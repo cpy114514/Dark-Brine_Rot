@@ -16,7 +16,7 @@ public sealed class OceanWorld : MonoBehaviour
     public EffectsQuality effectsQuality = EffectsQuality.Medium;
     [Header("Dynamic Sky")]
     [Range(0f, 1f)] public float cloudiness = 0.62f;
-    [Range(0f, 1f)] public float cloudMotion = 0.75f;
+    [Range(0f, 1f)] public float cloudMotion = 0.85f;
     [Range(0f, 1f)] public float sunlightIntensity = 0.72f;
 
     Mesh generatedMesh;
@@ -110,8 +110,8 @@ public sealed class OceanWorld : MonoBehaviour
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
         UpdateWaterDistances();
-        generatedMaterial.SetColor("_DeepColor", new Color(0.012f, 0.075f, 0.115f, 1f));
-        generatedMaterial.SetColor("_ShallowColor", new Color(0.045f, 0.28f, 0.34f, 1f));
+        generatedMaterial.SetColor("_DeepColor", new Color(0.004f, 0.032f, 0.060f, 1f));
+        generatedMaterial.SetColor("_ShallowColor", new Color(0.018f, 0.135f, 0.190f, 1f));
         generatedMaterial.SetColor("_CrestColor", new Color(0.78f, 0.93f, 0.92f, 1f));
         BuildSky();
     }
@@ -285,15 +285,15 @@ public sealed class OceanWorld : MonoBehaviour
 
         int cloudDetail = effectsQuality == EffectsQuality.Low ? 2 : effectsQuality == EffectsQuality.Medium ? 4 : 5;
         skyMaterial.SetFloat("_CloudDetail", cloudDetail);
-        skyMaterial.SetFloat("_CloudStrength", effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.72f : 0.86f);
+        skyMaterial.SetFloat("_CloudStrength", effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.82f : 0.90f);
         skyMaterial.SetFloat("_CloudCoverage", cloudiness);
         // The high cloud deck crosses a visible portion of the sky within a play session;
         // the low deck remains slower, so the layers do not drift in lockstep.
-        skyMaterial.SetFloat("_CloudSpeed", Mathf.Lerp(0.025f, 0.12f, cloudMotion));
+        skyMaterial.SetFloat("_CloudSpeed", Mathf.Lerp(0.055f, 0.24f, cloudMotion));
         skyMaterial.SetFloat("_SunGlow", sunlightIntensity);
-        skyMaterial.SetColor("_HorizonColor", new Color(0.58f, 0.74f, 0.80f, 1f));
-        skyMaterial.SetColor("_ZenithColor", new Color(0.09f, 0.28f, 0.48f, 1f));
-        skyMaterial.SetColor("_CloudColor", new Color(0.94f, 0.97f, 0.98f, 1f));
+        skyMaterial.SetColor("_HorizonColor", new Color(0.38f, 0.62f, 0.76f, 1f));
+        skyMaterial.SetColor("_ZenithColor", new Color(0.025f, 0.16f, 0.39f, 1f));
+        skyMaterial.SetColor("_CloudColor", new Color(0.92f, 0.96f, 1f, 1f));
         skyDome.GetComponent<MeshRenderer>().sharedMaterial = skyMaterial;
         // The same procedural material is also the real camera skybox. This avoids relying on
         // a finite sphere and makes clouds render identically from low flight and high flight.

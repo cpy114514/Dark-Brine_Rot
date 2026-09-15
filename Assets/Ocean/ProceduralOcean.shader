@@ -2,8 +2,8 @@ Shader "DarkBrine/Procedural Ocean"
 {
     Properties
     {
-        _DeepColor ("Deep water", Color) = (0.012, 0.075, 0.115, 1)
-        _ShallowColor ("Surface water", Color) = (0.045, 0.28, 0.34, 1)
+        _DeepColor ("Deep water", Color) = (0.004, 0.032, 0.060, 1)
+        _ShallowColor ("Surface water", Color) = (0.018, 0.135, 0.190, 1)
         _CrestColor ("Foam colour", Color) = (0.78, 0.93, 0.92, 1)
         _WaveHeight ("Wave height", Range(0, 2)) = 0.78
         _WaveSpeed ("Wave speed", Range(0, 3)) = 0.82
@@ -120,8 +120,8 @@ Shader "DarkBrine/Procedural Ocean"
                 half facingSun = saturate(dot(normalWS, sun.direction));
 
                 half3 water = lerp(_DeepColor.rgb, _ShallowColor.rgb, 0.22h + facingSun * 0.36h);
-                half3 skyReflection = half3(0.31h, 0.51h, 0.60h);
-                water = lerp(water, skyReflection, fresnel * 0.54h);
+                half3 skyReflection = half3(0.18h, 0.34h, 0.42h);
+                water = lerp(water, skyReflection, fresnel * 0.48h);
 
                 half haze = smoothstep(_MidDetailDistance * 0.72h, _ViewDistance, distanceToCamera);
                 water = lerp(water, skyReflection, haze * 0.64h);
