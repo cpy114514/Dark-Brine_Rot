@@ -1,0 +1,6 @@
+{
+  "finger_mesh": "restored from before_finger_correction.blend",
+  "body_vertices": 205770,
+  "bones": 73,
+  "bat_parent": "hand.R"
+}

@@ -1,0 +1,58 @@
+{
+  "auto_weight_result": "{'FINISHED'}",
+  "vertices": 205770,
+  "unweighted": 0,
+  "disabled_deform_bones_preserved": [
+    "Bone.011",
+    "Bone.012",
+    "Bone.019",
+    "Bone.023",
+    "Bone.027",
+    "Bone.028",
+    "Bone.029",
+    "Bone.030",
+    "Bone.031",
+    "Bone.032",
+    "Bone.033",
+    "Bone.034",
+    "Bone.035",
+    "Bone.036",
+    "Bone.037",
+    "Bone.038",
+    "Bone.039",
+    "Bone.040",
+    "Bone.041",
+    "Bone.042",
+    "Bone.043",
+    "Bone.044",
+    "Bone.053",
+    "Bone.057",
+    "Bone.007"
+  ],
+  "groups": 48,
+  "modifiers": [
+    [
+      "Armature",
+      "ARMATURE"
+    ]
+  ],
+  "pose_tests": {
+    "Bone.004": {
+      "max_vertex_motion": 0.07549089193344116,
+      "moved_vertices": 17896
+    },
+    "hand.R": {
+      "max_vertex_motion": 0.036840688437223434,
+      "moved_vertices": 12889
+    },
+    "Bone.014": {
+      "max_vertex_motion": 0.02271740324795246,
+      "moved_vertices": 3194
+    },
+    "Bone.065": {
+      "max_vertex_motion": 0.10910005867481232,
+      "moved_vertices": 37439
+    }
+  },
+  "rest_pose_restored": true
+}

@@ -1,0 +1,10 @@
+{
+  "original_bones_restored": 71,
+  "added_hand_bones": 2,
+  "vertices_before": 205770,
+  "vertices_after": 204933,
+  "finger_gap_width": 0.005,
+  "bat_parent": "hand.R",
+  "mesh_boundary_edges": 0,
+  "nonmanifold_edges": 0
+}
