@@ -2,34 +2,33 @@ Shader "DarkBrine/Procedural Ocean"
 {
     Properties
     {
-        _DeepColor ("Deep water", Color) = (0.018, 0.13, 0.19, 1.0)
-        _ShallowColor ("Wave colour", Color) = (0.035, 0.25, 0.31, 1.0)
-        _CrestColor ("Crest colour", Color) = (0.52, 0.82, 0.80, 1.0)
-        _WaveHeight ("Wave height", Range(0, 2)) = 1.05
-        _WaveScale ("Wave scale", Range(0.05, 1.5)) = 0.30
-        _WaveSpeed ("Wave speed", Range(0, 4)) = 1.0
-        _Smoothness ("Smoothness", Range(0, 1)) = 0.93
-        _Opacity ("Opacity", Range(0, 1)) = 0.87
-        _NearDetailDistance ("Near detail distance", Float) = 65
-        _MidDetailDistance ("Mid detail distance", Float) = 150
-        _ViewDistance ("View distance", Float) = 260
+        _DeepColor ("Deep water", Color) = (0.012, 0.075, 0.115, 1)
+        _ShallowColor ("Surface water", Color) = (0.045, 0.28, 0.34, 1)
+        _CrestColor ("Foam colour", Color) = (0.78, 0.93, 0.92, 1)
+        _WaveHeight ("Wave height", Range(0, 2)) = 0.78
+        _WaveSpeed ("Wave speed", Range(0, 3)) = 0.82
+        _Smoothness ("Water smoothness", Range(0, 1)) = 0.88
+        _NearDetailDistance ("Near detail distance", Float) = 180
+        _MidDetailDistance ("Mid detail distance", Float) = 700
+        _ViewDistance ("View distance", Float) = 3000
     }
 
     SubShader
     {
-        Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Geometry" "RenderType"="Opaque" }
+        // Draw after opaque scene geometry, so opaque islands naturally cover the water.
+        Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Transparent-100" "RenderType"="Transparent" }
         Pass
         {
             Name "OceanForward"
             Tags { "LightMode"="UniversalForward" }
             ZWrite On
+            ZTest LEqual
             Cull Back
 
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.5
-
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
@@ -38,126 +37,76 @@ Shader "DarkBrine/Procedural Ocean"
                 half4 _ShallowColor;
                 half4 _CrestColor;
                 half _WaveHeight;
-                half _WaveScale;
                 half _WaveSpeed;
                 half _Smoothness;
-                half _Opacity;
                 float _NearDetailDistance;
                 float _MidDetailDistance;
                 float _ViewDistance;
             CBUFFER_END
 
-            struct Attributes
-            {
-                float4 positionOS : POSITION;
-            };
-
+            struct Attributes { float4 positionOS : POSITION; };
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
                 float3 positionWS : TEXCOORD0;
                 half3 normalWS : TEXCOORD1;
-                half crest : TEXCOORD2;
             };
 
-            // Coherent value noise and FBM give every part of the water a different pattern.
-            // They are evaluated mathematically: this shader never samples a texture.
-            float Hash21(float2 p)
+            // A Gerstner wave displaces points sideways as well as vertically. This creates
+            // a rolling crest rather than the up/down look of a simple sine surface.
+            float3 AddGerstnerWave(float4 wave, float3 samplePosition, float time, inout float3 tangent, inout float3 binormal)
             {
-                p = frac(p * float2(123.34, 456.21));
-                p += dot(p, p + 45.32);
-                return frac(p.x * p.y);
+                float2 direction = normalize(wave.xy);
+                float steepness = wave.z * _WaveHeight;
+                float waveNumber = TWO_PI / wave.w;
+                float phase = waveNumber * (dot(direction, samplePosition.xz) - sqrt(9.81 / waveNumber) * time * _WaveSpeed);
+                float sine = sin(phase);
+                float cosine = cos(phase);
+                float amplitude = steepness / waveNumber;
+
+                tangent += float3(-direction.x * direction.x * steepness * sine,
+                                   direction.x * steepness * cosine,
+                                  -direction.x * direction.y * steepness * sine);
+                binormal += float3(-direction.x * direction.y * steepness * sine,
+                                    direction.y * steepness * cosine,
+                                   -direction.y * direction.y * steepness * sine);
+                return float3(direction.x * amplitude * cosine, amplitude * sine, direction.y * amplitude * cosine);
             }
 
-            float ValueNoise(float2 p)
+            // Per-pixel crest detection keeps foam narrow and smooth instead of turning it
+            // into large facets based on the underlying mesh triangles.
+            float CrestAt(float2 samplePosition, float time)
             {
-                float2 cell = floor(p);
-                float2 local = frac(p);
-                float2 smooth = local * local * (3.0 - 2.0 * local);
-                float a = Hash21(cell);
-                float b = Hash21(cell + float2(1.0, 0.0));
-                float c = Hash21(cell + float2(0.0, 1.0));
-                float d = Hash21(cell + float2(1.0, 1.0));
-                return lerp(lerp(a, b, smooth.x), lerp(c, d, smooth.x), smooth.y);
-            }
-
-            float Fbm(float2 p)
-            {
-                float value = 0.0;
-                float amplitude = 0.5;
-                float2x2 rotation = float2x2(0.8, -0.6, 0.6, 0.8);
-                [unroll]
-                for (int octave = 0; octave < 4; octave++)
-                {
-                    value += amplitude * ValueNoise(p);
-                    p = mul(rotation, p) * 2.07 + 11.7;
-                    amplitude *= 0.5;
-                }
-                return value / 0.9375;
-            }
-
-            float OceanHeight(float2 p, float t, out float crest)
-            {
-                float distanceToCamera = distance(p, _WorldSpaceCameraPos.xz);
-                // Far water only carries two cheap swells. It is intentionally low-frequency because
-                // the subsequent haze makes it read as a distant, softly blurred ocean surface.
-                if (distanceToCamera > _MidDetailDistance)
-                {
-                    float farSwellA = sin(dot(p, normalize(float2(0.77, 0.64))) * 0.13 + t * _WaveSpeed * 0.65) * 0.52;
-                    float farSwellB = sin(dot(p, normalize(float2(-0.48, 0.88))) * 0.20 + t * _WaveSpeed * 0.92) * 0.20;
-                    crest = 0.0;
-                    return (farSwellA + farSwellB) * _WaveHeight;
-                }
-
-                float2 slowDrift = float2(0.055, 0.026) * t * _WaveSpeed;
-                float2 fastDrift = float2(-0.19, 0.13) * t * _WaveSpeed;
-                float macro = Fbm(p * 0.028 + slowDrift);
-                float2 warped = p + float2(
-                    Fbm(p * 0.052 + slowDrift * 1.6),
-                    Fbm(p * 0.052 - slowDrift * 1.2)) * 22.0;
-
-                float longSwell = sin(dot(warped, normalize(float2(0.77, 0.64))) * 0.17 + t * _WaveSpeed * 0.75 + macro * 4.5) * 0.76;
-                float crossSwell = sin(dot(warped, normalize(float2(-0.48, 0.88))) * 0.31 + t * _WaveSpeed * 1.13 - macro * 3.0) * 0.34;
-                // Keep the smallest pattern broader than the mesh spacing, so irregular detail
-                // remains fluid instead of breaking into visible grid facets.
-                float windNoise = Fbm(warped * 0.13 + fastDrift);
-                // Mid-distance water skips the highest-frequency cap noise to reduce vertex cost.
-                float capNoise = distanceToCamera > _NearDetailDistance ? 0.5 : Fbm(warped * 0.27 - fastDrift * 1.7);
-                float windChop = (windNoise - 0.5) * 0.34 + (capNoise - 0.5) * 0.11;
-
-                // Broad breakers reuse the macro swell already calculated above, so larger foam
-                // appears without another expensive noise layer or a foam texture.
-                float broadBreaker = saturate((longSwell + crossSwell + (macro - 0.5) * 0.55 - 0.58) * 1.95);
-                float fineCrest = saturate((windNoise - 0.70) * 3.0 + (longSwell + crossSwell - 0.42) * 0.75);
-                crest = max(fineCrest, broadBreaker * (0.38 + windNoise * 0.62));
-                return (longSwell + crossSwell + windChop) * _WaveHeight;
-            }
-
-            void OceanShape(float2 p, float t, out float height, out float2 slope, out float crest)
-            {
-                height = OceanHeight(p, t, crest);
-                // Central differences make normals follow the irregular procedural surface.
-                float distanceToCamera = distance(p, _WorldSpaceCameraPos.xz);
-                float sampleStep = distanceToCamera > _MidDetailDistance ? 1.4 : distanceToCamera > _NearDetailDistance ? 0.8 : 0.35;
-                float unusedCrest;
-                float dx = OceanHeight(p + float2(sampleStep, 0.0), t, unusedCrest) - OceanHeight(p - float2(sampleStep, 0.0), t, unusedCrest);
-                float dz = OceanHeight(p + float2(0.0, sampleStep), t, unusedCrest) - OceanHeight(p - float2(0.0, sampleStep), t, unusedCrest);
-                slope = float2(dx, dz) / (2.0 * sampleStep);
+                float2 d0 = normalize(float2(0.82, 0.57));
+                float2 d1 = normalize(float2(-0.38, 0.93));
+                float2 d2 = normalize(float2(0.96, -0.29));
+                float2 d3 = normalize(float2(-0.72, -0.69));
+                float a = sin((dot(d0, samplePosition) - sqrt(9.81 / (TWO_PI / 180.0)) * time * _WaveSpeed) * (TWO_PI / 180.0)) * 0.54;
+                float b = sin((dot(d1, samplePosition) - sqrt(9.81 / (TWO_PI / 92.0))  * time * _WaveSpeed) * (TWO_PI / 92.0) + 1.9) * 0.27;
+                float c = sin((dot(d2, samplePosition) - sqrt(9.81 / (TWO_PI / 58.0))  * time * _WaveSpeed) * (TWO_PI / 58.0) + 4.2) * 0.13;
+                float d = sin((dot(d3, samplePosition) - sqrt(9.81 / (TWO_PI / 35.0))  * time * _WaveSpeed) * (TWO_PI / 35.0) + 2.7) * 0.06;
+                return smoothstep(0.76, 0.94, a + b + c + d);
             }
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                float3 worldBase = TransformObjectToWorld(input.positionOS.xyz);
-                float height;
-                float2 slope;
-                float crest;
-                OceanShape(worldBase.xz, _Time.y, height, slope, crest);
-                worldBase.y += height;
-                output.positionWS = worldBase;
-                output.normalWS = normalize(float3(-slope.x, 1.0, -slope.y));
-                output.crest = crest;
-                output.positionCS = TransformWorldToHClip(worldBase);
+                float3 basePosition = TransformObjectToWorld(input.positionOS.xyz);
+                float distanceToCamera = distance(basePosition.xz, _WorldSpaceCameraPos.xz);
+                float3 tangent = float3(1.0, 0.0, 0.0);
+                float3 binormal = float3(0.0, 0.0, 1.0);
+                float3 displacement = 0.0;
+
+                displacement += AddGerstnerWave(float4(0.82, 0.57, 0.15, 180.0), basePosition, _Time.y, tangent, binormal);
+                displacement += AddGerstnerWave(float4(-0.38, 0.93, 0.10, 92.0), basePosition, _Time.y + 1.9, tangent, binormal);
+                if (distanceToCamera < _MidDetailDistance)
+                    displacement += AddGerstnerWave(float4(0.96, -0.29, 0.06, 58.0), basePosition, _Time.y + 4.2, tangent, binormal);
+                if (distanceToCamera < _NearDetailDistance)
+                    displacement += AddGerstnerWave(float4(-0.72, -0.69, 0.03, 35.0), basePosition, _Time.y + 2.7, tangent, binormal);
+
+                output.positionWS = basePosition + displacement;
+                output.normalWS = normalize(cross(binormal, tangent));
+                output.positionCS = TransformWorldToHClip(output.positionWS);
                 return output;
             }
 
@@ -165,41 +114,18 @@ Shader "DarkBrine/Procedural Ocean"
             {
                 half3 normalWS = normalize(input.normalWS);
                 float distanceToCamera = distance(input.positionWS.xz, _WorldSpaceCameraPos.xz);
-                half3 viewDir = SafeNormalize(GetWorldSpaceViewDir(input.positionWS));
-                Light mainLight = GetMainLight();
-                half NdotL = saturate(dot(normalWS, mainLight.direction));
-                half fresnel = pow(1.0h - saturate(dot(normalWS, viewDir)), 5.0h);
-                half sparkle = 0.0h;
-                if (distanceToCamera < _MidDetailDistance)
-                {
-                    half3 halfVector = SafeNormalize(mainLight.direction + viewDir);
-                    // A dense, moving glint mask prevents a broad mesh triangle from becoming
-                    // one giant circular sun decal. The reflection remains a broken ribbon of
-                    // light that follows the waves instead of looking like a texture stamp.
-                    float glintNoise = ValueNoise(input.positionWS.xz * 3.4 + _Time.y * float2(0.75, -0.46));
-                    half glintMask = smoothstep(0.46h, 0.82h, glintNoise);
-                    half specular = pow(saturate(dot(normalWS, halfVector)), lerp(280.0h, 120.0h, 1.0h - _Smoothness));
-                    sparkle = specular * glintMask;
-                }
+                half3 viewDirection = SafeNormalize(GetWorldSpaceViewDir(input.positionWS));
+                Light sun = GetMainLight();
+                half fresnel = pow(1.0h - saturate(dot(normalWS, viewDirection)), 4.5h);
+                half facingSun = saturate(dot(normalWS, sun.direction));
 
-                half facingLight = saturate(dot(normalWS, mainLight.direction) * 0.5h + 0.5h);
-                // Keep the entire water body in one blue-green family.  Distance changes clarity,
-                // not the underlying hue, so the eye reads one continuous ocean.
-                half3 body = lerp(_DeepColor.rgb, _ShallowColor.rgb, facingLight * 0.44h + input.crest * 0.16h + 0.20h);
-                half3 horizon = half3(0.20h, 0.38h, 0.43h);
-                half3 colour = lerp(body, horizon, fresnel * 0.72h);
-                colour += mainLight.color * (sparkle * 1.25h + NdotL * input.crest * 0.13h);
-                colour = lerp(colour, _CrestColor.rgb, input.crest * fresnel * 0.28h);
-                // A long, continuous haze ramp is a cheap far-field blur: high-frequency lighting
-                // disappears first, then the remaining water softly merges into the horizon.
-                half haze = smoothstep(_NearDetailDistance * 0.8h, _ViewDistance, distanceToCamera);
-                half3 farWater = lerp(body, horizon, 0.58h);
-                colour = lerp(colour, farWater, haze * 0.72h);
-                // Larger pale breakers remain readable near and mid-range, then dissolve into
-                // the distance haze instead of requiring detailed geometry everywhere.
-                half broadFoam = smoothstep(0.20h, 0.64h, input.crest);
-                colour = lerp(colour, _CrestColor.rgb, broadFoam * (0.42h + 0.30h * (1.0h - haze)));
-                return half4(colour, 1.0h);
+                half3 water = lerp(_DeepColor.rgb, _ShallowColor.rgb, 0.22h + facingSun * 0.36h);
+                half3 skyReflection = half3(0.31h, 0.51h, 0.60h);
+                water = lerp(water, skyReflection, fresnel * 0.54h);
+
+                half haze = smoothstep(_MidDetailDistance * 0.72h, _ViewDistance, distanceToCamera);
+                water = lerp(water, skyReflection, haze * 0.64h);
+                return half4(water, 1.0h);
             }
             ENDHLSL
         }

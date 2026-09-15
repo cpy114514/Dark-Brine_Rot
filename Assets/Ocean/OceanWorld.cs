@@ -20,12 +20,23 @@ public sealed class OceanWorld : MonoBehaviour
     [Range(0f, 1f)] public float sunlightIntensity = 0.72f;
 
     Mesh generatedMesh;
+    Mesh forwardMesh;
+    Mesh surroundMesh;
     Material generatedMaterial;
     GameObject skyDome;
     Material skyMaterial;
     int generatedResolution;
     float generatedSize;
     int generatedCoverageAngle;
+    Light cachedSun;
+    float appliedNearDistance = float.NaN;
+    float appliedMidDistance = float.NaN;
+    float appliedViewDistance = float.NaN;
+
+    static readonly int NearDetailDistanceId = Shader.PropertyToID("_NearDetailDistance");
+    static readonly int MidDetailDistanceId = Shader.PropertyToID("_MidDetailDistance");
+    static readonly int ViewDistanceId = Shader.PropertyToID("_ViewDistance");
+    static readonly int SunDirectionId = Shader.PropertyToID("_SunDirection");
 
     void OnEnable() => BuildOcean();
 
@@ -56,13 +67,30 @@ public sealed class OceanWorld : MonoBehaviour
         var filter = GetComponent<MeshFilter>();
         var renderer = GetComponent<MeshRenderer>();
 
-        if (generatedMesh == null || generatedResolution != effectiveResolution || !Mathf.Approximately(generatedSize, meshSize) || generatedCoverageAngle != coverageMode)
+        if (generatedResolution != effectiveResolution || !Mathf.Approximately(generatedSize, meshSize))
         {
             DestroyGeneratedMesh();
-            generatedMesh = CreateOceanMesh(effectiveResolution, meshSize, coverageAngle);
-            filter.sharedMesh = generatedMesh;
             generatedResolution = effectiveResolution;
             generatedSize = meshSize;
+        }
+
+        if (generatedMesh == null || generatedCoverageAngle != coverageMode)
+        {
+            // Each view shape is generated once per resolution/range. Looking up and down
+            // then only swaps a mesh reference, avoiding repeated allocations and uploads.
+            if (coverageMode == 360)
+            {
+                if (surroundMesh == null)
+                    surroundMesh = CreateOceanMesh(effectiveResolution, meshSize, coverageAngle);
+                generatedMesh = surroundMesh;
+            }
+            else
+            {
+                if (forwardMesh == null)
+                    forwardMesh = CreateOceanMesh(effectiveResolution, meshSize, coverageAngle);
+                generatedMesh = forwardMesh;
+            }
+            filter.sharedMesh = generatedMesh;
             generatedCoverageAngle = coverageMode;
         }
 
@@ -73,15 +101,18 @@ public sealed class OceanWorld : MonoBehaviour
                 return;
             generatedMaterial = new Material(shader) { name = "Procedural Ocean Material" };
             generatedMaterial.hideFlags = HideFlags.DontSaveInEditor | HideFlags.DontSaveInBuild;
+            appliedNearDistance = appliedMidDistance = appliedViewDistance = float.NaN;
         }
         renderer.sharedMaterial = generatedMaterial;
+        // Draw after normal opaque props. An island's depth is therefore written first and
+        // rejects hidden water pixels automatically, with no per-island setup required.
+        generatedMaterial.renderQueue = 2900;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
-        GetShaderDetailDistances(out float shaderNearDistance, out float shaderMidDistance);
-        generatedMaterial.SetFloat("_NearDetailDistance", shaderNearDistance);
-        generatedMaterial.SetFloat("_MidDetailDistance", shaderMidDistance);
-        generatedMaterial.SetFloat("_ViewDistance", renderDistance);
-        generatedMaterial.SetColor("_CrestColor", new Color(0.74f, 0.91f, 0.88f, 1f));
+        UpdateWaterDistances();
+        generatedMaterial.SetColor("_DeepColor", new Color(0.012f, 0.075f, 0.115f, 1f));
+        generatedMaterial.SetColor("_ShallowColor", new Color(0.045f, 0.28f, 0.34f, 1f));
+        generatedMaterial.SetColor("_CrestColor", new Color(0.78f, 0.93f, 0.92f, 1f));
         BuildSky();
     }
 
@@ -105,21 +136,22 @@ public sealed class OceanWorld : MonoBehaviour
     static Mesh CreateOceanMesh(int meshResolution, float meshSize, int coverageAngle)
     {
         var mesh = new Mesh { name = coverageAngle >= 360 ? "Procedural Ocean Mesh" : "Visible Ocean Patch" };
-        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        // Small/medium grids fit 16-bit indices; high quality still uses 32-bit indices.
+        mesh.indexFormat = (meshResolution + 1) * (meshResolution + 1) <= 65535
+            ? UnityEngine.Rendering.IndexFormat.UInt16
+            : UnityEngine.Rendering.IndexFormat.UInt32;
 
         if (coverageAngle >= 360)
         {
             int side = meshResolution + 1;
             var vertices = new Vector3[side * side];
             var triangles = new int[meshResolution * meshResolution * 6];
-            var uvs = new Vector2[vertices.Length];
             float halfSize = meshSize * 0.5f;
             for (int z = 0; z <= meshResolution; z++)
             for (int x = 0; x <= meshResolution; x++)
             {
                 int index = z * side + x;
                 vertices[index] = new Vector3(x / (float)meshResolution * meshSize - halfSize, 0f, z / (float)meshResolution * meshSize - halfSize);
-                uvs[index] = new Vector2(x / (float)meshResolution, z / (float)meshResolution);
             }
             int triangle = 0;
             for (int z = 0; z < meshResolution; z++)
@@ -131,28 +163,36 @@ public sealed class OceanWorld : MonoBehaviour
             }
             mesh.vertices = vertices;
             mesh.triangles = triangles;
-            mesh.uv = uvs;
         }
         else
         {
             // A regular forward trapezoid uses fewer vertices than the full square while
             // avoiding the long radial triangles that make a polar fan visibly faceted.
             int depthSegments = meshResolution;
-            int widthSegments = Mathf.Max(48, Mathf.RoundToInt(meshResolution * 0.70f));
+            int widthSegments = Mathf.Max(48, Mathf.RoundToInt(meshResolution * 0.85f));
             int side = widthSegments + 1;
             var vertices = new Vector3[(depthSegments + 1) * side];
             var triangles = new int[depthSegments * widthSegments * 6];
-            var uvs = new Vector2[vertices.Length];
             float radius = meshSize * 0.5f;
-            float startDistance = -radius * 0.14f;
-            for (int row = 0; row <= depthSegments; row++)
+            // Start only a little behind the player, then concentrate both axes around the
+            // camera. This makes the near water smooth while keeping the far horizon cheap.
+            float startDistance = -Mathf.Min(180f, radius * 0.05f);
+            var columnPositions = new float[side];
             for (int column = 0; column <= widthSegments; column++)
             {
-                int index = row * side + column;
+                float centeredColumn = column / (float)widthSegments * 2f - 1f;
+                columnPositions[column] = Mathf.Sign(centeredColumn) * Mathf.Pow(Mathf.Abs(centeredColumn), 1.65f);
+            }
+            for (int row = 0; row <= depthSegments; row++)
+            {
                 float depth = row / (float)depthSegments;
-                float halfWidth = Mathf.Lerp(radius * 0.40f, radius * 1.10f, depth);
-                vertices[index] = new Vector3(Mathf.Lerp(-halfWidth, halfWidth, column / (float)widthSegments), 0f, Mathf.Lerp(startDistance, radius, depth));
-                uvs[index] = new Vector2(column / (float)widthSegments, depth);
+                // Concentrate rows at the player, where wave silhouette matters, and let the
+                // haze-covered far field use progressively larger cells.
+                float distributedDepth = Mathf.Pow(depth, 2.2f);
+                float halfWidth = Mathf.Lerp(radius * 0.40f, radius * 1.10f, distributedDepth);
+                float z = Mathf.Lerp(startDistance, radius, distributedDepth);
+                for (int column = 0; column <= widthSegments; column++)
+                    vertices[row * side + column] = new Vector3(columnPositions[column] * halfWidth, 0f, z);
             }
             int triangle = 0;
             for (int row = 0; row < depthSegments; row++)
@@ -164,11 +204,32 @@ public sealed class OceanWorld : MonoBehaviour
             }
             mesh.vertices = vertices;
             mesh.triangles = triangles;
-            mesh.uv = uvs;
         }
 
         mesh.RecalculateBounds();
         return mesh;
+    }
+
+    void UpdateWaterDistances()
+    {
+        if (generatedMaterial == null)
+            return;
+        GetShaderDetailDistances(out float nearDistance, out float midDistance);
+        if (appliedNearDistance != nearDistance)
+        {
+            generatedMaterial.SetFloat(NearDetailDistanceId, nearDistance);
+            appliedNearDistance = nearDistance;
+        }
+        if (appliedMidDistance != midDistance)
+        {
+            generatedMaterial.SetFloat(MidDetailDistanceId, midDistance);
+            appliedMidDistance = midDistance;
+        }
+        if (appliedViewDistance != renderDistance)
+        {
+            generatedMaterial.SetFloat(ViewDistanceId, renderDistance);
+            appliedViewDistance = renderDistance;
+        }
     }
 
     void GetShaderDetailDistances(out float shaderNearDistance, out float shaderMidDistance)
@@ -228,9 +289,11 @@ public sealed class OceanWorld : MonoBehaviour
         skyMaterial.SetFloat("_CloudCoverage", cloudiness);
         // The high cloud deck crosses a visible portion of the sky within a play session;
         // the low deck remains slower, so the layers do not drift in lockstep.
-        skyMaterial.SetFloat("_CloudSpeed", Mathf.Lerp(0.06f, 0.32f, cloudMotion));
+        skyMaterial.SetFloat("_CloudSpeed", Mathf.Lerp(0.025f, 0.12f, cloudMotion));
         skyMaterial.SetFloat("_SunGlow", sunlightIntensity);
-        skyMaterial.SetColor("_CloudColor", new Color(0.96f, 0.98f, 1f, 1f));
+        skyMaterial.SetColor("_HorizonColor", new Color(0.58f, 0.74f, 0.80f, 1f));
+        skyMaterial.SetColor("_ZenithColor", new Color(0.09f, 0.28f, 0.48f, 1f));
+        skyMaterial.SetColor("_CloudColor", new Color(0.94f, 0.97f, 0.98f, 1f));
         skyDome.GetComponent<MeshRenderer>().sharedMaterial = skyMaterial;
         // The same procedural material is also the real camera skybox. This avoids relying on
         // a finite sphere and makes clouds render identically from low flight and high flight.
@@ -248,32 +311,35 @@ public sealed class OceanWorld : MonoBehaviour
             // The ocean follows the player. Geometry outside the configured view range is never needed.
             transform.position = new Vector3(camera.transform.position.x, 0f, camera.transform.position.z);
             transform.rotation = Quaternion.Euler(0f, camera.transform.eulerAngles.y, 0f);
-            camera.farClipPlane = renderDistance + 20f;
-            camera.clearFlags = CameraClearFlags.Skybox;
+            if (camera.farClipPlane != renderDistance + 20f)
+                camera.farClipPlane = renderDistance + 20f;
+            if (camera.clearFlags != CameraClearFlags.Skybox)
+                camera.clearFlags = CameraClearFlags.Skybox;
             skyDome.transform.position = camera.transform.position;
-            if (generatedMaterial != null)
-            {
-                GetShaderDetailDistances(out float shaderNearDistance, out float shaderMidDistance);
-                generatedMaterial.SetFloat("_NearDetailDistance", shaderNearDistance);
-                generatedMaterial.SetFloat("_MidDetailDistance", shaderMidDistance);
-                generatedMaterial.SetFloat("_ViewDistance", renderDistance);
-            }
+            UpdateWaterDistances();
             int coverageAngle = GetVisibleCoverageAngle();
             if ((coverageAngle >= 360 ? 360 : 1) != generatedCoverageAngle)
                 BuildOcean();
         }
 
-        Light sun = FindFirstObjectByType<Light>();
+        // Retain live editor selection; only cache during play, reacquiring destroyed or
+        // deactivated lights. This scene's sun no longer requires a scene-wide search/frame.
+        if (!Application.isPlaying || cachedSun == null || !cachedSun.gameObject.activeInHierarchy)
+            cachedSun = FindFirstObjectByType<Light>();
+        Light sun = cachedSun;
         if (sun != null && sun.type == LightType.Directional)
-            skyMaterial.SetVector("_SunDirection", -sun.transform.forward);
+            skyMaterial.SetVector(SunDirectionId, -sun.transform.forward);
     }
 
     void OnDisable()
     {
         DestroyGeneratedMesh();
-        if (generatedMaterial == null) return;
-        if (Application.isPlaying) Destroy(generatedMaterial); else DestroyImmediate(generatedMaterial);
+        if (generatedMaterial != null)
+        {
+            if (Application.isPlaying) Destroy(generatedMaterial); else DestroyImmediate(generatedMaterial);
+        }
         generatedMaterial = null;
+        cachedSun = null;
         if (skyMaterial != null)
         {
             if (RenderSettings.skybox == skyMaterial)
@@ -285,8 +351,16 @@ public sealed class OceanWorld : MonoBehaviour
 
     void DestroyGeneratedMesh()
     {
-        if (generatedMesh == null) return;
-        if (Application.isPlaying) Destroy(generatedMesh); else DestroyImmediate(generatedMesh);
+        if (forwardMesh != null)
+        {
+            if (Application.isPlaying) Destroy(forwardMesh); else DestroyImmediate(forwardMesh);
+        }
+        if (surroundMesh != null)
+        {
+            if (Application.isPlaying) Destroy(surroundMesh); else DestroyImmediate(surroundMesh);
+        }
+        forwardMesh = null;
+        surroundMesh = null;
         generatedMesh = null;
         generatedResolution = 0;
         generatedSize = 0f;

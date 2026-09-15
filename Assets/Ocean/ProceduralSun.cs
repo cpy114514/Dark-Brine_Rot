@@ -6,10 +6,11 @@ public sealed class ProceduralSun : MonoBehaviour
 {
     [Header("High Sky Position")]
     [Range(0.35f, 0.95f)] public float elevation = 0.78f;
-    [Range(0.001f, 0.03f)] public float apparentSize = 0.012f;
+    [Range(0.001f, 0.04f)] public float apparentSize = 0.022f;
     public float maximumDistance = 1400f;
 
     Material generatedMaterial;
+    Light cachedLight;
 
     void OnEnable()
     {
@@ -42,13 +43,16 @@ public sealed class ProceduralSun : MonoBehaviour
         transform.position = camera.transform.position + directionToSun * distance;
         transform.localScale = Vector3.one * (distance * apparentSize);
 
-        Light directional = FindFirstObjectByType<Light>();
+        if (!Application.isPlaying || cachedLight == null || !cachedLight.gameObject.activeInHierarchy)
+            cachedLight = FindFirstObjectByType<Light>();
+        Light directional = cachedLight;
         if (directional != null && directional.type == LightType.Directional)
             directional.transform.rotation = Quaternion.LookRotation(-directionToSun, Vector3.up);
     }
 
     void OnDisable()
     {
+        cachedLight = null;
         if (generatedMaterial == null) return;
         if (Application.isPlaying) Destroy(generatedMaterial); else DestroyImmediate(generatedMaterial);
         generatedMaterial = null;
