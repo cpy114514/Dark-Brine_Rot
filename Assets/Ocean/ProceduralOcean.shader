@@ -23,7 +23,10 @@ Shader "DarkBrine/Procedural Ocean"
             Tags { "LightMode"="UniversalForward" }
             ZWrite On
             ZTest LEqual
-            Cull Back
+            // The swimmer's camera can settle just below the waterline. Keep
+            // the displaced surface visible from that side as well, rather
+            // than letting the sky show through a one-sided ocean plane.
+            Cull Off
 
             HLSLPROGRAM
             #pragma vertex vert
@@ -85,7 +88,27 @@ Shader "DarkBrine/Procedural Ocean"
                 float b = sin((dot(d1, samplePosition) - sqrt(9.81 / (TWO_PI / 92.0))  * time * _WaveSpeed) * (TWO_PI / 92.0) + 1.9) * 0.27;
                 float c = sin((dot(d2, samplePosition) - sqrt(9.81 / (TWO_PI / 58.0))  * time * _WaveSpeed) * (TWO_PI / 58.0) + 4.2) * 0.13;
                 float d = sin((dot(d3, samplePosition) - sqrt(9.81 / (TWO_PI / 35.0))  * time * _WaveSpeed) * (TWO_PI / 35.0) + 2.7) * 0.06;
-                return smoothstep(0.76, 0.94, a + b + c + d);
+                float e = sin((dot(normalize(float2(0.31, 0.95)), samplePosition) - sqrt(9.81 / (TWO_PI / 24.0)) * time * _WaveSpeed) * (TWO_PI / 24.0) + 0.8) * 0.038;
+                float f = sin((dot(normalize(float2(-0.91, 0.42)), samplePosition) - sqrt(9.81 / (TWO_PI / 15.0)) * time * _WaveSpeed) * (TWO_PI / 15.0) + 3.5) * 0.022;
+                return smoothstep(0.70, 0.91, a + b + c + d + e + f);
+            }
+
+            // A small, texture-free value-noise field breaks the foam into
+            // irregular patches instead of repeating stripes on every crest.
+            float Hash21(float2 p)
+            {
+                p = frac(p * float2(123.34, 456.21));
+                p += dot(p, p + 45.32);
+                return frac(p.x * p.y);
+            }
+
+            float ValueNoise(float2 p)
+            {
+                float2 cell = floor(p);
+                float2 local = frac(p);
+                local = local * local * (3.0 - 2.0 * local);
+                return lerp(lerp(Hash21(cell), Hash21(cell + float2(1, 0)), local.x),
+                            lerp(Hash21(cell + float2(0, 1)), Hash21(cell + float2(1, 1)), local.x), local.y);
             }
 
             Varyings vert(Attributes input)
@@ -103,6 +126,10 @@ Shader "DarkBrine/Procedural Ocean"
                     displacement += AddGerstnerWave(float4(0.96, -0.29, 0.06, 58.0), basePosition, _Time.y + 4.2, tangent, binormal);
                 if (distanceToCamera < _NearDetailDistance)
                     displacement += AddGerstnerWave(float4(-0.72, -0.69, 0.03, 35.0), basePosition, _Time.y + 2.7, tangent, binormal);
+                if (distanceToCamera < _NearDetailDistance)
+                    displacement += AddGerstnerWave(float4(0.31, 0.95, 0.022, 24.0), basePosition, _Time.y + 0.8, tangent, binormal);
+                if (distanceToCamera < _NearDetailDistance * 0.72)
+                    displacement += AddGerstnerWave(float4(-0.91, 0.42, 0.014, 15.0), basePosition, _Time.y + 3.5, tangent, binormal);
 
                 output.positionWS = basePosition + displacement;
                 output.normalWS = normalize(cross(binormal, tangent));
@@ -118,10 +145,26 @@ Shader "DarkBrine/Procedural Ocean"
                 Light sun = GetMainLight();
                 half fresnel = pow(1.0h - saturate(dot(normalWS, viewDirection)), 4.5h);
                 half facingSun = saturate(dot(normalWS, sun.direction));
+                half3 halfDirection = SafeNormalize(sun.direction + viewDirection);
+                half sunGlint = pow(saturate(dot(normalWS, halfDirection)), 120.0h);
 
                 half3 water = lerp(_DeepColor.rgb, _ShallowColor.rgb, 0.22h + facingSun * 0.36h);
                 half3 skyReflection = half3(0.18h, 0.34h, 0.42h);
                 water = lerp(water, skyReflection, fresnel * 0.48h);
+
+                // Let the visible foam drift faster than the large swell so
+                // whitecaps keep visibly breaking instead of reading as static paint.
+                float foamNoise = ValueNoise(input.positionWS.xz * 0.11 + _Time.y * float2(0.14, -0.10));
+                half crest = CrestAt(input.positionWS.xz, _Time.y);
+                // Foam lives predominantly in the near/mid field, where it is
+                // visible, then dissolves smoothly into the distant haze.
+                half foamDistanceFade = 1.0h - smoothstep(_MidDetailDistance * 0.72h, _MidDetailDistance, distanceToCamera);
+                half foam = crest * smoothstep(0.40h, 0.76h, foamNoise) * foamDistanceFade;
+                water = lerp(water, _CrestColor.rgb, foam * 0.78h);
+                // Sparse animated sparkles make the sun read on moving wavelets
+                // without requiring a normal map or screen-space reflections.
+                half glintMask = smoothstep(0.55h, 0.92h, foamNoise);
+                water += sun.color.rgb * sunGlint * glintMask * (0.12h + 0.28h * fresnel);
 
                 half haze = smoothstep(_MidDetailDistance * 0.72h, _ViewDistance, distanceToCamera);
                 water = lerp(water, skyReflection, haze * 0.64h);

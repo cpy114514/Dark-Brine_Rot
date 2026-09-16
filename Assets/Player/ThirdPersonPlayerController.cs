@@ -24,6 +24,27 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Min(0.15f)] public float rollDuration = 0.792793f;
     [Min(0.1f)] public float rollSpeed = 6.5f;
     [Min(0f)] public float rollCooldown = 0.18f;
+    [Tooltip("Exits before the source clip's held recovery pose, so the dodge does not visibly freeze on its final frame.")]
+    [Range(0.75f, 0.98f)] public float rollAnimationExitPhase = 0.90f;
+    [Range(0.01f, 0.16f)] public float rollExitBlend = 0.065f;
+
+    [Header("Water contact")]
+    [Tooltip("Spawn lightweight procedural droplets while the character is moving through the sea.")]
+    public bool waterSplashes = true;
+    [Min(0.1f)] public float splashMinSpeed = 1.15f;
+    [Range(0.05f, 0.5f)] public float splashInterval = 0.16f;
+
+    [Header("Swimming")]
+    [Min(0.1f)] public float swimSpeed = 3.4f;
+    [Min(0.1f)] public float swimAcceleration = 9f;
+    [Range(0.2f, 1.2f)] public float swimSubmergeDepth = 0.66f;
+    [Min(0.1f)] public float swimBuoyancy = 8f;
+
+    [Header("Underwater presentation")]
+    [Tooltip("How far below the surface the third-person camera settles while Sahur is swimming.")]
+    [Range(0.15f, 1.2f)] public float underwaterCameraDepth = 0.46f;
+    [Range(0.15f, 1f)] public float underwaterOverlayStrength = 0.68f;
+    [Range(0.08f, 0.8f)] public float underwaterBubbleInterval = 0.24f;
 
     [Header("Third-person camera")]
     [Min(1f)] public float cameraDistance = 4.2f;
@@ -51,6 +72,20 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     int motionState;
     float airborneTime;
     float landingTimer;
+    float splashTimer;
+    float underwaterBubbleTimer;
+    float underwaterBlend;
+    bool wasAtSeaSurface;
+    bool wasSwimming;
+    ParticleSystem waterRipples;
+    ParticleSystem waterDroplets;
+    ParticleSystem underwaterBubbles;
+    Material waterVfxMaterial;
+    Material underwaterOverlayMaterial;
+    Material underwaterBubbleMaterial;
+    Mesh waterDropletMesh;
+    Mesh waterRippleMesh;
+    Renderer underwaterOverlayRenderer;
 
     static readonly int SpeedId = Animator.StringToHash("Speed");
 
@@ -70,6 +105,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (animator != null) { animator.applyRootMotion = false; animator.Play("Locomotion", 0, 0f); animator.Update(0f); }
         ConfigureColliderToModel();
         KeepFeetOnSeaLevel();
+        CreateWaterSplashEffect();
+        CreateUnderwaterPresentation();
     }
 
     void Update()
@@ -104,6 +141,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Vector3 cameraRight = heading * Vector3.right;
         float activeMoveSpeed = moveSpeed * (sprinting ? sprintMultiplier : 1f);
         Vector3 desiredVelocity = (cameraForward * input.z + cameraRight * input.x) * activeMoveSpeed;
+
+        if (IsSwimming())
+        {
+            UpdateSwimming(input, desiredVelocity);
+            return;
+        }
+
+        wasSwimming = false;
 
         bool grounded = IsGroundedOrOnSea();
         bool isRolling = rollTimer > 0f;
@@ -147,25 +192,38 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // forward, backward, left and right input without root-motion drift.
             rollTimer = Mathf.Max(0f, rollTimer - Time.deltaTime);
             float phase = 1f - rollTimer / rollDuration;
-            // Stop translation before the standing recovery at the end of the clip.
-            float rollWeight = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.72f, phase));
+            float exitPhase = Mathf.Clamp(rollAnimationExitPhase, 0.75f, 0.98f);
+            // Never blend into the new input direction while the model is still
+            // visibly rolling. That was the source of the sideways skating.
+            float rollWeight = Mathf.Lerp(1f, 0.18f, Mathf.SmoothStep(0.45f, exitPhase, phase));
             planarVelocity = rollDirection * rollSpeed * rollWeight;
-            rollFinishedThisFrame = rollTimer <= 0f;
+
+            // The imported 44-frame clip pauses in its recovery pose. Fade out
+            // just before that tail, and hand both animation and movement over
+            // on this same frame.
+            rollFinishedThisFrame = phase >= exitPhase || rollTimer <= 0f;
+            if (rollFinishedThisFrame)
+            {
+                rollTimer = 0f;
+                planarVelocity = desiredVelocity;
+            }
         }
         else
         {
             float rate = desiredVelocity.sqrMagnitude > planarVelocity.sqrMagnitude ? acceleration : deceleration;
             planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity, rate * Time.deltaTime);
         }
+        float downwardSpeedBeforeMove = verticalSpeed;
         characterController.Move((planarVelocity + Vector3.up * verticalSpeed) * Time.deltaTime);
         KeepFeetOnSeaLevel();
+        UpdateWaterSplash(Mathf.Max(0f, -downwardSpeedBeforeMove));
 
-        // Do not feed the last roll velocity into normal deceleration: that
-        // was responsible for a short but noticeable glide after each roll.
+        // The exit velocity was already blended above, before the controller
+        // moved.  Only change the animation state here; changing velocity at
+        // this point would create a one-frame delay after the dodge.
         if (rollFinishedThisFrame)
         {
-            planarVelocity = Vector3.zero;
-            SetMotion(0, "Locomotion", 0.06f);
+            SetMotion(0, "Locomotion", rollExitBlend);
         }
 
         bool onGround = verticalSpeed <= 0f && IsGroundedOrOnSea();
@@ -188,7 +246,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         if (animator != null)
         {
-            animator.SetFloat(SpeedId, isRolling ? 0f : planarVelocity.magnitude, 0.04f, Time.deltaTime);
+            // rollTimer is now authoritative: it avoids retaining the stale
+            // pre-update isRolling value on the frame that the roll finishes.
+            animator.SetFloat(SpeedId, rollTimer > 0f ? 0f : planarVelocity.magnitude, 0.04f, Time.deltaTime);
         }
 
         if (planarVelocity.sqrMagnitude > 0.01f)
@@ -207,8 +267,13 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             return;
 
         Quaternion cameraRotation = Quaternion.Euler(pitch, yaw, 0f);
+        bool swimming = IsSwimming();
         Vector3 focus = transform.position + Vector3.up * (visualBaseOffset + cameraHeight);
+        if (swimming)
+            focus.y = Mathf.Min(focus.y, seaLevel - underwaterCameraDepth);
         Vector3 desiredPosition = focus - cameraRotation * Vector3.forward * cameraDistance;
+        if (swimming)
+            desiredPosition.y = Mathf.Min(desiredPosition.y, seaLevel - 0.12f);
 
         // Pull the camera forward if a solid island/prop stands between it and the player.
         float closest = cameraDistance;
@@ -224,6 +289,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             playerCamera.transform.SetPositionAndRotation(desiredPosition, cameraRotation);
             cameraInitialized = true;
+            UpdateUnderwaterPresentation(swimming);
             return;
         }
 
@@ -231,6 +297,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         playerCamera.transform.SetPositionAndRotation(
             Vector3.Lerp(playerCamera.transform.position, desiredPosition, smoothFactor),
             Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
+        UpdateUnderwaterPresentation(swimming);
     }
 
     void ConfigureColliderToModel()
@@ -274,10 +341,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void KeepFeetOnSeaLevel()
     {
-        if (transform.position.y + visualBaseOffset >= seaLevel)
+        float lowestFootOffset = GetLowestFootOffset();
+        if (transform.position.y + lowestFootOffset >= seaLevel)
             return;
         Vector3 position = transform.position;
-        position.y = seaLevel - visualBaseOffset;
+        position.y = seaLevel - lowestFootOffset;
         transform.position = position;
         verticalSpeed = 0f;
     }
@@ -287,7 +355,336 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         // The ocean is visual-only, so it has no physics collider.  Treat the
         // model's feet meeting the waterline as grounded while solid island
         // colliders continue to use CharacterController grounding normally.
-        return characterController.isGrounded || transform.position.y + visualBaseOffset <= seaLevel + 0.035f;
+        return characterController.isGrounded || transform.position.y + GetLowestFootOffset() <= seaLevel + 0.035f;
+    }
+
+    bool IsAtSeaSurface()
+    {
+        // Island colliders lift the calibrated soles above sea level.  This keeps
+        // water effects off beaches, rocks and props without adding water colliders.
+        return transform.position.y + GetLowestFootOffset() <= seaLevel + 0.045f;
+    }
+
+    bool IsSwimming()
+    {
+        // Solid island/prop colliders take priority: their shore remains a
+        // normal walkable surface. Outside them the ocean becomes buoyant water.
+        return IsAtSeaSurface() && characterController != null && !characterController.isGrounded;
+    }
+
+    void UpdateSwimming(Vector3 input, Vector3 desiredVelocity)
+    {
+        rollTimer = 0f;
+        rollCooldownTimer = 0f;
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
+        verticalSpeed = 0f;
+
+        float movementScale = Mathf.Clamp01(input.magnitude);
+        Vector3 swimVelocity = desiredVelocity.sqrMagnitude > 0.001f
+            ? desiredVelocity.normalized * swimSpeed * movementScale
+            : Vector3.zero;
+        planarVelocity = Vector3.MoveTowards(planarVelocity, swimVelocity, swimAcceleration * Time.deltaTime);
+
+        float targetY = seaLevel - GetLowestFootOffset() - swimSubmergeDepth;
+        float buoyancyVelocity = (targetY - transform.position.y) * swimBuoyancy;
+        characterController.Move((planarVelocity + Vector3.up * buoyancyVelocity) * Time.deltaTime);
+
+        bool moving = planarVelocity.sqrMagnitude > 0.12f;
+        if (!wasSwimming)
+        {
+            // One quiet breach ripple sells the waterline far better than a
+            // continuous fountain of polygon droplets around the swimmer.
+            EmitWaterSplash(0.46f, 2);
+            wasSwimming = true;
+        }
+        UpdateUnderwaterBubbles(moving);
+        SetMotion(moving ? 5 : 6, moving ? "Swim Forward" : "Swim Idle", 0.12f);
+        if (animator != null)
+            animator.SetFloat(SpeedId, moving ? planarVelocity.magnitude : 0f, 0.08f, Time.deltaTime);
+        if (moving)
+        {
+            Quaternion desired = Quaternion.LookRotation(new Vector3(planarVelocity.x, 0f, planarVelocity.z), Vector3.up);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, turnSpeedDegrees * Time.deltaTime);
+        }
+    }
+
+    float GetLowestFootOffset()
+    {
+        // The baked mesh and CharacterController can differ slightly between
+        // animation poses.  Taking the lower of both prevents falling through
+        // the visual-only ocean after travelling far from island colliders.
+        float colliderFoot = characterController != null
+            ? characterController.center.y - characterController.height * 0.5f
+            : visualBaseOffset;
+        return Mathf.Min(visualBaseOffset, colliderFoot);
+    }
+
+    void CreateWaterSplashEffect()
+    {
+        if (!waterSplashes || waterRipples != null)
+            return;
+
+        Shader shader = Shader.Find("DarkBrine/Procedural Water VFX");
+        if (shader == null)
+            return;
+        waterVfxMaterial = new Material(shader) { name = "Procedural Water VFX Material" };
+
+        waterRippleMesh = CreateRippleMesh();
+        waterDropletMesh = CreateDropletMesh();
+        waterRipples = CreateWaterParticleSystem("Water Ripple Rings", waterRippleMesh, 90, 0.62f, 0f);
+        waterDroplets = CreateWaterParticleSystem("Water Splash Columns", waterDropletMesh, 130, 0.44f, 1.35f);
+
+        var size = waterRipples.sizeOverLifetime;
+        size.enabled = true;
+        size.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.EaseInOut(0f, 0.28f, 1f, 1.9f));
+        var ringColor = waterRipples.colorOverLifetime;
+        ringColor.enabled = true;
+        ringColor.color = new ParticleSystem.MinMaxGradient(CreateFadeGradient(
+            new Color(0.72f, 0.98f, 1f, 0.78f), new Color(0.30f, 0.70f, 0.82f, 0f)));
+
+        var dropletColor = waterDroplets.colorOverLifetime;
+        dropletColor.enabled = true;
+        dropletColor.color = new ParticleSystem.MinMaxGradient(CreateFadeGradient(
+            new Color(0.92f, 1f, 1f, 0.92f), new Color(0.38f, 0.76f, 0.88f, 0f)));
+    }
+
+    void UpdateWaterSplash(float impactSpeed)
+    {
+        if (!waterSplashes || waterRipples == null || waterDroplets == null)
+            return;
+
+        bool atSeaSurface = IsAtSeaSurface();
+        float horizontalSpeed = new Vector2(planarVelocity.x, planarVelocity.z).magnitude;
+        if (atSeaSurface && !wasAtSeaSurface && impactSpeed > 3.2f)
+            EmitWaterSplash(0.9f, 5);
+
+        if (atSeaSurface && horizontalSpeed >= splashMinSpeed)
+        {
+            splashTimer -= Time.deltaTime;
+            if (splashTimer <= 0f)
+            {
+                float intensity = Mathf.InverseLerp(splashMinSpeed, rollSpeed, horizontalSpeed);
+                EmitWaterSplash(0.30f + intensity * 0.38f, rollTimer > 0f ? 4 : 2);
+                splashTimer = Mathf.Lerp(splashInterval * 2.1f, splashInterval * 1.25f, intensity);
+            }
+        }
+        else
+        {
+            splashTimer = 0f;
+        }
+        wasAtSeaSurface = atSeaSurface;
+    }
+
+    void EmitWaterSplash(float intensity, int count)
+    {
+        // A swimming character is intentionally below the surface, but the
+        // ring and droplets must always emit just above the real water plane.
+        Vector3 contact = new Vector3(transform.position.x, seaLevel + 0.025f, transform.position.z);
+        var ripple = new ParticleSystem.EmitParams
+        {
+            position = contact,
+            rotation3D = new Vector3(0f, Random.Range(0f, 360f), 0f),
+            startSize = Mathf.Lerp(0.55f, 1.35f, intensity),
+            startLifetime = Mathf.Lerp(0.40f, 0.78f, intensity),
+            startColor = new Color(0.75f, 0.98f, 1f, Mathf.Lerp(0.42f, 0.82f, intensity))
+        };
+        waterRipples.Emit(ripple, intensity > 0.82f ? 2 : 1);
+
+        for (int index = 0; index < count; index++)
+        {
+            float angle = (index / (float)count) * Mathf.PI * 2f + Random.Range(-0.22f, 0.22f);
+            Vector3 outward = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+            var particle = new ParticleSystem.EmitParams
+            {
+                position = contact + outward * Random.Range(0.06f, 0.30f),
+                velocity = outward * Random.Range(0.8f, 2.8f) * intensity + Vector3.up * Random.Range(2.2f, 4.8f) * intensity,
+                startSize = Random.Range(0.055f, 0.17f) * Mathf.Lerp(0.8f, 1.5f, intensity),
+                startLifetime = Random.Range(0.30f, 0.56f),
+                startColor = Color.Lerp(new Color(0.32f, 0.75f, 0.88f, 0.65f), new Color(0.96f, 1f, 1f, 0.95f), Random.value)
+            };
+            waterDroplets.Emit(particle, 1);
+        }
+    }
+
+    ParticleSystem CreateWaterParticleSystem(string name, Mesh mesh, int maxParticles, float lifetime, float gravity)
+    {
+        var effect = new GameObject(name);
+        effect.transform.SetParent(transform, false);
+        var particleSystem = effect.AddComponent<ParticleSystem>();
+        var main = particleSystem.main;
+        main.loop = false;
+        main.playOnAwake = false;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.maxParticles = maxParticles;
+        main.startLifetime = lifetime;
+        main.startSize = 1f;
+        main.gravityModifier = gravity;
+        var emission = particleSystem.emission;
+        emission.enabled = false;
+        var renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Mesh;
+        renderer.mesh = mesh;
+        renderer.sharedMaterial = waterVfxMaterial;
+        renderer.enableGPUInstancing = false;
+        particleSystem.Play();
+        return particleSystem;
+    }
+
+    void CreateUnderwaterPresentation()
+    {
+        if (playerCamera == null)
+            return;
+
+        Shader overlayShader = Shader.Find("DarkBrine/Underwater Overlay");
+        if (overlayShader != null)
+        {
+            underwaterOverlayMaterial = new Material(overlayShader) { name = "Underwater Camera Overlay" };
+            var overlay = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            overlay.name = "Underwater Camera Overlay";
+            overlay.transform.SetParent(playerCamera.transform, false);
+            overlay.transform.localPosition = new Vector3(0f, 0f, 0.42f);
+            overlay.transform.localRotation = Quaternion.identity;
+            overlay.transform.localScale = new Vector3(5f, 5f, 1f);
+            Destroy(overlay.GetComponent<Collider>());
+            underwaterOverlayRenderer = overlay.GetComponent<Renderer>();
+            underwaterOverlayRenderer.sharedMaterial = underwaterOverlayMaterial;
+            underwaterOverlayRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            underwaterOverlayRenderer.receiveShadows = false;
+            underwaterOverlayRenderer.enabled = false;
+        }
+
+        Shader bubbleShader = Shader.Find("DarkBrine/Underwater Bubble");
+        if (bubbleShader == null)
+            return;
+
+        underwaterBubbleMaterial = new Material(bubbleShader) { name = "Underwater Bubble Material" };
+        var effect = new GameObject("Underwater Bubble Trail");
+        effect.transform.SetParent(transform, false);
+        underwaterBubbles = effect.AddComponent<ParticleSystem>();
+        var main = underwaterBubbles.main;
+        main.loop = false;
+        main.playOnAwake = false;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.maxParticles = 80;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(0.8f, 1.55f);
+        main.startSize = new ParticleSystem.MinMaxCurve(0.045f, 0.13f);
+        main.gravityModifier = -0.16f;
+        var emission = underwaterBubbles.emission;
+        emission.enabled = false;
+        var renderer = underwaterBubbles.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.sharedMaterial = underwaterBubbleMaterial;
+        renderer.enableGPUInstancing = false;
+        underwaterBubbles.Play();
+    }
+
+    void UpdateUnderwaterPresentation(bool swimming)
+    {
+        float targetBlend = swimming ? underwaterOverlayStrength : 0f;
+        underwaterBlend = Mathf.MoveTowards(underwaterBlend, targetBlend, Time.deltaTime * 2.8f);
+        if (underwaterOverlayRenderer == null || underwaterOverlayMaterial == null)
+            return;
+
+        underwaterOverlayRenderer.enabled = underwaterBlend > 0.005f;
+        underwaterOverlayMaterial.SetFloat("_Intensity", underwaterBlend);
+    }
+
+    void UpdateUnderwaterBubbles(bool moving)
+    {
+        if (underwaterBubbles == null)
+            return;
+
+        underwaterBubbleTimer -= Time.deltaTime;
+        float interval = moving ? underwaterBubbleInterval : underwaterBubbleInterval * 2.8f;
+        if (underwaterBubbleTimer > 0f)
+            return;
+
+        Vector3 trail = planarVelocity.sqrMagnitude > 0.01f ? -planarVelocity.normalized * 0.22f : Vector3.zero;
+        var bubble = new ParticleSystem.EmitParams
+        {
+            position = transform.position + trail + Vector3.up * Random.Range(0.18f, 0.62f),
+            velocity = trail * Random.Range(0.45f, 1.0f) + Vector3.up * Random.Range(0.32f, 0.72f),
+            startSize = Random.Range(0.045f, moving ? 0.13f : 0.09f),
+            startLifetime = Random.Range(0.82f, 1.45f),
+            startColor = new Color(0.76f, 0.96f, 1f, Random.Range(0.42f, 0.72f))
+        };
+        underwaterBubbles.Emit(bubble, moving ? Random.Range(1, 3) : 1);
+        underwaterBubbleTimer = interval;
+    }
+
+    static Gradient CreateFadeGradient(Color start, Color end)
+    {
+        var gradient = new Gradient();
+        gradient.SetKeys(
+            new[] { new GradientColorKey(start, 0f), new GradientColorKey(end, 1f) },
+            new[] { new GradientAlphaKey(start.a, 0f), new GradientAlphaKey(start.a * 0.7f, 0.28f), new GradientAlphaKey(0f, 1f) });
+        return gradient;
+    }
+
+    static Mesh CreateRippleMesh()
+    {
+        const int segments = 24;
+        var vertices = new Vector3[segments * 2];
+        var triangles = new int[segments * 6];
+        for (int index = 0; index < segments; index++)
+        {
+            float angle = index / (float)segments * Mathf.PI * 2f;
+            Vector3 direction = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+            vertices[index * 2] = direction * 0.60f;
+            vertices[index * 2 + 1] = direction;
+            int next = (index + 1) % segments;
+            int tri = index * 6;
+            triangles[tri] = index * 2;
+            triangles[tri + 1] = next * 2;
+            triangles[tri + 2] = index * 2 + 1;
+            triangles[tri + 3] = index * 2 + 1;
+            triangles[tri + 4] = next * 2;
+            triangles[tri + 5] = next * 2 + 1;
+        }
+        var mesh = new Mesh { name = "Procedural Water Ripple" };
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        return mesh;
+    }
+
+    static Mesh CreateDropletMesh()
+    {
+        // A tiny 20-triangle icosahedron reads as a water droplet at game
+        // distance and avoids a texture, billboard, or imported particle asset.
+        const float t = 1.61803398875f;
+        Vector3[] vertices =
+        {
+            new(-1, t, 0), new(1, t, 0), new(-1, -t, 0), new(1, -t, 0),
+            new(0, -1, t), new(0, 1, t), new(0, -1, -t), new(0, 1, -t),
+            new(t, 0, -1), new(t, 0, 1), new(-t, 0, -1), new(-t, 0, 1)
+        };
+        for (int index = 0; index < vertices.Length; index++)
+            vertices[index] = vertices[index].normalized;
+        int[] triangles =
+        {
+            0,11,5, 0,5,1, 0,1,7, 0,7,10, 0,10,11,
+            1,5,9, 5,11,4, 11,10,2, 10,7,6, 7,1,8,
+            3,9,4, 3,4,2, 3,2,6, 3,6,8, 3,8,9,
+            4,9,5, 2,4,11, 6,2,10, 8,6,7, 9,8,1
+        };
+        var mesh = new Mesh { name = "Procedural Splash Droplet" };
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        return mesh;
+    }
+
+    void OnDestroy()
+    {
+        if (waterVfxMaterial != null) Destroy(waterVfxMaterial);
+        if (underwaterOverlayMaterial != null) Destroy(underwaterOverlayMaterial);
+        if (underwaterBubbleMaterial != null) Destroy(underwaterBubbleMaterial);
+        if (waterDropletMesh != null) Destroy(waterDropletMesh);
+        if (waterRippleMesh != null) Destroy(waterRippleMesh);
     }
 
     void OnDisable() => UnlockCursor();

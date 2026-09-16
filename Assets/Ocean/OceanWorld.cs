@@ -12,7 +12,7 @@ public sealed class OceanWorld : MonoBehaviour
     [Min(10f)] public float nearDetailDistance = 65f;
     [Min(20f)] public float midDetailDistance = 150f;
     [Header("Performance")]
-    [Tooltip("Controls water mesh density and procedural sky-cloud detail. Choose Low for slower computers.")]
+    [Tooltip("Controls water mesh density and raymarched volumetric-cloud quality. Choose Low for slower computers.")]
     public EffectsQuality effectsQuality = EffectsQuality.Medium;
     [Header("Dynamic Sky")]
     [Range(0f, 1f)] public float cloudiness = 0.62f;
@@ -42,9 +42,28 @@ public sealed class OceanWorld : MonoBehaviour
 
     void OnValidate()
     {
+#if UNITY_EDITOR
+        // Creating cloud renderers inside OnValidate triggers Unity's SendMessage warning and
+        // leaves the hierarchy mid-validation. Rebuild once that validation pass has completed.
+        if (!Application.isPlaying)
+        {
+            UnityEditor.EditorApplication.delayCall -= RebuildAfterValidation;
+            UnityEditor.EditorApplication.delayCall += RebuildAfterValidation;
+            return;
+        }
+#endif
+
         if (isActiveAndEnabled)
             BuildOcean();
     }
+
+#if UNITY_EDITOR
+    void RebuildAfterValidation()
+    {
+        if (this != null && isActiveAndEnabled && !Application.isPlaying)
+            BuildOcean();
+    }
+#endif
 
     void BuildOcean()
     {
@@ -286,18 +305,18 @@ public sealed class OceanWorld : MonoBehaviour
         int cloudDetail = effectsQuality == EffectsQuality.Low ? 2 : effectsQuality == EffectsQuality.Medium ? 4 : 5;
         skyMaterial.SetFloat("_CloudDetail", cloudDetail);
         skyMaterial.SetFloat("_CloudStrength", effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.82f : 0.90f);
+        // Coverage directly controls the raymarched cloud volume; there is no secondary
+        // mesh-cloud layer competing with it.
         skyMaterial.SetFloat("_CloudCoverage", cloudiness);
-        // The high cloud deck crosses a visible portion of the sky within a play session;
-        // the low deck remains slower, so the layers do not drift in lockstep.
-        skyMaterial.SetFloat("_CloudSpeed", Mathf.Lerp(0.055f, 0.24f, cloudMotion));
+        // Wind controls the animated volume's horizontal drift.
+        skyMaterial.SetFloat("_CloudSpeed", Mathf.Lerp(0f, 0.75f, cloudMotion));
         skyMaterial.SetFloat("_SunGlow", sunlightIntensity);
         skyMaterial.SetColor("_HorizonColor", new Color(0.38f, 0.62f, 0.76f, 1f));
         skyMaterial.SetColor("_ZenithColor", new Color(0.025f, 0.16f, 0.39f, 1f));
         skyMaterial.SetColor("_CloudColor", new Color(0.92f, 0.96f, 1f, 1f));
         skyDome.GetComponent<MeshRenderer>().sharedMaterial = skyMaterial;
-        // The same procedural material is also the real camera skybox. This avoids relying on
-        // a finite sphere and makes clouds render identically from low flight and high flight.
-        RenderSettings.skybox = skyMaterial;
+        // This shader renders only on the sky sphere. Keeping it out of the skybox pass
+        // avoids a second full-screen sky draw; the sphere's depth test skips covered pixels.
     }
 
     void LateUpdate()
@@ -311,8 +330,9 @@ public sealed class OceanWorld : MonoBehaviour
             // The ocean follows the player. Geometry outside the configured view range is never needed.
             transform.position = new Vector3(camera.transform.position.x, 0f, camera.transform.position.z);
             transform.rotation = Quaternion.Euler(0f, camera.transform.eulerAngles.y, 0f);
-            if (camera.farClipPlane != renderDistance + 20f)
-                camera.farClipPlane = renderDistance + 20f;
+            float requiredFarClip = renderDistance + 20f;
+            if (camera.farClipPlane != requiredFarClip)
+                camera.farClipPlane = requiredFarClip;
             if (camera.clearFlags != CameraClearFlags.Skybox)
                 camera.clearFlags = CameraClearFlags.Skybox;
             skyDome.transform.position = camera.transform.position;
@@ -328,7 +348,9 @@ public sealed class OceanWorld : MonoBehaviour
             cachedSun = FindFirstObjectByType<Light>();
         Light sun = cachedSun;
         if (sun != null && sun.type == LightType.Directional)
+        {
             skyMaterial.SetVector(SunDirectionId, -sun.transform.forward);
+        }
     }
 
     void OnDisable()

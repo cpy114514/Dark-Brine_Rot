@@ -4,21 +4,27 @@ Shader "DarkBrine/Procedural Sky"
     {
         _HorizonColor ("Horizon colour", Color) = (0.58, 0.74, 0.80, 1)
         _ZenithColor ("Zenith colour", Color) = (0.09, 0.28, 0.48, 1)
-        _CloudColor ("Cloud colour", Color) = (0.94, 0.97, 0.98, 1)
+        _CloudColor ("Cloud highlight", Color) = (0.94, 0.97, 0.98, 1)
         _SunColor ("Sunlight colour", Color) = (1.0, 0.62, 0.32, 1)
-        _CloudCoverage ("Cloud coverage", Range(0, 1)) = 0.55
+        _CloudCoverage ("Weather coverage", Range(0, 1)) = 0.55
         _CloudStrength ("Cloud strength", Range(0, 1)) = 0.72
-        _CloudDetail ("Cloud detail", Range(1, 5)) = 4
-        _CloudSpeed ("Cloud speed", Range(0, 1)) = 0.10
+        _CloudDetail ("Raymarch quality", Range(1, 5)) = 4
+        _CloudSpeed ("Wind speed", Range(0, 1)) = 0.10
         _SunGlow ("Sunlight intensity", Range(0, 1)) = 0.72
     }
     SubShader
     {
-        Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Background" "RenderType"="Background" }
+        // Draw behind the scene, but after opaque objects and the depth-writing ocean.
+        // The depth test then skips expensive cloud rays for covered pixels.
+        Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Transparent-50" "RenderType"="Transparent" }
         Pass
         {
+            Name "RaymarchedVolumetricClouds"
+            Tags { "LightMode"="SRPDefaultUnlit" }
             Cull Front
             ZWrite Off
+            ZTest LEqual
+
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -39,100 +45,155 @@ Shader "DarkBrine/Procedural Sky"
             CBUFFER_END
 
             struct Attributes { float4 positionOS : POSITION; };
-            struct Varyings { float4 positionCS : SV_POSITION; float3 directionOS : TEXCOORD0; };
+            struct Varyings { float4 positionCS : SV_POSITION; float3 positionWS : TEXCOORD0; };
 
-            float Hash21(float2 p)
+            float Hash31(float3 p)
             {
-                p = frac(p * float2(127.1, 311.7));
-                p += dot(p, p + 19.19);
-                return frac(p.x * p.y);
+                p = frac(p * 0.1031);
+                p += dot(p, p.yzx + 33.33);
+                return frac((p.x + p.y) * p.z);
             }
 
-            float Noise(float2 p)
+            float ValueNoise(float3 p)
             {
-                float2 cell = floor(p);
-                float2 local = frac(p);
-                float2 smooth = local * local * (3.0 - 2.0 * local);
-                return lerp(lerp(Hash21(cell), Hash21(cell + float2(1, 0)), smooth.x),
-                            lerp(Hash21(cell + float2(0, 1)), Hash21(cell + float2(1, 1)), smooth.x), smooth.y);
+                float3 cell = floor(p);
+                float3 local = frac(p);
+                local = local * local * (3.0 - 2.0 * local);
+                float n000 = Hash31(cell + float3(0, 0, 0));
+                float n100 = Hash31(cell + float3(1, 0, 0));
+                float n010 = Hash31(cell + float3(0, 1, 0));
+                float n110 = Hash31(cell + float3(1, 1, 0));
+                float n001 = Hash31(cell + float3(0, 0, 1));
+                float n101 = Hash31(cell + float3(1, 0, 1));
+                float n011 = Hash31(cell + float3(0, 1, 1));
+                float n111 = Hash31(cell + float3(1, 1, 1));
+                float nx00 = lerp(n000, n100, local.x);
+                float nx10 = lerp(n010, n110, local.x);
+                float nx01 = lerp(n001, n101, local.x);
+                float nx11 = lerp(n011, n111, local.x);
+                return lerp(lerp(nx00, nx10, local.y), lerp(nx01, nx11, local.y), local.z);
             }
 
-            float Fbm(float2 p, int octaves)
+            float Fbm(float3 p, int octaves)
             {
                 float total = 0.0;
-                float amplitude = 0.56;
-                float2x2 rotation = float2x2(0.80, -0.60, 0.60, 0.80);
+                float amplitude = 0.55;
                 [unroll]
                 for (int i = 0; i < 5; i++)
                 {
                     if (i >= octaves) break;
-                    total += Noise(p) * amplitude;
-                    p = mul(rotation, p) * 2.01 + float2(8.3, -5.7);
+                    total += ValueNoise(p) * amplitude;
+                    p = p.zxy * 2.03 + float3(19.1, -7.7, 11.3);
                     amplitude *= 0.5;
                 }
-                return total / 1.085;
+                return total / 1.06875;
             }
 
-            float CloudField(float2 plane, float2 drift, int detail)
+            float CloudDensity(float3 position, float cloudBase, float cloudThickness)
             {
-                // Large-scale distortion stops the cloud banks from reading as a regular grid.
-                float2 warp = float2(Noise(plane * 0.34 + drift * 0.22),
-                                     Noise(plane * 0.34 - drift * 0.17 + 17.6)) - 0.5;
-                return Fbm(plane + warp * 1.15 + drift, detail);
+                float heightFraction = (position.y - cloudBase) / cloudThickness;
+                float verticalProfile = smoothstep(0.02, 0.16, heightFraction) * (1.0 - smoothstep(0.64, 1.0, heightFraction));
+                if (verticalProfile <= 0.0)
+                    return 0.0;
+
+                float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
+                float3 samplePosition = position;
+                samplePosition.xz += wind;
+                float macro = Fbm(samplePosition * 0.00165, 4);
+                float erosion = Fbm(samplePosition * 0.0052 + float3(31.0, 7.0, -12.0), 3);
+                float wisps = Fbm(samplePosition * 0.012 + float3(-13.0, 41.0, 9.0), 2);
+                float threshold = lerp(0.74, 0.31, _CloudCoverage);
+                float shape = macro - threshold + (erosion - 0.50) * 0.30 + (wisps - 0.50) * 0.10;
+                return saturate(shape * 3.25) * verticalProfile;
+            }
+
+            float ShadowDensity(float3 position, float cloudBase, float cloudThickness)
+            {
+                float heightFraction = (position.y - cloudBase) / cloudThickness;
+                float verticalProfile = smoothstep(0.02, 0.16, heightFraction)
+                    * (1.0 - smoothstep(0.64, 1.0, heightFraction));
+                float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
+                position.xz += wind;
+                // Lighting only needs the broad cloud silhouette. The view march retains
+                // all fine erosion and wisps, avoiding three full density evaluations here.
+                float macro = Fbm(position * 0.00165, 2) * 1.29545;
+                float threshold = lerp(0.74, 0.31, _CloudCoverage);
+                return saturate((macro - threshold) * 3.25) * verticalProfile;
+            }
+
+            float SampleSunLight(float3 position, float3 sunDirection, float cloudBase, float cloudThickness)
+            {
+                float shadow = ShadowDensity(position + sunDirection * 110.0, cloudBase, cloudThickness);
+                shadow += ShadowDensity(position + sunDirection * 285.0, cloudBase, cloudThickness) * 0.7;
+                return exp(-shadow * 2.1);
             }
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
-                output.directionOS = normalize(input.positionOS.xyz);
+                output.positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 output.positionCS = TransformObjectToHClip(input.positionOS.xyz);
                 return output;
             }
 
             half4 frag(Varyings input) : SV_Target
             {
-                float3 direction = normalize(input.directionOS);
-                half elevation = saturate(direction.y);
-                half horizon = pow(1.0h - elevation, 2.7h);
-                half3 sky = lerp(_HorizonColor.rgb, _ZenithColor.rgb, pow(elevation, 0.58h));
-                // A cool, dense horizon and a subtly darker upper atmosphere add depth even
-                // when the cloud coverage slider is low.
-                sky = lerp(sky, half3(0.52h, 0.68h, 0.75h), horizon * 0.14h);
-                sky *= lerp(0.78h, 1.0h, pow(elevation, 0.28h));
-
-                // A high virtual cloud deck: the mapping keeps the horizon clear and produces
-                // recognisable cumulus banks plus a faster, thinner layer above them.
-                float2 plane = direction.xz / max(direction.y + 0.40, 0.56);
-                float2 lowDrift = _Time.y * _CloudSpeed * float2(0.09, -0.045);
-                float2 middleDrift = _Time.y * _CloudSpeed * float2(-0.13, 0.065);
-                float2 highDrift = _Time.y * _CloudSpeed * float2(-0.23, 0.13);
-                int detail = (int)_CloudDetail;
-                float cumulus = CloudField(plane * 1.42, lowDrift, detail);
-                float puffs = CloudField(plane * 3.65 + float2(4.6, -8.2), -lowDrift * 1.35, min(detail, 3));
-                float middleCloud = Fbm(float2(plane.x * 2.1, plane.y * 0.72) + middleDrift + float2(9.7, 2.4), min(detail, 3));
-                float wisps = Fbm(float2(plane.x * 7.8, plane.y * 1.3) + highDrift + float2(-11.3, 7.4), 2);
-                float filaments = Fbm(float2(plane.x * 15.0, plane.y * 0.52) + highDrift * 1.9 + float2(3.8, -14.1), 2);
-                float density = cumulus * 0.54 + puffs * 0.28 + middleCloud * 0.18 + (filaments - 0.5) * 0.075;
-                float threshold = lerp(0.74, 0.36, _CloudCoverage);
-                half cloud = smoothstep(threshold - 0.075, threshold + 0.095, density);
-                half cloudCore = smoothstep(threshold + 0.02, threshold + 0.22, density);
-                half cloudEdge = smoothstep(threshold - 0.12, threshold + 0.015, density) - cloud;
-                half highWisps = smoothstep(0.68, 0.86, wisps) * (1.0h - cloud) * 0.22h;
-                highWisps += smoothstep(0.71, 0.87, filaments) * (1.0h - cloud) * 0.16h;
-                half horizonClouds = smoothstep(0.10h, 0.35h, direction.y);
-                cloud = saturate(cloud + highWisps) * horizonClouds;
+                float3 rayOrigin = _WorldSpaceCameraPos;
+                float3 rayDirection = normalize(input.positionWS - rayOrigin);
+                float elevation = saturate(rayDirection.y * 0.5 + 0.5);
+                float horizon = pow(saturate(1.0 - max(rayDirection.y, 0.0)), 2.2);
+                float3 sky = lerp(_HorizonColor.rgb, _ZenithColor.rgb, pow(elevation, 0.72));
+                sky = lerp(sky, float3(0.47, 0.62, 0.71), horizon * 0.17);
 
                 float3 sunDirection = normalize(_SunDirection.xyz);
-                half sunFacing = saturate(dot(direction, sunDirection));
-                half3 cloudShadow = half3(0.31h, 0.41h, 0.52h);
-                half3 cloudColour = lerp(cloudShadow, _CloudColor.rgb, cloudCore * 0.86h + 0.12h);
-                half silverLining = cloudEdge * pow(sunFacing, 3.2h) * _SunGlow;
-                cloudColour += _SunColor.rgb * (silverLining * 0.45h + pow(sunFacing, 7.0h) * (1.0h - cloudCore) * 0.12h * _SunGlow);
-                sky = lerp(sky, cloudColour, cloud * _CloudStrength);
+                if (dot(sunDirection, sunDirection) < 0.01)
+                    sunDirection = normalize(float3(0.32, 0.78, 0.49));
+                float sunFacing = saturate(dot(rayDirection, sunDirection));
 
-                // Soft atmosphere only; the scene's physical sun remains the sole sun disc.
-                sky += _SunColor.rgb * pow(sunFacing, 42.0h) * (1.0h - cloud * 0.80h) * 0.045h * _SunGlow;
-                return half4(sky, 1.0h);
+                // World-space, high-altitude volume: no billboards or cloud textures.
+                float cloudBase = rayOrigin.y + 650.0;
+                float cloudThickness = 460.0;
+                float cloudTop = cloudBase + cloudThickness;
+                float cloudAlpha = 0.0;
+                float3 cloudLight = 0.0;
+
+                if (rayDirection.y > 0.018)
+                {
+                    float entry = max(0.0, (cloudBase - rayOrigin.y) / rayDirection.y);
+                    float exit = min(7200.0, (cloudTop - rayOrigin.y) / rayDirection.y);
+                    if (exit > entry)
+                    {
+                        int steps = _CloudDetail < 3.0 ? 8 : (_CloudDetail < 5.0 ? 14 : 20);
+                        if (entry > 3500.0) steps = max(4, steps / 2);
+                        else if (entry > 1600.0) steps = max(6, steps * 3 / 4);
+                        float segmentLength = (exit - entry) / steps;
+                        float jitter = Hash31(rayDirection * 127.7) - 0.5;
+                        float transmittance = 1.0;
+                        [loop]
+                        for (int i = 0; i < 20; i++)
+                        {
+                            if (i >= steps || transmittance < 0.015) break;
+                            float travel = entry + (i + 0.5 + jitter * 0.65) * segmentLength;
+                            float3 samplePosition = rayOrigin + rayDirection * travel;
+                            float density = CloudDensity(samplePosition, cloudBase, cloudThickness);
+                            if (density > 0.001)
+                            {
+                                float lightThroughCloud = SampleSunLight(samplePosition, sunDirection, cloudBase, cloudThickness);
+                                float phase = 0.32 + pow(sunFacing, 5.0) * 0.68;
+                                float3 shaded = lerp(float3(0.17, 0.24, 0.34), _CloudColor.rgb, lightThroughCloud);
+                                float opacity = density * segmentLength * 0.0034;
+                                cloudLight += transmittance * shaded * opacity * phase;
+                                transmittance *= exp(-opacity * 1.35);
+                            }
+                        }
+                        cloudAlpha = saturate(1.0 - transmittance);
+                    }
+                }
+
+                float sunHalo = pow(sunFacing, 34.0) * _SunGlow;
+                sky += _SunColor.rgb * sunHalo * (1.0 - cloudAlpha * 0.82) * 0.07;
+                sky = lerp(sky, cloudLight / max(cloudAlpha, 0.001), cloudAlpha * _CloudStrength);
+                return half4(sky, 1.0);
             }
             ENDHLSL
         }

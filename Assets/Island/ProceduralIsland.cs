@@ -35,6 +35,9 @@ public class ProceduralIsland : MonoBehaviour
     private Material forestGroundMaterial;
     private Material drySandMaterial;
     private Material rockyTerrainMaterial;
+    private GameObject shoreFoamObject;
+    private Mesh shoreFoamMesh;
+    private Material shoreFoamMaterial;
 
     private void OnEnable()
     {
@@ -49,7 +52,11 @@ public class ProceduralIsland : MonoBehaviour
         peakHeight = Mathf.Max(0.5f, peakHeight);
         underwaterDepth = Mathf.Max(0.1f, underwaterDepth);
         textureTiling = Mathf.Max(0.001f, textureTiling);
-        Rebuild();
+        // Creating generated child objects during OnValidate causes Unity
+        // lifecycle warnings. OnEnable handles safe editor/runtime rebuilding;
+        // while playing inspector changes still update immediately.
+        if (Application.isPlaying && isActiveAndEnabled)
+            Rebuild();
     }
 
     [ContextMenu("Rebuild Island")]
@@ -126,6 +133,7 @@ public class ProceduralIsland : MonoBehaviour
         collider.sharedMesh = islandMesh;
         EnsureMaterials();
         renderer.sharedMaterials = new[] { coastSandMaterial, beachSandMaterial, sparseGrassMaterial, forestGroundMaterial, drySandMaterial, rockyTerrainMaterial };
+        BuildShoreFoam();
     }
 
     public float GetWorldSurfaceHeight(Vector3 worldPosition)
@@ -214,6 +222,93 @@ public class ProceduralIsland : MonoBehaviour
         if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
         if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", 0f);
         return material;
+    }
+
+    private void BuildShoreFoam()
+    {
+        var shader = Shader.Find("DarkBrine/Procedural Shore Foam");
+        if (shader == null)
+            return;
+
+        if (shoreFoamObject == null)
+        {
+            var existing = transform.Find("Procedural Shore Foam");
+            shoreFoamObject = existing != null ? existing.gameObject : new GameObject("Procedural Shore Foam");
+            shoreFoamObject.transform.SetParent(transform, false);
+            if (shoreFoamObject.GetComponent<MeshFilter>() == null)
+                shoreFoamObject.AddComponent<MeshFilter>();
+            if (shoreFoamObject.GetComponent<MeshRenderer>() == null)
+                shoreFoamObject.AddComponent<MeshRenderer>();
+        }
+        if (shoreFoamMesh == null)
+            shoreFoamMesh = new Mesh { name = "Procedural Shore Breakers" };
+
+        const int rows = 5;
+        int columns = radialSegments + 1;
+        var vertices = new Vector3[(rows + 1) * columns];
+        var uv = new Vector2[vertices.Length];
+        for (int row = 0; row <= rows; row++)
+        {
+            float across = row / (float)rows;
+            // Five metres of water-side foam and a short overlap onto the beach.
+            // Island depth hides the inland part so the strip remains clean.
+            float shoreOffset = Mathf.Lerp(5f, -9f, across);
+            for (int column = 0; column <= radialSegments; column++)
+            {
+                float angle = column / (float)radialSegments * Mathf.PI * 2f;
+                float radius = EdgeRadius(angle) + shoreOffset;
+                int index = row * columns + column;
+                vertices[index] = new Vector3(Mathf.Cos(angle) * radius, 0.055f, Mathf.Sin(angle) * radius);
+                uv[index] = new Vector2(column / (float)radialSegments * 7f, across);
+            }
+        }
+        var triangles = new int[rows * radialSegments * 6];
+        int triangle = 0;
+        for (int row = 0; row < rows; row++)
+        for (int column = 0; column < radialSegments; column++)
+        {
+            int a = row * columns + column;
+            int b = a + 1;
+            int c = a + columns;
+            int d = c + 1;
+            triangles[triangle++] = a; triangles[triangle++] = c; triangles[triangle++] = b;
+            triangles[triangle++] = b; triangles[triangle++] = c; triangles[triangle++] = d;
+        }
+        shoreFoamMesh.Clear();
+        shoreFoamMesh.vertices = vertices;
+        shoreFoamMesh.uv = uv;
+        shoreFoamMesh.triangles = triangles;
+        shoreFoamMesh.RecalculateNormals();
+        shoreFoamMesh.RecalculateBounds();
+        shoreFoamObject.GetComponent<MeshFilter>().sharedMesh = shoreFoamMesh;
+
+        if (shoreFoamMaterial == null)
+        {
+            shoreFoamMaterial = new Material(shader) { name = "Procedural Shore Foam Material", hideFlags = HideFlags.DontSave };
+            shoreFoamMaterial.renderQueue = 2910;
+        }
+        shoreFoamObject.GetComponent<MeshRenderer>().sharedMaterial = shoreFoamMaterial;
+        shoreFoamObject.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        shoreFoamObject.GetComponent<MeshRenderer>().receiveShadows = false;
+    }
+
+    private void OnDisable()
+    {
+        if (shoreFoamMaterial != null)
+        {
+            if (Application.isPlaying) Destroy(shoreFoamMaterial); else DestroyImmediate(shoreFoamMaterial);
+            shoreFoamMaterial = null;
+        }
+        if (shoreFoamMesh != null)
+        {
+            if (Application.isPlaying) Destroy(shoreFoamMesh); else DestroyImmediate(shoreFoamMesh);
+            shoreFoamMesh = null;
+        }
+        if (shoreFoamObject != null)
+        {
+            if (Application.isPlaying) Destroy(shoreFoamObject); else DestroyImmediate(shoreFoamObject);
+            shoreFoamObject = null;
+        }
     }
 
     private static float SmoothStep(float edge0, float edge1, float value)
