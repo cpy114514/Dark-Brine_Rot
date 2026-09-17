@@ -9,7 +9,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Min(0.1f)] public float moveSpeed = 7f;
     [Min(1f)] public float sprintMultiplier = 1.65f;
     [Min(0.1f)] public float rotationSpeed = 14f;
-    [Min(0.1f)] public float jumpHeight = 1.35f;
+    [Min(0.1f)] public float jumpHeight = 2.25f;
     [Min(0.1f)] public float gravity = 32f;
     [Min(0.1f)] public float acceleration = 26f;
     [Min(0.1f)] public float deceleration = 34f;
@@ -22,7 +22,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     [Header("Evasion")]
     [Min(0.15f)] public float rollDuration = 0.792793f;
-    [Min(0.1f)] public float rollSpeed = 6.5f;
+    [Min(0.1f)] public float rollSpeed = 8.5f;
     [Min(0f)] public float rollCooldown = 0.18f;
     [Tooltip("Exits before the source clip's held recovery pose, so the dodge does not visibly freeze on its final frame.")]
     [Range(0.75f, 0.98f)] public float rollAnimationExitPhase = 0.90f;

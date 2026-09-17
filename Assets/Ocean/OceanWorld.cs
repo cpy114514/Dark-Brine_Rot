@@ -1,4 +1,16 @@
 using UnityEngine;
+using UnityEngine.Serialization;
+
+[System.Serializable]
+public struct OceanGerstnerWave
+{
+    [Tooltip("Horizontal travel direction in world X/Z.")]
+    public Vector2 direction;
+    [Min(0f)] public float amplitude;
+    [Min(4f)] public float wavelength;
+    [Min(0f)] public float speed;
+    [Range(0f, 1f)] public float steepness;
+}
 
 [ExecuteAlways]
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
@@ -6,17 +18,70 @@ public sealed class OceanWorld : MonoBehaviour
 {
     public enum EffectsQuality { Low, Medium, High }
 
-    [Header("Ocean")]
+    [Header("Ocean Geometry")]
     [Min(16)] public int resolution = 360;
-    [Min(40f)] public float renderDistance = 260f;
+    [FormerlySerializedAs("renderDistance")]
+    [Min(40f)] public float oceanSize = 260f;
+    public float oceanHeight = 0f;
+    public bool followCamera = true;
+
+    [Header("Distance / LOD")]
     [Min(10f)] public float nearDetailDistance = 65f;
     [Min(20f)] public float midDetailDistance = 150f;
+
     [Header("Performance")]
-    [Tooltip("Controls water mesh density and raymarched volumetric-cloud quality. Choose Low for slower computers.")]
+    [Tooltip("Controls water mesh density and optional shader detail. Choose Low for slower computers.")]
     public EffectsQuality effectsQuality = EffectsQuality.Medium;
+
+    [Header("Colors")]
+    public Color shallowColor = new Color(0.106f, 0.165f, 0.180f, 1f);
+    public Color midColor = new Color(0.043f, 0.090f, 0.110f, 1f);
+    public Color deepColor = new Color(0.012f, 0.027f, 0.035f, 1f);
+    [Range(0.2f, 20f)] public float depthFadeDistance = 5.5f;
+    [Range(0f, 1f)] public float waterOpacity = 0.94f;
+    [Range(0.1f, 8f)] public float absorptionStrength = 2.6f;
+
+    [Header("Waves")]
+    public OceanGerstnerWave wave1 = new OceanGerstnerWave { direction = new Vector2(0.82f, 0.57f), amplitude = 1.35f, wavelength = 180f, speed = 0.82f, steepness = 0.15f };
+    public OceanGerstnerWave wave2 = new OceanGerstnerWave { direction = new Vector2(-0.38f, 0.93f), amplitude = 0.72f, wavelength = 92f, speed = 0.95f, steepness = 0.10f };
+    public OceanGerstnerWave wave3 = new OceanGerstnerWave { direction = new Vector2(0.96f, -0.29f), amplitude = 0.32f, wavelength = 58f, speed = 1.12f, steepness = 0.06f };
+    public OceanGerstnerWave wave4 = new OceanGerstnerWave { direction = new Vector2(-0.72f, -0.69f), amplitude = 0.16f, wavelength = 35f, speed = 1.28f, steepness = 0.03f };
+
+    [Header("Surface Detail")]
+    [Range(0f, 2f)] public float largeDetailStrength = 0.34f;
+    [Range(0f, 2f)] public float mediumDetailStrength = 0.22f;
+    [Range(0f, 2f)] public float rippleStrength = 0.12f;
+
+    [Header("Reflection / Specular")]
+    [Range(0f, 1f)] public float smoothness = 0.88f;
+    [Range(0f, 2f)] public float reflectionStrength = 0.78f;
+    [Range(0f, 2f)] public float specularStrength = 1.05f;
+    [Range(20f, 300f)] public float specularSharpness = 118f;
+    [Range(0f, 2f)] public float sunGlitterStrength = 0.58f;
+    [Range(0f, 1f)] public float sunGlitterThreshold = 0.68f;
+    [Range(0f, 2f)] public float fresnelStrength = 0.82f;
+    [Range(1f, 9f)] public float fresnelPower = 4.4f;
+
+    [Header("Brine")]
+    [Range(0.01f, 1f)] public float brineNoiseScale = 0.065f;
+    [Range(0f, 1f)] public float brineFlowSpeed = 0.07f;
+    [Range(0f, 1f)] public float brineStrength = 0.10f;
+
+    [Header("Foam")]
+    public Color foamColor = new Color(0.40f, 0.48f, 0.47f, 1f);
+    [Range(0.05f, 8f)] public float foamWidth = 1.8f;
+    [Range(0f, 2f)] public float foamStrength = 0.72f;
+    [Range(0.05f, 2f)] public float foamNoiseScale = 0.22f;
+    [Range(0f, 2f)] public float foamSpeed = 0.28f;
+
+    // Sky values are retained for the existing scene's sky controller, but ocean setup no
+    // longer exposes them. The scene's completed sky is intentionally left untouched.
     [Header("Dynamic Sky")]
+    [HideInInspector]
     [Range(0f, 1f)] public float cloudiness = 0.62f;
+    [HideInInspector]
     [Range(0f, 1f)] public float cloudMotion = 0.85f;
+    [HideInInspector]
     [Range(0f, 1f)] public float sunlightIntensity = 0.72f;
 
     Mesh generatedMesh;
@@ -37,6 +102,10 @@ public sealed class OceanWorld : MonoBehaviour
     static readonly int MidDetailDistanceId = Shader.PropertyToID("_MidDetailDistance");
     static readonly int ViewDistanceId = Shader.PropertyToID("_ViewDistance");
     static readonly int SunDirectionId = Shader.PropertyToID("_SunDirection");
+    static readonly int ShallowColorId = Shader.PropertyToID("_ShallowColor");
+    static readonly int MidColorId = Shader.PropertyToID("_MidColor");
+    static readonly int DeepColorId = Shader.PropertyToID("_DeepColor");
+    static readonly int FoamColorId = Shader.PropertyToID("_FoamColor");
 
     void OnEnable() => BuildOcean();
 
@@ -68,9 +137,9 @@ public sealed class OceanWorld : MonoBehaviour
     void BuildOcean()
     {
         resolution = Mathf.Clamp(resolution, 16, 420);
-        renderDistance = Mathf.Max(renderDistance, 40f);
-        nearDetailDistance = Mathf.Clamp(nearDetailDistance, 10f, renderDistance - 20f);
-        midDetailDistance = Mathf.Clamp(midDetailDistance, nearDetailDistance + 10f, renderDistance - 5f);
+        oceanSize = Mathf.Max(oceanSize, 40f);
+        nearDetailDistance = Mathf.Clamp(nearDetailDistance, 10f, oceanSize - 20f);
+        midDetailDistance = Mathf.Clamp(midDetailDistance, nearDetailDistance + 10f, oceanSize - 5f);
         int effectiveResolution = effectsQuality switch
         {
             EffectsQuality.Low => Mathf.Min(resolution, 80),
@@ -82,7 +151,7 @@ public sealed class OceanWorld : MonoBehaviour
         // Keep the square mesh edge beyond the camera's far clip. The shader fogs the extra band.
         // Keep a generous band beyond the camera range.  The same mesh is used at every
         // altitude, so looking down from the sky cannot reveal a square water boundary.
-        float meshSize = (renderDistance + Mathf.Max(300f, renderDistance * 0.2f)) * 2f;
+        float meshSize = (oceanSize + Mathf.Max(300f, oceanSize * 0.2f)) * 2f;
         var filter = GetComponent<MeshFilter>();
         var renderer = GetComponent<MeshRenderer>();
 
@@ -129,9 +198,7 @@ public sealed class OceanWorld : MonoBehaviour
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
         UpdateWaterDistances();
-        generatedMaterial.SetColor("_DeepColor", new Color(0.004f, 0.032f, 0.060f, 1f));
-        generatedMaterial.SetColor("_ShallowColor", new Color(0.018f, 0.135f, 0.190f, 1f));
-        generatedMaterial.SetColor("_CrestColor", new Color(0.78f, 0.93f, 0.92f, 1f));
+        ApplyMaterialSettings();
         BuildSky();
     }
 
@@ -244,11 +311,51 @@ public sealed class OceanWorld : MonoBehaviour
             generatedMaterial.SetFloat(MidDetailDistanceId, midDistance);
             appliedMidDistance = midDistance;
         }
-        if (appliedViewDistance != renderDistance)
+        if (appliedViewDistance != oceanSize)
         {
-            generatedMaterial.SetFloat(ViewDistanceId, renderDistance);
-            appliedViewDistance = renderDistance;
+            generatedMaterial.SetFloat(ViewDistanceId, oceanSize);
+            appliedViewDistance = oceanSize;
         }
+    }
+
+    void ApplyMaterialSettings()
+    {
+        generatedMaterial.SetColor(ShallowColorId, shallowColor);
+        generatedMaterial.SetColor(MidColorId, midColor);
+        generatedMaterial.SetColor(DeepColorId, deepColor);
+        generatedMaterial.SetColor(FoamColorId, foamColor);
+        generatedMaterial.SetFloat("_DepthFadeDistance", depthFadeDistance);
+        generatedMaterial.SetFloat("_WaterOpacity", waterOpacity);
+        generatedMaterial.SetFloat("_AbsorptionStrength", absorptionStrength);
+        generatedMaterial.SetFloat("_LargeDetailStrength", largeDetailStrength);
+        generatedMaterial.SetFloat("_MediumDetailStrength", mediumDetailStrength);
+        generatedMaterial.SetFloat("_RippleStrength", rippleStrength);
+        generatedMaterial.SetFloat("_Smoothness", smoothness);
+        generatedMaterial.SetFloat("_ReflectionStrength", reflectionStrength);
+        generatedMaterial.SetFloat("_SpecularStrength", specularStrength);
+        generatedMaterial.SetFloat("_SpecularSharpness", specularSharpness);
+        generatedMaterial.SetFloat("_SunGlitterStrength", sunGlitterStrength);
+        generatedMaterial.SetFloat("_SunGlitterThreshold", sunGlitterThreshold);
+        generatedMaterial.SetFloat("_FresnelStrength", fresnelStrength);
+        generatedMaterial.SetFloat("_FresnelPower", fresnelPower);
+        generatedMaterial.SetFloat("_BrineNoiseScale", brineNoiseScale);
+        generatedMaterial.SetFloat("_BrineFlowSpeed", brineFlowSpeed);
+        generatedMaterial.SetFloat("_BrineStrength", brineStrength);
+        generatedMaterial.SetFloat("_FoamWidth", foamWidth);
+        generatedMaterial.SetFloat("_FoamStrength", foamStrength);
+        generatedMaterial.SetFloat("_FoamNoiseScale", foamNoiseScale);
+        generatedMaterial.SetFloat("_FoamSpeed", foamSpeed);
+        ApplyWave("_Wave1", wave1);
+        ApplyWave("_Wave2", wave2);
+        ApplyWave("_Wave3", wave3);
+        ApplyWave("_Wave4", wave4);
+    }
+
+    void ApplyWave(string propertyName, OceanGerstnerWave wave)
+    {
+        Vector2 direction = wave.direction.sqrMagnitude < 0.0001f ? Vector2.right : wave.direction.normalized;
+        generatedMaterial.SetVector(propertyName, new Vector4(direction.x, direction.y, wave.amplitude, wave.wavelength));
+        generatedMaterial.SetVector(propertyName + "Motion", new Vector4(wave.speed, wave.steepness, 0f, 0f));
     }
 
     void GetShaderDetailDistances(out float shaderNearDistance, out float shaderMidDistance)
@@ -291,7 +398,7 @@ public sealed class OceanWorld : MonoBehaviour
         }
         // A Unity primitive sphere has a 0.5-unit radius.  This keeps its inside surface
         // just before the far clip, so the procedural sky is rendered instead of the camera clear colour.
-        skyDome.transform.localScale = Vector3.one * (renderDistance * 2f + 16f);
+        skyDome.transform.localScale = Vector3.one * (oceanSize * 2f + 16f);
 
         if (skyMaterial == null)
         {
@@ -328,9 +435,12 @@ public sealed class OceanWorld : MonoBehaviour
         if (camera != null)
         {
             // The ocean follows the player. Geometry outside the configured view range is never needed.
-            transform.position = new Vector3(camera.transform.position.x, 0f, camera.transform.position.z);
-            transform.rotation = Quaternion.Euler(0f, camera.transform.eulerAngles.y, 0f);
-            float requiredFarClip = renderDistance + 20f;
+            if (followCamera)
+            {
+                transform.position = new Vector3(camera.transform.position.x, oceanHeight, camera.transform.position.z);
+                transform.rotation = Quaternion.Euler(0f, camera.transform.eulerAngles.y, 0f);
+            }
+            float requiredFarClip = oceanSize + 20f;
             if (camera.farClipPlane != requiredFarClip)
                 camera.farClipPlane = requiredFarClip;
             if (camera.clearFlags != CameraClearFlags.Skybox)
