@@ -15,7 +15,6 @@ namespace Mavis
     {
         const string LogPath = "Temp/foliage_colliders.txt";
 
-        [MenuItem("Mavis/Foliage/Add Colliders")]
         public static void Run()
         {
             int added = 0, skipped = 0, noMesh = 0;

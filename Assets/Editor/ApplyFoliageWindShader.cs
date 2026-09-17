@@ -17,7 +17,6 @@ namespace Mavis
         const string LogPath = "Temp/foliage_wind.txt";
         static readonly Shader WindShader = Shader.Find("Mavis/FoliageWind");
 
-        [MenuItem("Mavis/Foliage/Apply Wind Shader")]
         public static void Run()
         {
             var sb = new StringBuilder();

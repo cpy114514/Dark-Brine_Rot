@@ -9,6 +9,10 @@ Shader "Mavis/FoliageWind"
     Properties
     {
         _MainTex              ("Base Map", 2D) = "white" {}
+        [HideInInspector] _BaseMap ("URP Shadow Base Map", 2D) = "white" {}
+        _AlphaMap             ("Cutout Mask", 2D) = "white" {}
+        _UseAlphaMap          ("Use Cutout Mask", Float) = 0
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Cull", Float) = 0
         _BaseColor            ("Base Color", Color) = (1,1,1,1)
         _Smoothness           ("Smoothness", Range(0,1)) = 0.05
         _Metallic             ("Metallic", Range(0,1)) = 0.0
@@ -18,6 +22,9 @@ Shader "Mavis/FoliageWind"
         _WindTrunkStiffness   ("Trunk Stiffness (0=top moves, 1=stiff)", Range(0,1)) = 0.2
         _WindGust             ("Wind Gust", Range(0,4)) = 0.6
         _LocalWindScale       ("Per-Instance Wind Scale", Range(0,2)) = 1.0
+        [HideInInspector] _MavisWindAnchorY ("Wind Anchor Y", Float) = 0.0
+        [HideInInspector] _MavisWindInvHeight ("Wind Inverse Height", Float) = 1.0
+        [HideInInspector] _MavisWindResponse ("Wind Response", Float) = 1.0
         _PlayerPushStrength   ("Player Push Strength", Range(0,4)) = 1.0
         _PlayerPushHeightBias ("Player Push Height Bias (height where push applies)", Range(0,4)) = 1.0
     }
@@ -27,8 +34,8 @@ Shader "Mavis/FoliageWind"
         Tags
         {
             "RenderPipeline" = "UniversalPipeline"
-            "RenderType" = "Opaque"
-            "Queue" = "Geometry"
+            "RenderType" = "TransparentCutout"
+            "Queue" = "AlphaTest"
             "IgnoreProjector" = "True"
         }
 
@@ -36,6 +43,7 @@ Shader "Mavis/FoliageWind"
         {
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma target 4.5
@@ -55,11 +63,15 @@ Shader "Mavis/FoliageWind"
                 half   _Smoothness;
                 half   _Metallic;
                 half   _Cutoff;
+                half   _UseAlphaMap;
                 half   _WindBend;
                 half   _WindFrequency;
                 half   _WindTrunkStiffness;
                 half   _WindGust;
                 half   _LocalWindScale;
+                float  _MavisWindAnchorY;
+                float  _MavisWindInvHeight;
+                half   _MavisWindResponse;
                 half   _PlayerPushStrength;
                 half   _PlayerPushHeightBias;
             CBUFFER_END
@@ -73,6 +85,8 @@ Shader "Mavis/FoliageWind"
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
+            TEXTURE2D(_AlphaMap);
+            SAMPLER(sampler_AlphaMap);
 
             struct Attributes
             {
@@ -108,9 +122,11 @@ Shader "Mavis/FoliageWind"
                 float  gustiness    = _MavisWindParams.w;
                 float  freq         = _WindFrequency;
 
-                // Distance from anchor in object-local Y.  Foliage mesh typically
-                // authored with root at the trunk base; pivot.y ~= world height.
-                float heightFactor = saturate(positionWS.y - _MavisWindParams.y);
+                // FoliageWindDriver provides a world-height range for every renderer.
+                // This keeps the tree root planted even when the island itself sits high
+                // above world origin, while grass and leaf clusters still flex at their tips.
+                float heightFactor = saturate((positionWS.y - _MavisWindAnchorY) * _MavisWindInvHeight);
+                heightFactor *= heightFactor;
                 heightFactor = lerp(1.0 - _WindTrunkStiffness, 1.0, heightFactor);
 
                 // Phase per-leaf for organic motion
@@ -119,7 +135,7 @@ Shader "Mavis/FoliageWind"
                 float gust  = sin(time * freq * 0.37 + phase * 1.7);
 
                 float strength = _WindBend * _LocalWindScale * baseStrength *
-                                heightFactor * (1.0 + gustiness * gust);
+                                _MavisWindResponse * heightFactor * (1.0 + gustiness * gust);
 
                 // Lateral bend along wind direction, plus tiny vertical bob
                 float3 offset = dir * (wave * strength)
@@ -165,6 +181,10 @@ Shader "Mavis/FoliageWind"
             half4 frag(Varyings IN) : SV_Target
             {
                 half4 baseTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
+                half opacity = baseTex.a * _BaseColor.a;
+                if (_UseAlphaMap > 0.5h)
+                    opacity *= SAMPLE_TEXTURE2D(_AlphaMap, sampler_AlphaMap, IN.uv).r;
+                clip(opacity - _Cutoff);
                 half3 albedo  = baseTex.rgb * _BaseColor.rgb;
 
                 // Simple hemisphere ambient + main directional light
@@ -173,22 +193,21 @@ Shader "Mavis/FoliageWind"
                 half NdotL = saturate(dot(N, mainLight.direction));
                 half3 sky    = half3(0.55, 0.62, 0.7);
                 half3 ground = half3(0.18, 0.16, 0.13);
-                half3 hemi   = lerp(ground, sky, N.y * 0.5 + 0.5);
+                half3 hemi   = max(SampleSH(N), lerp(ground, sky, N.y * 0.5 + 0.5) * 0.3h);
+                hemi = max(hemi, half3(0.22h, 0.27h, 0.25h));
 
-                half3 lit = albedo * (hemi * 0.65 + mainLight.color * NdotL * 0.85);
-                lit += mainLight.color * mainLight.distanceAttenuation * 0.05; // soft ambient
+                half3 lit = albedo * (hemi * 1.05h + mainLight.color * (0.18h + NdotL * 0.72h) *
+                    mainLight.distanceAttenuation * mainLight.shadowAttenuation * 0.85h);
 
                 // Lighten leaves/branches slightly where player is pushing them
                 lit += albedo * IN.squish * 0.15;
 
-                return half4(lit, baseTex.a * _BaseColor.a);
+                return half4(lit, 1.0h);
             }
             ENDHLSL
         }
 
-        // Use URP shadow caster
-        UsePass "Universal Render Pipeline/Lit/ShadowCaster"
     }
 
-    FallBack "Universal Render Pipeline/Lit"
+    FallBack Off
 }
