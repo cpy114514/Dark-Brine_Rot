@@ -112,3 +112,22 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Local version-control data (Plastic SCM workspace state) — git only.
+.plastic/
+
+# Scene Fusion / KinematicSoup local collaboration data and offline package.
+# The plugin's runtime data lives under Assets/, and the project's offline copy
+# lives at the repo root; both are tooling artifacts and should not be pushed.
+/[Aa]ssets/KinematicSoup/
+/[Aa]ssets/KinematicSoup.meta
+/[Aa]ssets/KinematicSoup_dst/
+/[Aa]ssets/KinematicSoup_dst.meta
+/[Aa]ssets/com.kinematicsoup.scenefusion2lite/
+/[Aa]ssets/com.kinematicsoup.scenefusion2lite.meta
+/[Kk]inematicSoup/
+
+# Temporary prefab duplicates Unity creates on duplicate imports
+# (matches `name (10).prefab`, `name (12).prefab`, etc.).
+**/island_tree_01_4k ([0-9]*).prefab
+**/island_tree_01_4k ([0-9]*).prefab.meta

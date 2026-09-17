@@ -20,6 +20,13 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(0f, 0.3f)] public float jumpBufferTime = 0.12f;
     public float seaLevel = 0f;
 
+    [Header("Spawn")]
+    [Tooltip("Keeps the authored X/Z position and places Sahur on the procedural island surface at startup.")]
+    public bool snapSpawnToIslandSurface = true;
+    [Tooltip("Stable scene spawn anchor. This is not affected by animation root transform curves.")]
+    public Transform spawnPoint;
+    [Min(0f)] public float spawnSurfaceOffset = 0.03f;
+
     [Header("Evasion")]
     [Min(0.15f)] public float rollDuration = 0.792793f;
     [Min(0.1f)] public float rollSpeed = 8.5f;
@@ -92,7 +99,28 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
+        Animator rootAnimator = GetComponent<Animator>();
+        Animator visualAnimator = transform.Find("Pbr Sahur Visual")?.GetComponent<Animator>();
+        if (rootAnimator != null && visualAnimator != null)
+        {
+            // Animate the model, not the CharacterController root. Imported FBX
+            // root curves otherwise reset the player's world position each frame.
+            visualAnimator.enabled = false;
+            visualAnimator.runtimeAnimatorController = rootAnimator.runtimeAnimatorController;
+            visualAnimator.avatar = rootAnimator.avatar;
+            visualAnimator.applyRootMotion = false;
+            visualAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            rootAnimator.enabled = false;
+            visualAnimator.enabled = true;
+            animator = visualAnimator;
+
+            Mavis.SahurAttack attack = GetComponent<Mavis.SahurAttack>();
+            if (attack != null) attack.animator = animator;
+        }
+        else
+        {
+            animator = visualAnimator != null ? visualAnimator : rootAnimator;
+        }
         ConfigureColliderToModel();
         Vector3 rotation = transform.eulerAngles;
         yaw = rotation.y;
@@ -104,6 +132,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         playerCamera = Camera.main;
         if (animator != null) { animator.applyRootMotion = false; animator.Play("Locomotion", 0, 0f); animator.Update(0f); }
         ConfigureColliderToModel();
+        SnapSpawnToIslandSurface();
         KeepFeetOnSeaLevel();
         CreateWaterSplashEffect();
         CreateUnderwaterPresentation();
@@ -346,6 +375,33 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             return;
         Vector3 position = transform.position;
         position.y = seaLevel - lowestFootOffset;
+        transform.position = position;
+        verticalSpeed = 0f;
+    }
+
+    void SnapSpawnToIslandSurface()
+    {
+        if (!snapSpawnToIslandSurface)
+            return;
+
+        ProceduralIsland island = FindFirstObjectByType<ProceduralIsland>();
+        if (island == null)
+            return;
+
+        Vector3 position;
+        if (spawnPoint != null)
+        {
+            position = spawnPoint.position;
+        }
+        else
+        {
+            // Imported clips can reset the character root before Start. Without
+            // an assigned anchor, choose a deterministic point safely inside the
+            // island rather than trusting the animated root's current position.
+            position = island.transform.TransformPoint(Vector3.forward * island.shorelineRadius * 0.45f);
+        }
+        float surfaceHeight = island.GetWorldSurfaceHeight(position);
+        position.y = surfaceHeight - GetLowestFootOffset() + spawnSurfaceOffset;
         transform.position = position;
         verticalSpeed = 0f;
     }

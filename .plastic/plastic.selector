@@ -1,4 +1,0 @@
-repository "Dark Brine_Rot/Dark Brine_Rot@3574351988897@cloud"
-  path "/"
-    br "/main"
-    co "/main"

@@ -165,7 +165,7 @@ namespace WakaTime {
 
       var heartbeatJSON = JsonUtility.ToJson(heartbeat);
 
-      var request = UnityWebRequest.Post(_apiUrl + "users/current/heartbeats?api_key=" + _apiKey, string.Empty);
+      var request = UnityWebRequest.PostWwwForm(_apiUrl + "users/current/heartbeats?api_key=" + _apiKey, string.Empty);
       request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(heartbeatJSON));
       request.SetRequestHeader("Content-Type", "application/json");
 
