@@ -3,13 +3,13 @@ Shader "DarkBrine/Procedural Ocean"
     Properties
     {
         [Header(Colors)]
-        _ShallowColor ("Shallow brine", Color) = (0.106, 0.165, 0.180, 1)
-        _MidColor ("Mid brine", Color) = (0.043, 0.090, 0.110, 1)
-        _DeepColor ("Deep brine", Color) = (0.012, 0.027, 0.035, 1)
-        _FoamColor ("Cold foam", Color) = (0.40, 0.48, 0.47, 1)
+        _ShallowColor ("Shallow brine", Color) = (0.045, 0.095, 0.120, 1)
+        _MidColor ("Mid brine", Color) = (0.012, 0.042, 0.058, 1)
+        _DeepColor ("Deep brine", Color) = (0.004, 0.012, 0.020, 1)
+        _FoamColor ("Cold foam", Color) = (0.62, 0.80, 0.86, 1)
         _DepthFadeDistance ("Depth fade distance", Float) = 5.5
         _WaterOpacity ("Water opacity", Range(0, 1)) = 0.94
-        _AbsorptionStrength ("Absorption strength", Range(0.1, 8)) = 2.6
+        _AbsorptionStrength ("Absorption strength", Range(0.1, 8)) = 3.7
 
         [Header(Waves)]
         _Wave1 ("Wave 1 (dir XZ, amplitude, wavelength)", Vector) = (0.82, 0.57, 1.35, 180)
@@ -27,11 +27,11 @@ Shader "DarkBrine/Procedural Ocean"
         _RippleStrength ("Highlight ripples", Range(0, 2)) = 0.12
 
         [Header(Reflection And Specular)]
-        _Smoothness ("Water smoothness", Range(0, 1)) = 0.88
-        _ReflectionStrength ("Reflection strength", Range(0, 2)) = 0.78
-        _SpecularStrength ("Specular strength", Range(0, 2)) = 1.05
+        _Smoothness ("Water smoothness", Range(0, 1)) = 0.76
+        _ReflectionStrength ("Reflection strength", Range(0, 2)) = 0.38
+        _SpecularStrength ("Specular strength", Range(0, 2)) = 0.55
         _SpecularSharpness ("Specular sharpness", Range(20, 300)) = 118
-        _SunGlitterStrength ("Sun glitter strength", Range(0, 2)) = 0.58
+        _SunGlitterStrength ("Sun glitter strength", Range(0, 2)) = 0.24
         _SunGlitterThreshold ("Sun glitter threshold", Range(0, 1)) = 0.68
         _FresnelStrength ("Fresnel strength", Range(0, 2)) = 0.82
         _FresnelPower ("Fresnel power", Range(1, 9)) = 4.4
@@ -42,8 +42,8 @@ Shader "DarkBrine/Procedural Ocean"
         _BrineStrength ("Brine strength", Range(0, 1)) = 0.10
 
         [Header(Foam)]
-        _FoamWidth ("Foam width", Range(0.05, 8)) = 1.8
-        _FoamStrength ("Foam strength", Range(0, 2)) = 0.72
+        _FoamWidth ("Foam width", Range(0.05, 8)) = 2.2
+        _FoamStrength ("Foam strength", Range(0, 2)) = 0.66
         _FoamNoiseScale ("Foam noise scale", Range(0.05, 2)) = 0.22
         _FoamSpeed ("Foam speed", Range(0, 2)) = 0.28
 
@@ -244,7 +244,7 @@ Shader "DarkBrine/Procedural Ocean"
                 half3 reflectionVector = reflect(-viewDirection, normalWS);
                 half perceptualRoughness = saturate(1.0h - _Smoothness + abs(detailSlope) * 0.10h);
                 half3 probeReflection = GlossyEnvironmentReflection(reflectionVector, perceptualRoughness, 1.0h);
-                half3 coldSkyFallback = half3(0.10h, 0.19h, 0.23h);
+                half3 coldSkyFallback = half3(0.025h, 0.065h, 0.085h);
                 water = lerp(water, max(probeReflection, coldSkyFallback * 0.46h), saturate(fresnel * _ReflectionStrength));
 
                 float glintNoise = ValueNoise(p * 0.31 + _Time.y * float2(0.16, -0.11));
@@ -253,7 +253,9 @@ Shader "DarkBrine/Procedural Ocean"
 
                 float foamNoise = ValueNoise(p * _FoamNoiseScale + _Time.y * float2(0.15, -0.10) * _FoamSpeed);
                 half crestFoam = CrestAt(p, _Time.y) * smoothstep(0.46h, 0.78h, foamNoise) * nearDetailFade;
-                half shoreFoam = (1.0h - smoothstep(0.02h, _FoamWidth, waterThickness)) * smoothstep(0.34h, 0.75h, foamNoise);
+                // This is evaluated from the opaque island depth behind each water
+                // pixel, so breakers follow the actual coast rather than an island radius.
+                half shoreFoam = (1.0h - smoothstep(0.02h, _FoamWidth, waterThickness)) * smoothstep(0.36h, 0.76h, foamNoise);
                 half foam = max(crestFoam * 0.34h, shoreFoam) * _FoamStrength;
                 water = lerp(water, _FoamColor.rgb, saturate(foam));
 

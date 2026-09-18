@@ -179,6 +179,32 @@ public class ProceduralIsland : MonoBehaviour
         return shorelineRadius * variation;
     }
 
+    // The island mesh intentionally continues below the water. Find the real
+    // sea-level contour so shore effects do not follow that submerged skirt.
+    private float FindWaterlineRadius(float angle, float localSeaLevel)
+    {
+        float edgeRadius = EdgeRadius(angle);
+        if (SampleHeight(0f, angle) <= localSeaLevel)
+            return 0f;
+        if (SampleHeight(1f, angle) >= localSeaLevel)
+            return edgeRadius;
+
+        float land = 0f;
+        float water = 1f;
+        for (int iteration = 0; iteration < 14; iteration++)
+        {
+            float middle = (land + water) * 0.5f;
+            if (SampleHeight(middle, angle) > localSeaLevel)
+                land = middle;
+            else
+                water = middle;
+        }
+
+        // Keep the land side behind the island depth buffer, so foam cannot
+        // spill onto dry sand as the animated waterline rises and falls.
+        return edgeRadius * Mathf.Min(1f, water + 0.0002f);
+    }
+
     private float SampleHeight(float normalizedRadius, float angle)
     {
         normalizedRadius = Mathf.Max(0f, normalizedRadius);
@@ -243,20 +269,24 @@ public class ProceduralIsland : MonoBehaviour
         if (shoreFoamMesh == null)
             shoreFoamMesh = new Mesh { name = "Procedural Shore Breakers" };
 
-        const int rows = 5;
+        OceanWorld ocean = FindFirstObjectByType<OceanWorld>();
+        float seaLevel = ocean != null ? ocean.oceanHeight : 0f;
+        float localSeaLevel = transform.InverseTransformPoint(new Vector3(transform.position.x, seaLevel, transform.position.z)).y;
+
+        const int rows = 8;
         int columns = radialSegments + 1;
         var vertices = new Vector3[(rows + 1) * columns];
         var uv = new Vector2[vertices.Length];
         for (int row = 0; row <= rows; row++)
         {
             float across = row / (float)rows;
-            // Five metres of water-side foam and a short overlap onto the beach.
-            // Island depth hides the inland part so the strip remains clean.
-            float shoreOffset = Mathf.Lerp(5f, -9f, across);
+            // Start at the actual sea-level contour, not the submerged outer
+            // edge of the island, then move from water onto wet sand.
+            float shoreOffset = Mathf.Lerp(14f, -6f, across);
             for (int column = 0; column <= radialSegments; column++)
             {
                 float angle = column / (float)radialSegments * Mathf.PI * 2f;
-                float radius = EdgeRadius(angle) + shoreOffset;
+                float radius = FindWaterlineRadius(angle, localSeaLevel) + shoreOffset;
                 int index = row * columns + column;
                 vertices[index] = new Vector3(Mathf.Cos(angle) * radius, 0.055f, Mathf.Sin(angle) * radius);
                 uv[index] = new Vector2(column / (float)radialSegments * 7f, across);
@@ -287,9 +317,35 @@ public class ProceduralIsland : MonoBehaviour
             shoreFoamMaterial = new Material(shader) { name = "Procedural Shore Foam Material", hideFlags = HideFlags.DontSave };
             shoreFoamMaterial.renderQueue = 2910;
         }
+        ApplyShoreWaveSettings();
         shoreFoamObject.GetComponent<MeshRenderer>().sharedMaterial = shoreFoamMaterial;
         shoreFoamObject.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         shoreFoamObject.GetComponent<MeshRenderer>().receiveShadows = false;
+    }
+
+    // The shore mesh uses the same wave phase as the ocean surface. This keeps a
+    // breaker locked to its crest instead of leaving a flat, floating foam decal.
+    private void ApplyShoreWaveSettings()
+    {
+        if (shoreFoamMaterial == null)
+            return;
+
+        OceanWorld ocean = FindFirstObjectByType<OceanWorld>();
+        if (ocean == null)
+            return;
+
+        shoreFoamMaterial.SetFloat("_SeaLevel", ocean.oceanHeight);
+        ApplyShoreWave("_Wave1", ocean.wave1);
+        ApplyShoreWave("_Wave2", ocean.wave2);
+        ApplyShoreWave("_Wave3", ocean.wave3);
+        ApplyShoreWave("_Wave4", ocean.wave4);
+    }
+
+    private void ApplyShoreWave(string propertyName, OceanGerstnerWave wave)
+    {
+        Vector2 direction = wave.direction.sqrMagnitude < 0.0001f ? Vector2.right : wave.direction.normalized;
+        shoreFoamMaterial.SetVector(propertyName, new Vector4(direction.x, direction.y, wave.amplitude, wave.wavelength));
+        shoreFoamMaterial.SetVector(propertyName + "Motion", new Vector4(wave.speed, wave.steepness, 0f, 0f));
     }
 
     private void OnDisable()

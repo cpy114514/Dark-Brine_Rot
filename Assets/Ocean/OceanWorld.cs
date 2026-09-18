@@ -34,30 +34,32 @@ public sealed class OceanWorld : MonoBehaviour
     public EffectsQuality effectsQuality = EffectsQuality.Medium;
 
     [Header("Colors")]
-    public Color shallowColor = new Color(0.106f, 0.165f, 0.180f, 1f);
-    public Color midColor = new Color(0.043f, 0.090f, 0.110f, 1f);
-    public Color deepColor = new Color(0.012f, 0.027f, 0.035f, 1f);
+    public Color shallowColor = new Color(0.045f, 0.095f, 0.120f, 1f);
+    public Color midColor = new Color(0.012f, 0.042f, 0.058f, 1f);
+    public Color deepColor = new Color(0.004f, 0.012f, 0.020f, 1f);
     [Range(0.2f, 20f)] public float depthFadeDistance = 5.5f;
     [Range(0f, 1f)] public float waterOpacity = 0.94f;
-    [Range(0.1f, 8f)] public float absorptionStrength = 2.6f;
+    [Range(0.1f, 8f)] public float absorptionStrength = 3.7f;
 
     [Header("Waves")]
-    public OceanGerstnerWave wave1 = new OceanGerstnerWave { direction = new Vector2(0.82f, 0.57f), amplitude = 1.35f, wavelength = 180f, speed = 0.82f, steepness = 0.15f };
-    public OceanGerstnerWave wave2 = new OceanGerstnerWave { direction = new Vector2(-0.38f, 0.93f), amplitude = 0.72f, wavelength = 92f, speed = 0.95f, steepness = 0.10f };
-    public OceanGerstnerWave wave3 = new OceanGerstnerWave { direction = new Vector2(0.96f, -0.29f), amplitude = 0.32f, wavelength = 58f, speed = 1.12f, steepness = 0.06f };
-    public OceanGerstnerWave wave4 = new OceanGerstnerWave { direction = new Vector2(-0.72f, -0.69f), amplitude = 0.16f, wavelength = 35f, speed = 1.28f, steepness = 0.03f };
+    // Phase velocity is in metres per second. These scales follow the larger
+    // swell and smaller wind chop at visibly different, natural rates.
+    public OceanGerstnerWave wave1 = new OceanGerstnerWave { direction = new Vector2(0.82f, 0.57f), amplitude = 1.75f, wavelength = 130f, speed = 26f, steepness = 0.23f };
+    public OceanGerstnerWave wave2 = new OceanGerstnerWave { direction = new Vector2(-0.38f, 0.93f), amplitude = 1.10f, wavelength = 62f, speed = 20f, steepness = 0.17f };
+    public OceanGerstnerWave wave3 = new OceanGerstnerWave { direction = new Vector2(0.96f, -0.29f), amplitude = 0.52f, wavelength = 30f, speed = 15f, steepness = 0.11f };
+    public OceanGerstnerWave wave4 = new OceanGerstnerWave { direction = new Vector2(-0.72f, -0.69f), amplitude = 0.26f, wavelength = 15f, speed = 11f, steepness = 0.07f };
 
     [Header("Surface Detail")]
-    [Range(0f, 2f)] public float largeDetailStrength = 0.34f;
-    [Range(0f, 2f)] public float mediumDetailStrength = 0.22f;
-    [Range(0f, 2f)] public float rippleStrength = 0.12f;
+    [Range(0f, 2f)] public float largeDetailStrength = 0.42f;
+    [Range(0f, 2f)] public float mediumDetailStrength = 0.32f;
+    [Range(0f, 2f)] public float rippleStrength = 0.16f;
 
     [Header("Reflection / Specular")]
-    [Range(0f, 1f)] public float smoothness = 0.88f;
-    [Range(0f, 2f)] public float reflectionStrength = 0.78f;
-    [Range(0f, 2f)] public float specularStrength = 1.05f;
+    [Range(0f, 1f)] public float smoothness = 0.76f;
+    [Range(0f, 2f)] public float reflectionStrength = 0.38f;
+    [Range(0f, 2f)] public float specularStrength = 0.55f;
     [Range(20f, 300f)] public float specularSharpness = 118f;
-    [Range(0f, 2f)] public float sunGlitterStrength = 0.58f;
+    [Range(0f, 2f)] public float sunGlitterStrength = 0.24f;
     [Range(0f, 1f)] public float sunGlitterThreshold = 0.68f;
     [Range(0f, 2f)] public float fresnelStrength = 0.82f;
     [Range(1f, 9f)] public float fresnelPower = 4.4f;
@@ -68,9 +70,9 @@ public sealed class OceanWorld : MonoBehaviour
     [Range(0f, 1f)] public float brineStrength = 0.10f;
 
     [Header("Foam")]
-    public Color foamColor = new Color(0.40f, 0.48f, 0.47f, 1f);
-    [Range(0.05f, 8f)] public float foamWidth = 1.8f;
-    [Range(0f, 2f)] public float foamStrength = 0.72f;
+    public Color foamColor = new Color(0.62f, 0.80f, 0.86f, 1f);
+    [Range(0.05f, 8f)] public float foamWidth = 2.2f;
+    [Range(0f, 2f)] public float foamStrength = 0.66f;
     [Range(0.05f, 2f)] public float foamNoiseScale = 0.22f;
     [Range(0f, 2f)] public float foamSpeed = 0.28f;
 

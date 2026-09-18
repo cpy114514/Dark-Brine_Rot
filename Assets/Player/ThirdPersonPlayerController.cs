@@ -37,7 +37,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     [Header("Water contact")]
     [Tooltip("Spawn lightweight procedural droplets while the character is moving through the sea.")]
-    public bool waterSplashes = true;
+    public bool waterSplashes = false;
     [Min(0.1f)] public float splashMinSpeed = 1.15f;
     [Range(0.05f, 0.5f)] public float splashInterval = 0.16f;
 
@@ -51,6 +51,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Tooltip("How far below the surface the third-person camera settles while Sahur is swimming.")]
     [Range(0.15f, 1.2f)] public float underwaterCameraDepth = 0.46f;
     [Range(0.15f, 1f)] public float underwaterOverlayStrength = 0.68f;
+    [Tooltip("Show particle bubbles while Sahur is swimming.")]
+    public bool underwaterBubbleParticles = false;
     [Range(0.08f, 0.8f)] public float underwaterBubbleInterval = 0.24f;
 
     [Header("Third-person camera")]
@@ -447,7 +449,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         characterController.Move((planarVelocity + Vector3.up * buoyancyVelocity) * Time.deltaTime);
 
         bool moving = planarVelocity.sqrMagnitude > 0.12f;
-        if (!wasSwimming)
+        if (waterSplashes && !wasSwimming)
         {
             // One quiet breach ripple sells the waterline far better than a
             // continuous fountain of polygon droplets around the swimmer.
@@ -609,6 +611,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             underwaterOverlayRenderer.receiveShadows = false;
             underwaterOverlayRenderer.enabled = false;
         }
+
+        if (!underwaterBubbleParticles)
+            return;
 
         Shader bubbleShader = Shader.Find("DarkBrine/Underwater Bubble");
         if (bubbleShader == null)

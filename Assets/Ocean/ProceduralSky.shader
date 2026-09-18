@@ -91,14 +91,20 @@ Shader "DarkBrine/Procedural Sky"
 
             float CloudDensity(float3 position, float cloudBase, float cloudThickness)
             {
-                float heightFraction = (position.y - cloudBase) / cloudThickness;
+                float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
+                float3 samplePosition = position;
+                samplePosition.xz += wind;
+                // Each horizontal column gets its own floor and thickness so the
+                // volume reads as stacked tiers instead of a single flat slab.
+                float columnShape = Fbm(samplePosition * 0.0008 + float3(7.0, 0.0, -3.0), 3);
+                float localBase = cloudBase + (columnShape - 0.5) * 420.0;
+                float localThickness = cloudThickness * lerp(0.30, 1.55, saturate(columnShape * 1.15));
+
+                float heightFraction = (position.y - localBase) / localThickness;
                 float verticalProfile = smoothstep(0.02, 0.16, heightFraction) * (1.0 - smoothstep(0.64, 1.0, heightFraction));
                 if (verticalProfile <= 0.0)
                     return 0.0;
 
-                float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
-                float3 samplePosition = position;
-                samplePosition.xz += wind;
                 float macro = Fbm(samplePosition * 0.00165, 4);
                 float erosion = Fbm(samplePosition * 0.0052 + float3(31.0, 7.0, -12.0), 3);
                 float wisps = Fbm(samplePosition * 0.012 + float3(-13.0, 41.0, 9.0), 2);
@@ -109,11 +115,17 @@ Shader "DarkBrine/Procedural Sky"
 
             float ShadowDensity(float3 position, float cloudBase, float cloudThickness)
             {
-                float heightFraction = (position.y - cloudBase) / cloudThickness;
-                float verticalProfile = smoothstep(0.02, 0.16, heightFraction)
-                    * (1.0 - smoothstep(0.64, 1.0, heightFraction));
                 float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
                 position.xz += wind;
+                // Lighting must use the same columnShape as the view march, otherwise
+                // shadows would appear under columns that have already lifted their floor.
+                float columnShape = Fbm(position * 0.0008 + float3(7.0, 0.0, -3.0), 3);
+                float localBase = cloudBase + (columnShape - 0.5) * 420.0;
+                float localThickness = cloudThickness * lerp(0.30, 1.55, saturate(columnShape * 1.15));
+
+                float heightFraction = (position.y - localBase) / localThickness;
+                float verticalProfile = smoothstep(0.02, 0.16, heightFraction)
+                    * (1.0 - smoothstep(0.64, 1.0, heightFraction));
                 // Lighting only needs the broad cloud silhouette. The view march retains
                 // all fine erosion and wisps, avoiding three full density evaluations here.
                 float macro = Fbm(position * 0.00165, 2) * 1.29545;
