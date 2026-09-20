@@ -114,6 +114,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             visualAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
             rootAnimator.enabled = false;
             visualAnimator.enabled = true;
+            // Assigning a controller/avatar while the visual Animator is disabled can
+            // leave its playable graph stale. Rebind now so gameplay triggers such as
+            // Attack are handled immediately after the hand-off.
+            visualAnimator.Rebind();
+            visualAnimator.Update(0f);
             animator = visualAnimator;
 
             Mavis.SahurAttack attack = GetComponent<Mavis.SahurAttack>();

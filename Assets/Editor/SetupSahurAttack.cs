@@ -18,8 +18,7 @@ namespace Mavis
     {
         const string LogPath = "Temp/sahur_attack_setup.txt";
         const string ControllerPath = "Assets/Player/SahurGrounded.controller";
-
-        static bool handlerWired;
+        const string AttackClipPath = "Assets/Player/Animations/SwordAndShieldSlash.fbx";
 
         [MenuItem("Mavis/Sahur/Setup Attack")]
         public static void Run()
@@ -42,7 +41,20 @@ namespace Mavis
                     if (attackState == null)
                     {
                         attackState = sm.AddState("Attack");
-                        attackState.motion = null; // user drops the Mixamo clip here
+                    }
+
+                    var attackClip = AssetDatabase.LoadAllAssetsAtPath(AttackClipPath)
+                        .OfType<AnimationClip>()
+                        .FirstOrDefault(clip => clip.name == "Sword And Shield Slash");
+                    if (attackClip != null)
+                    {
+                        attackState.motion = attackClip;
+                        attackState.speed = 1.15f;
+                        sb.AppendLine("attack clip assigned: " + attackClip.name);
+                    }
+                    else
+                    {
+                        sb.AppendLine("WARNING: attack clip not found at " + AttackClipPath);
                     }
 
                     AnimatorStateTransition anyToAttack = null;
@@ -109,16 +121,12 @@ namespace Mavis
                         if (pi == null)
                         {
                             pi = sahurGo.AddComponent<PlayerInput>();
-                            pi.actions = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
-                            pi.notificationBehavior = PlayerNotifications.InvokeCSharpEvents;
                             sb.AppendLine("attached PlayerInput");
                         }
-                        if (!handlerWired)
-                        {
-                            pi.onActionTriggered += OnActionTriggeredStatic;
-                            handlerWired = true;
-                            sb.AppendLine("attack handler wired (static, once)");
-                        }
+                        pi.actions = AssetDatabase.LoadAssetAtPath<InputActionAsset>("Assets/InputSystem_Actions.inputactions");
+                        pi.defaultActionMap = "Player";
+                        pi.notificationBehavior = PlayerNotifications.SendMessages;
+                        sb.AppendLine("PlayerInput configured for OnAttack messages");
 
                         EditorUtility.SetDirty(sahurGo);
                     }
@@ -129,13 +137,6 @@ namespace Mavis
             catch (System.Exception e) { sb.AppendLine("EX: " + e); }
             File.WriteAllText(LogPath, sb.ToString(), new UTF8Encoding(false));
             Debug.Log("[Mavis] wrote " + LogPath);
-        }
-
-        static void OnActionTriggeredStatic(InputAction.CallbackContext ctx)
-        {
-            if (ctx.action == null || ctx.action.name != "Attack" || !ctx.performed) return;
-            var attack = Object.FindFirstObjectByType<SahurAttack>();
-            if (attack != null) attack.TriggerAttack();
         }
     }
 }

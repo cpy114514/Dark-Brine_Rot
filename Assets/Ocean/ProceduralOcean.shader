@@ -123,24 +123,18 @@ Shader "DarkBrine/Procedural Ocean"
                 half3 normalWS : TEXCOORD1;
                 float4 screenPosition : TEXCOORD2;
                 half fogFactor : TEXCOORD3;
-                float2 baseXZ : TEXCOORD4;
-                half regionMix : TEXCOORD5;
             };
 
             // A Gerstner wave displaces points sideways as well as vertically. This creates
             // a rolling crest rather than the up/down look of a simple sine surface.
-            // regionMix ∈ [0,1] is a spatial noise that scales the wave amplitude: quiet
-            // patches stay glassy, lively patches roll steep crests, so the surface is no
-            // longer a single global waveform.
-            float3 AddGerstnerWave(float4 wave, float4 motion, float3 samplePosition, float time, float regionMix, inout float3 tangent, inout float3 binormal)
+            float3 AddGerstnerWave(float4 wave, float4 motion, float3 samplePosition, float time, inout float3 tangent, inout float3 binormal)
             {
                 float2 direction = normalize(wave.xy);
                 float waveNumber = TWO_PI / max(wave.w, 0.001);
                 float phase = waveNumber * (dot(direction, samplePosition.xz) - motion.x * time);
                 float sine = sin(phase);
                 float cosine = cos(phase);
-                float ampModulation = lerp(0.20, 1.50, regionMix);
-                float amplitude = wave.z * ampModulation;
+                float amplitude = wave.z;
                 float steepness = min(motion.y, 0.95);
                 float horizontal = steepness * amplitude;
                 float slope = amplitude * waveNumber;
@@ -155,15 +149,13 @@ Shader "DarkBrine/Procedural Ocean"
             }
 
             // Per-pixel crest detection keeps foam narrow and smooth instead of turning it
-            // into large facets based on the underlying mesh triangles. regionMix reuses the
-            // spatial amplitude modulation so foam only lights up where waves are tall.
-            float CrestAt(float2 samplePosition, float time, float regionMix)
+            // into large facets based on the underlying mesh triangles.
+            float CrestAt(float2 samplePosition, float time)
             {
-                float ampModulation = lerp(0.20, 1.50, regionMix);
-                float a = sin((dot(normalize(_Wave1.xy), samplePosition) - _Wave1Motion.x * time) * (TWO_PI / max(_Wave1.w, 0.001))) * (_Wave1.z * 0.34 * ampModulation);
-                float b = sin((dot(normalize(_Wave2.xy), samplePosition) - _Wave2Motion.x * time) * (TWO_PI / max(_Wave2.w, 0.001)) + 1.9) * (_Wave2.z * 0.40 * ampModulation);
-                float c = sin((dot(normalize(_Wave3.xy), samplePosition) - _Wave3Motion.x * time) * (TWO_PI / max(_Wave3.w, 0.001)) + 4.2) * (_Wave3.z * 0.50 * ampModulation);
-                float d = sin((dot(normalize(_Wave4.xy), samplePosition) - _Wave4Motion.x * time) * (TWO_PI / max(_Wave4.w, 0.001)) + 2.7) * (_Wave4.z * 0.65 * ampModulation);
+                float a = sin((dot(normalize(_Wave1.xy), samplePosition) - _Wave1Motion.x * time) * (TWO_PI / max(_Wave1.w, 0.001))) * (_Wave1.z * 0.34);
+                float b = sin((dot(normalize(_Wave2.xy), samplePosition) - _Wave2Motion.x * time) * (TWO_PI / max(_Wave2.w, 0.001)) + 1.9) * (_Wave2.z * 0.40);
+                float c = sin((dot(normalize(_Wave3.xy), samplePosition) - _Wave3Motion.x * time) * (TWO_PI / max(_Wave3.w, 0.001)) + 4.2) * (_Wave3.z * 0.50);
+                float d = sin((dot(normalize(_Wave4.xy), samplePosition) - _Wave4Motion.x * time) * (TWO_PI / max(_Wave4.w, 0.001)) + 2.7) * (_Wave4.z * 0.65);
                 return smoothstep(0.56, 0.90, a + b + c + d);
             }
 
@@ -194,22 +186,12 @@ Shader "DarkBrine/Procedural Ocean"
                 float3 binormal = float3(0.0, 0.0, 1.0);
                 float3 displacement = 0.0;
 
-                // Spatial amplitude modulation: low-frequency blocks decide which patches
-                // are lively vs glassy, high-frequency noise breaks the boundary into an
-                // irregular seam. Both are sampled in undisplaced world-space xz so the
-                // wave shape and the foam stay locked to the same baseline.
-                float regionNoiseLow = ValueNoise(basePosition.xz * 0.012 + float2(13.7, -7.4));
-                float regionNoiseHi = ValueNoise(basePosition.xz * 0.052 + float2(-7.1, 4.2));
-                float regionMix = saturate(regionNoiseLow * 0.78 + regionNoiseHi * 0.34);
-                output.baseXZ = basePosition.xz;
-                output.regionMix = (half)regionMix;
-
-                displacement += AddGerstnerWave(_Wave1, _Wave1Motion, basePosition, _Time.y, regionMix, tangent, binormal);
-                displacement += AddGerstnerWave(_Wave2, _Wave2Motion, basePosition, _Time.y + 1.9, regionMix, tangent, binormal);
+                displacement += AddGerstnerWave(_Wave1, _Wave1Motion, basePosition, _Time.y, tangent, binormal);
+                displacement += AddGerstnerWave(_Wave2, _Wave2Motion, basePosition, _Time.y + 1.9, tangent, binormal);
                 if (distanceToCamera < _MidDetailDistance)
-                    displacement += AddGerstnerWave(_Wave3, _Wave3Motion, basePosition, _Time.y + 4.2, regionMix, tangent, binormal);
+                    displacement += AddGerstnerWave(_Wave3, _Wave3Motion, basePosition, _Time.y + 4.2, tangent, binormal);
                 if (distanceToCamera < _NearDetailDistance)
-                    displacement += AddGerstnerWave(_Wave4, _Wave4Motion, basePosition, _Time.y + 2.7, regionMix, tangent, binormal);
+                    displacement += AddGerstnerWave(_Wave4, _Wave4Motion, basePosition, _Time.y + 2.7, tangent, binormal);
 
                 output.positionWS = basePosition + displacement;
                 output.normalWS = normalize(cross(binormal, tangent));
@@ -270,7 +252,7 @@ Shader "DarkBrine/Procedural Ocean"
                 water += half3(0.82h, 0.91h, 0.95h) * sun.color.rgb * sunGlint * (0.20h + glintMask * _SunGlitterStrength);
 
                 float foamNoise = ValueNoise(p * _FoamNoiseScale + _Time.y * float2(0.15, -0.10) * _FoamSpeed);
-                half crestFoam = CrestAt(input.baseXZ, _Time.y, input.regionMix) * smoothstep(0.46h, 0.78h, foamNoise) * nearDetailFade;
+                half crestFoam = CrestAt(p, _Time.y) * smoothstep(0.46h, 0.78h, foamNoise) * nearDetailFade;
                 // This is evaluated from the opaque island depth behind each water
                 // pixel, so breakers follow the actual coast rather than an island radius.
                 half shoreFoam = (1.0h - smoothstep(0.02h, _FoamWidth, waterThickness)) * smoothstep(0.36h, 0.76h, foamNoise);

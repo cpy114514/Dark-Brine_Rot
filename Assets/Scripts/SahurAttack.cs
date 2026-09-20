@@ -29,6 +29,7 @@ namespace Mavis
 
         bool attackQueued;
         float lastFireTime = -10f;
+        int attackStateHash;
 
         void Reset()
         {
@@ -38,6 +39,7 @@ namespace Mavis
 
         void Awake()
         {
+            attackStateHash = Animator.StringToHash("Base Layer." + attackTrigger);
             if (stickHitbox != null) stickHitbox.enabled = false;
         }
 
@@ -51,7 +53,7 @@ namespace Mavis
 
             // Drive hitbox window via animator state info (works with any clip length)
             var info = animator != null ? animator.GetCurrentAnimatorStateInfo(0) : default;
-            bool inAttack = info.IsName("Attack");
+            bool inAttack = info.fullPathHash == attackStateHash;
             float normalized = info.normalizedTime;
             bool inWindow = inAttack &&
                             normalized >= swingWindowStart &&
@@ -74,8 +76,17 @@ namespace Mavis
         void DoAttack()
         {
             if (animator == null) return;
+            if (!animator.HasState(0, attackStateHash))
+            {
+                Debug.LogError($"Attack state '{attackTrigger}' is missing from '{animator.runtimeAnimatorController?.name}'.", this);
+                return;
+            }
+
             animator.ResetTrigger(attackTrigger);
-            animator.SetTrigger(attackTrigger);
+            // The visual Animator is handed off from the player root at runtime.
+            // Use the full-path hash so the state survives the playable-graph hand-off,
+            // while retaining a short blend instead of snapping into the first pose.
+            animator.CrossFadeInFixedTime(attackStateHash, 0.05f, 0, 0f);
             lastFireTime = Time.time;
         }
 
