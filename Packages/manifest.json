@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.daniel-geo.unityhackatime": "file:../Hackatime_Offline_Package/com.daniel-geo.unityhackatime",
+    "com.daniel-geo.unityhackatime": "https://github.com/daniel-geo/unity-hackatime.git#package",
     "com.unity.ai.assistant": "2.19.0-pre.2",
     "com.unity.ai.inference": "2.6.1",
     "com.unity.ai.navigation": "2.0.14",

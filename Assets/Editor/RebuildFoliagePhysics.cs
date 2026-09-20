@@ -15,7 +15,7 @@ namespace Mavis
 {
     public static class RebuildFoliagePhysics
     {
-        const string ScenePath = "Assets/Scenes/MainScene.unity";
+        const string ScenePath = "Assets/Scenes/Environment.unity";
         const string ColliderFolder = "Assets/Foliage/Colliders";
         const int TriangleBudget = 8000;
 
@@ -27,7 +27,7 @@ namespace Mavis
             Scene scene = SceneManager.GetActiveScene();
             if (scene.path != ScenePath || !scene.isLoaded)
             {
-                Debug.LogWarning("[Mavis] Foliage physics repair only runs in MainScene.");
+                Debug.LogWarning("[Mavis] Foliage physics repair only runs in Environment.");
                 return;
             }
 

@@ -51,9 +51,9 @@ namespace Mavis
         public static void RepairSceneMaterials()
         {
             Scene scene = SceneManager.GetActiveScene();
-            if (scene.path != "Assets/Scenes/MainScene.unity")
+            if (scene.path != "Assets/Scenes/Environment.unity")
             {
-                Debug.LogWarning("[Mavis] Material repair runs only in MainScene.");
+                Debug.LogWarning("[Mavis] Material repair runs only in Environment.");
                 return;
             }
 

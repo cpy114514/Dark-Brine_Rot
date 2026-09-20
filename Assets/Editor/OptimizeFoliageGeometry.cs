@@ -13,9 +13,9 @@ namespace Mavis
         public static void Run()
         {
             Scene scene = SceneManager.GetActiveScene();
-            if (scene.path != "Assets/Scenes/MainScene.unity")
+            if (scene.path != "Assets/Scenes/Environment.unity")
             {
-                Debug.LogWarning("[Mavis] Foliage optimization runs only in MainScene.");
+                Debug.LogWarning("[Mavis] Foliage optimization runs only in Environment.");
                 return;
             }
 

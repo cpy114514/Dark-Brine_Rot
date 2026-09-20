@@ -102,7 +102,7 @@ namespace Mavis
         public static void WriteReport()
         {
             Scene scene = SceneManager.GetActiveScene();
-            if (scene.path != "Assets/Scenes/MainScene.unity") return;
+            if (scene.path != "Assets/Scenes/Environment.unity") return;
             Physics.SyncTransforms();
             var output = new StringBuilder();
             foreach (GameObject sceneRoot in scene.GetRootGameObjects())

@@ -127,7 +127,14 @@ InitTestScene*.unity*
 /[Aa]ssets/com.kinematicsoup.scenefusion2lite.meta
 /[Kk]inematicSoup/
 
-# Temporary prefab duplicates Unity creates on duplicate imports
-# (matches `name (10).prefab`, `name (12).prefab`, etc.).
-**/island_tree_01_4k ([0-9]*).prefab
-**/island_tree_01_4k ([0-9]*).prefab.meta
+# Temporary prefab duplicates created by Unity and TreeGen on duplicate imports /
+# re-generate. Matches `name (10).prefab`, `name (1)_dst.prefab`, etc.
+**/* ([0-9]*).prefab
+**/* ([0-9]*).prefab.meta
+**/* ([0-9]*)_dst.prefab
+**/* ([0-9]*)_dst.prefab.meta
+
+# Unity auto-saves a `.unity.bak` next to a scene you open from the editor.
+# These are personal safety copies, not source of truth.
+*.unity.bak
+*.unity.bak.meta

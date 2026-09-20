@@ -28,7 +28,7 @@ namespace Mavis
                 sb.AppendLine("active scene: " + scene.path + " loaded=" + scene.isLoaded);
                 if (!scene.isLoaded)
                 {
-                    scene = EditorSceneManager.OpenScene("Assets/Scenes/MainScene.unity", OpenSceneMode.Single);
+                    scene = EditorSceneManager.OpenScene("Assets/Scenes/Environment.unity", OpenSceneMode.Single);
                     sb.AppendLine("opened " + scene.path);
                 }
 

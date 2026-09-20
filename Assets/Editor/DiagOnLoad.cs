@@ -81,8 +81,8 @@ namespace Diag
                 sb.AppendLine("total mesh assets: " + meshCount + "  with-0-mat: " + missingMatCount);
 
                 sb.AppendLine();
-                sb.AppendLine("== MainScene contents ==");
-                var scene = EditorSceneManager.OpenScene("Assets/Scenes/MainScene.unity", OpenSceneMode.Single);
+                sb.AppendLine("== Environment scene contents ==");
+                var scene = EditorSceneManager.OpenScene("Assets/Scenes/Environment.unity", OpenSceneMode.Single);
                 int goCount = 0;
                 foreach (var r in scene.GetRootGameObjects())
                 {
