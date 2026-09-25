@@ -4,6 +4,7 @@
 //   2. During the active swing window, enable the stick's trigger collider
 //      so OnTriggerEnter fires when hitting something with a Damageable tag.
 //   3. Optional damage event + cooldown to prevent spam-multi-hits per swing.
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,6 +31,7 @@ namespace Mavis
         bool attackQueued;
         float lastFireTime = -10f;
         int attackStateHash;
+        readonly HashSet<IDamageable> hitThisSwing = new HashSet<IDamageable>();
 
         void Reset()
         {
@@ -83,6 +85,7 @@ namespace Mavis
             }
 
             animator.ResetTrigger(attackTrigger);
+            hitThisSwing.Clear();
             // The visual Animator is handed off from the player root at runtime.
             // Use the full-path hash so the state survives the playable-graph hand-off,
             // while retaining a short blend instead of snapping into the first pose.
@@ -92,11 +95,17 @@ namespace Mavis
 
         void OnTriggerEnter(Collider other)
         {
-            if (!stickHitbox.enabled) return;
+            if (stickHitbox == null || !stickHitbox.enabled) return;
             if (((1 << other.gameObject.layer) & hitMask) == 0) return;
             if (!string.IsNullOrEmpty(enemyTag) && !other.CompareTag(enemyTag)) return;
+            // Body hitboxes also report trigger contacts through the player's
+            // kinematic Rigidbody. Only the stick's actual overlap may deal damage.
+            if (!Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
+                    stickHitbox.transform.rotation, other, other.transform.position,
+                    other.transform.rotation, out _, out _)) return;
             var dmg = other.GetComponentInParent<IDamageable>();
-            if (dmg != null) dmg.ApplyDamage(damage, transform.position);
+            if (dmg != null && hitThisSwing.Add(dmg))
+                dmg.ApplyDamage(damage, transform.position);
         }
     }
 

@@ -138,3 +138,16 @@ InitTestScene*.unity*
 # These are personal safety copies, not source of truth.
 *.unity.bak
 *.unity.bak.meta
+
+# Local tooling artifacts and process files - not project source
+# Blender work directory (source scripts, preview renders, QA reports)
+/BlenderWork/
+# Bundled Blender 5.2 asset library (brushes, presets) shipped under Tools/
+/Tools/blender/5.2/datafiles/
+# Hackatime offline tracking package
+/Hackatime_Offline_Package/
+# Agent / assistant local caches (skills, run data, scratch)
+.agents/
+.codex/
+# Unity Temp folder inside Assets/ (root /Temp/ already covered above)
+/Assets/Temp/

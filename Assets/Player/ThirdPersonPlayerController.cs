@@ -184,7 +184,17 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             return;
         }
 
+        bool exitedSwimming = wasSwimming;
         wasSwimming = false;
+        if (exitedSwimming)
+        {
+            // Water movement uses its own state and velocity.  As soon as an
+            // island collider takes over, return to the ground blend tree at
+            // walking speed before sprint input can accelerate it again.
+            Vector3 walkVelocity = (cameraForward * input.z + cameraRight * input.x) * moveSpeed;
+            planarVelocity = walkVelocity;
+            SetMotion(0, "Locomotion", 0.10f);
+        }
 
         bool grounded = IsGroundedOrOnSea();
         bool isRolling = rollTimer > 0f;
@@ -454,11 +464,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         characterController.Move((planarVelocity + Vector3.up * buoyancyVelocity) * Time.deltaTime);
 
         bool moving = planarVelocity.sqrMagnitude > 0.12f;
-        if (waterSplashes && !wasSwimming)
+        if (!wasSwimming)
         {
-            // One quiet breach ripple sells the waterline far better than a
-            // continuous fountain of polygon droplets around the swimmer.
-            EmitWaterSplash(0.46f, 2);
+            if (waterSplashes)
+            {
+                // One quiet breach ripple sells the waterline far better than a
+                // continuous fountain of polygon droplets around the swimmer.
+                EmitWaterSplash(0.46f, 2);
+            }
             wasSwimming = true;
         }
         UpdateUnderwaterBubbles(moving);

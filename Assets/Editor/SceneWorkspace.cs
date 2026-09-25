@@ -6,11 +6,11 @@ namespace Mavis.EditorTools
 {
     public static class SceneWorkspace
     {
-        const string Main = "Assets/Scenes/Main.unity";
-        const string Environment = "Assets/Scenes/Environment.unity";
-        const string Gameplay = "Assets/Scenes/Gameplay.unity";
-        const string Lighting = "Assets/Scenes/Lighting.unity";
-        const string Enemies = "Assets/Scenes/Enemies.unity";
+        const string Main = "Assets/Scenes/First Island/Main.unity";
+        const string Environment = "Assets/Scenes/First Island/Environment.unity";
+        const string Gameplay = "Assets/Scenes/First Island/Gameplay.unity";
+        const string Lighting = "Assets/Scenes/First Island/Lighting.unity";
+        const string Enemies = "Assets/Scenes/First Island/Enemies.unity";
 
         [MenuItem("Tools/Scenes/Open Full Workspace")]
         public static void OpenFullWorkspace()
