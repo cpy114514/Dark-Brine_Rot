@@ -358,7 +358,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         var mesh = new Mesh();
         foreach (SkinnedMeshRenderer renderer in renderers)
         {
-            renderer.BakeMesh(mesh);
+            // BakeMesh's default already includes the renderer scale. Asking
+            // for unscaled vertices prevents TransformPoint from applying it twice.
+            renderer.BakeMesh(mesh, true);
             foreach(var vertex in mesh.vertices)
             {
                 var point = transform.InverseTransformPoint(renderer.transform.TransformPoint(vertex));
@@ -370,7 +372,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (!initialized) return;
 
         characterController.height = Mathf.Max(1f, localBounds.size.y);
-        characterController.radius = Mathf.Clamp(Mathf.Min(localBounds.size.x, localBounds.size.z) * 0.32f, 0.18f, characterController.height * 0.45f);
+        // The animated bone colliders describe the limbs and torso. Keep this
+        // movement capsule inside the torso so it does not block contact early.
+        characterController.radius = Mathf.Clamp(Mathf.Min(localBounds.size.x, localBounds.size.z) * 0.25f, 0.15f, characterController.height * 0.45f);
         characterController.center = new Vector3(0f, localBounds.center.y, 0f);
         visualBaseOffset = localBounds.min.y;
         characterController.skinWidth = 0.015f;

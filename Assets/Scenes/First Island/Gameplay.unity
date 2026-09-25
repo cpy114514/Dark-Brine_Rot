@@ -526,6 +526,10 @@ PrefabInstance:
       propertyPath: spawnPoint
       value: 
       objectReference: {fileID: 1009845617}
+    - target: {fileID: 2086334352178926403, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: swimSubmergeDepth
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 6548037495126515326, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
       propertyPath: m_Name
       value: Sahur Player

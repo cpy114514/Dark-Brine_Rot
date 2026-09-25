@@ -1037,7 +1037,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8879528566716807029, guid: a0579fa34ed4147439a32b3201494819, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.275
+      value: -0.325
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1175,7 +1175,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.35
+  m_Radius: 0.27
   m_Height: 1.721541
   m_Direction: 1
   m_Center: {x: 0, y: 0.535, z: 0}
@@ -1193,7 +1193,7 @@ NavMeshAgent:
   m_Acceleration: 14
   avoidancePriority: 50
   m_AngularSpeed: 540
-  m_StoppingDistance: 2.296
+  m_StoppingDistance: 2.4
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
   m_AutoRepath: 1
@@ -1232,16 +1232,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongAI
   targetTag: Player
   sightRange: 12
-  attackRange: 2.8
-  attackInterval: 0.88
   giveUpRange: 35
-  feignDuration: 1.1
+  followStopDistance: 2.4
   chaseSpeed: 4.2
   turnSpeed: 600
-  visualGroundDrop: 0.275
+  visualGroundDrop: 0.325
+  keepVisualGroundOffset: 1
   animator: {fileID: 7736495598105563828}
   health: {fileID: 3929618944930166014}
-  attack: {fileID: 7919335226212313832}
 --- !u!114 &7919335226212313832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1249,7 +1247,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3960477964465410676}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 655b7d27986ff154d84c48aaf72ea44d, type: 3}
   m_Name: 
@@ -1292,7 +1290,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3960477964465410676}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aebf511830045464d85395df642d0bf2, type: 3}
   m_Name: 

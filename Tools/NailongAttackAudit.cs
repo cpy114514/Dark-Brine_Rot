@@ -30,6 +30,57 @@ public static class NailongAttackAudit
             .Select(x => x.name + " local=" + boss.transform.InverseTransformPoint(x.position)));
     }
 
+    public static string GroundReport()
+    {
+        var scene = SceneManager.GetSceneByPath("Assets/Scenes/First Island/Enemies.unity");
+        var boss = Array.Find(scene.GetRootGameObjects(), x => x.name == "Nailong");
+        var island = UnityEngine.Object.FindFirstObjectByType<ProceduralIsland>();
+        var skin = boss.GetComponentInChildren<SkinnedMeshRenderer>();
+        var b = new StringBuilder();
+        b.AppendLine("root=" + boss.transform.position + " surface=" + island.GetWorldSurfaceHeight(boss.transform.position) +
+            " meshMin=" + skin.bounds.min.y + " armatureRotation=" + boss.transform.Find("Armature").localRotation.eulerAngles);
+        foreach (var bone in skin.bones.Where(x => x != null &&
+            (x.name.Contains("Foot") || x.name.Contains("Toe") || x.name.Contains("Ankle"))))
+            b.AppendLine(bone.name + " local=" + boss.transform.InverseTransformPoint(bone.position) +
+                " y=" + bone.position.y + " surface=" + island.GetWorldSurfaceHeight(bone.position));
+        return b.ToString();
+    }
+
+    public static string CombatSetup()
+    {
+        if (!Application.isPlaying) return "Enter Play mode first.";
+        Application.runInBackground = true;
+        var scene = SceneManager.GetSceneByPath("Assets/Scenes/First Island/Enemies.unity");
+        var boss = Array.Find(scene.GetRootGameObjects(), x => x.name == "Nailong");
+        var sahur = UnityEngine.Object.FindFirstObjectByType<Mavis.PlayerHealth>();
+        var island = UnityEngine.Object.FindFirstObjectByType<ProceduralIsland>();
+        var controller = sahur.GetComponent<ThirdPersonPlayerController>();
+        if (controller != null) controller.enabled = false;
+        var cc = sahur.GetComponent<CharacterController>();
+        var pos = boss.transform.position + boss.transform.forward * 1.7f;
+        pos.y = island.GetWorldSurfaceHeight(pos) + (cc == null ? 0.5f :
+            (cc.height * 0.5f - cc.center.y) * Mathf.Abs(sahur.transform.lossyScale.y));
+        sahur.transform.position = pos;
+        sahur.currentHealth = sahur.maxHealth;
+        return "sahur=" + pos + " boss=" + boss.transform.position + " health=" + sahur.currentHealth;
+    }
+
+    public static string CombatReport()
+    {
+        var boss = UnityEngine.Object.FindFirstObjectByType<Mavis.NailongAI>();
+        var sahur = UnityEngine.Object.FindFirstObjectByType<Mavis.PlayerHealth>();
+        var target = (Transform)typeof(Mavis.NailongAI).GetField("target", BindingFlags.Instance | BindingFlags.NonPublic)
+            .GetValue(boss);
+        return "state=" + boss.CurrentState + " health=" + sahur.currentHealth +
+            " distance=" + Vector3.Distance(boss.transform.position, sahur.transform.position) +
+            " target=" + (target == null ? "null" : target.name + "@" + target.position + " tag=" + target.tag) +
+            " sahur=" + sahur.transform.position + " sahurTag=" + sahur.tag +
+            " aiEnabled=" + boss.enabled + " active=" + boss.gameObject.activeInHierarchy +
+            " frame=" + Time.frameCount + " time=" + Time.time + " scale=" + Time.timeScale +
+            " paused=" + EditorApplication.isPaused + " playing=" + EditorApplication.isPlaying +
+            " runInBackground=" + Application.runInBackground;
+    }
+
     static string Preview(Mavis.NailongAttackMotion.Style style)
     {
         if (!Application.isPlaying) return "Enter Play mode first.";
