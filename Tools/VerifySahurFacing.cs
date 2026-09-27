@@ -8,6 +8,7 @@ using Mavis;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public static class VerifySahurFacing
 {
@@ -41,6 +42,7 @@ public static class VerifySahurFacing
         var originalCursor = Cursor.lockState;
         bool originalCursorVisible = Cursor.visible;
         var report = new StringBuilder();
+        Action<ScriptableRenderContext, Camera> inspectRenderedPose = null;
         try
         {
             Time.timeScale = 1f;
@@ -51,6 +53,26 @@ public static class VerifySahurFacing
             Quaternion originalVisualRotation = visual.localRotation;
             var head = attack.animator.GetBoneTransform(HumanBodyBones.Head);
             Vector3 headFacingAxis = head.InverseTransformDirection(actor.transform.forward);
+            int renderedThirdSamples = 0;
+            float renderedThirdPeakYaw = 0f;
+            string renderedThirdError = null;
+            // Animator evaluation and LateUpdate display correction happen
+            // after Update tasks. Inspect the final pose presented to the
+            // renderer, rather than an intermediate uncorrected bone frame.
+            inspectRenderedPose = (context, camera) =>
+            {
+                if (camera.cameraType != CameraType.Game || attack.CurrentComboStage != 2) return;
+                var state = attack.animator.GetCurrentAnimatorStateInfo(0);
+                if (!state.IsName("Combo 3") || state.normalizedTime < attack.comboThreeHitWindow.x ||
+                    state.normalizedTime > attack.comboThreeHitWindow.y) return;
+                var face = Vector3.ProjectOnPlane(head.TransformDirection(headFacingAxis), Vector3.up).normalized;
+                float yaw = Mathf.Abs(Vector3.SignedAngle(actor.transform.forward, face, Vector3.up));
+                renderedThirdSamples++;
+                renderedThirdPeakYaw = Mathf.Max(renderedThirdPeakYaw, yaw);
+                if (yaw > 5f)
+                    renderedThirdError = $"Rendered third hit changed face heading: phase={state.normalizedTime:F3}, faceYaw={yaw:F2}, visualYaw={visual.localEulerAngles.y:F2}.";
+            };
+            RenderPipelineManager.beginCameraRendering += inspectRenderedPose;
             // Measured from the approved original-coordinate clips before
             // visual-heading correction; allow normal frame/blend variance.
             float[] referenceTravel = { 1.588f, 1.528f, 1.322f };
@@ -62,7 +84,7 @@ public static class VerifySahurFacing
                 Vector3 start = actor.transform.position;
                 var startedAt = Time.time;
                 Call(attack, "StartComboStage", stage);
-                float peakTurn = await WaitForAttack(attack, movement, actor.transform, facing, false, headFacingAxis);
+                float peakTurn = await WaitForAttack(attack, movement, actor.transform, facing, false);
                 AssertFacing(actor.transform, visual, facing, originalVisualRotation, "single hit " + (stage + 1));
                 float travel = Vector3.ProjectOnPlane(actor.transform.position - start, Vector3.up).magnitude;
                 if (Mathf.Abs(travel - referenceTravel[stage]) > referenceTravel[stage] * 0.15f)
@@ -75,9 +97,12 @@ public static class VerifySahurFacing
             Quaternion comboFacing = Quaternion.Euler(0f, -68f, 0f);
             actor.transform.rotation = comboFacing;
             Call(attack, "StartComboStage", 0);
-            float comboTurn = await WaitForAttack(attack, movement, actor.transform, comboFacing, true, headFacingAxis);
+            float comboTurn = await WaitForAttack(attack, movement, actor.transform, comboFacing, true);
             AssertFacing(actor.transform, visual, comboFacing, originalVisualRotation, "full three-hit combo");
             report.AppendLine($"Full combo: one shared starting heading, peak heading error={comboTurn:F4}deg, final drift={Quaternion.Angle(comboFacing, actor.transform.rotation):F4}deg");
+            if (renderedThirdSamples == 0) throw new InvalidOperationException("No Game-camera render frames were available to verify third-hit facing.");
+            if (renderedThirdError != null) throw new InvalidOperationException(renderedThirdError);
+            report.AppendLine($"Third-hit rendered pose: {renderedThirdSamples} samples, peak face yaw={renderedThirdPeakYaw:F2}deg; face heading remains aligned with the attack.");
 
             Quaternion heavyFacing = Quaternion.Euler(0f, 126f, 0f);
             actor.transform.rotation = heavyFacing;
@@ -124,6 +149,7 @@ public static class VerifySahurFacing
         }
         finally
         {
+            if (inspectRenderedPose != null) RenderPipelineManager.beginCameraRendering -= inspectRenderedPose;
             UnityEngine.Object.DestroyImmediate(holder);
             UnityEngine.Object.DestroyImmediate(floor);
             Time.timeScale = originalTimeScale;
@@ -132,7 +158,7 @@ public static class VerifySahurFacing
         }
     }
 
-    static async Task<float> WaitForAttack(SahurAttack attack, ThirdPersonPlayerController movement, Transform actor, Quaternion facing, bool chain, Vector3? headFacingAxis = null)
+    static async Task<float> WaitForAttack(SahurAttack attack, ThirdPersonPlayerController movement, Transform actor, Quaternion facing, bool chain)
     {
         var deadline = DateTime.UtcNow.AddSeconds(14);
         float peakTurn = 0f;
@@ -149,14 +175,6 @@ public static class VerifySahurFacing
                 var current = attack.animator.GetCurrentAnimatorStateInfo(0);
                 if (current.IsName("Combo " + (attack.CurrentComboStage + 1)) && Mathf.Abs(current.speed - 1.25f) > 0.001f)
                     throw new InvalidOperationException("The combo did not use the requested 1.25x playback speed.");
-                if (headFacingAxis.HasValue && attack.CurrentComboStage == 2 && current.IsName("Combo 3") &&
-                    current.normalizedTime >= attack.comboThreeHitWindow.x && current.normalizedTime <= attack.comboThreeHitWindow.y)
-                {
-                    var head = attack.animator.GetBoneTransform(HumanBodyBones.Head);
-                    var face = Vector3.ProjectOnPlane(head.TransformDirection(headFacingAxis.Value), Vector3.up).normalized;
-                    if (Vector3.Dot(face, facing * Vector3.forward) <= 0f)
-                        throw new InvalidOperationException($"The third combo hit visually faces behind its attack heading: phase={current.normalizedTime:F3}, faceYaw={Vector3.SignedAngle(facing * Vector3.forward, face, Vector3.up):F2}, visualYaw={actor.InverseTransformDirection(attack.animator.transform.forward)}.");
-                }
             }
             if (Get<bool>(movement, "hasAttackFacing") && Quaternion.Angle(Get<Quaternion>(movement, "attackFacing"), facing) > 0.1f)
                 throw new InvalidOperationException("A combo stage replaced the initial heading.");

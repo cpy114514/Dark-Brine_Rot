@@ -50,6 +50,10 @@ public static class AuditSahurVisualFacing
             var visual = animator.transform;
             Quaternion originalVisualRotation = visual.localRotation;
             Vector3 headForward = head.InverseTransformDirection(actor.transform.forward);
+            var hips = animator.GetBoneTransform(HumanBodyBones.Hips);
+            var chest = animator.GetBoneTransform(HumanBodyBones.UpperChest) ?? animator.GetBoneTransform(HumanBodyBones.Chest);
+            Vector3 hipsAxis = hips.InverseTransformDirection(actor.transform.forward);
+            Vector3 chestAxis = chest.InverseTransformDirection(actor.transform.forward);
             Vector3 referenceBody = Vector3.ProjectOnPlane(animator.bodyRotation * Vector3.forward, Vector3.up).normalized;
             cameraObject = new GameObject("Temporary Sahur heading camera");
             var camera = cameraObject.AddComponent<Camera>();
@@ -73,6 +77,8 @@ public static class AuditSahurVisualFacing
                     visual.localRotation = originalVisualRotation;
                     animator.Play("Combo " + stage, 0, phase);
                     animator.Update(0f);
+                    float sourceHips = Vector3.SignedAngle(Vector3.forward, Vector3.ProjectOnPlane(hips.TransformDirection(hipsAxis), Vector3.up), Vector3.up);
+                    float sourceChest = Vector3.SignedAngle(Vector3.forward, Vector3.ProjectOnPlane(chest.TransformDirection(chestAxis), Vector3.up), Vector3.up);
                     typeof(ThirdPersonPlayerController).GetMethod("AlignComboVisualFacing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(movement, null);
                     await Task.Delay(30);
                     var body = Vector3.ProjectOnPlane(animator.bodyRotation * Vector3.forward, Vector3.up).normalized;
@@ -80,7 +86,7 @@ public static class AuditSahurVisualFacing
                     var left = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;
                     var right = animator.GetBoneTransform(HumanBodyBones.RightUpperArm).position;
                     var shoulders = Vector3.ProjectOnPlane(Vector3.Cross(right - left, Vector3.up), Vector3.up).normalized;
-                    report.AppendLine($"Combo {stage} phase={phase:F2}: rootYaw={actor.transform.eulerAngles.y:F2}, bodyYaw={Vector3.SignedAngle(referenceBody, body, Vector3.up):F2}, headYaw={Vector3.SignedAngle(Vector3.forward, face, Vector3.up):F2}, shoulderYaw={Vector3.SignedAngle(Vector3.forward, shoulders, Vector3.up):F2}");
+                    report.AppendLine($"Combo {stage} phase={phase:F2}: rootYaw={actor.transform.eulerAngles.y:F2}, sourceHips={sourceHips:F2}, sourceChest={sourceChest:F2}, visualYaw={visual.localEulerAngles.y:F2}, bodyYaw={Vector3.SignedAngle(referenceBody, body, Vector3.up):F2}, headYaw={Vector3.SignedAngle(Vector3.forward, face, Vector3.up):F2}, shoulderYaw={Vector3.SignedAngle(Vector3.forward, shoulders, Vector3.up):F2}");
                     if (verify && stage == 3 && phase >= attack.comboThreeHitWindow.x &&
                         phase <= attack.comboThreeHitWindow.y && Vector3.Dot(face, Vector3.forward) <= 0f)
                         throw new InvalidOperationException("The third hit faces backwards during its hit window.");

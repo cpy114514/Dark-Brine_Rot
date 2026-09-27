@@ -79,6 +79,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Quaternion visualBaseRotation;
     Transform comboFacingBone;
     Vector3 comboBoneForwardAxis = Vector3.forward;
+    Transform comboHead;
+    Vector3 comboHeadForwardAxis = Vector3.forward;
     Mavis.SahurAttack combat;
     Camera playerCamera;
     float yaw;
@@ -192,6 +194,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
                                   animator.GetBoneTransform(HumanBodyBones.Hips);
                 if (comboFacingBone != null)
                     comboBoneForwardAxis = comboFacingBone.InverseTransformDirection(transform.forward);
+                comboHead = animator.GetBoneTransform(HumanBodyBones.Head);
+                if (comboHead != null)
+                    comboHeadForwardAxis = comboHead.InverseTransformDirection(transform.forward);
             }
         }
         SnapSpawnToIslandSurface();
@@ -677,10 +682,16 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     void AlignComboVisualFacing()
     {
         if (visualTransform == null || comboFacingBone == null) return;
-        // Use the actual animated chest transform, not Animator.bodyRotation:
+        // Use actual animated bone transforms, not Animator.bodyRotation:
         // its cached world rotation can lag behind a corrected visual parent
         // during crossfades. Live bone transforms also remain stable on pause.
-        Vector3 bodyForward = Vector3.ProjectOnPlane(comboFacingBone.TransformDirection(comboBoneForwardAxis), Vector3.up);
+        bool finalHit = combat != null && combat.CurrentComboStage == 2 ||
+                        animator != null && animator.GetCurrentAnimatorStateInfo(0).IsName("Combo 3");
+        // The final source strike also swings the head sideways. Keep Sahur's
+        // face aimed along the attack heading while preserving pitch and lean.
+        Transform facingBone = finalHit && comboHead != null ? comboHead : comboFacingBone;
+        Vector3 facingAxis = finalHit && comboHead != null ? comboHeadForwardAxis : comboBoneForwardAxis;
+        Vector3 bodyForward = Vector3.ProjectOnPlane(facingBone.TransformDirection(facingAxis), Vector3.up);
         Vector3 referenceForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
         if (bodyForward.sqrMagnitude < 0.0001f || referenceForward.sqrMagnitude < 0.0001f) return;
         float correction = Vector3.SignedAngle(bodyForward, referenceForward, Vector3.up);
