@@ -3,23 +3,24 @@ Shader "DarkBrine/Procedural Ocean"
     Properties
     {
         [Header(Colors)]
-        _ShallowColor ("Shallow brine", Color) = (0.045, 0.095, 0.120, 1)
-        _MidColor ("Mid brine", Color) = (0.012, 0.042, 0.058, 1)
-        _DeepColor ("Deep brine", Color) = (0.004, 0.012, 0.020, 1)
-        _FoamColor ("Cold foam", Color) = (0.62, 0.80, 0.86, 1)
+        _ShallowColor ("Shallow brine", Color) = (0.09, 0.22, 0.24, 1)
+        _MidColor ("Mid brine", Color) = (0.026, 0.09, 0.12, 1)
+        _DeepColor ("Deep brine", Color) = (0.012, 0.043, 0.065, 1)
+        _FoamColor ("Cold foam", Color) = (0.93, 0.97, 0.98, 1)
         _DepthFadeDistance ("Depth fade distance", Float) = 5.5
         _WaterOpacity ("Water opacity", Range(0, 1)) = 0.94
         _AbsorptionStrength ("Absorption strength", Range(0.1, 8)) = 3.7
 
         [Header(Waves)]
-        _Wave1 ("Wave 1 (dir XZ, amplitude, wavelength)", Vector) = (0.82, 0.57, 1.35, 180)
-        _Wave1Motion ("Wave 1 (speed, steepness)", Vector) = (0.82, 0.15, 0, 0)
-        _Wave2 ("Wave 2 (dir XZ, amplitude, wavelength)", Vector) = (-0.38, 0.93, 0.72, 92)
-        _Wave2Motion ("Wave 2 (speed, steepness)", Vector) = (0.95, 0.10, 0, 0)
-        _Wave3 ("Wave 3 (dir XZ, amplitude, wavelength)", Vector) = (0.96, -0.29, 0.32, 58)
-        _Wave3Motion ("Wave 3 (speed, steepness)", Vector) = (1.12, 0.06, 0, 0)
-        _Wave4 ("Wave 4 (dir XZ, amplitude, wavelength)", Vector) = (-0.72, -0.69, 0.16, 35)
-        _Wave4Motion ("Wave 4 (speed, steepness)", Vector) = (1.28, 0.03, 0, 0)
+        _Wave1 ("Wave 1 (dir XZ, amplitude, wavelength)", Vector) = (0.82, 0.57, 1.30, 95)
+        _Wave1Motion ("Wave 1 (speed, steepness)", Vector) = (12.2, 0.25, 0, 0)
+        _Wave2 ("Wave 2 (dir XZ, amplitude, wavelength)", Vector) = (-0.38, 0.93, 0.75, 44)
+        _Wave2Motion ("Wave 2 (speed, steepness)", Vector) = (8.3, 0.20, 0, 0)
+        _Wave3 ("Wave 3 (dir XZ, amplitude, wavelength)", Vector) = (0.96, -0.29, 0.28, 18)
+        _Wave3Motion ("Wave 3 (speed, steepness)", Vector) = (5.3, 0.12, 0, 0)
+        _Wave4 ("Wave 4 (dir XZ, amplitude, wavelength)", Vector) = (-0.72, -0.69, 0.11, 8)
+        _Wave4Motion ("Wave 4 (speed, steepness)", Vector) = (3.5, 0.08, 0, 0)
+        _WaveIrregularity ("Wave irregularity", Range(0, 1)) = 0.7
 
         [Header(Surface Detail)]
         _LargeDetailStrength ("Large variation", Range(0, 2)) = 0.34
@@ -42,10 +43,11 @@ Shader "DarkBrine/Procedural Ocean"
         _BrineStrength ("Brine strength", Range(0, 1)) = 0.10
 
         [Header(Foam)]
-        _FoamWidth ("Foam width", Range(0.05, 8)) = 2.2
-        _FoamStrength ("Foam strength", Range(0, 2)) = 0.66
+        _FoamWidth ("Foam width", Range(0.05, 8)) = 3.0
+        _FoamStrength ("Foam strength", Range(0, 2)) = 1.05
         _FoamNoiseScale ("Foam noise scale", Range(0.05, 2)) = 0.22
         _FoamSpeed ("Foam speed", Range(0, 2)) = 0.28
+        _FoamIrregularity ("Foam irregularity", Range(0, 1)) = 0.75
 
         _NearDetailDistance ("Near detail distance", Float) = 180
         _MidDetailDistance ("Mid detail distance", Float) = 700
@@ -89,6 +91,7 @@ Shader "DarkBrine/Procedural Ocean"
                 float4 _Wave3Motion;
                 float4 _Wave4;
                 float4 _Wave4Motion;
+                half _WaveIrregularity;
                 half _DepthFadeDistance;
                 half _WaterOpacity;
                 half _AbsorptionStrength;
@@ -110,6 +113,7 @@ Shader "DarkBrine/Procedural Ocean"
                 half _FoamStrength;
                 half _FoamNoiseScale;
                 half _FoamSpeed;
+                half _FoamIrregularity;
                 float _NearDetailDistance;
                 float _MidDetailDistance;
                 float _ViewDistance;
@@ -125,42 +129,6 @@ Shader "DarkBrine/Procedural Ocean"
                 half fogFactor : TEXCOORD3;
             };
 
-            // A Gerstner wave displaces points sideways as well as vertically. This creates
-            // a rolling crest rather than the up/down look of a simple sine surface.
-            float3 AddGerstnerWave(float4 wave, float4 motion, float3 samplePosition, float time, inout float3 tangent, inout float3 binormal)
-            {
-                float2 direction = normalize(wave.xy);
-                float waveNumber = TWO_PI / max(wave.w, 0.001);
-                float phase = waveNumber * (dot(direction, samplePosition.xz) - motion.x * time);
-                float sine = sin(phase);
-                float cosine = cos(phase);
-                float amplitude = wave.z;
-                float steepness = min(motion.y, 0.95);
-                float horizontal = steepness * amplitude;
-                float slope = amplitude * waveNumber;
-
-                tangent += float3(-direction.x * direction.x * horizontal * waveNumber * sine,
-                                   direction.x * slope * cosine,
-                                  -direction.x * direction.y * horizontal * waveNumber * sine);
-                binormal += float3(-direction.x * direction.y * horizontal * waveNumber * sine,
-                                    direction.y * slope * cosine,
-                                   -direction.y * direction.y * horizontal * waveNumber * sine);
-                return float3(direction.x * horizontal * cosine, amplitude * sine, direction.y * horizontal * cosine);
-            }
-
-            // Per-pixel crest detection keeps foam narrow and smooth instead of turning it
-            // into large facets based on the underlying mesh triangles.
-            float CrestAt(float2 samplePosition, float time)
-            {
-                float a = sin((dot(normalize(_Wave1.xy), samplePosition) - _Wave1Motion.x * time) * (TWO_PI / max(_Wave1.w, 0.001))) * (_Wave1.z * 0.34);
-                float b = sin((dot(normalize(_Wave2.xy), samplePosition) - _Wave2Motion.x * time) * (TWO_PI / max(_Wave2.w, 0.001)) + 1.9) * (_Wave2.z * 0.40);
-                float c = sin((dot(normalize(_Wave3.xy), samplePosition) - _Wave3Motion.x * time) * (TWO_PI / max(_Wave3.w, 0.001)) + 4.2) * (_Wave3.z * 0.50);
-                float d = sin((dot(normalize(_Wave4.xy), samplePosition) - _Wave4Motion.x * time) * (TWO_PI / max(_Wave4.w, 0.001)) + 2.7) * (_Wave4.z * 0.65);
-                return smoothstep(0.56, 0.90, a + b + c + d);
-            }
-
-            // A small, texture-free value-noise field breaks the foam into
-            // irregular patches instead of repeating stripes on every crest.
             float Hash21(float2 p)
             {
                 p = frac(p * float2(123.34, 456.21));
@@ -177,6 +145,65 @@ Shader "DarkBrine/Procedural Ocean"
                             lerp(Hash21(cell + float2(0, 1)), Hash21(cell + float2(1, 1)), local.x), local.y);
             }
 
+            // World-space, slowly drifting fields make neighbouring crests differ
+            // without jittering their phase independently every frame.
+            float2 WaveVariation(float2 p, float time)
+            {
+                return float2(
+                    ValueNoise(p * 0.011 + float2(17.3, -8.1) + time * float2(0.0017, -0.0011)),
+                    ValueNoise(p * 0.023 + float2(-12.7, 21.4) + time * float2(-0.0013, 0.0019)));
+            }
+
+            float2 WaveSample(float2 p, float2 variation)
+            {
+                return p + (variation - 0.5) * (10.0 * _WaveIrregularity);
+            }
+
+            float2 WaveWeights(float2 variation)
+            {
+                float swell = 1.0 + _WaveIrregularity *
+                    ((variation.x - 0.5) * 0.85 + (variation.y - 0.5) * 0.30);
+                float chop = 1.0 + _WaveIrregularity *
+                    ((variation.y - 0.5) * 0.70 - (variation.x - 0.5) * 0.20);
+                return float2(swell, chop);
+            }
+
+            // A Gerstner wave displaces points sideways as well as vertically. This creates
+            // a rolling crest rather than the up/down look of a simple sine surface.
+            float3 AddGerstnerWave(float4 wave, float4 motion, float weight, float3 samplePosition, float time, inout float3 tangent, inout float3 binormal)
+            {
+                float2 direction = normalize(wave.xy);
+                float waveNumber = TWO_PI / max(wave.w, 0.001);
+                float phase = waveNumber * (dot(direction, samplePosition.xz) - motion.x * time);
+                float sine = sin(phase);
+                float cosine = cos(phase);
+                float amplitude = wave.z * weight;
+                float steepness = min(motion.y, 0.95);
+                float horizontal = steepness * amplitude;
+                float slope = amplitude * waveNumber;
+
+                tangent += float3(-direction.x * direction.x * horizontal * waveNumber * sine,
+                                   direction.x * slope * cosine,
+                                  -direction.x * direction.y * horizontal * waveNumber * sine);
+                binormal += float3(-direction.x * direction.y * horizontal * waveNumber * sine,
+                                    direction.y * slope * cosine,
+                                   -direction.y * direction.y * horizontal * waveNumber * sine);
+                return float3(direction.x * horizontal * cosine, amplitude * sine, direction.y * horizontal * cosine);
+            }
+
+            // Per-pixel crest detection keeps foam narrow and smooth instead of turning it
+            // into large facets based on the underlying mesh triangles.
+            float CrestAt(float2 samplePosition, float time, float2 variation)
+            {
+                float2 warped = WaveSample(samplePosition, variation);
+                float2 weights = WaveWeights(variation);
+                float a = sin((dot(normalize(_Wave1.xy), warped) - _Wave1Motion.x * time) * (TWO_PI / max(_Wave1.w, 0.001))) * (_Wave1.z * weights.x * 0.34);
+                float b = sin((dot(normalize(_Wave2.xy), warped) - _Wave2Motion.x * (time + 1.9)) * (TWO_PI / max(_Wave2.w, 0.001))) * (_Wave2.z * weights.y * 0.40);
+                float c = sin((dot(normalize(_Wave3.xy), warped) - _Wave3Motion.x * (time + 4.2)) * (TWO_PI / max(_Wave3.w, 0.001))) * (_Wave3.z * weights.y * 0.50);
+                float d = sin((dot(normalize(_Wave4.xy), warped) - _Wave4Motion.x * (time + 2.7)) * (TWO_PI / max(_Wave4.w, 0.001))) * (_Wave4.z * weights.x * 0.65);
+                return smoothstep(0.36, 0.72, a + b + c + d);
+            }
+
             Varyings vert(Attributes input)
             {
                 Varyings output;
@@ -185,13 +212,19 @@ Shader "DarkBrine/Procedural Ocean"
                 float3 tangent = float3(1.0, 0.0, 0.0);
                 float3 binormal = float3(0.0, 0.0, 1.0);
                 float3 displacement = 0.0;
+                float2 variation = WaveVariation(basePosition.xz, _Time.y);
+                float2 weights = WaveWeights(variation);
+                float3 wavePosition = basePosition;
+                wavePosition.xz = WaveSample(basePosition.xz, variation);
 
-                displacement += AddGerstnerWave(_Wave1, _Wave1Motion, basePosition, _Time.y, tangent, binormal);
-                displacement += AddGerstnerWave(_Wave2, _Wave2Motion, basePosition, _Time.y + 1.9, tangent, binormal);
-                if (distanceToCamera < _MidDetailDistance)
-                    displacement += AddGerstnerWave(_Wave3, _Wave3Motion, basePosition, _Time.y + 4.2, tangent, binormal);
-                if (distanceToCamera < _NearDetailDistance)
-                    displacement += AddGerstnerWave(_Wave4, _Wave4Motion, basePosition, _Time.y + 2.7, tangent, binormal);
+                float mediumWeight = 1.0 - smoothstep(_MidDetailDistance * 0.75, _MidDetailDistance, distanceToCamera);
+                float nearWeight = 1.0 - smoothstep(_NearDetailDistance * 0.65, _NearDetailDistance, distanceToCamera);
+                displacement += AddGerstnerWave(_Wave1, _Wave1Motion, weights.x, wavePosition, _Time.y, tangent, binormal);
+                displacement += AddGerstnerWave(_Wave2, _Wave2Motion, weights.y, wavePosition, _Time.y + 1.9, tangent, binormal);
+                if (mediumWeight > 0.001)
+                    displacement += AddGerstnerWave(_Wave3, _Wave3Motion, mediumWeight * weights.y, wavePosition, _Time.y + 4.2, tangent, binormal);
+                if (nearWeight > 0.001)
+                    displacement += AddGerstnerWave(_Wave4, _Wave4Motion, nearWeight * weights.x, wavePosition, _Time.y + 2.7, tangent, binormal);
 
                 output.positionWS = basePosition + displacement;
                 output.normalWS = normalize(cross(binormal, tangent));
@@ -216,13 +249,22 @@ Shader "DarkBrine/Procedural Ocean"
                 float detailSlope = (largeNoise - 0.5) * _LargeDetailStrength * mediumDetailFade
                                   + (mediumNoise - 0.5) * _MediumDetailStrength * nearDetailFade
                                   + (rippleNoise - 0.5) * _RippleStrength * nearDetailFade;
-                half3 normalWS = normalize(input.normalWS + half3(-detailSlope, 0, detailSlope * 0.72));
+                float2 capillaryA = normalize(float2(0.93, 0.37));
+                float2 capillaryB = normalize(float2(-0.46, 0.89));
+                float microA = cos(dot(p, capillaryA) * 2.2 - _Time.y * 3.0 + mediumNoise * 2.0) * 0.045;
+                float microB = cos(dot(p, capillaryB) * 4.5 - _Time.y * 4.7) * 0.022;
+                float2 capillaryTilt = (capillaryA * microA + capillaryB * microB) * nearDetailFade;
+                half3 normalWS = normalize(input.normalWS + half3(-detailSlope - capillaryTilt.x, 0,
+                    detailSlope * 0.72 - capillaryTilt.y));
                 half3 viewDirection = SafeNormalize(GetWorldSpaceViewDir(input.positionWS));
 
                 float2 screenUv = input.screenPosition.xy / input.screenPosition.w;
                 float sceneRawDepth = SampleSceneDepth(screenUv);
                 float sceneEyeDepth = LinearEyeDepth(sceneRawDepth, _ZBufferParams);
-                float waterEyeDepth = LinearEyeDepth(input.positionCS.z / input.positionCS.w, _ZBufferParams);
+                // SV_POSITION is already rasterized in the fragment stage, so
+                // z/w is not clip depth here. Use view-space water depth to
+                // compare like-for-like with the sampled opaque scene depth.
+                float waterEyeDepth = -TransformWorldToView(input.positionWS).z;
                 float waterThickness = max(0.0, sceneEyeDepth - waterEyeDepth);
                 float shallowToMid = saturate(waterThickness / max(_DepthFadeDistance, 0.01));
                 float midToDeep = saturate(waterThickness * _AbsorptionStrength / max(_DepthFadeDistance, 0.01));
@@ -244,19 +286,44 @@ Shader "DarkBrine/Procedural Ocean"
                 half3 reflectionVector = reflect(-viewDirection, normalWS);
                 half perceptualRoughness = saturate(1.0h - _Smoothness + abs(detailSlope) * 0.10h);
                 half3 probeReflection = GlossyEnvironmentReflection(reflectionVector, perceptualRoughness, 1.0h);
-                half3 coldSkyFallback = half3(0.025h, 0.065h, 0.085h);
-                water = lerp(water, max(probeReflection, coldSkyFallback * 0.46h), saturate(fresnel * _ReflectionStrength));
+                half3 coldSkyFallback = half3(0.07h, 0.16h, 0.21h);
+                water = lerp(water, max(probeReflection, coldSkyFallback * 0.70h), saturate(fresnel * _ReflectionStrength));
 
                 float glintNoise = ValueNoise(p * 0.31 + _Time.y * float2(0.16, -0.11));
-                half glintMask = smoothstep(_SunGlitterThreshold, 1.0h, glintNoise);
-                water += half3(0.82h, 0.91h, 0.95h) * sun.color.rgb * sunGlint * (0.20h + glintMask * _SunGlitterStrength);
+                half glintField = glintNoise * 0.48h + mediumNoise * 0.32h + rippleNoise * 0.20h;
+                half glintMask = smoothstep(_SunGlitterThreshold - 0.16h,
+                    _SunGlitterThreshold + 0.10h, glintField);
+                half glintCluster = smoothstep(0.28h, 0.64h, largeNoise);
+                water += half3(0.82h, 0.91h, 0.95h) * sun.color.rgb * sunGlint *
+                    (0.015h + glintMask * glintCluster * _SunGlitterStrength);
 
                 float foamNoise = ValueNoise(p * _FoamNoiseScale + _Time.y * float2(0.15, -0.10) * _FoamSpeed);
-                half crestFoam = CrestAt(p, _Time.y) * smoothstep(0.46h, 0.78h, foamNoise) * nearDetailFade;
-                // This is evaluated from the opaque island depth behind each water
-                // pixel, so breakers follow the actual coast rather than an island radius.
-                half shoreFoam = (1.0h - smoothstep(0.02h, _FoamWidth, waterThickness)) * smoothstep(0.36h, 0.76h, foamNoise);
-                half foam = max(crestFoam * 0.34h, shoreFoam) * _FoamStrength;
+                float foamRegion = ValueNoise(p * (_FoamNoiseScale * 0.27) + float2(9.3, -17.6)
+                    + _Time.y * float2(0.008, -0.006) * _FoamSpeed);
+                float foamDetail = ValueNoise(p * (_FoamNoiseScale * 2.4) + float2(-14.2, 3.8)
+                    + _Time.y * float2(-0.09, 0.07) * _FoamSpeed);
+                float2 waveVariation = WaveVariation(p, _Time.y);
+                half crestCutoff = lerp(0.52h, 0.45h + (1.0h - foamRegion) * 0.18h, _FoamIrregularity);
+                half crestFoam = CrestAt(p, _Time.y, waveVariation) *
+                    smoothstep(crestCutoff, crestCutoff + 0.22h, foamNoise) * nearDetailFade;
+                // Opaque depth measures water above submerged terrain. A narrow
+                // bright contact line plus irregular advancing bands follows the
+                // real coastline, while deep water receives no shore foam.
+                half shoreMask = 1.0h - smoothstep(0.0h, _FoamWidth, waterThickness);
+                half contactPatch = lerp(1.0h, smoothstep(0.25h, 0.70h,
+                    foamRegion * 0.65h + foamDetail * 0.35h), _FoamIrregularity * 0.85h);
+                half contactWidth = lerp(0.28h, 0.15h + foamRegion * 0.26h, _FoamIrregularity);
+                half contactFoam = (1.0h - smoothstep(0.0h, contactWidth, waterThickness)) *
+                    0.45h * contactPatch;
+                half localSpeed = 1.8h + _FoamIrregularity * (foamRegion - 0.5h) * 0.9h;
+                half localSpacing = 2.5h + _FoamIrregularity * (foamDetail - 0.5h) * 1.1h;
+                half shorePulse = sin(waterThickness * localSpacing - _Time.y * localSpeed
+                    + foamNoise * 3.0h + (foamRegion - 0.5h) * _FoamIrregularity * 5.0h) * 0.5h + 0.5h;
+                half patchMask = lerp(1.0h, smoothstep(0.29h, 0.67h,
+                    foamRegion * 0.7h + foamDetail * 0.3h), _FoamIrregularity * 0.8h);
+                half breakerFoam = smoothstep(0.64h, 0.93h, shorePulse) *
+                    (0.25h + foamNoise * 0.55h + foamDetail * 0.2h) * patchMask;
+                half foam = max(crestFoam * 0.28h, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
                 water = lerp(water, _FoamColor.rgb, saturate(foam));
 
                 half haze = smoothstep(_MidDetailDistance * 0.68h, _ViewDistance, distanceToCamera);

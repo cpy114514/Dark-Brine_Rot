@@ -26,15 +26,13 @@ public class ProceduralIsland : MonoBehaviour
     public Texture2D drySand;
     public Texture2D forestGround;
     public Texture2D rockyTerrain;
+    public Texture2D coastSandNormal;
+    public Texture2D grassNormal;
+    public Texture2D rockyNormal;
     [Min(0.001f)] public float textureTiling = 0.09f;
 
     private Mesh islandMesh;
-    private Material coastSandMaterial;
-    private Material beachSandMaterial;
-    private Material sparseGrassMaterial;
-    private Material forestGroundMaterial;
-    private Material drySandMaterial;
-    private Material rockyTerrainMaterial;
+    private Material terrainMaterial;
     private GameObject shoreFoamObject;
     private Mesh shoreFoamMesh;
     private Material shoreFoamMaterial;
@@ -74,8 +72,10 @@ public class ProceduralIsland : MonoBehaviour
 
         var vertices = new List<Vector3>(1 + radialSegments * rings);
         var uv = new List<Vector2>(1 + radialSegments * rings);
+        var biomeUv = new List<Vector2>(1 + radialSegments * rings);
         vertices.Add(Vector3.up * SampleHeight(0f, 0f));
         uv.Add(Vector2.zero);
+        biomeUv.Add(Vector2.zero);
 
         for (var ring = 1; ring <= rings; ring++)
         {
@@ -91,15 +91,11 @@ public class ProceduralIsland : MonoBehaviour
                 // World-space-like tiling keeps the supplied 4K material detail
                 // consistent even when the island is hundreds of metres wide.
                 uv.Add(new Vector2(x * textureTiling, z * textureTiling));
+                biomeUv.Add(new Vector2(normalizedRadius, 0f));
             }
         }
 
-        var coastSand = new List<int>();
-        var beachSand = new List<int>();
-        var sparse = new List<int>();
-        var forest = new List<int>();
-        var dry = new List<int>();
-        var rocky = new List<int>();
+        var triangles = new List<int>(radialSegments * rings * 6);
         for (var ring = 0; ring < rings; ring++)
         {
             for (var segment = 0; segment < radialSegments; segment++)
@@ -109,30 +105,26 @@ public class ProceduralIsland : MonoBehaviour
                 var b = 1 + ring * radialSegments + segment;
                 var c = 1 + ring * radialSegments + nextSegment;
                 var d = ring == 0 ? 0 : 1 + (ring - 1) * radialSegments + nextSegment;
-                AddTriangle(a, b, c, vertices, coastSand, beachSand, sparse, forest, dry, rocky);
+                AddTriangle(a, b, c, triangles);
                 if (ring > 0)
-                    AddTriangle(a, c, d, vertices, coastSand, beachSand, sparse, forest, dry, rocky);
+                    AddTriangle(a, c, d, triangles);
             }
         }
 
         islandMesh.Clear();
         islandMesh.SetVertices(vertices);
         islandMesh.SetUVs(0, uv);
-        islandMesh.subMeshCount = 6;
-        islandMesh.SetTriangles(coastSand, 0, true);
-        islandMesh.SetTriangles(beachSand, 1, true);
-        islandMesh.SetTriangles(sparse, 2, true);
-        islandMesh.SetTriangles(forest, 3, true);
-        islandMesh.SetTriangles(dry, 4, true);
-        islandMesh.SetTriangles(rocky, 5, true);
+        islandMesh.SetUVs(1, biomeUv);
+        islandMesh.subMeshCount = 1;
+        islandMesh.SetTriangles(triangles, 0, true);
         islandMesh.RecalculateNormals();
         islandMesh.RecalculateBounds();
 
         filter.sharedMesh = islandMesh;
         collider.sharedMesh = null;
         collider.sharedMesh = islandMesh;
-        EnsureMaterials();
-        renderer.sharedMaterials = new[] { coastSandMaterial, beachSandMaterial, sparseGrassMaterial, forestGroundMaterial, drySandMaterial, rockyTerrainMaterial };
+        EnsureMaterial();
+        renderer.sharedMaterials = new[] { terrainMaterial };
         BuildShoreFoam();
     }
 
@@ -145,25 +137,12 @@ public class ProceduralIsland : MonoBehaviour
         return transform.TransformPoint(new Vector3(local.x, SampleHeight(normalizedRadius, angle), local.z)).y;
     }
 
-    private void AddTriangle(int a, int b, int c, List<Vector3> vertices, List<int> coastSand, List<int> beachSand, List<int> sparse, List<int> forest, List<int> dry, List<int> rocky)
+    private static void AddTriangle(int a, int b, int c, List<int> triangles)
     {
-        var center = (vertices[a] + vertices[b] + vertices[c]) / 3f;
-        var radius = new Vector2(center.x, center.z).magnitude;
-        var normalizedRadius = radius / EdgeRadius(Mathf.Atan2(center.z, center.x));
-        // Complete rings create natural, continuous biome bands without the
-        // saw-tooth material seams produced by per-triangle selection.
-        List<int> target;
-        if (normalizedRadius > 0.90f) target = coastSand;
-        else if (normalizedRadius > 0.78f) target = beachSand;
-        else if (normalizedRadius > 0.62f) target = sparse;
-        else if (normalizedRadius > 0.36f) target = forest;
-        else if (normalizedRadius > 0.23f) target = dry;
-        else target = rocky;
-        // The ring runs counter-clockwise in XZ; reverse this order so the
-        // terrain normals face the sky and the URP Lit material renders its top.
-        target.Add(a);
-        target.Add(c);
-        target.Add(b);
+        // XZ rings run counter-clockwise; reverse winding to face the sky.
+        triangles.Add(a);
+        triangles.Add(c);
+        triangles.Add(b);
     }
 
     private float EdgeRadius(float angle)
@@ -219,35 +198,34 @@ public class ProceduralIsland : MonoBehaviour
                + (1f - land) * 0.04f;
     }
 
-    private void EnsureMaterials()
+    private void EnsureMaterial()
     {
-        coastSandMaterial = CreateOrUpdateMaterial(coastSandMaterial, "Island Coast Sand 01", coastSand01, sandColor, 0.28f);
-        beachSandMaterial = CreateOrUpdateMaterial(beachSandMaterial, "Island Coast Sand 03", coastSand03, sandColor, 0.24f);
-        sparseGrassMaterial = CreateOrUpdateMaterial(sparseGrassMaterial, "Island Sparse Grass", sparseGrass, grassColor, 0.10f);
-        forestGroundMaterial = CreateOrUpdateMaterial(forestGroundMaterial, "Island Forest Ground", forestGround != null ? forestGround : leafyGrass, grassColor, 0.08f);
-        drySandMaterial = CreateOrUpdateMaterial(drySandMaterial, "Island Dry Sand", drySand, rockColor, 0.20f);
-        rockyTerrainMaterial = CreateOrUpdateMaterial(rockyTerrainMaterial, "Island Rocky Terrain", rockyTerrain, rockColor, 0.14f);
-    }
-
-    private static Material CreateOrUpdateMaterial(Material material, string materialName, Texture2D texture, Color fallbackColor, float smoothness)
-    {
-        if (material == null)
+        if (terrainMaterial == null)
         {
-            var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
-            material = new Material(shader) { name = materialName, hideFlags = HideFlags.DontSave };
+            var shader = Shader.Find("DarkBrine/Island Blended Terrain");
+            if (shader == null)
+            {
+                Debug.LogError("Island Blended Terrain shader is missing.", this);
+                return;
+            }
+            terrainMaterial = new Material(shader) { name = "Island Blended Terrain Material", hideFlags = HideFlags.DontSave };
         }
 
-        // The supplied grass scans are deliberately earthy.  A restrained tint
-        // preserves their natural detail while keeping grassland readable from
-        // the coastline under the scene's blue outdoor lighting.
-        var color = texture == null ? fallbackColor : Color.Lerp(Color.white, fallbackColor, 0.24f);
-        material.color = color;
-        if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
-        if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", texture);
-        if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", texture);
-        if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", smoothness);
-        if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", 0f);
-        return material;
+        terrainMaterial.SetTexture("_SandTex", coastSand03 != null ? coastSand03 : coastSand01);
+        terrainMaterial.SetTexture("_SandAltTex", coastSand01 != null ? coastSand01 : coastSand03);
+        terrainMaterial.SetTexture("_DryTex", drySand != null ? drySand : coastSand01);
+        terrainMaterial.SetTexture("_GrassTex", sparseGrass != null ? sparseGrass : leafyGrass);
+        terrainMaterial.SetTexture("_LeafyGrassTex", leafyGrass != null ? leafyGrass : sparseGrass);
+        terrainMaterial.SetTexture("_ForestTex", forestGround != null ? forestGround : leafyGrass);
+        terrainMaterial.SetTexture("_RockTex", rockyTerrain != null ? rockyTerrain : drySand);
+        terrainMaterial.SetTexture("_SandNormal", coastSandNormal != null ? coastSandNormal : Texture2D.normalTexture);
+        terrainMaterial.SetTexture("_GrassNormal", grassNormal != null ? grassNormal : Texture2D.normalTexture);
+        terrainMaterial.SetTexture("_RockNormal", rockyNormal != null ? rockyNormal : Texture2D.normalTexture);
+        terrainMaterial.SetColor("_SandTint", Color.Lerp(Color.white, sandColor, 0.10f));
+        terrainMaterial.SetColor("_GrassTint", Color.Lerp(Color.white, grassColor, 0.32f));
+        terrainMaterial.SetColor("_RockTint", Color.Lerp(Color.white, rockColor, 0.07f));
+        var ocean = FindFirstObjectByType<OceanWorld>();
+        terrainMaterial.SetFloat("_SeaLevel", ocean != null ? ocean.oceanHeight : 0f);
     }
 
     private void BuildShoreFoam()
@@ -273,16 +251,16 @@ public class ProceduralIsland : MonoBehaviour
         float seaLevel = ocean != null ? ocean.oceanHeight : 0f;
         float localSeaLevel = transform.InverseTransformPoint(new Vector3(transform.position.x, seaLevel, transform.position.z)).y;
 
-        const int rows = 8;
+        const int rows = 12;
         int columns = radialSegments + 1;
         var vertices = new Vector3[(rows + 1) * columns];
         var uv = new Vector2[vertices.Length];
         for (int row = 0; row <= rows; row++)
         {
             float across = row / (float)rows;
-            // Start at the actual sea-level contour, not the submerged outer
-            // edge of the island, then move from water onto wet sand.
-            float shoreOffset = Mathf.Lerp(14f, -6f, across);
+            // Keep breakers close to the actual waterline. The previous wide
+            // band covered the bay like a foam decal instead of shore wash.
+            float shoreOffset = Mathf.Lerp(9f, -2.5f, across);
             for (int column = 0; column <= radialSegments; column++)
             {
                 float angle = column / (float)radialSegments * Mathf.PI * 2f;
@@ -350,6 +328,11 @@ public class ProceduralIsland : MonoBehaviour
 
     private void OnDisable()
     {
+        if (terrainMaterial != null)
+        {
+            if (Application.isPlaying) Destroy(terrainMaterial); else DestroyImmediate(terrainMaterial);
+            terrainMaterial = null;
+        }
         if (shoreFoamMaterial != null)
         {
             if (Application.isPlaying) Destroy(shoreFoamMaterial); else DestroyImmediate(shoreFoamMaterial);

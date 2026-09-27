@@ -8,7 +8,7 @@ public static class NailongHandoffAudit
 {
     public static string Report()
     {
-        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Nailong/Nailong.prefab");
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Bosses/Nailong/Nailong.prefab");
         var boss = Boss();
         var sahur = UnityEngine.Object.FindFirstObjectByType<PlayerHealth>();
         return "playing=" + Application.isPlaying +

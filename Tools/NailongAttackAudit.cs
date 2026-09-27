@@ -103,7 +103,7 @@ public static class NailongAttackAudit
     {
         if (Application.isPlaying) return "Stop Play mode before editing the prefab.";
         NailongBossSetup.Build();
-        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Nailong/Nailong.prefab");
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Bosses/Nailong/Nailong.prefab");
         var motion = prefab.GetComponent<Mavis.NailongAttackMotion>();
         var ai = prefab.GetComponent<Mavis.NailongAI>();
         return "motion=" + (motion != null) + " visualGroundDrop=" + ai.visualGroundDrop +
@@ -124,7 +124,7 @@ public static class NailongAttackAudit
             c.name.IndexOf("kick", StringComparison.OrdinalIgnoreCase) >= 0 ||
             c.name.IndexOf("stomp", StringComparison.OrdinalIgnoreCase) >= 0))
             b.AppendLine(clip.name + " length=" + clip.length + " humanoid=" + clip.humanMotion);
-        var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>("Assets/Models/Nailong/NailongBoss.controller");
+        var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>("Assets/Game/Prefabs/Bosses/Nailong/NailongBoss.controller");
         foreach (var state in controller.layers[0].stateMachine.states)
             b.AppendLine("STATE " + state.state.name + " motion=" + state.state.motion?.name);
         return b.ToString();

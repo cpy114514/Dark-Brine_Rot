@@ -2,7 +2,7 @@ Shader "DarkBrine/Procedural Shore Foam"
 {
     Properties
     {
-        _FoamColor ("Foam colour", Color) = (0.78, 0.96, 1.0, 0.94)
+        _FoamColor ("Foam colour", Color) = (0.94, 0.97, 0.98, 0.98)
         _SeaLevel ("Sea level", Float) = 0
         _Wave1 ("Wave 1", Vector) = (0.82, 0.57, 1.35, 180)
         _Wave1Motion ("Wave 1 motion", Vector) = (9.0, 0.15, 0, 0)
@@ -102,27 +102,21 @@ Shader "DarkBrine/Procedural Shore Foam"
 
             half4 frag(Varyings input) : SV_Target
             {
-                float slowNoise = Noise(input.positionWS.xz * 0.17 + _Time.y * float2(0.10, -0.065));
-                float fineNoise = Noise(input.positionWS.xz * 0.74 - _Time.y * float2(0.29, 0.19));
-                // Broad cells break a crest into separate sections instead of
-                // drawing a uniform white ring around the whole island.
-                float breakerSections = Noise(input.positionWS.xz * 0.052 + _Time.y * float2(0.022, -0.014));
-                // Constant phase travels toward larger UV.y: from the water-side row
-                // onto the island, where depth naturally hides the spent foam.
-                float breakingBands = sin(input.uv.y * 21.0 - _Time.y * 4.8 + slowNoise * 6.0) * 0.5 + 0.5;
-                float shoreFade = smoothstep(0.025, 0.13, input.uv.y) * (1.0 - smoothstep(0.72, 0.94, input.uv.y));
-                // Keep distinct gaps between breakers, but give each crest a
-                // readable footprint from the player's beach-level camera.
-                float crestTexture = smoothstep(0.12, 0.58, fineNoise + slowNoise * 0.28);
-                float crestSections = smoothstep(0.24, 0.58, breakerSections + fineNoise * 0.18);
-                float crest = pow(saturate(breakingBands), 2.25) * crestTexture * crestSections;
-                float residueSections = smoothstep(0.18, 0.56, breakerSections + slowNoise * 0.25);
-                float residue = smoothstep(0.31, 0.68, slowNoise * 0.58 + fineNoise * 0.42) * residueSections * 0.54;
-                // A persistent wet-foam base makes the surf legible at beach
-                // height; the brighter crest and residue still travel through it.
-                float foamCoverage = saturate(0.32 + crest * 0.68 + residue * 0.35);
-                half alpha = shoreFade * foamCoverage * _FoamColor.a;
-                half3 foamColor = lerp(_FoamColor.rgb * 0.66, _FoamColor.rgb, saturate(crest + residue));
+                float2 shore = input.positionWS.xz;
+                float broad = Noise(shore * 0.12 + _Time.y * float2(0.024, -0.016));
+                float fine = Noise(shore * 0.67 - _Time.y * float2(0.18, 0.13));
+                float sections = Noise(shore * 0.075 + _Time.y * float2(0.015, -0.01));
+                // Narrow, irregular crests travel from sea to land. The thin
+                // remnants behind them fade instead of painting a solid ring.
+                float phase = input.uv.y * 18.0 - _Time.y * 2.9 + (broad - 0.5) * 3.5;
+                float crest = pow(saturate(sin(phase) * 0.5 + 0.5), 6.0);
+                float broken = 0.38 + 0.62 * smoothstep(0.26, 0.66, sections + fine * 0.18);
+                float lace = smoothstep(0.42, 0.72, fine) * (0.22 + broad * 0.24);
+                float edge = smoothstep(0.08, 0.22, input.uv.y)
+                           * (1.0 - smoothstep(0.76, 0.96, input.uv.y));
+                float coverage = saturate(crest * broken * 0.95 + lace * broken * 0.36);
+                half alpha = edge * coverage * _FoamColor.a;
+                half3 foamColor = lerp(_FoamColor.rgb * 0.86, _FoamColor.rgb, saturate(crest));
                 return half4(foamColor, alpha);
             }
             ENDHLSL

@@ -34,20 +34,22 @@ public sealed class OceanWorld : MonoBehaviour
     public EffectsQuality effectsQuality = EffectsQuality.Medium;
 
     [Header("Colors")]
-    public Color shallowColor = new Color(0.045f, 0.095f, 0.120f, 1f);
-    public Color midColor = new Color(0.012f, 0.042f, 0.058f, 1f);
-    public Color deepColor = new Color(0.004f, 0.012f, 0.020f, 1f);
+    public Color shallowColor = new Color(0.09f, 0.22f, 0.24f, 1f);
+    public Color midColor = new Color(0.026f, 0.09f, 0.12f, 1f);
+    public Color deepColor = new Color(0.012f, 0.043f, 0.065f, 1f);
     [Range(0.2f, 20f)] public float depthFadeDistance = 5.5f;
     [Range(0f, 1f)] public float waterOpacity = 0.94f;
     [Range(0.1f, 8f)] public float absorptionStrength = 3.7f;
 
     [Header("Waves")]
-    // Phase velocity is in metres per second. These scales follow the larger
-    // swell and smaller wind chop at visibly different, natural rates.
-    public OceanGerstnerWave wave1 = new OceanGerstnerWave { direction = new Vector2(0.82f, 0.57f), amplitude = 1.75f, wavelength = 130f, speed = 26f, steepness = 0.23f };
-    public OceanGerstnerWave wave2 = new OceanGerstnerWave { direction = new Vector2(-0.38f, 0.93f), amplitude = 1.10f, wavelength = 62f, speed = 20f, steepness = 0.17f };
-    public OceanGerstnerWave wave3 = new OceanGerstnerWave { direction = new Vector2(0.96f, -0.29f), amplitude = 0.52f, wavelength = 30f, speed = 15f, steepness = 0.11f };
-    public OceanGerstnerWave wave4 = new OceanGerstnerWave { direction = new Vector2(-0.72f, -0.69f), amplitude = 0.26f, wavelength = 15f, speed = 11f, steepness = 0.07f };
+    // Phase velocities approximately follow deep-water dispersion: the long
+    // swell travels faster than short wind chop without racing across the beach.
+    public OceanGerstnerWave wave1 = new OceanGerstnerWave { direction = new Vector2(0.82f, 0.57f), amplitude = 1.30f, wavelength = 95f, speed = 12.2f, steepness = 0.25f };
+    public OceanGerstnerWave wave2 = new OceanGerstnerWave { direction = new Vector2(-0.38f, 0.93f), amplitude = 0.75f, wavelength = 44f, speed = 8.3f, steepness = 0.20f };
+    public OceanGerstnerWave wave3 = new OceanGerstnerWave { direction = new Vector2(0.96f, -0.29f), amplitude = 0.28f, wavelength = 18f, speed = 5.3f, steepness = 0.12f };
+    public OceanGerstnerWave wave4 = new OceanGerstnerWave { direction = new Vector2(-0.72f, -0.69f), amplitude = 0.11f, wavelength = 8f, speed = 3.5f, steepness = 0.08f };
+    [Tooltip("Breaks up evenly spaced swells with broad, slowly drifting variations in crest shape and height.")]
+    [Range(0f, 1f)] public float waveIrregularity = 0.7f;
 
     [Header("Surface Detail")]
     [Range(0f, 2f)] public float largeDetailStrength = 0.42f;
@@ -70,11 +72,13 @@ public sealed class OceanWorld : MonoBehaviour
     [Range(0f, 1f)] public float brineStrength = 0.10f;
 
     [Header("Foam")]
-    public Color foamColor = new Color(0.62f, 0.80f, 0.86f, 1f);
-    [Range(0.05f, 8f)] public float foamWidth = 2.2f;
-    [Range(0f, 2f)] public float foamStrength = 0.66f;
+    public Color foamColor = new Color(0.93f, 0.97f, 0.98f, 1f);
+    [Range(0.05f, 8f)] public float foamWidth = 3.0f;
+    [Range(0f, 2f)] public float foamStrength = 1.05f;
     [Range(0.05f, 2f)] public float foamNoiseScale = 0.22f;
     [Range(0f, 2f)] public float foamSpeed = 0.28f;
+    [Tooltip("Varies the size, spacing and timing of individual white-water patches.")]
+    [Range(0f, 1f)] public float foamIrregularity = 0.75f;
 
     // Sky values are retained for the existing scene's sky controller, but ocean setup no
     // longer exposes them. The scene's completed sky is intentionally left untouched.
@@ -347,6 +351,8 @@ public sealed class OceanWorld : MonoBehaviour
         generatedMaterial.SetFloat("_FoamStrength", foamStrength);
         generatedMaterial.SetFloat("_FoamNoiseScale", foamNoiseScale);
         generatedMaterial.SetFloat("_FoamSpeed", foamSpeed);
+        generatedMaterial.SetFloat("_WaveIrregularity", waveIrregularity);
+        generatedMaterial.SetFloat("_FoamIrregularity", foamIrregularity);
         ApplyWave("_Wave1", wave1);
         ApplyWave("_Wave2", wave2);
         ApplyWave("_Wave3", wave3);
@@ -413,16 +419,17 @@ public sealed class OceanWorld : MonoBehaviour
 
         int cloudDetail = effectsQuality == EffectsQuality.Low ? 2 : effectsQuality == EffectsQuality.Medium ? 4 : 5;
         skyMaterial.SetFloat("_CloudDetail", cloudDetail);
-        skyMaterial.SetFloat("_CloudStrength", effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.82f : 0.90f);
+        skyMaterial.SetFloat("_CloudStrength", effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.72f : 0.80f);
         // Coverage directly controls the raymarched cloud volume; there is no secondary
         // mesh-cloud layer competing with it.
         skyMaterial.SetFloat("_CloudCoverage", cloudiness);
         // Wind controls the animated volume's horizontal drift.
         skyMaterial.SetFloat("_CloudSpeed", Mathf.Lerp(0f, 0.75f, cloudMotion));
         skyMaterial.SetFloat("_SunGlow", sunlightIntensity);
-        skyMaterial.SetColor("_HorizonColor", new Color(0.38f, 0.62f, 0.76f, 1f));
-        skyMaterial.SetColor("_ZenithColor", new Color(0.025f, 0.16f, 0.39f, 1f));
-        skyMaterial.SetColor("_CloudColor", new Color(0.92f, 0.96f, 1f, 1f));
+        skyMaterial.SetColor("_HorizonColor", new Color(0.67f, 0.82f, 0.94f, 1f));
+        skyMaterial.SetColor("_ZenithColor", new Color(0.18f, 0.47f, 0.79f, 1f));
+        skyMaterial.SetColor("_CloudColor", new Color(0.96f, 0.98f, 1f, 1f));
+        skyMaterial.SetColor("_SunColor", new Color(1f, 0.96f, 0.87f, 1f));
         skyDome.GetComponent<MeshRenderer>().sharedMaterial = skyMaterial;
         // This shader renders only on the sky sphere. Keeping it out of the skybox pass
         // avoids a second full-screen sky draw; the sphere's depth test skips covered pixels.

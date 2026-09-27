@@ -32,7 +32,7 @@ public static class MoveGrassMainToEnvironment
     private const string EnvironmentScenePath = "Assets/Scenes/Environment.unity";
 
     // Asset path substrings used to detect rostlinka grass prefab variants.
-    // Rostlinka lives under Assets/3d model/simple-grass-chunks/ and the FBX +
+    // Rostlinka lives under Assets/Game/Prefabs/Environment/Grass/SimpleGrassChunks/ and the FBX +
     // extracted per-blade prefabs all carry "rostlinka_07c_ske" in their name.
     // Matching on name (not GUID) keeps this tool working across re-imports.
     private static readonly string[] GrassPathMarkers =

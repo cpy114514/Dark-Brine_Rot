@@ -133,6 +133,9 @@ InitTestScene*.unity*
 **/* ([0-9]*).prefab.meta
 **/* ([0-9]*)_dst.prefab
 **/* ([0-9]*)_dst.prefab.meta
+# Numbered variants inside the organized game library are intentional assets.
+!/Assets/Game/Prefabs/**/*.prefab
+!/Assets/Game/Prefabs/**/*.prefab.meta
 
 # Unity auto-saves a `.unity.bak` next to a scene you open from the editor.
 # These are personal safety copies, not source of truth.

@@ -2,10 +2,10 @@ Shader "DarkBrine/Procedural Sky"
 {
     Properties
     {
-        _HorizonColor ("Horizon colour", Color) = (0.58, 0.74, 0.80, 1)
-        _ZenithColor ("Zenith colour", Color) = (0.09, 0.28, 0.48, 1)
+        _HorizonColor ("Horizon colour", Color) = (0.67, 0.82, 0.94, 1)
+        _ZenithColor ("Zenith colour", Color) = (0.18, 0.47, 0.79, 1)
         _CloudColor ("Cloud highlight", Color) = (0.94, 0.97, 0.98, 1)
-        _SunColor ("Sunlight colour", Color) = (1.0, 0.62, 0.32, 1)
+        _SunColor ("Sunlight colour", Color) = (1.0, 0.96, 0.87, 1)
         _CloudCoverage ("Weather coverage", Range(0, 1)) = 0.55
         _CloudStrength ("Cloud strength", Range(0, 1)) = 0.72
         _CloudDetail ("Raymarch quality", Range(1, 5)) = 4
@@ -94,9 +94,12 @@ Shader "DarkBrine/Procedural Sky"
                 float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
                 float3 samplePosition = position;
                 samplePosition.xz += wind;
+                // Use broader noise at long range. Fine 600 m features cannot be
+                // resolved by a horizon ray that travels tens of kilometres.
+                float distanceLod = saturate((distance(position, _WorldSpaceCameraPos) - 4500.0) / 15000.0);
                 // Each horizontal column gets its own floor and thickness so the
                 // volume reads as stacked tiers instead of a single flat slab.
-                float columnShape = Fbm(samplePosition * 0.0008 + float3(7.0, 0.0, -3.0), 3);
+                float columnShape = Fbm(samplePosition * lerp(0.0008, 0.00015, distanceLod) + float3(7.0, 0.0, -3.0), 3);
                 float localBase = cloudBase + (columnShape - 0.5) * 420.0;
                 float localThickness = cloudThickness * lerp(0.30, 1.55, saturate(columnShape * 1.15));
 
@@ -105,9 +108,9 @@ Shader "DarkBrine/Procedural Sky"
                 if (verticalProfile <= 0.0)
                     return 0.0;
 
-                float macro = Fbm(samplePosition * 0.00165, 4);
-                float erosion = Fbm(samplePosition * 0.0052 + float3(31.0, 7.0, -12.0), 3);
-                float wisps = Fbm(samplePosition * 0.012 + float3(-13.0, 41.0, 9.0), 2);
+                float macro = Fbm(samplePosition * lerp(0.00165, 0.00018, distanceLod), 4);
+                float erosion = Fbm(samplePosition * lerp(0.0052, 0.00038, distanceLod) + float3(31.0, 7.0, -12.0), 3);
+                float wisps = Fbm(samplePosition * lerp(0.012, 0.0007, distanceLod) + float3(-13.0, 41.0, 9.0), 2);
                 float threshold = lerp(0.74, 0.31, _CloudCoverage);
                 float shape = macro - threshold + (erosion - 0.50) * 0.30 + (wisps - 0.50) * 0.10;
                 return saturate(shape * 3.25) * verticalProfile;
@@ -115,11 +118,12 @@ Shader "DarkBrine/Procedural Sky"
 
             float ShadowDensity(float3 position, float cloudBase, float cloudThickness)
             {
+                float distanceLod = saturate((distance(position, _WorldSpaceCameraPos) - 4500.0) / 15000.0);
                 float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
                 position.xz += wind;
                 // Lighting must use the same columnShape as the view march, otherwise
                 // shadows would appear under columns that have already lifted their floor.
-                float columnShape = Fbm(position * 0.0008 + float3(7.0, 0.0, -3.0), 3);
+                float columnShape = Fbm(position * lerp(0.0008, 0.00015, distanceLod) + float3(7.0, 0.0, -3.0), 3);
                 float localBase = cloudBase + (columnShape - 0.5) * 420.0;
                 float localThickness = cloudThickness * lerp(0.30, 1.55, saturate(columnShape * 1.15));
 
@@ -128,7 +132,7 @@ Shader "DarkBrine/Procedural Sky"
                     * (1.0 - smoothstep(0.64, 1.0, heightFraction));
                 // Lighting only needs the broad cloud silhouette. The view march retains
                 // all fine erosion and wisps, avoiding three full density evaluations here.
-                float macro = Fbm(position * 0.00165, 2) * 1.29545;
+                float macro = Fbm(position * lerp(0.00165, 0.00018, distanceLod), 2) * 1.29545;
                 float threshold = lerp(0.74, 0.31, _CloudCoverage);
                 return saturate((macro - threshold) * 3.25) * verticalProfile;
             }
@@ -155,7 +159,7 @@ Shader "DarkBrine/Procedural Sky"
                 float elevation = saturate(rayDirection.y * 0.5 + 0.5);
                 float horizon = pow(saturate(1.0 - max(rayDirection.y, 0.0)), 2.2);
                 float3 sky = lerp(_HorizonColor.rgb, _ZenithColor.rgb, pow(elevation, 0.72));
-                sky = lerp(sky, float3(0.47, 0.62, 0.71), horizon * 0.17);
+                sky = lerp(sky, float3(0.78, 0.88, 0.96), horizon * 0.19);
 
                 float3 sunDirection = normalize(_SunDirection.xyz);
                 if (dot(sunDirection, sunDirection) < 0.01)
@@ -169,30 +173,34 @@ Shader "DarkBrine/Procedural Sky"
                 float cloudAlpha = 0.0;
                 float3 cloudLight = 0.0;
 
-                if (rayDirection.y > 0.018)
+                // Near the horizon, a cloud ray travels tens of kilometres and
+                // sparse volume samples alias into white speckles. The distant
+                // angular cloud layer below covers that range instead.
+                if (rayDirection.y > 0.14)
                 {
                     float entry = max(0.0, (cloudBase - rayOrigin.y) / rayDirection.y);
-                    float exit = min(7200.0, (cloudTop - rayOrigin.y) / rayDirection.y);
+                    float exit = min(24000.0, (cloudTop - rayOrigin.y) / rayDirection.y);
                     if (exit > entry)
                     {
                         int steps = _CloudDetail < 3.0 ? 8 : (_CloudDetail < 5.0 ? 14 : 20);
-                        if (entry > 3500.0) steps = max(4, steps / 2);
+                        if (entry > 3500.0) steps = max(10, steps * 3 / 4);
                         else if (entry > 1600.0) steps = max(6, steps * 3 / 4);
                         float segmentLength = (exit - entry) / steps;
                         float jitter = Hash31(rayDirection * 127.7) - 0.5;
+                        float jitterStrength = 0.65 * (1.0 - saturate((entry - 4000.0) / 8000.0));
                         float transmittance = 1.0;
                         [loop]
                         for (int i = 0; i < 20; i++)
                         {
                             if (i >= steps || transmittance < 0.015) break;
-                            float travel = entry + (i + 0.5 + jitter * 0.65) * segmentLength;
+                            float travel = entry + (i + 0.5 + jitter * jitterStrength) * segmentLength;
                             float3 samplePosition = rayOrigin + rayDirection * travel;
                             float density = CloudDensity(samplePosition, cloudBase, cloudThickness);
                             if (density > 0.001)
                             {
                                 float lightThroughCloud = SampleSunLight(samplePosition, sunDirection, cloudBase, cloudThickness);
-                                float phase = 0.32 + pow(sunFacing, 5.0) * 0.68;
-                                float3 shaded = lerp(float3(0.17, 0.24, 0.34), _CloudColor.rgb, lightThroughCloud);
+                                float phase = 0.72 + pow(sunFacing, 5.0) * 0.28;
+                                float3 shaded = lerp(float3(0.52, 0.64, 0.75), _CloudColor.rgb, lightThroughCloud);
                                 float opacity = density * segmentLength * 0.0034;
                                 cloudLight += transmittance * shaded * opacity * phase;
                                 transmittance *= exp(-opacity * 1.35);
@@ -202,9 +210,22 @@ Shader "DarkBrine/Procedural Sky"
                     }
                 }
 
+                float3 cloudColor = cloudLight / max(cloudAlpha, 0.001);
+                float horizonMix = 1.0 - smoothstep(0.08, 0.22, rayDirection.y);
+                if (horizonMix > 0.0)
+                {
+                    float2 farWind = _Time.y * _CloudSpeed * float2(0.021, -0.014);
+                    float2 farPosition = rayDirection.xz * 13.0 + farWind;
+                    float farCloud = 0.29
+                        + 0.10 * sin(farPosition.x * 0.81 + farPosition.y * 0.43)
+                        + 0.06 * sin(farPosition.x * 1.63 - farPosition.y * 0.92 + 1.7);
+                    cloudAlpha = lerp(cloudAlpha, farCloud, horizonMix);
+                    cloudColor = lerp(cloudColor, float3(0.77, 0.85, 0.92), horizonMix);
+                }
+
                 float sunHalo = pow(sunFacing, 34.0) * _SunGlow;
                 sky += _SunColor.rgb * sunHalo * (1.0 - cloudAlpha * 0.82) * 0.07;
-                sky = lerp(sky, cloudLight / max(cloudAlpha, 0.001), cloudAlpha * _CloudStrength);
+                sky = lerp(sky, cloudColor, cloudAlpha * _CloudStrength);
                 return half4(sky, 1.0);
             }
             ENDHLSL

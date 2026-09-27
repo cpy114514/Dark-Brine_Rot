@@ -7,7 +7,7 @@ public static class ApplyNailongTextures
 {
     public static string Apply()
     {
-        const string root = "Assets/Models/Nailong";
+        const string root = "Assets/Game/Prefabs/Bosses/Nailong";
         const string modelPath = root + "/nailong.fbx";
         const string textureFolder = root + "/Textures";
         const string materialFolder = root + "/Materials";

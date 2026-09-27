@@ -44,7 +44,7 @@ namespace Diag
                 log.AppendLine("PATH updated for this session");
 
                 // 2) Reimport every .blend whose model is missing or empty.
-                var blendGuids = AssetDatabase.FindAssets("t:Model", new[] { "Assets/3d model" });
+                var blendGuids = AssetDatabase.FindAssets("t:Model", new[] { "Assets/Game/Prefabs/Environment" });
                 int reimported = 0;
                 foreach (var g in blendGuids)
                 {
