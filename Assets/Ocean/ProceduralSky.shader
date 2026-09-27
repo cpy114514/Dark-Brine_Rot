@@ -11,6 +11,10 @@ Shader "DarkBrine/Procedural Sky"
         _CloudDetail ("Raymarch quality", Range(1, 5)) = 4
         _CloudSpeed ("Wind speed", Range(0, 1)) = 0.10
         _SunGlow ("Sunlight intensity", Range(0, 1)) = 0.72
+        _Daylight ("Daylight", Range(0, 1)) = 1
+        _NightFactor ("Night sky", Range(0, 1)) = 0
+        _MoonDirection ("Moon direction", Vector) = (0, 1, 0, 0)
+        _MoonIllumination ("Moon illumination", Range(0, 1)) = 0.5
     }
     SubShader
     {
@@ -41,7 +45,11 @@ Shader "DarkBrine/Procedural Sky"
                 half _CloudDetail;
                 half _CloudSpeed;
                 half _SunGlow;
+                half _Daylight;
+                half _NightFactor;
                 float4 _SunDirection;
+                float4 _MoonDirection;
+                half _MoonIllumination;
             CBUFFER_END
 
             struct Attributes { float4 positionOS : POSITION; };
@@ -165,12 +173,36 @@ Shader "DarkBrine/Procedural Sky"
                 if (dot(sunDirection, sunDirection) < 0.01)
                     sunDirection = normalize(float3(0.32, 0.78, 0.49));
                 float sunFacing = saturate(dot(rayDirection, sunDirection));
+                float cloudAlpha = 0.0;
+
+                // A soft warm scattering halo follows the actual sunset direction.
+                // The procedural disk remains a separate camera-facing sun mesh.
+                float mieHalo = pow(sunFacing, 11.0) * _SunGlow * 0.20;
+                float aureole = pow(sunFacing, 3.4) * _SunGlow * (1.0 - _Daylight) * 0.055;
+                float sunsetWash = pow(sunFacing, 1.7) * _SunGlow * (1.0 - _Daylight) * 0.07;
+                sky += _SunColor.rgb * (mieHalo + aureole + sunsetWash) * (1.0 - cloudAlpha * 0.72);
+
+                // Stable angular stars and an opposite-side moon fade in through blue hour.
+                float3 starCell = floor(rayDirection * 420.0);
+                float starHash = Hash31(starCell + 17.31);
+                float starPoint = smoothstep(0.99855, 0.99992, starHash);
+                float twinkle = 0.72 + 0.28 * sin(_Time.y * (0.45 + starHash) + starHash * 75.0);
+                float starVisibility = saturate(_NightFactor) * smoothstep(0.025, 0.18, rayDirection.y);
+                sky += float3(0.55, 0.70, 1.0) * starPoint * twinkle * starVisibility * 1.65;
+
+                float3 moonDirection = normalize(_MoonDirection.xyz);
+                if (dot(moonDirection, moonDirection) < 0.01)
+                    moonDirection = normalize(-sunDirection);
+                float moonFacing = saturate(dot(rayDirection, moonDirection));
+                float moonGlow = pow(moonFacing, 38.0) * lerp(0.04, 0.11, _MoonIllumination);
+                float moonAureole = pow(moonFacing, 5.5) * 0.012;
+                float3 moonColor = float3(0.58, 0.73, 1.0);
+                sky += moonColor * (moonGlow + moonAureole) * saturate(_NightFactor);
 
                 // World-space, high-altitude volume: no billboards or cloud textures.
                 float cloudBase = rayOrigin.y + 650.0;
                 float cloudThickness = 460.0;
                 float cloudTop = cloudBase + cloudThickness;
-                float cloudAlpha = 0.0;
                 float3 cloudLight = 0.0;
 
                 // Near the horizon, a cloud ray travels tens of kilometres and
@@ -200,7 +232,10 @@ Shader "DarkBrine/Procedural Sky"
                             {
                                 float lightThroughCloud = SampleSunLight(samplePosition, sunDirection, cloudBase, cloudThickness);
                                 float phase = 0.72 + pow(sunFacing, 5.0) * 0.28;
-                                float3 shaded = lerp(float3(0.52, 0.64, 0.75), _CloudColor.rgb, lightThroughCloud);
+                                float3 nightLight = float3(0.13, 0.19, 0.34);
+                                float3 sunlitCloud = lerp(nightLight, _CloudColor.rgb * _SunColor.rgb * 1.45,
+                                    saturate(lightThroughCloud * (0.25 + _Daylight * 0.75)));
+                                float3 shaded = lerp(nightLight, sunlitCloud, 0.35 + _Daylight * 0.65);
                                 float opacity = density * segmentLength * 0.0034;
                                 cloudLight += transmittance * shaded * opacity * phase;
                                 transmittance *= exp(-opacity * 1.35);
@@ -216,16 +251,17 @@ Shader "DarkBrine/Procedural Sky"
                 {
                     float2 farWind = _Time.y * _CloudSpeed * float2(0.021, -0.014);
                     float2 farPosition = rayDirection.xz * 13.0 + farWind;
-                    float farCloud = 0.29
-                        + 0.10 * sin(farPosition.x * 0.81 + farPosition.y * 0.43)
-                        + 0.06 * sin(farPosition.x * 1.63 - farPosition.y * 0.92 + 1.7);
+                    float farCloudShape = 0.5
+                        + 0.31 * sin(farPosition.x * 0.81 + farPosition.y * 0.43)
+                        + 0.19 * sin(farPosition.x * 1.63 - farPosition.y * 0.92 + 1.7);
+                    float farCloud = saturate(lerp(0.015, 0.70, _CloudCoverage)
+                        + (farCloudShape - 0.5) * 0.22);
                     cloudAlpha = lerp(cloudAlpha, farCloud, horizonMix);
                     cloudColor = lerp(cloudColor, float3(0.77, 0.85, 0.92), horizonMix);
                 }
 
-                float sunHalo = pow(sunFacing, 34.0) * _SunGlow;
-                sky += _SunColor.rgb * sunHalo * (1.0 - cloudAlpha * 0.82) * 0.07;
                 sky = lerp(sky, cloudColor, cloudAlpha * _CloudStrength);
+                sky *= 1.0 - cloudAlpha * saturate(_NightFactor) * 0.35;
                 return half4(sky, 1.0);
             }
             ENDHLSL

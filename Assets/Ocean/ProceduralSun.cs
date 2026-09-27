@@ -10,11 +10,13 @@ public sealed class ProceduralSun : MonoBehaviour
     public float maximumDistance = 1400f;
 
     Material generatedMaterial;
+    MeshRenderer sunRenderer;
     Light cachedLight;
 
     void OnEnable()
     {
         var renderer = GetComponent<MeshRenderer>();
+        sunRenderer = renderer;
         var shader = Shader.Find("DarkBrine/Procedural Sun");
         if (shader == null)
             return;
@@ -27,6 +29,18 @@ public sealed class ProceduralSun : MonoBehaviour
         PositionHighSun();
     }
 
+    public void SetAtmosphere(Color core, Color glow, float intensity, bool visible)
+    {
+        if (generatedMaterial != null)
+        {
+            generatedMaterial.SetColor("_CoreColor", core);
+            generatedMaterial.SetColor("_GlowColor", glow);
+            generatedMaterial.SetFloat("_Intensity", intensity);
+        }
+        if (sunRenderer != null && sunRenderer.enabled != visible)
+            sunRenderer.enabled = visible;
+    }
+
     void LateUpdate() => PositionHighSun();
 
     void PositionHighSun()
@@ -35,19 +49,27 @@ public sealed class ProceduralSun : MonoBehaviour
         if (camera == null)
             return;
 
-        // Keep the visual disc well above the horizon and inside the current camera range.
-        // This also lets free-flight cameras move without leaving the sun behind in world space.
-        Vector3 directionToSun = new Vector3(-0.32f, elevation, 0.78f).normalized;
+        if (!Application.isPlaying || cachedLight == null || !cachedLight.gameObject.activeInHierarchy)
+        {
+            foreach (var candidate in FindObjectsByType<Light>(FindObjectsSortMode.None))
+                if (candidate.type == LightType.Directional)
+                {
+                    cachedLight = candidate;
+                    break;
+                }
+        }
+        DayNightCycle cycle = cachedLight != null ? cachedLight.GetComponent<DayNightCycle>() : null;
+        Vector3 directionToSun = cycle != null
+            ? cycle.SunDirection
+            : cachedLight != null && cachedLight.type == LightType.Directional
+                ? -cachedLight.transform.forward
+                : new Vector3(-0.32f, elevation, 0.78f).normalized;
+        // Keep the visible sun locked to the animated directional light and camera.
         float distance = Mathf.Min(maximumDistance, camera.farClipPlane * 0.72f);
         distance = Mathf.Max(distance, 80f);
         transform.position = camera.transform.position + directionToSun * distance;
         transform.localScale = Vector3.one * (distance * apparentSize);
 
-        if (!Application.isPlaying || cachedLight == null || !cachedLight.gameObject.activeInHierarchy)
-            cachedLight = FindFirstObjectByType<Light>();
-        Light directional = cachedLight;
-        if (directional != null && directional.type == LightType.Directional)
-            directional.transform.rotation = Quaternion.LookRotation(-directionToSun, Vector3.up);
     }
 
     void OnDisable()

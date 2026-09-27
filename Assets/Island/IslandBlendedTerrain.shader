@@ -16,6 +16,13 @@ Shader "DarkBrine/Island Blended Terrain"
         _GrassTint ("Grass tint", Color) = (1, 1, 1, 1)
         _RockTint ("Rock tint", Color) = (1, 1, 1, 1)
         _SeaLevel ("Sea level", Float) = 0
+        _BeachTex ("Yellow beach sand", 2D) = "white" {}
+        [Normal] _BeachNormal ("Beach sand normal", 2D) = "bump" {}
+        _BeachTint ("Beach tint", Color) = (1.18, 1.08, 0.72, 1)
+        _BeachHeight ("Beach height above sea", Float) = 8
+        _BeachBlendWidth ("Beach transition height", Float) = 3.5
+        _BeachTiling ("Beach world tiling", Float) = 0.075
+        [HideInInspector] _BeachEnabled ("Beach enabled", Float) = 0
         [HideInInspector] _BaseMap ("Shadow base map", 2D) = "white" {}
         [HideInInspector] _BaseColor ("Shadow base color", Color) = (1, 1, 1, 1)
         [HideInInspector] _Cutoff ("Shadow cutoff", Float) = 0
@@ -49,6 +56,11 @@ Shader "DarkBrine/Island Blended Terrain"
                 half4 _GrassTint;
                 half4 _RockTint;
                 float _SeaLevel;
+                half4 _BeachTint;
+                float _BeachHeight;
+                float _BeachBlendWidth;
+                float _BeachTiling;
+                half _BeachEnabled;
             CBUFFER_END
 
             TEXTURE2D(_SandTex); SAMPLER(sampler_SandTex);
@@ -61,6 +73,8 @@ Shader "DarkBrine/Island Blended Terrain"
             TEXTURE2D(_SandNormal); SAMPLER(sampler_SandNormal);
             TEXTURE2D(_GrassNormal); SAMPLER(sampler_GrassNormal);
             TEXTURE2D(_RockNormal); SAMPLER(sampler_RockNormal);
+            TEXTURE2D(_BeachTex); SAMPLER(sampler_BeachTex);
+            TEXTURE2D(_BeachNormal); SAMPLER(sampler_BeachNormal);
 
             struct Attributes
             {
@@ -141,6 +155,19 @@ Shader "DarkBrine/Island Blended Terrain"
                 albedo = lerp(albedo, grass, grassBlend);
                 albedo = lerp(albedo, sand, shoreBlend);
 
+                // Use real sea-relative elevation instead of painting a fixed
+                // radial ring. Broad patches soften the dry-sand/grass boundary.
+                float2 beachUv = p * _BeachTiling;
+                half beachBlend = 0.0h;
+                if (_BeachEnabled > 0.5h)
+                {
+                    float beachElevation = shoreHeight + (detailPatch - 0.5) * 1.3;
+                    beachBlend = 1.0h - smoothstep(_BeachHeight - max(_BeachBlendWidth, 0.1),
+                        _BeachHeight, beachElevation);
+                    half3 yellowSand = SAMPLE_TEXTURE2D(_BeachTex, sampler_BeachTex, beachUv).rgb * _BeachTint.rgb;
+                    albedo = lerp(albedo, yellowSand, beachBlend);
+                }
+
                 half3 surfaceNormal = normalize(input.normalWS);
                 half slopeRock = (1.0h - smoothstep(0.68h, 0.92h, surfaceNormal.y)) * 0.70h;
                 half exposedSoil = smoothstep(0.60, 0.79, detailPatch) * 0.22h;
@@ -155,6 +182,11 @@ Shader "DarkBrine/Island Blended Terrain"
                 half3 sandNormal = UnpackNormal(SAMPLE_TEXTURE2D(_SandNormal, sampler_SandNormal, input.uv));
                 half3 detailNormal = normalize(lerp(rockNormal, grassNormal, forestBlend));
                 detailNormal = normalize(lerp(detailNormal, sandNormal, shoreBlend));
+                if (_BeachEnabled > 0.5h)
+                {
+                    half3 beachNormal = UnpackNormal(SAMPLE_TEXTURE2D(_BeachNormal, sampler_BeachNormal, beachUv));
+                    detailNormal = normalize(lerp(detailNormal, beachNormal, beachBlend));
+                }
                 detailNormal = normalize(lerp(detailNormal, rockNormal, slopeRock));
                 detailNormal.xy *= 0.55h;
                 detailNormal = normalize(detailNormal);

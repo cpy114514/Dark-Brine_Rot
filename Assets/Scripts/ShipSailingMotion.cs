@@ -42,7 +42,7 @@ public sealed class ShipSailingMotion : MonoBehaviour
         Vector3 position = transform.position;
         position += heading * (forwardSpeed * deltaTime);
 
-        float time = Time.time;
+        float time = Time.time * ocean.waveMotionSpeed;
         float halfLength = hullLength * 0.5f;
         float halfBeam = hullBeam * 0.5f;
         float center = SampleHeight(position, time);

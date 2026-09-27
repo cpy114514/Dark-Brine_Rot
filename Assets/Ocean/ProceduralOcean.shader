@@ -6,12 +6,14 @@ Shader "DarkBrine/Procedural Ocean"
         _ShallowColor ("Shallow brine", Color) = (0.09, 0.22, 0.24, 1)
         _MidColor ("Mid brine", Color) = (0.026, 0.09, 0.12, 1)
         _DeepColor ("Deep brine", Color) = (0.012, 0.043, 0.065, 1)
+        _WaterReflectionTint ("Night reflection tint", Color) = (0.07, 0.16, 0.21, 1)
         _FoamColor ("Cold foam", Color) = (0.93, 0.97, 0.98, 1)
         _DepthFadeDistance ("Depth fade distance", Float) = 5.5
         _WaterOpacity ("Water opacity", Range(0, 1)) = 0.94
         _AbsorptionStrength ("Absorption strength", Range(0.1, 8)) = 3.7
 
         [Header(Waves)]
+        _OceanMotionSpeed ("Ocean animation speed", Range(0.25, 4)) = 1.8
         _Wave1 ("Wave 1 (dir XZ, amplitude, wavelength)", Vector) = (0.82, 0.57, 1.30, 95)
         _Wave1Motion ("Wave 1 (speed, steepness)", Vector) = (12.2, 0.25, 0, 0)
         _Wave2 ("Wave 2 (dir XZ, amplitude, wavelength)", Vector) = (-0.38, 0.93, 0.75, 44)
@@ -48,6 +50,7 @@ Shader "DarkBrine/Procedural Ocean"
         _FoamNoiseScale ("Foam noise scale", Range(0.05, 2)) = 0.22
         _FoamSpeed ("Foam speed", Range(0, 2)) = 0.28
         _FoamIrregularity ("Foam irregularity", Range(0, 1)) = 0.75
+        _WhitecapStrength ("Open-water whitecaps", Range(0, 1)) = 0.55
 
         _NearDetailDistance ("Near detail distance", Float) = 180
         _MidDetailDistance ("Mid detail distance", Float) = 700
@@ -73,6 +76,7 @@ Shader "DarkBrine/Procedural Ocean"
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.5
+            #pragma multi_compile_fog
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
@@ -80,6 +84,7 @@ Shader "DarkBrine/Procedural Ocean"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _DeepColor;
+                half4 _WaterReflectionTint;
                 half4 _ShallowColor;
                 half4 _MidColor;
                 half4 _FoamColor;
@@ -92,6 +97,8 @@ Shader "DarkBrine/Procedural Ocean"
                 float4 _Wave4;
                 float4 _Wave4Motion;
                 half _WaveIrregularity;
+                float _OceanMotionSpeed;
+                half _WhitecapStrength;
                 half _DepthFadeDistance;
                 half _WaterOpacity;
                 half _AbsorptionStrength;
@@ -207,24 +214,25 @@ Shader "DarkBrine/Procedural Ocean"
             Varyings vert(Attributes input)
             {
                 Varyings output;
+                float oceanTime = _Time.y * _OceanMotionSpeed;
                 float3 basePosition = TransformObjectToWorld(input.positionOS.xyz);
                 float distanceToCamera = distance(basePosition.xz, _WorldSpaceCameraPos.xz);
                 float3 tangent = float3(1.0, 0.0, 0.0);
                 float3 binormal = float3(0.0, 0.0, 1.0);
                 float3 displacement = 0.0;
-                float2 variation = WaveVariation(basePosition.xz, _Time.y);
+                float2 variation = WaveVariation(basePosition.xz, oceanTime);
                 float2 weights = WaveWeights(variation);
                 float3 wavePosition = basePosition;
                 wavePosition.xz = WaveSample(basePosition.xz, variation);
 
                 float mediumWeight = 1.0 - smoothstep(_MidDetailDistance * 0.75, _MidDetailDistance, distanceToCamera);
                 float nearWeight = 1.0 - smoothstep(_NearDetailDistance * 0.65, _NearDetailDistance, distanceToCamera);
-                displacement += AddGerstnerWave(_Wave1, _Wave1Motion, weights.x, wavePosition, _Time.y, tangent, binormal);
-                displacement += AddGerstnerWave(_Wave2, _Wave2Motion, weights.y, wavePosition, _Time.y + 1.9, tangent, binormal);
+                displacement += AddGerstnerWave(_Wave1, _Wave1Motion, weights.x, wavePosition, oceanTime, tangent, binormal);
+                displacement += AddGerstnerWave(_Wave2, _Wave2Motion, weights.y, wavePosition, oceanTime + 1.9, tangent, binormal);
                 if (mediumWeight > 0.001)
-                    displacement += AddGerstnerWave(_Wave3, _Wave3Motion, mediumWeight * weights.y, wavePosition, _Time.y + 4.2, tangent, binormal);
+                    displacement += AddGerstnerWave(_Wave3, _Wave3Motion, mediumWeight * weights.y, wavePosition, oceanTime + 4.2, tangent, binormal);
                 if (nearWeight > 0.001)
-                    displacement += AddGerstnerWave(_Wave4, _Wave4Motion, nearWeight * weights.x, wavePosition, _Time.y + 2.7, tangent, binormal);
+                    displacement += AddGerstnerWave(_Wave4, _Wave4Motion, nearWeight * weights.x, wavePosition, oceanTime + 2.7, tangent, binormal);
 
                 output.positionWS = basePosition + displacement;
                 output.normalWS = normalize(cross(binormal, tangent));
@@ -236,6 +244,7 @@ Shader "DarkBrine/Procedural Ocean"
 
             half4 frag(Varyings input) : SV_Target
             {
+                float oceanTime = _Time.y * _OceanMotionSpeed;
                 float distanceToCamera = distance(input.positionWS.xz, _WorldSpaceCameraPos.xz);
                 float nearDetailFade = 1.0 - smoothstep(_NearDetailDistance * 0.68, _NearDetailDistance, distanceToCamera);
                 float mediumDetailFade = 1.0 - smoothstep(_MidDetailDistance * 0.72, _MidDetailDistance, distanceToCamera);
@@ -243,16 +252,16 @@ Shader "DarkBrine/Procedural Ocean"
 
                 // Three procedural scales affect the surface only near the camera, avoiding
                 // repeated normal maps and distant shimmer at the horizon.
-                float largeNoise = ValueNoise(p * 0.035 + _Time.y * float2(0.022, -0.014));
-                float mediumNoise = ValueNoise(p * 0.115 + _Time.y * float2(-0.065, 0.041));
-                float rippleNoise = ValueNoise(p * 0.58 + _Time.y * float2(0.22, 0.16));
+                float largeNoise = ValueNoise(p * 0.035 + oceanTime * float2(0.022, -0.014));
+                float mediumNoise = ValueNoise(p * 0.115 + oceanTime * float2(-0.065, 0.041));
+                float rippleNoise = ValueNoise(p * 0.58 + oceanTime * float2(0.22, 0.16));
                 float detailSlope = (largeNoise - 0.5) * _LargeDetailStrength * mediumDetailFade
                                   + (mediumNoise - 0.5) * _MediumDetailStrength * nearDetailFade
                                   + (rippleNoise - 0.5) * _RippleStrength * nearDetailFade;
                 float2 capillaryA = normalize(float2(0.93, 0.37));
                 float2 capillaryB = normalize(float2(-0.46, 0.89));
-                float microA = cos(dot(p, capillaryA) * 2.2 - _Time.y * 3.0 + mediumNoise * 2.0) * 0.045;
-                float microB = cos(dot(p, capillaryB) * 4.5 - _Time.y * 4.7) * 0.022;
+                float microA = cos(dot(p, capillaryA) * 2.2 - oceanTime * 3.0 + mediumNoise * 2.0) * 0.045;
+                float microB = cos(dot(p, capillaryB) * 4.5 - oceanTime * 4.7) * 0.022;
                 float2 capillaryTilt = (capillaryA * microA + capillaryB * microB) * nearDetailFade;
                 half3 normalWS = normalize(input.normalWS + half3(-detailSlope - capillaryTilt.x, 0,
                     detailSlope * 0.72 - capillaryTilt.y));
@@ -271,7 +280,7 @@ Shader "DarkBrine/Procedural Ocean"
 
                 half3 bodyColor = lerp(_ShallowColor.rgb, _MidColor.rgb, shallowToMid);
                 bodyColor = lerp(bodyColor, _DeepColor.rgb, midToDeep);
-                float brineNoise = ValueNoise(p * _BrineNoiseScale + _Time.y * float2(0.028, -0.018) * _BrineFlowSpeed);
+                float brineNoise = ValueNoise(p * _BrineNoiseScale + oceanTime * float2(0.028, -0.018) * _BrineFlowSpeed);
                 bodyColor *= 1.0h + (brineNoise - 0.5h) * _BrineStrength;
 
                 // Opaque Texture permits only a restrained near-shore hint of terrain.
@@ -286,10 +295,10 @@ Shader "DarkBrine/Procedural Ocean"
                 half3 reflectionVector = reflect(-viewDirection, normalWS);
                 half perceptualRoughness = saturate(1.0h - _Smoothness + abs(detailSlope) * 0.10h);
                 half3 probeReflection = GlossyEnvironmentReflection(reflectionVector, perceptualRoughness, 1.0h);
-                half3 coldSkyFallback = half3(0.07h, 0.16h, 0.21h);
+                half3 coldSkyFallback = _WaterReflectionTint.rgb;
                 water = lerp(water, max(probeReflection, coldSkyFallback * 0.70h), saturate(fresnel * _ReflectionStrength));
 
-                float glintNoise = ValueNoise(p * 0.31 + _Time.y * float2(0.16, -0.11));
+                float glintNoise = ValueNoise(p * 0.31 + oceanTime * float2(0.16, -0.11));
                 half glintField = glintNoise * 0.48h + mediumNoise * 0.32h + rippleNoise * 0.20h;
                 half glintMask = smoothstep(_SunGlitterThreshold - 0.16h,
                     _SunGlitterThreshold + 0.10h, glintField);
@@ -297,15 +306,15 @@ Shader "DarkBrine/Procedural Ocean"
                 water += half3(0.82h, 0.91h, 0.95h) * sun.color.rgb * sunGlint *
                     (0.015h + glintMask * glintCluster * _SunGlitterStrength);
 
-                float foamNoise = ValueNoise(p * _FoamNoiseScale + _Time.y * float2(0.15, -0.10) * _FoamSpeed);
+                float foamNoise = ValueNoise(p * _FoamNoiseScale + oceanTime * float2(0.15, -0.10) * _FoamSpeed);
                 float foamRegion = ValueNoise(p * (_FoamNoiseScale * 0.27) + float2(9.3, -17.6)
-                    + _Time.y * float2(0.008, -0.006) * _FoamSpeed);
+                    + oceanTime * float2(0.008, -0.006) * _FoamSpeed);
                 float foamDetail = ValueNoise(p * (_FoamNoiseScale * 2.4) + float2(-14.2, 3.8)
-                    + _Time.y * float2(-0.09, 0.07) * _FoamSpeed);
-                float2 waveVariation = WaveVariation(p, _Time.y);
+                    + oceanTime * float2(-0.09, 0.07) * _FoamSpeed);
+                float2 waveVariation = WaveVariation(p, oceanTime);
                 half crestCutoff = lerp(0.52h, 0.45h + (1.0h - foamRegion) * 0.18h, _FoamIrregularity);
-                half crestFoam = CrestAt(p, _Time.y, waveVariation) *
-                    smoothstep(crestCutoff, crestCutoff + 0.22h, foamNoise) * nearDetailFade;
+                half crestFoam = CrestAt(p, oceanTime, waveVariation) *
+                    smoothstep(crestCutoff, crestCutoff + 0.22h, foamNoise) * mediumDetailFade;
                 // Opaque depth measures water above submerged terrain. A narrow
                 // bright contact line plus irregular advancing bands follows the
                 // real coastline, while deep water receives no shore foam.
@@ -317,13 +326,13 @@ Shader "DarkBrine/Procedural Ocean"
                     0.45h * contactPatch;
                 half localSpeed = 1.8h + _FoamIrregularity * (foamRegion - 0.5h) * 0.9h;
                 half localSpacing = 2.5h + _FoamIrregularity * (foamDetail - 0.5h) * 1.1h;
-                half shorePulse = sin(waterThickness * localSpacing - _Time.y * localSpeed
+                half shorePulse = sin(waterThickness * localSpacing - oceanTime * localSpeed
                     + foamNoise * 3.0h + (foamRegion - 0.5h) * _FoamIrregularity * 5.0h) * 0.5h + 0.5h;
                 half patchMask = lerp(1.0h, smoothstep(0.29h, 0.67h,
                     foamRegion * 0.7h + foamDetail * 0.3h), _FoamIrregularity * 0.8h);
                 half breakerFoam = smoothstep(0.64h, 0.93h, shorePulse) *
                     (0.25h + foamNoise * 0.55h + foamDetail * 0.2h) * patchMask;
-                half foam = max(crestFoam * 0.28h, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
+                half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
                 water = lerp(water, _FoamColor.rgb, saturate(foam));
 
                 half haze = smoothstep(_MidDetailDistance * 0.68h, _ViewDistance, distanceToCamera);

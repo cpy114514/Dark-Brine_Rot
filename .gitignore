@@ -152,5 +152,8 @@ InitTestScene*.unity*
 # Agent / assistant local caches (skills, run data, scratch)
 .agents/
 .codex/
+# Local-only agent / assistant tooling scripts (outside Assets/ so they don't trigger reimports).
+# Keep them out of the repo: they're scaffolding for AI-driven one-off jobs, not project source.
+AgentScripts/
 # Unity Temp folder inside Assets/ (root /Temp/ already covered above)
 /Assets/Temp/

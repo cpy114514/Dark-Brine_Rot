@@ -16,7 +16,7 @@ namespace Mavis
         const string PrefabPath = Root + "/SahurPlayer.prefab";
         const string AudioPath = Root + "/Audio/";
 
-        [MenuItem("Mavis/Sahur/Setup Stick Three-Hit Combo")]
+        [MenuItem("Mavis/Sahur/Legacy/Setup KayKit Stick Three-Hit Combo")]
         public static void Run()
         {
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);

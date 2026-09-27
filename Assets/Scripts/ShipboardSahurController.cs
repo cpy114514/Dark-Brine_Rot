@@ -29,6 +29,8 @@ public sealed class ShipboardSahurController : MonoBehaviour
     Animator animator;
     Camera viewCamera;
     ShipFollowCamera shipCamera;
+    ShipLadder[] ladders;
+    ShipLadder activeLadder;
     Vector3 spawnShipLocalPosition;
     Vector3 lastShipLocalPosition;
     Vector3 planarVelocity;
@@ -39,6 +41,8 @@ public sealed class ShipboardSahurController : MonoBehaviour
     bool cameraInitialized;
     int jumpState;
     float landingTimer;
+    float ladderDistance;
+    int ladderDirection;
     bool groundedLastFrame;
 
     static readonly int SpeedId = Animator.StringToHash("Speed");
@@ -51,6 +55,7 @@ public sealed class ShipboardSahurController : MonoBehaviour
         {
             spawnShipLocalPosition = ship.InverseTransformPoint(transform.position);
             lastShipLocalPosition = spawnShipLocalPosition;
+            ladders = ship.GetComponents<ShipLadder>();
         }
 
         // The imported animation curves must drive the model, not its movement root.
@@ -90,7 +95,7 @@ public sealed class ShipboardSahurController : MonoBehaviour
     {
         // CharacterController does not inherit a moving parent's physics position
         // reliably. Keep Sahur independent and explicitly carry him with the deck.
-        if (ship != null)
+        if (activeLadder == null && ship != null)
         {
             Vector3 carriedPosition = ship.TransformPoint(lastShipLocalPosition);
             controller.Move(carriedPosition - transform.position);
@@ -99,7 +104,11 @@ public sealed class ShipboardSahurController : MonoBehaviour
 
         Keyboard keyboard = Keyboard.current;
         Mouse mouse = Mouse.current;
-        if (keyboard == null || PauseSettingsMenu.IsOpen) return;
+        if (keyboard == null || PauseSettingsMenu.IsOpen)
+        {
+            if (activeLadder != null) PlaceLadderFeet();
+            return;
+        }
 
         if (keyboard.vKey.wasPressedThisFrame)
         {
@@ -130,6 +139,18 @@ public sealed class ShipboardSahurController : MonoBehaviour
         Vector3 right = Quaternion.Euler(0f, yaw, 0f) * Vector3.right;
         float speed = walkSpeed * (GameInputSettings.Pressed(GameInputSettings.Action.Sprint) ? sprintMultiplier : 1f);
         Vector3 desired = (forward * input.y + right * input.x) * speed;
+
+        if (activeLadder != null)
+        {
+            UpdateLadder();
+            return;
+        }
+        if (TryStartLadder(desired))
+        {
+            UpdateLadder();
+            return;
+        }
+
         planarVelocity = Vector3.MoveTowards(planarVelocity, desired, acceleration * Time.deltaTime);
 
         bool grounded = groundedLastFrame || controller.isGrounded;
@@ -185,6 +206,86 @@ public sealed class ShipboardSahurController : MonoBehaviour
             groundedLastFrame = false;
             if (animator != null) animator.CrossFadeInFixedTime("Locomotion", 0.08f);
         }
+        if (ship != null) lastShipLocalPosition = ship.InverseTransformPoint(transform.position);
+    }
+
+    bool TryStartLadder(Vector3 desired)
+    {
+        if (ladders == null || desired.sqrMagnitude < 0.1f ||
+            !GameInputSettings.Pressed(GameInputSettings.Action.Forward))
+            return false;
+
+        Vector3 feet = FeetPosition();
+        foreach (ShipLadder ladder in ladders)
+        {
+            if (ladder == null || !ladder.enabled) continue;
+            if (Vector3.Distance(feet, ladder.Bottom) <= ladder.entryDistance &&
+                Vector3.Dot(desired.normalized, ladder.HorizontalUp) > 0.45f)
+            {
+                BeginLadder(ladder, true);
+                return true;
+            }
+            if (Vector3.Distance(feet, ladder.DeckExit) <= ladder.entryDistance &&
+                Vector3.Dot(desired.normalized, -ladder.HorizontalUp) > 0.45f)
+            {
+                BeginLadder(ladder, false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void BeginLadder(ShipLadder ladder, bool ascending)
+    {
+        activeLadder = ladder;
+        ladderDirection = ascending ? 1 : -1;
+        ladderDistance = ascending ? 0f : ladder.Length;
+        controller.enabled = false;
+        planarVelocity = Vector3.zero;
+        verticalSpeed = 0f;
+        groundedLastFrame = false;
+        jumpState = 0;
+        if (animator != null) animator.CrossFadeInFixedTime("Locomotion", 0.08f);
+        PlaceLadderFeet();
+    }
+
+    void UpdateLadder()
+    {
+        float input = (GameInputSettings.Pressed(GameInputSettings.Action.Forward) ? 1f : 0f) -
+                      (GameInputSettings.Pressed(GameInputSettings.Action.Back) ? 1f : 0f);
+        ladderDistance = Mathf.Clamp(ladderDistance +
+            input * ladderDirection * activeLadder.climbSpeed * Time.deltaTime,
+            0f, activeLadder.Length);
+        PlaceLadderFeet();
+
+        Vector3 horizontal = activeLadder.HorizontalUp * ladderDirection;
+        transform.rotation = Quaternion.RotateTowards(transform.rotation,
+            Quaternion.LookRotation(horizontal, Vector3.up), turnSpeed * Time.deltaTime);
+        if (animator != null)
+            animator.SetFloat(SpeedId, Mathf.Abs(input) * 1.5f, 0.08f, Time.deltaTime);
+
+        bool reachedTop = ladderDistance >= activeLadder.Length - 0.001f &&
+                          input * ladderDirection > 0f;
+        bool reachedBottom = ladderDistance <= 0.001f &&
+                             input * ladderDirection < 0f;
+        if (!reachedTop && !reachedBottom) return;
+
+        controller.enabled = true;
+        activeLadder = null;
+        verticalSpeed = -2f;
+        lastShipLocalPosition = ship.InverseTransformPoint(transform.position);
+    }
+
+    Vector3 FeetPosition()
+    {
+        return transform.position + Vector3.up *
+            ((controller.center.y - controller.height * 0.5f) * transform.lossyScale.y);
+    }
+
+    void PlaceLadderFeet()
+    {
+        transform.position = activeLadder.PointAt(ladderDistance) - Vector3.up *
+            ((controller.center.y - controller.height * 0.5f) * transform.lossyScale.y);
         if (ship != null) lastShipLocalPosition = ship.InverseTransformPoint(transform.position);
     }
 

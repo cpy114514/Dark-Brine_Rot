@@ -4,6 +4,7 @@ Shader "DarkBrine/Procedural Shore Foam"
     {
         _FoamColor ("Foam colour", Color) = (0.94, 0.97, 0.98, 0.98)
         _SeaLevel ("Sea level", Float) = 0
+        _OceanMotionSpeed ("Ocean animation speed", Range(0.25, 4)) = 1.8
         _Wave1 ("Wave 1", Vector) = (0.82, 0.57, 1.35, 180)
         _Wave1Motion ("Wave 1 motion", Vector) = (9.0, 0.15, 0, 0)
         _Wave2 ("Wave 2", Vector) = (-0.38, 0.93, 0.72, 92)
@@ -36,6 +37,7 @@ Shader "DarkBrine/Procedural Shore Foam"
             CBUFFER_START(UnityPerMaterial)
                 half4 _FoamColor;
                 float _SeaLevel;
+                float _OceanMotionSpeed;
                 float4 _Wave1;
                 float4 _Wave1Motion;
                 float4 _Wave2;
@@ -86,12 +88,13 @@ Shader "DarkBrine/Procedural Shore Foam"
             {
                 Varyings output;
                 float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
-                float waveHeight = WaveHeight(_Wave1, _Wave1Motion, positionWS.xz, _Time.y)
-                                 + WaveHeight(_Wave2, _Wave2Motion, positionWS.xz, _Time.y + 1.9)
-                                 + WaveHeight(_Wave3, _Wave3Motion, positionWS.xz, _Time.y + 4.2)
-                                 + WaveHeight(_Wave4, _Wave4Motion, positionWS.xz, _Time.y + 2.7);
-                float breakerLift = sin(input.uv.x * 9.0 + _Time.y * 3.1) * 0.045
-                                  + sin(input.uv.x * 17.0 - _Time.y * 4.4) * 0.022;
+                float oceanTime = _Time.y * _OceanMotionSpeed;
+                float waveHeight = WaveHeight(_Wave1, _Wave1Motion, positionWS.xz, oceanTime)
+                                 + WaveHeight(_Wave2, _Wave2Motion, positionWS.xz, oceanTime + 1.9)
+                                 + WaveHeight(_Wave3, _Wave3Motion, positionWS.xz, oceanTime + 4.2)
+                                 + WaveHeight(_Wave4, _Wave4Motion, positionWS.xz, oceanTime + 2.7);
+                float breakerLift = sin(input.uv.x * 9.0 + oceanTime * 3.1) * 0.045
+                                  + sin(input.uv.x * 17.0 - oceanTime * 4.4) * 0.022;
                 float wetEdge = smoothstep(0.02, 0.20, input.uv.y) * (1.0 - smoothstep(0.62, 0.88, input.uv.y));
                 positionWS.y = _SeaLevel + waveHeight + 0.14 + breakerLift * wetEdge;
                 output.positionWS = positionWS;
@@ -103,12 +106,13 @@ Shader "DarkBrine/Procedural Shore Foam"
             half4 frag(Varyings input) : SV_Target
             {
                 float2 shore = input.positionWS.xz;
-                float broad = Noise(shore * 0.12 + _Time.y * float2(0.024, -0.016));
-                float fine = Noise(shore * 0.67 - _Time.y * float2(0.18, 0.13));
-                float sections = Noise(shore * 0.075 + _Time.y * float2(0.015, -0.01));
+                float oceanTime = _Time.y * _OceanMotionSpeed;
+                float broad = Noise(shore * 0.12 + oceanTime * float2(0.024, -0.016));
+                float fine = Noise(shore * 0.67 - oceanTime * float2(0.18, 0.13));
+                float sections = Noise(shore * 0.075 + oceanTime * float2(0.015, -0.01));
                 // Narrow, irregular crests travel from sea to land. The thin
                 // remnants behind them fade instead of painting a solid ring.
-                float phase = input.uv.y * 18.0 - _Time.y * 2.9 + (broad - 0.5) * 3.5;
+                float phase = input.uv.y * 18.0 - oceanTime * 2.9 + (broad - 0.5) * 3.5;
                 float crest = pow(saturate(sin(phase) * 0.5 + 0.5), 6.0);
                 float broken = 0.38 + 0.62 * smoothstep(0.26, 0.66, sections + fine * 0.18);
                 float lace = smoothstep(0.42, 0.72, fine) * (0.22 + broad * 0.24);

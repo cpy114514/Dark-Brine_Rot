@@ -16,6 +16,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(0.1f, 1f)] public float backwardsSpeedMultiplier = 0.72f;
     [Min(30f)] public float turnSpeedDegrees = 720f;
     [Min(0f)] public float groundStickSpeed = 5f;
+    [Tooltip("Restore the pre-attack heading after the animation finishes, without changing its authored travel.")]
+    [Range(0.05f, 0.3f)] public float attackFacingRecoveryTime = 0.14f;
     [Range(0f, 0.3f)] public float coyoteTime = 0.12f;
     [Range(0f, 0.3f)] public float jumpBufferTime = 0.12f;
     public float seaLevel = 0f;
@@ -36,7 +38,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(0.01f, 0.16f)] public float rollExitBlend = 0.065f;
 
     [Header("Air flip")]
-    [Tooltip("Press Dodge while rising to perform one forward flip per jump. The air-flip Animator state plays the existing roll clip at 2.2x speed.")]
+    [Tooltip("Tap Dodge while rising to perform one forward flip per jump. The animation and visual rotation are timed to finish together.")]
     [Min(0.2f)] public float airFlipDuration = 0.43f;
 
     [Header("Water contact")]
@@ -75,14 +77,22 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Transform visualTransform;
     Vector3 visualBasePosition;
     Quaternion visualBaseRotation;
+    Transform comboFacingBone;
+    Vector3 comboBoneForwardAxis = Vector3.forward;
     Mavis.SahurAttack combat;
     Camera playerCamera;
     float yaw;
     float pitch = 10f;
     float verticalSpeed;
-    int activeComboMotionStage = -1;
-    bool comboWasAirborne;
-    bool comboLanded;
+    float authoredAttackHeight;
+    float unsupportedAttackSpeed;
+    bool trackingAttackRoot;
+    bool hasAttackFacing;
+    bool recoveringAttackFacing;
+    Quaternion attackFacing;
+    Quaternion attackRecoveryStart;
+    float attackRecoveryElapsed;
+    readonly RaycastHit[] attackGroundHits = new RaycastHit[16];
     float visualBaseOffset;
     float coyoteTimer;
     float jumpBufferTimer;
@@ -90,6 +100,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     float rollCooldownTimer;
     float rollInheritedSpeed;
     float airFlipTimer;
+    float airFlipInputBufferTimer;
     bool airFlipUsed;
     Vector3 planarVelocity;
     Vector3 rollDirection;
@@ -113,6 +124,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Renderer underwaterOverlayRenderer;
 
     static readonly int SpeedId = Animator.StringToHash("Speed");
+    const float AirFlipInputBufferDuration = 0.12f;
 
     public bool CanUseGroundAttack => characterController != null && rollTimer <= 0f &&
                                       IsGroundedOrOnSea() && !IsSwimming();
@@ -133,7 +145,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             visualAnimator.enabled = false;
             visualAnimator.runtimeAnimatorController = rootAnimator.runtimeAnimatorController;
             visualAnimator.avatar = rootAnimator.avatar;
-            visualAnimator.applyRootMotion = false;
+            visualAnimator.applyRootMotion = true;
             visualAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
             rootAnimator.enabled = false;
             visualAnimator.enabled = true;
@@ -151,6 +163,13 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             animator = visualAnimator != null ? visualAnimator : rootAnimator;
         }
+        if (animator != null)
+        {
+            var rootMotion = animator.GetComponent<SahurRootMotionRelay>();
+            if (rootMotion == null) rootMotion = animator.gameObject.AddComponent<SahurRootMotionRelay>();
+            rootMotion.Initialize(this, combat);
+            animator.applyRootMotion = true;
+        }
         ConfigureColliderToModel();
         Vector3 rotation = transform.eulerAngles;
         yaw = rotation.y;
@@ -160,12 +179,20 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     void Start()
     {
         playerCamera = Camera.main;
-        if (animator != null) { animator.applyRootMotion = false; animator.Play("Locomotion", 0, 0f); animator.Update(0f); }
+        if (animator != null) { animator.applyRootMotion = true; animator.Play("Locomotion", 0, 0f); animator.Update(0f); }
         ConfigureColliderToModel();
         if (visualTransform != null)
         {
             visualBasePosition = visualTransform.localPosition;
             visualBaseRotation = visualTransform.localRotation;
+            if (animator != null && animator.isHuman)
+            {
+                comboFacingBone = animator.GetBoneTransform(HumanBodyBones.UpperChest) ??
+                                  animator.GetBoneTransform(HumanBodyBones.Chest) ??
+                                  animator.GetBoneTransform(HumanBodyBones.Hips);
+                if (comboFacingBone != null)
+                    comboBoneForwardAxis = comboFacingBone.InverseTransformDirection(transform.forward);
+            }
         }
         SnapSpawnToIslandSurface();
         KeepFeetOnSeaLevel();
@@ -206,9 +233,18 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         float activeMoveSpeed = moveSpeed * (sprinting ? sprintMultiplier : 1f);
         Vector3 desiredVelocity = (cameraForward * input.z + cameraRight * input.x) * activeMoveSpeed;
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
-        bool groundComboActive = combat != null && combat.IsGroundComboActive;
-        if (combatLocked)
+        bool chargeMovementAllowed = combat != null && combat.IsCharging;
+        bool movementLocked = combatLocked && !chargeMovementAllowed;
+        bool attackRootMotion = combat != null && combat.UsesAnimationRootMotion;
+        if (!attackRootMotion)
+        {
+            trackingAttackRoot = false;
+            authoredAttackHeight = 0f;
+        }
+        if (movementLocked)
             desiredVelocity = Vector3.zero;
+
+        UpdateAttackFacingRecovery(!movementLocked && desiredVelocity.sqrMagnitude > 0.01f);
 
         if (IsSwimming())
         {
@@ -230,10 +266,18 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         bool grounded = IsGroundedOrOnSea();
         bool isRolling = rollTimer > 0f;
+        bool dodgePressed = acceptInput && !combatLocked &&
+                            GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge);
         if (grounded) airFlipUsed = false;
+        if (grounded)
+            airFlipInputBufferTimer = 0f;
+        else if (dodgePressed)
+            airFlipInputBufferTimer = AirFlipInputBufferDuration;
+        else
+            airFlipInputBufferTimer = Mathf.Max(0f, airFlipInputBufferTimer - Time.deltaTime);
         rollCooldownTimer = Mathf.Max(0f, rollCooldownTimer - Time.deltaTime);
         if (acceptInput && !combatLocked && !isRolling && grounded && rollCooldownTimer <= 0f &&
-            GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge))
+            dodgePressed)
         {
             // Without WASD, dodge forward in the direction Sahur is facing.
             // Directional dodges still follow the camera-relative input.
@@ -244,6 +288,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // never turn leftover braking momentum into a stationary boost.
             rollInheritedSpeed = GetRollInheritedSpeed(planarVelocity, desiredVelocity, rollDirection);
             rollTimer = rollDuration;
+            recoveringAttackFacing = false;
             rollCooldownTimer = rollDuration + rollCooldown;
             planarVelocity = rollDirection * (rollSpeed + rollInheritedSpeed);
             isRolling = true;
@@ -260,7 +305,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (combatLocked)
             jumpBufferTimer = 0f;
 
-        if (grounded && verticalSpeed < 0f && !groundComboActive)
+        if (grounded && verticalSpeed < 0f && !attackRootMotion)
             verticalSpeed = -groundStickSpeed;
         if (!isRolling && jumpBufferTimer > 0f && coyoteTimer > 0f)
         {
@@ -276,16 +321,17 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         // rising, leaving enough airtime to complete the rotation before landing.
         if (acceptInput && !combatLocked && !isRolling && !grounded && !airFlipUsed &&
             airFlipTimer <= 0f && rollCooldownTimer <= 0f && verticalSpeed > 2f &&
-            GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge))
+            airFlipInputBufferTimer > 0f)
         {
             airFlipUsed = true;
             airFlipTimer = airFlipDuration;
+            airFlipInputBufferTimer = 0f;
             rollCooldownTimer = airFlipDuration + rollCooldown;
             jumpBufferTimer = 0f;
             SetMotion(7, "Air Flip", 0.06f);
         }
-        if (groundComboActive)
-            verticalSpeed = 0f; // This combo's jump comes from the imported animation.
+        if (attackRootMotion)
+            verticalSpeed = unsupportedAttackSpeed; // Source lift plus gravity only when there is no floor.
         else
             verticalSpeed -= gravity * Time.deltaTime;
 
@@ -316,47 +362,17 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         else
         {
-            // Do not let walking or sprint momentum hide the authored step-in.
-            float rate = groundComboActive ? Mathf.Max(deceleration, 180f) :
-                desiredVelocity.sqrMagnitude > planarVelocity.sqrMagnitude ? acceleration : deceleration;
-            planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity, rate * Time.deltaTime);
+            if (attackRootMotion)
+                planarVelocity = Vector3.zero;
+            else
+            {
+                float rate = desiredVelocity.sqrMagnitude > planarVelocity.sqrMagnitude ? acceleration : deceleration;
+                planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity, rate * Time.deltaTime);
+            }
         }
         float downwardSpeedBeforeMove = verticalSpeed;
-        Vector3 comboStep = Vector3.zero;
-        if (groundComboActive)
-        {
-            int stage = combat.CurrentComboStage;
-            if (stage != activeComboMotionStage)
-            {
-                activeComboMotionStage = stage;
-                comboWasAirborne = false;
-                comboLanded = false;
-            }
-            comboStep = combat.ConsumeComboDisplacement();
-            // The third strike crouches below its starting root height, then
-            // recovers. Once its actual jump has landed, that recovery must not
-            // lift the collision capsule for a second, unanimated hop.
-            if (comboLanded && comboStep.y > 0f)
-                comboStep.y = 0f;
-            if (grounded && comboStep.y <= 0f && !comboWasAirborne)
-                comboStep.y -= groundStickSpeed * Time.deltaTime;
-        }
-        else
-        {
-            activeComboMotionStage = -1;
-            comboWasAirborne = false;
-            comboLanded = false;
-        }
-        // Resolve the authored displacement against terrain and solid obstacles.
-        CollisionFlags comboCollision = characterController.Move(
-            (planarVelocity + Vector3.up * verticalSpeed) * Time.deltaTime + comboStep);
-        if (groundComboActive)
-        {
-            if (!characterController.isGrounded)
-                comboWasAirborne = true;
-            if (comboWasAirborne && (comboCollision & CollisionFlags.Below) != 0 && comboStep.y < 0f)
-                comboLanded = true;
-        }
+        if (!attackRootMotion)
+            characterController.Move((planarVelocity + Vector3.up * verticalSpeed) * Time.deltaTime);
         KeepFeetOnSeaLevel();
         UpdateWaterSplash(Mathf.Max(0f, -downwardSpeedBeforeMove));
 
@@ -395,12 +411,141 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             animator.SetFloat(SpeedId, rollTimer > 0f ? 0f : planarVelocity.magnitude, 0.12f, Time.deltaTime);
         }
 
-        if (!groundComboActive && planarVelocity.sqrMagnitude > 0.01f)
+        if (!movementLocked && !recoveringAttackFacing && planarVelocity.sqrMagnitude > 0.01f)
         {
             Quaternion desired = Quaternion.LookRotation(new Vector3(planarVelocity.x, 0f, planarVelocity.z), Vector3.up);
             float turnRate = isRolling ? turnSpeedDegrees * 1.8f : turnSpeedDegrees;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, turnRate * Time.deltaTime);
         }
+        if (chargeMovementAllowed && hasAttackFacing)
+            attackFacing = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+    }
+
+    public void BeginAttackFacing()
+    {
+        // Combo stages share one heading. Never capture an intermediate turn
+        // from a sliced animation as the starting direction of its next hit.
+        if (hasAttackFacing) return;
+        if (recoveringAttackFacing) transform.rotation = attackFacing;
+        recoveringAttackFacing = false;
+        Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+        attackFacing = forward.sqrMagnitude > 0.0001f
+            ? Quaternion.LookRotation(forward.normalized, Vector3.up)
+            : Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+        hasAttackFacing = true;
+    }
+
+    public void EndAttackFacing(bool immediate = false)
+    {
+        if (!hasAttackFacing && !recoveringAttackFacing) return;
+        hasAttackFacing = false;
+        trackingAttackRoot = false;
+        authoredAttackHeight = 0f;
+        attackRecoveryStart = transform.rotation;
+        attackRecoveryElapsed = 0f;
+        recoveringAttackFacing = !immediate;
+        if (immediate)
+        {
+            transform.rotation = attackFacing;
+            if (visualTransform != null) visualTransform.localRotation = visualBaseRotation;
+        }
+    }
+
+    void UpdateAttackFacingRecovery(bool movementRequested)
+    {
+        if (!recoveringAttackFacing) return;
+        // Intentional movement/dodging takes priority over recovery. Merely
+        // orbiting the camera does not change the remembered attack heading.
+        if (movementRequested || rollTimer > 0f)
+        {
+            recoveringAttackFacing = false;
+            return;
+        }
+        attackRecoveryElapsed += Time.deltaTime;
+        float phase = Mathf.Clamp01(attackRecoveryElapsed / Mathf.Max(0.05f, attackFacingRecoveryTime));
+        transform.rotation = Quaternion.Slerp(attackRecoveryStart, attackFacing, Mathf.SmoothStep(0f, 1f, phase));
+        if (phase >= 1f) recoveringAttackFacing = false;
+    }
+
+    public void ApplyAttackRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
+    {
+        if (characterController == null || combat == null || !combat.UsesAnimationRootMotion ||
+            PauseSettingsMenu.IsOpen)
+            return;
+
+        // Unity supplies the imported clip's world-space root delta after
+        // humanoid retargeting and transition blending. The controller only
+        // resolves that delta against real collision; it never invents a step.
+        if (!trackingAttackRoot)
+        {
+            trackingAttackRoot = true;
+            authoredAttackHeight = 0f;
+            unsupportedAttackSpeed = 0f;
+        }
+        if (combat.IsGroundComboActive && visualTransform != null)
+        {
+            // Visual yaw correction must not rotate or shorten the source's
+            // travel. Undo that display rotation on the world-space Animator
+            // delta, then restore the original visual reference orientation.
+            Quaternion reference = transform.rotation * visualBaseRotation;
+            deltaPosition = reference * (Quaternion.Inverse(visualTransform.rotation) * deltaPosition);
+        }
+        authoredAttackHeight += deltaPosition.y;
+        characterController.Move(deltaPosition);
+        // A ground combo keeps the heading chosen before its first hit. The
+        // model's whole-body turn is corrected separately for display; it must
+        // not rotate the movement capsule or change the next hit's heading.
+        if (combat.IsGroundComboActive && hasAttackFacing)
+            transform.rotation = attackFacing;
+        else
+            transform.rotation = transform.rotation * deltaRotation;
+        FollowAttackGroundSupport();
+        KeepFeetOnSeaLevel();
+        if (combat.IsGroundComboActive) AlignComboVisualFacing();
+    }
+
+    void FollowAttackGroundSupport()
+    {
+        float scaleY = transform.lossyScale.y;
+        float contactTolerance = characterController.skinWidth * scaleY + 0.02f;
+
+        // Root motion is authored on a flat floor. Follow a descending physical
+        // surface only while the source's feet are at floor level; keep its
+        // actual jump height untouched. This changes no X/Z travel or timing.
+        Vector3 foot = transform.TransformPoint(characterController.center -
+            Vector3.up * (characterController.height * 0.5f));
+        float sourceLift = Mathf.Max(0f, authoredAttackHeight);
+        float probeHeight = characterController.stepOffset * scaleY;
+        int count = Physics.RaycastNonAlloc(foot - Vector3.up * sourceLift + Vector3.up * probeHeight,
+            Vector3.down, attackGroundHits, probeHeight * 2f + contactTolerance,
+            ~0, QueryTriggerInteraction.Ignore);
+        float supportY = float.NegativeInfinity;
+        for (int i = 0; i < count; i++)
+        {
+            var hit = attackGroundHits[i];
+            if (hit.collider.transform.IsChildOf(transform)) continue;
+            if (Vector3.Angle(hit.normal, Vector3.up) > characterController.slopeLimit) continue;
+            supportY = Mathf.Max(supportY, hit.point.y);
+        }
+
+        // Keep the source jump relative to its floor, but never use root motion
+        // to suspend the actor after that floor ends. Carry the falling speed
+        // into normal movement if the attack ends before the actor lands.
+        float drop = foot.y - sourceLift - supportY;
+        if (float.IsNegativeInfinity(supportY) || drop > probeHeight)
+        {
+            unsupportedAttackSpeed -= gravity * Time.deltaTime;
+            var flags = characterController.Move(Vector3.up * unsupportedAttackSpeed * Time.deltaTime);
+            if ((flags & CollisionFlags.Below) != 0) unsupportedAttackSpeed = 0f;
+            verticalSpeed = unsupportedAttackSpeed;
+            return;
+        }
+
+        unsupportedAttackSpeed = 0f;
+        verticalSpeed = 0f;
+        if (authoredAttackHeight > contactTolerance) return;
+        if (drop > characterController.skinWidth * scaleY && drop <= probeHeight)
+            characterController.Move(Vector3.down * drop);
     }
 
     static float GetRollInheritedSpeed(Vector3 currentVelocity, Vector3 desiredVelocity, Vector3 direction)
@@ -503,8 +648,15 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     {
         if (visualTransform == null) return;
 
+        if (combat != null && combat.IsGroundComboActive)
+        {
+            visualTransform.localPosition = visualBasePosition;
+            AlignComboVisualFacing();
+            return;
+        }
+
         // The imported roll stores its full rotation as humanoid root motion.
-        // Root motion is deliberately disabled on Sahur, so rotate only the
+        // Root motion is not applied during rolls, so rotate only the
         // visual around the movement capsule's centre to show the somersault
         // without tilting or displacing the CharacterController and camera.
         if (airFlipTimer <= 0f)
@@ -520,6 +672,19 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Vector3 pivot = characterController.center;
         visualTransform.localPosition = pivot + spin * (visualBasePosition - pivot);
         visualTransform.localRotation = spin * visualBaseRotation;
+    }
+
+    void AlignComboVisualFacing()
+    {
+        if (visualTransform == null || comboFacingBone == null) return;
+        // Use the actual animated chest transform, not Animator.bodyRotation:
+        // its cached world rotation can lag behind a corrected visual parent
+        // during crossfades. Live bone transforms also remain stable on pause.
+        Vector3 bodyForward = Vector3.ProjectOnPlane(comboFacingBone.TransformDirection(comboBoneForwardAxis), Vector3.up);
+        Vector3 referenceForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+        if (bodyForward.sqrMagnitude < 0.0001f || referenceForward.sqrMagnitude < 0.0001f) return;
+        float correction = Vector3.SignedAngle(bodyForward, referenceForward, Vector3.up);
+        visualTransform.rotation = Quaternion.AngleAxis(correction, Vector3.up) * visualTransform.rotation;
     }
 
     void KeepFeetOnSeaLevel()
@@ -588,6 +753,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         rollInheritedSpeed = 0f;
         rollCooldownTimer = 0f;
         airFlipTimer = 0f;
+        airFlipInputBufferTimer = 0f;
         airFlipUsed = false;
         if (visualTransform != null)
         {
@@ -911,7 +1077,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (waterRippleMesh != null) Destroy(waterRippleMesh);
     }
 
-    void OnDisable() => UnlockCursor();
+    void OnDisable()
+    {
+        EndAttackFacing(true);
+        UnlockCursor();
+    }
 
     static void LockCursor()
     {

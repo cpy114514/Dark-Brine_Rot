@@ -42,19 +42,21 @@ public sealed class OceanWorld : MonoBehaviour
     [Range(0.1f, 8f)] public float absorptionStrength = 3.7f;
 
     [Header("Waves")]
+    [Tooltip("Shared animation speed for swells, short chop, whitecaps and shore breakers. Does not change game time.")]
+    [Range(0.25f, 4f)] public float waveMotionSpeed = 1.8f;
     // Phase velocities approximately follow deep-water dispersion: the long
     // swell travels faster than short wind chop without racing across the beach.
-    public OceanGerstnerWave wave1 = new OceanGerstnerWave { direction = new Vector2(0.82f, 0.57f), amplitude = 1.30f, wavelength = 95f, speed = 12.2f, steepness = 0.25f };
-    public OceanGerstnerWave wave2 = new OceanGerstnerWave { direction = new Vector2(-0.38f, 0.93f), amplitude = 0.75f, wavelength = 44f, speed = 8.3f, steepness = 0.20f };
-    public OceanGerstnerWave wave3 = new OceanGerstnerWave { direction = new Vector2(0.96f, -0.29f), amplitude = 0.28f, wavelength = 18f, speed = 5.3f, steepness = 0.12f };
-    public OceanGerstnerWave wave4 = new OceanGerstnerWave { direction = new Vector2(-0.72f, -0.69f), amplitude = 0.11f, wavelength = 8f, speed = 3.5f, steepness = 0.08f };
+    public OceanGerstnerWave wave1 = new OceanGerstnerWave { direction = new Vector2(0.82f, 0.57f), amplitude = 1.90f, wavelength = 95f, speed = 12.2f, steepness = 0.42f };
+    public OceanGerstnerWave wave2 = new OceanGerstnerWave { direction = new Vector2(-0.38f, 0.93f), amplitude = 1.10f, wavelength = 44f, speed = 8.3f, steepness = 0.34f };
+    public OceanGerstnerWave wave3 = new OceanGerstnerWave { direction = new Vector2(0.96f, -0.29f), amplitude = 0.42f, wavelength = 18f, speed = 5.3f, steepness = 0.22f };
+    public OceanGerstnerWave wave4 = new OceanGerstnerWave { direction = new Vector2(-0.72f, -0.69f), amplitude = 0.18f, wavelength = 8f, speed = 3.5f, steepness = 0.14f };
     [Tooltip("Breaks up evenly spaced swells with broad, slowly drifting variations in crest shape and height.")]
     [Range(0f, 1f)] public float waveIrregularity = 0.7f;
 
     [Header("Surface Detail")]
-    [Range(0f, 2f)] public float largeDetailStrength = 0.42f;
-    [Range(0f, 2f)] public float mediumDetailStrength = 0.32f;
-    [Range(0f, 2f)] public float rippleStrength = 0.16f;
+    [Range(0f, 2f)] public float largeDetailStrength = 0.52f;
+    [Range(0f, 2f)] public float mediumDetailStrength = 0.44f;
+    [Range(0f, 2f)] public float rippleStrength = 0.24f;
 
     [Header("Reflection / Specular")]
     [Range(0f, 1f)] public float smoothness = 0.76f;
@@ -75,13 +77,14 @@ public sealed class OceanWorld : MonoBehaviour
     public Color foamColor = new Color(0.93f, 0.97f, 0.98f, 1f);
     [Range(0.05f, 8f)] public float foamWidth = 3.0f;
     [Range(0f, 2f)] public float foamStrength = 1.05f;
+    [Tooltip("Open-water crest foam, independent of the shoreline contact foam.")]
+    [Range(0f, 1f)] public float whitecapStrength = 0.55f;
     [Range(0.05f, 2f)] public float foamNoiseScale = 0.22f;
     [Range(0f, 2f)] public float foamSpeed = 0.28f;
     [Tooltip("Varies the size, spacing and timing of individual white-water patches.")]
     [Range(0f, 1f)] public float foamIrregularity = 0.75f;
 
-    // Sky values are retained for the existing scene's sky controller, but ocean setup no
-    // longer exposes them. The scene's completed sky is intentionally left untouched.
+    // Initial conditions are replaced by DayNightCycle once the lighting scene is active.
     [Header("Dynamic Sky")]
     [HideInInspector]
     [Range(0f, 1f)] public float cloudiness = 0.62f;
@@ -108,6 +111,8 @@ public sealed class OceanWorld : MonoBehaviour
     static readonly int MidDetailDistanceId = Shader.PropertyToID("_MidDetailDistance");
     static readonly int ViewDistanceId = Shader.PropertyToID("_ViewDistance");
     static readonly int SunDirectionId = Shader.PropertyToID("_SunDirection");
+    static readonly int MoonDirectionId = Shader.PropertyToID("_MoonDirection");
+    static readonly int MoonIlluminationId = Shader.PropertyToID("_MoonIllumination");
     static readonly int ShallowColorId = Shader.PropertyToID("_ShallowColor");
     static readonly int MidColorId = Shader.PropertyToID("_MidColor");
     static readonly int DeepColorId = Shader.PropertyToID("_DeepColor");
@@ -198,6 +203,7 @@ public sealed class OceanWorld : MonoBehaviour
             appliedNearDistance = appliedMidDistance = appliedViewDistance = float.NaN;
         }
         renderer.sharedMaterial = generatedMaterial;
+        renderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.BlendProbesAndSkybox;
         // Draw after normal opaque props. An island's depth is therefore written first and
         // rejects hidden water pixels automatically, with no per-island setup required.
         generatedMaterial.renderQueue = 2900;
@@ -351,12 +357,44 @@ public sealed class OceanWorld : MonoBehaviour
         generatedMaterial.SetFloat("_FoamStrength", foamStrength);
         generatedMaterial.SetFloat("_FoamNoiseScale", foamNoiseScale);
         generatedMaterial.SetFloat("_FoamSpeed", foamSpeed);
+        generatedMaterial.SetFloat("_OceanMotionSpeed", waveMotionSpeed);
+        generatedMaterial.SetFloat("_WhitecapStrength", whitecapStrength);
         generatedMaterial.SetFloat("_WaveIrregularity", waveIrregularity);
         generatedMaterial.SetFloat("_FoamIrregularity", foamIrregularity);
         ApplyWave("_Wave1", wave1);
         ApplyWave("_Wave2", wave2);
         ApplyWave("_Wave3", wave3);
         ApplyWave("_Wave4", wave4);
+    }
+
+    public void ApplyDayNightAppearance(Color horizon, Color zenith, Color clouds, float cloudCoverage, Color sun,
+        float sunGlow, float daylight, float night, Vector3 moonDirection, float moonIllumination,
+        Color shallow, Color mid, Color deep, Color reflectedSky)
+    {
+        if (skyMaterial != null)
+        {
+            skyMaterial.SetColor("_HorizonColor", horizon);
+            skyMaterial.SetColor("_ZenithColor", zenith);
+            skyMaterial.SetColor("_CloudColor", clouds);
+            skyMaterial.SetFloat("_CloudCoverage", Mathf.Clamp01(cloudCoverage));
+            skyMaterial.SetColor("_SunColor", sun);
+            skyMaterial.SetFloat("_SunGlow", sunGlow);
+            skyMaterial.SetFloat("_Daylight", daylight);
+            skyMaterial.SetFloat("_NightFactor", night);
+            skyMaterial.SetVector(MoonDirectionId, moonDirection);
+            skyMaterial.SetFloat(MoonIlluminationId, moonIllumination);
+        }
+
+        if (generatedMaterial != null)
+        {
+            generatedMaterial.SetColor(ShallowColorId, shallow);
+            generatedMaterial.SetColor(MidColorId, mid);
+            generatedMaterial.SetColor(DeepColorId, deep);
+            generatedMaterial.SetColor("_WaterReflectionTint", reflectedSky);
+            generatedMaterial.SetFloat("_ReflectionStrength", Mathf.Clamp(reflectionStrength * 1.45f, 0f, 2f));
+            generatedMaterial.SetFloat("_Smoothness", Mathf.Lerp(smoothness, 0.9f, 0.42f));
+            generatedMaterial.SetFloat("_SunGlitterStrength", sunGlitterStrength * Mathf.Lerp(0.025f, 1f, daylight));
+        }
     }
 
     void ApplyWave(string propertyName, OceanGerstnerWave wave)
@@ -430,6 +468,8 @@ public sealed class OceanWorld : MonoBehaviour
         skyMaterial.SetColor("_ZenithColor", new Color(0.18f, 0.47f, 0.79f, 1f));
         skyMaterial.SetColor("_CloudColor", new Color(0.96f, 0.98f, 1f, 1f));
         skyMaterial.SetColor("_SunColor", new Color(1f, 0.96f, 0.87f, 1f));
+        skyMaterial.SetFloat("_Daylight", 1f);
+        skyMaterial.SetFloat("_NightFactor", 0f);
         skyDome.GetComponent<MeshRenderer>().sharedMaterial = skyMaterial;
         // This shader renders only on the sky sphere. Keeping it out of the skybox pass
         // avoids a second full-screen sky draw; the sphere's depth test skips covered pixels.
@@ -468,7 +508,8 @@ public sealed class OceanWorld : MonoBehaviour
         Light sun = cachedSun;
         if (sun != null && sun.type == LightType.Directional)
         {
-            skyMaterial.SetVector(SunDirectionId, -sun.transform.forward);
+            DayNightCycle cycle = sun.GetComponent<DayNightCycle>();
+            skyMaterial.SetVector(SunDirectionId, cycle != null ? cycle.SunDirection : -sun.transform.forward);
         }
     }
 

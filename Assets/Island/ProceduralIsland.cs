@@ -31,6 +31,15 @@ public class ProceduralIsland : MonoBehaviour
     public Texture2D rockyNormal;
     [Min(0.001f)] public float textureTiling = 0.09f;
 
+    [Header("Yellow shoreline beach")]
+    public Texture2D beachSand;
+    public Texture2D beachSandNormal;
+    public Color beachTint = new Color(1.18f, 1.08f, 0.72f, 1f);
+    [Tooltip("Sand coverage height above sea level in world metres. Keeps inland ground unchanged.")]
+    [Min(0.5f)] public float beachHeight = 8f;
+    [Min(0.1f)] public float beachBlendWidth = 3.5f;
+    [Min(0.001f)] public float beachTextureTiling = 0.075f;
+
     private Mesh islandMesh;
     private Material terrainMaterial;
     private GameObject shoreFoamObject;
@@ -224,6 +233,13 @@ public class ProceduralIsland : MonoBehaviour
         terrainMaterial.SetColor("_SandTint", Color.Lerp(Color.white, sandColor, 0.10f));
         terrainMaterial.SetColor("_GrassTint", Color.Lerp(Color.white, grassColor, 0.32f));
         terrainMaterial.SetColor("_RockTint", Color.Lerp(Color.white, rockColor, 0.07f));
+        terrainMaterial.SetFloat("_BeachEnabled", beachSand != null ? 1f : 0f);
+        terrainMaterial.SetTexture("_BeachTex", beachSand != null ? beachSand : Texture2D.whiteTexture);
+        terrainMaterial.SetTexture("_BeachNormal", beachSandNormal != null ? beachSandNormal : Texture2D.normalTexture);
+        terrainMaterial.SetColor("_BeachTint", beachTint);
+        terrainMaterial.SetFloat("_BeachHeight", beachHeight);
+        terrainMaterial.SetFloat("_BeachBlendWidth", Mathf.Min(beachBlendWidth, beachHeight));
+        terrainMaterial.SetFloat("_BeachTiling", beachTextureTiling);
         var ocean = FindFirstObjectByType<OceanWorld>();
         terrainMaterial.SetFloat("_SeaLevel", ocean != null ? ocean.oceanHeight : 0f);
     }
@@ -313,6 +329,7 @@ public class ProceduralIsland : MonoBehaviour
             return;
 
         shoreFoamMaterial.SetFloat("_SeaLevel", ocean.oceanHeight);
+        shoreFoamMaterial.SetFloat("_OceanMotionSpeed", ocean.waveMotionSpeed);
         ApplyShoreWave("_Wave1", ocean.wave1);
         ApplyShoreWave("_Wave2", ocean.wave2);
         ApplyShoreWave("_Wave3", ocean.wave3);

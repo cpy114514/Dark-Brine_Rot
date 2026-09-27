@@ -47,7 +47,12 @@ public static class ConfigureSahurAnimations
 
         var charge = FindOrAddState(machine, "Charge Windup", new Vector3(580f, 180f));
         charge.motion = lightAttack.motion;
-        charge.speed = 0f;
+        charge.speed = 1f;
+        charge.speedParameterActive = false;
+        charge.timeParameterActive = true;
+        charge.timeParameter = "ChargePhase";
+        if (!controller.parameters.Any(parameter => parameter.name == "ChargePhase"))
+            controller.AddParameter("ChargePhase", AnimatorControllerParameterType.Float);
         var heavy = FindOrAddState(machine, "Heavy Attack", new Vector3(820f, 180f));
         heavy.motion = lightAttack.motion;
         heavy.speed = 0.9f;
@@ -75,6 +80,14 @@ public static class ConfigureSahurAnimations
             try
             {
                 var player = root.GetComponent<ThirdPersonPlayerController>();
+                var attack = root.GetComponent<Mavis.SahurAttack>();
+                if (attack != null)
+                {
+                    attack.chargeClip = lightAttack.motion as AnimationClip;
+                    attack.chargeTimeParameter = "ChargePhase";
+                    attack.chargePoseTime = SahurAttack.SafeChargePoseTime;
+                    EditorUtility.SetDirty(attack);
+                }
                 if (player != null)
                 {
                     player.rollExitBlend = 0.11f;
