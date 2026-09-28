@@ -362,8 +362,8 @@ MonoBehaviour:
   sharkNoseDistance: 37
   swimSubmergeDepth: 18
   swimBobHeight: 0.55
-  blackoutDelay: 2.2
-  blackoutDuration: 1.2
+  blackoutDelay: 4.7
+  blackoutDuration: 0.75
 --- !u!4 &92067237
 Transform:
   m_ObjectHideFlags: 0

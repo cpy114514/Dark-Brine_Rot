@@ -14,6 +14,9 @@ namespace Mavis
         public string heavyAttackState = "Heavy Attack";
         public string chargeTimeParameter = "ChargePhase";
         public AnimationClip chargeClip;
+        const string ChargeUpperBodyLayer = "Charge Upper Body";
+        const float ChargeLayerFadeIn = 0.10f;
+        const float ChargeLayerFadeOut = 0.09f;
         // The later overhead windup intersects Sahur's tall head with this grip.
         public const float SafeChargePoseTime = 0.18f;
         [Range(0f, SafeChargePoseTime)] public float chargePoseTime = SafeChargePoseTime;
@@ -89,6 +92,9 @@ namespace Mavis
         int lightStateHash;
         int heavyStateHash;
         int chargeStateHash;
+        int upperBodyChargeStateHash;
+        int chargeLayerIndex = -1;
+        bool usesUpperBodyCharge;
         int chargeTimeHash;
         int jumpSlashStateHash;
         int activeAttackHash;
@@ -111,6 +117,7 @@ namespace Mavis
             lightStateHash = Animator.StringToHash("Base Layer." + attackTrigger);
             heavyStateHash = Animator.StringToHash("Base Layer." + heavyAttackState);
             chargeStateHash = Animator.StringToHash("Base Layer." + chargeState);
+            upperBodyChargeStateHash = Animator.StringToHash(ChargeUpperBodyLayer + "." + chargeState);
             chargeTimeHash = Animator.StringToHash(chargeTimeParameter);
             jumpSlashStateHash = Animator.StringToHash("Base Layer." + jumpSlashState);
             comboStateHashes[0] = Animator.StringToHash("Base Layer." + comboOneState);
@@ -162,6 +169,7 @@ namespace Mavis
                 StartLightAttack();
             }
 
+            UpdateChargeLayerWeight();
             UpdateHitbox();
         }
 
@@ -250,6 +258,7 @@ namespace Mavis
         {
             comboStep = stage;
             comboContinueQueued = false;
+            controller?.BeginComboSourceTravel(stage);
             float multiplier = stage == 1 ? comboTwoDamageMultiplier :
                 stage == 2 ? comboThreeDamageMultiplier : 1f;
             BeginAttack(comboStateHashes[stage], damage * multiplier, 0f,
@@ -261,15 +270,26 @@ namespace Mavis
 
         void StartCharge()
         {
-            if (animator == null || !animator.HasState(0, chargeStateHash) ||
-                !animator.HasState(0, heavyStateHash))
+            if (animator == null || !animator.HasState(0, heavyStateHash))
             {
                 Debug.LogError("Sahur charge states are missing from the Animator controller.", this);
                 return;
             }
 
+            // The gameplay controller hands the Animator from the root to the
+            // visual child in Awake, so resolve the layer on the live Animator.
+            chargeLayerIndex = animator.GetLayerIndex(ChargeUpperBodyLayer);
+            usesUpperBodyCharge = chargeLayerIndex > 0 &&
+                                  animator.HasState(chargeLayerIndex, upperBodyChargeStateHash);
+            if (!usesUpperBodyCharge && !animator.HasState(0, chargeStateHash))
+            {
+                Debug.LogError("Sahur charge windup is missing from the Animator controller.", this);
+                return;
+            }
+
             attackQueued = false;
             comboContinueQueued = false;
+            if (usesUpperBodyCharge) controller?.PrepareChargeLocomotion();
             controller?.BeginAttackFacing();
             charging = true;
             chargeStartedAt = Time.time;
@@ -277,7 +297,12 @@ namespace Mavis
             // Play the real hand draw-back from the source clip across the
             // charging period, then stop at its prepared striking pose.
             UpdateChargePose();
-            animator.CrossFadeInFixedTime(chargeStateHash, 0.10f, 0, 0f);
+            if (usesUpperBodyCharge)
+            {
+                animator.SetLayerWeight(chargeLayerIndex, 0f);
+                animator.Play(upperBodyChargeStateHash, chargeLayerIndex, 0f);
+            }
+            else animator.CrossFadeInFixedTime(chargeStateHash, ChargeLayerFadeIn, 0, 0f);
         }
 
         void ReleaseCharge()
@@ -299,8 +324,22 @@ namespace Mavis
             controller?.EndAttackFacing();
             animator.SetFloat(chargeTimeHash, 0f);
             if (stickHitbox != null) stickHitbox.enabled = false;
-            if (animator != null)
+            if (usesUpperBodyCharge && animator != null && chargeLayerIndex >= 0)
+                animator.SetLayerWeight(chargeLayerIndex, 0f);
+            else if (animator != null)
                 animator.CrossFadeInFixedTime("Locomotion", 0.14f, 0, 0f);
+        }
+
+        void UpdateChargeLayerWeight()
+        {
+            if (!usesUpperBodyCharge || animator == null || chargeLayerIndex < 0) return;
+            float target = charging ? 1f : 0f;
+            float duration = charging ? ChargeLayerFadeIn : ChargeLayerFadeOut;
+            float weight = Mathf.MoveTowards(animator.GetLayerWeight(chargeLayerIndex),
+                target, Time.deltaTime / duration);
+            animator.SetLayerWeight(chargeLayerIndex, weight);
+            if (!charging && weight <= 0f)
+                animator.SetFloat(chargeTimeHash, 0f);
         }
 
         void UpdateChargePose()
@@ -500,7 +539,11 @@ namespace Mavis
             airAttackUsed = false;
             comboStep = -1;
             if (stickHitbox != null) stickHitbox.enabled = false;
-            if (animator != null) animator.SetFloat(chargeTimeHash, 0f);
+            if (animator != null)
+            {
+                animator.SetFloat(chargeTimeHash, 0f);
+                if (chargeLayerIndex >= 0) animator.SetLayerWeight(chargeLayerIndex, 0f);
+            }
         }
     }
 

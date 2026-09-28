@@ -45,6 +45,28 @@ public class ProceduralIsland : MonoBehaviour
     private GameObject shoreFoamObject;
     private Mesh shoreFoamMesh;
     private Material shoreFoamMaterial;
+    private OceanWorld shoreOcean;
+    private OceanWorld.EffectsQuality shoreQuality;
+
+    private void LateUpdate()
+    {
+        if (shoreFoamMaterial == null) return;
+        if (shoreOcean == null) shoreOcean = FindFirstObjectByType<OceanWorld>();
+        if (shoreOcean == null) return;
+        if (shoreQuality != shoreOcean.effectsQuality)
+        {
+            BuildShoreFoam();
+            return;
+        }
+        shoreOcean.GetShaderDetailDistances(out float nearDistance, out float midDistance);
+        // Graphics quality changes the water LOD while the island stays built.
+        // Keep its ribbon in the same wave field without rebuilding the terrain.
+        if (shoreFoamMaterial.GetFloat("_NearDetailDistance") != nearDistance ||
+            shoreFoamMaterial.GetFloat("_MidDetailDistance") != midDistance ||
+            shoreFoamMaterial.GetFloat("_OceanMotionSpeed") != shoreOcean.waveMotionSpeed ||
+            shoreFoamMaterial.GetFloat("_WaveIrregularity") != shoreOcean.waveIrregularity)
+            ApplyShoreWaveSettings();
+    }
 
     private void OnEnable()
     {
@@ -268,28 +290,49 @@ public class ProceduralIsland : MonoBehaviour
         float localSeaLevel = transform.InverseTransformPoint(new Vector3(transform.position.x, seaLevel, transform.position.z)).y;
 
         const int rows = 12;
-        int columns = radialSegments + 1;
+        shoreQuality = ocean != null ? ocean.effectsQuality : OceanWorld.EffectsQuality.Medium;
+        float spacing = shoreQuality == OceanWorld.EffectsQuality.Low ? 8f :
+            shoreQuality == OceanWorld.EffectsQuality.Medium ? 4f : 2f;
+        int segmentCap = shoreQuality == OceanWorld.EffectsQuality.Low ? 512 :
+            shoreQuality == OceanWorld.EffectsQuality.Medium ? 1024 : 2048;
+        // Terrain spokes may be tens of metres apart on a large island. The
+        // narrow ribbon needs its own sampling to stay on the shorter waves.
+        int shoreSegments = Mathf.Clamp(Mathf.CeilToInt(shorelineRadius * 1.2f * Mathf.PI * 2f / spacing),
+            radialSegments, Mathf.Max(radialSegments, segmentCap));
+        int columns = shoreSegments + 1;
+        var shorelineDirections = new Vector2[columns];
+        var waterlineRadii = new float[columns];
+        for (int column = 0; column < columns; column++)
+        {
+            float angle = column / (float)shoreSegments * Mathf.PI * 2f;
+            shorelineDirections[column] = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+            // The coastline search is identical for every ribbon row.
+            waterlineRadii[column] = FindWaterlineRadius(angle, localSeaLevel);
+        }
         var vertices = new Vector3[(rows + 1) * columns];
         var uv = new Vector2[vertices.Length];
+        float surfWidth = ocean != null
+            ? Mathf.Clamp(6f + (ocean.wave1.amplitude + ocean.wave2.amplitude) * 3f, 9f, 20f)
+            : 11f;
         for (int row = 0; row <= rows; row++)
         {
             float across = row / (float)rows;
-            // Keep breakers close to the actual waterline. The previous wide
-            // band covered the bay like a foam decal instead of shore wash.
-            float shoreOffset = Mathf.Lerp(9f, -2.5f, across);
-            for (int column = 0; column <= radialSegments; column++)
+            // A surf zone should grow with the incoming swell, while its inner
+            // edge still follows the actual waterline rather than the island rim.
+            float shoreOffset = Mathf.Lerp(surfWidth, -2.5f, across);
+            for (int column = 0; column <= shoreSegments; column++)
             {
-                float angle = column / (float)radialSegments * Mathf.PI * 2f;
-                float radius = FindWaterlineRadius(angle, localSeaLevel) + shoreOffset;
+                Vector2 direction = shorelineDirections[column];
+                float radius = waterlineRadii[column] + shoreOffset;
                 int index = row * columns + column;
-                vertices[index] = new Vector3(Mathf.Cos(angle) * radius, 0.055f, Mathf.Sin(angle) * radius);
-                uv[index] = new Vector2(column / (float)radialSegments * 7f, across);
+                vertices[index] = new Vector3(direction.x * radius, localSeaLevel + 0.055f, direction.y * radius);
+                uv[index] = new Vector2(column / (float)shoreSegments * 7f, across);
             }
         }
-        var triangles = new int[rows * radialSegments * 6];
+        var triangles = new int[rows * shoreSegments * 6];
         int triangle = 0;
         for (int row = 0; row < rows; row++)
-        for (int column = 0; column < radialSegments; column++)
+        for (int column = 0; column < shoreSegments; column++)
         {
             int a = row * columns + column;
             int b = a + 1;
@@ -304,6 +347,17 @@ public class ProceduralIsland : MonoBehaviour
         shoreFoamMesh.triangles = triangles;
         shoreFoamMesh.RecalculateNormals();
         shoreFoamMesh.RecalculateBounds();
+        if (ocean != null)
+        {
+            float lift = (ocean.wave1.amplitude + ocean.wave2.amplitude + ocean.wave3.amplitude + ocean.wave4.amplitude) * 1.6f + 0.25f;
+            float shift = (ocean.wave1.amplitude * ocean.wave1.steepness + ocean.wave2.amplitude * ocean.wave2.steepness +
+                ocean.wave3.amplitude * ocean.wave3.steepness + ocean.wave4.amplitude * ocean.wave4.steepness) * 1.6f;
+            Bounds bounds = shoreFoamMesh.bounds;
+            Vector3 scale = transform.lossyScale;
+            bounds.Expand(new Vector3(shift * 2f / Mathf.Max(Mathf.Abs(scale.x), 0.001f),
+                lift * 2f / Mathf.Max(Mathf.Abs(scale.y), 0.001f), shift * 2f / Mathf.Max(Mathf.Abs(scale.z), 0.001f)));
+            shoreFoamMesh.bounds = bounds;
+        }
         shoreFoamObject.GetComponent<MeshFilter>().sharedMesh = shoreFoamMesh;
 
         if (shoreFoamMaterial == null)
@@ -314,7 +368,7 @@ public class ProceduralIsland : MonoBehaviour
         ApplyShoreWaveSettings();
         shoreFoamObject.GetComponent<MeshRenderer>().sharedMaterial = shoreFoamMaterial;
         shoreFoamObject.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        shoreFoamObject.GetComponent<MeshRenderer>().receiveShadows = false;
+        shoreFoamObject.GetComponent<MeshRenderer>().receiveShadows = true;
     }
 
     // The shore mesh uses the same wave phase as the ocean surface. This keeps a
@@ -324,12 +378,17 @@ public class ProceduralIsland : MonoBehaviour
         if (shoreFoamMaterial == null)
             return;
 
-        OceanWorld ocean = FindFirstObjectByType<OceanWorld>();
+        if (shoreOcean == null) shoreOcean = FindFirstObjectByType<OceanWorld>();
+        OceanWorld ocean = shoreOcean;
         if (ocean == null)
             return;
 
         shoreFoamMaterial.SetFloat("_SeaLevel", ocean.oceanHeight);
         shoreFoamMaterial.SetFloat("_OceanMotionSpeed", ocean.waveMotionSpeed);
+        shoreFoamMaterial.SetFloat("_WaveIrregularity", ocean.waveIrregularity);
+        ocean.GetShaderDetailDistances(out float nearDistance, out float midDistance);
+        shoreFoamMaterial.SetFloat("_NearDetailDistance", nearDistance);
+        shoreFoamMaterial.SetFloat("_MidDetailDistance", midDistance);
         ApplyShoreWave("_Wave1", ocean.wave1);
         ApplyShoreWave("_Wave2", ocean.wave2);
         ApplyShoreWave("_Wave3", ocean.wave3);

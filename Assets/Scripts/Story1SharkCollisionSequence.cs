@@ -20,8 +20,8 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     [Min(0f)] public float swimBobHeight = 0.55f;
 
     [Header("Ending")]
-    [Min(0f)] public float blackoutDelay = 2.2f;
-    [Min(0.1f)] public float blackoutDuration = 1.2f;
+    [Min(0f)] public float blackoutDelay = 4.7f;
+    [Min(0.1f)] public float blackoutDuration = 0.75f;
 
     Transform shipTransform;
     Transform sahurTransform;
@@ -29,6 +29,8 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     ShipFollowCamera shipCamera;
     TralaleroSwimAnimator swimAnimator;
     Image blackoutImage;
+    Image glintHorizontal;
+    Image glintVertical;
     Vector3 heading;
     Vector3 side;
     Vector3 impactSharkCenter;
@@ -42,6 +44,8 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     Quaternion impactSahurRotation;
     Quaternion impactSwimmerRotation;
     Quaternion impactCameraRotation;
+    Vector3 launchCameraPosition;
+    Vector3 launchCameraFocus;
     float oceanHeight;
     float voyageTime;
     float impactTime;
@@ -138,6 +142,9 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         impactSahurRotation = sahurTransform.rotation;
         impactCameraPosition = storyCamera.transform.position;
         impactCameraRotation = storyCamera.transform.rotation;
+        // A fixed wide shot lets the ship and Sahur visibly recede into the sky.
+        launchCameraPosition = impactShipPosition - heading * 120f + side * 130f + Vector3.up * 95f;
+        launchCameraFocus = impactShipPosition + heading * 60f + Vector3.up * 75f;
         UpdateImpact(0f);
     }
 
@@ -153,35 +160,52 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
             (Mathf.Sin(Mathf.Min(time, 0.75f) / 0.75f * Mathf.PI) * 3f);
 
         float flightTime = Mathf.Max(0f, time - TralaleroSwimAnimator.TailContactTime);
+        float shipBurst = 1f - Mathf.Exp(-4.5f * flightTime);
+        // A quick pop after contact becomes an accelerating, upward flight.
+        // Both trajectories keep rising until the blackout: neither falls into the sea.
         shipTransform.position = impactShipPosition +
-            heading * (10f * flightTime) + side * (7f * flightTime) +
-            Vector3.up * (38f * flightTime - 4f * flightTime * flightTime);
+            heading * (12f * shipBurst + 24f * flightTime + 18f * flightTime * flightTime) +
+            side * (5f * shipBurst + 8f * flightTime + 4f * flightTime * flightTime) +
+            Vector3.up * (12f * shipBurst + 20f * flightTime + 7.5f * flightTime * flightTime);
+        // Keep the bow above the water during the first beat; tumble only
+        // after the whole hull has cleared the surface.
+        float shipTumble = Mathf.SmoothStep(0f, 1f,
+            Mathf.Clamp01((flightTime - 0.35f) / 3.5f));
         shipTransform.rotation =
-            Quaternion.AngleAxis(70f * flightTime, side) *
-            Quaternion.AngleAxis(45f * flightTime, heading) * impactShipRotation;
+            Quaternion.AngleAxis(-115f * shipTumble, side) *
+            Quaternion.AngleAxis(105f * shipTumble, heading) *
+            Quaternion.AngleAxis(20f * shipTumble, Vector3.up) * impactShipRotation;
 
-        float sahurForward = 80f * (1f - Mathf.Exp(-1.5f * flightTime));
-        float sahurTowardCamera = 50f * (1f - Mathf.Exp(-1.4f * flightTime));
+        // Sahur separates a moment later and tumbles on a wider path.
+        float sahurTime = Mathf.Max(0f, flightTime - 0.13f);
+        float sahurBurst = 1f - Mathf.Exp(-5f * sahurTime);
         sahurTransform.position = impactSahurPosition +
-            heading * sahurForward + side * sahurTowardCamera +
-            Vector3.up * (50f * flightTime - 4f * flightTime * flightTime);
+            heading * (20f * sahurBurst + 27f * sahurTime + 20f * sahurTime * sahurTime) +
+            side * (10f * sahurBurst + 14f * sahurTime + 6f * sahurTime * sahurTime) +
+            Vector3.up * (16f * sahurBurst + 35f * sahurTime + 9f * sahurTime * sahurTime);
+        float sahurTumble = 1f - Mathf.Exp(-0.75f * sahurTime);
         sahurTransform.rotation =
-            Quaternion.AngleAxis(540f * flightTime, Vector3.forward) * impactSahurRotation;
+            Quaternion.AngleAxis(650f * sahurTumble, impactCameraRotation * Vector3.forward) *
+            Quaternion.AngleAxis(180f * sahurTumble, side) * impactSahurRotation;
 
-        Vector3 desiredCamera = shipTransform.position + heading * 25f +
-                                side * 95f + Vector3.up * 45f;
-        float cameraBlend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(time / 0.7f));
-        Vector3 cameraPosition = Vector3.Lerp(impactCameraPosition, desiredCamera, cameraBlend);
-        float shake = (1f - Mathf.Clamp01(time / 0.9f)) * 0.8f;
-        cameraPosition += storyCamera.transform.right *
+        float cameraBlend = Mathf.SmoothStep(0f, 1f,
+            Mathf.Clamp01((time - 0.15f) / 0.85f));
+        float follow = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(flightTime / 4.1f));
+        Vector3 cameraPosition = Vector3.Lerp(impactCameraPosition,
+            launchCameraPosition + heading * (24f * follow) + Vector3.up * (18f * follow),
+            cameraBlend);
+        float shake = (1f - Mathf.Clamp01(Mathf.Abs(time - TralaleroSwimAnimator.TailContactTime) / 0.35f)) * 1.3f;
+        cameraPosition += (impactCameraRotation * Vector3.right) *
                           (Mathf.PerlinNoise(time * 37f, 0f) * 2f - 1f) * shake;
         cameraPosition += Vector3.up *
                           (Mathf.PerlinNoise(0f, time * 41f) * 2f - 1f) * shake;
-        Vector3 focus = shipTransform.position + heading * 25f + Vector3.up * 20f +
-                        (sahurTransform.position - shipTransform.position) * 0.10f;
+        Vector3 focus = launchCameraFocus + heading * (70f * follow) +
+                        side * (20f * follow) + Vector3.up * (48f * follow);
         Quaternion desiredRotation = Quaternion.LookRotation(focus - cameraPosition, Vector3.up);
         storyCamera.transform.SetPositionAndRotation(cameraPosition,
             Quaternion.Slerp(impactCameraRotation, desiredRotation, cameraBlend));
+
+        UpdateGlint(flightTime);
 
         float alpha = Mathf.Clamp01((time - blackoutDelay) / blackoutDuration);
         blackoutImage.enabled = alpha > 0f;
@@ -206,5 +230,43 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         blackoutImage.color = Color.clear;
         blackoutImage.raycastTarget = false;
         blackoutImage.enabled = false;
+
+        glintHorizontal = CreateGlintBar(canvasObject.transform, "Distant glint horizontal", new Vector2(30f, 2f));
+        glintVertical = CreateGlintBar(canvasObject.transform, "Distant glint vertical", new Vector2(2f, 30f));
+    }
+
+    static Image CreateGlintBar(Transform parent, string name, Vector2 size)
+    {
+        GameObject bar = new GameObject(name, typeof(RectTransform), typeof(Image));
+        bar.transform.SetParent(parent, false);
+        RectTransform rect = bar.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        Image image = bar.GetComponent<Image>();
+        image.raycastTarget = false;
+        image.enabled = false;
+        return image;
+    }
+
+    void UpdateGlint(float flightTime)
+    {
+        float appear = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((flightTime - 3.2f) / 0.22f));
+        float vanish = 1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((flightTime - 3.65f) / 0.35f));
+        float alpha = appear * vanish;
+        Vector3 point = storyCamera.WorldToViewportPoint(
+            Vector3.Lerp(shipTransform.position, sahurTransform.position, 0.5f));
+        bool visible = alpha > 0f && point.z > 0f &&
+                       point.x > 0f && point.x < 1f && point.y > 0f && point.y < 1f;
+        glintHorizontal.enabled = glintVertical.enabled = visible;
+        if (!visible) return;
+
+        Vector2 position = new Vector2((point.x - 0.5f) * Screen.width,
+                                       (point.y - 0.5f) * Screen.height);
+        glintHorizontal.rectTransform.anchoredPosition = position;
+        glintVertical.rectTransform.anchoredPosition = position;
+        float size = 0.45f + 0.55f * Mathf.Sin(Mathf.PI * appear);
+        glintHorizontal.rectTransform.localScale = glintVertical.rectTransform.localScale =
+            Vector3.one * size;
+        glintHorizontal.color = glintVertical.color = new Color(1f, 1f, 1f, alpha);
     }
 }

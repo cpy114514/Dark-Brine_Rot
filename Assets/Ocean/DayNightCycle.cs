@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 public sealed class DayNightCycle : MonoBehaviour
 {
     [Header("Clock")]
+    [Tooltip("Real-world minutes for one complete 24-hour in-game day.")]
     [Min(2f)] public float fullDayMinutes = 24f;
     [Range(0f, 24f)] public float startHour = 8f;
     public bool clockRuns = true;
@@ -33,6 +34,12 @@ public sealed class DayNightCycle : MonoBehaviour
     OceanWorld ocean;
     float elapsedGameHours;
     float nextReflectionUpdate;
+    int reflectionRenderId = -1;
+    float lastReflectionRequest = float.NegativeInfinity;
+    Vector3 reflectedLightDirection;
+    Vector3 reflectedCameraPosition;
+    Color reflectedLightRadiance;
+    float reflectedCloudCoverage;
     int dailyVariationIndex = int.MinValue;
     float dailySunTimeShift;
     float dailySunAzimuthOffset;
@@ -128,11 +135,23 @@ public sealed class DayNightCycle : MonoBehaviour
     void Update()
     {
         if (clockRuns && fullDayMinutes > 0f)
-            elapsedGameHours += Time.deltaTime * 24f / fullDayMinutes;
+            elapsedGameHours += Time.deltaTime * 24f / (fullDayMinutes * 60f);
 
         ApplyTimeOfDay();
-        if (oceanReflectionProbe != null && Time.time >= nextReflectionUpdate)
-            RefreshOceanReflections();
+        if (oceanReflectionProbe != null)
+        {
+            Camera camera = Camera.main;
+            Color radiance = sun.color * sun.intensity;
+            float colorChange = Mathf.Abs(radiance.r - reflectedLightRadiance.r) +
+                Mathf.Abs(radiance.g - reflectedLightRadiance.g) + Mathf.Abs(radiance.b - reflectedLightRadiance.b);
+            bool changed = Vector3.Angle(-sun.transform.forward, reflectedLightDirection) > 5f ||
+                colorChange > 0.12f || Mathf.Abs(currentCloudCoverage - reflectedCloudCoverage) > 0.08f ||
+                (camera != null && Vector3.Distance(camera.transform.position, reflectedCameraPosition) > 30f);
+            // The configured interval remains the upper bound. Capture earlier
+            // through dawn/dusk, but never queue overlapping cubemap renders.
+            if (Time.time >= nextReflectionUpdate || (changed && Time.time - lastReflectionRequest >= 1.5f))
+                RefreshOceanReflections();
+        }
     }
 
     void ApplyTimeOfDay()
@@ -333,8 +352,27 @@ public sealed class DayNightCycle : MonoBehaviour
     {
         if (oceanReflectionProbe != null)
         {
+            if (reflectionRenderId >= 0 && !oceanReflectionProbe.IsFinishedRendering(reflectionRenderId))
+                return;
+            Camera camera = Camera.main;
+            if (ocean != null && camera != null)
+            {
+                float coverage = ocean.oceanSize + Mathf.Max(300f, ocean.oceanSize * 0.2f);
+                oceanReflectionProbe.transform.position = new Vector3(camera.transform.position.x,
+                    ocean.oceanHeight + 5f, camera.transform.position.z);
+                oceanReflectionProbe.size = Vector3.one * (coverage * 2f);
+                // The procedural sky is a sphere around the camera, not a
+                // RenderSettings skybox. The probe must actually see its surface.
+                oceanReflectionProbe.farClipPlane = coverage + Vector3.Distance(
+                    camera.transform.position, oceanReflectionProbe.transform.position);
+                reflectedCameraPosition = camera.transform.position;
+            }
             oceanReflectionProbe.resolution = reflectionResolution;
-            oceanReflectionProbe.RenderProbe();
+            reflectionRenderId = oceanReflectionProbe.RenderProbe();
+            reflectedLightDirection = -sun.transform.forward;
+            reflectedLightRadiance = sun.color * sun.intensity;
+            reflectedCloudCoverage = currentCloudCoverage;
+            lastReflectionRequest = Time.time;
         }
         nextReflectionUpdate = Time.time + reflectionRefreshSeconds;
     }

@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Mavis;
@@ -79,8 +78,12 @@ public static class AuditSahurVisualFacing
                     animator.Update(0f);
                     float sourceHips = Vector3.SignedAngle(Vector3.forward, Vector3.ProjectOnPlane(hips.TransformDirection(hipsAxis), Vector3.up), Vector3.up);
                     float sourceChest = Vector3.SignedAngle(Vector3.forward, Vector3.ProjectOnPlane(chest.TransformDirection(chestAxis), Vector3.up), Vector3.up);
-                    typeof(ThirdPersonPlayerController).GetMethod("AlignComboVisualFacing", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(movement, null);
+                    // Root yaw is extracted by the importer. Sample the
+                    // authored bone pose with a fixed visual parent; do not
+                    // counter-rotate the model to flatten chest/head twist.
                     await Task.Delay(30);
+                    if (Quaternion.Angle(visual.localRotation, originalVisualRotation) > 0.1f)
+                        throw new InvalidOperationException("Source-pose sampling unexpectedly rotated the visual parent.");
                     var body = Vector3.ProjectOnPlane(animator.bodyRotation * Vector3.forward, Vector3.up).normalized;
                     var face = Vector3.ProjectOnPlane(head.TransformDirection(headForward), Vector3.up).normalized;
                     var left = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm).position;

@@ -151,6 +151,10 @@ public sealed class ShipboardSahurController : MonoBehaviour
             return;
         }
 
+        // The mouse controls the third-person heading even while standing still.
+        // WASD moves relative to that heading; strafing or backing up no longer
+        // turns Sahur away from the direction the player is looking.
+        transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         planarVelocity = Vector3.MoveTowards(planarVelocity, desired, acceleration * Time.deltaTime);
 
         bool grounded = groundedLastFrame || controller.isGrounded;
@@ -186,11 +190,6 @@ public sealed class ShipboardSahurController : MonoBehaviour
             }
         }
 
-        if (planarVelocity.sqrMagnitude > 0.01f)
-        {
-            Quaternion facing = Quaternion.LookRotation(planarVelocity.normalized, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, facing, turnSpeed * Time.deltaTime);
-        }
         if (animator != null)
             animator.SetFloat(SpeedId, planarVelocity.magnitude, 0.08f, Time.deltaTime);
 
@@ -291,7 +290,18 @@ public sealed class ShipboardSahurController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (wideView || viewCamera == null) return;
+        if (viewCamera == null) return;
+        if (wideView)
+        {
+            // The ship overview has its own orbit camera. Follow its actual
+            // horizontal view so the same mouse drag turns Sahur in this mode.
+            Vector3 cameraForward = Vector3.ProjectOnPlane(viewCamera.transform.forward, Vector3.up);
+            if (cameraForward.sqrMagnitude > 0.001f)
+                yaw = Quaternion.LookRotation(cameraForward, Vector3.up).eulerAngles.y;
+            if (activeLadder == null)
+                transform.rotation = Quaternion.Euler(0f, yaw, 0f);
+            return;
+        }
 
         Vector3 feet = transform.position + Vector3.up *
             ((controller.center.y - controller.height * 0.5f) * transform.lossyScale.y);

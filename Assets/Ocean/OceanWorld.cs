@@ -208,7 +208,16 @@ public sealed class OceanWorld : MonoBehaviour
         // rejects hidden water pixels automatically, with no per-island setup required.
         generatedMaterial.renderQueue = 2900;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        renderer.receiveShadows = false;
+        renderer.receiveShadows = true;
+        // Shader displacement must remain inside the CPU culling volume.
+        // Recompute flat bounds first so repeated quality rebuilds cannot grow it.
+        generatedMesh.RecalculateBounds();
+        float verticalPadding = (wave1.amplitude + wave2.amplitude + wave3.amplitude + wave4.amplitude) * 1.6f;
+        float horizontalPadding = (wave1.amplitude * wave1.steepness + wave2.amplitude * wave2.steepness +
+            wave3.amplitude * wave3.steepness + wave4.amplitude * wave4.steepness) * 1.6f;
+        Bounds waveBounds = generatedMesh.bounds;
+        waveBounds.Expand(new Vector3(horizontalPadding * 2f, verticalPadding * 2f, horizontalPadding * 2f));
+        generatedMesh.bounds = waveBounds;
         UpdateWaterDistances();
         ApplyMaterialSettings();
         BuildSky();
@@ -249,7 +258,12 @@ public sealed class OceanWorld : MonoBehaviour
             for (int x = 0; x <= meshResolution; x++)
             {
                 int index = z * side + x;
-                vertices[index] = new Vector3(x / (float)meshResolution * meshSize - halfSize, 0f, z / (float)meshResolution * meshSize - halfSize);
+                float nx = x / (float)meshResolution * 2f - 1f;
+                float nz = z / (float)meshResolution * 2f - 1f;
+                // Looking down must retain the same short waves as looking ahead.
+                // Concentrate the existing vertex budget around the camera.
+                vertices[index] = new Vector3(Mathf.Sign(nx) * Mathf.Pow(Mathf.Abs(nx), 2.35f) * halfSize,
+                    0f, Mathf.Sign(nz) * Mathf.Pow(Mathf.Abs(nz), 2.35f) * halfSize);
             }
             int triangle = 0;
             for (int z = 0; z < meshResolution; z++)
@@ -286,9 +300,12 @@ public sealed class OceanWorld : MonoBehaviour
                 float depth = row / (float)depthSegments;
                 // Concentrate rows at the player, where wave silhouette matters, and let the
                 // haze-covered far field use progressively larger cells.
-                float distributedDepth = Mathf.Pow(depth, 2.2f);
+                const float rearFraction = 0.25f;
+                float z = depth <= rearFraction
+                    ? startDistance * Mathf.Pow(1f - depth / rearFraction, 1.7f)
+                    : radius * Mathf.Pow((depth - rearFraction) / (1f - rearFraction), 2.2f);
+                float distributedDepth = Mathf.Clamp01(z / radius);
                 float halfWidth = Mathf.Lerp(radius * 0.40f, radius * 1.10f, distributedDepth);
-                float z = Mathf.Lerp(startDistance, radius, distributedDepth);
                 for (int column = 0; column <= widthSegments; column++)
                     vertices[row * side + column] = new Vector3(columnPositions[column] * halfWidth, 0f, z);
             }
@@ -393,7 +410,9 @@ public sealed class OceanWorld : MonoBehaviour
             generatedMaterial.SetColor("_WaterReflectionTint", reflectedSky);
             generatedMaterial.SetFloat("_ReflectionStrength", Mathf.Clamp(reflectionStrength * 1.45f, 0f, 2f));
             generatedMaterial.SetFloat("_Smoothness", Mathf.Lerp(smoothness, 0.9f, 0.42f));
-            generatedMaterial.SetFloat("_SunGlitterStrength", sunGlitterStrength * Mathf.Lerp(0.025f, 1f, daylight));
+            // The main directional light already becomes dim blue moonlight.
+            // Keep its reflection instead of suppressing it a second time.
+            generatedMaterial.SetFloat("_SunGlitterStrength", sunGlitterStrength);
         }
     }
 
@@ -404,7 +423,7 @@ public sealed class OceanWorld : MonoBehaviour
         generatedMaterial.SetVector(propertyName + "Motion", new Vector4(wave.speed, wave.steepness, 0f, 0f));
     }
 
-    void GetShaderDetailDistances(out float shaderNearDistance, out float shaderMidDistance)
+    public void GetShaderDetailDistances(out float shaderNearDistance, out float shaderMidDistance)
     {
         float nearCap = effectsQuality switch
         {

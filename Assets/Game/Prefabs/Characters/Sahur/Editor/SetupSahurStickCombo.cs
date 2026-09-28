@@ -33,18 +33,17 @@ namespace Mavis
                 importer.clipAnimations = clips;
                 importer.SaveAndReimport();
             }
-            return "Three combo slices retain original positional root motion; the controller normalizes visual body heading separately.";
+            return "Three combo slices extract trajectory yaw with Body Orientation, preserving natural local joint twists.";
         }
 
         static bool ConfigureComboRootOrientation(ModelImporterClipAnimation clip)
         {
-            bool changed = !clip.keepOriginalOrientation || !clip.lockRootRotation ||
+            bool changed = clip.keepOriginalOrientation || clip.lockRootRotation ||
                            !Mathf.Approximately(clip.rotationOffset, 0f);
-            // Keep positional deltas in the source's original coordinate frame.
-            // The controller corrects whole-body heading on the visual child
-            // and maps those deltas back before moving the collision root.
-            clip.keepOriginalOrientation = true;
-            clip.lockRootRotation = true;
+            // Separate whole-body trajectory yaw from the pose. Never cancel
+            // a chest/head rotation by counter-rotating the entire model.
+            clip.keepOriginalOrientation = false;
+            clip.lockRootRotation = false;
             clip.rotationOffset = 0f;
             return changed;
         }
