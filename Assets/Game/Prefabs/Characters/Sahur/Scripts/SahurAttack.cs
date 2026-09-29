@@ -66,6 +66,7 @@ namespace Mavis
 
         public bool IsCombatMotionActive => charging || attacking;
         public bool IsGroundComboActive => attacking && comboStep >= 0;
+        public bool IsHeavyAttackActive => attacking && activeAttackHash == heavyStateHash;
         public bool UsesAnimationRootMotion => attacking && activeAttackHash != jumpSlashStateHash;
         public int CurrentComboStage => IsGroundComboActive ? comboStep : -1;
         public bool IsCharging => charging;
@@ -321,10 +322,10 @@ namespace Mavis
                 return;
             }
 
-            // The Blender windup uses 0..1, while the original heavy strike
-            // still begins at the safe early pose of its three-hit source.
+            // The dedicated Blender strike starts from the windup's fully
+            // drawn pose. The legacy base-layer charge retains its old offset.
             float releasePhase = usesUpperBodyCharge
-                ? Mathf.Clamp(chargePoseTime, 0f, SafeChargePoseTime) * Charge01
+                ? 0f
                 : animator.GetFloat(chargeTimeHash);
             float releaseTime = releasePhase * (chargeClip != null ? chargeClip.length : 0f);
             charging = false;

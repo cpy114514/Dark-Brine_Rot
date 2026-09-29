@@ -521,12 +521,22 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
                 deltaPosition.z = worldTravel.z;
             }
         }
+        if (combat.IsHeavyAttackActive && hasAttackFacing)
+        {
+            // This imported strike travels sideways and turns almost 180
+            // degrees. Retain its authored distance, timing, and vertical
+            // lift, but carry the charge along the direction Sahur aimed.
+            float authoredPlanarDistance = Vector3.ProjectOnPlane(deltaPosition, Vector3.up).magnitude;
+            Vector3 forward = attackFacing * Vector3.forward;
+            deltaPosition.x = forward.x * authoredPlanarDistance;
+            deltaPosition.z = forward.z * authoredPlanarDistance;
+        }
         authoredAttackHeight += deltaPosition.y;
         characterController.Move(deltaPosition);
         // A ground combo keeps the heading chosen before its first hit. The
         // natural local spine/hips twists remain in the imported pose, but its
         // extracted trajectory yaw must not change the gameplay heading.
-        if (combat.IsGroundComboActive && hasAttackFacing)
+        if ((combat.IsGroundComboActive || combat.IsHeavyAttackActive) && hasAttackFacing)
             transform.rotation = attackFacing;
         else
             transform.rotation = transform.rotation * deltaRotation;

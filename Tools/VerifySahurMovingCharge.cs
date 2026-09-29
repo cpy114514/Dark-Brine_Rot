@@ -47,9 +47,9 @@ public static class VerifySahurMovingCharge
                 (animator.IsInTransition(0) &&
                  animator.GetNextAnimatorStateInfo(0).fullPathHash == heavy);
             if (attack.IsCharging || !attack.UsesAnimationRootMotion || !heavyPlaying)
-                throw new InvalidOperationException("Release did not start the original full-body heavy attack.");
+                throw new InvalidOperationException("Release did not start the full-body heavy attack.");
             return "Charge flow passed: base locomotion + arm overlay, cancel clears overlay, " +
-                   "release enters original heavy attack with root motion.";
+                   "release enters the dedicated heavy attack with root motion.";
         }
         finally
         {

@@ -103,7 +103,10 @@ namespace Mavis
             var heavy = states.FirstOrDefault(item => item.state.name == "Heavy Attack").state;
             if (charge == null || heavy == null || heavy.motion is not AnimationClip heavyClip)
                 throw new InvalidOperationException("The charge and heavy attack states need a source clip.");
-            charge.motion = heavyClip;
+            // The heavy strike has its own Blender take; the legacy base-layer
+            // windup must keep its original source instead of scrubbing that strike.
+            var windupClip = charge.motion as AnimationClip ?? heavyClip;
+            charge.motion = windupClip;
             charge.speed = 1f;
             charge.speedParameterActive = false;
             charge.speedParameter = "";
@@ -159,7 +162,7 @@ namespace Mavis
                 attack.comboTwoHitWindow = new Vector2(0.34f, 0.75f);
                 attack.comboThreeHitWindow = new Vector2(0.32f, 0.55f);
                 attack.chargeTimeParameter = chargePhase;
-                attack.chargeClip = heavyClip;
+                attack.chargeClip = windupClip;
                 attack.chargePoseTime = SahurAttack.SafeChargePoseTime;
 
                 Transform visual = prefab.transform.Find("Pbr Sahur Visual");
