@@ -4,8 +4,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-// Safe, repeatable handoff while the new Blender clips are being authored.
-// It never rebuilds the Animator Controller or restores the old attack.
+// Safe, repeatable setup for the procedural Nailong combat while authored clips
+// are still being made. It preserves the current Animator Controller.
 public static class NailongBossSetup
 {
     const string PrefabPath = "Assets/Game/Prefabs/Bosses/Nailong/Nailong.prefab";
@@ -26,12 +26,11 @@ public static class NailongBossSetup
             if (ai == null || health == null || animator == null)
                 throw new InvalidOperationException("Nailong is missing a required boss component.");
 
-            // Preserve the legacy components and their settings for rollback,
-            // but make it impossible for the temporary boss to deal damage.
+            // The AI drives timed attacks through these existing components.
             var oldAttack = root.GetComponent<NailongAttack>();
-            if (oldAttack != null) oldAttack.enabled = false;
+            if (oldAttack != null) oldAttack.enabled = true;
             var oldMotion = root.GetComponent<NailongAttackMotion>();
-            if (oldMotion != null) oldMotion.enabled = false;
+            if (oldMotion != null) oldMotion.enabled = true;
             var oldHitbox = root.transform.Find("NailongHitbox");
             if (oldHitbox != null && oldHitbox.TryGetComponent(out Collider hitbox))
                 hitbox.enabled = false;
@@ -52,7 +51,7 @@ public static class NailongBossSetup
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath, out bool success);
             if (!success) throw new InvalidOperationException("Nailong prefab save failed.");
             AssetDatabase.SaveAssets();
-            Debug.Log("[Nailong] Old attack disabled. Temporary behaviour: idle and follow Sahur only.");
+            Debug.Log("[Nailong] Procedural attacks, combat motion, chase, and death are ready.");
         }
         finally { PrefabUtility.UnloadPrefabContents(root); }
     }

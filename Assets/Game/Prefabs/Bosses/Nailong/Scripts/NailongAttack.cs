@@ -11,27 +11,34 @@ namespace Mavis
         [Min(0f)] public float verticalTolerance = 2.5f;
         public string targetTag = "Player";
 
-        public bool TryHit(Transform target, float reach, float damageMultiplier = 1f, float pushDistance = 0f)
+        public bool TryHit(Transform target, float reach, float damageMultiplier = 1f,
+            float pushDistance = 0f, bool ignoreFacing = false)
         {
             if (target == null) return false;
             // Allow the authored Sahur scene instance, which is Untagged but
             // carries PlayerHealth, without changing the player's prefab.
-            if (!string.IsNullOrEmpty(targetTag) && !target.CompareTag(targetTag) &&
+            if (!string.IsNullOrEmpty(targetTag) && target.tag != targetTag &&
                 target.GetComponentInParent<PlayerHealth>() == null) return false;
             Vector3 delta = target.position - transform.position;
             if (Mathf.Abs(delta.y) > verticalTolerance) return false;
             delta.y = 0f;
             if (delta.sqrMagnitude > reach * reach) return false;
-            if (delta.sqrMagnitude > 0.01f &&
+            if (!ignoreFacing && delta.sqrMagnitude > 0.01f &&
                 Vector3.Angle(transform.forward, delta) > attackArc * 0.5f)
                 return false;
 
             IDamageable victim = target.GetComponentInParent<IDamageable>();
             if (victim == null) return false;
             victim.ApplyDamage(damage * damageMultiplier, transform.position + transform.forward * reach);
-            if (pushDistance > 0f && delta.sqrMagnitude > 0.01f &&
-                target.TryGetComponent(out CharacterController controller))
-                controller.Move(delta.normalized * pushDistance);
+            if (pushDistance > 0f)
+            {
+                CharacterController controller = target.GetComponentInParent<CharacterController>();
+                if (controller != null)
+                {
+                    Vector3 pushDirection = delta.sqrMagnitude > 0.01f ? delta.normalized : transform.forward;
+                    controller.Move(pushDirection * pushDistance);
+                }
+            }
             return true;
         }
     }

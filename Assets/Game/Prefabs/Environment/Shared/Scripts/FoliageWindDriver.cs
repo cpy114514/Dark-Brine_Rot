@@ -19,7 +19,7 @@ namespace Mavis
 
         [Header("Natural response")]
         [Tooltip("Final wind displacement in world units. This keeps a WindZone value of 1 from moving whole trees by metres.")]
-        [Range(0f, 1f)] public float globalResponse = 0.28f;
+        [Range(0f, 1f)] public float globalResponse = 0.55f;
 
         sealed class FoliageRenderer
         {
@@ -78,7 +78,9 @@ namespace Mavis
         void CacheRendererProfiles()
         {
             foliage.Clear();
-            foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            // Include inactive LOD renderers so they already have their wind profile
+            // when a LODGroup activates them later.
+            foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 if (!UsesFoliageShader(renderer))
                     continue;
@@ -92,7 +94,7 @@ namespace Mavis
                     renderer = renderer,
                     anchorY = bounds.min.y,
                     inverseHeight = 1f / bounds.size.y,
-                    response = GetResponse(renderer.name)
+                    response = GetResponse(renderer)
                 };
                 foliage.Add(entry);
                 ApplyProfile(entry);
@@ -107,13 +109,26 @@ namespace Mavis
             return false;
         }
 
-        static float GetResponse(string rendererName)
+        static float GetResponse(Renderer renderer)
         {
-            string name = rendererName.ToLowerInvariant();
-            if (name.Contains("geometry_nodes") || name.Contains("trunk")) return 0.12f;
-            if (name.Contains("branch")) return 0.38f;
-            if (name.Contains("leaf")) return 0.86f;
-            if (name.Contains("rostlinka") || name.Contains("forest")) return 1.00f;
+            string name = renderer.name.ToLowerInvariant();
+            bool hasLeaves = false;
+            bool hasBranches = false;
+            bool hasBark = false;
+            foreach (Material material in renderer.sharedMaterials)
+            {
+                if (material == null) continue;
+                string materialName = material.name.ToLowerInvariant();
+                hasLeaves |= materialName.Contains("leaf") || materialName.Contains("leaves");
+                hasBranches |= materialName.Contains("branch");
+                hasBark |= materialName.Contains("bark") || materialName.Contains("trunk");
+            }
+
+            if (name.Contains("geometry_nodes") || name.Contains("trunk") || (hasBark && !hasLeaves && !hasBranches)) return 0.12f;
+            if (name.Contains("leaf") || hasLeaves) return 0.86f;
+            if (name.Contains("branch") || hasBranches) return 0.38f;
+            if (name.Contains("rostlinka") || name.Contains("forest") || name.Contains("grass")) return 1.00f;
+            if (name.Contains("tree")) return 0.70f;
             return 0.52f;
         }
 
@@ -133,7 +148,7 @@ namespace Mavis
         {
             if (response <= 0.15f) return 0.94f;
             if (response <= 0.40f) return 0.66f;
-            if (response >= 0.90f) return 0.16f;
+            if (response >= 0.75f) return 0.18f;
             return 0.34f;
         }
     }

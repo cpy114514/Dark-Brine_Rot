@@ -18,9 +18,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Min(0f)] public float groundStickSpeed = 5f;
     [Tooltip("Restore the pre-attack heading after the animation finishes, without changing its authored travel.")]
     [Range(0.05f, 0.3f)] public float attackFacingRecoveryTime = 0.14f;
-    [Tooltip("Original source root-position curves, normalized to each combo slice's playback phase. No manually authored lunge distances.")]
-    [HideInInspector] public AnimationCurve[] comboSourceX;
-    [HideInInspector] public AnimationCurve[] comboSourceZ;
+      [Tooltip("Original source root-position curves, normalized to each combo slice's playback phase.")]
+      [HideInInspector] public AnimationCurve[] comboSourceX;
+      [HideInInspector] public AnimationCurve[] comboSourceZ;
+      [Tooltip("Scales the sword animation's long lunges to suit Sahur's stick attacks.")]
+      [Range(0.1f, 1f)] public float comboTravelScale = 0.65f;
     [Range(0f, 0.3f)] public float coyoteTime = 0.12f;
     [Range(0f, 0.3f)] public float jumpBufferTime = 0.12f;
     public float seaLevel = 0f;
@@ -86,6 +88,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     ComboMotionSample comboCurrentSample;
     ComboMotionSample comboNextSample;
     Mavis.SahurAttack combat;
+    Mavis.PlayerStamina playerStamina;
     Camera playerCamera;
     float yaw;
     float pitch = 10f;
@@ -107,6 +110,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     float rollInheritedSpeed;
     float airFlipTimer;
     bool airFlipUsed;
+    Quaternion airFlipVisualSpin = Quaternion.identity;
     Vector3 planarVelocity;
     Vector3 rollDirection;
     bool cameraInitialized;
@@ -140,6 +144,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         combat = GetComponent<Mavis.SahurAttack>();
+        playerStamina = GetComponent<Mavis.PlayerStamina>();
         Animator rootAnimator = GetComponent<Animator>();
         visualTransform = transform.Find("Pbr Sahur Visual");
         Animator visualAnimator = visualTransform != null ? visualTransform.GetComponent<Animator>() : null;
@@ -223,12 +228,13 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (!acceptInput) input = Vector3.zero;
 
         // Running is direction-agnostic: any held WASD direction can sprint.
-        bool sprinting = input.sqrMagnitude > 0.01f && GameInputSettings.Pressed(GameInputSettings.Action.Sprint);
+        bool wantsSprint = input.sqrMagnitude > 0.01f &&
+                           GameInputSettings.Pressed(GameInputSettings.Action.Sprint);
         Quaternion heading = Quaternion.Euler(0f, yaw, 0f);
         Vector3 cameraForward = heading * Vector3.forward;
         Vector3 cameraRight = heading * Vector3.right;
-        float activeMoveSpeed = moveSpeed * (sprinting ? sprintMultiplier : 1f);
-        Vector3 desiredVelocity = (cameraForward * input.z + cameraRight * input.x) * activeMoveSpeed;
+        Vector3 moveDirection = cameraForward * input.z + cameraRight * input.x;
+        Vector3 desiredVelocity = moveDirection * moveSpeed * (wantsSprint ? sprintMultiplier : 1f);
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
         bool chargeMovementAllowed = combat != null && combat.IsCharging;
         bool movementLocked = combatLocked && !chargeMovementAllowed;
@@ -246,10 +252,18 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         if (IsSwimming())
         {
+            playerStamina?.StopSprinting();
             UpdateSwimming(input, desiredVelocity);
             return;
         }
 
+        bool sprinting = wantsSprint && !movementLocked &&
+                         (playerStamina == null || playerStamina.TickSprint(Time.deltaTime));
+        if (!sprinting)
+        {
+            if (!wantsSprint || movementLocked) playerStamina?.StopSprinting();
+            desiredVelocity = movementLocked ? Vector3.zero : moveDirection * moveSpeed;
+        }
         bool exitedSwimming = wasSwimming;
         wasSwimming = false;
         if (exitedSwimming)
@@ -271,7 +285,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (grounded) airFlipUsed = false;
         rollCooldownTimer = Mathf.Max(0f, rollCooldownTimer - Time.deltaTime);
         if (acceptInput && !combatLocked && !isRolling && grounded && rollCooldownTimer <= 0f &&
-            dodgePressed && !jumpPressed)
+            dodgePressed && !jumpPressed &&
+            (playerStamina == null || playerStamina.TrySpend(playerStamina.rollCost)))
         {
             // Without WASD, dodge forward in the direction Sahur is facing.
             // Directional dodges still follow the camera-relative input.
@@ -303,19 +318,27 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             verticalSpeed = -groundStickSpeed;
         if (!isRolling && jumpBufferTimer > 0f && coyoteTimer > 0f)
         {
-            verticalSpeed = Mathf.Sqrt(jumpHeight * 2f * gravity);
-            coyoteTimer = 0f;
-            jumpBufferTimer = 0f;
-            grounded = false;
-            airborneTime = 0f;
-            SetMotion(2, "Jump Start", 0.10f);
+            if (playerStamina != null && !playerStamina.TrySpend(playerStamina.jumpCost))
+            {
+                jumpBufferTimer = 0f;
+            }
+            else
+            {
+                verticalSpeed = Mathf.Sqrt(jumpHeight * 2f * gravity);
+                coyoteTimer = 0f;
+                jumpBufferTimer = 0f;
+                grounded = false;
+                airborneTime = 0f;
+                SetMotion(2, "Jump Start", 0.10f);
+            }
         }
 
         // Latch a single press, including at the apex or while falling. The
         // timer owns the whole flip; holding/releasing Ctrl cannot shorten it.
         // Added lift both raises the jump and gives a late flip time to finish.
         if (acceptInput && !combatLocked && !isRolling && !grounded && !airFlipUsed &&
-            airFlipTimer <= 0f && rollCooldownTimer <= 0f && dodgePressed)
+            airFlipTimer <= 0f && rollCooldownTimer <= 0f && dodgePressed &&
+            (playerStamina == null || playerStamina.TrySpend(playerStamina.airFlipCost)))
         {
             airFlipUsed = true;
             airFlipTimer = airFlipDuration;
@@ -601,7 +624,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         comboCurrentSample = currentSample;
         comboNextSample = nextSample;
-        travel = Vector3.Scale(travel, visualTransform.lossyScale) * animator.humanScale;
+          travel = Vector3.Scale(travel, visualTransform.lossyScale) *
+                   (animator.humanScale * comboTravelScale);
         return true;
     }
 
@@ -727,6 +751,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         if (combat != null && combat.IsGroundComboActive)
         {
+            airFlipVisualSpin = Quaternion.identity;
             visualTransform.localPosition = visualBasePosition;
             visualTransform.localRotation = visualBaseRotation;
             return;
@@ -736,19 +761,27 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         // Root motion is not applied during rolls, so rotate only the
         // visual around the movement capsule's centre to show the somersault
         // without tilting or displacing the CharacterController and camera.
-        if (airFlipTimer <= 0f)
+        if (airFlipTimer > 0f)
         {
-            visualTransform.localPosition = visualBasePosition;
-            visualTransform.localRotation = visualBaseRotation;
-            return;
+            float phase = Mathf.Clamp01(1f - airFlipTimer / Mathf.Max(0.2f, airFlipDuration));
+            // Keep almost constant angular speed. A full SmoothStep stalls at
+            // both ends and makes the middle of this short flip rush past.
+            float spinPhase = Mathf.Lerp(phase, Mathf.SmoothStep(0f, 1f, phase), 0.18f);
+            airFlipVisualSpin = Quaternion.Euler(360f * spinPhase, 0f, 0f);
+        }
+        else
+        {
+            // A landing or collision can end the timer between frames. Blend
+            // the remaining tilt back to upright rather than snapping it.
+            float recovery = 1f - Mathf.Exp(-Time.deltaTime / 0.06f);
+            airFlipVisualSpin = Quaternion.Slerp(airFlipVisualSpin, Quaternion.identity, recovery);
+            if (Quaternion.Angle(airFlipVisualSpin, Quaternion.identity) < 0.2f)
+                airFlipVisualSpin = Quaternion.identity;
         }
 
-        float phase = 1f - airFlipTimer / Mathf.Max(0.2f, airFlipDuration);
-        float angle = 360f * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(phase));
-        Quaternion spin = Quaternion.Euler(angle, 0f, 0f);
         Vector3 pivot = characterController.center;
-        visualTransform.localPosition = pivot + spin * (visualBasePosition - pivot);
-        visualTransform.localRotation = spin * visualBaseRotation;
+        visualTransform.localPosition = pivot + airFlipVisualSpin * (visualBasePosition - pivot);
+        visualTransform.localRotation = airFlipVisualSpin * visualBaseRotation;
     }
 
     void KeepFeetOnSeaLevel()
@@ -818,6 +851,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         rollCooldownTimer = 0f;
         airFlipTimer = 0f;
         airFlipUsed = false;
+        airFlipVisualSpin = Quaternion.identity;
         if (visualTransform != null)
         {
             visualTransform.localPosition = visualBasePosition;

@@ -56208,7 +56208,7 @@ MonoBehaviour:
   baseStrength: 1
   frequency: 1
   gustiness: 0.6
-  globalResponse: 0.28
+  globalResponse: 0.55
 --- !u!4 &1079199921
 Transform:
   m_ObjectHideFlags: 0

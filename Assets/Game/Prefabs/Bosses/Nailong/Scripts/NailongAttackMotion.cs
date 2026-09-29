@@ -6,7 +6,7 @@ namespace Mavis
     // It runs in LateUpdate, after Animator has written the humanoid bones.
     public sealed class NailongAttackMotion : MonoBehaviour
     {
-        public enum Style { LeftClaw, RightClaw, DoubleClaw, ShoulderBump }
+        public enum Style { LeftClaw, RightClaw, DoubleClaw, ShoulderBump, Cry, Tantrum }
 
         Transform leftShoulder;
         Transform leftForeArm;
@@ -58,6 +58,31 @@ namespace Mavis
             float phase = Mathf.Clamp01((Time.time - startedAt) / duration);
             if (phase >= 1f) { active = false; return; }
 
+            if (style == Style.Cry)
+            {
+                float shake = Mathf.Sin(Time.time * 17f);
+                Lean(7f + 3f * Mathf.Abs(shake), 8f * shake);
+                PoseCryingArm(true);
+                PoseCryingArm(false);
+                if (head != null)
+                    head.rotation = Quaternion.AngleAxis(5f * shake, transform.forward) *
+                        Quaternion.AngleAxis(7f, transform.right) * head.rotation;
+                return;
+            }
+
+            if (style == Style.Tantrum)
+            {
+                float flail = Mathf.Sin(Time.time * 13f);
+                float leftFlail = Mathf.Clamp01(0.25f + 0.75f * Mathf.Max(0f, flail));
+                float rightFlail = Mathf.Clamp01(0.25f + 0.75f * Mathf.Max(0f, -flail));
+                Lean(11f + 7f * Mathf.Abs(flail), 12f * flail);
+                PoseArm(true, 0.8f * leftFlail, 0.45f * leftFlail, false);
+                PoseArm(false, 0.8f * rightFlail, 0.45f * rightFlail, false);
+                if (head != null)
+                    head.rotation = Quaternion.AngleAxis(8f * flail, transform.up) * head.rotation;
+                return;
+            }
+
             if (style == Style.ShoulderBump)
             {
                 float wind = Wind(phase);
@@ -97,6 +122,30 @@ namespace Mavis
             Lean(13f * Mathf.Max(left, right), 17f * (right - left));
             PoseArm(true, leftWind, left, false);
             PoseArm(false, rightWind, right, false);
+        }
+
+        void PoseCryingArm(bool left)
+        {
+            Transform shoulder = left ? leftShoulder : rightShoulder;
+            Transform foreArm = left ? leftForeArm : rightForeArm;
+            Transform hand = left ? leftHand : rightHand;
+            if (shoulder == null || hand == null) return;
+
+            Vector3 arm = hand.position - shoulder.position;
+            if (arm.sqrMagnitude < 0.001f) return;
+            float side = left ? -1f : 1f;
+            Vector3 nearFace = transform.TransformDirection(new Vector3(side * 0.44f, 0.78f, 0.36f).normalized);
+            shoulder.rotation = Quaternion.FromToRotation(arm, nearFace) * shoulder.rotation;
+
+            if (foreArm != null)
+            {
+                Vector3 wrist = hand.position - foreArm.position;
+                if (wrist.sqrMagnitude > 0.001f)
+                {
+                    Vector3 curl = transform.TransformDirection(new Vector3(-side * 0.32f, 0.45f, 0.55f));
+                    foreArm.rotation = Quaternion.FromToRotation(wrist, curl) * foreArm.rotation;
+                }
+            }
         }
 
         void Lean(float forwardDegrees, float twistDegrees)

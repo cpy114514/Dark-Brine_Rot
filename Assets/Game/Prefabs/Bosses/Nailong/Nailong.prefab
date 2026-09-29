@@ -1236,10 +1236,34 @@ MonoBehaviour:
   followStopDistance: 2.4
   chaseSpeed: 4.2
   turnSpeed: 600
+  attackRange: 3.05
+  attackReach: 3.35
+  attackWindup: 0.34
+  attackRecovery: 0.5
+  attackCooldown: 1.2
+  cryingRadius: 5.6
+  cryingDamageMultiplier: 0.9
+  cryingStaminaDrain: 8
+  cryingWindup: 1
+  cryingCooldown: 8
+  skillRange: 7.7
+  shamelessChargeSpeed: 9.5
+  shamelessChargeDuration: 0.62
+  shamelessChargeDamageMultiplier: 1.5
+  shamelessChargeCooldown: 7
+  tantrumRadius: 5.2
+  tantrumDamageMultiplier: 0.58
+  tantrumStaminaDrainPerPulse: 2.5
+  tantrumWindup: 0.85
+  tantrumPulseInterval: 0.48
+  tantrumPulseCount: 3
+  tantrumCooldown: 11
   visualGroundDrop: 0.325
   keepVisualGroundOffset: 1
   animator: {fileID: 7736495598105563828}
   health: {fileID: 3929618944930166014}
+  attack: {fileID: 7919335226212313832}
+  attackMotion: {fileID: 7410499902333440630}
 --- !u!114 &7919335226212313832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1247,7 +1271,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3960477964465410676}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 655b7d27986ff154d84c48aaf72ea44d, type: 3}
   m_Name: 
@@ -1290,7 +1314,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3960477964465410676}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aebf511830045464d85395df642d0bf2, type: 3}
   m_Name: 

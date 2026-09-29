@@ -75,6 +75,7 @@ namespace Mavis
         readonly Collider[] nearbyColliders = new Collider[64];
         readonly int[] comboStateHashes = new int[3];
         ThirdPersonPlayerController controller;
+        PlayerStamina stamina;
         bool attackQueued;
         bool comboContinueQueued;
         bool charging;
@@ -98,6 +99,8 @@ namespace Mavis
         int chargeTimeHash;
         int jumpSlashStateHash;
         int activeAttackHash;
+        AudioClip activeSwish;
+        bool swishPlayed;
 
         void Reset()
         {
@@ -114,6 +117,7 @@ namespace Mavis
         void Awake()
         {
             controller = GetComponent<ThirdPersonPlayerController>();
+            stamina = GetComponent<PlayerStamina>();
             lightStateHash = Animator.StringToHash("Base Layer." + attackTrigger);
             heavyStateHash = Animator.StringToHash("Base Layer." + heavyAttackState);
             chargeStateHash = Animator.StringToHash("Base Layer." + chargeState);
@@ -232,7 +236,7 @@ namespace Mavis
                 animator.HasState(0, comboStateHashes[1]) &&
                 animator.HasState(0, comboStateHashes[2]))
                 StartComboStage(0);
-            else
+            else if (stamina == null || stamina.TrySpend(stamina.lightAttackCost))
                 PlayAttack(false, damage); // Existing scenes still work until their controller is upgraded.
         }
 
@@ -244,18 +248,24 @@ namespace Mavis
                 return;
             }
 
+            if (stamina != null && !stamina.TrySpend(stamina.jumpSlashCost)) return;
+
             airAttackUsed = true;
             airImpactArmed = true;
             attackQueued = false;
             comboStep = -1;
             comboContinueQueued = false;
             BeginAttack(jumpSlashStateHash, damage * jumpSlashDamageMultiplier, 0f, 0.08f);
-            if (swingAudio != null && heavySwish != null)
-                swingAudio.PlayOneShot(heavySwish);
         }
 
         void StartComboStage(int stage)
         {
+            if (stamina != null && !stamina.TrySpend(stamina.lightAttackCost))
+            {
+                comboContinueQueued = false;
+                return;
+            }
+
             comboStep = stage;
             comboContinueQueued = false;
             controller?.BeginComboSourceTravel(stage);
@@ -263,9 +273,6 @@ namespace Mavis
                 stage == 2 ? comboThreeDamageMultiplier : 1f;
             BeginAttack(comboStateHashes[stage], damage * multiplier, 0f,
                 stage == 0 ? 0.08f : comboBlendTime);
-            if (swingAudio != null && comboSwishes != null &&
-                stage < comboSwishes.Length && comboSwishes[stage] != null)
-                swingAudio.PlayOneShot(comboSwishes[stage]);
         }
 
         void StartCharge()
@@ -287,6 +294,8 @@ namespace Mavis
                 return;
             }
 
+            if (stamina != null && !stamina.CanSpend(stamina.chargedAttackCost)) return;
+
             attackQueued = false;
             comboContinueQueued = false;
             if (usesUpperBodyCharge) controller?.PrepareChargeLocomotion();
@@ -294,8 +303,7 @@ namespace Mavis
             charging = true;
             chargeStartedAt = Time.time;
             if (stickHitbox != null) stickHitbox.enabled = false;
-            // Play the real hand draw-back from the source clip across the
-            // charging period, then stop at its prepared striking pose.
+            // Scrub the dedicated one-handed windup across the full charge.
             UpdateChargePose();
             if (usesUpperBodyCharge)
             {
@@ -307,15 +315,22 @@ namespace Mavis
 
         void ReleaseCharge()
         {
-            // Preserve the sampled clip phase when handing charge over to heavy.
-            float releaseTime = animator.GetFloat(chargeTimeHash) *
-                (chargeClip != null ? chargeClip.length : 0f);
+            if (stamina != null && !stamina.TrySpend(stamina.chargedAttackCost))
+            {
+                CancelCharge();
+                return;
+            }
+
+            // The Blender windup uses 0..1, while the original heavy strike
+            // still begins at the safe early pose of its three-hit source.
+            float releasePhase = usesUpperBodyCharge
+                ? Mathf.Clamp(chargePoseTime, 0f, SafeChargePoseTime) * Charge01
+                : animator.GetFloat(chargeTimeHash);
+            float releaseTime = releasePhase * (chargeClip != null ? chargeClip.length : 0f);
             charging = false;
             float multiplier = Mathf.Lerp(minChargeDamageMultiplier, maxChargeDamageMultiplier,
                 Mathf.Clamp01((Time.time - chargeStartedAt) / fullChargeTime));
             PlayAttack(true, damage * multiplier, releaseTime);
-            if (swingAudio != null && heavySwish != null)
-                swingAudio.PlayOneShot(heavySwish);
         }
 
         void CancelCharge()
@@ -344,10 +359,12 @@ namespace Mavis
 
         void UpdateChargePose()
         {
-            if (animator == null || chargeClip == null) return;
-            // Clamp old scene overrides too; never hold the staff across the head.
-            animator.SetFloat(chargeTimeHash,
-                Mathf.Clamp(chargePoseTime, 0f, SafeChargePoseTime) * Charge01);
+            if (animator == null) return;
+            if (usesUpperBodyCharge)
+                animator.SetFloat(chargeTimeHash, Charge01);
+            else if (chargeClip != null)
+                animator.SetFloat(chargeTimeHash,
+                    Mathf.Clamp(chargePoseTime, 0f, SafeChargePoseTime) * Charge01);
         }
 
         void PlayAttack(bool heavy, float amount, float heavyStartPose = 0f)
@@ -377,6 +394,12 @@ namespace Mavis
             attackStartedAt = Time.time;
             lastFireTime = Time.time;
             hitThisSwing.Clear();
+            activeSwish = comboStep >= 0 && comboSwishes != null &&
+                          comboStep < comboSwishes.Length ? comboSwishes[comboStep] :
+                          stateHash == heavyStateHash || stateHash == jumpSlashStateHash ?
+                          heavySwish : comboSwishes != null && comboSwishes.Length > 0 ?
+                          comboSwishes[0] : null;
+            swishPlayed = false;
             if (stickHitbox != null) stickHitbox.enabled = false;
             if (stateHash == heavyStateHash && offset > 0f && chargeClip != null)
             {
@@ -460,6 +483,16 @@ namespace Mavis
             {
                 start = activeAttackHash == heavyStateHash ? heavySwingWindowStart : swingWindowStart;
                 end = activeAttackHash == heavyStateHash ? heavySwingWindowEnd : swingWindowEnd;
+            }
+            // Start the whoosh just before the actual strike, rather than at
+            // the beginning of the windup or the start of a combo transition.
+            if (!swishPlayed && info.fullPathHash == activeAttackHash &&
+                info.normalizedTime >= Mathf.Max(0f, start - 0.08f) &&
+                !animator.IsInTransition(0))
+            {
+                swishPlayed = true;
+                if (swingAudio != null && activeSwish != null)
+                    swingAudio.PlayOneShot(activeSwish);
             }
             stickHitbox.enabled = info.fullPathHash == activeAttackHash &&
                                   info.normalizedTime >= start && info.normalizedTime <= end &&

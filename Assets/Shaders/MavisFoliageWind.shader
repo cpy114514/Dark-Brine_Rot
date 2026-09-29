@@ -106,40 +106,45 @@ Shader "Mavis/FoliageWind"
                 float  squish     : TEXCOORD4;
             };
 
-            // Simple value-noise driven by world position + time. Cheap enough for foliage.
-            float Hash(float3 p)
-            {
-                p = frac(p * float3(443.897, 441.423, 437.195));
-                p += dot(p, p.yzx + 19.19);
-                return frac((p.x + p.y) * p.z);
-            }
-
             float3 ComputeWindOffset(float3 positionWS)
             {
-                float3 dir  = _MavisWindDir.xyz;
+                float3 dir = _MavisWindDir.xyz;
+                dir.y = 0.0;
+                dir = dot(dir, dir) > 1e-4 ? normalize(dir) : float3(1.0, 0.0, 0.0);
+                float3 sideDir = float3(-dir.z, 0.0, dir.x);
                 float  time = _MavisWindDir.w;
                 float  baseStrength = _MavisWindParams.x;
                 float  gustiness    = _MavisWindParams.w;
                 float  freq         = _WindFrequency;
 
-                // FoliageWindDriver provides a world-height range for every renderer.
-                // This keeps the tree root planted even when the island itself sits high
-                // above world origin, while grass and leaf clusters still flex at their tips.
+                // Build a continuous wind field in world space. Adjacent vertices share
+                // the same broad motion instead of receiving unrelated random phases.
                 float heightFactor = saturate((positionWS.y - _MavisWindAnchorY) * _MavisWindInvHeight);
                 heightFactor *= heightFactor;
                 heightFactor = lerp(1.0 - _WindTrunkStiffness, 1.0, heightFactor);
 
-                // Phase per-leaf for organic motion
-                float phase = Hash(positionWS.xzx) * 6.2831;
-                float wave  = sin(time * freq + phase);
-                float gust  = sin(time * freq * 0.37 + phase * 1.7);
+                float2 windPosition = positionWS.xz;
+                float broadPhase = time * freq * 0.72 +
+                    dot(windPosition, dir.xz * 0.052 + sideDir.xz * 0.018);
+                float detailPhase = time * freq * 1.18 +
+                    dot(windPosition, dir.xz * -0.13 + sideDir.xz * 0.16) + 1.7;
+                float crossPhase = time * freq * 0.56 +
+                    dot(windPosition, sideDir.xz * 0.075 + dir.xz * 0.025) - 0.9;
+                float sway = sin(broadPhase) * 0.72 + sin(detailPhase) * 0.22 + sin(crossPhase) * 0.06;
+                float gustPhase = time * max(_MavisWindParams.y, 0.08) * 0.55 +
+                    dot(windPosition, dir.xz * 0.021) + 0.6;
+                float gust = sin(gustPhase) * 0.5 + 0.5;
+                float gustAmount = saturate(gustiness * _WindGust);
+                float gustEnvelope = lerp(1.0 - gustAmount * 0.16, 1.0 + gustAmount * 0.34, gust);
 
                 float strength = _WindBend * _LocalWindScale * baseStrength *
-                                _MavisWindResponse * heightFactor * (1.0 + gustiness * gust);
+                                _MavisWindResponse * heightFactor * gustEnvelope;
 
-                // Lateral bend along wind direction, plus tiny vertical bob
-                float3 offset = dir * (wave * strength)
-                              + float3(0, abs(gust) * strength * 0.08, 0);
+                // The crosswind term keeps crowns and grass from moving like a rigid wall.
+                // Roots remain anchored by heightFactor; only tips get the small lift.
+                float3 offset = dir * (sway * strength)
+                              + sideDir * (sin(detailPhase + 0.8) * strength * 0.12)
+                              + float3(0.0, gust * strength * 0.035, 0.0);
                 return offset;
             }
 

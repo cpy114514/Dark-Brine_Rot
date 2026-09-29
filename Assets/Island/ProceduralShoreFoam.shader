@@ -27,10 +27,12 @@ Shader "DarkBrine/Procedural Shore Foam"
             Tags { "LightMode"="UniversalForward" }
             Blend SrcAlpha OneMinusSrcAlpha
             ZWrite Off
-            // The water and surf ribbon have different tessellation. Let the
-            // opaque depth texture hide terrain, but do not let the water mesh
-            // erase its own foam where their interpolated wave heights cross.
-            ZTest Always
+            // Respect the island's hardware depth so surf behind dry terrain
+            // cannot show through, even when the camera depth copy is stale.
+            ZTest LEqual
+            // Bias only the depth comparison to keep foam above the displaced
+            // ocean where the two meshes have different tessellation.
+            Offset -1, -1
             Cull Off
 
             HLSLPROGRAM

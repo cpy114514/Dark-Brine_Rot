@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 1336109698613982991}
   - component: {fileID: 6832417762851660915}
   - component: {fileID: 2720605264520499925}
+  - component: {fileID: 7476164261654792111}
   m_Layer: 0
   m_Name: Pbr Sahur Visual
   m_TagString: Untagged
@@ -166,6 +167,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4dc391d0a97f2d4fba37f3c1dfa41c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SahurRootMotionRelay
+--- !u!114 &7476164261654792111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 678114971662188399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b126d94c4cdc3042b394c4b5867a931, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SahurCombatGuardIK
+  guardStrength: 0.9
+  blendInSeconds: 0.09
+  blendOutSeconds: 0.16
+  chargeHandTurnDegrees: 125
+  chargeTurnInSeconds: 0.18
+  chargeTurnOutSeconds: 0.09
+  chargeArmStrength: 0.95
+  chargeArmInSeconds: 0.12
+  chargeArmOutSeconds: 0.08
+  chargeHandSideOffset: 0.3
+  chargeHandForwardOffset: 0.24
 --- !u!1 &1120692580181806039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,6 +1639,7 @@ GameObject:
   - component: {fileID: 4332325559732497499}
   - component: {fileID: 3512529650752302148}
   - component: {fileID: 5610018856762232532}
+  - component: {fileID: 4747575031338363534}
   m_Layer: 0
   m_Name: SahurPlayer
   m_TagString: Untagged
@@ -2465,6 +2490,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  comboTravelScale: 0.65
   coyoteTime: 0.12
   jumpBufferTime: 0.12
   seaLevel: 0
@@ -2563,15 +2589,15 @@ MonoBehaviour:
   chargeState: Charge Windup
   heavyAttackState: Heavy Attack
   chargeTimeParameter: ChargePhase
-  chargeClip: {fileID: -203655887218126122, guid: bff9cf4d18da2fb47ba8dbcbb4e28245, type: 3}
+  chargeClip: {fileID: -203655887218126122, guid: 108276e68449afb4b832669f17a64534, type: 3}
   chargePoseTime: 0.18
   comboOneState: Combo 1
   comboTwoState: Combo 2
   comboThreeState: Combo 3
   comboQueueOpen: 0.12
-  comboChainPoint: 0.98
-  comboQueueClose: 0.96
-  comboBlendTime: 0.06
+  comboChainPoint: 0.95
+  comboQueueClose: 0.98
+  comboBlendTime: 0.09
   comboTwoDamageMultiplier: 1.2
   comboThreeDamageMultiplier: 1.6
   comboOneHitWindow: {x: 0.57, y: 0.86}
@@ -2742,6 +2768,30 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &4747575031338363534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6548037495126515326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38fa7c158e364c6685e48d48cab0a19b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.PlayerStamina
+  maxStamina: 100
+  currentStamina: 100
+  regenerationPerSecond: 30
+  regenerationDelay: 0.55
+  sprintDrainPerSecond: 8
+  sprintRestartThreshold: 4
+  jumpCost: 6
+  rollCost: 10
+  airFlipCost: 8
+  lightAttackCost: 5
+  jumpSlashCost: 8
+  chargedAttackCost: 16
 --- !u!1 &6599514254367242517
 GameObject:
   m_ObjectHideFlags: 0
