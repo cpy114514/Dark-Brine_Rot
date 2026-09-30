@@ -52,6 +52,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Min(0.1f)] public float swimAcceleration = 9f;
     [Range(0.2f, 1.2f)] public float swimSubmergeDepth = 0.66f;
     [Min(0.1f)] public float swimBuoyancy = 8f;
+    [Min(0.5f)] public float swimStartDepth = 1.15f;
+    [Range(0.05f, 0.5f)] public float swimShoreHysteresis = 0.25f;
+    [Min(1f)] public float fastSwimMultiplier = 1.5f;
+    [Min(0f)] public float fastSwimDrainPerSecond = 3f;
+    [Range(0.3f, 1f)] public float wadingSpeedMultiplier = 0.7f;
 
     [Header("Underwater presentation")]
     [Tooltip("How far below the surface the third-person camera settles while Sahur is swimming.")]
@@ -115,6 +120,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     float underwaterBlend;
     bool wasAtSeaSurface;
     bool wasSwimming;
+    OceanWorld swimmingOcean;
+    float swimExitJumpTimer;
+    float swimRippleTimer;
+    readonly RaycastHit[] waterGroundHits = new RaycastHit[32];
+    public bool Swimming => IsSwimming();
+    public bool FastSwimming { get; private set; }
     ParticleSystem waterRipples;
     ParticleSystem waterDroplets;
     ParticleSystem underwaterBubbles;
@@ -161,6 +172,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         combat = GetComponent<Mavis.SahurAttack>();
+        swimmingOcean = FindFirstObjectByType<OceanWorld>();
         playerStamina = GetComponent<Mavis.PlayerStamina>();
         Animator rootAnimator = GetComponent<Animator>();
         visualTransform = transform.Find("Pbr Sahur Visual");
@@ -224,6 +236,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         if (PauseSettingsMenu.IsOpen)
             return;
+        if (swimmingOcean == null) swimmingOcean = FindFirstObjectByType<OceanWorld>();
+        if (swimmingOcean != null) seaLevel = swimmingOcean.oceanHeight;
+        swimExitJumpTimer = Mathf.Max(0f, swimExitJumpTimer - Time.deltaTime);
         if (Mouse.current.leftButton.wasPressedThisFrame && Cursor.lockState != CursorLockMode.Locked)
             LockCursor();
         bool acceptInput = Cursor.lockState == CursorLockMode.Locked;
@@ -267,10 +282,13 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         if (IsSwimming())
         {
-            playerStamina?.StopSprinting();
-            UpdateSwimming(input, desiredVelocity);
+            // Water takes priority over an in-flight attack or dodge.
+            combat?.SuspendForSwimming();
+            UpdateSwimming(input, moveDirection, wantsSprint, acceptInput &&
+                GameInputSettings.PressedThisFrame(GameInputSettings.Action.Jump));
             return;
         }
+        FastSwimming = false;
 
         bool canSprint = wantsSprint && !movementLocked && moveDirection.sqrMagnitude > 0.01f;
         bool sprinting = canSprint &&
@@ -289,8 +307,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // walking speed before sprint input can accelerate it again.
             Vector3 walkVelocity = (cameraForward * input.z + cameraRight * input.x) * moveSpeed;
             planarVelocity = walkVelocity;
-            SetMotion(0, "Locomotion", 0.10f);
+            playerStamina?.StopSprinting();
+            if (swimExitJumpTimer <= 0f) verticalSpeed = -groundStickSpeed;
+            airborneTime = landingTimer = 0f;
+            if (swimExitJumpTimer <= 0f) SetMotion(0, "Locomotion", 0.10f);
         }
+        float waterDepth = GetWaterDepth();
+        if (swimmingOcean != null && IsAtSeaSurface() && waterDepth > 0f && !exitedSwimming)
+            desiredVelocity *= Mathf.Lerp(1f, wadingSpeedMultiplier, Mathf.Clamp01(waterDepth / swimStartDepth));
 
         bool grounded = verticalSpeed <= 0f && IsGroundedOrOnSea();
         bool isRolling = rollTimer > 0f;
@@ -677,13 +701,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             return;
 
         Quaternion cameraRotation = Quaternion.Euler(pitch, yaw, 0f);
-        bool swimming = IsSwimming();
         Vector3 focus = transform.position + Vector3.up * (visualBaseOffset + cameraHeight);
-        if (swimming)
-            focus.y = Mathf.Min(focus.y, seaLevel - underwaterCameraDepth);
         Vector3 desiredPosition = focus - cameraRotation * Vector3.forward * cameraDistance;
-        if (swimming)
-            desiredPosition.y = Mathf.Min(desiredPosition.y, seaLevel - 0.12f);
 
         // Pull the camera forward if a solid island/prop stands between it and the player.
         float closest = cameraDistance;
@@ -702,7 +721,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             playerCamera.transform.SetPositionAndRotation(desiredPosition, cameraRotation);
             cameraInitialized = true;
-            UpdateUnderwaterPresentation(swimming);
+            UpdateUnderwaterPresentation(playerCamera.transform.position.y < seaLevel - 0.12f && swimmingOcean != null);
             return;
         }
 
@@ -710,7 +729,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         playerCamera.transform.SetPositionAndRotation(
             Vector3.Lerp(playerCamera.transform.position, desiredPosition, smoothFactor),
             Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
-        UpdateUnderwaterPresentation(swimming);
+        UpdateUnderwaterPresentation(playerCamera.transform.position.y < seaLevel - 0.12f && swimmingOcean != null);
     }
 
     void ConfigureColliderToModel()
@@ -812,21 +831,13 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void KeepFeetOnSeaLevel()
     {
-        float lowestFootOffset = GetLowestFootOffset();
-        if (transform.position.y + lowestFootOffset >= seaLevel)
-            return;
-        Vector3 position = transform.position;
-        position.y = seaLevel - lowestFootOffset;
-        transform.position = position;
-        verticalSpeed = 0f;
+        // Water is not a solid floor. Shallow water uses the real seabed,
+        // while deep water hands off to buoyancy on the following update.
     }
 
     bool IsGroundedOrOnSea()
     {
-        // The ocean is visual-only, so it has no physics collider.  Treat the
-        // model's feet meeting the waterline as grounded while solid island
-        // colliders continue to use CharacterController grounding normally.
-        return characterController.isGrounded || transform.position.y + GetLowestFootOffset() <= seaLevel + 0.035f;
+        return characterController != null && characterController.isGrounded;
     }
 
     bool IsAtSeaSurface()
@@ -838,12 +849,33 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     bool IsSwimming()
     {
-        // Solid island/prop colliders take priority: their shore remains a
-        // normal walkable surface. Outside them the ocean becomes buoyant water.
-        return IsAtSeaSurface() && characterController != null && !characterController.isGrounded;
+        if (characterController == null || swimmingOcean == null || !swimmingOcean.isActiveAndEnabled ||
+            swimExitJumpTimer > 0f || !IsAtSeaSurface()) return false;
+        // Grounded does not necessarily mean dry: the new seabed can be far
+        // below the water. Use actual water depth and a stable shore dead band.
+        float threshold = wasSwimming ? swimStartDepth - swimShoreHysteresis : swimStartDepth;
+        return GetWaterDepth() > Mathf.Max(0.5f, threshold);
     }
 
-    void UpdateSwimming(Vector3 input, Vector3 desiredVelocity)
+    float GetWaterDepth()
+    {
+        if (characterController == null) return 0f;
+        float feet = transform.position.y + GetLowestFootOffset();
+        Vector3 origin = new Vector3(transform.position.x, feet + 0.5f, transform.position.z);
+        int count = Physics.RaycastNonAlloc(origin, Vector3.down, waterGroundHits,
+            Mathf.Max(5f, characterController.height + 2f), ~0, QueryTriggerInteraction.Ignore);
+        float floor = float.NegativeInfinity;
+        for (int i = 0; i < count; i++)
+        {
+            var hit = waterGroundHits[i];
+            if (hit.collider.transform.IsChildOf(transform) ||
+                Vector3.Angle(hit.normal, Vector3.up) > characterController.slopeLimit) continue;
+            floor = Mathf.Max(floor, hit.point.y);
+        }
+        return float.IsNegativeInfinity(floor) ? float.PositiveInfinity : seaLevel - floor;
+    }
+
+    void UpdateSwimming(Vector3 input, Vector3 desiredVelocity, bool wantsFastSwim, bool jumpPressed)
     {
         rollTimer = 0f;
         rollInheritedSpeed = 0f;
@@ -859,15 +891,24 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
         verticalSpeed = 0f;
+        hasAttackFacing = recoveringAttackFacing = trackingAttackRoot = false;
+        authoredAttackHeight = unsupportedAttackSpeed = 0f;
 
         float movementScale = Mathf.Clamp01(input.magnitude);
+        bool canFastSwim = wantsFastSwim && movementScale > 0.01f;
+        FastSwimming = canFastSwim && (playerStamina == null ||
+            playerStamina.TickSprint(Time.deltaTime, fastSwimDrainPerSecond));
+        if (!canFastSwim) playerStamina?.StopSprinting();
         Vector3 swimVelocity = desiredVelocity.sqrMagnitude > 0.001f
-            ? desiredVelocity.normalized * swimSpeed * movementScale
+            ? desiredVelocity.normalized * swimSpeed * movementScale * (FastSwimming ? fastSwimMultiplier : 1f)
             : Vector3.zero;
         planarVelocity = Vector3.MoveTowards(planarVelocity, swimVelocity, swimAcceleration * Time.deltaTime);
 
         float targetY = seaLevel - GetLowestFootOffset() - swimSubmergeDepth;
-        float buoyancyVelocity = (targetY - transform.position.y) * swimBuoyancy;
+        // Exponential correction cannot overshoot at low frame rates or after a pause.
+        float buoyancyVelocity = (targetY - transform.position.y) *
+            (1f - Mathf.Exp(-swimBuoyancy * Time.deltaTime)) / Mathf.Max(0.0001f, Time.deltaTime);
+        buoyancyVelocity = Mathf.Clamp(buoyancyVelocity, -4f, 4f);
         characterController.Move((planarVelocity + Vector3.up * buoyancyVelocity) * Time.deltaTime);
 
         bool moving = planarVelocity.sqrMagnitude > 0.12f;
@@ -882,6 +923,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             wasSwimming = true;
         }
         UpdateUnderwaterBubbles(moving);
+        swimRippleTimer -= Time.deltaTime;
+        if (moving && waterSplashes && swimRippleTimer <= 0f)
+        {
+            EmitWaterSplash(FastSwimming ? 0.34f : 0.20f, 0);
+            swimRippleTimer = FastSwimming ? 0.25f : 0.4f;
+        }
         SetMotion(moving ? 5 : 6, moving ? "Swim Forward" : "Swim Idle", 0.12f);
         if (animator != null)
             animator.SetFloat(SpeedId, moving ? planarVelocity.magnitude : 0f, 0.08f, Time.deltaTime);
@@ -889,6 +936,16 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             Quaternion desired = Quaternion.LookRotation(new Vector3(planarVelocity.x, 0f, planarVelocity.z), Vector3.up);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, turnSpeedDegrees * Time.deltaTime);
+        }
+        // A short breach helps over shallow shore lips, not an unlimited deep-water jump.
+        if (jumpPressed && GetWaterDepth() < characterController.height + 0.35f &&
+            (playerStamina == null || playerStamina.TrySpend(playerStamina.jumpCost)))
+        {
+            swimExitJumpTimer = 0.45f;
+            verticalSpeed = Mathf.Sqrt(2f * gravity * (jumpHeight + Mathf.Min(swimSubmergeDepth, 0.8f)));
+            playerStamina?.StopSprinting();
+            FastSwimming = false;
+            SetMotion(2, "Jump Start", 0.10f);
         }
     }
 

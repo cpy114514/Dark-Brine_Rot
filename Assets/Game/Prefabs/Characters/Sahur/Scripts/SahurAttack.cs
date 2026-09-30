@@ -135,6 +135,11 @@ namespace Mavis
 
         void Update()
         {
+            if (controller != null && controller.Swimming)
+            {
+                SuspendForSwimming();
+                return;
+            }
             if (PauseSettingsMenu.IsOpen)
             {
                 attackQueued = false;
@@ -188,7 +193,7 @@ namespace Mavis
 
         public void TriggerAttack()
         {
-            if (PauseSettingsMenu.IsOpen || charging || Cursor.lockState != CursorLockMode.Locked)
+            if (PauseSettingsMenu.IsOpen || charging || (controller != null && controller.Swimming) || Cursor.lockState != CursorLockMode.Locked)
                 return;
 
             // SendMessages and action callbacks can both arrive in one frame.
@@ -340,12 +345,28 @@ namespace Mavis
         {
             charging = false;
             controller?.EndAttackFacing();
-            animator.SetFloat(chargeTimeHash, 0f);
+            if (animator != null) animator.SetFloat(chargeTimeHash, 0f);
             if (stickHitbox != null) stickHitbox.enabled = false;
             if (usesUpperBodyCharge && animator != null && chargeLayerIndex >= 0)
                 animator.SetLayerWeight(chargeLayerIndex, 0f);
             else if (animator != null)
                 animator.CrossFadeInFixedTime("Locomotion", 0.14f, 0, 0f);
+        }
+
+        public void SuspendForSwimming()
+        {
+            if (charging) CancelCharge();
+            if (attacking) FinishAttack();
+            attackQueued = comboContinueQueued = airImpactArmed = false;
+            airAttackUsed = false;
+            hitThisSwing.Clear();
+            if (stickHitbox != null) stickHitbox.enabled = false;
+            if (animator != null)
+            {
+                animator.ResetTrigger(attackTrigger);
+                int layer = animator.GetLayerIndex(ChargeUpperBodyLayer);
+                if (layer >= 0) animator.SetLayerWeight(layer, 0f);
+            }
         }
 
         void UpdateChargeLayerWeight()

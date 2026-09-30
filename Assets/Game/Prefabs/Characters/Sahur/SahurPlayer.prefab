@@ -1632,6 +1632,7 @@ GameObject:
   - component: {fileID: 3512529650752302148}
   - component: {fileID: 5610018856762232532}
   - component: {fileID: 4747575031338363534}
+  - component: {fileID: 5080858521627766709}
   m_Layer: 0
   m_Name: SahurPlayer
   m_TagString: Untagged
@@ -2493,13 +2494,18 @@ MonoBehaviour:
   rollExitBlend: 0.11
   airFlipDuration: 0.43
   airFlipExtraHeight: 1.25
-  waterSplashes: 0
+  waterSplashes: 1
   splashMinSpeed: 2.3
   splashInterval: 0.16
-  swimSpeed: 6.8
-  swimAcceleration: 18
+  swimSpeed: 3.4
+  swimAcceleration: 9
   swimSubmergeDepth: 1.32
   swimBuoyancy: 16
+  swimStartDepth: 1.15
+  swimShoreHysteresis: 0.25
+  fastSwimMultiplier: 1.5
+  fastSwimDrainPerSecond: 3
+  wadingSpeedMultiplier: 0.7
   underwaterCameraDepth: 0.92
   underwaterOverlayStrength: 0.68
   underwaterBubbleParticles: 0
@@ -2781,6 +2787,22 @@ MonoBehaviour:
   lightAttackCost: 3
   jumpSlashCost: 5
   chargedAttackCost: 10
+--- !u!114 &5080858521627766709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6548037495126515326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb4a21243eb2a5748adfe3424fa0e050, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SahurSwimmingWeapon
+  stick: {fileID: 332009883791112351}
+  backOffset: 0.22
+  heightOffset: 0.04
+  diagonalAngle: 22
 --- !u!1 &6599514254367242517
 GameObject:
   m_ObjectHideFlags: 0

@@ -66,13 +66,18 @@ namespace Mavis
         /// <summary>Drains stamina while sprinting and resumes only after a small refill.</summary>
         public bool TickSprint(float deltaTime)
         {
+            return TickSprint(deltaTime, sprintDrainPerSecond);
+        }
+
+        public bool TickSprint(float deltaTime, float drainPerSecond)
+        {
             if (!sprinting)
             {
                 if (currentStamina < sprintRestartThreshold) return false;
                 sprinting = true;
             }
 
-            float cost = sprintDrainPerSecond * deltaTime;
+            float cost = Mathf.Max(0f, drainPerSecond) * Mathf.Max(0f, deltaTime);
             if (currentStamina <= cost)
             {
                 if (currentStamina > 0f)
