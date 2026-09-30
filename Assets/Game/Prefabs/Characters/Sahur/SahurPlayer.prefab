@@ -182,14 +182,6 @@ MonoBehaviour:
   guardStrength: 0.9
   blendInSeconds: 0.09
   blendOutSeconds: 0.16
-  chargeHandTurnDegrees: 125
-  chargeTurnInSeconds: 0.18
-  chargeTurnOutSeconds: 0.09
-  chargeArmStrength: 0.95
-  chargeArmInSeconds: 0.12
-  chargeArmOutSeconds: 0.08
-  chargeHandSideOffset: 0.3
-  chargeHandForwardOffset: 0.24
 --- !u!1 &1120692580181806039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1657,7 +1649,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 33.761, z: 850}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1336109698613982991}
@@ -2494,9 +2486,6 @@ MonoBehaviour:
   coyoteTime: 0.12
   jumpBufferTime: 0.12
   seaLevel: 0
-  snapSpawnToIslandSurface: 1
-  spawnPoint: {fileID: 0}
-  spawnSurfaceOffset: 0.03
   rollDuration: 0.7927928
   rollSpeed: 6.5
   rollCooldown: 0.18
@@ -2782,16 +2771,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.PlayerStamina
   maxStamina: 100
   currentStamina: 100
-  regenerationPerSecond: 30
-  regenerationDelay: 0.55
-  sprintDrainPerSecond: 8
+  regenerationPerSecond: 35
+  regenerationDelay: 0.4
+  sprintDrainPerSecond: 4
   sprintRestartThreshold: 4
-  jumpCost: 6
-  rollCost: 10
-  airFlipCost: 8
-  lightAttackCost: 5
-  jumpSlashCost: 8
-  chargedAttackCost: 16
+  jumpCost: 4
+  rollCost: 6
+  airFlipCost: 5
+  lightAttackCost: 3
+  jumpSlashCost: 5
+  chargedAttackCost: 10
 --- !u!1 &6599514254367242517
 GameObject:
   m_ObjectHideFlags: 0

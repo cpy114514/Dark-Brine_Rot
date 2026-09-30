@@ -40,6 +40,18 @@ public class ProceduralIsland : MonoBehaviour
     [Min(0.1f)] public float beachBlendWidth = 3.5f;
     [Min(0.001f)] public float beachTextureTiling = 0.075f;
 
+    [Header("Natural surface patches")]
+    public Texture2D fineSand;
+    public Texture2D fineSandNormal;
+    public Texture2D wetBeachSand;
+    public Texture2D wetBeachNormal;
+    public Texture2D meadowGrass;
+    public Texture2D meadowGrassNormal;
+    public Texture2D dryGrass;
+    public Texture2D dryGrassNormal;
+    [Range(0f, 1f)] public float surfaceVariation = 0.85f;
+    [Min(0.001f)] public float surfacePatchScale = 0.045f;
+
     private Mesh islandMesh;
     private Material terrainMaterial;
     private GameObject shoreFoamObject;
@@ -262,6 +274,18 @@ public class ProceduralIsland : MonoBehaviour
         terrainMaterial.SetFloat("_BeachHeight", beachHeight);
         terrainMaterial.SetFloat("_BeachBlendWidth", Mathf.Min(beachBlendWidth, beachHeight));
         terrainMaterial.SetFloat("_BeachTiling", beachTextureTiling);
+        terrainMaterial.SetFloat("_VariationAmount", surfaceVariation);
+        terrainMaterial.SetFloat("_PatchScale", surfacePatchScale);
+        terrainMaterial.SetFloat("_VariationEnabled", fineSand != null && wetBeachSand != null &&
+            meadowGrass != null && dryGrass != null ? 1f : 0f);
+        terrainMaterial.SetTexture("_FineSandTex", fineSand != null ? fineSand : beachSand);
+        terrainMaterial.SetTexture("_WetSandTex", wetBeachSand != null ? wetBeachSand : beachSand);
+        terrainMaterial.SetTexture("_MeadowTex", meadowGrass != null ? meadowGrass : sparseGrass);
+        terrainMaterial.SetTexture("_DryGrassTex", dryGrass != null ? dryGrass : sparseGrass);
+        terrainMaterial.SetTexture("_FineSandNormal", fineSandNormal != null ? fineSandNormal : Texture2D.normalTexture);
+        terrainMaterial.SetTexture("_WetSandNormal", wetBeachNormal != null ? wetBeachNormal : Texture2D.normalTexture);
+        terrainMaterial.SetTexture("_MeadowNormal", meadowGrassNormal != null ? meadowGrassNormal : Texture2D.normalTexture);
+        terrainMaterial.SetTexture("_DryGrassNormal", dryGrassNormal != null ? dryGrassNormal : Texture2D.normalTexture);
         var ocean = FindFirstObjectByType<OceanWorld>();
         terrainMaterial.SetFloat("_SeaLevel", ocean != null ? ocean.oceanHeight : 0f);
     }

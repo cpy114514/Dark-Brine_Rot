@@ -17,7 +17,8 @@ namespace Mavis
         const string ChargeUpperBodyLayer = "Charge Upper Body";
         const float ChargeLayerFadeIn = 0.10f;
         const float ChargeLayerFadeOut = 0.09f;
-        // The later overhead windup intersects Sahur's tall head with this grip.
+        const float OriginalStrikeWindupNormalized = 8f / 32f;
+        // Legacy base-layer fallback only; the moving charge uses the extracted clip.
         public const float SafeChargePoseTime = 0.18f;
         [Range(0f, SafeChargePoseTime)] public float chargePoseTime = SafeChargePoseTime;
 
@@ -304,7 +305,8 @@ namespace Mavis
             charging = true;
             chargeStartedAt = Time.time;
             if (stickHitbox != null) stickHitbox.enabled = false;
-            // Scrub the dedicated one-handed windup across the full charge.
+            // Stretch the unedited first eight frames of Heavy Attack
+            // across the full charge duration.
             UpdateChargePose();
             if (usesUpperBodyCharge)
             {
@@ -322,10 +324,10 @@ namespace Mavis
                 return;
             }
 
-            // The dedicated Blender strike starts from the windup's fully
-            // drawn pose. The legacy base-layer charge retains its old offset.
+            // The upper-body clip is exactly frames 0–8 of Heavy Attack's
+            // 0–32 source take, so release continues at the matching frame.
             float releasePhase = usesUpperBodyCharge
-                ? 0f
+                ? OriginalStrikeWindupNormalized * Charge01
                 : animator.GetFloat(chargeTimeHash);
             float releaseTime = releasePhase * (chargeClip != null ? chargeClip.length : 0f);
             charging = false;

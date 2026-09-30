@@ -112,7 +112,11 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         foreach (Light light in FindObjectsByType<Light>(FindObjectsSortMode.None))
             originalLightShadows[light] = light.shadows;
         foreach (OptionControl option in options)
+        {
+            if (option.key == "shadowDistance" && option.slider != null)
+                option.slider.maxValue = 800f;
             controlsByKey[option.key] = option;
+        }
 
         CacheDifficultyTargets();
         factoryDefaults = CaptureDefaults();
@@ -274,6 +278,16 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             footerHint.text = "SELECT AGAIN TO EXIT  /  ESC TO CANCEL";
             return;
         }
+        bool hasActiveGame = FindFirstObjectByType<ThirdPersonPlayerController>() != null;
+        bool savedGame = GameSaveManager.SaveCurrentGame();
+        if (hasActiveGame && !savedGame)
+        {
+            confirmQuit = false;
+            quitLabel.text = "QUIT";
+            footerHint.text = "SAVE FAILED  /  EXIT CANCELLED";
+            return;
+        }
+        PlayerPrefs.Save();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -440,7 +454,17 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             PlayerPrefs.SetInt(Prefix + "ShadowDistanceV2", 1);
             PlayerPrefs.Save();
         }
-        s.shadowDistance = Mathf.Clamp(storedShadowDistance, 15f, 250f);
+        if (PlayerPrefs.GetInt(Prefix + "ShadowDistanceV3", 0) == 0)
+        {
+            // Upgrade earlier factory defaults, but retain a deliberate custom range.
+            if (Mathf.Approximately(storedShadowDistance, 180f) ||
+                Mathf.Approximately(storedShadowDistance, 50f))
+                storedShadowDistance = factoryDefaults.shadowDistance;
+            PlayerPrefs.SetFloat(Prefix + "ShadowDistance", storedShadowDistance);
+            PlayerPrefs.SetInt(Prefix + "ShadowDistanceV3", 1);
+            PlayerPrefs.Save();
+        }
+        s.shadowDistance = Mathf.Clamp(storedShadowDistance, 15f, 800f);
         s.lodBias = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "LodBias", s.lodBias), 0.5f, 3f);
         s.invertY = Get("InvertY", s.invertY);
         s.fullscreen = Get("Fullscreen", s.fullscreen);

@@ -27,13 +27,6 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(0f, 0.3f)] public float jumpBufferTime = 0.12f;
     public float seaLevel = 0f;
 
-    [Header("Spawn")]
-    [Tooltip("Keeps the authored X/Z position and places Sahur on the procedural island surface at startup.")]
-    public bool snapSpawnToIslandSurface = true;
-    [Tooltip("Stable scene spawn anchor. This is not affected by animation root transform curves.")]
-    public Transform spawnPoint;
-    [Min(0f)] public float spawnSurfaceOffset = 0.03f;
-
     [Header("Evasion")]
     [Min(0.15f)] public float rollDuration = 0.792793f;
     [Min(0.1f)] public float rollSpeed = 6.5f;
@@ -140,6 +133,30 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool CanUseAirAttack => characterController != null && rollTimer <= 0f && airFlipTimer <= 0f &&
                                    !IsGroundedOrOnSea() && !IsSwimming();
 
+    public void RestoreSavedPose(Vector3 position, Quaternion rotation)
+    {
+        if (characterController == null)
+            characterController = GetComponent<CharacterController>();
+
+        bool restoreController = characterController != null && characterController.enabled;
+        if (restoreController)
+            characterController.enabled = false;
+
+        transform.SetPositionAndRotation(position, Quaternion.Euler(0f, rotation.eulerAngles.y, 0f));
+
+        if (restoreController)
+            characterController.enabled = true;
+
+        yaw = transform.eulerAngles.y;
+        pitch = 10f;
+        verticalSpeed = 0f;
+        planarVelocity = Vector3.zero;
+        rollTimer = 0f;
+        rollCooldownTimer = 0f;
+        airFlipTimer = 0f;
+        cameraInitialized = false;
+    }
+
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -196,8 +213,6 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             visualBasePosition = visualTransform.localPosition;
             visualBaseRotation = visualTransform.localRotation;
         }
-        SnapSpawnToIslandSurface();
-        KeepFeetOnSeaLevel();
         CreateWaterSplashEffect();
         CreateUnderwaterPresentation();
     }
@@ -257,11 +272,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             return;
         }
 
-        bool sprinting = wantsSprint && !movementLocked &&
+        bool canSprint = wantsSprint && !movementLocked && moveDirection.sqrMagnitude > 0.01f;
+        bool sprinting = canSprint &&
                          (playerStamina == null || playerStamina.TickSprint(Time.deltaTime));
         if (!sprinting)
         {
-            if (!wantsSprint || movementLocked) playerStamina?.StopSprinting();
+            if (!canSprint) playerStamina?.StopSprinting();
             desiredVelocity = movementLocked ? Vector3.zero : moveDirection * moveSpeed;
         }
         bool exitedSwimming = wasSwimming;
@@ -801,33 +817,6 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             return;
         Vector3 position = transform.position;
         position.y = seaLevel - lowestFootOffset;
-        transform.position = position;
-        verticalSpeed = 0f;
-    }
-
-    void SnapSpawnToIslandSurface()
-    {
-        if (!snapSpawnToIslandSurface)
-            return;
-
-        ProceduralIsland island = FindFirstObjectByType<ProceduralIsland>();
-        if (island == null)
-            return;
-
-        Vector3 position;
-        if (spawnPoint != null)
-        {
-            position = spawnPoint.position;
-        }
-        else
-        {
-            // Imported clips can reset the character root before Start. Without
-            // an assigned anchor, choose a deterministic point safely inside the
-            // island rather than trusting the animated root's current position.
-            position = island.transform.TransformPoint(Vector3.forward * island.shorelineRadius * 0.45f);
-        }
-        float surfaceHeight = island.GetWorldSurfaceHeight(position);
-        position.y = surfaceHeight - GetLowestFootOffset() + spawnSurfaceOffset;
         transform.position = position;
         verticalSpeed = 0f;
     }

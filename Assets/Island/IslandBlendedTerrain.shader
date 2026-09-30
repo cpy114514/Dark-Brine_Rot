@@ -23,6 +23,17 @@ Shader "DarkBrine/Island Blended Terrain"
         _BeachBlendWidth ("Beach transition height", Float) = 3.5
         _BeachTiling ("Beach world tiling", Float) = 0.075
         [HideInInspector] _BeachEnabled ("Beach enabled", Float) = 0
+        _FineSandTex ("Fine sand patches", 2D) = "white" {}
+        _WetSandTex ("Wet shore patches", 2D) = "white" {}
+        _MeadowTex ("Meadow patches", 2D) = "white" {}
+        _DryGrassTex ("Dry grass patches", 2D) = "white" {}
+        [Normal] _FineSandNormal ("Fine sand normal", 2D) = "bump" {}
+        [Normal] _WetSandNormal ("Wet sand normal", 2D) = "bump" {}
+        [Normal] _MeadowNormal ("Meadow normal", 2D) = "bump" {}
+        [Normal] _DryGrassNormal ("Dry grass normal", 2D) = "bump" {}
+        _VariationAmount ("Surface variation", Range(0,1)) = 0.85
+        _PatchScale ("Patch scale", Float) = 0.045
+        [HideInInspector] _VariationEnabled ("Variation enabled", Float) = 0
         [HideInInspector] _BaseMap ("Shadow base map", 2D) = "white" {}
         [HideInInspector] _BaseColor ("Shadow base color", Color) = (1, 1, 1, 1)
         [HideInInspector] _Cutoff ("Shadow cutoff", Float) = 0
@@ -61,6 +72,9 @@ Shader "DarkBrine/Island Blended Terrain"
                 float _BeachBlendWidth;
                 float _BeachTiling;
                 half _BeachEnabled;
+                half _VariationAmount;
+                half _VariationEnabled;
+                float _PatchScale;
             CBUFFER_END
 
             TEXTURE2D(_SandTex); SAMPLER(sampler_SandTex);
@@ -75,6 +89,11 @@ Shader "DarkBrine/Island Blended Terrain"
             TEXTURE2D(_RockNormal); SAMPLER(sampler_RockNormal);
             TEXTURE2D(_BeachTex); SAMPLER(sampler_BeachTex);
             TEXTURE2D(_BeachNormal); SAMPLER(sampler_BeachNormal);
+            // All new maps share existing repeating samplers to stay below DX11's sampler limit.
+            TEXTURE2D(_FineSandTex); TEXTURE2D(_WetSandTex);
+            TEXTURE2D(_MeadowTex); TEXTURE2D(_DryGrassTex);
+            TEXTURE2D(_FineSandNormal); TEXTURE2D(_WetSandNormal);
+            TEXTURE2D(_MeadowNormal); TEXTURE2D(_DryGrassNormal);
 
             struct Attributes
             {
@@ -145,6 +164,24 @@ Shader "DarkBrine/Island Blended Terrain"
                 half sandPatch = smoothstep(0.30, 0.72, PatchNoise(p * 0.041 + 47.1));
                 half3 grass = lerp(sparse, leafy, grassPatch * 0.70h);
                 half3 sand = lerp(coast, paleSand, sandPatch * 0.55h);
+                // Two noise scales and a warped coordinate give irregular, stable patches,
+                // not stripes, grid cells, or a pattern that swims as the camera moves.
+                float2 patchPosition = p * _PatchScale +
+                    float2(broadPatch, detailPatch) * 0.7;
+                half meadowWeight = smoothstep(0.30, 0.66,
+                    PatchNoise(patchPosition + 8.3)) * _VariationAmount * _VariationEnabled;
+                half dryGrassWeight = smoothstep(0.58, 0.80,
+                    PatchNoise(patchPosition * 1.65 + 52.7)) * 0.46h * _VariationAmount * _VariationEnabled;
+                float2 grassVariationUv = p * 0.22;
+                if (_VariationEnabled > 0.5h)
+                {
+                    half3 meadow = SAMPLE_TEXTURE2D(_MeadowTex, sampler_GrassTex, grassVariationUv).rgb *
+                        _GrassTint.rgb * half3(1.08h, 1.15h, 0.97h);
+                    half3 dryGrass = SAMPLE_TEXTURE2D(_DryGrassTex, sampler_GrassTex, grassVariationUv * 1.13 + 11.4).rgb *
+                        _GrassTint.rgb * half3(0.86h, 0.94h, 0.80h);
+                    grass = lerp(grass, meadow, meadowWeight);
+                    grass = lerp(grass, dryGrass, dryGrassWeight);
+                }
 
                 half forestBlend = smoothstep(0.26, 0.43, zone);
                 half grassBlend = smoothstep(0.40, 0.62, zone);
@@ -159,12 +196,26 @@ Shader "DarkBrine/Island Blended Terrain"
                 // radial ring. Broad patches soften the dry-sand/grass boundary.
                 float2 beachUv = p * _BeachTiling;
                 half beachBlend = 0.0h;
+                half fineSandWeight = smoothstep(0.30, 0.68, PatchNoise(patchPosition + 31.2)) *
+                    _VariationAmount * _VariationEnabled;
+                half wetPatchWeight = (1.0h - smoothstep(0.2, 4.8,
+                    shoreHeight + (detailPatch - 0.5) * 2.0)) * _VariationAmount * _VariationEnabled;
+                float2 sandVariationUv = beachUv * 2.8;
                 if (_BeachEnabled > 0.5h)
                 {
                     float beachElevation = shoreHeight + (detailPatch - 0.5) * 1.3;
                     beachBlend = 1.0h - smoothstep(_BeachHeight - max(_BeachBlendWidth, 0.1),
                         _BeachHeight, beachElevation);
                     half3 yellowSand = SAMPLE_TEXTURE2D(_BeachTex, sampler_BeachTex, beachUv).rgb * _BeachTint.rgb;
+                    if (_VariationEnabled > 0.5h)
+                    {
+                        half3 fineSand = SAMPLE_TEXTURE2D(_FineSandTex, sampler_BeachTex, sandVariationUv).rgb *
+                            half3(1.42h, 1.30h, 1.04h);
+                        half3 wetSand = SAMPLE_TEXTURE2D(_WetSandTex, sampler_BeachTex, sandVariationUv + 13.2).rgb *
+                            half3(1.10h, 1.05h, 0.91h);
+                        yellowSand = lerp(yellowSand, fineSand, fineSandWeight);
+                        yellowSand = lerp(yellowSand, wetSand, wetPatchWeight);
+                    }
                     albedo = lerp(albedo, yellowSand, beachBlend);
                 }
 
@@ -179,12 +230,26 @@ Shader "DarkBrine/Island Blended Terrain"
 
                 half3 rockNormal = UnpackNormal(SAMPLE_TEXTURE2D(_RockNormal, sampler_RockNormal, input.uv));
                 half3 grassNormal = UnpackNormal(SAMPLE_TEXTURE2D(_GrassNormal, sampler_GrassNormal, input.uv));
+                if (_VariationEnabled > 0.5h)
+                {
+                    half3 meadowNormal = UnpackNormal(SAMPLE_TEXTURE2D(_MeadowNormal, sampler_GrassNormal, grassVariationUv));
+                    half3 dryGrassNormal = UnpackNormal(SAMPLE_TEXTURE2D(_DryGrassNormal, sampler_GrassNormal, grassVariationUv * 1.13 + 11.4));
+                    grassNormal = normalize(lerp(grassNormal, meadowNormal, meadowWeight * grassBlend));
+                    grassNormal = normalize(lerp(grassNormal, dryGrassNormal, dryGrassWeight * grassBlend));
+                }
                 half3 sandNormal = UnpackNormal(SAMPLE_TEXTURE2D(_SandNormal, sampler_SandNormal, input.uv));
                 half3 detailNormal = normalize(lerp(rockNormal, grassNormal, forestBlend));
                 detailNormal = normalize(lerp(detailNormal, sandNormal, shoreBlend));
                 if (_BeachEnabled > 0.5h)
                 {
                     half3 beachNormal = UnpackNormal(SAMPLE_TEXTURE2D(_BeachNormal, sampler_BeachNormal, beachUv));
+                    if (_VariationEnabled > 0.5h)
+                    {
+                        half3 fineNormal = UnpackNormal(SAMPLE_TEXTURE2D(_FineSandNormal, sampler_BeachNormal, sandVariationUv));
+                        half3 wetNormal = UnpackNormal(SAMPLE_TEXTURE2D(_WetSandNormal, sampler_BeachNormal, sandVariationUv + 13.2));
+                        beachNormal = normalize(lerp(beachNormal, fineNormal, fineSandWeight));
+                        beachNormal = normalize(lerp(beachNormal, wetNormal, wetPatchWeight));
+                    }
                     detailNormal = normalize(lerp(detailNormal, beachNormal, beachBlend));
                 }
                 detailNormal = normalize(lerp(detailNormal, rockNormal, slopeRock));

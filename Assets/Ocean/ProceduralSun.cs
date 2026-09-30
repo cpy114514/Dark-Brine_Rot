@@ -7,7 +7,7 @@ public sealed class ProceduralSun : MonoBehaviour
     [Header("High Sky Position")]
     [Range(0.35f, 0.95f)] public float elevation = 0.78f;
     [Range(0.001f, 0.04f)] public float apparentSize = 0.022f;
-    public float maximumDistance = 1400f;
+    [Min(80f)] public float maximumDistance = 2200f;
 
     Material generatedMaterial;
     MeshRenderer sunRenderer;
@@ -42,6 +42,7 @@ public sealed class ProceduralSun : MonoBehaviour
     }
 
     void LateUpdate() => PositionHighSun();
+    void OnValidate() => PositionHighSun();
 
     void PositionHighSun()
     {
@@ -59,11 +60,15 @@ public sealed class ProceduralSun : MonoBehaviour
                 }
         }
         DayNightCycle cycle = cachedLight != null ? cachedLight.GetComponent<DayNightCycle>() : null;
-        Vector3 directionToSun = cycle != null
+        // The runtime-only day/night component has no SunDirection before Play.
+        // In Edit Mode use the authored light, not its uninitialized zero vector.
+        Vector3 directionToSun = Application.isPlaying && cycle != null &&
+                                 cycle.isActiveAndEnabled && cycle.SunDirection.sqrMagnitude > 0.001f
             ? cycle.SunDirection
             : cachedLight != null && cachedLight.type == LightType.Directional
                 ? -cachedLight.transform.forward
                 : new Vector3(-0.32f, elevation, 0.78f).normalized;
+        directionToSun.Normalize();
         // Keep the visible sun locked to the animated directional light and camera.
         float distance = Mathf.Min(maximumDistance, camera.farClipPlane * 0.72f);
         distance = Mathf.Max(distance, 80f);

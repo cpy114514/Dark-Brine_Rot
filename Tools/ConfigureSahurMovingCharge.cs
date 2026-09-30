@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-/// <summary>Gives Sahur a one-handed Blender charge above walking/running.</summary>
+/// <summary>Plays the original attack windup above walking/running.</summary>
 public static class ConfigureSahurMovingCharge
 {
     const string Root = "Assets/Game/Prefabs/Characters/Sahur/Animations/";
@@ -13,7 +13,8 @@ public static class ConfigureSahurMovingCharge
     const string LayerName = "Charge Upper Body";
     const string StateName = "Charge Windup";
     const string PhaseName = "ChargePhase";
-    const string WindupPath = Root + "Gameplay/SahurRightHandCharge.fbx";
+    const string WindupPath = Root + "Source/SwordAndShieldSlash_ThreeHit.fbx";
+    const string WindupName = "SahurHeavyWindup";
 
     public static string Apply()
     {
@@ -27,10 +28,12 @@ public static class ConfigureSahurMovingCharge
             .Select(child => child.state).FirstOrDefault(state => state.name == "Heavy Attack");
         if (heavy?.motion is not AnimationClip)
             throw new InvalidOperationException("Sahur Heavy Attack clip is missing.");
+        if (AssetDatabase.GetAssetPath(heavy.motion) != WindupPath)
+            throw new InvalidOperationException("The windup must come from the active Heavy Attack FBX.");
         var windupClip = AssetDatabase.LoadAllAssetsAtPath(WindupPath)
-            .OfType<AnimationClip>().FirstOrDefault(clip => clip.name == "SahurRightHandCharge");
+            .OfType<AnimationClip>().FirstOrDefault(clip => clip.name == WindupName);
         if (windupClip == null || !windupClip.humanMotion)
-            throw new InvalidOperationException("Blender one-handed charge clip is missing or not Humanoid.");
+            throw new InvalidOperationException("Original attack windup clip is missing or not Humanoid.");
 
         var mask = AssetDatabase.LoadAssetAtPath<AvatarMask>(MaskPath);
         if (mask == null)
@@ -46,6 +49,7 @@ public static class ConfigureSahurMovingCharge
         mask.SetHumanoidBodyPartActive(AvatarMaskBodyPart.RightArm, true);
         mask.SetHumanoidBodyPartActive(AvatarMaskBodyPart.LeftFingers, false);
         mask.SetHumanoidBodyPartActive(AvatarMaskBodyPart.RightFingers, true);
+        mask.SetHumanoidBodyPartActive(AvatarMaskBodyPart.RightHandIK, true);
 
         int layerIndex = Array.FindIndex(controller.layers, layer => layer.name == LayerName);
         if (layerIndex < 0)
@@ -62,7 +66,7 @@ public static class ConfigureSahurMovingCharge
         layer.blendingMode = AnimatorLayerBlendingMode.Override;
         layer.defaultWeight = 0f;
         layer.syncedLayerIndex = -1;
-        layer.iKPass = false;
+        layer.iKPass = true;
         var machine = layer.stateMachine;
         if (machine == null) throw new InvalidOperationException("Charge layer state machine is missing.");
         var charge = machine.states.Select(child => child.state)
@@ -91,7 +95,7 @@ public static class ConfigureSahurMovingCharge
         var controller = AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath);
         var mask = AssetDatabase.LoadAssetAtPath<AvatarMask>(MaskPath);
         var windupClip = AssetDatabase.LoadAllAssetsAtPath(WindupPath)
-            .OfType<AnimationClip>().FirstOrDefault(clip => clip.name == "SahurRightHandCharge");
+            .OfType<AnimationClip>().FirstOrDefault(clip => clip.name == WindupName);
         if (controller == null || mask == null)
             throw new InvalidOperationException("Charge controller or mask is missing.");
         int layerIndex = Array.FindIndex(controller.layers, layer => layer.name == LayerName);
@@ -108,9 +112,10 @@ public static class ConfigureSahurMovingCharge
             mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.RightLeg) ||
             mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.LeftArm) ||
             mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.LeftFingers) ||
-            !mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.RightArm))
+            !mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.RightArm) ||
+            !mask.GetHumanoidBodyPartActive(AvatarMaskBodyPart.RightHandIK) || !layer.iKPass)
             throw new InvalidOperationException("Sahur moving-charge mask or layer is misconfigured.");
         return $"Sahur moving charge ready: layer={layerIndex}, clip={charge.motion.name}, " +
-               "locomotion and left arm from base, right arm from Blender charge.";
+               "locomotion and left arm from base, right arm from Heavy Attack frames 0–8.";
     }
 }

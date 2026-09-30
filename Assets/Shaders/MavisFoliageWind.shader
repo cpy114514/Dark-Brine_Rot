@@ -39,21 +39,7 @@ Shader "Mavis/FoliageWind"
             "IgnoreProjector" = "True"
         }
 
-        Pass
-        {
-            Name "ForwardLit"
-            Tags { "LightMode" = "UniversalForward" }
-            Cull [_Cull]
-
-            HLSLPROGRAM
-            #pragma target 4.5
-            #pragma vertex   vert
-            #pragma fragment frag
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-            #pragma multi_compile_fragment _ _SHADOWS_SOFT
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-
+        HLSLINCLUDE
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
@@ -209,6 +195,65 @@ Shader "Mavis/FoliageWind"
 
                 return half4(lit, 1.0h);
             }
+            float3 _LightDirection;
+            float3 _LightPosition;
+
+            Varyings shadowVert(Attributes IN)
+            {
+                // Reuse the visible vertex deformation, including player avoidance.
+                Varyings OUT = vert(IN);
+                float3 lightDirection = _LightDirection;
+                #if defined(_CASTING_PUNCTUAL_LIGHT_SHADOW)
+                    lightDirection = normalize(_LightPosition - OUT.positionWS);
+                #endif
+                OUT.positionCS = TransformWorldToHClip(ApplyShadowBias(
+                    OUT.positionWS, normalize(OUT.normalWS), lightDirection));
+                #if UNITY_REVERSED_Z
+                    OUT.positionCS.z = min(OUT.positionCS.z, UNITY_NEAR_CLIP_VALUE * OUT.positionCS.w);
+                #else
+                    OUT.positionCS.z = max(OUT.positionCS.z, UNITY_NEAR_CLIP_VALUE * OUT.positionCS.w);
+                #endif
+                return OUT;
+            }
+
+            half4 shadowFrag(Varyings IN) : SV_Target
+            {
+                half opacity = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv).a * _BaseColor.a;
+                if (_UseAlphaMap > 0.5h)
+                    opacity *= SAMPLE_TEXTURE2D(_AlphaMap, sampler_AlphaMap, IN.uv).r;
+                clip(opacity - _Cutoff);
+                return 0;
+            }
+        ENDHLSL
+
+        Pass
+        {
+            Name "ForwardLit"
+            Tags { "LightMode" = "UniversalForward" }
+            Cull [_Cull]
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+            Cull [_Cull]
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex shadowVert
+            #pragma fragment shadowFrag
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             ENDHLSL
         }
 

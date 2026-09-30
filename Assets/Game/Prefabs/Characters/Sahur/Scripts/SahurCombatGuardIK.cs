@@ -8,31 +8,39 @@ public sealed class SahurCombatGuardIK : MonoBehaviour
     [Range(0f, 1f)] public float guardStrength = 0.9f;
     [Min(0.01f)] public float blendInSeconds = 0.09f;
     [Min(0.01f)] public float blendOutSeconds = 0.16f;
-    [Header("Charge windup")]
-    [Range(0f, 150f)] public float chargeHandTurnDegrees = 125f;
-    [Min(0.01f)] public float chargeTurnInSeconds = 0.18f;
-    [Min(0.01f)] public float chargeTurnOutSeconds = 0.09f;
 
     Animator animator;
     Mavis.SahurAttack attack;
     Transform chest;
     Transform leftShoulder;
-    Transform rightHand;
     float weight;
-    float chargeTurnWeight;
+    float chargeWeight;
+    int chargeLayer = -1;
+    Transform rightShoulder;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
         attack = GetComponentInParent<Mavis.SahurAttack>();
+        chargeLayer = animator.GetLayerIndex("Charge Upper Body");
     }
 
     void OnAnimatorIK(int layerIndex)
     {
-        if (layerIndex != 0 || animator == null || !animator.isHuman)
+        if (animator == null || !animator.isHuman)
             return;
+        // The visual controller is assigned by the player after this component's Awake.
+        if (chargeLayer < 0) chargeLayer = animator.GetLayerIndex("Charge Upper Body");
 
         bool charging = attack != null && attack.enabled && attack.IsCharging;
+        // Apply on the final upper-body layer, after its animation has been evaluated.
+        // The base-layer IK would otherwise be overwritten by the charge clip.
+        if (layerIndex == chargeLayer)
+        {
+            ApplyRightChargePull(charging);
+            return;
+        }
+        if (layerIndex != 0) return;
         bool guarding = attack != null && attack.enabled &&
                         attack.IsCombatMotionActive && !charging;
         float target = guarding ? guardStrength : 0f;
@@ -47,7 +55,7 @@ public sealed class SahurCombatGuardIK : MonoBehaviour
         if (chest == null || leftShoulder == null) return;
 
         Transform root = attack.transform;
-        // The source combo expects a shield here; the Blender charge does not.
+        // Keep the free hand compact during attacks; fade this guard out during charge.
         Vector3 handTarget = chest.position - root.right * 0.17f +
                              root.forward * 0.21f + Vector3.up * 0.03f;
         Vector3 elbowHint = leftShoulder.position - root.right * 0.29f +
@@ -56,27 +64,65 @@ public sealed class SahurCombatGuardIK : MonoBehaviour
         animator.SetIKHintPosition(AvatarIKHint.LeftElbow, elbowHint);
     }
 
-    void LateUpdate()
+    void ApplyRightChargePull(bool charging)
     {
-        if (animator == null || !animator.isHuman || attack == null) return;
-        if (rightHand == null) rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
-        if (rightHand == null) return;
+        // Release immediately gives the original swing full control again.
+        chargeWeight = charging ? Mathf.SmoothStep(0f, 1f, attack.Charge01) : 0f;
+        animator.SetIKPositionWeight(AvatarIKGoal.RightHand, chargeWeight);
+        animator.SetIKRotationWeight(AvatarIKGoal.RightHand, chargeWeight);
+        animator.SetIKHintPositionWeight(AvatarIKHint.RightElbow, chargeWeight);
+        if (chargeWeight <= 0f) return;
 
-        // The Blender arm take pulls the grip around the right shoulder. Match
-        // the stick's turn to charge progress so it follows that arc gradually.
-        bool charging = attack.enabled && attack.IsCharging;
-        float seconds = charging ? chargeTurnInSeconds : chargeTurnOutSeconds;
-        chargeTurnWeight = Mathf.MoveTowards(chargeTurnWeight,
-            charging ? attack.Charge01 : 0f,
-            Time.deltaTime / seconds);
-        if (chargeTurnWeight > 0f)
-            rightHand.rotation = Quaternion.AngleAxis(
-                chargeHandTurnDegrees * chargeTurnWeight, attack.transform.up) * rightHand.rotation;
+        if (rightShoulder == null)
+            rightShoulder = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+        Transform hand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        Transform forearm = animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+        if (rightShoulder == null || hand == null || forearm == null) return;
+
+        Transform root = attack.transform;
+        float reach = Vector3.Distance(rightShoulder.position, forearm.position) +
+                      Vector3.Distance(forearm.position, hand.position);
+        // Actor-relative right, independent of the camera or the character's heading.
+        Vector3 pull = root.right * 0.62f - root.forward * 0.48f - root.up * 0.10f;
+        animator.SetIKPosition(AvatarIKGoal.RightHand, rightShoulder.position + pull * reach);
+        animator.SetIKHintPosition(AvatarIKHint.RightElbow,
+            rightShoulder.position + (root.right * 0.60f - root.forward * 0.15f - root.up * 0.40f) * reach);
+
+        // Aim the attached bat to the same side as the pull, rather than across the left shoulder.
+        var box = attack.stickHitbox as BoxCollider;
+        var capsule = attack.stickHitbox as CapsuleCollider;
+        if (box != null || capsule != null)
+        {
+            Vector3 axis;
+            Vector3 center;
+            if (capsule != null)
+            {
+                axis = capsule.direction == 0 ? Vector3.right :
+                       capsule.direction == 1 ? Vector3.up : Vector3.forward;
+                center = capsule.center;
+            }
+            else
+            {
+                Vector3 size = box.size;
+                axis = size.x >= size.y && size.x >= size.z ? Vector3.right :
+                       size.y >= size.z ? Vector3.up : Vector3.forward;
+                center = box.center;
+            }
+            Transform hitbox = attack.stickHitbox.transform;
+            Vector3 worldAxis = hitbox.TransformDirection(axis);
+            if (Vector3.Dot(worldAxis, hitbox.TransformPoint(center) - hand.position) < 0f)
+                worldAxis = -worldAxis;
+            Vector3 direction = (root.right * 0.85f - root.forward * 0.50f + root.up * 0.15f).normalized;
+            animator.SetIKRotation(AvatarIKGoal.RightHand,
+                Quaternion.FromToRotation(worldAxis, direction) *
+                animator.GetIKRotation(AvatarIKGoal.RightHand));
+        }
+        else animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0f);
     }
 
     void OnDisable()
     {
         weight = 0f;
-        chargeTurnWeight = 0f;
+        chargeWeight = 0f;
     }
 }

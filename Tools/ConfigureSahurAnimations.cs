@@ -54,10 +54,7 @@ public static class ConfigureSahurAnimations
         if (!controller.parameters.Any(parameter => parameter.name == "ChargePhase"))
             controller.AddParameter("ChargePhase", AnimatorControllerParameterType.Float);
         var heavy = FindOrAddState(machine, "Heavy Attack", new Vector3(820f, 180f));
-        var chargedStrike = AssetDatabase.LoadAllAssetsAtPath(
-                "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurRightHandChargedStrike.fbx")
-            .OfType<AnimationClip>().FirstOrDefault(clip => clip.name == "SahurRightHandChargedStrike");
-        heavy.motion = chargedStrike != null ? chargedStrike : lightAttack.motion;
+        heavy.motion = lightAttack.motion;
         heavy.speed = 0.9f;
 
         ConfigureExit(lightAttack, locomotion, 0.89f, 0.16f);

@@ -1,3 +1,5 @@
+using Mavis;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
@@ -12,6 +14,8 @@ public sealed class MainMenuController : MonoBehaviour
     public Button continueButton;
     public PauseSettingsMenu settingsMenu;
 
+    TMP_Text saveStatus;
+
     void Awake()
     {
         Time.timeScale = 1f;
@@ -20,9 +24,13 @@ public sealed class MainMenuController : MonoBehaviour
         var inputModule = FindFirstObjectByType<InputSystemUIInputModule>();
         if (inputModule != null)
             inputModule.AssignDefaultActions();
-        // There is no save/checkpoint system yet. Do not present a fake load action.
         if (continueButton != null)
-            continueButton.interactable = false;
+            continueButton.onClick.AddListener(ContinueGame);
+
+        Transform saveStatusTransform = transform.Find("Save Status");
+        if (saveStatusTransform != null)
+            saveStatus = saveStatusTransform.GetComponent<TMP_Text>();
+        RefreshSaveStatus();
     }
 
     void Update()
@@ -36,13 +44,40 @@ public sealed class MainMenuController : MonoBehaviour
 
     public void NewGame()
     {
+        GameSaveManager.CancelPendingContinue();
+        StartGame();
+    }
+
+    public void ContinueGame()
+    {
+        if (!GameSaveManager.QueueContinue())
+        {
+            RefreshSaveStatus();
+            return;
+        }
+
+        StartGame();
+    }
+
+    void StartGame()
+    {
         if (!Application.CanStreamedLevelBeLoaded(GameScenePath))
         {
+            GameSaveManager.CancelPendingContinue();
             Debug.LogError("[Main Menu] First Island/Main is missing from Build Settings.", this);
             return;
         }
         Time.timeScale = 1f;
         SceneManager.LoadScene(GameScenePath, LoadSceneMode.Single);
+    }
+
+    void RefreshSaveStatus()
+    {
+        bool hasSave = GameSaveManager.HasSave;
+        if (continueButton != null)
+            continueButton.interactable = hasSave;
+        if (saveStatus != null)
+            saveStatus.text = hasSave ? "SAVE DATA FOUND" : "NO SAVE DATA";
     }
 
     public void Settings()
@@ -53,6 +88,8 @@ public sealed class MainMenuController : MonoBehaviour
 
     public void Quit()
     {
+        GameSaveManager.SaveCurrentGame();
+        PlayerPrefs.Save();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

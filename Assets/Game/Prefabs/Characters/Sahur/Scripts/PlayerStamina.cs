@@ -9,20 +9,20 @@ namespace Mavis
         [Header("Stamina")]
         [Min(1f)] public float maxStamina = 100f;
         [Min(0f)] public float currentStamina = 100f;
-        [Min(0f)] public float regenerationPerSecond = 30f;
-        [Min(0f)] public float regenerationDelay = 0.55f;
+        [Min(0f)] public float regenerationPerSecond = 35f;
+        [Min(0f)] public float regenerationDelay = 0.4f;
 
         [Header("Movement costs")]
-        [Min(0f)] public float sprintDrainPerSecond = 8f;
+        [Min(0f)] public float sprintDrainPerSecond = 4f;
         [Min(0f)] public float sprintRestartThreshold = 4f;
-        [Min(0f)] public float jumpCost = 6f;
-        [Min(0f)] public float rollCost = 10f;
-        [Min(0f)] public float airFlipCost = 8f;
+        [Min(0f)] public float jumpCost = 4f;
+        [Min(0f)] public float rollCost = 6f;
+        [Min(0f)] public float airFlipCost = 5f;
 
         [Header("Attack costs")]
-        [Min(0f)] public float lightAttackCost = 5f;
-        [Min(0f)] public float jumpSlashCost = 8f;
-        [Min(0f)] public float chargedAttackCost = 16f;
+        [Min(0f)] public float lightAttackCost = 3f;
+        [Min(0f)] public float jumpSlashCost = 5f;
+        [Min(0f)] public float chargedAttackCost = 10f;
 
         float nextRegenerationTime;
         bool sprinting;
