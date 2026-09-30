@@ -23,4 +23,4 @@ This project is licenced by MIT.
 
 ## AI usage:
 
-This project is made with AI.
+This project used AI
