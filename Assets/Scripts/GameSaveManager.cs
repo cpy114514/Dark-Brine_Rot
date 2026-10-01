@@ -113,6 +113,9 @@ namespace Mavis
             if (player == null)
                 return false;
 
+            if (player.GetComponent<GameSaveExcluded>() != null)
+                return false;
+
             try
             {
                 var data = new SaveData

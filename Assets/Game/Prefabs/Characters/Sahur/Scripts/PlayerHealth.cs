@@ -13,6 +13,9 @@ namespace Mavis
         public float maxHealth = 100f;
         public float currentHealth = 100f;
         public UnityEvent OnDeath = new UnityEvent();
+        float protectedUntil;
+        public bool IsProtected => Time.time < protectedUntil;
+        public void GrantProtection(float seconds) => protectedUntil = Time.time + Mathf.Max(0f, seconds);
 
         void Awake()
         {
@@ -21,7 +24,7 @@ namespace Mavis
 
         public void ApplyDamage(float amount, Vector3 hitPoint)
         {
-            if (currentHealth <= 0f) return;
+            if (currentHealth <= 0f || amount <= 0f || IsProtected) return;
             currentHealth -= amount;
             if (currentHealth <= 0f)
             {

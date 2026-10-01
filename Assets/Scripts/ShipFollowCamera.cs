@@ -19,6 +19,8 @@ public sealed class ShipFollowCamera : MonoBehaviour
     [Min(0.1f)] public float rotationSharpness = 5f;
 
     [Header("View controls")]
+    [Tooltip("Move the mouse to look around without holding a button while sailing.")]
+    public bool mouseFreeLook = true;
     [Min(0.01f)] public float mouseOrbitSensitivity = 0.18f;
     [Min(1f)] public float keyboardOrbitSpeed = 75f;
     [Min(0.01f)] public float zoomSensitivity = 0.1f;
@@ -32,6 +34,15 @@ public sealed class ShipFollowCamera : MonoBehaviour
     float distance;
     Vector3 focusOffset;
 
+    void OnEnable()
+    {
+        if (Application.isPlaying && mouseFreeLook && target != null && !PauseSettingsMenu.IsOpen && !Mavis.SahurLoadoutUI.BlocksInput)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
     void Start()
     {
         if (target != null)
@@ -43,7 +54,7 @@ public sealed class ShipFollowCamera : MonoBehaviour
 
     void LateUpdate()
     {
-        if (target == null)
+        if (target == null || PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput)
             return;
 
         ReadViewInput();
@@ -69,13 +80,20 @@ public sealed class ShipFollowCamera : MonoBehaviour
 
     void ReadViewInput()
     {
+        if (PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput) return;
         Mouse mouse = Mouse.current;
         if (mouse != null)
         {
-            Vector2 delta = mouse.delta.ReadValue();
-            if (mouse.leftButton.isPressed)
+            // Clicking the Game view recaptures the cursor after focus loss.
+            if (mouseFreeLook && Cursor.lockState != CursorLockMode.Locked && mouse.leftButton.wasPressedThisFrame)
             {
-                orbitYaw += delta.x * mouseOrbitSensitivity;
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+            }
+            Vector2 delta = mouse.delta.ReadValue();
+            if ((mouseFreeLook && Cursor.lockState == CursorLockMode.Locked) || (!mouseFreeLook && mouse.leftButton.isPressed))
+            {
+                orbitYaw -= delta.x * mouseOrbitSensitivity;
                 orbitPitch -= delta.y * mouseOrbitSensitivity;
             }
 
@@ -97,8 +115,8 @@ public sealed class ShipFollowCamera : MonoBehaviour
                 ResetView();
 
             float keyStep = keyboardOrbitSpeed * Time.deltaTime;
-            if (keyboard.leftArrowKey.isPressed) orbitYaw -= keyStep;
-            if (keyboard.rightArrowKey.isPressed) orbitYaw += keyStep;
+            if (keyboard.leftArrowKey.isPressed) orbitYaw += keyStep;
+            if (keyboard.rightArrowKey.isPressed) orbitYaw -= keyStep;
             if (keyboard.upArrowKey.isPressed) orbitPitch += keyStep;
             if (keyboard.downArrowKey.isPressed) orbitPitch -= keyStep;
         }

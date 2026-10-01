@@ -1,12 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>Story1 controls for Sahur while the ship carries the character.</summary>
+/// <summary>Story1 passenger pose, with the previous deck controls available for other setups.</summary>
 [RequireComponent(typeof(CharacterController))]
 [DisallowMultipleComponent]
 [DefaultExecutionOrder(100)]
 public sealed class ShipboardSahurController : MonoBehaviour
 {
+    [Header("Control mode")]
+    public bool passengerMode;
+
     [Header("Movement")]
     [Min(0.1f)] public float walkSpeed = 5f;
     [Min(1f)] public float sprintMultiplier = 1.6f;
@@ -32,6 +35,7 @@ public sealed class ShipboardSahurController : MonoBehaviour
     ShipLadder[] ladders;
     ShipLadder activeLadder;
     Vector3 spawnShipLocalPosition;
+    Quaternion spawnShipLocalRotation;
     Vector3 lastShipLocalPosition;
     Vector3 planarVelocity;
     float verticalSpeed;
@@ -54,6 +58,7 @@ public sealed class ShipboardSahurController : MonoBehaviour
         if (ship != null)
         {
             spawnShipLocalPosition = ship.InverseTransformPoint(transform.position);
+            spawnShipLocalRotation = Quaternion.Inverse(ship.rotation) * transform.rotation;
             lastShipLocalPosition = spawnShipLocalPosition;
             ladders = ship.GetComponents<ShipLadder>();
         }
@@ -86,13 +91,25 @@ public sealed class ShipboardSahurController : MonoBehaviour
         if (viewCamera != null)
         {
             shipCamera = viewCamera.GetComponent<ShipFollowCamera>();
-            if (shipCamera != null) shipCamera.enabled = false;
+            if (shipCamera != null) shipCamera.enabled = passengerMode;
         }
         if (animator != null) animator.Play("Locomotion", 0, 0f);
+        if (passengerMode && controller != null) controller.enabled = false;
     }
 
     void Update()
     {
+        if (passengerMode)
+        {
+            // Sahur stays at the same point on deck while the helm turns the ship.
+            // Keep a separate world root so the impact sequence can throw him free.
+            if (ship != null)
+                transform.SetPositionAndRotation(ship.TransformPoint(spawnShipLocalPosition),
+                    ship.rotation * spawnShipLocalRotation);
+            if (animator != null) animator.SetFloat(SpeedId, 0f);
+            return;
+        }
+
         // CharacterController does not inherit a moving parent's physics position
         // reliably. Keep Sahur independent and explicitly carry him with the deck.
         if (activeLadder == null && ship != null)
@@ -290,7 +307,7 @@ public sealed class ShipboardSahurController : MonoBehaviour
 
     void LateUpdate()
     {
-        if (viewCamera == null) return;
+        if (passengerMode || viewCamera == null) return;
         if (wideView)
         {
             // The ship overview has its own orbit camera. Follow its actual

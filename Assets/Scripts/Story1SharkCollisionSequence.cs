@@ -8,7 +8,8 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
 {
     [Header("Scene references")]
     public ShipSailingMotion ship;
-    public ShipboardSahurController sahur;
+    public ThirdPersonPlayerController sahur;
+    public Story1OceanAwakening awakening;
     public Transform swimmer;
     public Camera storyCamera;
 
@@ -18,6 +19,15 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     [Min(0f)] public float sharkNoseDistance = 37f;
     [Min(0f)] public float swimSubmergeDepth = 18f;
     [Min(0f)] public float swimBobHeight = 0.55f;
+    [Min(1f)] public float maximumSwimSpeed = 30f;
+    [Min(1f)] public float escapePursuitSpeed = 90f;
+    [Min(1f)] public float pursuitBoostSeconds = 8f;
+    [Min(1f)] public float swimTurnDegreesPerSecond = 120f;
+    [Min(0.1f)] public float contactTolerance = 2f;
+    [Tooltip("Sideways hunting sweeps fade out before the final bow approach.")]
+    [Min(0f)] public float huntingSweepWidth = 18f;
+    [Min(0f)] public float huntingDiveDepth = 4f;
+    [Range(0f, 15f)] public float turnBankDegrees = 7f;
 
     [Header("Ending")]
     [Min(0f)] public float blackoutDelay = 4.7f;
@@ -34,8 +44,18 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     Vector3 heading;
     Vector3 side;
     Vector3 impactSharkCenter;
-    Vector3 swimStartPosition;
+    Vector3 swimPosition;
     Vector3 swimDirection;
+    Quaternion swimRotation;
+    Vector3 previousDestination;
+    bool hasPreviousDestination;
+    float baseTailBeatFrequency;
+    float swimBank;
+    OceanWorld ocean;
+    Collider[] shipColliders;
+    Vector3 bowContactPoint;
+    Vector3 tailContactPosition;
+    Quaternion tailContactRotation;
     Vector3 impactShipPosition;
     Vector3 impactSahurPosition;
     Vector3 impactSwimmerPosition;
@@ -50,6 +70,11 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     float voyageTime;
     float impactTime;
     bool impacted;
+    bool blackoutComplete;
+
+    public bool HasImpacted => impacted;
+    public float VoyageTime => voyageTime;
+    public float CurrentSwimSpeed { get; private set; }
 
     void Start()
     {
@@ -70,19 +95,16 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         heading = Vector3.ProjectOnPlane(shipTransform.right, Vector3.up).normalized;
         side = Vector3.Cross(Vector3.up, heading).normalized;
 
-        OceanWorld ocean = FindFirstObjectByType<OceanWorld>();
+        ocean = FindFirstObjectByType<OceanWorld>();
         oceanHeight = ocean != null ? ocean.oceanHeight : 0f;
-
-        // Use the shark's authored scene position as the start of its swim.
-        // Its nose meets the bow when the ship reaches the 30-second point.
-        impactSharkCenter = shipTransform.position + heading *
-            (ship.forwardSpeed * impactAfterSeconds + bowDistance + sharkNoseDistance);
-        swimStartPosition = swimmer.position;
-        swimStartPosition.y = oceanHeight - swimSubmergeDepth;
-        swimDirection = Vector3.ProjectOnPlane(impactSharkCenter - swimStartPosition,
-            Vector3.up).normalized;
+        shipColliders = shipTransform.GetComponentsInChildren<Collider>();
+        swimPosition = swimmer.position;
+        swimRotation = swimmer.rotation;
+        swimDirection = Vector3.ProjectOnPlane(swimmer.forward, Vector3.up).normalized;
+        float actualNoseReach = Vector3.ProjectOnPlane(swimAnimator.NoseWorldPoint - swimmer.position, Vector3.up).magnitude;
+        if (actualNoseReach > 1f) sharkNoseDistance = actualNoseReach;
+        baseTailBeatFrequency = swimAnimator.tailBeatFrequency;
         CreateBlackoutOverlay();
-        UpdateSwimmer(0f);
     }
 
     void Update()
@@ -91,31 +113,113 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         if (!impacted)
         {
             UpdateSwimmer(voyageTime);
-            if (voyageTime >= impactAfterSeconds)
+            // The timer arms the encounter; actual bow contact starts the slap.
+            // Deadline pursuit closes the gap continuously even while reversing or turning.
+            float noseGap = Vector3.ProjectOnPlane(swimAnimator.NoseWorldPoint - bowContactPoint, Vector3.up).magnitude;
+            if (voyageTime >= impactAfterSeconds && noseGap <= contactTolerance &&
+                Vector3.Angle(Vector3.ProjectOnPlane(swimmer.forward, Vector3.up), -heading) < 10f)
                 BeginImpact();
             return;
         }
 
-        UpdateImpact(Mathf.Min(voyageTime - impactTime, blackoutDelay + blackoutDuration));
+        float endingTime = voyageTime - impactTime;
+        float fullBlackTime = blackoutDelay + blackoutDuration;
+        if (endingTime < fullBlackTime || awakening == null)
+        {
+            UpdateImpact(Mathf.Min(endingTime, fullBlackTime));
+            return;
+        }
+        if (!blackoutComplete)
+        {
+            UpdateImpact(fullBlackTime);
+            blackoutComplete = true;
+            awakening.BeginBlackout(blackoutImage, impactShipPosition, heading);
+        }
     }
 
     void UpdateSwimmer(float time)
     {
+        heading = Vector3.ProjectOnPlane(shipTransform.right, Vector3.up).normalized;
+        side = Vector3.Cross(Vector3.up, heading).normalized;
         float progress = Mathf.Clamp01(time / impactAfterSeconds);
-        float bob = Mathf.Sin(time * 3.4f) * swimBobHeight;
-        Vector3 destination = new Vector3(impactSharkCenter.x,
-            oceanHeight - swimSubmergeDepth, impactSharkCenter.z);
-        swimmer.position = Vector3.Lerp(swimStartPosition, destination, progress) +
-                           Vector3.up * bob;
+        bowContactPoint = FindBowContactPoint();
+        float standOff = 45f * (1f - Mathf.SmoothStep(0f, 1f, progress));
+        float hunting = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.45f, .82f, progress));
+        Vector3 huntingOffset = side * (huntingSweepWidth * hunting *
+            (Mathf.Sin(time * .52f) + .25f * Mathf.Sin(time * 1.13f))) +
+            heading * (Mathf.Sin(time * .38f) * 6f * hunting);
+        Vector3 approach = Vector3.ProjectOnPlane(bowContactPoint + heading * standOff + huntingOffset -
+            swimAnimator.NoseWorldPoint, Vector3.up);
+        if (approach.sqrMagnitude > .0001f) swimDirection = approach.normalized;
+        float faceBow = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.65f, .9f, progress));
+        Vector3 forward = Vector3.Slerp(swimDirection, -heading, faceBow).normalized;
+        Vector3 previousForward = swimRotation * Vector3.forward;
+        if (forward.sqrMagnitude > .001f)
+            swimRotation = Quaternion.RotateTowards(swimRotation, Quaternion.LookRotation(forward, Vector3.up),
+                swimTurnDegreesPerSecond * Time.deltaTime);
+        float turnRate = Time.deltaTime > .0001f ? Vector3.SignedAngle(previousForward,
+            swimRotation * Vector3.forward, Vector3.up) / Time.deltaTime : 0f;
+        float bankTarget = Mathf.Clamp(-turnRate * .2f, -turnBankDegrees, turnBankDegrees) * hunting;
+        swimBank = Mathf.Lerp(swimBank, bankTarget, 1f - Mathf.Exp(-4f * Time.deltaTime));
+        swimmer.rotation = swimRotation * Quaternion.Euler(
+            Mathf.Sin(time * 1.4f) * 2.5f * hunting, 0f,
+            swimBank + Mathf.Sin(time * 2.1f) * 1.5f * hunting);
+        // The model's nose is offset sideways from its imported root. Aim its
+        // actual nose at the bow instead of treating the root as its centreline.
+        Vector3 noseOffset = swimAnimator.NoseWorldPoint - swimmer.position;
+        impactSharkCenter = bowContactPoint - noseOffset + heading * standOff + huntingOffset;
+        Vector3 towardDestination = Vector3.ProjectOnPlane(impactSharkCenter - swimPosition, Vector3.up);
+        float remaining = Mathf.Max(.08f, impactAfterSeconds - time);
+        float deltaTime = Time.deltaTime;
+        float destinationSpeed = hasPreviousDestination && deltaTime > .0001f ?
+            Vector3.ProjectOnPlane(impactSharkCenter - previousDestination, Vector3.up).magnitude / deltaTime :
+            Mathf.Abs(ship.CurrentSpeed);
+        previousDestination = impactSharkCenter;
+        hasPreviousDestination = true;
+        // Include how fast the bow target moves, not just the remaining gap.
+        // A reversing or turning ship otherwise leaves a permanent chase lag.
+        float urgency = Mathf.SmoothStep(0f, 1f,
+            Mathf.Clamp01(1f - (impactAfterSeconds - time) / pursuitBoostSeconds));
+        float pursuitLimit = Mathf.Lerp(maximumSwimSpeed,
+            Mathf.Max(maximumSwimSpeed, escapePursuitSpeed), urgency);
+        float requiredSpeed = destinationSpeed + towardDestination.magnitude / remaining + 2f;
+        float speed = Mathf.Min(pursuitLimit, Mathf.Max(Mathf.Abs(ship.CurrentSpeed) + 1f, requiredSpeed));
+        Vector3 step = Vector3.ClampMagnitude(towardDestination, speed * Time.deltaTime);
+        CurrentSwimSpeed = deltaTime > .0001f ? step.magnitude / deltaTime : 0f;
+        float targetBeat = baseTailBeatFrequency *
+            Mathf.Lerp(1f, 2f, Mathf.Clamp01(CurrentSwimSpeed / maximumSwimSpeed)) *
+            (1f + .08f * Mathf.Sin(time * .9f) * hunting);
+        swimAnimator.tailBeatFrequency = Mathf.Lerp(swimAnimator.tailBeatFrequency, targetBeat,
+            1f - Mathf.Exp(-3f * Time.deltaTime));
+        swimPosition += step;
+        float water = ocean != null ? ocean.SampleSurfaceHeight(swimPosition, Time.time) : oceanHeight;
+        float dive = huntingDiveDepth * hunting * (.5f + .5f * Mathf.Sin(time * .72f));
+        swimPosition.y = Mathf.MoveTowards(swimPosition.y, water - swimSubmergeDepth - dive,
+            maximumSwimSpeed * Time.deltaTime);
+        swimmer.position = swimPosition + Vector3.up * (Mathf.Sin(time * 3.4f) * swimBobHeight);
 
-        float turn = Mathf.SmoothStep(0f, 1f,
-            Mathf.InverseLerp(impactAfterSeconds * 0.6f, impactAfterSeconds, time));
-        Vector3 forward = Vector3.Lerp(swimDirection, -heading, turn).normalized;
-        Quaternion facing = Quaternion.LookRotation(forward, Vector3.up);
-        swimmer.rotation = facing * Quaternion.Euler(
-            Mathf.Sin(time * 2.2f) * 3f,
-            Mathf.Sin(time * 2.8f) * 5f,
-            Mathf.Sin(time * 3.4f) * 5f);
+    }
+
+    Vector3 FindBowContactPoint(float contactHeight = float.NaN)
+    {
+        Vector3 origin = shipTransform.position + heading * (bowDistance + 60f);
+        origin.y = float.IsNaN(contactHeight) ? swimAnimator.NoseWorldPoint.y : contactHeight;
+        Vector3 contact = shipTransform.position + heading * bowDistance;
+        contact.y = origin.y;
+        float closest = 150f;
+        bool backfaces = Physics.queriesHitBackfaces;
+        Physics.queriesHitBackfaces = true;
+        foreach (Collider collider in shipColliders)
+        {
+            if (collider == null || !collider.enabled || collider.isTrigger) continue;
+            if (collider.Raycast(new Ray(origin, -heading), out RaycastHit hit, closest))
+            {
+                closest = hit.distance;
+                contact = hit.point;
+            }
+        }
+        Physics.queriesHitBackfaces = backfaces;
+        return contact;
     }
 
     void BeginImpact()
@@ -123,16 +227,21 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         impacted = true;
         impactTime = voyageTime;
 
-        // Keep the final frame aligned with the actual bow if sailing speed
-        // was changed in the Inspector during the voyage.
-        swimmer.position = shipTransform.position + heading *
-                           (bowDistance + sharkNoseDistance) +
-                           Vector3.up * (oceanHeight - swimSubmergeDepth);
         impactSwimmerPosition = swimmer.position;
         impactSwimmerRotation = swimmer.rotation;
+        // Sweep above the waterline so the slap is visible, still targeting
+        // the actual bow collider at that height.
+        bowContactPoint = FindBowContactPoint(Mathf.Max(bowContactPoint.y, oceanHeight + 8f));
+        // Turn and translate continuously so the deformed tail tip reaches the
+        // actual hull point at the slap's contact frame.
+        tailContactRotation = Quaternion.LookRotation(heading, Vector3.up);
+        Vector3 tailOffset = Vector3.Scale(swimAnimator.TailContactLocalPoint, swimmer.lossyScale);
+        tailContactPosition = bowContactPoint - tailContactRotation * tailOffset;
         swimAnimator.PlayTailSlap();
         ship.enabled = false;
         sahur.enabled = false;
+        var passenger = sahur.GetComponent<Story1SahurPassenger>();
+        if (passenger != null) passenger.enabled = false;
         if (sahurCollider != null) sahurCollider.enabled = false;
         if (shipCamera != null) shipCamera.enabled = false;
 
@@ -143,8 +252,8 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         impactCameraPosition = storyCamera.transform.position;
         impactCameraRotation = storyCamera.transform.rotation;
         // A fixed wide shot lets the ship and Sahur visibly recede into the sky.
-        launchCameraPosition = impactShipPosition - heading * 120f + side * 130f + Vector3.up * 95f;
-        launchCameraFocus = impactShipPosition + heading * 60f + Vector3.up * 75f;
+        launchCameraPosition = impactShipPosition + heading * 15f + side * 150f + Vector3.up * 55f;
+        launchCameraFocus = impactShipPosition + heading * 35f + Vector3.up * 20f;
         UpdateImpact(0f);
     }
 
@@ -154,10 +263,9 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         // The launch begins when the tail finishes its striking sweep.
         float tailTurn = Mathf.SmoothStep(0f, 1f,
             Mathf.Clamp01(time / TralaleroSwimAnimator.TailContactTime));
-        swimmer.rotation = Quaternion.AngleAxis(170f * tailTurn, Vector3.up) *
-                           impactSwimmerRotation;
-        swimmer.position = impactSwimmerPosition + Vector3.up *
-            (Mathf.Sin(Mathf.Min(time, 0.75f) / 0.75f * Mathf.PI) * 3f);
+        swimmer.rotation = Quaternion.Slerp(impactSwimmerRotation, tailContactRotation, tailTurn);
+        swimmer.position = Vector3.Lerp(impactSwimmerPosition, tailContactPosition, tailTurn) +
+            Vector3.up * (Mathf.Sin(Mathf.Clamp01(time / TralaleroSwimAnimator.TailContactTime) * Mathf.PI) * 1.5f);
 
         float flightTime = Mathf.Max(0f, time - TralaleroSwimAnimator.TailContactTime);
         float shipBurst = 1f - Mathf.Exp(-4.5f * flightTime);
@@ -188,8 +296,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
             Quaternion.AngleAxis(650f * sahurTumble, impactCameraRotation * Vector3.forward) *
             Quaternion.AngleAxis(180f * sahurTumble, side) * impactSahurRotation;
 
-        float cameraBlend = Mathf.SmoothStep(0f, 1f,
-            Mathf.Clamp01((time - 0.15f) / 0.85f));
+        float cameraBlend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(time / 0.45f));
         float follow = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(flightTime / 4.1f));
         Vector3 cameraPosition = Vector3.Lerp(impactCameraPosition,
             launchCameraPosition + heading * (24f * follow) + Vector3.up * (18f * follow),
@@ -200,7 +307,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         cameraPosition += Vector3.up *
                           (Mathf.PerlinNoise(0f, time * 41f) * 2f - 1f) * shake;
         Vector3 focus = launchCameraFocus + heading * (70f * follow) +
-                        side * (20f * follow) + Vector3.up * (48f * follow);
+                        side * (20f * follow) + Vector3.up * (100f * follow);
         Quaternion desiredRotation = Quaternion.LookRotation(focus - cameraPosition, Vector3.up);
         storyCamera.transform.SetPositionAndRotation(cameraPosition,
             Quaternion.Slerp(impactCameraRotation, desiredRotation, cameraBlend));

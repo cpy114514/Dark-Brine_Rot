@@ -80,6 +80,7 @@ public static class BuildSettingsMenu
             {
                 new()
                 {
+                    Choice("language", "LANGUAGE", "Change language immediately; choice is saved"),
                     Choice("difficulty", "CHALLENGE", "Nailong health and chase; Sahur attack power"),
                     Slide("cameraDistance", "CAMERA DISTANCE", "Third-person follow distance", 2.5f, 11f),
                     Slide("fieldOfView", "FIELD OF VIEW", "Camera perspective", 50f, 90f)
@@ -183,10 +184,13 @@ public static class BuildSettingsMenu
         var scroll = section.gameObject.AddComponent<ScrollRect>();
         scroll.horizontal = false;
         scroll.vertical = true;
-        scroll.scrollSensitivity = 26f;
+        scroll.scrollSensitivity = 40f;
         scroll.movementType = ScrollRect.MovementType.Clamped;
         RectTransform viewport = Rect(section, "Viewport", Vector2.zero, new Vector2(950, 560));
         viewport.gameObject.AddComponent<RectMask2D>();
+        var viewportHit = viewport.gameObject.AddComponent<Image>();
+        viewportHit.color = Color.clear;
+        viewportHit.raycastTarget = true;
         RectTransform content = Rect(viewport, "Content", Vector2.zero,
             new Vector2(950, Mathf.Max(560, specs.Count * 76 + 20)));
         content.anchorMin = new Vector2(0.5f, 1f);

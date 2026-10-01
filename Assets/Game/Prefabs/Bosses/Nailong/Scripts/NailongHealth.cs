@@ -18,14 +18,32 @@ namespace Mavis
         void Awake()
         {
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+            if (GetComponent<NailongHealthBar>() == null) gameObject.AddComponent<NailongHealthBar>();
+            if (GetComponent<NailongLoot>() == null) gameObject.AddComponent<NailongLoot>();
+            if (GetComponent<NailongHitReaction>() == null) gameObject.AddComponent<NailongHitReaction>();
         }
 
         public void ApplyDamage(float amount, Vector3 hitPoint)
         {
+            ApplyCombatDamage(amount, hitPoint, CombatHitKind.ComboOne);
+        }
+
+        public void ApplyCombatDamage(float amount, Vector3 hitPoint, CombatHitKind kind)
+        {
             if (IsDead || amount <= 0f) return;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             Damaged?.Invoke(amount);
-            if (IsDead) OnDeath.Invoke();
+            if (!IsDead)
+            {
+                GetComponent<NailongHitReaction>()?.Hit(hitPoint, kind);
+                if (kind == CombatHitKind.ChargedHeavy || kind == CombatHitKind.JumpSlash)
+                    GetComponent<NailongAI>()?.Interrupt(0.6f);
+            }
+            if (IsDead)
+            {
+                GetComponent<NailongLoot>()?.Drop();
+                OnDeath.Invoke();
+            }
         }
     }
 }

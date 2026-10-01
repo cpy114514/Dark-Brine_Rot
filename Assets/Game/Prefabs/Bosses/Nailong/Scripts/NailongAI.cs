@@ -7,8 +7,32 @@ namespace Mavis
     [RequireComponent(typeof(NailongHealth), typeof(NailongAttack), typeof(NailongAttackMotion))]
     public sealed class NailongAI : MonoBehaviour
     {
-        public enum State { Idle, Chase, Attack, Dead }
-        enum AttackPattern { None, Slap, CryingBurst, ShamelessCharge, UnreasonableTantrum }
+        public enum State { Idle, Chase, Attack, Dead, Staggered }
+        enum AttackPattern { None, Slap, CryingBurst, ShamelessCharge, UnreasonableTantrum, ClawFlurry, Roar, ScoldingSpit }
+
+        [Header("乱抓连击")]
+        [Min(0.1f)] public float flurryWindup = 0.45f;
+        [Min(0.1f)] public float flurryInterval = 0.28f;
+        [Range(2, 8)] public int flurryCount = 4;
+        [Min(0f)] public float flurryDamageMultiplier = 0.55f;
+        [Min(0.1f)] public float flurryRecovery = 0.6f;
+
+        [Header("咆哮震退")]
+        [Min(0.1f)] public float roarWindup = 1f;
+        [Min(1f)] public float roarRadius = 6f;
+        [Min(0f)] public float roarPushDistance = 3.2f;
+        [Min(0f)] public float roarDamageMultiplier = 0.7f;
+        [Min(0.1f)] public float roarCooldown = 7f;
+
+        [Header("指人骂街 / 口水弹")]
+        [Min(1f)] public float spitRange = 14f;
+        [Min(0.1f)] public float spitWindup = 0.9f;
+        [Min(0.1f)] public float spitInterval = 0.28f;
+        [Range(1, 6)] public int spitCount = 3;
+        [Min(1f)] public float spitSpeed = 16f;
+        [Min(0f)] public float spitDamageMultiplier = 0.8f;
+        [Min(0.1f)] public float spitCooldown = 5f;
+        [Min(0.1f)] public float skillRecovery = 0.7f;
 
         [Header("Target")]
         public string targetTag = "Player";
@@ -63,6 +87,24 @@ namespace Mavis
         public State CurrentState => state;
 
         State state;
+        float staggerUntil;
+        public bool IsStaggered => state == State.Staggered;
+
+        public void Interrupt(float seconds)
+        {
+            if (health == null || health.IsDead || state == State.Dead) return;
+            staggerUntil = Mathf.Max(staggerUntil, Time.time + seconds);
+            state = State.Staggered;
+            activeAttack = AttackPattern.None;
+            attackResolved = true;
+            nextActionTime = Mathf.Max(nextActionTime, staggerUntil + 0.4f);
+            if (agent != null && agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
+            HideWarning();
+            attackMotion?.Stop();
+            // Already launched projectiles remain; only the unfinished attack is cancelled.
+            effects?.StopPresentation();
+            Play("Idle");
+        }
         NavMeshAgent agent;
         ProceduralIsland island;
         Transform target;
@@ -80,6 +122,11 @@ namespace Mavis
         LineRenderer warningRing;
         Material warningMaterial;
         bool engaged;
+        float nextRoarTime;
+        float nextSpitTime;
+        float nextActionTime;
+        int strikesDone;
+        NailongCombatEffects effects;
 
         void Awake()
         {
@@ -92,6 +139,8 @@ namespace Mavis
             if (attack != null) attack.enabled = true;
             if (attackMotion != null) attackMotion.enabled = true;
             if (animator != null) animator.applyRootMotion = false;
+            effects = GetComponent<NailongCombatEffects>();
+            if (effects == null) effects = gameObject.AddComponent<NailongCombatEffects>();
             health.OnDeath.AddListener(HandleDeath);
             health.Damaged += HandleDamaged;
         }
@@ -105,9 +154,16 @@ namespace Mavis
 
             // The first island has no baked NavMesh. Direct movement remains
             // available without leaving an invalid agent active.
-            if (agent != null && agent.enabled && !agent.isOnNavMesh)
-                agent.enabled = false;
-            if (agent != null && agent.enabled)
+            if (agent != null)
+            {
+                if (agent.enabled && !agent.isOnNavMesh) agent.enabled = false;
+                if (!agent.enabled && UnityEngine.AI.NavMesh.SamplePosition(transform.position, out var navHit, 2f, agent.areaMask))
+                {
+                    transform.position = navHit.position;
+                    agent.enabled = true;
+                }
+            }
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
             {
                 agent.speed = chaseSpeed;
                 agent.stoppingDistance = followStopDistance;
@@ -120,12 +176,25 @@ namespace Mavis
 
         void Update()
         {
+            if (PauseSettingsMenu.IsOpen) return;
             if (state == State.Dead) return;
+            if (state == State.Staggered)
+            {
+                if (Time.time < staggerUntil) return;
+                state = State.Idle;
+            }
             if (target == null) AcquireTarget();
             if (target == null)
             {
                 engaged = false;
                 activeAttack = AttackPattern.None;
+                EnterIdle();
+                return;
+            }
+            var targetHealth = target.GetComponentInParent<PlayerHealth>();
+            if (targetHealth != null && targetHealth.currentHealth <= 0f)
+            {
+                engaged = false;
                 EnterIdle();
                 return;
             }
@@ -141,7 +210,7 @@ namespace Mavis
             if (distance <= sightRange) engaged = true;
             if (!engaged) return;
 
-            FaceTarget();
+            if (state != State.Attack || !attackResolved || activeAttack == AttackPattern.ScoldingSpit) FaceTarget();
             if (state == State.Attack)
             {
                 TickAttack();
@@ -203,9 +272,10 @@ namespace Mavis
                 activeAttack = AttackPattern.None;
                 HideWarning();
                 if (attackMotion != null) attackMotion.Stop();
+                effects?.HideTaunt();
             }
             state = State.Idle;
-            if (agent != null && agent.enabled) agent.isStopped = true;
+            if (agent != null && agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
             Play("Idle");
         }
 
@@ -213,51 +283,57 @@ namespace Mavis
         {
             if (state == State.Chase) return;
             state = State.Chase;
-            if (agent != null && agent.enabled) agent.isStopped = false;
+            if (agent != null && agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
             Play("Walk");
         }
 
         AttackPattern ChooseAttack(float distance)
         {
-            bool canSlap = distance <= attackRange && Time.time >= nextAttackTime;
-            bool canCry = distance <= cryingRadius && Time.time >= nextCryingTime;
-            bool canCharge = distance <= skillRange && Time.time >= nextChargeTime;
-            bool canTantrum = distance <= tantrumRadius && Time.time >= nextTantrumTime;
-
-            // At mid-range the boss prefers a loud, telegraphed gap closer or
-            // tantrum. Up close it mixes those skills with a quick slap.
-            if (distance > attackRange)
-            {
-                if (canCharge && Random.value < 0.58f) return AttackPattern.ShamelessCharge;
-                if (canCry) return AttackPattern.CryingBurst;
-                if (canTantrum) return AttackPattern.UnreasonableTantrum;
-                if (canCharge) return AttackPattern.ShamelessCharge;
-                return AttackPattern.None;
-            }
-
+            if (Time.time < nextActionTime) return AttackPattern.None;
+            bool claw = distance <= attackRange && Time.time >= nextAttackTime;
+            bool roar = distance <= roarRadius && Time.time >= nextRoarTime;
+            bool spit = distance <= spitRange && Time.time >= nextSpitTime;
             float roll = Random.value;
-            if (canTantrum && roll < 0.2f) return AttackPattern.UnreasonableTantrum;
-            if (canCry && roll < 0.43f) return AttackPattern.CryingBurst;
-            if (canSlap) return AttackPattern.Slap;
-            if (canCry) return AttackPattern.CryingBurst;
-            if (canTantrum) return AttackPattern.UnreasonableTantrum;
-            if (canCharge) return AttackPattern.ShamelessCharge;
+            if (roar && roll < 0.3f) return AttackPattern.Roar;
+            if (spit && (!claw || roll > 0.75f)) return AttackPattern.ScoldingSpit;
+            if (claw) return AttackPattern.ClawFlurry;
+            if (roar) return AttackPattern.Roar;
+            if (spit) return AttackPattern.ScoldingSpit;
             return AttackPattern.None;
         }
 
         void BeginAttack(AttackPattern pattern)
         {
+            if (state == State.Dead || state == State.Staggered) return;
             activeAttack = pattern;
             state = State.Attack;
             attackStartedAt = Time.time;
             attackResolved = false;
             tantrumPulsesDone = 0;
-            if (agent != null && agent.enabled) agent.isStopped = true;
+            strikesDone = 0;
+            if (agent != null && agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
 
             float duration = AttackDuration(pattern);
             if (attackMotion != null)
                 attackMotion.Begin(MotionFor(pattern), duration);
             Play("Idle");
+            if (pattern == AttackPattern.ClawFlurry)
+            {
+                nextAttackTime = Time.time + AttackDuration(pattern) + attackCooldown;
+                attackMotion?.ConfigureFlurry(flurryWindup, flurryInterval, flurryCount);
+            }
+            else if (pattern == AttackPattern.Roar)
+            {
+                nextRoarTime = Time.time + roarCooldown;
+                attackMotion?.ConfigureCue(roarWindup);
+                ShowWarning(transform.position, roarRadius, new Color(1f, 0.65f, 0.12f));
+            }
+            else if (pattern == AttackPattern.ScoldingSpit)
+            {
+                nextSpitTime = Time.time + spitCooldown;
+                attackMotion?.ConfigureCue(spitWindup);
+                effects?.ShowTaunt(AttackDuration(pattern));
+            }
 
             if (pattern == AttackPattern.Slap)
                 nextAttackTime = Time.time + attackCooldown;
@@ -281,9 +357,42 @@ namespace Mavis
 
         void TickAttack()
         {
+            if (state != State.Attack) return;
             float elapsed = Time.time - attackStartedAt;
             switch (activeAttack)
             {
+                case AttackPattern.ClawFlurry:
+                    // Each individual swipe owns one hit, not damage every frame.
+                    while (strikesDone < flurryCount && elapsed >= flurryWindup + strikesDone * flurryInterval)
+                    {
+                        strikesDone++;
+                        attackResolved = true;
+                        TryHit(attackReach, flurryDamageMultiplier, 0.16f);
+                    }
+                    if (elapsed >= AttackDuration(activeAttack)) FinishAttack();
+                    break;
+
+                case AttackPattern.Roar:
+                    if (!attackResolved && elapsed >= roarWindup)
+                    {
+                        attackResolved = true;
+                        HideWarning();
+                        attack?.Roar(roarRadius, roarDamageMultiplier, roarPushDistance, target);
+                        effects?.Roar(roarRadius);
+                    }
+                    if (elapsed >= AttackDuration(activeAttack)) FinishAttack();
+                    break;
+
+                case AttackPattern.ScoldingSpit:
+                    while (strikesDone < spitCount && elapsed >= spitWindup + strikesDone * spitInterval)
+                    {
+                        strikesDone++;
+                        attackResolved = true;
+                        if (target != null) effects?.Spit(target, spitSpeed, attack.damage * spitDamageMultiplier);
+                    }
+                    if (elapsed >= AttackDuration(activeAttack)) FinishAttack();
+                    break;
+
                 case AttackPattern.Slap:
                     if (!attackResolved && elapsed >= attackWindup)
                     {
@@ -394,6 +503,8 @@ namespace Mavis
 
         void FinishAttack()
         {
+            nextActionTime = Time.time + 0.4f;
+            effects?.HideTaunt();
             activeAttack = AttackPattern.None;
             HideWarning();
             if (attackMotion != null) attackMotion.Stop();
@@ -404,6 +515,9 @@ namespace Mavis
         {
             switch (pattern)
             {
+                case AttackPattern.ClawFlurry: return flurryWindup + flurryInterval * (flurryCount - 1) + flurryRecovery;
+                case AttackPattern.Roar: return roarWindup + skillRecovery;
+                case AttackPattern.ScoldingSpit: return spitWindup + spitInterval * (spitCount - 1) + skillRecovery;
                 case AttackPattern.Slap: return attackWindup + attackRecovery;
                 case AttackPattern.CryingBurst: return cryingWindup + 0.65f;
                 case AttackPattern.ShamelessCharge: return 0.55f + shamelessChargeDuration + 0.42f;
@@ -417,6 +531,9 @@ namespace Mavis
         {
             switch (pattern)
             {
+                case AttackPattern.ClawFlurry: return NailongAttackMotion.Style.Flurry;
+                case AttackPattern.Roar: return NailongAttackMotion.Style.Roar;
+                case AttackPattern.ScoldingSpit: return NailongAttackMotion.Style.PointAndSpit;
                 case AttackPattern.CryingBurst: return NailongAttackMotion.Style.Cry;
                 case AttackPattern.ShamelessCharge: return NailongAttackMotion.Style.ShoulderBump;
                 case AttackPattern.UnreasonableTantrum: return NailongAttackMotion.Style.Tantrum;
@@ -525,7 +642,8 @@ namespace Mavis
             direction.y = 0f;
             if (direction.sqrMagnitude < 0.001f) return;
             transform.rotation = Quaternion.RotateTowards(transform.rotation,
-                Quaternion.LookRotation(direction), turnSpeed * Time.deltaTime);
+                Quaternion.LookRotation(direction),
+                (state == State.Attack && activeAttack == AttackPattern.ScoldingSpit ? Mathf.Min(turnSpeed, 120f) : turnSpeed) * Time.deltaTime);
         }
 
         void SnapToSurface()
@@ -557,6 +675,7 @@ namespace Mavis
             activeAttack = AttackPattern.None;
             HideWarning();
             if (attackMotion != null) attackMotion.Stop();
+            effects?.Cancel();
             if (agent != null && agent.enabled) agent.enabled = false;
             Play("Death");
             foreach (Collider collider in GetComponentsInChildren<Collider>())
@@ -568,6 +687,16 @@ namespace Mavis
         {
             a.y = b.y = 0f;
             return Vector3.Distance(a, b);
+        }
+
+        void OnDisable()
+        {
+            if (agent != null && agent.enabled && agent.isOnNavMesh) agent.isStopped = true;
+            activeAttack = AttackPattern.None;
+            HideWarning();
+            attackMotion?.Stop();
+            effects?.Cancel();
+            if (state != State.Dead) state = State.Idle;
         }
     }
 }

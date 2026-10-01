@@ -83,7 +83,6 @@ public static class VerifySahurNaturalCombo
             actor.transform.localPosition = Vector3.up * 3f;
             var movement = actor.GetComponent<ThirdPersonPlayerController>();
             var attack = actor.GetComponent<SahurAttack>();
-            movement.snapSpawnToIslandSurface = false;
             movement.waterSplashes = false;
             movement.cameraCollision = false;
             foreach (var input in actor.GetComponentsInChildren<PlayerInput>(true)) input.enabled = false;
@@ -185,6 +184,10 @@ public static class VerifySahurNaturalCombo
                     referenceAnimator.Update(0f);
                     foreach (HumanBodyBones boneId in PoseBones)
                     {
+                        // The deliberate free-arm guard differs from the source clip;
+                        // it must not invalidate the authored body/weapon-arm regression.
+                        if (boneId == HumanBodyBones.LeftUpperArm &&
+                            animator.GetComponent<SahurCombatGuardIK>()?.enabled == true) continue;
                         Transform actualBone = animator.GetBoneTransform(boneId);
                         Transform sourceBone = referenceAnimator.GetBoneTransform(boneId);
                         if (actualBone == null || sourceBone == null) continue;

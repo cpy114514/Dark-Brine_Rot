@@ -6,7 +6,7 @@ namespace Mavis
     // It runs in LateUpdate, after Animator has written the humanoid bones.
     public sealed class NailongAttackMotion : MonoBehaviour
     {
-        public enum Style { LeftClaw, RightClaw, DoubleClaw, ShoulderBump, Cry, Tantrum }
+        public enum Style { LeftClaw, RightClaw, DoubleClaw, ShoulderBump, Cry, Tantrum, Flurry, Roar, PointAndSpit }
 
         Transform leftShoulder;
         Transform leftForeArm;
@@ -20,6 +20,22 @@ namespace Mavis
         float startedAt;
         float duration;
         bool active;
+        readonly System.Collections.Generic.Dictionary<Transform, Quaternion> fingerRest =
+            new System.Collections.Generic.Dictionary<Transform, Quaternion>();
+        float cueTime;
+        float flurryWindup;
+        float flurryInterval;
+        int flurryCount;
+        public Vector3 MouthPosition => head != null
+            ? head.position + transform.forward * 0.48f + transform.up * 0.05f
+            : transform.position + Vector3.up * 1.9f + transform.forward * 0.6f;
+        public void ConfigureCue(float seconds) => cueTime = seconds;
+        public void ConfigureFlurry(float windup, float interval, int count)
+        {
+            flurryWindup = windup;
+            flurryInterval = interval;
+            flurryCount = count;
+        }
 
         void Awake()
         {
@@ -40,6 +56,9 @@ namespace Mavis
                     case "Head": head = bone; break;
                 }
             }
+            if (rightHand != null)
+                foreach (var finger in rightHand.GetComponentsInChildren<Transform>())
+                    if (finger != rightHand) fingerRest[finger] = finger.localRotation;
         }
 
         public void Begin(Style nextStyle, float seconds)
@@ -50,13 +69,60 @@ namespace Mavis
             active = true;
         }
 
-        public void Stop() => active = false;
+        public void Stop()
+        {
+            active = false;
+            foreach (var pair in fingerRest) if (pair.Key != null) pair.Key.localRotation = pair.Value;
+        }
 
         void LateUpdate()
         {
-            if (!active) return;
-            float phase = Mathf.Clamp01((Time.time - startedAt) / duration);
-            if (phase >= 1f) { active = false; return; }
+            if (!active || PauseSettingsMenu.IsOpen) return;
+            float elapsed = Time.time - startedAt;
+            float phase = Mathf.Clamp01(elapsed / duration);
+            if (phase >= 1f) { Stop(); return; }
+
+            float envelope = Smooth(phase / 0.10f) * (1f - Smooth((phase - 0.80f) / 0.20f));
+            if (style == Style.Flurry)
+            {
+                float leftStrike = 0f, rightStrike = 0f, flurryLeftWind = 0f, flurryRightWind = 0f;
+                for (int i = 0; i < flurryCount; i++)
+                {
+                    float hitTime = flurryWindup + i * flurryInterval;
+                    // Peak extension coincides with this swipe's damage cue.
+                    float strike = Smooth(Mathf.InverseLerp(hitTime - 0.13f, hitTime, elapsed)) *
+                        (1f - Smooth(Mathf.InverseLerp(hitTime + 0.04f, hitTime + 0.20f, elapsed)));
+                    float wind = Smooth(Mathf.InverseLerp(hitTime - 0.30f, hitTime - 0.16f, elapsed)) *
+                        (1f - Smooth(Mathf.InverseLerp(hitTime - 0.16f, hitTime, elapsed)));
+                    if (i % 2 == 0) { leftStrike = Mathf.Max(leftStrike, strike); flurryLeftWind = Mathf.Max(flurryLeftWind, wind); }
+                    else { rightStrike = Mathf.Max(rightStrike, strike); flurryRightWind = Mathf.Max(flurryRightWind, wind); }
+                }
+                Lean(14f * Mathf.Max(leftStrike, rightStrike) * envelope, 22f * (rightStrike - leftStrike) * envelope);
+                PoseArm(true, flurryLeftWind * envelope, leftStrike * envelope, false);
+                PoseArm(false, flurryRightWind * envelope, rightStrike * envelope, false);
+                return;
+            }
+            if (style == Style.Roar)
+            {
+                float wind = 1f - Smooth(Mathf.InverseLerp(cueTime - 0.16f, cueTime + 0.04f, elapsed));
+                float burst = Mathf.Exp(-Mathf.Max(0f, elapsed - cueTime) * 5f) *
+                    Smooth(Mathf.InverseLerp(cueTime - 0.10f, cueTime, elapsed));
+                Lean((-13f * wind + 25f * burst) * envelope, Mathf.Sin(elapsed * 22f) * burst * 4f);
+                PoseArm(true, wind * envelope, burst * envelope, false);
+                PoseArm(false, wind * envelope, burst * envelope, false);
+                if (head != null) head.rotation = Quaternion.AngleAxis((-18f * wind + 12f * burst) * envelope, transform.right) * head.rotation;
+                return;
+            }
+            if (style == Style.PointAndSpit)
+            {
+                float jab = elapsed < cueTime ? Mathf.Sin(elapsed * 15f) * 4f : Mathf.Sin((elapsed - cueTime) * 22f) * 2f;
+                Lean((6f + jab) * envelope, 5f * envelope);
+                PoseArm(false, 0f, envelope, false);
+                PoseArm(true, 0.35f * envelope, 0f, true);
+                PointFinger(envelope);
+                if (head != null) head.rotation = Quaternion.AngleAxis(jab * envelope, transform.right) * head.rotation;
+                return;
+            }
 
             if (style == Style.Cry)
             {
@@ -122,6 +188,17 @@ namespace Mavis
             Lean(13f * Mathf.Max(left, right), 17f * (right - left));
             PoseArm(true, leftWind, left, false);
             PoseArm(false, rightWind, right, false);
+        }
+
+        void PointFinger(float amount)
+        {
+            if (rightHand == null) return;
+            foreach (Transform finger in rightHand.GetComponentsInChildren<Transform>())
+            {
+                if (finger == rightHand || finger.name.Contains("Index")) continue;
+                if (finger.name.Contains("Middle") || finger.name.Contains("Ring") || finger.name.Contains("Pinky"))
+                    finger.localRotation = fingerRest[finger] * Quaternion.Euler(0f, 0f, 55f * amount);
+            }
         }
 
         void PoseCryingArm(bool left)
@@ -211,5 +288,7 @@ namespace Mavis
             t = Mathf.Clamp01(t);
             return t * t * (3f - 2f * t);
         }
+
+        void OnDisable() => Stop();
     }
 }

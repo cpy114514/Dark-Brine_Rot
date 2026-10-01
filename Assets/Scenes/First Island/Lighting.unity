@@ -390,9 +390,9 @@ MonoBehaviour:
   fullDayMinutes: 24
   startHour: 8
   clockRuns: 1
-  minimumCloudCoverage: 0.12
-  maximumCloudCoverage: 0.88
-  cloudWeatherFrequency: 0.0018
+  minimumCloudCoverage: 0.62
+  maximumCloudCoverage: 0.98
+  cloudWeatherFrequency: 0.0045
   noonElevation: 70
   noonIntensity: 1.55
   oceanReflectionProbe: {fileID: 563594254}

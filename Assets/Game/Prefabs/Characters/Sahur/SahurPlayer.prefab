@@ -2505,6 +2505,7 @@ MonoBehaviour:
   swimShoreHysteresis: 0.25
   fastSwimMultiplier: 1.5
   fastSwimDrainPerSecond: 3
+  swimHeadFreeboard: 0.25
   wadingSpeedMultiplier: 0.7
   underwaterCameraDepth: 0.92
   underwaterOverlayStrength: 0.68
@@ -2584,7 +2585,7 @@ MonoBehaviour:
   chargeState: Charge Windup
   heavyAttackState: Heavy Attack
   chargeTimeParameter: ChargePhase
-  chargeClip: {fileID: -203655887218126122, guid: 108276e68449afb4b832669f17a64534, type: 3}
+  chargeClip: {fileID: 7400000, guid: 83919a63344d676489a90b25e362127e, type: 2}
   chargePoseTime: 0.18
   comboOneState: Combo 1
   comboTwoState: Combo 2
@@ -2611,10 +2612,11 @@ MonoBehaviour:
   damage: 25
   swingWindowStart: 0.2
   swingWindowEnd: 0.65
-  heavySwingWindowStart: 0.25
-  heavySwingWindowEnd: 0.69
+  heavySwingWindowStart: 0.145
+  heavySwingWindowEnd: 0.3
   cooldown: 0.5
-  fullChargeTime: 1.25
+  fullChargeTime: 1.8
+  maxChargePosePhase: 0.11607143
   minChargeDamageMultiplier: 1.25
   maxChargeDamageMultiplier: 2.2
   swingAudio: {fileID: 5610018856762232532}
@@ -2800,7 +2802,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SahurSwimmingWeapon
   stick: {fileID: 332009883791112351}
-  backOffset: 0.22
+  backOffset: 0.55
   heightOffset: 0.04
   diagonalAngle: 22
 --- !u!1 &6599514254367242517

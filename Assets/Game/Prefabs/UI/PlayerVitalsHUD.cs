@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Mavis
 {
-    /// <summary>Builds a minimal monochrome health and pale-blue stamina HUD.</summary>
+    /// <summary>Two monochrome bars, identified by HP/SP rather than color.</summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Canvas))]
     public sealed class PlayerVitalsHUD : MonoBehaviour
@@ -34,7 +34,9 @@ namespace Mavis
         {
             FindPlayerVitals();
             if (canvasGroup != null)
-                canvasGroup.alpha = global::PauseSettingsMenu.IsOpen ? 0f : 1f;
+                canvasGroup.alpha = health != null && health.isActiveAndEnabled && health.currentHealth > 0f &&
+                    health.GetComponent<ThirdPersonPlayerController>() is ThirdPersonPlayerController movement && movement.isActiveAndEnabled &&
+                    !global::PauseSettingsMenu.IsOpen && !SahurLoadoutUI.IsOpen && !IslandMapUI.BlocksInput && !PlayerDeathRespawn.IsOpen ? 1f : 0f;
             RefreshBars(false);
         }
 
@@ -67,7 +69,7 @@ namespace Mavis
             canvasGroup.blocksRaycasts = false;
 
             var healthBack = CreateImage(hud.transform, "Health Track", Color.black);
-            SetTopRow(healthBack.rectTransform, 0f, 0f, 10f);
+            SetTopRow(healthBack.rectTransform, 30f, 0f, 10f);
             healthFill = CreateImage(healthBack.transform, "Health Fill", new Color32(245, 245, 245, 255));
             SetFillRect(healthFill.rectTransform);
             healthFill.type = Image.Type.Filled;
@@ -76,18 +78,30 @@ namespace Mavis
             healthFill.fillAmount = 1f;
 
             var staminaBack = CreateImage(hud.transform, "Stamina Track", Color.black);
-            SetTopRow(staminaBack.rectTransform, 0f, -16f, 10f);
-            staminaFill = CreateImage(staminaBack.transform, "Stamina Fill", new Color32(142, 216, 255, 255));
+            SetTopRow(staminaBack.rectTransform, 30f, -16f, 10f);
+            staminaFill = CreateImage(staminaBack.transform, "Stamina Fill", GameUITheme.Secondary);
             SetFillRect(staminaFill.rectTransform);
             staminaFill.type = Image.Type.Filled;
             staminaFill.fillMethod = Image.FillMethod.Horizontal;
             staminaFill.fillOrigin = (int)Image.OriginHorizontal.Left;
             staminaFill.fillAmount = 1f;
 
-            /*
-             * Keep the HUD as only two flat bars: white-on-black health and
-             * pale-blue-on-black stamina. No panel, labels, numbers, or trim.
-             */
+            BarLabel(hud.transform,"HP",0);
+            BarLabel(hud.transform,"SP",-16);
+        }
+
+        void BarLabel(Transform parent,string caption,float y)
+        {
+            var obj=new GameObject(caption,typeof(RectTransform),typeof(Text));
+            obj.transform.SetParent(parent,false);
+            var text=obj.GetComponent<Text>();
+            text.font=GameLocalization.Font ? GameLocalization.Font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.fontSize=12; text.text=caption; text.color=GameUITheme.Foreground;
+            text.verticalOverflow=VerticalWrapMode.Overflow;
+            text.alignment=TextAnchor.MiddleLeft; text.raycastTarget=false;
+            var rect=text.rectTransform; rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(0,1);
+            rect.anchoredPosition=new Vector2(0,y+2); rect.sizeDelta=new Vector2(26,14);
+            GameUITheme.OutlineSymbol(text);
         }
 
         void FindPlayerVitals()
@@ -127,7 +141,7 @@ namespace Mavis
             rect.anchorMax = new Vector2(1f, 1f);
             rect.pivot = new Vector2(0f, 1f);
             rect.anchoredPosition = new Vector2(left, top);
-            rect.sizeDelta = new Vector2(-left * 2f, height);
+            rect.sizeDelta = new Vector2(-left, height);
         }
 
         static void SetFillRect(RectTransform rect)

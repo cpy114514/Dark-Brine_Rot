@@ -1,28 +1,41 @@
 using UnityEngine;
 
 /// <summary>
-/// Moves the story ship forward while letting its long hull follow the ocean swell.
+/// Drives the story ship while letting its long hull follow the ocean swell.
 /// The imported ship_g model points along its local +X axis.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class ShipSailingMotion : MonoBehaviour
 {
     [Header("Sailing")]
-    [Min(0f)] public float forwardSpeed = 3f;
-    [Min(1f)] public float hullLength = 55f;
-    [Min(1f)] public float hullBeam = 22f;
+    [Tooltip("Sail forward continuously; W/S do not stop or reverse a sailboat.")]
+    public bool autoSail = true;
+    [Min(0f)] public float forwardSpeed = 8f;
+    [Min(1f)] public float hullLength = 96f;
+    [Min(1f)] public float hullBeam = 37.5f;
+
+    [Header("Helm")]
+    [Min(0f)] public float fullSpeed = 6f;
+    [Min(0f)] public float reverseSpeed = 4f;
+    [Min(0.1f)] public float speedChangePerSecond = 2f;
+    [Min(0f)] public float turnDegreesPerSecond = 14f;
+    [Min(0.1f)] public float steeringResponse = 2.5f;
 
     [Header("Wave motion")]
-    [Range(0f, 1f)] public float heaveStrength = 0.6f;
+    [Range(0f, 1f)] public float heaveStrength = 1f;
     [Range(0f, 10f)] public float maxPitchDegrees = 4f;
     [Range(0f, 10f)] public float maxRollDegrees = 5f;
-    [Min(0.1f)] public float responseSpeed = 3f;
+    [Min(0.1f)] public float responseSpeed = 6f;
 
     OceanWorld ocean;
     Quaternion baseRotation;
     Vector3 heading;
     Vector3 beamDirection;
     float waterlineOffset;
+    float currentSpeed;
+    float steering;
+
+    public float CurrentSpeed => currentSpeed;
 
     void Start()
     {
@@ -31,33 +44,57 @@ public sealed class ShipSailingMotion : MonoBehaviour
         heading = Vector3.ProjectOnPlane(baseRotation * Vector3.right, Vector3.up).normalized;
         beamDirection = Vector3.ProjectOnPlane(baseRotation * Vector3.forward, Vector3.up).normalized;
         waterlineOffset = transform.position.y - (ocean != null ? ocean.oceanHeight : 0f);
+        currentSpeed = autoSail ? Mathf.Max(.1f, forwardSpeed) : forwardSpeed;
+        if (GetComponent<ShipWakeEffects>() == null) gameObject.AddComponent<ShipWakeEffects>();
     }
 
     void Update()
     {
-        if (ocean == null)
-            return;
+        float helm = (GameInputSettings.Pressed(GameInputSettings.Action.Right) ? 1f : 0f) -
+                     (GameInputSettings.Pressed(GameInputSettings.Action.Left) ? 1f : 0f);
+        Simulate(Time.deltaTime, helm, GameInputSettings.Pressed(GameInputSettings.Action.Forward),
+            GameInputSettings.Pressed(GameInputSettings.Action.Back));
+    }
 
-        float deltaTime = Time.deltaTime;
+    void Simulate(float deltaTime, float helm, bool forward, bool reverse)
+    {
+        if (PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput) return;
+        deltaTime = Mathf.Max(0f, deltaTime);
+        steering = Mathf.MoveTowards(steering, helm, steeringResponse * deltaTime);
+        float targetSpeed = autoSail ? Mathf.Max(.1f, forwardSpeed) :
+            forward && reverse ? 0f : reverse ? -reverseSpeed :
+            forward ? Mathf.Max(fullSpeed, forwardSpeed) : forwardSpeed;
+        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed,
+            speedChangePerSecond * deltaTime);
+        baseRotation = Quaternion.AngleAxis(steering * turnDegreesPerSecond * deltaTime,
+            Vector3.up) * baseRotation;
+        heading = Vector3.ProjectOnPlane(baseRotation * Vector3.right, Vector3.up).normalized;
+        beamDirection = Vector3.ProjectOnPlane(baseRotation * Vector3.forward, Vector3.up).normalized;
         Vector3 position = transform.position;
-        position += heading * (forwardSpeed * deltaTime);
+        position += heading * (currentSpeed * deltaTime);
 
-        float time = Time.time * ocean.waveMotionSpeed;
+        if (ocean == null)
+        {
+            transform.SetPositionAndRotation(position, baseRotation);
+            return;
+        }
+
         float halfLength = hullLength * 0.5f;
         float halfBeam = hullBeam * 0.5f;
-        float center = SampleHeight(position, time);
-        float bow = SampleHeight(position + heading * halfLength, time);
-        float stern = SampleHeight(position - heading * halfLength, time);
-        float starboard = SampleHeight(position + beamDirection * halfBeam, time);
-        float port = SampleHeight(position - beamDirection * halfBeam, time);
+        float center = ocean.SampleSurfaceHeight(position, Time.time) - ocean.oceanHeight;
+        float bow = ocean.SampleSurfaceHeight(position + heading * halfLength, Time.time);
+        float stern = ocean.SampleSurfaceHeight(position - heading * halfLength, Time.time);
+        float starboard = ocean.SampleSurfaceHeight(position + beamDirection * halfBeam, Time.time);
+        float port = ocean.SampleSurfaceHeight(position - beamDirection * halfBeam, Time.time);
 
         float pitch = Mathf.Clamp(Mathf.Atan2(bow - stern, hullLength) * Mathf.Rad2Deg,
             -maxPitchDegrees, maxPitchDegrees);
         float roll = Mathf.Clamp(Mathf.Atan2(starboard - port, hullBeam) * Mathf.Rad2Deg,
             -maxRollDegrees, maxRollDegrees);
-        Quaternion targetRotation = baseRotation *
-            Quaternion.AngleAxis(pitch, Vector3.forward) *
-            Quaternion.AngleAxis(-roll, Vector3.right);
+        // ship_g's imported root is flipped 180 degrees around X. Apply tilt
+        // about world hull axes so a rising bow really lifts the bow.
+        Quaternion targetRotation = Quaternion.AngleAxis(roll, heading) *
+            Quaternion.AngleAxis(pitch, Vector3.Cross(heading, Vector3.up)) * baseRotation;
 
         float blend = 1f - Mathf.Exp(-responseSpeed * deltaTime);
         position.y = Mathf.Lerp(position.y,
@@ -65,24 +102,4 @@ public sealed class ShipSailingMotion : MonoBehaviour
         transform.SetPositionAndRotation(position, Quaternion.Slerp(transform.rotation, targetRotation, blend));
     }
 
-    float SampleHeight(Vector3 worldPosition, float time)
-    {
-        Vector2 point = new Vector2(worldPosition.x, worldPosition.z);
-        // The large hull follows the two swells; the shader's short chop
-        // moves across the water without pitching the whole ship.
-        return SampleWave(ocean.wave1, point, time) +
-               SampleWave(ocean.wave2, point, time + 1.9f);
-    }
-
-    static float SampleWave(OceanGerstnerWave wave, Vector2 point, float time)
-    {
-        if (wave.amplitude <= 0f || wave.wavelength <= 0f)
-            return 0f;
-
-        Vector2 direction = wave.direction.sqrMagnitude > 0.0001f
-            ? wave.direction.normalized : Vector2.right;
-        float phase = (Vector2.Dot(direction, point) - wave.speed * time) *
-                      (Mathf.PI * 2f / wave.wavelength);
-        return wave.amplitude * Mathf.Sin(phase);
-    }
 }

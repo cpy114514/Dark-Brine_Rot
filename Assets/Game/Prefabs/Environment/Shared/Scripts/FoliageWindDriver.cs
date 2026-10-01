@@ -3,6 +3,7 @@
 // Designed to be added once to the scene; reads WindZone (if any) for direction/strength.
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Mavis
 {
@@ -42,6 +43,16 @@ namespace Mavis
             if (windZone == null)
                 windZone = FindFirstObjectByType<WindZone>();
             CacheRendererProfiles();
+            SceneManager.sceneLoaded += SceneLoaded;
+            if (Application.isPlaying && GetComponent<FoliageInteractionSystem>() == null)
+                gameObject.AddComponent<FoliageInteractionSystem>();
+        }
+
+        void SceneLoaded(Scene scene, LoadSceneMode mode) { CacheRendererProfiles(); }
+        void OnDisable()
+        {
+            SceneManager.sceneLoaded -= SceneLoaded;
+            Shader.SetGlobalVector("_MavisWindParams", Vector4.zero);
         }
 
         void OnValidate()
@@ -57,7 +68,7 @@ namespace Mavis
         void Update()
         {
             Vector3 dir = baseDirection;
-            float strength = baseStrength;
+            float strength = 1f;
             float main = 1.0f;
 
             if (windZone != null)
@@ -69,15 +80,20 @@ namespace Mavis
 
             dir = dir.sqrMagnitude < 1e-4f ? Vector3.right : dir.normalized;
 
+            float windTime = Time.timeSinceLevelLoad;
+#if UNITY_EDITOR
+            if (!Application.isPlaying) windTime = (float)UnityEditor.EditorApplication.timeSinceStartup;
+#endif
             Shader.SetGlobalVector("_MavisWindDir",
-                new Vector4(dir.x, dir.y, dir.z, Time.timeSinceLevelLoad));
+                new Vector4(dir.x, dir.y, dir.z, windTime));
             Shader.SetGlobalVector("_MavisWindParams",
-                new Vector4(strength * baseStrength * globalResponse, main, 0f, gustiness));
+                new Vector4(strength * baseStrength * globalResponse, main, frequency, gustiness));
         }
 
         void CacheRendererProfiles()
         {
             foliage.Clear();
+            var lodBounds = new Dictionary<LODGroup, Bounds>();
             // Include inactive LOD renderers so they already have their wind profile
             // when a LODGroup activates them later.
             foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -86,6 +102,18 @@ namespace Mavis
                     continue;
 
                 Bounds bounds = renderer.bounds;
+                var group = renderer.GetComponentInParent<LODGroup>();
+                if (group != null)
+                {
+                    if (!lodBounds.TryGetValue(group, out bounds))
+                    {
+                        bounds = renderer.bounds;
+                        foreach (var lod in group.GetLODs())
+                            foreach (var member in lod.renderers)
+                                if (member != null) bounds.Encapsulate(member.bounds);
+                        lodBounds[group] = bounds;
+                    }
+                }
                 if (bounds.size.y < 0.001f)
                     continue;
 
@@ -99,6 +127,8 @@ namespace Mavis
                 foliage.Add(entry);
                 ApplyProfile(entry);
             }
+            var interactions = GetComponent<FoliageInteractionSystem>();
+            if (interactions != null) interactions.RebuildGrassIndex();
         }
 
         static bool UsesFoliageShader(Renderer renderer)
@@ -142,6 +172,24 @@ namespace Mavis
             propertyBlock.SetFloat(ResponseId, entry.response);
             propertyBlock.SetFloat(RootStiffnessId, GetRootStiffness(entry.response));
             entry.renderer.SetPropertyBlock(propertyBlock);
+            // Mixed tree meshes need separate leaf/branch/bark weights, but the same
+            // anchor and height at every LOD, otherwise branches drift away from trunks.
+            var materials = entry.renderer.sharedMaterials;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                var material = materials[i];
+                if (!material || material.shader.name != "Mavis/FoliageWind") continue;
+                entry.renderer.GetPropertyBlock(propertyBlock, i);
+                string name = material.name.ToLowerInvariant();
+                float response = name.Contains("bark") || name.Contains("trunk") ? .08f :
+                    name.Contains("branch") ? .30f : entry.response;
+                propertyBlock.SetFloat(AnchorYId, entry.anchorY);
+                propertyBlock.SetFloat(InverseHeightId, entry.inverseHeight);
+                propertyBlock.SetFloat(ResponseId, response);
+                propertyBlock.SetFloat(RootStiffnessId, GetRootStiffness(response));
+                propertyBlock.SetFloat("_PlayerPushStrength", response < .5f ? .08f : name.Contains("grass") ? 1f : .3f);
+                entry.renderer.SetPropertyBlock(propertyBlock, i);
+            }
         }
 
         static float GetRootStiffness(float response)

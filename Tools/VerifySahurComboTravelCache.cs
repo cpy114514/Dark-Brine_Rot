@@ -56,7 +56,6 @@ public static class VerifySahurComboTravelCache
             var attack = actor.GetComponent<SahurAttack>();
             foreach (var behaviour in actor.GetComponentsInChildren<Behaviour>(true))
                 if (!(behaviour is Animator)) behaviour.enabled = false;
-            movement.snapSpawnToIslandSurface = false;
             movement.waterSplashes = false;
             movement.cameraCollision = false;
             holder.SetActive(true);

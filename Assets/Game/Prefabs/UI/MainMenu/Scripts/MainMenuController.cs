@@ -18,6 +18,7 @@ public sealed class MainMenuController : MonoBehaviour
 
     void Awake()
     {
+        LocalizedGameText.BindTree(transform);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

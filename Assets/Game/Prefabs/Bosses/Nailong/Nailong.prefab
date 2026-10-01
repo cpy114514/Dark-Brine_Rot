@@ -1115,6 +1115,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a0579fa34ed4147439a32b3201494819, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7410499902333440630}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a0579fa34ed4147439a32b3201494819, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5868874853257744513}
   m_SourcePrefab: {fileID: 100100000, guid: a0579fa34ed4147439a32b3201494819, type: 3}
 --- !u!4 &1958093111465054081 stripped
 Transform:
@@ -1186,7 +1189,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3960477964465410676}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.56
   m_Speed: 4.2
@@ -1230,6 +1233,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85d4166d19fcfd5449dfdbcf0ac34da9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongAI
+  flurryWindup: 0.45
+  flurryInterval: 0.28
+  flurryCount: 4
+  flurryDamageMultiplier: 0.55
+  flurryRecovery: 0.6
+  roarWindup: 1
+  roarRadius: 6
+  roarPushDistance: 3.2
+  roarDamageMultiplier: 0.7
+  roarCooldown: 7
+  spitRange: 14
+  spitWindup: 0.9
+  spitInterval: 0.28
+  spitCount: 3
+  spitSpeed: 16
+  spitDamageMultiplier: 0.8
+  spitCooldown: 5
+  skillRecovery: 0.7
   targetTag: Player
   sightRange: 12
   giveUpRange: 35
@@ -1319,6 +1340,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aebf511830045464d85395df642d0bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongAttackMotion
+--- !u!114 &5868874853257744513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3960477964465410676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a6b9d966669fd14b9b9eafbba7ebf60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongCombatEffects
 --- !u!4 &4069364082922344787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 166159824728751734, guid: a0579fa34ed4147439a32b3201494819, type: 3}

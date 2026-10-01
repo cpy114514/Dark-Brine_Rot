@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class SahurSwimmingWeapon : MonoBehaviour
 {
     public Transform stick;
-    [Min(0f)] public float backOffset = 0.22f;
+    [Min(0f)] public float backOffset = 0.55f;
     public float heightOffset = 0.04f;
     [Range(-60f, 60f)] public float diagonalAngle = 22f;
 
@@ -16,6 +16,8 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     Quaternion gripRotation;
     Vector3 gripScale;
     Mesh mesh;
+    Vector3 shaftAxis;
+    Vector3 shaftFront;
     Collider[] colliders;
     bool[] colliderEnabled;
     bool stowed;
@@ -34,6 +36,22 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
         gripRotation = stick.localRotation;
         gripScale = stick.localScale;
         mesh = stick.GetComponent<MeshFilter>()?.sharedMesh;
+        if (mesh != null)
+        {
+            var size = mesh.bounds.size;
+            shaftAxis = size.x > size.y && size.x > size.z ? Vector3.right :
+                size.y > size.z ? Vector3.up : Vector3.forward;
+            // This FBX's shaft is diagonal inside its mesh bounds. Its fitted
+            // hitbox describes the real shaft direction, unlike an AABB axis.
+            if (attack != null && attack.stickHitbox is CapsuleCollider capsule)
+            {
+                Vector3 axis = capsule.direction == 0 ? Vector3.right : capsule.direction == 1 ? Vector3.up : Vector3.forward;
+                shaftAxis = stick.InverseTransformDirection(capsule.transform.TransformDirection(axis)).normalized;
+            }
+            shaftFront = Vector3.ProjectOnPlane(Vector3.forward, shaftAxis);
+            if (shaftFront.sqrMagnitude < 0.01f) shaftFront = Vector3.ProjectOnPlane(Vector3.up, shaftAxis);
+            shaftFront.Normalize();
+        }
         colliders = stick.GetComponentsInChildren<Collider>(true);
         colliderEnabled = new bool[colliders.Length];
     }
@@ -67,13 +85,9 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
         if (up.sqrMagnitude < 0.5f || across.sqrMagnitude < 0.5f) return;
         float angle = diagonalAngle * Mathf.Deg2Rad;
         Vector3 shaft = up * Mathf.Cos(angle) + across * Mathf.Sin(angle);
-        var size = mesh.bounds.size;
-        Vector3 localAxis = size.x > size.y && size.x > size.z ? Vector3.right :
-            size.y > size.z ? Vector3.up : Vector3.forward;
         // Give the shaft a stable roll as well as its diagonal direction.
-        Vector3 localFront = localAxis == Vector3.forward ? Vector3.up : Vector3.forward;
         stick.rotation = Quaternion.LookRotation(front, shaft) *
-            Quaternion.Inverse(Quaternion.LookRotation(localFront, localAxis));
+            Quaternion.Inverse(Quaternion.LookRotation(shaftFront, shaftAxis));
         Vector3 centre = chest.position - front * backOffset + up * heightOffset;
         stick.position = centre - stick.TransformVector(mesh.bounds.center);
     }

@@ -68,6 +68,10 @@ Shader "Mavis/FoliageWind"
 
             // Global player state for foliage squish (xyz = world pos, w = radius)
             float4 _MavisPlayerPos;
+            // Four moving bodies plus eight short-lived footprints. Shared by all LODs.
+            float4 _MavisFoliageBodies[12]; // xyz = feet, w = radius
+            float4 _MavisFoliageMotion[12]; // xy = horizontal motion, z = strength
+            int _MavisFoliageBodyCount;
 
             TEXTURE2D(_MainTex);
             SAMPLER(sampler_MainTex);
@@ -101,13 +105,12 @@ Shader "Mavis/FoliageWind"
                 float  time = _MavisWindDir.w;
                 float  baseStrength = _MavisWindParams.x;
                 float  gustiness    = _MavisWindParams.w;
-                float  freq         = _WindFrequency;
+                float  freq         = _WindFrequency * max(_MavisWindParams.z, 0.05);
 
                 // Build a continuous wind field in world space. Adjacent vertices share
                 // the same broad motion instead of receiving unrelated random phases.
                 float heightFactor = saturate((positionWS.y - _MavisWindAnchorY) * _MavisWindInvHeight);
-                heightFactor *= heightFactor;
-                heightFactor = lerp(1.0 - _WindTrunkStiffness, 1.0, heightFactor);
+                heightFactor = pow(heightFactor, lerp(1.25, 3.0, _WindTrunkStiffness));
 
                 float2 windPosition = positionWS.xz;
                 float broadPhase = time * freq * 0.72 +
@@ -140,25 +143,29 @@ Shader "Mavis/FoliageWind"
                 float3 positionWS = TransformObjectToWorld(IN.positionOS.xyz);
                 positionWS += ComputeWindOffset(positionWS);
 
-                // Player avoidance: when a vertex is within the player's push radius,
-                // displace it radially away from the player and squash it toward the ground.
-                float3 playerDelta = positionWS - _MavisPlayerPos.xyz;
-                float  playerDist  = length(playerDelta);
-                float  playerRadius = max(_MavisPlayerPos.w, 0.0001);
-                float  playerInfluence = 1.0 - saturate(playerDist / playerRadius);
-                playerInfluence *= playerInfluence; // ease-out
-
-                // height bias: only push the higher portions (more grass-like / leaf-like)
-                float heightAbovePlayer = saturate(positionWS.y - _MavisPlayerPos.y);
-                playerInfluence *= saturate(0.3 + heightAbovePlayer * _PlayerPushHeightBias);
-
-                if (playerInfluence > 0.0 && playerDist > 1e-4)
+                float playerInfluence = 0;
+                float3 push = 0;
+                float3 originalWS = TransformObjectToWorld(IN.positionOS.xyz);
+                float rootMask = saturate((originalWS.y - _MavisWindAnchorY) * _MavisWindInvHeight);
+                rootMask = rootMask * rootMask;
+                // Distant foliage still moves in the wind, without paying for close-up interaction.
+                if (distance(originalWS, _WorldSpaceCameraPos) < 65.0)
                 {
-                    float3 pushDir = playerDelta / playerDist;
-                    float  pushAmt = playerInfluence * _PlayerPushStrength;
-                    positionWS += pushDir * pushAmt * 0.5;          // lateral push
-                    positionWS.y -= pushAmt * 0.35;                 // squish downward
+                    [loop] for (int i = 0; i < _MavisFoliageBodyCount; i++)
+                    {
+                        float2 delta = originalWS.xz - _MavisFoliageBodies[i].xz;
+                        float dist = length(delta);
+                        float influence = saturate(1.0 - dist / max(_MavisFoliageBodies[i].w, 0.001));
+                        influence *= influence * saturate(1.0 - abs(originalWS.y - _MavisFoliageBodies[i].y - 0.65) / 2.5);
+                        influence *= _MavisFoliageMotion[i].z;
+                        float2 direction = delta / max(dist, 0.05) + _MavisFoliageMotion[i].xy * 0.35;
+                        push += float3(direction.x, -0.35, direction.y) * influence;
+                        playerInfluence = max(playerInfluence, influence);
+                    }
                 }
+                // Saturate overlapping footprints instead of letting them flatten the entire patch.
+                push /= max(1.0, length(push.xz));
+                positionWS += push * rootMask * _PlayerPushStrength * 0.65;
                 OUT.squish = playerInfluence;
 
                 OUT.positionWS = positionWS;
@@ -238,6 +245,20 @@ Shader "Mavis/FoliageWind"
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+            Cull [_Cull]
+            ZWrite On
+            ColorMask R
+            HLSLPROGRAM
+            #pragma target 4.5
+            #pragma vertex vert
+            #pragma fragment shadowFrag
             ENDHLSL
         }
 

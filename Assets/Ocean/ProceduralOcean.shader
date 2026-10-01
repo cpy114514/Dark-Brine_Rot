@@ -129,6 +129,13 @@ Shader "DarkBrine/Procedural Ocean"
                 float _NearDetailDistance;
                 float _MidDetailDistance;
                 float _ViewDistance;
+                float _ShipHullMaskEnabled;
+                float4x4 _ShipHullWorldToLocal;
+                float4 _ShipHullWidths[21];
+                float4 _WakeHull;
+                float4 _WakeDirection;
+                float4 _WakeTrail[16];
+                int _WakeCount;
             CBUFFER_END
 
             #include "Assets/Ocean/OceanWaves.hlsl"
@@ -179,8 +186,54 @@ Shader "DarkBrine/Procedural Ocean"
                 return output;
             }
 
+            half SailingFoam(float2 p, float detail)
+            {
+                // Everything is painted onto the displaced ocean itself: no floating foam planes.
+                float2 offset = p - _WakeHull.xy;
+                if (dot(offset, offset) > 90000.0) return 0;
+                float along = dot(offset, _WakeDirection.xy);
+                float across = abs(dot(offset, float2(-_WakeDirection.y, _WakeDirection.x)));
+                float bowProgress = saturate((_WakeHull.z - along) / max(2.0 * _WakeHull.z, 1.0));
+                float hullWidth = _WakeHull.w * sqrt(bowProgress);
+                float sideBand = 1.0 - smoothstep(1.0, 4.5, abs(across - hullWidth - 1.5));
+                float hullGate = smoothstep(-_WakeHull.z - 4.0, -_WakeHull.z + 4.0, along) *
+                    (1.0 - smoothstep(_WakeHull.z, _WakeHull.z + 5.0, along));
+                half foam = sideBand * hullGate * _WakeDirection.z * (0.45 + detail * 0.55);
+                // Segment-distance history follows turns and stays behind after the ship has passed.
+                [loop] for (int i = 1; i < _WakeCount; i++)
+                {
+                    float4 a = _WakeTrail[i - 1];
+                    float4 b = _WakeTrail[i];
+                    float2 segment = b.xy - a.xy;
+                    float t = saturate(dot(p - a.xy, segment) / max(dot(segment, segment), 0.01));
+                    float age = max(0.0, _Time.y - lerp(a.z, b.z, t));
+                    float fade = saturate(1.0 - age / max(_WakeDirection.w, 0.1));
+                    float width = lerp(a.w, b.w, t) + age * 1.5;
+                    float d = length(p - lerp(a.xy, b.xy, t));
+                    float edge = 1.0 - smoothstep(1.0, 4.0, abs(d - width));
+                    float center = (1.0 - smoothstep(width * 0.25, width, d)) * 0.45;
+                    foam = max(foam, max(edge, center) * fade * (0.25 + detail * 0.75));
+                }
+                return foam;
+            }
+
             half4 frag(Varyings input) : SV_Target
             {
+                if (_ShipHullMaskEnabled > 0.5)
+                {
+                    float3 hull = mul(_ShipHullWorldToLocal, float4(input.positionWS, 1)).xyz;
+                    if (abs(hull.x) < 50 && hull.y > -2.2 && hull.y < 12)
+                    {
+                        float section = clamp((hull.x + 50) / 5, 0, 19.999);
+                        int index = (int)floor(section);
+                        float4 widths = lerp(_ShipHullWidths[index], _ShipHullWidths[index + 1], frac(section));
+                        float width = hull.y < 0 ? widths.x * saturate((hull.y + 2.2) / 2.2) :
+                            hull.y < 3 ? lerp(widths.x, widths.y, hull.y / 3) :
+                            hull.y < 6 ? lerp(widths.y, widths.z, (hull.y - 3) / 3) :
+                            lerp(widths.z, widths.w, saturate((hull.y - 6) / 3));
+                        clip(abs(hull.z) - width);
+                    }
+                }
                 float oceanTime = _Time.y * _OceanMotionSpeed;
                 float distanceToCamera = distance(input.baseXZ, _WorldSpaceCameraPos.xz);
                 float2 detailWeights = OceanDetailWeights(distanceToCamera);
@@ -299,6 +352,7 @@ Shader "DarkBrine/Procedural Ocean"
                 half breakerFoam = smoothstep(0.57h, 0.87h, shorePulse) *
                     (0.34h + foamNoise * 0.58h + foamDetail * 0.24h) * patchMask;
                 half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
+                foam = max(foam, SailingFoam(p, foamDetail));
                 // Lace stays white in daylight, but is no longer self-lit at night
                 // or under tree/island shadows.
                 half3 foamIllumination = saturate(ambient + sun.color *

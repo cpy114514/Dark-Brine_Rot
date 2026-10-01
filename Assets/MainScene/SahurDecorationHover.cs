@@ -9,14 +9,37 @@ public sealed class SahurDecorationHover : MonoBehaviour,
 {
     public Sprite normalSprite;
     public Sprite hoverSprite;
+    [Tooltip("Optional display-only adjustment for the colored drawing; original PNGs stay untouched.")]
+    public Material hoverMaterial;
+    [Tooltip("Keep the original silhouette when a material aligns the colored drawing in UV space.")]
+    public bool alignHoverInMaterial;
     [Range(0f, 1f)] public float alphaThreshold = 0.1f;
 
     Image image;
+    Material normalMaterial;
+    bool materialCaptured;
+
+    void EnsureImage()
+    {
+        if (image == null) image = GetComponent<Image>();
+        if (!materialCaptured && image != null)
+        {
+            normalMaterial = image.material == image.defaultMaterial ? null : image.material;
+            materialCaptured = true;
+        }
+    }
 
     public void SetSprites(Sprite normal, Sprite hover)
     {
         normalSprite = normal;
         hoverSprite = hover;
+        ShowNormal();
+    }
+
+    public void SetNormalMaterial(Material material)
+    {
+        EnsureImage();
+        normalMaterial = material;
         ShowNormal();
     }
 
@@ -29,14 +52,22 @@ public sealed class SahurDecorationHover : MonoBehaviour,
 
     void ShowNormal()
     {
-        if (image == null) image = GetComponent<Image>();
-        if (image != null) image.sprite = normalSprite;
+        EnsureImage();
+        if (image != null)
+        {
+            image.sprite = normalSprite;
+            image.material = normalMaterial;
+        }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (image == null) image = GetComponent<Image>();
-        if (hoverSprite != null) image.sprite = hoverSprite;
+        EnsureImage();
+        if (hoverSprite != null)
+        {
+            image.sprite = alignHoverInMaterial && hoverMaterial != null ? normalSprite : hoverSprite;
+            image.material = hoverMaterial != null ? hoverMaterial : normalMaterial;
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData) => ShowNormal();
@@ -50,6 +81,18 @@ public sealed class SahurDecorationHover : MonoBehaviour,
         if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 rectTransform, screenPoint, eventCamera, out var localPoint)) return false;
         var rect = rectTransform.rect;
+        EnsureImage();
+        if (image != null && image.preserveAspect && normalSprite.rect.height > 0f)
+        {
+            // Match Image's aspect-preserving drawing area, including pivot alignment.
+            // This also excludes the transparent letterbox when the two drawings differ in size.
+            float aspect = normalSprite.rect.width / normalSprite.rect.height;
+            Vector2 previousSize = rect.size;
+            if (aspect > rect.width / Mathf.Max(.0001f, rect.height)) rect.height = rect.width / aspect;
+            else rect.width = rect.height * aspect;
+            rect.x += (previousSize.x - rect.width) * rectTransform.pivot.x;
+            rect.y += (previousSize.y - rect.height) * rectTransform.pivot.y;
+        }
         if (!rect.Contains(localPoint) || rect.width <= 0f || rect.height <= 0f) return false;
         var spriteRect = normalSprite.rect;
         var texture = normalSprite.texture;

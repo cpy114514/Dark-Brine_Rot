@@ -1,0 +1,79 @@
+using UnityEngine;
+
+/// <summary>CPU height sampling for the same warped Gerstner waves as OceanWaves.hlsl.</summary>
+public static class OceanSurfaceSampler
+{
+    public static float Height(OceanWorld ocean, Vector3 worldPoint, float gameTime)
+    {
+        Vector2 worldXZ = new Vector2(worldPoint.x, worldPoint.z);
+        Vector2 sampleXZ = worldXZ;
+        ocean.GetShaderDetailDistances(out float near, out float mid);
+        Camera camera = Camera.main;
+        float distance = camera == null ? 0f : Vector2.Distance(worldXZ,
+            new Vector2(camera.transform.position.x, camera.transform.position.z));
+        Vector2 detail = new Vector2(1f - Smooth(near * .65f, near, distance),
+            1f - Smooth(mid * .75f, mid, distance));
+        float time = gameTime * ocean.waveMotionSpeed;
+        // Gerstner waves also move vertices sideways. Invert that displacement
+        // before reading the height at the requested world coordinate.
+        for (int i = 0; i < 2; i++)
+        {
+            Vector3 displacement = Displacement(ocean, sampleXZ, time, detail);
+            sampleXZ = worldXZ - new Vector2(displacement.x, displacement.z);
+        }
+        return ocean.oceanHeight + Displacement(ocean, sampleXZ, time, detail).y;
+    }
+
+    static Vector3 Displacement(OceanWorld ocean, Vector2 p, float time, Vector2 detail)
+    {
+        float broad = Noise(p * .011f + new Vector2(17.3f, -8.1f) + time * new Vector2(.0017f, -.0011f));
+        float small = Noise(p * .023f + new Vector2(-12.7f, 21.4f) + time * new Vector2(-.0013f, .0019f));
+        float regional = Noise(p * .0058f + new Vector2(38.4f, 5.7f) + time * new Vector2(.0008f, -.0005f));
+        float cross = Noise(p * .039f + new Vector2(-29.6f, -17.2f) + time * new Vector2(-.0021f, .0014f));
+        float irregularity = ocean.waveIrregularity;
+        Vector2 warped = p + (new Vector2(broad, small) - Vector2.one * .5f) * (19f * irregularity);
+        float swell = 1f + irregularity * ((broad - .5f) * .85f + (regional - .5f) * .48f + (small - .5f) * .25f);
+        float chop = 1f + irregularity * ((small - .5f) * .70f - (broad - .5f) * .20f + (cross - .5f) * .42f);
+        float phaseA = irregularity * (4f * (regional - .5f) + 1.7f * (small - .5f));
+        float phaseB = irregularity * (2.9f * (broad - .5f) - 2.2f * (cross - .5f));
+        float phaseC = irregularity * (1.6f * (cross - .5f) + .8f * (regional - .5f));
+        float phaseD = irregularity * (1.45f * (small - .5f) - 1.2f * (regional - .5f));
+        return Wave(ocean.wave1, warped, time, swell, phaseA) +
+               Wave(ocean.wave2, warped, time + 1.9f, chop, phaseB) +
+               Wave(ocean.wave3, warped, time + 4.2f, chop * detail.y, phaseC) +
+               Wave(ocean.wave4, warped, time + 2.7f, swell * detail.x, phaseD);
+    }
+
+    static Vector3 Wave(OceanGerstnerWave wave, Vector2 p, float time, float weight, float offset)
+    {
+        if (wave.amplitude <= 0f || wave.wavelength <= 0f) return Vector3.zero;
+        Vector2 direction = wave.direction.sqrMagnitude < .0001f ? Vector2.right : wave.direction.normalized;
+        float phase = (Vector2.Dot(direction, p) - wave.speed * time) * (2f * Mathf.PI / wave.wavelength) + offset;
+        float horizontal = Mathf.Min(wave.steepness, .95f) * wave.amplitude * weight * Mathf.Cos(phase);
+        return new Vector3(direction.x * horizontal, wave.amplitude * weight * Mathf.Sin(phase), direction.y * horizontal);
+    }
+
+    static float Noise(Vector2 p)
+    {
+        Vector2 cell = new Vector2(Mathf.Floor(p.x), Mathf.Floor(p.y));
+        Vector2 f = p - cell;
+        f = new Vector2(f.x * f.x * (3f - 2f * f.x), f.y * f.y * (3f - 2f * f.y));
+        return Mathf.Lerp(Mathf.Lerp(Hash(cell), Hash(cell + Vector2.right), f.x),
+            Mathf.Lerp(Hash(cell + Vector2.up), Hash(cell + Vector2.one), f.x), f.y);
+    }
+
+    static float Hash(Vector2 p)
+    {
+        p = new Vector2(Frac(p.x * 123.34f), Frac(p.y * 456.21f));
+        float d = Vector2.Dot(p, p + Vector2.one * 45.32f);
+        p += Vector2.one * d;
+        return Frac(p.x * p.y);
+    }
+
+    static float Frac(float x) => x - Mathf.Floor(x);
+    static float Smooth(float a, float b, float x)
+    {
+        float u = Mathf.Clamp01((x - a) / Mathf.Max(.001f, b - a));
+        return u * u * (3f - 2f * u);
+    }
+}

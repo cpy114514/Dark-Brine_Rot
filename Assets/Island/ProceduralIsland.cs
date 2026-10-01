@@ -306,8 +306,25 @@ public class ProceduralIsland : MonoBehaviour
             if (shoreFoamObject.GetComponent<MeshRenderer>() == null)
                 shoreFoamObject.AddComponent<MeshRenderer>();
         }
+        // Older scenes saved generated ribbons but not their DontSave material.
+        // Reuse one ribbon and remove only duplicate generator-owned children;
+        // otherwise their missing materials render as magenta after a reload.
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            var child = transform.GetChild(i).gameObject;
+            if (child == shoreFoamObject || child.name != "Procedural Shore Foam") continue;
+            var filter = child.GetComponent<MeshFilter>();
+            var duplicateRenderer = child.GetComponent<MeshRenderer>();
+            if (filter == null || duplicateRenderer == null ||
+                (filter.sharedMesh != null && filter.sharedMesh.name != "Procedural Shore Breakers")) continue;
+            duplicateRenderer.enabled = false;
+            if (Application.isPlaying) Destroy(child); else DestroyImmediate(child);
+        }
+        // This child is reconstructed by OnEnable; do not serialize a ribbon
+        // whose runtime-only material cannot be serialized alongside it.
+        shoreFoamObject.hideFlags = HideFlags.DontSave;
         if (shoreFoamMesh == null)
-            shoreFoamMesh = new Mesh { name = "Procedural Shore Breakers" };
+            shoreFoamMesh = new Mesh { name = "Procedural Shore Breakers", hideFlags = HideFlags.DontSave };
 
         OceanWorld ocean = FindFirstObjectByType<OceanWorld>();
         float seaLevel = ocean != null ? ocean.oceanHeight : 0f;

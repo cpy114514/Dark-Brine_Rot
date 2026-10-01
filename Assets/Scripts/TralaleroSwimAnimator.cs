@@ -2,14 +2,14 @@ using UnityEngine;
 
 /// <summary>
 /// Animates the single-mesh Tralalero model without requiring a skeleton.
-/// Its negative local Z end is the tail; the nose and body stay in place.
+/// Its negative local Z end is the tail; the nose stays stable while the rear body undulates.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class TralaleroSwimAnimator : MonoBehaviour
 {
-    const float SlapWindupEnd = 0.16f;
-    public const float TailContactTime = 0.38f;
-    const float SlapRecoveryEnd = 0.75f;
+    const float SlapWindupEnd = 0.25f;
+    public const float TailContactTime = 0.65f;
+    const float SlapRecoveryEnd = 1.05f;
 
     [Header("Swimming")]
     [Min(0f)] public float tailBeatFrequency = 7f;
@@ -28,8 +28,25 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     Vector3[] movedNormals;
     float tailStart;
     float tailLength;
+    float bodyStart;
+    float bodyLength;
+    float swimPhase;
     float slapStartTime;
     bool slapping;
+    Vector3 noseTip;
+    Vector3 tailTip;
+
+    public Vector3 NoseWorldPoint => meshFilter != null ? meshFilter.transform.TransformPoint(noseTip) : transform.position;
+
+    public Vector3 TailContactLocalPoint
+    {
+        get
+        {
+            if (meshFilter == null) return Vector3.back;
+            Vector3 point = tailTip + Vector3.right * (slapSwing * EvaluateSlap(TailContactTime));
+            return transform.InverseTransformPoint(meshFilter.transform.TransformPoint(point));
+        }
+    }
 
     void Awake()
     {
@@ -50,11 +67,24 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         // The imported shark faces +Z. Only the narrow rear third bends.
         tailStart = Mathf.Lerp(sourceMesh.bounds.min.z, sourceMesh.bounds.max.z, 0.34f);
         tailLength = tailStart - sourceMesh.bounds.min.z;
+        bodyStart = Mathf.Lerp(sourceMesh.bounds.min.z, sourceMesh.bounds.max.z, .62f);
+        bodyLength = Mathf.Max(.0001f, bodyStart - sourceMesh.bounds.min.z);
+        float tipBand = sourceMesh.bounds.size.z * .02f;
+        int noseCount = 0, tailCount = 0;
+        foreach (Vector3 vertex in restVertices)
+        {
+            if (vertex.z >= sourceMesh.bounds.max.z - tipBand) { noseTip += vertex; noseCount++; }
+            if (vertex.z <= sourceMesh.bounds.min.z + tipBand) { tailTip += vertex; tailCount++; }
+        }
+        noseTip /= Mathf.Max(1, noseCount);
+        tailTip /= Mathf.Max(1, tailCount);
+        noseTip.z = sourceMesh.bounds.max.z;
+        tailTip.z = sourceMesh.bounds.min.z;
         animatedMesh = Instantiate(sourceMesh);
         animatedMesh.name = sourceMesh.name + " (swimming)";
         animatedMesh.MarkDynamic();
         Bounds bounds = sourceMesh.bounds;
-        bounds.Expand(new Vector3((tailSwing + slapSwing * 2f) * 2f, 0f, 0f));
+        bounds.Expand(new Vector3((tailSwing * 1.25f + slapSwing * 2f) * 2f, 0f, 0f));
         animatedMesh.bounds = bounds;
         meshFilter.sharedMesh = animatedMesh;
     }
@@ -73,7 +103,9 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         float slapTime = Time.time - slapStartTime;
         float swimFade = slapping ? 1f - Mathf.Clamp01(slapTime / TailContactTime) : 1f;
         float slap = slapping ? EvaluateSlap(slapTime) : 0f;
-        float waveTime = Time.time * tailBeatFrequency;
+        // Integrate frequency: changing swimming speed must not jump the tail's phase.
+        swimPhase = Mathf.Repeat(swimPhase + Time.deltaTime * tailBeatFrequency, Mathf.PI * 2f);
+        float waveTime = swimPhase;
         float inverseLength = 1f / tailLength;
 
         for (int i = 0; i < restVertices.Length; i++)
@@ -85,9 +117,16 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
             float phase = waveTime + (tailStart - vertex.z) * waveTravel;
             float sine = Mathf.Sin(phase);
             float wave = tailSwing * swimFade;
-            float offset = wave * weight * sine + slapSwing * weight * slap;
+            float bodyU = Mathf.Clamp01((bodyStart - vertex.z) / bodyLength);
+            float bodyWeight = bodyU * bodyU * (3f - 2f * bodyU);
+            float bodySlope = bodyU > 0f && bodyU < 1f ? -6f * bodyU * (1f - bodyU) / bodyLength : 0f;
+            float bodyPhase = waveTime + (bodyStart - vertex.z) * waveTravel * .6f;
+            float bodyWave = wave * .22f;
+            float offset = wave * weight * sine + slapSwing * weight * slap +
+                bodyWave * bodyWeight * Mathf.Sin(bodyPhase);
             float slope = wave * (weightSlope * sine - weight * waveTravel * Mathf.Cos(phase))
-                        + slapSwing * weightSlope * slap;
+                        + slapSwing * weightSlope * slap + bodyWave *
+                (bodySlope * Mathf.Sin(bodyPhase) - bodyWeight * waveTravel * .6f * Mathf.Cos(bodyPhase));
 
             vertex.x += offset;
             movedVertices[i] = vertex;

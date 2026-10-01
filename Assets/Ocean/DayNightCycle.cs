@@ -13,9 +13,10 @@ public sealed class DayNightCycle : MonoBehaviour
     public bool clockRuns = true;
 
     [Header("Cloud Weather")]
-    [Range(0f, 1f)] public float minimumCloudCoverage = 0.12f;
-    [Range(0f, 1f)] public float maximumCloudCoverage = 0.88f;
-    [Min(0.0001f)] public float cloudWeatherFrequency = 0.0018f;
+    [Range(0f, 1f)] public float minimumCloudCoverage = 0.62f;
+    [Range(0f, 1f)] public float maximumCloudCoverage = 0.98f;
+    [Tooltip("Weather fronts per second. 0.0045 changes between sparse and dense clouds about every 3.7 minutes.")]
+    [Min(0.0001f)] public float cloudWeatherFrequency = 0.0045f;
 
     [Header("Sun")]
     [Min(10f)] public float noonElevation = 70f;
@@ -44,7 +45,6 @@ public sealed class DayNightCycle : MonoBehaviour
     float dailySunTimeShift;
     float dailySunAzimuthOffset;
     float dailySunElevationScale = 1f;
-    float dailyCloudBias;
     float dailyPalette;
     float dailySunGlowScale = 1f;
     float currentNightFactor;
@@ -76,6 +76,27 @@ public sealed class DayNightCycle : MonoBehaviour
     public Vector3 SunDirection { get; private set; }
     public Vector3 MoonDirection { get; private set; }
     public float MoonIllumination { get; private set; }
+    public float CurrentCloudCoverage => currentCloudCoverage;
+
+    public float EvaluateCloudCoverage(float weatherSeconds)
+    {
+        // Weather is independent of the day number, so midnight cannot abruptly
+        // replace the clouds. Alternating fronts actually reach both extremes;
+        // the old daily bias kept the noise compressed around a narrow middle.
+        float position = Mathf.Max(0f, weatherSeconds) * Mathf.Max(0.0001f, cloudWeatherFrequency);
+        int front = Mathf.FloorToInt(position);
+        float blend = SmoothThreshold(position - front, 0.12f, 0.88f);
+        float low = Mathf.Min(minimumCloudCoverage, maximumCloudCoverage);
+        float high = Mathf.Max(minimumCloudCoverage, maximumCloudCoverage);
+        return Mathf.Lerp(low, high, Mathf.Lerp(CloudFront(front), CloudFront(front + 1), blend));
+    }
+
+    static float CloudFront(int front)
+    {
+        if (front == 0) return 0f;
+        float variation = Hash01(front * 31 + 7);
+        return (front & 1) == 0 ? variation * 0.12f : Mathf.Lerp(0.86f, 1f, variation);
+    }
 
     const float LunarCycleDays = 29.53059f;
 
@@ -199,10 +220,7 @@ public sealed class DayNightCycle : MonoBehaviour
             moonSurfaceLightDirection = (MoonDirection * (2f * lightAlongMoon) - SunDirection).normalized;
         }
 
-        float weatherNoise = Mathf.PerlinNoise(Time.time * cloudWeatherFrequency, 3.71f + gameDay * 0.731f);
-        float weatherBlend = Mathf.Lerp(dailyCloudBias, SmoothThreshold(weatherNoise, 0.22f, 0.78f), 0.32f);
-        float cloudCoverage = Mathf.Lerp(Mathf.Min(minimumCloudCoverage, maximumCloudCoverage),
-            Mathf.Max(minimumCloudCoverage, maximumCloudCoverage), weatherBlend);
+        float cloudCoverage = EvaluateCloudCoverage(Time.time);
         currentCloudCoverage = cloudCoverage;
         Vector3 lightingDirection = Vector3.Slerp(SunDirection, MoonDirection, night);
         sun.transform.rotation = Quaternion.LookRotation(-lightingDirection, Vector3.up);
@@ -286,7 +304,6 @@ public sealed class DayNightCycle : MonoBehaviour
         dailySunTimeShift = Mathf.Lerp(-0.32f, 0.32f, Hash01(gameDay * 11 + 1));
         dailySunAzimuthOffset = Mathf.Lerp(-5.5f, 5.5f, Hash01(gameDay * 17 + 3));
         dailySunElevationScale = Mathf.Lerp(0.94f, 1.035f, Hash01(gameDay * 23 + 5));
-        dailyCloudBias = Mathf.Lerp(0.16f, 0.84f, Hash01(gameDay * 31 + 7));
         dailyPalette = Hash01(gameDay * 37 + 11);
         dailySunGlowScale = Mathf.Lerp(0.9f, 1.18f, Hash01(gameDay * 43 + 13));
     }

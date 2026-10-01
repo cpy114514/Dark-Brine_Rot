@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Mavis
 {
@@ -10,11 +11,35 @@ namespace Mavis
         [Range(20f, 180f)] public float attackArc = 130f;
         [Min(0f)] public float verticalTolerance = 2.5f;
         public string targetTag = "Player";
+        readonly Collider[] roarHits = new Collider[64];
+        readonly HashSet<Transform> roarVictims = new HashSet<Transform>();
+
+        public int Roar(float radius, float multiplier, float pushDistance, Transform mainTarget)
+        {
+            roarVictims.Clear();
+            int count = Physics.OverlapSphereNonAlloc(transform.position, radius, roarHits, ~0, QueryTriggerInteraction.Collide);
+            int hitCount = 0;
+            for (int i = 0; i < count; i++)
+            {
+                var victim = roarHits[i].GetComponentInParent<PlayerHealth>();
+                if (victim == null || victim.transform.IsChildOf(transform) || !roarVictims.Add(victim.transform)) continue;
+                if (TryHit(victim.transform, radius, multiplier, pushDistance, true)) hitCount++;
+            }
+            if (mainTarget != null)
+            {
+                var victim = mainTarget.GetComponentInParent<PlayerHealth>();
+                Transform root = victim != null ? victim.transform : mainTarget;
+                if (roarVictims.Add(root) && TryHit(root, radius, multiplier, pushDistance, true)) hitCount++;
+            }
+            return hitCount;
+        }
 
         public bool TryHit(Transform target, float reach, float damageMultiplier = 1f,
             float pushDistance = 0f, bool ignoreFacing = false)
         {
             if (target == null) return false;
+            var playerHealth = target.GetComponentInParent<PlayerHealth>();
+            if (playerHealth != null && (playerHealth.currentHealth <= 0f || playerHealth.IsProtected)) return false;
             // Allow the authored Sahur scene instance, which is Untagged but
             // carries PlayerHealth, without changing the player's prefab.
             if (!string.IsNullOrEmpty(targetTag) && target.tag != targetTag &&
@@ -30,13 +55,16 @@ namespace Mavis
             IDamageable victim = target.GetComponentInParent<IDamageable>();
             if (victim == null) return false;
             victim.ApplyDamage(damage * damageMultiplier, transform.position + transform.forward * reach);
+            if (playerHealth != null && playerHealth.currentHealth <= 0f) return true;
             if (pushDistance > 0f)
             {
                 CharacterController controller = target.GetComponentInParent<CharacterController>();
-                if (controller != null)
+                if (controller != null && controller.enabled)
                 {
                     Vector3 pushDirection = delta.sqrMagnitude > 0.01f ? delta.normalized : transform.forward;
-                    controller.Move(pushDirection * pushDistance);
+                    var knockback = controller.GetComponent<CombatKnockback>();
+                    if (knockback == null) knockback = controller.gameObject.AddComponent<CombatKnockback>();
+                    knockback.Push(pushDirection * pushDistance);
                 }
             }
             return true;

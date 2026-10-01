@@ -15,7 +15,7 @@ public static class VerifySahurMovingCharge
         int layer = animator.GetLayerIndex("Charge Upper Body");
         int charge = Animator.StringToHash("Charge Upper Body.Charge Windup");
         int locomotion = Animator.StringToHash("Base Layer.Locomotion");
-        int heavy = Animator.StringToHash("Base Layer.Heavy Attack");
+        int heavy = Animator.StringToHash("Charge Upper Body.Heavy Attack");
         if (layer <= 0) throw new InvalidOperationException("Charge layer is missing.");
         var flags = BindingFlags.Instance | BindingFlags.NonPublic;
         var start = typeof(Mavis.SahurAttack).GetMethod("StartCharge", flags);
@@ -43,13 +43,13 @@ public static class VerifySahurMovingCharge
             animator.SetLayerWeight(layer, 1f);
             release.Invoke(attack, null);
             animator.Update(0.02f);
-            bool heavyPlaying = animator.GetCurrentAnimatorStateInfo(0).fullPathHash == heavy ||
-                (animator.IsInTransition(0) &&
-                 animator.GetNextAnimatorStateInfo(0).fullPathHash == heavy);
-            if (attack.IsCharging || !attack.UsesAnimationRootMotion || !heavyPlaying)
-                throw new InvalidOperationException("Release did not start the full-body heavy attack.");
+            bool heavyPlaying = animator.GetCurrentAnimatorStateInfo(layer).fullPathHash == heavy ||
+                (animator.IsInTransition(layer) &&
+                 animator.GetNextAnimatorStateInfo(layer).fullPathHash == heavy);
+            if (attack.IsCharging || attack.UsesAnimationRootMotion || !heavyPlaying)
+                throw new InvalidOperationException("Release did not start the right-arm heavy attack.");
             return "Charge flow passed: base locomotion + arm overlay, cancel clears overlay, " +
-                   "release enters the original heavy swing with root motion.";
+                   "release stays on the right-arm layer without root motion.";
         }
         finally
         {

@@ -48,8 +48,8 @@ Material:
     - _PlayerPushStrength: 0
     - _Smoothness: 0.04
     - _UseAlphaMap: 1
-    - _WindBend: 0.55
-    - _WindFrequency: 1
+    - _WindBend: 0.8
+    - _WindFrequency: 0.75
     - _WindGust: 0.6
     - _WindTrunkStiffness: 0.15
     m_Colors:

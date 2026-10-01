@@ -102,6 +102,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void Awake()
     {
+        LocalizedGameText.BindTree(transform);
         player = FindFirstObjectByType<ThirdPersonPlayerController>();
         foreach (Resolution resolution in Screen.resolutions)
             if (!resolutions.Exists(r => r.width == resolution.width && r.height == resolution.height))
@@ -119,6 +120,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         }
 
         CacheDifficultyTargets();
+        ConfigureScrollHitAreas();
         factoryDefaults = CaptureDefaults();
         InitializeRuntimePipeline();
         saved = ReadSettings();
@@ -126,6 +128,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         savedKeys = ReadKeys();
         draftKeys = (Key[])savedKeys.Clone();
         Bind();
+        GameLocalization.Changed += Refresh;
         ApplySettings(saved);
         Refresh();
         HideImmediate();
@@ -133,6 +136,8 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void Bind()
     {
+        foreach(var button in new[]{resumeButton,settingsButton,quitButton,backButton,applyButton,defaultsButton})
+            GameUITheme.StyleButton(button);
         resumeButton.onClick.AddListener(Resume);
         settingsButton.onClick.AddListener(ShowSettings);
         quitButton.onClick.AddListener(QuitOrConfirm);
@@ -147,13 +152,36 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         foreach (OptionControl option in options)
         {
             string key = option.key;
-            if (option.button != null) option.button.onClick.AddListener(() => ActivateOption(key));
+            if (option.button != null)
+            {
+                GameUITheme.StyleButton(option.button);
+                option.button.onClick.AddListener(() => ActivateOption(key));
+            }
             if (option.slider != null) option.slider.onValueChanged.AddListener(value => SetSlider(key, value));
+        }
+    }
+
+    void ConfigureScrollHitAreas()
+    {
+        // Labels deliberately do not consume UI events. A transparent viewport
+        // still needs a Graphic so scrolling/dragging empty space reaches ScrollRect.
+        foreach (var scroll in GetComponentsInChildren<ScrollRect>(true))
+        {
+            if (!scroll.viewport) continue;
+            var hitArea = scroll.viewport.GetComponent<Image>();
+            if (!hitArea) hitArea = scroll.viewport.gameObject.AddComponent<Image>();
+            hitArea.color = Color.clear;
+            hitArea.raycastTarget = true;
+            scroll.horizontal = false;
+            scroll.vertical = true;
+            scroll.scrollSensitivity = 40f;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
         }
     }
 
     void Update()
     {
+        if (SahurLoadoutUI.BlocksInput) return;
         if (Keyboard.current == null) return;
         if (pendingKey != null)
         {
@@ -262,7 +290,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         {
             bool selected = i == section;
             sectionPanels[i].SetActive(selected);
-            sectionTabs[i].image.color = selected ? Color.white : Color.black;
+            GameUITheme.StyleButton(sectionTabs[i],selected);
             sectionTabLabels[i].color = selected ? Color.black : Color.white;
         }
         sectionTitle.text = SectionNames[section];
@@ -306,6 +334,9 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         }
         switch (key)
         {
+            case "language":
+                GameLocalization.SetLanguage(GameLocalization.Language == GameLanguage.English ? GameLanguage.SimplifiedChinese : GameLanguage.English);
+                break;
             case "difficulty": draft.difficulty = (draft.difficulty + 1) % 3; break;
             case "invertY": draft.invertY = !draft.invertY; break;
             case "resolution": draft.resolutionIndex = (draft.resolutionIndex + 1) % resolutions.Count; break;
@@ -366,24 +397,13 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         PlayerPrefs.SetFloat(Prefix + "Sensitivity", saved.sensitivity);
         PlayerPrefs.SetFloat(Prefix + "FieldOfView", saved.fieldOfView);
         PlayerPrefs.SetFloat(Prefix + "CameraDistance", saved.cameraDistance);
-        PlayerPrefs.SetFloat(Prefix + "RenderScale", saved.renderScale);
-        PlayerPrefs.SetFloat(Prefix + "ShadowDistance", saved.shadowDistance);
-        PlayerPrefs.SetFloat(Prefix + "LodBias", saved.lodBias);
         Put("InvertY", saved.invertY);
         Put("Fullscreen", saved.fullscreen);
         Put("VSync", saved.vsync);
-        Put("PostProcessing", saved.postProcessing);
-        Put("Shadows", saved.shadows);
-        Put("Bloom", saved.bloom);
-        Put("Vignette", saved.vignette);
-        Put("MotionBlur", saved.motionBlur);
         PlayerPrefs.SetInt(Prefix + "ResolutionWidth", resolutions[saved.resolutionIndex].width);
         PlayerPrefs.SetInt(Prefix + "ResolutionHeight", resolutions[saved.resolutionIndex].height);
-        PlayerPrefs.SetInt(Prefix + "TextureMipmapLimit", saved.textureMipmapLimit);
         PlayerPrefs.SetInt(Prefix + "FrameLimit", FrameLimits[saved.frameLimitIndex]);
-        PlayerPrefs.SetInt(Prefix + "Antialiasing", saved.antialiasing);
-        PlayerPrefs.SetInt(Prefix + "ShadowResolution", ShadowResolutions[saved.shadowResolutionIndex]);
-        PlayerPrefs.SetInt(Prefix + "AnisotropicFiltering", saved.anisotropicFiltering);
+        SaveGraphicsPreferences(saved);
         PlayerPrefs.SetInt(Prefix + "Difficulty", saved.difficulty);
         PlayerPrefs.Save();
         footerHint.text = "SETTINGS SAVED";
@@ -392,6 +412,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void RestoreDefaults()
     {
+        GameLocalization.SetLanguage(GameLanguage.English);
         draft = factoryDefaults;
         draftKeys = new Key[Enum.GetValues(typeof(GameInputSettings.Action)).Length];
         for (int i = 0; i < draftKeys.Length; i++)
@@ -402,39 +423,45 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     Settings CaptureDefaults()
     {
-        var urp = Camera.main != null ? Camera.main.GetComponent<UniversalAdditionalCameraData>() : null;
-        var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
-        int shadowResolution = pipeline != null ? pipeline.mainLightShadowmapResolution : 2048;
-        int shadowIndex = Array.IndexOf(ShadowResolutions, shadowResolution);
         return new Settings
         {
             masterVolume = 1f,
             sensitivity = 0.12f,
             fieldOfView = Camera.main != null ? Camera.main.fieldOfView : 60f,
             cameraDistance = player != null ? player.cameraDistance : 4.2f,
-            renderScale = pipeline != null ? pipeline.renderScale : 1f,
-            shadowDistance = pipeline != null ? pipeline.shadowDistance : 50f,
-            lodBias = QualitySettings.lodBias,
+            // Low-cost defaults, not visibility cuts. UI retains native resolution;
+            // keep nearby contact shadows, color grading, and inexpensive FXAA.
+            renderScale = 0.85f,
+            shadowDistance = 180f,
+            lodBias = 1f,
             invertY = false,
             fullscreen = Screen.fullScreen,
             vsync = true,
-            postProcessing = urp != null && urp.renderPostProcessing,
+            postProcessing = true,
             shadows = true,
-            bloom = EffectActive<Bloom>(true),
-            vignette = EffectActive<Vignette>(true),
-            motionBlur = EffectActive<MotionBlur>(false),
+            bloom = false,
+            vignette = false,
+            motionBlur = false,
             resolutionIndex = FindResolution(Screen.width, Screen.height),
-            textureMipmapLimit = 0,
+            textureMipmapLimit = 1,
             frameLimitIndex = 1,
-            antialiasing = urp != null ? (int)urp.antialiasing : 0,
-            shadowResolutionIndex = shadowIndex >= 0 ? shadowIndex : 1,
-            anisotropicFiltering = (int)QualitySettings.anisotropicFiltering,
+            antialiasing = (int)AntialiasingMode.FastApproximateAntialiasing,
+            shadowResolutionIndex = 0,
+            anisotropicFiltering = (int)AnisotropicFiltering.Enable,
             difficulty = 1
         };
     }
 
     Settings ReadSettings()
     {
+        // Migrate graphics once for existing installations. Audio, controls,
+        // display mode, language, difficulty, and subsequent graphics choices survive.
+        if (PlayerPrefs.GetInt(Prefix + "LowGraphicsDefaultV1", 0) == 0)
+        {
+            SaveGraphicsPreferences(factoryDefaults);
+            PlayerPrefs.SetInt(Prefix + "LowGraphicsDefaultV1", 1);
+            PlayerPrefs.Save();
+        }
         Settings s = factoryDefaults;
         s.masterVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(Prefix + "MasterVolume", s.masterVolume));
         s.sensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "Sensitivity", s.sensitivity), 0.03f, 0.5f);
@@ -477,7 +504,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         s.resolutionIndex = FindResolution(
             PlayerPrefs.GetInt(Prefix + "ResolutionWidth", resolutions[s.resolutionIndex].width),
             PlayerPrefs.GetInt(Prefix + "ResolutionHeight", resolutions[s.resolutionIndex].height));
-        s.textureMipmapLimit = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "TextureMipmapLimit", 0), 0, 2);
+        s.textureMipmapLimit = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "TextureMipmapLimit", s.textureMipmapLimit), 0, 2);
         s.frameLimitIndex = Array.IndexOf(FrameLimits, PlayerPrefs.GetInt(Prefix + "FrameLimit", 60));
         if (s.frameLimitIndex < 0) s.frameLimitIndex = 1;
         s.antialiasing = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Antialiasing", s.antialiasing), 0, 2);
@@ -487,6 +514,22 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         s.anisotropicFiltering = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "AnisotropicFiltering", s.anisotropicFiltering), 0, 2);
         s.difficulty = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Difficulty", 1), 0, 2);
         return s;
+    }
+
+    static void SaveGraphicsPreferences(Settings s)
+    {
+        PlayerPrefs.SetFloat(Prefix + "RenderScale", s.renderScale);
+        PlayerPrefs.SetFloat(Prefix + "ShadowDistance", s.shadowDistance);
+        PlayerPrefs.SetFloat(Prefix + "LodBias", s.lodBias);
+        PlayerPrefs.SetInt(Prefix + "TextureMipmapLimit", s.textureMipmapLimit);
+        PlayerPrefs.SetInt(Prefix + "Antialiasing", s.antialiasing);
+        PlayerPrefs.SetInt(Prefix + "ShadowResolution", ShadowResolutions[s.shadowResolutionIndex]);
+        PlayerPrefs.SetInt(Prefix + "AnisotropicFiltering", s.anisotropicFiltering);
+        Put("PostProcessing", s.postProcessing);
+        Put("Shadows", s.shadows);
+        Put("Bloom", s.bloom);
+        Put("Vignette", s.vignette);
+        Put("MotionBlur", s.motionBlur);
     }
 
     static void Put(string name, bool value) => PlayerPrefs.SetInt(Prefix + name, value ? 1 : 0);
@@ -630,6 +673,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     string ValueText(string key)
     {
+        if (key == "language") return GameLocalization.Language == GameLanguage.English ? "English" : "简体中文";
         if (key.StartsWith("key.", StringComparison.Ordinal) &&
             Enum.TryParse(key.Substring(4), out GameInputSettings.Action action))
             return draftKeys[(int)action].ToString().ToUpperInvariant();
@@ -667,6 +711,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void OnDestroy()
     {
+        GameLocalization.Changed -= Refresh;
         if (runtimePipelineAsset != null)
         {
             QualitySettings.renderPipeline = originalPipelineAsset;

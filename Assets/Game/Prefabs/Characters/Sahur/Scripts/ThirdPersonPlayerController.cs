@@ -56,6 +56,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(0.05f, 0.5f)] public float swimShoreHysteresis = 0.25f;
     [Min(1f)] public float fastSwimMultiplier = 1.5f;
     [Min(0f)] public float fastSwimDrainPerSecond = 3f;
+    [Range(0.05f, 0.6f)] public float swimHeadFreeboard = 0.25f;
     [Range(0.3f, 1f)] public float wadingSpeedMultiplier = 0.7f;
 
     [Header("Underwater presentation")]
@@ -88,6 +89,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Mavis.SahurAttack combat;
     Mavis.PlayerStamina playerStamina;
     Camera playerCamera;
+    Mavis.EnemyLockOn enemyLock;
     float yaw;
     float pitch = 10f;
     float verticalSpeed;
@@ -97,6 +99,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     bool hasAttackFacing;
     bool recoveringAttackFacing;
     Quaternion attackFacing;
+    Quaternion comboAim;
+    bool comboAimPending;
     Quaternion attackRecoveryStart;
     float attackRecoveryElapsed;
     readonly RaycastHit[] attackGroundHits = new RaycastHit[16];
@@ -125,7 +129,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     float swimRippleTimer;
     readonly RaycastHit[] waterGroundHits = new RaycastHit[32];
     public bool Swimming => IsSwimming();
+    public Animator CharacterAnimator => animator;
     public bool FastSwimming { get; private set; }
+    // Story cinematics can keep buoyancy, animation and the camera running while withholding input.
+    public bool ExternalControlLock { get; set; }
+    public float LowestFootWorldOffset => GetLowestFootOffset();
     ParticleSystem waterRipples;
     ParticleSystem waterDroplets;
     ParticleSystem underwaterBubbles;
@@ -146,6 +154,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     public void RestoreSavedPose(Vector3 position, Quaternion rotation)
     {
+        enemyLock?.Clear();
         if (characterController == null)
             characterController = GetComponent<CharacterController>();
 
@@ -166,6 +175,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         rollCooldownTimer = 0f;
         airFlipTimer = 0f;
         cameraInitialized = false;
+        wasSwimming = FastSwimming = wasAtSeaSurface = false;
+        swimExitJumpTimer = swimRippleTimer = 0f;
+        playerStamina?.StopSprinting();
     }
 
     void Awake()
@@ -213,6 +225,15 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Vector3 rotation = transform.eulerAngles;
         yaw = rotation.y;
         LockCursor();
+        if (GetComponent<Mavis.PlayerHealth>() == null) gameObject.AddComponent<Mavis.PlayerHealth>();
+        if (GetComponent<Mavis.PlayerDeathRespawn>() == null) gameObject.AddComponent<Mavis.PlayerDeathRespawn>();
+        if (GetComponent<Mavis.IslandMapUI>() == null) gameObject.AddComponent<Mavis.IslandMapUI>();
+        enemyLock = GetComponent<Mavis.EnemyLockOn>();
+        if (enemyLock == null) enemyLock = gameObject.AddComponent<Mavis.EnemyLockOn>();
+        if (GetComponent<Mavis.EquipmentInventory>() == null)
+            gameObject.AddComponent<Mavis.EquipmentInventory>();
+        if (GetComponent<Mavis.SahurLoadoutUI>() == null)
+            gameObject.AddComponent<Mavis.SahurLoadoutUI>();
     }
 
     void Start()
@@ -241,11 +262,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         swimExitJumpTimer = Mathf.Max(0f, swimExitJumpTimer - Time.deltaTime);
         if (Mouse.current.leftButton.wasPressedThisFrame && Cursor.lockState != CursorLockMode.Locked)
             LockCursor();
-        bool acceptInput = Cursor.lockState == CursorLockMode.Locked;
+        bool acceptInput = Cursor.lockState == CursorLockMode.Locked && !ExternalControlLock;
 
         Vector2 look = acceptInput ? Mouse.current.delta.ReadValue() * mouseSensitivity : Vector2.zero;
         yaw += look.x;
         pitch = Mathf.Clamp(pitch + (invertLookY ? look.y : -look.y), minPitch, maxPitch);
+        if (acceptInput)
         cameraDistance = Mathf.Clamp(cameraDistance - Mouse.current.scroll.ReadValue().y * 0.004f, 2.5f, 11f);
 
         Vector3 input = Vector3.zero;
@@ -264,6 +286,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Vector3 cameraForward = heading * Vector3.forward;
         Vector3 cameraRight = heading * Vector3.right;
         Vector3 moveDirection = cameraForward * input.z + cameraRight * input.x;
+        UpdateComboFacing(moveDirection, look.x, Time.deltaTime);
         Vector3 desiredVelocity = moveDirection * moveSpeed * (wantsSprint ? sprintMultiplier : 1f);
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
         bool chargeMovementAllowed = combat != null && combat.IsCharging;
@@ -439,7 +462,6 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         float downwardSpeedBeforeMove = verticalSpeed;
         if (!attackRootMotion)
             characterController.Move((planarVelocity + Vector3.up * verticalSpeed) * Time.deltaTime);
-        KeepFeetOnSeaLevel();
         UpdateWaterSplash(Mathf.Max(0f, -downwardSpeedBeforeMove));
 
         // The exit velocity was already blended above, before the controller
@@ -489,10 +511,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     public void BeginAttackFacing()
     {
-        // Combo stages share one heading. Never capture an intermediate turn
-        // from a sliced animation as the starting direction of its next hit.
+        // Keep the gameplay heading (which can be steered between hits), never
+        // capture the imported body's local animation twist as a new heading.
         if (hasAttackFacing) return;
-        if (recoveringAttackFacing) transform.rotation = attackFacing;
+        if (enemyLock != null && enemyLock.IsLocked) transform.rotation = enemyLock.FacingRotation();
+        else if (recoveringAttackFacing) transform.rotation = attackFacing;
         recoveringAttackFacing = false;
         Vector3 forward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
         attackFacing = forward.sqrMagnitude > 0.0001f
@@ -501,10 +524,40 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         hasAttackFacing = true;
     }
 
+    void UpdateComboFacing(Vector3 moveDirection, float horizontalLook, float deltaTime)
+    {
+        if (combat == null || !combat.IsGroundComboActive)
+        {
+            comboAimPending = false;
+            return;
+        }
+        // Remember input during the hit; apply it when recovery/windup opens.
+        if (enemyLock != null && enemyLock.IsLocked)
+        {
+            comboAim = enemyLock.FacingRotation();
+            comboAimPending = true;
+        }
+        else if (moveDirection.sqrMagnitude > .01f)
+        {
+            comboAim = Quaternion.LookRotation(Vector3.ProjectOnPlane(moveDirection, Vector3.up), Vector3.up);
+            comboAimPending = true;
+        }
+        else if (Mathf.Abs(horizontalLook) > .0001f)
+        {
+            comboAim = Quaternion.Euler(0, yaw, 0);
+            comboAimPending = true;
+        }
+        if (!hasAttackFacing || !combat.CanSteerGroundCombo || !comboAimPending) return;
+        attackFacing = Quaternion.RotateTowards(attackFacing, comboAim, turnSpeedDegrees * Mathf.Max(0, deltaTime));
+        transform.rotation = attackFacing;
+        recoveringAttackFacing = false;
+    }
+
     public void EndAttackFacing(bool immediate = false)
     {
         if (!hasAttackFacing && !recoveringAttackFacing) return;
         hasAttackFacing = false;
+        comboAimPending = false;
         trackingAttackRoot = false;
         authoredAttackHeight = 0f;
         comboCurrentSample = comboNextSample = default;
@@ -573,7 +626,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         authoredAttackHeight += deltaPosition.y;
         characterController.Move(deltaPosition);
-        // A ground combo keeps the heading chosen before its first hit. The
+        // Each hit keeps its aimed heading during the damaging arc. The
         // natural local spine/hips twists remain in the imported pose, but its
         // extracted trajectory yaw must not change the gameplay heading.
         if ((combat.IsGroundComboActive || combat.IsHeavyAttackActive) && hasAttackFacing)
@@ -581,7 +634,6 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         else
             transform.rotation = transform.rotation * deltaRotation;
         FollowAttackGroundSupport();
-        KeepFeetOnSeaLevel();
     }
 
     void FollowAttackGroundSupport()
@@ -702,14 +754,35 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         Quaternion cameraRotation = Quaternion.Euler(pitch, yaw, 0f);
         Vector3 focus = transform.position + Vector3.up * (visualBaseOffset + cameraHeight);
-        Vector3 desiredPosition = focus - cameraRotation * Vector3.forward * cameraDistance;
+        if (Swimming && animator != null && animator.isHuman)
+        {
+            var head = animator.GetBoneTransform(HumanBodyBones.Head);
+            if (head != null) focus = head.position + Vector3.up * 0.25f;
+        }
+        float followDistance = cameraDistance;
+        if (enemyLock != null && enemyLock.IsLocked && !Mavis.SahurLoadoutUI.BlocksInput && !PauseSettingsMenu.IsOpen)
+        {
+            Vector3 toward = enemyLock.AimPoint - focus;
+            if (toward.sqrMagnitude > .01f)
+            {
+                var desiredRotation = Quaternion.LookRotation(toward).eulerAngles;
+                float blend = 1f - Mathf.Exp(-8f * Time.deltaTime);
+                yaw = Mathf.LerpAngle(yaw, desiredRotation.y, blend);
+                float targetPitch = Mathf.DeltaAngle(0f, desiredRotation.x);
+                pitch = Mathf.Lerp(pitch, Mathf.Clamp(targetPitch, minPitch, maxPitch), blend);
+                cameraRotation = Quaternion.Euler(pitch, yaw, 0f);
+                focus = Vector3.Lerp(focus, enemyLock.AimPoint, .25f);
+                followDistance = Mathf.Clamp(Mathf.Max(cameraDistance, toward.magnitude * .45f + 2f), cameraDistance, 12f);
+            }
+        }
+        Vector3 desiredPosition = focus - cameraRotation * Vector3.forward * followDistance;
 
         // Pull the camera forward if a solid island/prop stands between it and the player.
-        float closest = cameraDistance;
+        float closest = followDistance;
         if (cameraCollision)
         {
             foreach (var hit in Physics.SphereCastAll(focus, 0.12f, (desiredPosition-focus).normalized,
-                         cameraDistance, ~0, QueryTriggerInteraction.Ignore))
+                         followDistance, ~0, QueryTriggerInteraction.Ignore))
             {
                 if (hit.collider.transform.IsChildOf(transform)) continue;
                 closest = Mathf.Min(closest, Mathf.Max(0.4f, hit.distance - 0.08f));
@@ -721,7 +794,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             playerCamera.transform.SetPositionAndRotation(desiredPosition, cameraRotation);
             cameraInitialized = true;
-            UpdateUnderwaterPresentation(playerCamera.transform.position.y < seaLevel - 0.12f && swimmingOcean != null);
+            UpdateUnderwaterPresentation(IsCameraUnderwater());
+            enemyLock?.RefreshMarker();
             return;
         }
 
@@ -729,7 +803,16 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         playerCamera.transform.SetPositionAndRotation(
             Vector3.Lerp(playerCamera.transform.position, desiredPosition, smoothFactor),
             Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
-        UpdateUnderwaterPresentation(playerCamera.transform.position.y < seaLevel - 0.12f && swimmingOcean != null);
+        UpdateUnderwaterPresentation(IsCameraUnderwater());
+        enemyLock?.RefreshMarker();
+    }
+
+    bool IsCameraUnderwater()
+    {
+        if (swimmingOcean == null || playerCamera == null) return false;
+        float surface = OceanSurfaceSampler.Height(swimmingOcean, playerCamera.transform.position, playerCamera);
+        // A small dead band keeps the overlay from flickering at the surface.
+        return playerCamera.transform.position.y < surface + (underwaterBlend > 0.05f ? 0.08f : -0.12f);
     }
 
     void ConfigureColliderToModel()
@@ -829,12 +912,6 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         visualTransform.localRotation = airFlipVisualSpin * visualBaseRotation;
     }
 
-    void KeepFeetOnSeaLevel()
-    {
-        // Water is not a solid floor. Shallow water uses the real seabed,
-        // while deep water hands off to buoyancy on the following update.
-    }
-
     bool IsGroundedOrOnSea()
     {
         return characterController != null && characterController.isGrounded;
@@ -844,7 +921,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     {
         // Island colliders lift the calibrated soles above sea level.  This keeps
         // water effects off beaches, rocks and props without adding water colliders.
-        return transform.position.y + GetLowestFootOffset() <= seaLevel + 0.045f;
+        float surface = wasSwimming && swimmingOcean != null ?
+            OceanSurfaceSampler.Height(swimmingOcean, transform.position, playerCamera) : seaLevel;
+        return transform.position.y + GetLowestFootOffset() <= surface + 0.045f;
     }
 
     bool IsSwimming()
@@ -904,11 +983,19 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             : Vector3.zero;
         planarVelocity = Vector3.MoveTowards(planarVelocity, swimVelocity, swimAcceleration * Time.deltaTime);
 
-        float targetY = seaLevel - GetLowestFootOffset() - swimSubmergeDepth;
+        float surface = OceanSurfaceSampler.Height(swimmingOcean, transform.position, playerCamera);
+        float targetY = surface - GetLowestFootOffset() - swimSubmergeDepth * Mathf.Abs(transform.lossyScale.y);
+        if (animator != null && animator.isHuman)
+        {
+            // Idle treading and prone strokes have very different head heights.
+            // Float the breathing point, rather than submerging the prone pose.
+            var head = animator.GetBoneTransform(HumanBodyBones.Head);
+            if (head != null) targetY = surface + swimHeadFreeboard - (head.position.y - transform.position.y);
+        }
         // Exponential correction cannot overshoot at low frame rates or after a pause.
         float buoyancyVelocity = (targetY - transform.position.y) *
             (1f - Mathf.Exp(-swimBuoyancy * Time.deltaTime)) / Mathf.Max(0.0001f, Time.deltaTime);
-        buoyancyVelocity = Mathf.Clamp(buoyancyVelocity, -4f, 4f);
+        buoyancyVelocity = Mathf.Clamp(buoyancyVelocity, -8f, 8f);
         characterController.Move((planarVelocity + Vector3.up * buoyancyVelocity) * Time.deltaTime);
 
         bool moving = planarVelocity.sqrMagnitude > 0.12f;
@@ -957,7 +1044,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         float colliderFoot = characterController != null
             ? characterController.center.y - characterController.height * 0.5f
             : visualBaseOffset;
-        return Mathf.Min(visualBaseOffset, colliderFoot);
+        return Mathf.Min(visualBaseOffset, colliderFoot) * Mathf.Abs(transform.lossyScale.y);
     }
 
     void CreateWaterSplashEffect()
@@ -1020,7 +1107,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     {
         // A swimming character is intentionally below the surface, but the
         // ring and droplets must always emit just above the real water plane.
-        Vector3 contact = new Vector3(transform.position.x, seaLevel + 0.025f, transform.position.z);
+        float surface = swimmingOcean != null ? OceanSurfaceSampler.Height(swimmingOcean, transform.position, playerCamera) : seaLevel;
+        Vector3 contact = new Vector3(transform.position.x, surface + 0.025f, transform.position.z);
         var ripple = new ParticleSystem.EmitParams
         {
             position = contact,

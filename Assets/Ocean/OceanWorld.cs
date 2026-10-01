@@ -423,6 +423,38 @@ public sealed class OceanWorld : MonoBehaviour
         generatedMaterial.SetVector(propertyName + "Motion", new Vector4(wave.speed, wave.steepness, 0f, 0f));
     }
 
+    public float SampleSurfaceHeight(Vector3 worldPoint, float gameTime) =>
+        OceanSurfaceSampler.Height(this, worldPoint, gameTime);
+
+    public void SetShipWake(Vector4 hull, Vector4 direction, Vector4[] trail, int count)
+    {
+        if (generatedMaterial == null) return;
+        generatedMaterial.SetVector("_WakeHull", hull);
+        generatedMaterial.SetVector("_WakeDirection", direction);
+        generatedMaterial.SetVectorArray("_WakeTrail", trail);
+        generatedMaterial.SetInt("_WakeCount", count);
+    }
+
+    public void ClearShipWake()
+    {
+        if (generatedMaterial == null) return;
+        generatedMaterial.SetVector("_WakeDirection", Vector4.zero);
+        generatedMaterial.SetInt("_WakeCount", 0);
+    }
+
+    public void SetShipHullMask(Matrix4x4 worldToHull, Vector4[] widths)
+    {
+        if (generatedMaterial == null) return;
+        generatedMaterial.SetMatrix("_ShipHullWorldToLocal", worldToHull);
+        generatedMaterial.SetVectorArray("_ShipHullWidths", widths);
+        generatedMaterial.SetFloat("_ShipHullMaskEnabled", 1f);
+    }
+
+    public void ClearShipHullMask()
+    {
+        if (generatedMaterial != null) generatedMaterial.SetFloat("_ShipHullMaskEnabled", 0f);
+    }
+
     public void GetShaderDetailDistances(out float shaderNearDistance, out float shaderMidDistance)
     {
         float nearCap = effectsQuality switch

@@ -3,7 +3,77 @@ guid: 68e0d856ce4881e45967552bdc22aed6
 ModelImporter:
   serializedVersion: 24300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_0
+    second: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_1
+    second: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_2
+    second: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_3
+    second: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_4
+    second: {fileID: 2100000, guid: 926ee44e9a4045719769ad0ca0d43576, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_5
+    second: {fileID: 2100000, guid: 2f90c454a405496fa1b60b55961e9c7f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_6
+    second: {fileID: 2100000, guid: cf3c715f8a714b62a0c22377f2751626, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_7
+    second: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_8
+    second: {fileID: 2100000, guid: 23d74341b46046d3ab781196df94b7c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_9
+    second: {fileID: 2100000, guid: 1042a73fefae431a8de616b793129236, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_10
+    second: {fileID: 2100000, guid: 92a43db8fb1b4b8a806ee66aa43a3b7e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_11
+    second: {fileID: 2100000, guid: a3581b2a0514487590ecaee77c4f78d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_12
+    second: {fileID: 2100000, guid: 07c42f6b470c45f9a8eaa5052f16e48f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: acmat_13
+    second: {fileID: 2100000, guid: 8e5a2901573242de85a02e8b930a14f8, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
