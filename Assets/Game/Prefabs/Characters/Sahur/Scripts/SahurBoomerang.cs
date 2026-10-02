@@ -15,7 +15,7 @@ namespace Mavis
         [Min(0f)] public float cooldown = .65f;
         [Min(.05f)] public float hitRadius = .4f;
         public string throwState = "Boomerang Throw";
-        [Range(.1f, .8f)] public float releasePhase = .30f;
+        [Range(.1f, .8f)] public float releasePhase = .28f;
         public bool IsThrowing { get; private set; }
         public bool IsBusy => IsThrowing || IsFlying;
         public bool IsFlying => visual != null;
@@ -35,6 +35,7 @@ namespace Mavis
         Vector3 center;
         Vector3 launchCenter;
         Vector3 direction;
+        Vector3 spinAxis;
         Quaternion rotation;
         float elapsed;
         float nextThrow;
@@ -67,8 +68,11 @@ namespace Mavis
                 if (IsFlying) returning = true;
                 else TryThrow();
             }
-            Simulate(Time.deltaTime);
         }
+
+        // Animator evaluates after Update. Release from the pose rendered this
+        // frame, rather than spawning the flying stick at last frame's grip.
+        void LateUpdate() => Simulate(Time.deltaTime);
 
         public bool TryThrow()
         {
@@ -83,12 +87,7 @@ namespace Mavis
             if (attack.animator == null || !attack.animator.HasState(0, throwHash)) return false;
             if (stamina != null && !stamina.TrySpend(staminaCost)) return false;
 
-            var camera = Camera.main;
-            direction = Vector3.ProjectOnPlane(camera != null ? camera.transform.forward : transform.forward, Vector3.up).normalized;
-            if (direction.sqrMagnitude < .01f) direction = transform.forward;
-            transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
             movement.BeginAttackFacing();
-            direction = transform.forward;
             IsThrowing = true;
             released = enteredThrow = false;
             throwElapsed = 0f;
@@ -102,6 +101,11 @@ namespace Mavis
         void Launch()
         {
             released = true;
+            // The collision root owns the aimed heading; the camera can orbit
+            // independently and the throw clip can twist the torso locally.
+            direction = Vector3.ProjectOnPlane(transform.forward, Vector3.up).normalized;
+            if (direction.sqrMagnitude < .01f) direction = Vector3.forward;
+            spinAxis = Vector3.Cross(Vector3.up, direction).normalized;
             heldRenderers = stick.GetComponentsInChildren<Renderer>(true);
             heldVisible = new bool[heldRenderers.Length];
             heldColliders = stick.GetComponentsInChildren<Collider>(true);
@@ -160,9 +164,9 @@ namespace Mavis
             if (!returning)
             {
                 float progress = Mathf.Clamp01(elapsed * outwardSpeed / Mathf.Max(1f, throwDistance));
-                Vector3 side = Vector3.Cross(Vector3.up, direction);
+                float arc = Mathf.Sin(progress * Mathf.PI);
                 center = launchCenter + direction * (throwDistance * progress) +
-                    side * (Mathf.Sin(progress * Mathf.PI) * 1.2f) + Vector3.up * (Mathf.Sin(progress * Mathf.PI) * .35f);
+                    Vector3.up * (arc * arc * .35f);
                 if (progress >= 1f) returning = true;
             }
             else center = Vector3.MoveTowards(center, stick.TransformPoint(mesh.sharedMesh.bounds.center), returnSpeed * deltaTime);
@@ -215,7 +219,7 @@ namespace Mavis
         void PlaceVisual(float deltaTime)
         {
             if (visual == null) return;
-            rotation = Quaternion.AngleAxis(1100f * deltaTime, Vector3.up) * rotation;
+            rotation = Quaternion.AngleAxis(1100f * deltaTime, spinAxis) * rotation;
             visual.transform.rotation = rotation;
             visual.transform.position = center - visual.transform.TransformVector(mesh.sharedMesh.bounds.center);
         }

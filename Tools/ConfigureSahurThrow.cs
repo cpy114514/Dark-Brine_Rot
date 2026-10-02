@@ -27,7 +27,7 @@ public static class ConfigureSahurThrow
         EditorUtility.SetDirty(state);
         EditorUtility.SetDirty(controller);
         AssetDatabase.SaveAssets();
-        return new { clip = clip.name, durationSeconds = clip.length / state.speed, releasePhase = .30f, controller = AssetDatabase.GetAssetPath(controller) };
+        return new { clip = clip.name, durationSeconds = clip.length / state.speed, releasePhase = .28f, controller = AssetDatabase.GetAssetPath(controller) };
     }
     public static object Inspect()
     {

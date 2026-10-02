@@ -10,6 +10,12 @@ namespace Mavis
         public Transform visual;
         public Renderer[] bodyRenderers;
         public Collider bodyCollider;
+        [Header("Authored animation")]
+        public Animator animator;
+        public CappuccinoMotionRig motionRig;
+        public AnimationClip attackClip;
+        public AnimationClip deathClip;
+        public bool attackOnHit = true;
         [Min(0f)] public float hitReactionDuration = 0.22f;
         [Min(0.1f)] public float deathDuration = 0.9f;
         [Min(0f)] public float removeAfterDeath = 4f;
@@ -17,16 +23,21 @@ namespace Mavis
         public UnityEvent onDefeated = new UnityEvent();
 
         Health health;
+        CappuccinoUltimate ultimate;
         MaterialPropertyBlock properties;
         Vector3 restPosition;
         Quaternion restRotation;
         float hitTime = -100f;
         float deathTime = -1f;
         float modelHeight;
+        float nextAttackTime;
+        static readonly int AttackTrigger = Animator.StringToHash("Attack");
+        static readonly int DeathTrigger = Animator.StringToHash("Die");
 
         void Awake()
         {
             health = GetComponent<Health>();
+            ultimate = GetComponent<CappuccinoUltimate>();
             health.OnDamaged ??= new UnityEvent<float>();
             health.OnDeath ??= new UnityEvent();
             health.OnHealthChanged ??= new UnityEvent<float, float>();
@@ -42,31 +53,65 @@ namespace Mavis
             if (health.IsDead) OnDeath();
         }
 
-        void OnHit(float amount) { hitTime = Time.time; }
+        void OnHit(float amount)
+        {
+            hitTime = Time.time;
+            if (attackOnHit && health != null && !health.IsDead) PlayAttack();
+        }
+
+        [ContextMenu("Play Attack (Play Mode)")]
+        void PreviewAttack() { if (Application.isPlaying) PlayAttack(); }
+
+        public void PlayAttack() => TryPlayAttack();
+
+        public bool TryPlayAttack() => TryPlayAttack(Time.time);
+
+        internal bool TryPlayAttack(float now)
+        {
+            if (animator == null || deathTime >= 0f ||
+                (health != null && health.IsDead) || now < nextAttackTime) return false;
+            animator.SetTrigger(AttackTrigger);
+            nextAttackTime = now + (attackClip != null ? attackClip.length : 1.5f) + 0.25f;
+            return true;
+        }
 
         void OnDeath()
         {
             if (deathTime >= 0f) return;
             deathTime = Time.time;
             if (bodyCollider != null) bodyCollider.enabled = false;
+            if (animator != null && deathClip != null)
+            {
+                animator.ResetTrigger(AttackTrigger);
+                animator.SetTrigger(DeathTrigger);
+                motionRig?.SetDeathGrounding();
+            }
             onDefeated.Invoke();
-            if (removeAfterDeath > 0f) Destroy(gameObject, Mathf.Max(removeAfterDeath, deathDuration));
+            float fallDuration = deathClip != null ? deathClip.length + 0.65f : deathDuration;
+            if (removeAfterDeath > 0f) Destroy(gameObject, Mathf.Max(removeAfterDeath, fallDuration));
         }
 
         void Update()
         {
             float hit = Mathf.Clamp01(1f - (Time.time - hitTime) / Mathf.Max(0.01f, hitReactionDuration));
+            Color combatColor = ultimate != null && ultimate.IsEmpowered ? new Color(1f, 0.6f, 0.3f) : Color.white;
             if (bodyRenderers != null)
                 foreach (var renderer in bodyRenderers)
                 {
                     if (renderer == null) continue;
                     renderer.GetPropertyBlock(properties);
-                    properties.SetColor("_BaseColor", Color.Lerp(Color.white, hitColor, hit));
+                    properties.SetColor("_BaseColor", Color.Lerp(combatColor, hitColor, hit));
                     renderer.SetPropertyBlock(properties);
                 }
             if (visual == null) return;
             if (deathTime >= 0f)
             {
+                if (animator != null && deathClip != null)
+                {
+                    visual.localPosition = restPosition;
+                    visual.localRotation = restRotation;
+                    return;
+                }
                 float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((Time.time - deathTime) / deathDuration));
                 // Lift the pivot while tipping so the cup settles onto its side above the ground.
                 visual.localPosition = restPosition + Vector3.up * (modelHeight * 0.43f * t);

@@ -1,0 +1,12 @@
+SahurFastFreestyle is adapted from CMU Graphics Lab motion capture trial 125_06 (Free Style).
+Source: http://mocap.cs.cmu.edu/search.php?subjectnumber=125
+Terms: http://mocap.cs.cmu.edu/
+BVH conversion by Bruce Hahne (cgspeed MotionBuilder-friendly release, 2010); mirror: https://github.com/Shriinivas/cmubvh
+
+CMU permits including the data in commercially sold products, but does not permit reselling the data directly, including converted data. The BVH conversion has no additional restrictions.
+
+The data used in this project was obtained from mocap.cs.cmu.edu.
+The database was created with funding from NSF EIA-0196217.
+
+Adaptation: humanoid retargeting, loop extraction, removal of translation and heading drift, height alignment, faster cadence, and flutter kick replacing the studio support pose.
+Source and reproducible import tool: Tools/AnimationSources/CMU and Tools/ImportSahurFreestyle.cs.

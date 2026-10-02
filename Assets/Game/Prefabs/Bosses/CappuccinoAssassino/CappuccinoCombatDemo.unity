@@ -2750,7 +2750,8 @@ MonoBehaviour:
   chargeState: Charge Windup
   heavyAttackState: Heavy Attack
   chargeTimeParameter: ChargePhase
-  chargeClip: {fileID: -203655887218126122, guid: 108276e68449afb4b832669f17a64534, type: 3}
+  chargeClip: {fileID: 7400000, guid: 06d79df34e813924caac71cb2de074a2, type: 2}
+  chargedStrikeClip: {fileID: 0}
   chargePoseTime: 0.18
   comboOneState: Combo 1
   comboTwoState: Combo 2
@@ -2777,11 +2778,12 @@ MonoBehaviour:
   damage: 25
   swingWindowStart: 0.2
   swingWindowEnd: 0.65
-  heavySwingWindowStart: 0.25
-  heavySwingWindowEnd: 0.69
+  heavySwingWindowStart: 0.35
+  heavySwingWindowEnd: 0.43
   cooldown: 0.5
   fullChargeTime: 1.8
-  maxChargePosePhase: 0.55
+  chargeWindupTime: 0.48
+  maxChargePosePhase: 0.28
   minChargeDamageMultiplier: 1.25
   maxChargeDamageMultiplier: 2.2
   swingAudio: {fileID: 1987490036}
@@ -3655,13 +3657,13 @@ MonoBehaviour:
   waterSplashes: 1
   splashMinSpeed: 2.3
   splashInterval: 0.16
-  swimSpeed: 3.4
-  swimAcceleration: 9
+  swimSpeed: 7.5
+  swimAcceleration: 20
   swimSubmergeDepth: 1.2
   swimBuoyancy: 16
   swimStartDepth: 1.15
   swimShoreHysteresis: 0.25
-  fastSwimMultiplier: 1.5
+  fastSwimMultiplier: 1.75
   fastSwimDrainPerSecond: 3
   swimHeadFreeboard: 0.25
   wadingSpeedMultiplier: 0.7

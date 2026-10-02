@@ -186,11 +186,16 @@ MonoBehaviour:
   sharkNoseDistance: 37
   swimSubmergeDepth: 18
   swimBobHeight: 0.55
-  maximumSwimSpeed: 30
-  escapePursuitSpeed: 90
+  maximumSwimSpeed: 14
+  escapePursuitSpeed: 36
+  swimAcceleration: 7
+  huntingStandOffDistance: 140
   pursuitBoostSeconds: 8
-  swimTurnDegreesPerSecond: 120
+  swimTurnDegreesPerSecond: 65
   contactTolerance: 2
+  huntingSweepWidth: 18
+  huntingDiveDepth: 4
+  turnBankDegrees: 7
   blackoutDelay: 4.7
   blackoutDuration: 0.75
 --- !u!4 &92067237
@@ -3332,7 +3337,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Story1FloatingPlank
   player: {fileID: 1016091479380073362}
   deck: {fileID: 1909293349}
+  woodMaterial: {fileID: 2100000, guid: fa8ab2739578976419220f5f7eb238f2, type: 2}
   freeboard: 0.35
+  forwardSpeed: 8.5
+  reverseSpeed: 4.5
+  acceleration: 5.5
+  braking: 7.5
+  turnSpeed: 65
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  surfEffects: 1
+  surfMaterial: {fileID: 2100000, guid: 4955ff7de2b5bdc40b189703891c1bab, type: 2}
+  wakeLifetime: 3.5
 --- !u!4 &1909293351
 Transform:
   m_ObjectHideFlags: 0

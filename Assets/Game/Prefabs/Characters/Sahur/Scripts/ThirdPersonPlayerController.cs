@@ -48,13 +48,13 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(0.05f, 0.5f)] public float splashInterval = 0.16f;
 
     [Header("Swimming")]
-    [Min(0.1f)] public float swimSpeed = 3.4f;
-    [Min(0.1f)] public float swimAcceleration = 9f;
+    [Min(0.1f)] public float swimSpeed = 7.5f;
+    [Min(0.1f)] public float swimAcceleration = 20f;
     [Range(0.2f, 1.2f)] public float swimSubmergeDepth = 0.66f;
     [Min(0.1f)] public float swimBuoyancy = 8f;
     [Min(0.5f)] public float swimStartDepth = 1.15f;
     [Range(0.05f, 0.5f)] public float swimShoreHysteresis = 0.25f;
-    [Min(1f)] public float fastSwimMultiplier = 1.5f;
+    [Min(1f)] public float fastSwimMultiplier = 1.75f;
     [Min(0f)] public float fastSwimDrainPerSecond = 3f;
     [Range(0.05f, 0.6f)] public float swimHeadFreeboard = 0.25f;
     [Range(0.3f, 1f)] public float wadingSpeedMultiplier = 0.7f;
@@ -133,6 +133,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool FastSwimming { get; private set; }
     // Story cinematics can keep buoyancy, animation and the camera running while withholding input.
     public bool ExternalControlLock { get; set; }
+    public bool ExternalMovementLock { get; set; }
     public float LowestFootWorldOffset => GetLowestFootOffset();
     ParticleSystem waterRipples;
     ParticleSystem waterDroplets;
@@ -270,6 +271,20 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (acceptInput)
         cameraDistance = Mathf.Clamp(cameraDistance - Mouse.current.scroll.ReadValue().y * 0.004f, 2.5f, 11f);
 
+        // Mounted controls leave camera input available while the platform owns movement.
+        if (ExternalMovementLock)
+        {
+            planarVelocity = Vector3.zero;
+            verticalSpeed = rollTimer = rollCooldownTimer = rollInheritedSpeed = 0f;
+            airFlipTimer = coyoteTimer = jumpBufferTimer = airborneTime = landingTimer = 0f;
+            authoredAttackHeight = unsupportedAttackSpeed = 0f;
+            trackingAttackRoot = wasSwimming = FastSwimming = false;
+            playerStamina?.StopSprinting();
+            SetMotion(0, "Locomotion", .12f);
+            if (animator != null) animator.SetFloat(SpeedId, 0f);
+            return;
+        }
+
         Vector3 input = Vector3.zero;
         if (GameInputSettings.Pressed(GameInputSettings.Action.Forward)) input.z += 1f;
         if (GameInputSettings.Pressed(GameInputSettings.Action.Back)) input.z -= 1f;
@@ -289,8 +304,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         UpdateComboFacing(moveDirection, look.x, Time.deltaTime);
         Vector3 desiredVelocity = moveDirection * moveSpeed * (wantsSprint ? sprintMultiplier : 1f);
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
-        bool chargeMovementAllowed = combat != null && combat.IsCharging;
-        bool movementLocked = combatLocked && !chargeMovementAllowed;
+        bool armCombatMovementAllowed = combat != null && combat.CanMoveDuringCombat;
+        bool movementLocked = combatLocked && !armCombatMovementAllowed;
         bool attackRootMotion = combat != null && combat.UsesAnimationRootMotion;
         if (!attackRootMotion)
         {
@@ -505,7 +520,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             float turnRate = isRolling ? turnSpeedDegrees * 1.8f : turnSpeedDegrees;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, turnRate * Time.deltaTime);
         }
-        if (chargeMovementAllowed && hasAttackFacing)
+        if (armCombatMovementAllowed && hasAttackFacing)
             attackFacing = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
     }
 
@@ -589,7 +604,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     public void ApplyAttackRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
     {
-        if (characterController == null || combat == null || !combat.UsesAnimationRootMotion ||
+        if (ExternalMovementLock || characterController == null || combat == null || !combat.UsesAnimationRootMotion ||
             PauseSettingsMenu.IsOpen)
             return;
 
@@ -928,6 +943,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     bool IsSwimming()
     {
+        if (ExternalMovementLock) return false;
         if (characterController == null || swimmingOcean == null || !swimmingOcean.isActiveAndEnabled ||
             swimExitJumpTimer > 0f || !IsAtSeaSurface()) return false;
         // Grounded does not necessarily mean dry: the new seabed can be far
@@ -1016,7 +1032,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             EmitWaterSplash(FastSwimming ? 0.34f : 0.20f, 0);
             swimRippleTimer = FastSwimming ? 0.25f : 0.4f;
         }
-        SetMotion(moving ? 5 : 6, moving ? "Swim Forward" : "Swim Idle", 0.12f);
+        // Sprint uses its own freestyle stroke; exhaustion immediately returns to the normal swim.
+        SetMotion(!moving ? 6 : FastSwimming ? 8 : 5,
+            !moving ? "Swim Idle" : FastSwimming ? "Swim Fast" : "Swim Forward", 0.18f);
         if (animator != null)
             animator.SetFloat(SpeedId, moving ? planarVelocity.magnitude : 0f, 0.08f, Time.deltaTime);
         if (moving)

@@ -31,11 +31,11 @@ public static class ConfigureSahurSwimming
         var player = root.GetComponent<ThirdPersonPlayerController>();
         if (player == null) return;
         if (undo) Undo.RecordObject(player, "Configure swimming");
-        player.swimSpeed = 3.4f;
-        player.swimAcceleration = 9f;
+        player.swimSpeed = 7.5f;
+        player.swimAcceleration = 20f;
         player.swimStartDepth = 1.15f;
         player.swimShoreHysteresis = 0.25f;
-        player.fastSwimMultiplier = 1.5f;
+        player.fastSwimMultiplier = 1.75f;
         player.fastSwimDrainPerSecond = 3f;
         player.wadingSpeedMultiplier = 0.7f;
         player.waterSplashes = true;

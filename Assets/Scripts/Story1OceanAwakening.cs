@@ -1,8 +1,9 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
-/// <summary>Continues the shark encounter with a blackout and recovery onto floating wreckage.</summary>
+/// <summary>Continues the shark encounter with unconscious wave drift onto First Island.</summary>
 [DisallowMultipleComponent]
 public sealed class Story1OceanAwakening : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public sealed class Story1OceanAwakening : MonoBehaviour
     public GameObject shark;
     public GameObject looseShipDecoration;
     public Story1FloatingPlank plank;
+    public bool driftToFirstIsland = true;
     [Min(0f)] public float blackHoldSeconds = 3f;
     [Min(0.01f)] public float eyesOpenSeconds = 2.4f;
     [Min(0.01f)] public float climbSeconds = 1.15f;
@@ -21,7 +23,7 @@ public sealed class Story1OceanAwakening : MonoBehaviour
     public void BeginBlackout(Image blackout, Vector3 impactPosition, Vector3 heading)
     {
         if (HasBegun) return;
-        if (player == null || storyCamera == null || plank == null || blackout == null)
+        if (player == null || storyCamera == null || (!driftToFirstIsland && plank == null) || blackout == null)
         {
             Debug.LogError("Story1 ocean awakening is missing a scene reference.", this);
             return;
@@ -42,6 +44,19 @@ public sealed class Story1OceanAwakening : MonoBehaviour
         blackout.enabled = true;
         blackout.color = Color.black;
         yield return new WaitForSeconds(Mathf.Max(0f, blackHoldSeconds));
+
+        if (driftToFirstIsland)
+        {
+            const string islandScene = "Assets/Scenes/First Island/Main.unity";
+            if (Application.CanStreamedLevelBeLoaded(islandScene))
+            {
+                Mavis.GameSaveManager.CancelPendingContinue();
+                SceneManager.LoadSceneAsync(islandScene, LoadSceneMode.Single);
+                yield break;
+            }
+            Debug.LogError("First Island/Main is missing from Build Settings.", this);
+            yield break;
+        }
 
         if (ship != null) ship.SetActive(false);
         if (shark != null) shark.SetActive(false);

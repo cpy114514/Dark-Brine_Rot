@@ -14,6 +14,8 @@ namespace Mavis
         public string heavyAttackState = "Heavy Attack";
         public string chargeTimeParameter = "ChargePhase";
         public AnimationClip chargeClip;
+        [Tooltip("Optional separate authored attack clip played from its start on charge release.")]
+        public AnimationClip chargedStrikeClip;
         const string ChargeUpperBodyLayer = "Charge Upper Body";
         const float ChargeLayerFadeIn = 0.10f;
         const float ChargeLayerFadeOut = 0.18f;
@@ -56,6 +58,8 @@ namespace Mavis
 
         [Header("Right mouse charge")]
         [Min(0.2f)] public float fullChargeTime = 1.8f;
+        [Tooltip("Time to raise the weapon into its held pose. Damage keeps charging until fullChargeTime.")]
+        [Min(0.05f)] public float chargeWindupTime = 0.42f;
         [Tooltip("Normalized end of the authored windup in the complete heavy clip. Holding freezes here; damage still reaches full charge.")]
         [Range(0.1f, 1f)] public float maxChargePosePhase = 0.55f;
         [Min(1f)] public float minChargeDamageMultiplier = 1.25f;
@@ -83,12 +87,14 @@ namespace Mavis
             }
         }
         public bool IsHeavyAttackActive => attacking && activeAttackHash == heavyStateHash;
+        public bool CanMoveDuringCombat => charging || (IsHeavyAttackActive && usesRightArmHeavy);
         public bool UsesAnimationRootMotion => attacking && activeAttackHash != jumpSlashStateHash && !usesRightArmHeavy;
         public int CurrentComboStage => IsGroundComboActive ? comboStep : -1;
         public bool IsCharging => charging;
         public float ChargeElapsed => charging ? Mathf.Max(0f, Time.time - chargeStartedAt) : 0f;
         public float Charge01 => charging ? Mathf.Clamp01(ChargeElapsed / Mathf.Max(0.2f, fullChargeTime)) : 0f;
-        public float ChargePose01 => Charge01 * Mathf.Clamp01(maxChargePosePhase);
+        public float ChargePose01 => Mathf.SmoothStep(0f, 1f,
+            Mathf.Clamp01(ChargeElapsed / Mathf.Max(0.05f, chargeWindupTime))) * Mathf.Clamp01(maxChargePosePhase);
         public float HeavyAttackPhase
         {
             get
@@ -127,6 +133,8 @@ namespace Mavis
         int upperBodyChargeStateHash;
         int rightArmHeavyStateHash;
         bool usesRightArmHeavy;
+        static readonly int HeavyPlaybackSpeedHash = Animator.StringToHash("HeavyPlaybackSpeed");
+        bool hasHeavyPlaybackSpeed;
         int AttackAnimationLayer => usesRightArmHeavy ? chargeLayerIndex : 0;
         int AttackAnimationHash => usesRightArmHeavy ? rightArmHeavyStateHash : activeAttackHash;
         int chargeLayerIndex = -1;
@@ -166,6 +174,10 @@ namespace Mavis
             comboStateHashes[2] = Animator.StringToHash("Base Layer." + comboThreeState);
             if (swingAudio == null) swingAudio = GetComponent<AudioSource>();
             if (stickHitbox != null) stickHitbox.enabled = false;
+            if (animator != null)
+                foreach (var parameter in animator.parameters)
+                    if (parameter.nameHash == HeavyPlaybackSpeedHash && parameter.type == AnimatorControllerParameterType.Float)
+                        hasHeavyPlaybackSpeed = true;
             boomerang = GetComponent<SahurBoomerang>();
             if (boomerang == null) boomerang = gameObject.AddComponent<SahurBoomerang>();
         }
@@ -236,6 +248,7 @@ namespace Mavis
 
         public void TriggerAttack()
         {
+            if (!enabled) return;
             if (boomerang != null && boomerang.IsBusy) return;
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || charging || (controller != null && controller.Swimming) || Cursor.lockState != CursorLockMode.Locked)
                 return;
@@ -337,7 +350,7 @@ namespace Mavis
             // The gameplay controller hands the Animator from the root to the
             // visual child in Awake, so resolve the layer on the live Animator.
             chargeLayerIndex = animator.GetLayerIndex(ChargeUpperBodyLayer);
-            usesUpperBodyCharge = chargeLayerIndex > 0 &&
+            usesUpperBodyCharge = chargeClip != null && chargeLayerIndex > 0 &&
                                   animator.HasState(chargeLayerIndex, upperBodyChargeStateHash);
             if (!usesUpperBodyCharge && !animator.HasState(0, chargeStateHash))
             {
@@ -354,7 +367,7 @@ namespace Mavis
             charging = true;
             chargeStartedAt = Time.time;
             if (stickHitbox != null) stickHitbox.enabled = false;
-            // Stretch only the safe beginning of the windup over the charge.
+            // Raise promptly, then hold the ready pose while damage continues charging.
             UpdateChargePose();
             if (usesUpperBodyCharge)
             {
@@ -372,10 +385,8 @@ namespace Mavis
                 return;
             }
 
-            // Continue the same downloaded clip from the currently held pose.
-            // A short charge keeps the remaining anticipation; a full charge is ready to strike.
             float releasePhase = ChargePose01;
-            float releaseTime = releasePhase * (chargeClip != null ? chargeClip.length : 0f);
+            float releaseTime = chargedStrikeClip != null ? 0f : releasePhase * (chargeClip != null ? chargeClip.length : 0f);
             charging = false;
             float multiplier = Mathf.Lerp(minChargeDamageMultiplier, maxChargeDamageMultiplier,
                 Mathf.Clamp01((Time.time - chargeStartedAt) / fullChargeTime));
@@ -413,6 +424,18 @@ namespace Mavis
         void UpdateChargeLayerWeight()
         {
             if (!usesUpperBodyCharge || animator == null || chargeLayerIndex < 0) return;
+            if (hasHeavyPlaybackSpeed)
+            {
+                float phase = HeavyAttackPhase;
+                // Give the fast imported downswing more frames while shortening
+                // its long recovery. This affects only the right-arm state.
+                float speed = !usesRightArmHeavy ? 1f : phase <= heavySwingWindowEnd
+                    ? Mathf.Lerp(1f, .8f, Mathf.SmoothStep(0f, 1f,
+                        Mathf.InverseLerp(maxChargePosePhase, heavySwingWindowStart, phase)))
+                    : Mathf.Lerp(.8f, 1.6f, Mathf.SmoothStep(0f, 1f,
+                        Mathf.InverseLerp(heavySwingWindowEnd, Mathf.Min(1f, heavySwingWindowEnd + .25f), phase)));
+                animator.SetFloat(HeavyPlaybackSpeedHash, speed);
+            }
             // Both windup and release belong to the right-arm layer. The base
             // keeps the idle/walk/run pose instead of taking over the whole body.
             if (IsHeavyAttackActive && !usesRightArmHeavy && animator.GetLayerWeight(chargeLayerIndex) > 0f)
@@ -454,7 +477,7 @@ namespace Mavis
             controller?.BeginAttackFacing();
             animator.ResetTrigger(attackTrigger);
             activeAttackHash = stateHash;
-            usesRightArmHeavy = stateHash == heavyStateHash && usesUpperBodyCharge &&
+            usesRightArmHeavy = stateHash == heavyStateHash && chargeClip != null && usesUpperBodyCharge &&
                 chargeLayerIndex > 0 && animator.HasState(chargeLayerIndex, rightArmHeavyStateHash);
             if (!usesRightArmHeavy && chargeLayerIndex > 0)
                 animator.SetLayerWeight(chargeLayerIndex, 0f);
@@ -473,9 +496,18 @@ namespace Mavis
             if (stickHitbox != null) stickHitbox.enabled = false;
             if (usesRightArmHeavy && chargeClip != null)
             {
+                if (hasHeavyPlaybackSpeed) animator.SetFloat(HeavyPlaybackSpeedHash, 1f);
+                if (chargedStrikeClip != null)
+                {
+                    // Keep the accepted windup, then blend into the independent
+                    // downloaded attack; charge duration only scales damage.
+                    animator.CrossFadeInFixedTime(rightArmHeavyStateHash, .08f, chargeLayerIndex, 0f);
+                    return;
+                }
                 // Windup and strike sample the same clip, at the same phase,
                 // without introducing any torso, left-arm or root motion.
-                animator.CrossFade(rightArmHeavyStateHash, 0.04f / Mathf.Max(.01f, chargeClip.length),
+                float currentDuration = Mathf.Max(.01f, animator.GetCurrentAnimatorStateInfo(chargeLayerIndex).length);
+                animator.CrossFade(rightArmHeavyStateHash, .09f / currentDuration,
                     chargeLayerIndex, offset / chargeClip.length);
                 return;
             }

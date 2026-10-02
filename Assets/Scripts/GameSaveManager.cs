@@ -29,11 +29,15 @@ namespace Mavis
             public bool hasStamina;
             public float stamina;
             public long savedAtUtcTicks;
+            public bool hasArrivalState;
+            public bool hasLanded;
+            public bool hasStick;
         }
 
         static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
 
         public static bool HasSave => TryReadSave(out _);
+        public static bool IsContinuePending => instance != null && instance.restorePending;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
@@ -116,6 +120,9 @@ namespace Mavis
             if (player.GetComponent<GameSaveExcluded>() != null)
                 return false;
 
+            var arrival = player.GetComponent<FirstIslandArrival>();
+            if (arrival != null && !arrival.IsAwake) return false;
+
             try
             {
                 var data = new SaveData
@@ -125,6 +132,12 @@ namespace Mavis
                     playerRotation = player.transform.rotation,
                     savedAtUtcTicks = DateTime.UtcNow.Ticks
                 };
+                if (arrival != null)
+                {
+                    data.hasArrivalState = true;
+                    data.hasLanded = arrival.HasLanded;
+                    data.hasStick = arrival.HasStick;
+                }
 
                 PlayerHealth health = player.GetComponent<PlayerHealth>();
                 if (health != null)
@@ -193,6 +206,9 @@ namespace Mavis
             {
                 SaveData data = pendingSave;
                 player.RestoreSavedPose(data.playerPosition, data.playerRotation);
+                var arrival = player.GetComponent<FirstIslandArrival>();
+                if (arrival != null)
+                    arrival.RestoreProgress(!data.hasArrivalState || data.hasLanded, !data.hasArrivalState || data.hasStick);
 
                 PlayerHealth health = player.GetComponent<PlayerHealth>();
                 if (data.hasHealth && health != null)

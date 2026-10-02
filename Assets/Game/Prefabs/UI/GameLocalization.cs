@@ -97,6 +97,11 @@ namespace Mavis
             Add("No gear collected yet","暂无已获得装备","gear.none"); Add("Collected:","已获得：","gear.collected"); Add("Loot acquired: {0}","喜提战利品：{0}","gear.pickup");
             Add("Karen Fairy Clogs","猪妖小仙人洞洞鞋", "奶龙洞洞鞋", "Nailong Clogs"); Add("Karen Fairy Trousers","猪妖小仙人下装", "奶龙下装", "Nailong Trousers"); Add("Karen Fairy Round Glasses","猪妖小仙人圆框眼镜", "奶龙圆框眼镜", "Nailong Round Glasses");
             Add("SCROLL FOR MORE","向下滚动查看更多");
+            Add("You lost consciousness.", "你失去了意识。");
+            Add("The waves washed you ashore.", "海浪把你推上了岸。");
+            Add("Your stick washed away. Find it along the beach.", "棍子被冲走了。沿着沙滩找到棍子。");
+            Add("F  Pick up the stick", "按 F 拾起棍子");
+            Add("You recovered your stick.", "找回了棍子。");
             Add("Come here, coward!","你过来呀！胆小鬼！","nailong.taunt");
             for (int i=1;i<=4;i++) { Add(i+"   Empty",i+"   空"); Add(i+"\nUnassigned",i+"\n未配置"); }
             string[] slotsEn={"Head","Body","Legs","Feet","Weapon"}, slotsZh={"头部","身体","腿部","脚部","武器"};
