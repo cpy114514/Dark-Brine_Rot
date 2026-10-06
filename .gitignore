@@ -157,3 +157,11 @@ InitTestScene*.unity*
 AgentScripts/
 # Unity Temp folder inside Assets/ (root /Temp/ already covered above)
 /Assets/Temp/
+
+# Local repair snapshots and bundled Blender runtime caches.
+/ProjectRepairBackups/
+/Assets/ProjectRepairBackups/
+/Assets/ProjectRepairBackups.meta
+/Assets/_Recovery/
+/Assets/_Recovery.meta
+/Tools/blender/5.2/python/

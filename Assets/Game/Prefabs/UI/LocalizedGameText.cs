@@ -39,6 +39,7 @@ namespace Mavis
         void LateUpdate() { ReadAndRefresh(); }
         void ReadAndRefresh()
         {
+            if(tmp && GameLocalization.TMPFont && tmp.font!=GameLocalization.TMPFont)tmp.font=GameLocalization.TMPFont;
             string current = tmp ? tmp.text : legacy ? legacy.text : "";
             if (current != output) source = current;
             Refresh();

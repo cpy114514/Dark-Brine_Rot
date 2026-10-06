@@ -45,6 +45,10 @@ float3 OceanGerstner(float4 wave, float4 motion, float weight, float2 weightGrad
     float phase = k * (dot(direction, sampleXZ) - motion.x * time) + phaseOffset;
     float sine, cosine;
     sincos(phase, sine, cosine);
+    // A restrained second harmonic sharpens the crest and broadens the trough,
+    // retaining the swell's period and mean sea level.
+    float verticalShape = sine - 0.08 * (cosine * cosine - sine * sine);
+    float verticalDerivative = cosine + 0.32 * sine * cosine;
     float2 phaseGradient = k * float2(dot(direction, sampleDx), dot(direction, sampleDz))
         + phaseOffsetGradient;
     float amplitude = wave.z * weight;
@@ -52,12 +56,12 @@ float3 OceanGerstner(float4 wave, float4 motion, float weight, float2 weightGrad
     float2 horizontalGradient = horizontalScale *
         (weightGradient * cosine - weight * sine * phaseGradient);
     float2 verticalGradient = wave.z *
-        (weightGradient * sine + weight * cosine * phaseGradient);
+        (weightGradient * verticalShape + weight * verticalDerivative * phaseGradient);
     tangent += float3(direction.x * horizontalGradient.x, verticalGradient.x,
         direction.y * horizontalGradient.x);
     binormal += float3(direction.x * horizontalGradient.y, verticalGradient.y,
         direction.y * horizontalGradient.y);
-    return float3(direction.x * horizontalScale * weight * cosine, amplitude * sine,
+    return float3(direction.x * horizontalScale * weight * cosine, amplitude * verticalShape,
         direction.y * horizontalScale * weight * cosine);
 }
 
@@ -115,7 +119,9 @@ void OceanEvaluateWaves(float2 baseXZ, float time, float2 detailWeights,
             sampleXZ, sampleDx, sampleDz, time + 2.7, tangent, binormal);
     displacement = a + b + c + d;
     normal = normalize(cross(binormal, tangent));
-    crest = smoothstep(0.36, 0.72, a.y * 0.34 + b.y * 0.40 + c.y * 0.50 + d.y * 0.65);
+    float compression = 1.0 - (tangent.x * binormal.z - tangent.z * binormal.x);
+    crest = smoothstep(0.36, 0.72, a.y * 0.34 + b.y * 0.40 + c.y * 0.50 + d.y * 0.65)
+        * lerp(0.30, 1.0, smoothstep(0.015, 0.13, compression));
 }
 
 #endif

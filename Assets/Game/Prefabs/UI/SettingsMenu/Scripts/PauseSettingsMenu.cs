@@ -128,6 +128,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         savedKeys = ReadKeys();
         draftKeys = (Key[])savedKeys.Clone();
         Bind();
+        MinimalMenuLayout.Settings(this);
         GameLocalization.Changed += Refresh;
         ApplySettings(saved);
         Refresh();
@@ -589,7 +590,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void ApplySettings(Settings s)
     {
-        AudioListener.volume = s.masterVolume;
+        GameAudioPolicy.ApplyMasterVolume(s.masterVolume);
         if (Camera.main != null)
         {
             Camera.main.fieldOfView = s.fieldOfView;

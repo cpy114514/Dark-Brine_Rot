@@ -149,3 +149,7 @@ Packages/packages-lock.json linguist-generated
 # Exceptions for .asset files such as lightning pre-baking
 LightingData.asset     binary
 *.glb filter=lfs diff=lfs merge=lfs -text
+
+# Generated high-detail tree meshes are large even in Unity YAML format.
+Assets/Resources/FoliagePerformance/*.asset filter=lfs diff=lfs merge=lfs -text
+Assets/Game/Prefabs/Environment/Trees/CoastalTrees/Meshes/*.asset filter=lfs diff=lfs merge=lfs -text

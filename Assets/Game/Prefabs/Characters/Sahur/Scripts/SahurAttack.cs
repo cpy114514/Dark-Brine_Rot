@@ -50,6 +50,10 @@ namespace Mavis
         public LayerMask hitMask = ~0;
         public string enemyTag = "Enemy";
         public float damage = 25f;
+        [Tooltip("Ground combo reach in metres at Sahur's usual scale (3).")]
+        [Min(0f)] public float comboReach = 4.8f;
+        [Range(30f, 180f)] public float comboArc = 150f;
+        [Min(0f)] public float weaponHitPadding = .55f;
         [Range(0f, 1f)] public float swingWindowStart = 0.10f;
         [Range(0f, 1f)] public float swingWindowEnd = 0.55f;
         [Range(0f, 1f)] public float heavySwingWindowStart = 0.25f;
@@ -110,8 +114,13 @@ namespace Mavis
 
         readonly HashSet<IDamageable> hitThisSwing = new HashSet<IDamageable>();
         readonly Collider[] nearbyColliders = new Collider[64];
+        readonly RaycastHit[] strikeObstacles = new RaycastHit[32];
+        Vector3 previousWeaponA, previousWeaponB;
+        bool hasWeaponSample;
+        float previousHitPhase;
         readonly int[] comboStateHashes = new int[3];
         ThirdPersonPlayerController controller;
+        CharacterController strikeController;
         PlayerStamina stamina;
         bool attackQueued;
         bool comboContinueQueued;
@@ -122,6 +131,7 @@ namespace Mavis
         bool airImpactArmed;
         int comboStep = -1;
         int lastAttackInputFrame = -1;
+        int movementCancelFrame = -1;
         float queueExpiresAt;
         float chargeStartedAt;
         float attackStartedAt;
@@ -161,6 +171,7 @@ namespace Mavis
         void Awake()
         {
             controller = GetComponent<ThirdPersonPlayerController>();
+            strikeController = GetComponent<CharacterController>();
             stamina = GetComponent<PlayerStamina>();
             lightStateHash = Animator.StringToHash("Base Layer." + attackTrigger);
             heavyStateHash = Animator.StringToHash("Base Layer." + heavyAttackState);
@@ -184,6 +195,9 @@ namespace Mavis
 
         void Update()
         {
+            // Check before animation progress, charge release or damage. The
+            // movement controller also checks so script order cannot delay it.
+            if (TryCancelForMovementInput()) return;
             if (boomerang != null && boomerang.IsBusy)
             {
                 attackQueued = comboContinueQueued = false;
@@ -236,6 +250,19 @@ namespace Mavis
             }
 
             UpdateChargeLayerWeight();
+        }
+
+        void LateUpdate()
+        {
+            // Sample the pose Unity rendered this frame, after Animator/root motion.
+            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
+                (controller != null && controller.Swimming))
+            {
+                if (stickHitbox != null) stickHitbox.enabled = false;
+                hasWeaponSample = false;
+                return;
+            }
+            if (TryCancelForMovementInput()) return;
             UpdateHitbox();
         }
 
@@ -249,6 +276,7 @@ namespace Mavis
         public void TriggerAttack()
         {
             if (!enabled) return;
+            if (TryCancelForMovementInput() || movementCancelFrame == Time.frameCount) return;
             if (boomerang != null && boomerang.IsBusy) return;
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || charging || (controller != null && controller.Swimming) || Cursor.lockState != CursorLockMode.Locked)
                 return;
@@ -405,6 +433,47 @@ namespace Mavis
                 animator.CrossFadeInFixedTime("Locomotion", 0.14f, 0, 0f);
         }
 
+        public bool TryCancelForMovementInput()
+        {
+            if (movementCancelFrame == Time.frameCount) return true;
+            if (!enabled || !IsCombatMotionActive || PauseSettingsMenu.IsOpen ||
+                SahurLoadoutUI.BlocksInput || Cursor.lockState != CursorLockMode.Locked ||
+                (controller != null && (!controller.enabled || controller.ExternalControlLock || controller.ExternalMovementLock)))
+                return false;
+            // A new direction press cancels even when opposing keys give zero
+            // net movement. Holding a key from before the attack is allowed.
+            if (!GameInputSettings.PressedThisFrame(GameInputSettings.Action.Forward) &&
+                !GameInputSettings.PressedThisFrame(GameInputSettings.Action.Back) &&
+                !GameInputSettings.PressedThisFrame(GameInputSettings.Action.Left) &&
+                !GameInputSettings.PressedThisFrame(GameInputSettings.Action.Right)) return false;
+            CancelForMovement();
+            return true;
+        }
+
+        void CancelForMovement()
+        {
+            movementCancelFrame = Time.frameCount;
+            boomerang?.CancelThrowForMovement();
+            charging = attacking = usesRightArmHeavy = activeAttackEntered = false;
+            attackQueued = comboContinueQueued = airImpactArmed = false;
+            comboStep = -1;
+            activeAttackHash = 0;
+            swingDamage = 0f;
+            activeSwish = null;
+            swishPlayed = true;
+            hitThisSwing.Clear();
+            hasWeaponSample = false;
+            if (stickHitbox != null) stickHitbox.enabled = false;
+            controller?.EndAttackFacing(true);
+            if (animator == null) return;
+            animator.ResetTrigger(attackTrigger);
+            animator.SetFloat(chargeTimeHash, 0f);
+            if (hasHeavyPlaybackSpeed) animator.SetFloat(HeavyPlaybackSpeedHash, 1f);
+            int layer = animator.GetLayerIndex(ChargeUpperBodyLayer);
+            if (layer > 0) animator.SetLayerWeight(layer, 0f);
+            animator.CrossFadeInFixedTime("Base Layer.Locomotion", .08f, 0, 0f);
+        }
+
         public void SuspendForSwimming()
         {
             if (charging) CancelCharge();
@@ -487,6 +556,7 @@ namespace Mavis
             attackStartedAt = Time.time;
             lastFireTime = Time.time;
             hitThisSwing.Clear();
+            hasWeaponSample = false;
             activeSwish = comboStep >= 0 && comboSwishes != null &&
                           comboStep < comboSwishes.Length ? comboSwishes[comboStep] :
                           stateHash == heavyStateHash || stateHash == jumpSlashStateHash ?
@@ -576,6 +646,7 @@ namespace Mavis
             activeAttackEntered = false;
             comboStep = -1;
             comboContinueQueued = false;
+            hasWeaponSample = false;
             controller?.EndAttackFacing();
         }
 
@@ -584,6 +655,7 @@ namespace Mavis
             if (stickHitbox == null || animator == null || !attacking)
             {
                 if (stickHitbox != null) stickHitbox.enabled = false;
+                hasWeaponSample = false;
                 return;
             }
 
@@ -622,18 +694,80 @@ namespace Mavis
                                   info.normalizedTime >= start && info.normalizedTime <= end &&
                                   !animator.IsInTransition(layer);
             if (stickHitbox.enabled)
+            {
+                Physics.SyncTransforms();
                 ScanHits();
+            }
+            else hasWeaponSample = false;
         }
 
         void ScanHits()
         {
-            // A trigger enabled mid-swing can already overlap an enemy and never
-            // receive OnTriggerEnter. Scan the stick's actual volume each frame.
-            Bounds bounds = stickHitbox.bounds;
-            int count = Physics.OverlapSphereNonAlloc(bounds.center, bounds.extents.magnitude,
+            GetWeaponVolume(out Vector3 a, out Vector3 b, out float radius);
+            ScanWeaponSegment(a, b, radius);
+            float phase = animator.GetCurrentAnimatorStateInfo(AttackAnimationLayer).normalizedTime;
+            // Sweep only consecutive damaging poses. Do not bridge a cancelled
+            // swing, a new combo stage, or the anticipation before the first hit.
+            if (hasWeaponSample && phase >= previousHitPhase && phase - previousHitPhase <= .25f)
+            {
+                ScanWeaponSegment(previousWeaponA, a, radius);
+                ScanWeaponSegment(previousWeaponB, b, radius);
+            }
+            previousWeaponA = a; previousWeaponB = b; previousHitPhase = phase;
+            hasWeaponSample = true;
+            if (comboStep < 0 || comboReach <= 0f) return;
+            int count = Physics.OverlapSphereNonAlloc(StrikeOrigin, comboReach * StrikeScale,
                 nearbyColliders, hitMask, QueryTriggerInteraction.Collide);
             for (int i = 0; i < count; i++)
-                TryHit(nearbyColliders[i]);
+                TryHit(nearbyColliders[i], false);
+        }
+
+        float StrikeScale => Mathf.Max(.01f, Mathf.Abs(transform.lossyScale.y) / 3f);
+        Vector3 StrikeOrigin => strikeController != null ? strikeController.bounds.center : transform.position;
+
+        void GetWeaponVolume(out Vector3 a, out Vector3 b, out float radius)
+        {
+            if (stickHitbox is CapsuleCollider capsule)
+            {
+                Vector3 axis = capsule.direction == 0 ? Vector3.right : capsule.direction == 1 ? Vector3.up : Vector3.forward;
+                Vector3 scale = capsule.transform.lossyScale;
+                float axialScale = Mathf.Abs(capsule.direction == 0 ? scale.x : capsule.direction == 1 ? scale.y : scale.z);
+                float radialScale = capsule.direction == 0 ? Mathf.Max(Mathf.Abs(scale.y), Mathf.Abs(scale.z)) :
+                    capsule.direction == 1 ? Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z)) : Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.y));
+                radius = capsule.radius * radialScale + weaponHitPadding * StrikeScale;
+                float half = Mathf.Max(0f, capsule.height * axialScale * .5f - capsule.radius * radialScale);
+                Vector3 center = capsule.transform.TransformPoint(capsule.center);
+                Vector3 extent = capsule.transform.TransformDirection(axis).normalized * half;
+                a = center - extent; b = center + extent;
+            }
+            else
+            {
+                a = b = stickHitbox.bounds.center;
+                radius = stickHitbox.bounds.extents.magnitude + weaponHitPadding * StrikeScale;
+            }
+        }
+
+        void ScanWeaponSegment(Vector3 a, Vector3 b, float radius)
+        {
+            int count = Physics.OverlapCapsuleNonAlloc(a, b, radius, nearbyColliders, hitMask, QueryTriggerInteraction.Collide);
+            for (int i = 0; i < count; i++) TryHit(nearbyColliders[i], true);
+        }
+
+        bool StrikeBlocked(Collider target)
+        {
+            Vector3 from = StrikeOrigin;
+            Vector3 to = target.ClosestPoint(from);
+            Vector3 step = to - from;
+            if (step.sqrMagnitude < .001f) return false;
+            int count = Physics.RaycastNonAlloc(from, step.normalized, strikeObstacles, step.magnitude, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                Collider obstacle = strikeObstacles[i].collider;
+                if (obstacle == null || obstacle == target || obstacle.transform.IsChildOf(transform) ||
+                    obstacle.GetComponentInParent<IDamageable>() != null) continue;
+                return true;
+            }
+            return false;
         }
 
         void ApplyLandingImpact()
@@ -663,11 +797,12 @@ namespace Mavis
         void OnTriggerEnter(Collider other)
         {
             if (stickHitbox == null || !stickHitbox.enabled) return;
-            TryHit(other);
+            TryHit(other, false);
         }
 
-        void TryHit(Collider other)
+        void TryHit(Collider other, bool weaponContact)
         {
+            if (!attacking || stickHitbox == null || !stickHitbox.enabled) return;
             if (other == null || other == stickHitbox || other.transform.IsChildOf(transform)) return;
             if (((1 << other.gameObject.layer) & hitMask) == 0) return;
             var target = other.GetComponentInParent<IDamageable>();
@@ -677,11 +812,16 @@ namespace Mavis
                 (targetComponent == null ||
                  (!targetComponent.CompareTag(enemyTag) &&
                   !targetComponent.transform.root.CompareTag(enemyTag)))) return;
-            if (!Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
+            Vector3 point = other.ClosestPoint(StrikeOrigin);
+            Vector3 direction = Vector3.ProjectOnPlane(other.bounds.center - StrikeOrigin, Vector3.up);
+            bool inComboArc = comboStep >= 0 && (point - StrikeOrigin).sqrMagnitude <= Mathf.Pow(comboReach * StrikeScale, 2f) &&
+                Vector3.Angle(transform.forward, direction) <= comboArc * .5f;
+            if (!weaponContact && !inComboArc && !Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
                     stickHitbox.transform.rotation, other, other.transform.position,
                     other.transform.rotation, out _, out _)) return;
+            if (StrikeBlocked(other)) return;
             if (hitThisSwing.Add(target))
-                CombatHitFeedback.Apply(gameObject, target, swingDamage, stickHitbox.bounds.center,
+                CombatHitFeedback.Apply(gameObject, target, swingDamage, other.ClosestPoint(stickHitbox.bounds.center),
                     activeAttackHash == jumpSlashStateHash ? CombatHitKind.JumpSlash
                     : activeAttackHash == heavyStateHash ? CombatHitKind.ChargedHeavy
                     : comboStep == 2 ? CombatHitKind.ComboFinisher : comboStep == 1 ? CombatHitKind.ComboTwo : CombatHitKind.ComboOne);

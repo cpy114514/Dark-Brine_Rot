@@ -16,12 +16,21 @@ namespace Mavis
         float trail = 1f;
         int previousHealth = -1;
         int previousMax = -1;
+        CappuccinoAI ai;
+
+        void Awake()
+        {
+            ai=health ? health.GetComponent<CappuccinoAI>() : GetComponentInParent<CappuccinoAI>();
+            if(fill)fill.color=GameUITheme.Foreground;
+            if(damageTrail)damageTrail.color=GameUITheme.Muted;
+            if(valueText)valueText.color=GameUITheme.Foreground;
+        }
 
         void LateUpdate()
         {
             if (health == null) return;
             if (viewer == null || !viewer.isActiveAndEnabled) viewer = Camera.main;
-            bool visible = !health.IsDead && viewer != null &&
+            bool visible = !health.IsDead && viewer != null && !GameUITheme.ModalOpen && (ai==null || !ai.FightActive) &&
                 (viewer.transform.position - transform.position).sqrMagnitude < visibleDistance * visibleDistance;
             if (canvas != null) canvas.enabled = visible;
             if (visible) transform.rotation = Quaternion.LookRotation(transform.position - viewer.transform.position, viewer.transform.up);

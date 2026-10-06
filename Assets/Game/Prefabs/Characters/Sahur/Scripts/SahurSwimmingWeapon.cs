@@ -23,6 +23,7 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     bool stowed;
 
     public bool IsStowed => stowed;
+    public bool Climbing { get; set; }
 
     void Awake()
     {
@@ -59,7 +60,7 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     void LateUpdate()
     {
         if (controller == null || stick == null || mesh == null) return;
-        bool swimming = controller.enabled && controller.Swimming;
+        bool swimming = controller.enabled && (controller.Swimming || Climbing);
         if (!swimming) { RestoreGrip(); return; }
         animator = attack != null ? attack.animator : GetComponentInChildren<Animator>();
         if (animator == null || !animator.isHuman) return;

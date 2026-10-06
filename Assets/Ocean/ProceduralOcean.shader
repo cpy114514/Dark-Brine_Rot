@@ -77,6 +77,7 @@ Shader "DarkBrine/Procedural Ocean"
             #pragma fragment frag
             #pragma target 3.5
             #pragma multi_compile_fog
+            #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
@@ -135,7 +136,9 @@ Shader "DarkBrine/Procedural Ocean"
                 float4 _WakeHull;
                 float4 _WakeDirection;
                 float4 _WakeTrail[16];
+                float4 _WakeTrailSettings[16];
                 int _WakeCount;
+                float _ShipWakeMode;
             CBUFFER_END
 
             #include "Assets/Ocean/OceanWaves.hlsl"
@@ -167,6 +170,14 @@ Shader "DarkBrine/Procedural Ocean"
                             lerp(Hash21(cell + float2(0, 1)), Hash21(cell + float2(1, 1)), local.x), local.y);
             }
 
+            float3 WindDetail(float2 p, float2 direction, float2 scale, float2 drift)
+            {
+                float2 crossWind = float2(-direction.y, direction.x);
+                float2 uv = float2(dot(p, direction), dot(p, crossWind)) * scale + drift;
+                float3 field = OceanNoiseGradient(uv);
+                return float3(field.x, direction * (field.y * scale.x) + crossWind * (field.z * scale.y));
+            }
+
             Varyings vert(Attributes input)
             {
                 Varyings output;
@@ -186,7 +197,7 @@ Shader "DarkBrine/Procedural Ocean"
                 return output;
             }
 
-            half SailingFoam(float2 p, float detail)
+            half SurfingFoam(float2 p, float detail)
             {
                 // Everything is painted onto the displaced ocean itself: no floating foam planes.
                 float2 offset = p - _WakeHull.xy;
@@ -213,6 +224,69 @@ Shader "DarkBrine/Procedural Ocean"
                     float edge = 1.0 - smoothstep(1.0, 4.0, abs(d - width));
                     float center = (1.0 - smoothstep(width * 0.25, width, d)) * 0.45;
                     foam = max(foam, max(edge, center) * fade * (0.25 + detail * 0.75));
+                }
+                return foam;
+            }
+
+            half SailingFoam(float2 p, float detail, float breakup)
+            {
+                if (_ShipWakeMode < 0.5) return SurfingFoam(p, detail);
+                float2 offset = p - _WakeHull.xy;
+                if (dot(offset, offset) > 90000.0) return 0;
+                float2 direction = _WakeDirection.xy;
+                float along = dot(offset, direction);
+                float across = abs(dot(offset, float2(-direction.y, direction.x)));
+                float halfLength = max(_WakeHull.z, 1.0);
+                float fromBow = halfLength - along;
+                float progress = saturate(fromBow / (halfLength * 2.0));
+                // A bow wave hugs the waterline before peeling away from the
+                // stern. Its endpoint matches the first historical wake sample.
+                float hullWidth = _WakeHull.w * 0.73 * pow(saturate(sin(progress * PI)), 0.65);
+                float divergentWidth = fromBow * 0.195 + _WakeHull.w * 0.08;
+                float sideWidth = max(hullWidth + 0.65, divergentWidth);
+                float hullGate = smoothstep(-halfLength - 2.5, -halfLength, along)
+                    * (1.0 - smoothstep(halfLength - 1.5, halfLength + 1.5, along));
+                float sideDistance = abs(across - sideWidth - (breakup - 0.5) * 1.8);
+                float sideRibbon = 1.0 - smoothstep(0.5, 3.2, sideDistance);
+                float lace = lerp(0.12, 1.0, smoothstep(0.26, 0.66, detail * 0.55 + breakup * 0.45));
+                half foam = sideRibbon * hullGate * _WakeDirection.z * lace * 0.82;
+                // Join the live stern to the latest fixed sample between emissions,
+                // so the wake cannot detach as the ship advances or turns.
+                float4 liveStern = float4(_WakeHull.xy - direction * halfLength, _Time.y,
+                    halfLength * 2.0 * 0.195 + _WakeHull.w * 0.08);
+                [loop] for (int i = 0; i < _WakeCount; i++)
+                {
+                    int previousIndex = max(0, i - 1);
+                    float4 a = i == 0 ? liveStern : _WakeTrail[previousIndex];
+                    float4 b = _WakeTrail[i];
+                    float2 segment = b.xy - a.xy;
+                    float lengthSquared = dot(segment, segment);
+                    if (lengthSquared < 0.01) continue;
+                    float segmentLength = sqrt(lengthSquared);
+                    float alongSegment = dot(p - a.xy, segment) / segmentLength;
+                    float t = saturate(alongSegment / segmentLength);
+                    float age = max(0.0, _Time.y - lerp(a.z, b.z, t));
+                    float life = max(_WakeDirection.w, 0.1);
+                    float fade = 1.0 - smoothstep(life * 0.12, life, age);
+                    float4 newestSettings = float4(direction, _WakeDirection.z, _WakeTrailSettings[0].w);
+                    float4 settings = lerp(i == 0 ? newestSettings : _WakeTrailSettings[previousIndex],
+                        _WakeTrailSettings[i], t);
+                    float2 normal = float2(-segment.y, segment.x) / segmentLength;
+                    float lateralDistance = abs(dot(p - lerp(a.xy, b.xy, t), normal));
+                    float width = lerp(a.w, b.w, t) + age * settings.w;
+                    float bandWidth = lerp(2.3, 6.0, saturate(age / life));
+                    float meander = (breakup - 0.5) * lerp(1.8, 4.0, saturate(age / life));
+                    float ribbon = 1.0 - smoothstep(bandWidth * 0.18, bandWidth,
+                        abs(lateralDistance - width - meander));
+                    // Longitudinal gates make open ribbons; clamped point distance
+                    // would add a visible semicircle at every trail endpoint.
+                    float endGate = smoothstep(-2.0, 0.0, alongSegment)
+                        * (1.0 - smoothstep(segmentLength, segmentLength + 2.0, alongSegment));
+                    float innerWash = (1.0 - smoothstep(width * 0.18, width * 0.55, lateralDistance))
+                        * exp(-age * 0.7) * 0.18 * detail;
+                    float dissolvedLace = lerp(lace, detail * 0.6, saturate(age / life));
+                    foam = max(foam, (ribbon * dissolvedLace + innerWash) * endGate
+                        * fade * settings.z * 0.9);
                 }
                 return foam;
             }
@@ -246,18 +320,24 @@ Shader "DarkBrine/Procedural Ocean"
 
                 // Three procedural scales affect the surface only near the camera, avoiding
                 // repeated normal maps and distant shimmer at the horizon.
-                float3 largeField = OceanNoiseGradient(p * 0.035 + oceanTime * float2(0.022, -0.014));
-                float3 mediumField = OceanNoiseGradient(p * 0.115 + oceanTime * float2(-0.065, 0.041));
-                float3 rippleField = OceanNoiseGradient(p * 0.58 + oceanTime * float2(0.22, 0.16));
+                float2 windDirection = normalize(_Wave1.xy);
+                float2 crossDirection = normalize(_Wave3.xy);
+                float3 largeField = WindDetail(p, windDirection, float2(0.035, 0.026),
+                    oceanTime * float2(-0.075, 0.012));
+                float3 mediumField = WindDetail(p, crossDirection, float2(0.115, 0.075),
+                    oceanTime * float2(-0.21, 0.025));
+                float3 rippleField = WindDetail(p, windDirection, float2(0.58, 0.32),
+                    oceanTime * float2(-0.48, 0.06));
                 float largeNoise = largeField.x, mediumNoise = mediumField.x, rippleNoise = rippleField.x;
                 float pixelFootprint = max(length(ddx(p)), length(ddy(p)));
                 float rippleFilter = 1.0 - smoothstep(0.35, 1.1, pixelFootprint * 0.58);
+                float mediumFilter = 1.0 - smoothstep(0.35, 1.1, pixelFootprint * 0.115);
                 // Actual two-axis height derivatives, not a fixed diagonal tilt.
-                float2 detailSlope = largeField.yz * (0.035 * 8.0 * _LargeDetailStrength) * mediumDetailFade
-                    + mediumField.yz * (0.115 * 2.0 * _MediumDetailStrength) * nearDetailFade
-                    + rippleField.yz * (0.58 * 0.2 * _RippleStrength) * nearDetailFade * rippleFilter;
-                float2 capillaryA = normalize(float2(0.93, 0.37));
-                float2 capillaryB = normalize(float2(-0.46, 0.89));
+                float2 detailSlope = largeField.yz * (6.5 * _LargeDetailStrength) * mediumDetailFade
+                    + mediumField.yz * (1.8 * _MediumDetailStrength) * nearDetailFade * mediumFilter
+                    + rippleField.yz * (0.2 * _RippleStrength) * nearDetailFade * rippleFilter;
+                float2 capillaryA = windDirection;
+                float2 capillaryB = crossDirection;
                 float microA = cos(dot(p, capillaryA) * 2.2 - oceanTime * 3.0 + mediumNoise * 2.0) * 0.045;
                 float microB = cos(dot(p, capillaryB) * 4.5 - oceanTime * 4.7) * 0.022;
                 float filterA = 1.0 - smoothstep(0.8, 2.4, pixelFootprint * 2.2);
@@ -301,7 +381,9 @@ Shader "DarkBrine/Procedural Ocean"
                 half fresnel = (0.0204h + 0.9796h * pow(1.0h - NoV, _FresnelPower)) * _FresnelStrength;
                 half3 reflectionVector = reflect(-viewDirection, normalWS);
                 float normalVariance = dot(ddx(normalWS), ddx(normalWS)) + dot(ddy(normalWS), ddy(normalWS));
-                half perceptualRoughness = saturate(sqrt((1.0h - _Smoothness) * (1.0h - _Smoothness)
+                half surfaceRoughness = saturate(1.0h - _Smoothness + waveCrest * 0.055h
+                    + (mediumNoise - 0.5h) * 0.035h);
+                half perceptualRoughness = saturate(sqrt(surfaceRoughness * surfaceRoughness
                     + min(normalVariance, 0.25) * 0.35));
                 half3 probeReflection = GlossyEnvironmentReflection(reflectionVector, input.positionWS,
                     perceptualRoughness, 1.0h, screenUv);
@@ -326,15 +408,23 @@ Shader "DarkBrine/Procedural Ocean"
                 water += waterBrdf.specular * sun.color * NoL * attenuation * sunGlint * _SpecularStrength *
                     (0.75h + glintMask * glintCluster * _SunGlitterStrength);
 
-                float foamNoise = ValueNoise(p * _FoamNoiseScale + oceanTime * float2(0.15, -0.10) * _FoamSpeed);
+                // Foam drifts with the displaced surface and wind rather than
+                // reading as an independently sliding texture over the waves.
+                float2 foamPosition = input.positionWS.xz - displacement.xz * 0.65
+                    - windDirection * oceanTime * _FoamSpeed * 1.5;
+                float foamNoise = ValueNoise(foamPosition * _FoamNoiseScale);
                 float foamRegion = ValueNoise(p * (_FoamNoiseScale * 0.27) + float2(9.3, -17.6)
                     + oceanTime * float2(0.008, -0.006) * _FoamSpeed);
-                float foamDetail = ValueNoise(p * (_FoamNoiseScale * 2.4) + float2(-14.2, 3.8)
+                float foamDetail = ValueNoise(foamPosition * (_FoamNoiseScale * 2.4) + float2(-14.2, 3.8)
                     + oceanTime * float2(-0.09, 0.07) * _FoamSpeed);
                 half crestCutoff = lerp(0.52h, 0.45h + (1.0h - foamRegion) * 0.18h, _FoamIrregularity);
                 half crestFoam = waveCrest *
                     smoothstep(crestCutoff, crestCutoff + 0.22h, foamNoise) * mediumDetailFade *
                     (0.38h + 0.62h * smoothstep(0.23h, 0.62h, foamDetail));
+                // Thin lace and broken patches leave water visible within each
+                // whitecap, instead of filling the whole crest with a white band.
+                half foamLace = 1.0h - smoothstep(0.07h, 0.25h, abs(foamDetail - 0.48h));
+                crestFoam *= lerp(1.0h, 0.30h + foamLace * 0.70h, _FoamIrregularity);
                 // Opaque depth measures water above submerged terrain. A narrow
                 // bright contact line plus irregular advancing bands follows the
                 // real coastline, while deep water receives no shore foam.
@@ -351,8 +441,9 @@ Shader "DarkBrine/Procedural Ocean"
                     foamRegion * 0.7h + foamDetail * 0.3h), _FoamIrregularity * 0.8h);
                 half breakerFoam = smoothstep(0.57h, 0.87h, shorePulse) *
                     (0.34h + foamNoise * 0.58h + foamDetail * 0.24h) * patchMask;
+                breakerFoam *= (0.60h + waveCrest * 0.40h) * (0.65h + foamLace * 0.35h);
                 half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
-                foam = max(foam, SailingFoam(p, foamDetail));
+                foam = max(foam, SailingFoam(p, foamDetail, foamNoise));
                 // Lace stays white in daylight, but is no longer self-lit at night
                 // or under tree/island shadows.
                 half3 foamIllumination = saturate(ambient + sun.color *

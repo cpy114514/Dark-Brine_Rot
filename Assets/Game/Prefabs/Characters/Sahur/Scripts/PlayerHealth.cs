@@ -13,6 +13,8 @@ namespace Mavis
         public float maxHealth = 100f;
         public float currentHealth = 100f;
         public UnityEvent OnDeath = new UnityEvent();
+        // Story encounters can hand a lethal hit to the next scene instead of respawning.
+        public System.Action NarrativeDefeatHandler { get; set; }
         float protectedUntil;
         public bool IsProtected => Time.time < protectedUntil;
         public void GrantProtection(float seconds) => protectedUntil = Time.time + Mathf.Max(0f, seconds);
@@ -29,7 +31,8 @@ namespace Mavis
             if (currentHealth <= 0f)
             {
                 currentHealth = 0f;
-                OnDeath.Invoke();
+                if (NarrativeDefeatHandler != null) NarrativeDefeatHandler();
+                else OnDeath.Invoke();
             }
         }
     }

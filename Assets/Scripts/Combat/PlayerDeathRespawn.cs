@@ -65,6 +65,7 @@ namespace Mavis
         public void Die()
         {
             if (IsDead || health.currentHealth > 0f) return;
+            if (health.NarrativeDefeatHandler != null) { health.NarrativeDefeatHandler(); return; }
             GetComponent<IslandMapUI>()?.SetOpen(false);
             GetComponent<EnemyLockOn>()?.Clear();
             GetComponent<SahurLoadoutUI>()?.SetOpen(false);

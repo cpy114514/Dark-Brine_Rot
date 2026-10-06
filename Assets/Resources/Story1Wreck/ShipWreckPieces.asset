@@ -1,0 +1,1433 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4acfab038ead671479d9f59782031e81, type: 3}
+  m_Name: ShipWreckPieces
+  m_EditorClassIdentifier: Assembly-CSharp::Story1ShipWreckAsset
+  originalShip: {fileID: 919132149155446097, guid: 68e0d856ce4881e45967552bdc22aed6, type: 3}
+  sourceSha256: bec3c8783a08c5005d87f9264be0a00d9b2218fc21e197645f237f9e19ad0ace
+  decks:
+  - name: deck_Object_30_00_00_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 60fffb5d9ed6dce4dbd9337ae293f9db, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 17.371609, y: 6.2098784, z: -5.9833393}
+    sourceSize: {x: 2.574276, y: 0.7503052, z: 6.1787376}
+    floatRotation: 0
+  - name: deck_Object_30_00_01_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 94a0835c8ea2f8044994023f29a54fed, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 19.12345, y: 7.0324087, z: -2.3328505}
+    sourceSize: {x: 4.728204, y: 2.151958, z: 9.698501}
+    floatRotation: 0
+  - name: deck_Object_30_00_02_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: aa19c7e4a17df164ab6b1c672a488f9b, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 19.132866, y: 6.9149294, z: 2.332637}
+    sourceSize: {x: 4.7277703, y: 2.1562042, z: 9.701254}
+    floatRotation: 0
+  - name: deck_Object_30_00_03_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 10628a728b4c2ea46a7cd2f5f6b8988a, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 17.37159, y: 6.209875, z: 5.983362}
+    sourceSize: {x: 2.5742383, y: 0.7503061, z: 6.1786995}
+    floatRotation: 0
+  - name: deck_Object_30_01_00_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: fd126f2b8c13ea4448215f79920d931f, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 9.440041, y: 5.7865467, z: -6.8886757}
+    sourceSize: {x: 4.384498, y: 0.33976698, z: 9.700422}
+    floatRotation: 0
+  - name: deck_Object_30_01_01_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 898a2113c0b0ba1488a1c287d7f59558, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 9.440055, y: 5.788436, z: -2.3482585}
+    sourceSize: {x: 4.696563, y: 0.34345627, z: 9.700451}
+    floatRotation: 0
+  - name: deck_Object_30_01_02_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 757c1c5a32af83a4e84207ffd8a37c83, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 9.440054, y: 5.7884235, z: 2.3482268}
+    sourceSize: {x: 4.696633, y: 0.3434372, z: 9.700455}
+    floatRotation: 0
+  - name: deck_Object_30_01_03_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 98240860e43afb942b6bd1321fc66b84, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: 9.440056, y: 5.7866077, z: 6.8886795}
+    sourceSize: {x: 4.384498, y: 0.33989954, z: 9.70045}
+    floatRotation: 0
+  - name: deck_Object_30_02_00_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 7a0676b69e2791d4d888462dff81a3d6, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -0.2580061, y: 5.854004, z: -7.044792}
+    sourceSize: {x: 4.6965637, y: 0.35029745, z: 9.699572}
+    floatRotation: 0
+  - name: deck_Object_30_02_01_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 77e6dab238b85e24981ceb85a2de2c50, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -0.2580061, y: 5.8521185, z: -2.3482587}
+    sourceSize: {x: 4.6966805, y: 0.34782648, z: 9.699572}
+    floatRotation: 0
+  - name: deck_Object_30_02_02_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 55172ab2ae5da1440bf5a8411dabdeae, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -0.25800514, y: 5.8521338, z: 2.348298}
+    sourceSize: {x: 4.6966085, y: 0.34784842, z: 9.69957}
+    floatRotation: 0
+  - name: deck_Object_30_02_03_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 1f4fb89fa70185046a8f1e35c08d06ad, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -0.2580061, y: 5.854002, z: 7.044796}
+    sourceSize: {x: 4.6965637, y: 0.35029078, z: 9.699572}
+    floatRotation: 0
+  - name: deck_Object_30_03_00_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 17a7bebc68a418c4ab95be7621ba4f38, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -9.950001, y: 12.407361, z: -7.0107393}
+    sourceSize: {x: 4.6284432, y: 13.001966, z: 9.70264}
+    floatRotation: 0
+  - name: deck_Object_30_03_01_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 8aade0a8c8d0db745a5c54ce1e002c05, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -9.950001, y: 12.403654, z: -2.3482587}
+    sourceSize: {x: 4.6967845, y: 13.000825, z: 9.70264}
+    floatRotation: 0
+  - name: deck_Object_30_03_02_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: a1d2ecf9df60d7e46ba1dec03444d39f, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -9.949989, y: 12.404529, z: 2.3483276}
+    sourceSize: {x: 4.6966515, y: 13.002535, z: 9.702618}
+    floatRotation: 0
+  - name: deck_Object_30_03_03_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 2b7bbd87dffb15740b197c8307fe54e4, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -9.949999, y: 12.40738, z: 7.010742}
+    sourceSize: {x: 4.628441, y: 13.001951, z: 9.702638}
+    floatRotation: 0
+  - name: deck_Object_30_04_00_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: a1a2575c54cb13349a7c890ebe378681, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -19.63437, y: 13.179891, z: -6.564534}
+    sourceSize: {x: 3.736032, y: 12.964289, z: 9.69046}
+    floatRotation: 0
+  - name: deck_Object_30_04_01_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: a0100c82cc845a7478d7e65f528adfbd, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -19.63437, y: 13.177543, z: -2.348261}
+    sourceSize: {x: 4.6971927, y: 12.969118, z: 9.69046}
+    floatRotation: 0
+  - name: deck_Object_30_04_02_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: 18608ca08342ea940aea09919b7725f0, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -19.63437, y: 13.177557, z: 2.348429}
+    sourceSize: {x: 4.696854, y: 12.969089, z: 9.69046}
+    floatRotation: 0
+  - name: deck_Object_30_04_03_00
+    sourceObject: Object_30
+    mesh: {fileID: 4300000, guid: e7dd5d55e3f37d446bec5213ffacdd60, type: 2}
+    material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
+    sourceCenter: {x: -19.63437, y: 13.179939, z: 6.563642}
+    sourceSize: {x: 3.7342405, y: 12.964185, z: 9.69046}
+    floatRotation: 0
+  hulls:
+  - name: hull_Object_22_00_00_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 610807927d02de749abccfb3c33d8064, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 19.554974, y: 3.2885761, z: -3.142852}
+    sourceSize: {x: 3.9140368, y: 6.2849975, z: 6.0426464}
+    floatRotation: -90
+  - name: hull_Object_22_00_00_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: c2a787865dec1d74884f43611a8955cc, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 20.550976, y: 7.6184273, z: -3.3173027}
+    sourceSize: {x: 4.7456665, y: 6.634609, z: 8.034651}
+    floatRotation: -90
+  - name: hull_Object_22_00_01_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: a4e407588668d9041b65b5eb4a990b1c, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 19.554974, y: 3.2738457, z: 3.1428826}
+    sourceSize: {x: 3.9434981, y: 6.285053, z: 6.0426464}
+    floatRotation: 90
+  - name: hull_Object_22_00_01_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 0e6f9c7acfdb0d64d909bc7d4c98ecec, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 20.550976, y: 7.6184273, z: 3.3173065}
+    sourceSize: {x: 4.745666, y: 6.6346097, z: 8.034651}
+    floatRotation: 90
+  - name: hull_Object_22_01_00_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: e4e4b5131b527aa488e25fb8e695db3c, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 12.516325, y: 2.6765902, z: -4.2166276}
+    sourceSize: {x: 5.138008, y: 8.433259, z: 8.03465}
+    floatRotation: -90
+  - name: hull_Object_22_01_00_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 62cef033c882406448e0e26fd67723bf, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 12.516325, y: 6.958845, z: -7.378064}
+    sourceSize: {x: 3.4265013, y: 2.4278698, z: 8.03465}
+    floatRotation: -90
+  - name: hull_Object_22_01_01_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 94f6dd1f1a73f5e48b020c0b5a3082c4, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 12.516325, y: 2.6765902, z: 4.216652}
+    sourceSize: {x: 5.138009, y: 8.4333, z: 8.03465}
+    floatRotation: 90
+  - name: hull_Object_22_01_01_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 51bf8c573bfd111479fb3ed0bd40cd7b, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 12.516325, y: 6.958843, z: 7.407398}
+    sourceSize: {x: 3.4264975, y: 2.3692088, z: 8.03465}
+    floatRotation: 90
+  - name: hull_Object_22_02_00_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 48915eec7b912c94bbd2618de2a4e37b, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 4.4816747, y: 2.6765902, z: -4.595496}
+    sourceSize: {x: 5.138008, y: 9.190996, z: 8.03465}
+    floatRotation: -90
+  - name: hull_Object_22_02_00_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: d8ba5ba7c6601974a9432aedf16aa931, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 4.4816747, y: 6.8453417, z: -8.674041}
+    sourceSize: {x: 3.1994953, y: 1.3160954, z: 8.03465}
+    floatRotation: -90
+  - name: hull_Object_22_02_01_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 512fdf7a77d5f5f4297a22d7c088ebac, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 4.4816747, y: 2.6765902, z: 4.5973496}
+    sourceSize: {x: 5.138009, y: 9.194695, z: 8.03465}
+    floatRotation: 90
+  - name: hull_Object_22_02_01_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 0e145bde889c64d4fae51f0f68a68323, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: 4.4816747, y: 6.845339, z: 8.703376}
+    sourceSize: {x: 3.1994896, y: 1.2574329, z: 8.03465}
+    floatRotation: 90
+  - name: hull_Object_22_03_00_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: d2f0d4202cda00141baa61aa6fb1fc4e, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -3.5529754, y: 2.6765902, z: -4.6240616}
+    sourceSize: {x: 5.138008, y: 9.248127, z: 8.034651}
+    floatRotation: -90
+  - name: hull_Object_22_03_00_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 4f8e5efd0364d37428c949a0acbfce82, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -3.5529754, y: 7.007064, z: -8.979801}
+    sourceSize: {x: 3.5229397, y: 0.82647514, z: 8.034651}
+    floatRotation: -90
+  - name: hull_Object_22_03_01_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 5836fac444791f14fac97ff4039026d9, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -3.5529754, y: 2.6765902, z: 4.624066}
+    sourceSize: {x: 5.138009, y: 9.248128, z: 8.034651}
+    floatRotation: 90
+  - name: hull_Object_22_03_01_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: bb3f98744a0547c4e947223bd604a6b8, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -3.5529754, y: 7.007061, z: 9.009141}
+    sourceSize: {x: 3.522934, y: 0.76780415, z: 8.034651}
+    floatRotation: 90
+  - name: hull_Object_22_04_00_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: a7137a5da27d5c74fa9cf3c5be40985b, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -11.5876255, y: 2.6765902, z: -4.465516}
+    sourceSize: {x: 5.138008, y: 8.931036, z: 8.034651}
+    floatRotation: -90
+  - name: hull_Object_22_04_00_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 352643cc6500b2f4e8e7d3ea5f2126e0, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -11.5876255, y: 7.30371, z: -8.319502}
+    sourceSize: {x: 4.116232, y: 1.722538, z: 8.034651}
+    floatRotation: -90
+  - name: hull_Object_22_04_01_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 83ecd6d9568412943aebeefb39bd6b89, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -11.5876255, y: 2.6765902, z: 4.4653497}
+    sourceSize: {x: 5.138009, y: 8.930696, z: 8.034651}
+    floatRotation: 90
+  - name: hull_Object_22_04_01_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 1ffbc1d4fa4f5c146acf338848c4706e, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -11.5876255, y: 7.303708, z: 8.321582}
+    sourceSize: {x: 4.116228, y: 1.7183857, z: 8.034651}
+    floatRotation: 90
+  - name: hull_Object_22_05_00_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: eb7d4fe432e716949afe2511eb47fb8d, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -18.409597, y: 2.6765902, z: -3.7291155}
+    sourceSize: {x: 5.1380086, y: 7.458235, z: 5.609292}
+    floatRotation: -90
+  - name: hull_Object_22_05_00_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: a48111b8734d6c14ab2abf6ec2be384c, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -19.622276, y: 7.814599, z: -4.0852404}
+    sourceSize: {x: 5.138009, y: 8.170486, z: 8.03465}
+    floatRotation: -90
+  - name: hull_Object_22_05_01_00
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 2d1b1425263d2104997843052ea9b5d4, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -18.409597, y: 2.6765902, z: 3.7311952}
+    sourceSize: {x: 5.138009, y: 7.462386, z: 5.609292}
+    floatRotation: 90
+  - name: hull_Object_22_05_01_01
+    sourceObject: Object_22
+    mesh: {fileID: 4300000, guid: 19f380702b90f8f49915e6d57b4faa29, type: 2}
+    material: {fileID: 2100000, guid: 8080651c6400400ea9d9b7a99c04379d, type: 2}
+    sourceCenter: {x: -19.622276, y: 7.814598, z: 4.0852447}
+    sourceSize: {x: 5.1380067, y: 8.1704855, z: 8.03465}
+    floatRotation: 90
+  details:
+  - name: detail_Object_10_00_00_02
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: 0ce34ebbb63b7044d9834b4970e1bb02, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.598625, y: 35.081444, z: -15.632824}
+    sourceSize: {x: 0.75380325, y: 0.60266876, z: 0.72975826}
+    floatRotation: 90
+  - name: detail_Object_10_00_01_00
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: 3862187bd9a264e4b9a9de0d1f443f22, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 4.4953194, y: 8.100208, z: -0.02289328}
+    sourceSize: {x: 2.1035628, y: 1.3287053, z: 1.5500352}
+    floatRotation: 90
+  - name: detail_Object_10_00_01_02
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: e4001267869fba2428812d7ad7d99e4a, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.599335, y: 34.98484, z: -0.03647019}
+    sourceSize: {x: 0.7294769, y: 0.25515008, z: 0.7296448}
+    floatRotation: 90
+  - name: detail_Object_10_00_02_02
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: 973553cd377a378438b874aecd7a4965, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.598838, y: 35.08126, z: 15.632469}
+    sourceSize: {x: 0.7541313, y: 0.6034517, z: 0.7293358}
+    floatRotation: 90
+  - name: detail_Object_10_01_00_00
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: 159e9737cbfdc32499f779ee9e9b49cf, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -11.868408, y: 11.075104, z: -7.845099}
+    sourceSize: {x: 1.3364, y: 0.14457703, z: 1.1948175}
+    floatRotation: 90
+  - name: detail_Object_10_01_01_00
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: 5db1565dd970a5c43b1a7815866ba5d5, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -9.5378, y: 10.6751, z: -0.025097013}
+    sourceSize: {x: 1.3364019, y: 7.2580814, z: 0.0625}
+    floatRotation: 90
+  - name: detail_Object_10_01_02_00
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: d960c7a844209144892addc534967a87, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -11.868408, y: 11.0751, z: 7.8444138}
+    sourceSize: {x: 1.3364, y: 0.1393404, z: 1.1948175}
+    floatRotation: 90
+  - name: detail_Object_10_02_00_00
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: 7a22c372e943e8644ae8efce8c8bda1f, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -15.897458, y: 11.425104, z: -7.090804}
+    sourceSize: {x: 2.0364008, y: 1.3743329, z: 6.863283}
+    floatRotation: 90
+  - name: detail_Object_10_02_02_00
+    sourceObject: Object_10
+    mesh: {fileID: 4300000, guid: a934d310b72b25d4c98fbdd6485b1ed3, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -15.897458, y: 11.4251, z: 7.090227}
+    sourceSize: {x: 2.0364008, y: 1.374105, z: 6.863283}
+    floatRotation: 90
+  - name: detail_Object_11_00_00_00
+    sourceObject: Object_11
+    mesh: {fileID: 4300000, guid: 05dd8803c1cd63e47adcc71f678e9489, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 19.46145, y: 7.5968475, z: -5.468848}
+    sourceSize: {x: 1.4439707, y: 0.80907965, z: 1.3549004}
+    floatRotation: 90
+  - name: detail_Object_11_00_01_00
+    sourceObject: Object_11
+    mesh: {fileID: 4300000, guid: fa0adc1b9698a91459671c58d4cc102e, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 19.46145, y: 7.5968437, z: 5.468853}
+    sourceSize: {x: 1.4439688, y: 0.8090806, z: 1.3549004}
+    floatRotation: 90
+  - name: detail_Object_11_01_00_00
+    sourceObject: Object_11
+    mesh: {fileID: 4300000, guid: dcc923d1b028ca740b04c5580abf1513, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 4.8430586, y: 12.208601, z: -0.30045643}
+    sourceSize: {x: 0.3448, y: 0.60093427, z: 1.4650769}
+    floatRotation: 90
+  - name: detail_Object_11_01_01_00
+    sourceObject: Object_11
+    mesh: {fileID: 4300000, guid: 7fe8f3f50f1176d46a99086de438d84a, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 4.84306, y: 12.208603, z: 0.30017886}
+    sourceSize: {x: 0.34480286, y: 0.6003727, z: 1.4650745}
+    floatRotation: 90
+  - name: detail_Object_11_02_00_00
+    sourceObject: Object_11
+    mesh: {fileID: 4300000, guid: 4efd8c5408d76484fad4c08614b91bcb, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -7.60722, y: 7.436784, z: -9.592175}
+    sourceSize: {x: 1.4762197, y: 0.3769102, z: 1.47264}
+    floatRotation: 90
+  - name: detail_Object_11_02_01_00
+    sourceObject: Object_11
+    mesh: {fileID: 4300000, guid: 70b2821d3b725524dac1463421c9dde5, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -7.60722, y: 7.436778, z: 9.592178}
+    sourceSize: {x: 1.4762197, y: 0.3769102, z: 1.47264}
+    floatRotation: 90
+  - name: detail_Object_12_00_00_00
+    sourceObject: Object_12
+    mesh: {fileID: 4300000, guid: 215c879468ea33c44ab2aae63a25cb26, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -19.788807, y: 1.6934292, z: -0.005828291}
+    sourceSize: {x: 2.95712, y: 0.7147328, z: 1.754633}
+    floatRotation: 90
+  - name: detail_Object_13_00_00_00
+    sourceObject: Object_13
+    mesh: {fileID: 4300000, guid: 6b780d97e699cbf43b80407d7764682f, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -12.590972, y: 11.166272, z: -4.459909}
+    sourceSize: {x: 3.5113792, y: 8.919076, z: 7.5384846}
+    floatRotation: 90
+  - name: detail_Object_13_00_01_00
+    sourceObject: Object_13
+    mesh: {fileID: 4300000, guid: ea63ba89025648b47ac156b560381aa5, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -12.590972, y: 11.166268, z: 4.459166}
+    sourceSize: {x: 3.5113792, y: 8.919076, z: 7.5384846}
+    floatRotation: 90
+  - name: detail_Object_13_01_00_00
+    sourceObject: Object_13
+    mesh: {fileID: 4300000, guid: 77e9c57063aabfb45a68d2faee0b7bd2, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -20.129457, y: 9.420921, z: -3.9382074}
+    sourceSize: {x: 9.15216, y: 7.8756723, z: 7.5384865}
+    floatRotation: 90
+  - name: detail_Object_13_01_01_00
+    sourceObject: Object_13
+    mesh: {fileID: 4300000, guid: 84b3735e0d52f1046b36ff2c9e225ff8, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -20.12922, y: 9.420936, z: 3.937616}
+    sourceSize: {x: 9.15213, y: 7.875975, z: 7.5380116}
+    floatRotation: 90
+  - name: detail_Object_14_00_00_02
+    sourceObject: Object_14
+    mesh: {fileID: 4300000, guid: 76dbd96aab23dd04d91893e951ab1067, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.599009, y: 35.252308, z: -10.786325}
+    sourceSize: {x: 1.063797, y: 10.786334, z: 0.72899914}
+    floatRotation: 90
+  - name: detail_Object_14_00_01_02
+    sourceObject: Object_14
+    mesh: {fileID: 4300000, guid: 9c76e200e904fa743812e2f5a4c59646, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 9.162033, y: 38.45395, z: 0.000009536743}
+    sourceSize: {x: 7.5225334, y: 10.786335, z: 1.8550425}
+    floatRotation: 90
+  - name: detail_Object_14_00_02_02
+    sourceObject: Object_14
+    mesh: {fileID: 4300000, guid: 58ab8f3489ef9404abf267f4c66054da, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.5990095, y: 35.2523, z: 10.786345}
+    sourceSize: {x: 1.063797, y: 10.786336, z: 0.7290001}
+    floatRotation: 90
+  - name: detail_Object_14_01_01_00
+    sourceObject: Object_14
+    mesh: {fileID: 4300000, guid: 71b3bd1fc859e5446ba7e64c978a584f, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -9.359381, y: 9.000086, z: -0.10009974}
+    sourceSize: {x: 5.20003, y: 2.8001971, z: 0.45060062}
+    floatRotation: 90
+  - name: detail_Object_15_00_01_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: ca28526f8e29f2a4ea2e97a578bfcb63, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 29.910759, y: 13.632444, z: -0.024488598}
+    sourceSize: {x: 5.6023674, y: 0.4655171, z: 8.753082}
+    floatRotation: 90
+  - name: detail_Object_15_00_01_01
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 141ae026ce3acbd43bca70dc4a026a11, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 36.48065, y: 18.584415, z: -0.02510956}
+    sourceSize: {x: 4.3015747, y: 0.3811954, z: 5.8752975}
+    floatRotation: 90
+  - name: detail_Object_15_01_01_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: a40d8a294dc6cad4fa2c116ad8683d56, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 23.343203, y: 10.955181, z: 0.83630925}
+    sourceSize: {x: 4.40304, y: 2.222609, z: 4.382038}
+    floatRotation: 90
+  - name: detail_Object_15_01_01_02
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: b5a1a14bfb68b9a4e97f5e02e860486e, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 14.606809, y: 38.624992, z: -0.0034364536}
+    sourceSize: {x: 0.60177994, y: 0.16243404, z: 0.5738182}
+    floatRotation: 90
+  - name: detail_Object_15_02_00_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: da9a9507f2e5f614f9d87d6ef05da90b, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 3.3706062, y: 11.731215, z: -13.036587}
+    sourceSize: {x: 1.481617, y: 7.7628193, z: 11.209091}
+    floatRotation: 90
+  - name: detail_Object_15_02_00_02
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: de43cabe726f6f54bbdf671c42af8824, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 8.599635, y: 36.099632, z: -11.558327}
+    sourceSize: {x: 0.65192795, y: 11.583335, z: 0.6519394}
+    floatRotation: 90
+  - name: detail_Object_15_02_01_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 500233ecbc2aca243a106d6affb6c583, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 2.115435, y: 10.810564, z: -0.06094563}
+    sourceSize: {x: 11.246128, y: 1.2906581, z: 8.69875}
+    floatRotation: 90
+  - name: detail_Object_15_02_01_01
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 83a15e992df23c140b5ad1c89e1faaf4, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.1118517, y: 22.05669, z: -0.02499336}
+    sourceSize: {x: 11.24613, y: 0.9058918, z: 2.226152}
+    floatRotation: 90
+  - name: detail_Object_15_02_01_02
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 3509d7aa56b26f44da4ccbf5a097eb87, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 7.6685286, y: 33.30282, z: 0.025009394}
+    sourceSize: {x: 11.246128, y: 11.583336, z: 2.591951}
+    floatRotation: 90
+  - name: detail_Object_15_02_01_03
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: a6f5c1b9ff690ac4398e61f5c36c820d, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 7.26223, y: 44.54895, z: 0.02233684}
+    sourceSize: {x: 11.246128, y: 2.1156304, z: 5.3444195}
+    floatRotation: 90
+  - name: detail_Object_15_02_02_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: e82f1687f0535e6499f51cffed3836bb, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 3.3706062, y: 11.731207, z: 13.036594}
+    sourceSize: {x: 1.4816208, y: 7.762821, z: 11.209091}
+    floatRotation: 90
+  - name: detail_Object_15_02_02_02
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 55055e0e6d1f2f44fa03e2ac7438a7fa, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 8.600001, y: 36.099632, z: 11.608345}
+    sourceSize: {x: 0.65192413, y: 11.583337, z: 0.6526718}
+    floatRotation: 90
+  - name: detail_Object_15_03_00_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 37d40bef8949f8c4e94bf6c366de4e81, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -3.5772798, y: 11.1243, z: -9.564724}
+    sourceSize: {x: 3.0058107, y: 1.0219488, z: 2.6866803}
+    floatRotation: 90
+  - name: detail_Object_15_03_01_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 3191ad7362d018a4e8a62e4aa68d07d5, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -5.0129547, y: 13.627805, z: -0.02865801}
+    sourceSize: {x: 1.2724609, y: 0.47445938, z: 5.5580306}
+    floatRotation: 90
+  - name: detail_Object_15_03_02_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: f971a8411a85e5d4b875521f2f930818, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -3.5772798, y: 11.124294, z: 9.564731}
+    sourceSize: {x: 3.0058107, y: 1.021946, z: 2.6866803}
+    floatRotation: 90
+  - name: detail_Object_15_04_01_00
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: 262b9706fcea80d49818401c54100921, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -25.437534, y: 13.20788, z: -0.024995126}
+    sourceSize: {x: 6.451497, y: 0.50000006, z: 5.259466}
+    floatRotation: 90
+  - name: detail_Object_15_04_01_01
+    sourceObject: Object_15
+    mesh: {fileID: 4300000, guid: ec9a71301bfdefa4cb4fc0909636d2c4, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -28.794106, y: 17.833265, z: -0.024898067}
+    sourceSize: {x: 2.7992744, y: 0.37783366, z: 2.415987}
+    floatRotation: 90
+  - name: detail_Object_16_00_00_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: ca5b763ac5d7e2743af390ebb539ca17, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 19.113888, y: 6.8587904, z: -4.027252}
+    sourceSize: {x: 7.165868, y: 7.97093, z: 12.393624}
+    floatRotation: 90
+  - name: detail_Object_16_00_01_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: 7e66be8fd79e38548ace4af7537340f9, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 19.113888, y: 9.256158, z: 3.9436755}
+    sourceSize: {x: 2.367982, y: 7.9709277, z: 12.393624}
+    floatRotation: 90
+  - name: detail_Object_16_01_00_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: 09be5ff2180288445bc27c250cd2af20, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.720263, y: 5.485676, z: -7.940892}
+    sourceSize: {x: 6.0285025, y: 3.3574095, z: 12.393624}
+    floatRotation: 90
+  - name: detail_Object_16_01_01_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: c1cb1f517c1d1cd4e98e4e8107923ca6, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.720263, y: 5.4889746, z: 8.184012}
+    sourceSize: {x: 6.0337076, y: 2.710092, z: 12.393624}
+    floatRotation: 90
+  - name: detail_Object_16_02_00_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: 6ab19c35dbaadcf458f10251145647df, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -5.6733613, y: 7.2828574, z: -4.872789}
+    sourceSize: {x: 9.224599, y: 9.662003, z: 12.393624}
+    floatRotation: 90
+  - name: detail_Object_16_02_01_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: cc1b163762e473f4f983c8679b21e4f6, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -5.6733613, y: 7.273623, z: 4.7892127}
+    sourceSize: {x: 9.244624, y: 9.662002, z: 12.393624}
+    floatRotation: 90
+  - name: detail_Object_16_03_00_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: 9fb63ceea0fd60447857c99ed5500bdb, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -18.066986, y: 9.92639, z: -4.565438}
+    sourceSize: {x: 6.780227, y: 9.047303, z: 12.393624}
+    floatRotation: 90
+  - name: detail_Object_16_03_01_00
+    sourceObject: Object_16
+    mesh: {fileID: 4300000, guid: 612da23ce146396498f27a134a729587, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -18.06519, y: 9.923525, z: 4.477435}
+    sourceSize: {x: 6.785954, y: 9.038446, z: 12.390031}
+    floatRotation: 90
+  - name: detail_Object_17_00_00_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: 195ed6168414854458832f1f52f59ec7, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 18.615011, y: 6.3095374, z: -4.0668893}
+    sourceSize: {x: 7.3632483, y: 8.009864, z: 12.063068}
+    floatRotation: 90
+  - name: detail_Object_17_00_01_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: 63ed3727cf77bc24fa62c2bf696d7b25, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 18.620245, y: 6.308551, z: 3.9429731}
+    sourceSize: {x: 7.3746777, y: 8.009861, z: 12.073536}
+    floatRotation: 90
+  - name: detail_Object_17_01_00_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: 650804ed9e56cb34eb917541992b62df, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.5467095, y: 5.2526145, z: -8.022464}
+    sourceSize: {x: 5.557793, y: 3.4754415, z: 12.073535}
+    floatRotation: 90
+  - name: detail_Object_17_01_01_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: affe71639829e574cbf0f0148d85fd4e, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.5467095, y: 5.254046, z: 7.945571}
+    sourceSize: {x: 5.5692844, y: 3.3715992, z: 12.073535}
+    floatRotation: 90
+  - name: detail_Object_17_02_00_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: 5128ec9df98c84044befbe1a32358817, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -5.5268254, y: 5.589617, z: -8.75169}
+    sourceSize: {x: 5.817568, y: 2.1489515, z: 12.073535}
+    floatRotation: 90
+  - name: detail_Object_17_02_01_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: 5543d09405e2b8940a2f32d3fa4efd9b, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -5.5268254, y: 5.5874295, z: 8.633988}
+    sourceSize: {x: 5.8206987, y: 2.136526, z: 12.073535}
+    floatRotation: 90
+  - name: detail_Object_17_03_00_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: 098bad1d802abaa4b98835d363d27ef3, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -17.60036, y: 6.240407, z: -4.6501613}
+    sourceSize: {x: 3.5187902, y: 9.176409, z: 12.073536}
+    floatRotation: 90
+  - name: detail_Object_17_03_01_00
+    sourceObject: Object_17
+    mesh: {fileID: 4300000, guid: 81110ac9b6bd6a44daf3745edea7d5dd, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -17.563622, y: 6.240404, z: 4.517154}
+    sourceSize: {x: 3.5187936, y: 9.158223, z: 12.000059}
+    floatRotation: 90
+  - name: detail_Object_18_00_00_00
+    sourceObject: Object_18
+    mesh: {fileID: 4300000, guid: f90d88f6486d2c1458fb9afb922756e5, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.64536, y: 8.106026, z: -0.11315474}
+    sourceSize: {x: 0.61560965, y: 1.8365064, z: 0.21605968}
+    floatRotation: 90
+  - name: detail_Object_18_02_00_00
+    sourceObject: Object_18
+    mesh: {fileID: 4300000, guid: 96cab9bee51785c49a7d5f34a9454b24, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -21.2, y: 16.185102, z: 0.000004529953}
+    sourceSize: {x: 6.2202034, y: 13.950003, z: 4.8500004}
+    floatRotation: 90
+  - name: detail_Object_19_00_00_00
+    sourceObject: Object_19
+    mesh: {fileID: 4300000, guid: 385e71424cf10b24986a829d3f4acf2a, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 18.979282, y: 2.8703055, z: 0.0018437505}
+    sourceSize: {x: 6.5688953, y: 1.3170714, z: 9.759615}
+    floatRotation: 90
+  - name: detail_Object_19_00_00_01
+    sourceObject: Object_19
+    mesh: {fileID: 4300000, guid: 2556fb884f190794a8624c3514286001, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 21.179466, y: 9.775845, z: 0.003029108}
+    sourceSize: {x: 7.242183, y: 13.41202, z: 8.1755295}
+    floatRotation: 90
+  - name: detail_Object_19_01_00_00
+    sourceObject: Object_19
+    mesh: {fileID: 4300000, guid: 94cc4a180223a2c4faed3c1f83fae715, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 8.5155945, y: -0.14409918, z: 0.0018429458}
+    sourceSize: {x: 1.8866622, y: 1.3170705, z: 11.167759}
+    floatRotation: 90
+  - name: detail_Object_19_02_00_00
+    sourceObject: Object_19
+    mesh: {fileID: 4300000, guid: 3e1bd8d91b254ad45b8e229f6bbabde6, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -2.6521626, y: -0.24961966, z: 0.001842916}
+    sourceSize: {x: 1.6756215, y: 1.3170705, z: 11.167759}
+    floatRotation: 90
+  - name: detail_Object_19_03_00_00
+    sourceObject: Object_19
+    mesh: {fileID: 4300000, guid: 71d93ac33fffff54a8bd6ffa9a9dfcbf, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -13.81992, y: -0.2840942, z: 0.0018428862}
+    sourceSize: {x: 1.6066723, y: 1.3170705, z: 11.167758}
+    floatRotation: 90
+  - name: detail_Object_2_00_00_00
+    sourceObject: Object_2
+    mesh: {fileID: 4300000, guid: b041d714405c48a4cabbdc53797d8fa3, type: 2}
+    material: {fileID: 2100000, guid: 92a43db8fb1b4b8a806ee66aa43a3b7e, type: 2}
+    sourceCenter: {x: 12.969107, y: 17.425003, z: -11.266663}
+    sourceSize: {x: 12.449997, y: 11.266668, z: 8.538213}
+    floatRotation: 90
+  - name: detail_Object_2_00_00_01
+    sourceObject: Object_2
+    mesh: {fileID: 4300000, guid: 2377df4d50bb0684386ad26d5e2438a0, type: 2}
+    material: {fileID: 2100000, guid: 92a43db8fb1b4b8a806ee66aa43a3b7e, type: 2}
+    sourceCenter: {x: 12.977932, y: 29.875004, z: -11.26666}
+    sourceSize: {x: 12.4500065, y: 11.2666645, z: 8.555863}
+    floatRotation: 90
+  - name: detail_Object_2_00_01_00
+    sourceObject: Object_2
+    mesh: {fileID: 4300000, guid: 178f3a27e356e0b49943b3acfa486389, type: 2}
+    material: {fileID: 2100000, guid: 92a43db8fb1b4b8a806ee66aa43a3b7e, type: 2}
+    sourceCenter: {x: 14.09872, y: 18.704067, z: 0.00000667572}
+    sourceSize: {x: 9.891869, y: 11.26667, z: 6.590307}
+    floatRotation: 90
+  - name: detail_Object_2_00_01_01
+    sourceObject: Object_2
+    mesh: {fileID: 4300000, guid: 49519de6b236f3c4398f532b1779cbb9, type: 2}
+    material: {fileID: 2100000, guid: 92a43db8fb1b4b8a806ee66aa43a3b7e, type: 2}
+    sourceCenter: {x: 13.0564995, y: 29.875002, z: 0.00000667572}
+    sourceSize: {x: 12.450001, y: 11.26667, z: 8.713}
+    floatRotation: 90
+  - name: detail_Object_2_00_02_00
+    sourceObject: Object_2
+    mesh: {fileID: 4300000, guid: 5c0d269cc0c6d45429d77af5a907f255, type: 2}
+    material: {fileID: 2100000, guid: 92a43db8fb1b4b8a806ee66aa43a3b7e, type: 2}
+    sourceCenter: {x: 12.5644455, y: 17.425, z: 11.266673}
+    sourceSize: {x: 12.4500065, y: 11.266666, z: 7.7288904}
+    floatRotation: 90
+  - name: detail_Object_2_00_02_01
+    sourceObject: Object_2
+    mesh: {fileID: 4300000, guid: ca700476029c0004d8a1ac710bf7e752, type: 2}
+    material: {fileID: 2100000, guid: 92a43db8fb1b4b8a806ee66aa43a3b7e, type: 2}
+    sourceCenter: {x: 12.585196, y: 29.875002, z: 11.266676}
+    sourceSize: {x: 12.450001, y: 11.26667, z: 7.7703905}
+    floatRotation: 90
+  - name: detail_Object_20_00_00_00
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 9011a65f2608acd4280373617e327f47, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 21.851048, y: 7.8605757, z: -3.3058362}
+    sourceSize: {x: 3.7257304, y: 6.6116447, z: 9.233892}
+    floatRotation: 90
+  - name: detail_Object_20_00_00_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 35b5ccc48bef79f4d975f231228c78a4, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 22.116749, y: 11.490972, z: -3.305836}
+    sourceSize: {x: 3.5350618, y: 6.6116443, z: 9.765299}
+    floatRotation: 90
+  - name: detail_Object_20_00_01_00
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: d44f4f114a9408f41bd3972997893ecf, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 21.851048, y: 7.8605757, z: 3.305825}
+    sourceSize: {x: 3.7257318, y: 6.6116776, z: 9.233892}
+    floatRotation: 90
+  - name: detail_Object_20_00_01_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: d1f841716550c5a4fb4cbb2653d20f2c, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 22.116749, y: 11.490972, z: 3.3058252}
+    sourceSize: {x: 3.535061, y: 6.611678, z: 9.765299}
+    floatRotation: 90
+  - name: detail_Object_20_01_00_00
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 3477727cf8630864a8942e13ebd9dd6b, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.35253, y: 6.787201, z: -0.6018461}
+    sourceSize: {x: 3.2532601, y: 1.2036647, z: 0.8147001}
+    floatRotation: 90
+  - name: detail_Object_20_01_00_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: f7d3bcdcf21961b4d9ef0c53f8a3514b, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 3.98669, y: 11.266602, z: -0.17500545}
+    sourceSize: {x: 1.9040012, y: 0.3499833, z: 1.6113198}
+    floatRotation: 90
+  - name: detail_Object_20_01_00_03
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 80697c77f1be83046a9a2ed974a964a1, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 4.9276443, y: 39.26478, z: -0.17500123}
+    sourceSize: {x: 5.850048, y: 0.34997514, z: 6.555892}
+    floatRotation: 90
+  - name: detail_Object_20_01_01_00
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: d73bf62a6f87f6a44996afae6b443d09, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 6.35253, y: 6.796897, z: 0.50571406}
+    sourceSize: {x: 3.2338676, y: 1.0114559, z: 0.8147001}
+    floatRotation: 90
+  - name: detail_Object_20_01_01_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: a268fb0f4182a2a44865634d4c84bd54, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 3.98669, y: 11.266602, z: 0.14999484}
+    sourceSize: {x: 1.9040012, y: 0.30001733, z: 1.6113198}
+    floatRotation: 90
+  - name: detail_Object_20_01_01_03
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 5dc2edba95435d54a81e93b876d8cac5, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 4.9276443, y: 39.26464, z: 0.14999905}
+    sourceSize: {x: 5.8503304, y: 0.30002576, z: 6.555892}
+    floatRotation: 90
+  - name: detail_Object_20_02_00_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 59c27e505f60b544aa8d240feaac7bee, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -10.085101, y: 15.259853, z: -4.852229}
+    sourceSize: {x: 6.2863016, y: 7.5814066, z: 1.8801022}
+    floatRotation: 90
+  - name: detail_Object_20_02_00_03
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: cf4a71e5ce5b8fb409f8736b2db279aa, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 0.7427305, y: 36.094826, z: -0.07207371}
+    sourceSize: {x: 1.1379623, y: 0.14411984, z: 1.8139355}
+    floatRotation: 90
+  - name: detail_Object_20_02_01_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 1de01a134b69dab45bd3099fbb2018dd, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -10.085101, y: 15.259851, z: 4.8522196}
+    sourceSize: {x: 6.286298, y: 7.581372, z: 1.8801022}
+    floatRotation: 90
+  - name: detail_Object_20_02_01_03
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 46c9e12e2fb11284a8b3d0123f22e00d, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: 0.7426789, y: 36.094852, z: 0.07397949}
+    sourceSize: {x: 1.1384888, y: 0.14798665, z: 1.8140397}
+    floatRotation: 90
+  - name: detail_Object_20_03_00_00
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 3c49842ec05e66648bf83d0c6505925e, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -20.8322, y: 2.13908, z: -0.13356358}
+    sourceSize: {x: 6.47552, y: 0.2670995, z: 2.317999}
+    floatRotation: 90
+  - name: detail_Object_20_03_00_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: b3073b83c832d624380b76b2b10b388a, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -17.362577, y: 15.51683, z: -4.2881923}
+    sourceSize: {x: 6.500349, y: 8.576357, z: 12.67485}
+    floatRotation: 90
+  - name: detail_Object_20_03_01_00
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 7860d8b443430b24f9d92317ecb1acb9, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -20.8322, y: 2.13908, z: 0.13355036}
+    sourceSize: {x: 6.475521, y: 0.26712838, z: 2.317999}
+    floatRotation: 90
+  - name: detail_Object_20_03_01_01
+    sourceObject: Object_20
+    mesh: {fileID: 4300000, guid: 241569a36cbdd08428d2934c47fff3a9, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -17.362577, y: 15.516827, z: 4.2881823}
+    sourceSize: {x: 6.500346, y: 8.576392, z: 12.67485}
+    floatRotation: 90
+  - name: detail_Object_21_00_00_00
+    sourceObject: Object_21
+    mesh: {fileID: 4300000, guid: e77f65e568064374fbe1e5adbfb76c7b, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -2.4988954, y: 7.2393227, z: -9.940443}
+    sourceSize: {x: 2.036399, y: 1.5938168, z: 6.2987247}
+    floatRotation: 90
+  - name: detail_Object_21_00_01_00
+    sourceObject: Object_21
+    mesh: {fileID: 4300000, guid: 62b4218a11324d6448d247f5797888c4, type: 2}
+    material: {fileID: 2100000, guid: 63a8f6fc855a4371bcc29c18ea226b7b, type: 2}
+    sourceCenter: {x: -2.4835908, y: 7.238047, z: 9.944133}
+    sourceSize: {x: 2.0338583, y: 1.5865288, z: 6.3136563}
+    floatRotation: 90
+  - name: detail_Object_23_00_01_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: eaaac400669ba87478a8ae85c1e43987, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 38.87833, y: 19.935852, z: -0.00770964}
+    sourceSize: {x: 0.32364082, y: 0.046680875, z: 0.48296356}
+    floatRotation: 90
+  - name: detail_Object_23_00_01_01
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: e7184da9ce6e0e44e9d10543d5efd3dc, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 32.072296, y: 25.201717, z: -0.009281302}
+    sourceSize: {x: 10.20809, y: 0.048630767, z: 13.387093}
+    floatRotation: 90
+  - name: detail_Object_23_01_01_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 91c94830fa1a0e24b87895f51f550478, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 16.440376, y: 11.176047, z: 1.2575502}
+    sourceSize: {x: 3.1559067, y: 1.3042917, z: 9.60538}
+    floatRotation: 90
+  - name: detail_Object_23_01_01_01
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: ee9f16f9eed147041b3685e4b99eea19, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 23.503244, y: 31.361164, z: -0.008792754}
+    sourceSize: {x: 2.7917652, y: 0.051160477, z: 3.751011}
+    floatRotation: 90
+  - name: detail_Object_23_01_01_02
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 9e15dee979960eb41ab549332edfecda, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 16.900887, y: 36.770405, z: -0.0071038883}
+    sourceSize: {x: 8.026718, y: 0.05878391, z: 10.526401}
+    floatRotation: 90
+  - name: detail_Object_23_02_00_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 066c6d1c83b032a47a947b9ae27af6ce, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.286667, y: 14.415554, z: -11.27187}
+    sourceSize: {x: 11.364241, y: 11.271872, z: 10.7800865}
+    floatRotation: 90
+  - name: detail_Object_23_02_00_01
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: ee2af5635211eea428dbe25854817790, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.9839811, y: 26.42736, z: -10.009552}
+    sourceSize: {x: 12.659372, y: 8.74724, z: 9.335663}
+    floatRotation: 90
+  - name: detail_Object_23_02_00_02
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: e783a92d2f31b274b9f7a1e71b17a9a9, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 8.530269, y: 33.89696, z: -12.287024}
+    sourceSize: {x: 2.279831, y: 6.5267076, z: 0.67588425}
+    floatRotation: 90
+  - name: detail_Object_23_02_01_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 3c023402d5feb7c479b31899280bb31d, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 8.968039, y: 13.946144, z: 0.0000042915344}
+    sourceSize: {x: 12.3030615, y: 11.271874, z: 5.3392954}
+    floatRotation: 90
+  - name: detail_Object_23_02_01_01
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: bb014dac7156eb3479b410d4f041c709, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 4.438547, y: 26.427359, z: 0.000004053116}
+    sourceSize: {x: 12.659374, y: 11.271873, z: 8.43224}
+    floatRotation: 90
+  - name: detail_Object_23_02_01_02
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 511df5290c3fb634d921d08768fa02ed, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 4.7671556, y: 39.08673, z: 0.000009775162}
+    sourceSize: {x: 12.65937, y: 10.0724945, z: 13.741064}
+    floatRotation: 90
+  - name: detail_Object_23_02_02_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: e23970a07e0ddad49943ed42e9773d64, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.286747, y: 14.417136, z: 11.271877}
+    sourceSize: {x: 11.3610735, y: 11.271875, z: 10.780247}
+    floatRotation: 90
+  - name: detail_Object_23_02_02_01
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 7b4f23d3e0e0f9f409ce61a96dfaaf7f, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.9860654, y: 26.42736, z: 10.009067}
+    sourceSize: {x: 12.659372, y: 8.746252, z: 9.340041}
+    floatRotation: 90
+  - name: detail_Object_23_02_02_02
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: dd0e2f0707f98f34c93625f0662b9305, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 8.524298, y: 33.896942, z: 12.286171}
+    sourceSize: {x: 2.2797928, y: 6.525214, z: 0.68782616}
+    floatRotation: 90
+  - name: detail_Object_23_03_00_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 0ebb4dfe2b6193e42bab67c3da8673db, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -4.909914, y: 11.520935, z: -10.086376}
+    sourceSize: {x: 8.165265, y: 3.9676514, z: 5.6130767}
+    floatRotation: 90
+  - name: detail_Object_23_03_01_01
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 487dfe12da2c3714e967ae6a0d1ff3c1, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -12.621012, y: 30.501827, z: -0.0061171902}
+    sourceSize: {x: 4.510437, y: 0.050785754, z: 6.4468565}
+    floatRotation: 90
+  - name: detail_Object_23_03_01_02
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 6d72f5ecd4568d44f84dcbacb42fbece, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -5.8116517, y: 35.35255, z: -0.0076994747}
+    sourceSize: {x: 5.1910095, y: 0.047973894, z: 7.4165525}
+    floatRotation: 90
+  - name: detail_Object_23_03_02_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 31fd00d8db5dd9640a4b9d8aa14ae1d2, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -4.9106307, y: 11.521552, z: 10.08337}
+    sourceSize: {x: 8.162485, y: 3.974864, z: 5.6145105}
+    floatRotation: 90
+  - name: detail_Object_23_04_01_00
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: 210cc8883f07a2a43946b2e7360cc8cf, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -28.538689, y: 19.377445, z: 0.0001540631}
+    sourceSize: {x: 1.4404583, y: 0.06403041, z: 2.093626}
+    floatRotation: 90
+  - name: detail_Object_23_04_01_01
+    sourceObject: Object_23
+    mesh: {fileID: 4300000, guid: c6967ed69ae511e4b9b72ea068af4e50, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -21.725595, y: 24.214027, z: -0.0035010371}
+    sourceSize: {x: 8.232706, y: 0.056542903, z: 11.762317}
+    floatRotation: 90
+  - name: detail_Object_24_00_00_02
+    sourceObject: Object_24
+    mesh: {fileID: 4300000, guid: a0d89f8dfaf2609498a4d7b9010beab8, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 8.485119, y: 42.376884, z: -0.000012785196}
+    sourceSize: {x: 6.2813606, y: 1.2144462, z: 1.9358325}
+    floatRotation: 90
+  - name: detail_Object_24_01_00_00
+    sourceObject: Object_24
+    mesh: {fileID: 4300000, guid: b8bfc36244c0d3240b015a3ff4cb7529, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -7.32977, y: 13.972057, z: -0.03724569}
+    sourceSize: {x: 0.81091785, y: 0.6263354, z: 0.49531984}
+    floatRotation: 90
+  - name: detail_Object_24_02_00_00
+    sourceObject: Object_24
+    mesh: {fileID: 4300000, guid: f131e0144ffb75440a9b5cd735835711, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -29.570625, y: 18.67436, z: -0.0001321435}
+    sourceSize: {x: 0.4551506, y: 0.45435894, z: 0.53481865}
+    floatRotation: 90
+  - name: detail_Object_25_00_00_00
+    sourceObject: Object_25
+    mesh: {fileID: 4300000, guid: 595f64b8a0268154ca881ba8f5f8a0fa, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 39.12175, y: 19.729862, z: 0.0007773191}
+    sourceSize: {x: 0.508337, y: 0.44335115, z: 0.50452423}
+    floatRotation: 90
+  - name: detail_Object_26_00_00_00
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: a8a87186865e152499ffbf7964b0d3ca, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.685104, y: 14.775964, z: -3.814277}
+    sourceSize: {x: 8.365709, y: 7.629484, z: 3.638132}
+    floatRotation: 90
+  - name: detail_Object_26_00_00_01
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: 685779dd5746edd4d8906613f24d5a9c, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.3160326, y: 24.571255, z: -4.872536}
+    sourceSize: {x: 11.224871, y: 3.6906338, z: 2.8999896}
+    floatRotation: 90
+  - name: detail_Object_26_00_00_02
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: a54164e0c6824944bb820dbafda61d67, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 5.6502504, y: 35.793446, z: -1.6550062}
+    sourceSize: {x: 11.219513, y: 3.310942, z: 6.824656}
+    floatRotation: 90
+  - name: detail_Object_26_00_01_00
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: 0f39640499b4bbd4eab69a49230bd50d, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.6850479, y: 14.776365, z: 3.7975419}
+    sourceSize: {x: 8.364905, y: 7.5941534, z: 3.63802}
+    floatRotation: 90
+  - name: detail_Object_26_00_01_01
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: dd509e1c25985fc4988e5de8ed81bc23, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 3.3143513, y: 24.571255, z: 4.8603187}
+    sourceSize: {x: 11.224871, y: 3.6725636, z: 2.896627}
+    floatRotation: 90
+  - name: detail_Object_26_00_01_02
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: ec90c079ca231f74a8bf574524ffb7c9, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 5.657545, y: 35.796124, z: 1.6576468}
+    sourceSize: {x: 11.224869, y: 3.3143644, z: 6.8231697}
+    floatRotation: 90
+  - name: detail_Object_26_01_00_00
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: 367415610ab9cde4c93bc9edf37cb0c7, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -1.7300088, y: 13.347722, z: -8.485275}
+    sourceSize: {x: 11.222195, y: 3.8294406, z: 7.1920943}
+    floatRotation: 90
+  - name: detail_Object_26_01_00_01
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: 00fd95a0ddb7ce04fb321ca476c73a85, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 0.12613964, y: 24.029366, z: -5.345248}
+    sourceSize: {x: 10.141096, y: 3.466746, z: 3.4797978}
+    floatRotation: 90
+  - name: detail_Object_26_01_01_00
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: db53fe6d80e92894e927c28b1d880eb8, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: -1.7355077, y: 13.346384, z: 8.477574}
+    sourceSize: {x: 11.224869, y: 3.8467035, z: 7.203092}
+    floatRotation: 90
+  - name: detail_Object_26_01_01_01
+    sourceObject: Object_26
+    mesh: {fileID: 4300000, guid: 2bb50f1dd56376047b1df61a4dffb153, type: 2}
+    material: {fileID: 2100000, guid: 9a429429378e443095e583e2ecd8b535, type: 2}
+    sourceCenter: {x: 0.12968612, y: 24.01779, z: 5.342204}
+    sourceSize: {x: 10.117943, y: 3.4707491, z: 3.4727044}
+    floatRotation: 90
+  - name: detail_Object_27_00_00_00
+    sourceObject: Object_27
+    mesh: {fileID: 4300000, guid: 8629cea167ec7d3438c01d4a2a486c48, type: 2}
+    material: {fileID: 2100000, guid: 926ee44e9a4045719769ad0ca0d43576, type: 2}
+    sourceCenter: {x: -8.02933, y: 10.756893, z: -3.837497}
+    sourceSize: {x: 9.336222, y: 7.6750016, z: 3.0795002}
+    floatRotation: 90
+  - name: detail_Object_27_00_01_00
+    sourceObject: Object_27
+    mesh: {fileID: 4300000, guid: 9aa5a26d1192b6040bf0ba0c18c1ce6d, type: 2}
+    material: {fileID: 2100000, guid: 926ee44e9a4045719769ad0ca0d43576, type: 2}
+    sourceCenter: {x: -8.03082, y: 10.757269, z: 3.8375046}
+    sourceSize: {x: 9.3354645, y: 7.6750016, z: 3.0765204}
+    floatRotation: 90
+  - name: detail_Object_28_00_00_00
+    sourceObject: Object_28
+    mesh: {fileID: 4300000, guid: b861f6a8221015147a7b1a7df455ea79, type: 2}
+    material: {fileID: 2100000, guid: 2f90c454a405496fa1b60b55961e9c7f, type: 2}
+    sourceCenter: {x: 19.3459, y: 7.639343, z: -5.2609634}
+    sourceSize: {x: 1.025661, y: 0.82754946, z: 1.0578003}
+    floatRotation: 90
+  - name: detail_Object_28_00_01_00
+    sourceObject: Object_28
+    mesh: {fileID: 4300000, guid: 4a900863eb3c1854697d9a609cac7dda, type: 2}
+    material: {fileID: 2100000, guid: 2f90c454a405496fa1b60b55961e9c7f, type: 2}
+    sourceCenter: {x: 19.3459, y: 7.6393394, z: 5.2609673}
+    sourceSize: {x: 1.0256591, y: 0.8275504, z: 1.0578003}
+    floatRotation: 90
+  - name: detail_Object_28_01_00_00
+    sourceObject: Object_28
+    mesh: {fileID: 4300000, guid: bfbb42a425a8a9945be2af949822c4be, type: 2}
+    material: {fileID: 2100000, guid: 2f90c454a405496fa1b60b55961e9c7f, type: 2}
+    sourceCenter: {x: -7.60987, y: 7.4339285, z: -9.350599}
+    sourceSize: {x: 0.9605899, y: 0.5092602, z: 0.9891796}
+    floatRotation: 90
+  - name: detail_Object_28_01_01_00
+    sourceObject: Object_28
+    mesh: {fileID: 4300000, guid: 9162561447cafb341bb7e4b7e47e52e0, type: 2}
+    material: {fileID: 2100000, guid: 2f90c454a405496fa1b60b55961e9c7f, type: 2}
+    sourceCenter: {x: -7.60987, y: 7.4339232, z: 9.350603}
+    sourceSize: {x: 0.9605899, y: 0.5092602, z: 0.9891796}
+    floatRotation: 90
+  - name: detail_Object_29_00_00_00
+    sourceObject: Object_29
+    mesh: {fileID: 4300000, guid: 86a5930dff495f444b775921db8d35a9, type: 2}
+    material: {fileID: 2100000, guid: cf3c715f8a714b62a0c22377f2751626, type: 2}
+    sourceCenter: {x: 4.41267, y: 7.3000007, z: -0.024995267}
+    sourceSize: {x: 4.6475, y: 1.1691701, z: 1.7328799}
+    floatRotation: 90
+  - name: detail_Object_29_01_00_00
+    sourceObject: Object_29
+    mesh: {fileID: 4300000, guid: fd2835d2581ece243a719da6b1018628, type: 2}
+    material: {fileID: 2100000, guid: cf3c715f8a714b62a0c22377f2751626, type: 2}
+    sourceCenter: {x: -10.082525, y: 13.754501, z: 0.029389799}
+    sourceSize: {x: 3.1113997, y: 2.6487684, z: 0.6795492}
+    floatRotation: 90
+  - name: detail_Object_3_00_00_00
+    sourceObject: Object_3
+    mesh: {fileID: 4300000, guid: a9289a69061b14145a0b481dd6d86711, type: 2}
+    material: {fileID: 2100000, guid: a3581b2a0514487590ecaee77c4f78d3, type: 2}
+    sourceCenter: {x: 32.271576, y: 20.938986, z: 1.2659113}
+    sourceSize: {x: 9.529232, y: 2.5818074, z: 11.804249}
+    floatRotation: 90
+  - name: detail_Object_3_00_00_01
+    sourceObject: Object_3
+    mesh: {fileID: 4300000, guid: de8600a49a98da6498ff1a2f12cad78b, type: 2}
+    material: {fileID: 2100000, guid: a3581b2a0514487590ecaee77c4f78d3, type: 2}
+    sourceCenter: {x: 28.85395, y: 27.617733, z: 0.67838794}
+    sourceSize: {x: 3.8282642, y: 1.3922824, z: 4.969}
+    floatRotation: 90
+  - name: detail_Object_3_01_00_00
+    sourceObject: Object_3
+    mesh: {fileID: 4300000, guid: cb5f7ef4d4b17b441bb5fef7d95e2132, type: 2}
+    material: {fileID: 2100000, guid: a3581b2a0514487590ecaee77c4f78d3, type: 2}
+    sourceCenter: {x: 23.13887, y: 19.242252, z: 1.3703464}
+    sourceSize: {x: 12.922701, y: 2.2916317, z: 6.4611588}
+    floatRotation: 90
+  - name: detail_Object_3_01_00_01
+    sourceObject: Object_3
+    mesh: {fileID: 4300000, guid: dd5b0269dcfa9fd48bc2d34954846658, type: 2}
+    material: {fileID: 2100000, guid: a3581b2a0514487590ecaee77c4f78d3, type: 2}
+    sourceCenter: {x: 20.467325, y: 32.164955, z: 0.78721046}
+    sourceSize: {x: 12.922703, y: 1.5994027, z: 11.80425}
+    floatRotation: 90
+  - name: detail_Object_4_00_00_00
+    sourceObject: Object_4
+    mesh: {fileID: 4300000, guid: cf56802e22e68064d84143ef86d95420, type: 2}
+    material: {fileID: 2100000, guid: 07c42f6b470c45f9a8eaa5052f16e48f, type: 2}
+    sourceCenter: {x: 3.263348, y: 19.150127, z: 0.49867946}
+    sourceSize: {x: 13.61425, y: 0.9973512, z: 5.768136}
+    floatRotation: 90
+  - name: detail_Object_4_00_00_01
+    sourceObject: Object_4
+    mesh: {fileID: 4300000, guid: 0d28b60d408141e42a8eeff2bbe3b31e, type: 2}
+    material: {fileID: 2100000, guid: 07c42f6b470c45f9a8eaa5052f16e48f, type: 2}
+    sourceCenter: {x: 4.10896, y: 32.764378, z: 0.48228556}
+    sourceSize: {x: 13.61425, y: 0.96455646, z: 7.45936}
+    floatRotation: 90
+  - name: detail_Object_4_01_00_00
+    sourceObject: Object_4
+    mesh: {fileID: 4300000, guid: 82b72d1007cf67a4b9369c69edfc013f, type: 2}
+    material: {fileID: 2100000, guid: 07c42f6b470c45f9a8eaa5052f16e48f, type: 2}
+    sourceCenter: {x: -3.3504, y: 19.456644, z: 0.49831715}
+    sourceSize: {x: 13.001217, y: 0.9966263, z: 7.45936}
+    floatRotation: 90
+  - name: detail_Object_4_01_00_01
+    sourceObject: Object_4
+    mesh: {fileID: 4300000, guid: 296719e82e6ef6a4db086c21bbe705a2, type: 2}
+    material: {fileID: 2100000, guid: 07c42f6b470c45f9a8eaa5052f16e48f, type: 2}
+    sourceCenter: {x: -1.0514592, y: 30.887129, z: 0.4745348}
+    sourceSize: {x: 9.859753, y: 0.9490502, z: 2.8614786}
+    floatRotation: 90
+  - name: detail_Object_5_00_00_00
+    sourceObject: Object_5
+    mesh: {fileID: 4300000, guid: d203821b0a9d70647aae434857f919bc, type: 2}
+    material: {fileID: 2100000, guid: 23d74341b46046d3ab781196df94b7c6, type: 2}
+    sourceCenter: {x: -9.501815, y: 8.792545, z: -0.100097656}
+    sourceSize: {x: 4.62691, y: 2.268181, z: 0.24242973}
+    floatRotation: 90
+  - name: detail_Object_6_00_00_00
+    sourceObject: Object_6
+    mesh: {fileID: 4300000, guid: a734f599b29603b4199d0f620459fac5, type: 2}
+    material: {fileID: 2100000, guid: 1042a73fefae431a8de616b793129236, type: 2}
+    sourceCenter: {x: -16.366955, y: 11.529152, z: -4.998127}
+    sourceSize: {x: 2.7907019, y: 5.8085413, z: 13.623691}
+    floatRotation: 90
+  - name: detail_Object_6_00_01_00
+    sourceObject: Object_6
+    mesh: {fileID: 4300000, guid: f47b0c011119baf4db4102e97a3014ce, type: 2}
+    material: {fileID: 2100000, guid: 1042a73fefae431a8de616b793129236, type: 2}
+    sourceCenter: {x: -16.351536, y: 11.52915, z: 4.9744787}
+    sourceSize: {x: 2.7907019, y: 5.84997, z: 13.654931}
+    floatRotation: 90
+  - name: detail_Object_7_00_00_00
+    sourceObject: Object_7
+    mesh: {fileID: 4300000, guid: be670690834ec574c9dcb04cee7e0064, type: 2}
+    material: {fileID: 2100000, guid: 8e5a2901573242de85a02e8b930a14f8, type: 2}
+    sourceCenter: {x: 11.804195, y: 47.562057, z: 0.5608395}
+    sourceSize: {x: 2.6709023, y: 1.1169486, z: 5.33741}
+    floatRotation: 90
+  - name: detail_Object_8_00_00_00
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 9bca73dbee672204896ac56d035a04e8, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 19.363827, y: 6.0230484, z: -5.9315352}
+    sourceSize: {x: 3.7710075, y: 1.0487194, z: 2.3518982}
+    floatRotation: 90
+  - name: detail_Object_8_00_01_00
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 540bb4c7a815057409f0bc8eda8213cf, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 20.179302, y: 6.133823, z: 0.0012712479}
+    sourceSize: {x: 3.5275545, y: 10.816894, z: 1.6395321}
+    floatRotation: 90
+  - name: detail_Object_8_00_01_02
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: ac9a9b146268a4843b71bfa8495d203b, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 9.766363, y: 41.886208, z: 0.015423328}
+    sourceSize: {x: 0.101177216, y: 0.55768514, z: 0.096282005}
+    floatRotation: 90
+  - name: detail_Object_8_00_02_00
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: cf482bbac4b93cf478729712746f13f8, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 19.355602, y: 6.02318, z: 5.932808}
+    sourceSize: {x: 3.770739, y: 1.0461798, z: 2.3354473}
+    floatRotation: 90
+  - name: detail_Object_8_01_00_02
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 4545d6a17f7ff9743940335147208eac, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.595519, y: 35.448006, z: -12.893012}
+    sourceSize: {x: 1.1539993, y: 6.662114, z: 0.16748047}
+    floatRotation: 90
+  - name: detail_Object_8_01_01_02
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 256e55cbe2a37334580914829e5a4cbb, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.931127, y: 38.49806, z: 0.00037384033}
+    sourceSize: {x: 7.1348877, y: 10.706308, z: 0.84457207}
+    floatRotation: 90
+  - name: detail_Object_8_01_02_02
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 86c51b62c15173e4e8128fed774b9b3a, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: 8.597946, y: 35.447704, z: 12.894788}
+    sourceSize: {x: 1.1517868, y: 6.6636496, z: 0.17232132}
+    floatRotation: 90
+  - name: detail_Object_8_02_00_01
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 68a1c036676ee854da3d803314bce78a, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -10.9519825, y: 17.883112, z: -7.161437}
+    sourceSize: {x: 1.1995964, y: 3.508523, z: 4.2615385}
+    floatRotation: 90
+  - name: detail_Object_8_02_01_01
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 5a0fb818dd528574cb6ad8f3ad8b0960, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -8.88702, y: 17.777386, z: 0.0012712479}
+    sourceSize: {x: 0.9604397, y: 10.816894, z: 0.13161469}
+    floatRotation: 90
+  - name: detail_Object_8_02_02_01
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: a30327cb80a83f14ab87fadbb915e72e, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -10.952146, y: 17.882505, z: 7.1655693}
+    sourceSize: {x: 1.2008667, y: 3.5117025, z: 4.2612114}
+    floatRotation: 90
+  - name: detail_Object_8_03_00_01
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 44840082b9ba49b4892eaaac797715cc, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -18.763054, y: 18.483463, z: -6.9550343}
+    sourceSize: {x: 1.7222843, y: 3.0957165, z: 11.360606}
+    floatRotation: 90
+  - name: detail_Object_8_03_01_01
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 21f8d49ab7c69c747bbc4e9443c0714c, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -24.375366, y: 18.873632, z: 0.0012712479}
+    sourceSize: {x: 0.9007416, y: 10.816894, z: 0.13438034}
+    floatRotation: 90
+  - name: detail_Object_8_03_02_01
+    sourceObject: Object_8
+    mesh: {fileID: 4300000, guid: 9a87ab3bc0ccb8b45876a439af6cf82d, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -18.763054, y: 18.487633, z: 6.956354}
+    sourceSize: {x: 1.713934, y: 3.0932732, z: 11.360606}
+    floatRotation: 90
+  - name: detail_Object_9_00_00_00
+    sourceObject: Object_9
+    mesh: {fileID: 4300000, guid: 5ef8e38833956c742a615514da00da72, type: 2}
+    material: {fileID: 2100000, guid: b3509cbd75cd4877952b835b7c26ea38, type: 2}
+    sourceCenter: {x: -10.326707, y: 13.998577, z: 0.02849263}
+    sourceSize: {x: 2.0288506, y: 2.0582438, z: 0.10982704}
+    floatRotation: 90

@@ -52,15 +52,22 @@ Shader "Mavis/FoliageWind"
                 half   _UseAlphaMap;
                 half   _WindBend;
                 half   _WindFrequency;
-                half   _WindTrunkStiffness;
                 half   _WindGust;
                 half   _LocalWindScale;
-                float  _MavisWindAnchorY;
-                float  _MavisWindInvHeight;
-                half   _MavisWindResponse;
                 half   _PlayerPushStrength;
                 half   _PlayerPushHeightBias;
             CBUFFER_END
+
+            UNITY_INSTANCING_BUFFER_START(FoliageInstances)
+                UNITY_DEFINE_INSTANCED_PROP(float, _MavisWindAnchorY)
+                UNITY_DEFINE_INSTANCED_PROP(float, _MavisWindInvHeight)
+                UNITY_DEFINE_INSTANCED_PROP(float, _MavisWindResponse)
+                UNITY_DEFINE_INSTANCED_PROP(float, _WindTrunkStiffness)
+            UNITY_INSTANCING_BUFFER_END(FoliageInstances)
+            #define _MavisWindAnchorY UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _MavisWindAnchorY)
+            #define _MavisWindInvHeight UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _MavisWindInvHeight)
+            #define _MavisWindResponse UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _MavisWindResponse)
+            #define _WindTrunkStiffness UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _WindTrunkStiffness)
 
             // Global wind state (set every frame by FoliageWindDriver)
             float4 _MavisWindDir;       // xyz = direction (normalized), w = time
@@ -84,6 +91,7 @@ Shader "Mavis/FoliageWind"
                 float3 normalOS   : NORMAL;
                 float4 tangentOS  : TANGENT;
                 float2 uv         : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings
@@ -139,6 +147,7 @@ Shader "Mavis/FoliageWind"
 
             Varyings vert(Attributes IN)
             {
+                UNITY_SETUP_INSTANCE_ID(IN);
                 Varyings OUT;
                 float3 positionWS = TransformObjectToWorld(IN.positionOS.xyz);
                 positionWS += ComputeWindOffset(positionWS);
@@ -241,7 +250,9 @@ Shader "Mavis/FoliageWind"
             HLSLPROGRAM
             #pragma target 4.5
             #pragma vertex vert
+            #pragma multi_compile_instancing
             #pragma fragment frag
+            #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
@@ -258,6 +269,7 @@ Shader "Mavis/FoliageWind"
             HLSLPROGRAM
             #pragma target 4.5
             #pragma vertex vert
+            #pragma multi_compile_instancing
             #pragma fragment shadowFrag
             ENDHLSL
         }
@@ -273,6 +285,7 @@ Shader "Mavis/FoliageWind"
             HLSLPROGRAM
             #pragma target 4.5
             #pragma vertex shadowVert
+            #pragma multi_compile_instancing
             #pragma fragment shadowFrag
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             ENDHLSL

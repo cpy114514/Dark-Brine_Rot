@@ -118,6 +118,7 @@ namespace Mavis
             var background = Box(root.transform, "Map backdrop", Vector2.zero, Vector2.zero, GameUITheme.Gray(0,.98f));
             background.anchorMin = Vector2.zero; background.anchorMax = Vector2.one; background.offsetMin = background.offsetMax = Vector2.zero;
             Label(root.transform, "岛屿地图", 40, new Vector2(-165, 470), new Vector2(800, 70), Color.white);
+            GameUITheme.Rule(root.transform,new Vector2(-165,429),new Vector2(814,1),GameUITheme.Muted);
             Box(root.transform, "Map border", new Vector2(-165, 0), new Vector2(814, 814), GameUITheme.Muted);
             var mapArea = Box(root.transform, "Ocean", new Vector2(-165, 0), new Vector2(810, 810), GameUITheme.Gray(.12f));
             mapArea.gameObject.AddComponent<RectMask2D>();
@@ -133,12 +134,13 @@ namespace Mavis
             playerArrow = Label(terrain.transform, "▲", 32, Vector2.zero, new Vector2(44, 44), GameUITheme.Foreground);
             GameUITheme.OutlineSymbol(playerArrow);
             Label(mapArea, "北  N", 23, new Vector2(0, 380), new Vector2(110, 45), Color.white);
-            Label(root.transform, "地图图例", 30, new Vector2(480, 335), new Vector2(330, 60), Color.white);
+            Label(root.transform, "地图图例", 21, new Vector2(480, 335), new Vector2(330, 60), Color.white);
+            GameUITheme.Rule(root.transform,new Vector2(480,292),new Vector2(290,1),GameUITheme.Muted);
             Label(root.transform, "▲  玩家 / 朝向", 24, new Vector2(480, 245), new Vector2(330, 60), GameUITheme.Foreground);
             Label(root.transform, "◆  岛上复活点", 24, new Vector2(480, 165), new Vector2(330, 60), GameUITheme.Foreground);
             Label(root.transform, "●  Nailong", 24, new Vector2(480, 85), new Vector2(330, 60), GameUITheme.Foreground);
             coordinates = Label(root.transform, "", 22, new Vector2(480, -125), new Vector2(360, 190), GameUITheme.Secondary);
-            Label(root.transform, "M / Esc 关闭地图 · 查看时游戏暂停", 23, new Vector2(-165, -465), new Vector2(1100, 55), GameUITheme.Secondary);
+            Label(root.transform, "M / Esc 关闭地图 · 查看时游戏暂停", 17, new Vector2(-165, -465), new Vector2(1100, 55), GameUITheme.Secondary);
             var close = Box(root.transform, "Close map", new Vector2(480, -325), new Vector2(290, 64), GameUITheme.Track);
             var closeButton=close.gameObject.AddComponent<Button>();
             GameUITheme.StyleButton(closeButton);

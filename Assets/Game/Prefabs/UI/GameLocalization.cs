@@ -16,6 +16,8 @@ namespace Mavis
         static GameLanguage language;
         static Font font;
         static TMP_FontAsset tmpFont;
+        static TMP_FontAsset latinFont;
+        static TMP_FontAsset uiFont;
         public static GameLanguage Language { get { EnsureLoaded(); return language; } }
         public static Font Font => font ? font : font = Resources.Load<Font>("Localization/NotoSansCJKsc-Regular");
         public static TMP_FontAsset TMPFont
@@ -26,7 +28,20 @@ namespace Mavis
                 {
                     tmpFont = Resources.Load<TMP_FontAsset>("Localization/NotoSansCJKsc SDF");
                 }
-                return tmpFont;
+                if(!latinFont)latinFont=Resources.Load<TMP_FontAsset>("Fonts & Materials/LiberationSans SDF");
+                if(!uiFont && latinFont)
+                {
+                    // Keep Latin glyphs on their stable atlas in both languages. Chinese
+                    // uses the bundled CJK fallback; the shared source assets are not edited.
+                    uiFont=UnityEngine.Object.Instantiate(latinFont);
+                    uiFont.name="Dark Brine UI";uiFont.hideFlags=HideFlags.DontSave;
+                    uiFont.fallbackFontAssetTable=new List<TMP_FontAsset>();
+                    if(tmpFont)uiFont.fallbackFontAssetTable.Add(tmpFont);
+                    if(latinFont.fallbackFontAssetTable!=null)
+                        foreach(var fallback in latinFont.fallbackFontAssetTable)
+                            if(fallback && fallback!=tmpFont)uiFont.fallbackFontAssetTable.Add(fallback);
+                }
+                return uiFont ? uiFont : tmpFont;
             }
         }
         static void EnsureLoaded()
@@ -36,7 +51,11 @@ namespace Mavis
             loaded = true;
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void Reset() { loaded = false; Changed = null; font = null; tmpFont = null; }
+        static void Reset()
+        {
+            if(uiFont){if(Application.isPlaying)UnityEngine.Object.Destroy(uiFont);else UnityEngine.Object.DestroyImmediate(uiFont);}
+            loaded=false;Changed=null;font=null;tmpFont=null;latinFont=null;uiFont=null;
+        }
         public static void SetLanguage(GameLanguage value)
         {
             EnsureLoaded();
@@ -56,7 +75,18 @@ namespace Mavis
                 foreach (string alias in aliases) result[alias] = pair;
             }
             Add("DARK BRINE: ROT", "暗潮：抽象之岛"); Add("MAIN MENU","主菜单"); Add("FIRST ISLAND","第一座岛");
+            Add("01  /  FIRST ISLAND","01  /  第一座岛");
+            Add("I / Esc to close","I / Esc 关闭");
             Add("CLICK TO SWITCH TERRAIN", "点击切换地形");
+            Add("Fight the shark on the wreckage. Use your usual attacks and dodge.", "在木板上迎战鲨鱼。使用平时的攻击和闪避。");
+            Add("The shark is winding up. Dodge away!", "鲨鱼正在蓄力，快闪开！");
+            Add("Counterattack now!", "趁现在反击！");
+            Add("A huge wave is coming!", "巨浪正在袭来！");
+            Add("Climbing onto the board...", "正在爬上木板…");
+            Add("{0}: climb onto the board", "{0}：爬上木板");
+            Add("Swim near a board, then press {0} to climb", "游到木板旁，按 {0} 爬上去");
+            Add("F: surf on this board  {0}: jump between boards", "F：操控木板冲浪  {0}：在木板之间跳跃");
+            Add("{0}/{1}: forward/back  {2}/{3}: steer  {4}: jump off  F: walk on board", "{0}/{1}：前后移动  {2}/{3}：转向  {4}：跳离  F：恢复步行");
             Add("NEW GAME","开始游戏"); Add("CONTINUE","继续游戏"); Add("SAVE DATA FOUND","已有存档"); Add("NO SAVE DATA","暂无存档");
             Add("PAUSED","游戏暂停"); Add("RESUME","继续游戏"); Add("SETTINGS","设置"); Add("QUIT","退出游戏");
             Add("BACK","返回"); Add("DEFAULTS","恢复默认"); Add("APPLY & SAVE","应用并保存");
@@ -66,6 +96,11 @@ namespace Mavis
             Add("CAMERA DISTANCE","镜头距离"); Add("Third-person follow distance","第三人称镜头跟随距离"); Add("FIELD OF VIEW","视野范围"); Add("Camera perspective","镜头视野角度");
             Add("MOVE FORWARD","向前移动"); Add("MOVE BACK","向后移动"); Add("MOVE LEFT","向左移动"); Add("MOVE RIGHT","向右移动");
             Add("SPRINT","奔跑"); Add("JUMP","跳跃"); Add("DODGE","闪避"); Add("Click to rebind","点击修改按键");
+            Add("HEALING PACK", "治疗包");
+            Add("{0}  HEAL  {1}/2", "{0}  治疗包  {1}/2", "healing.count");
+            Add("Healing pack: +{0} HP", "使用治疗包：+{0} HP", "healing.used");
+            Add("Health is full", "生命值已满", "healing.full");
+            Add("No healing packs remaining", "治疗包已用完", "healing.empty");
             Add("LOOK SENSITIVITY","鼠标灵敏度"); Add("Mouse camera speed","鼠标转动镜头的速度"); Add("INVERT VERTICAL LOOK","反转垂直视角"); Add("Reverse vertical mouse look","反转鼠标上下移动方向");
             Add("MASTER VOLUME","主音量"); Add("Overall game sound","所有游戏声音的音量"); Add("RESOLUTION","分辨率"); Add("Screen pixel dimensions","画面像素尺寸");
             Add("DISPLAY MODE","显示模式"); Add("Borderless or windowed","无边框或窗口模式"); Add("VERTICAL SYNC","垂直同步"); Add("Sync frames with the display","让帧率与显示器同步");
@@ -92,8 +127,8 @@ namespace Mavis
             Add("Close  [I]","关闭  [I]"); Add("Skill loadout  /  Four slots","技能配置  /  四个槽位"); Add("I / Esc to close · Gear collecting only; equipping and skills coming later","I / Esc 关闭   ·   装备可收集，穿戴与技能稍后加入");
             Add("{0}   Empty","{0}   空","skill.empty"); Add("{0}\nUnassigned","{0}\n未配置","skill.unassigned");
             Add("{0}     Empty","{0}     空","gear.empty"); Add("{0}  Collected {1}","{0}  已获得 {1}","gear.count");
-            Add("Skill slot {0} · Unassigned\n\nNo skills available yet.\nChoose a skill here when skills are added.\n\n1–4 select a slot; they do not cast skills.","技能槽 {0} · 未配置\n\n技能还在修炼，暂未开放。\n后续可在这里选择技能，放入当前槽位。\n\n数字 1–4 只切换选中槽位，不会释放技能。","skill.details");
-            Add("{0} gear · Not equipped\n\n{1}\n\nDefeat Karen Fairy, then approach the drops to collect them.\nCollection only for now: no equipping or stat bonuses.","{0}装备 · 未穿戴\n\n{1}\n\n击败猪妖小仙人后靠近掉落物可自动拾取。\n暂时只收集，不提供穿戴或属性加成。","gear.details");
+            Add("SKILL SLOT {0}\n\nUnassigned.\n\n1–4  /  Select a slot","技能槽 {0}\n\n未配置。\n\n1–4  /  选择槽位","skill.details");
+            Add("{0} collection\n\n{1}\n\nApproach dropped gear to collect it.","{0}收集\n\n{1}\n\n靠近掉落的装备可自动拾取。","gear.details");
             Add("No gear collected yet","暂无已获得装备","gear.none"); Add("Collected:","已获得：","gear.collected"); Add("Loot acquired: {0}","喜提战利品：{0}","gear.pickup");
             Add("Karen Fairy Clogs","猪妖小仙人洞洞鞋", "奶龙洞洞鞋", "Nailong Clogs"); Add("Karen Fairy Trousers","猪妖小仙人下装", "奶龙下装", "Nailong Trousers"); Add("Karen Fairy Round Glasses","猪妖小仙人圆框眼镜", "奶龙圆框眼镜", "Nailong Round Glasses");
             Add("SCROLL FOR MORE","向下滚动查看更多");

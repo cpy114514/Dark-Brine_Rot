@@ -133,7 +133,19 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool FastSwimming { get; private set; }
     // Story cinematics can keep buoyancy, animation and the camera running while withholding input.
     public bool ExternalControlLock { get; set; }
+    [System.NonSerialized] public bool OnFloatingWreckDeck;
     public bool ExternalMovementLock { get; set; }
+    public string ExternalMovementAnimation { get; set; }
+    public Transform ExternalCameraFocus { get; set; }
+    public bool KeepCameraAboveWater { get; set; }
+
+    // Leave a moving deck through the usual jump, stamina and gravity code.
+    public void LeaveMovingPlatform(Vector3 velocity)
+    {
+        planarVelocity = Vector3.ProjectOnPlane(velocity, Vector3.up);
+        verticalSpeed = -groundStickSpeed;
+        coyoteTimer = coyoteTime;
+    }
     public float LowestFootWorldOffset => GetLowestFootOffset();
     ParticleSystem waterRipples;
     ParticleSystem waterDroplets;
@@ -227,6 +239,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         yaw = rotation.y;
         LockCursor();
         if (GetComponent<Mavis.PlayerHealth>() == null) gameObject.AddComponent<Mavis.PlayerHealth>();
+        if (GetComponent<Mavis.SahurHealingPacks>() == null) gameObject.AddComponent<Mavis.SahurHealingPacks>();
         if (GetComponent<Mavis.PlayerDeathRespawn>() == null) gameObject.AddComponent<Mavis.PlayerDeathRespawn>();
         if (GetComponent<Mavis.IslandMapUI>() == null) gameObject.AddComponent<Mavis.IslandMapUI>();
         enemyLock = GetComponent<Mavis.EnemyLockOn>();
@@ -280,7 +293,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             authoredAttackHeight = unsupportedAttackSpeed = 0f;
             trackingAttackRoot = wasSwimming = FastSwimming = false;
             playerStamina?.StopSprinting();
-            SetMotion(0, "Locomotion", .12f);
+            if (string.IsNullOrEmpty(ExternalMovementAnimation)) SetMotion(0, "Locomotion", .12f);
+            else if (animator != null && (combat == null || !combat.IsCombatMotionActive))
+            {
+                motionState = 9;
+                if (!animator.GetCurrentAnimatorStateInfo(0).IsName(ExternalMovementAnimation) &&
+                    !(animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName(ExternalMovementAnimation)))
+                    animator.CrossFadeInFixedTime(ExternalMovementAnimation, .12f, 0, 0f);
+            }
             if (animator != null) animator.SetFloat(SpeedId, 0f);
             return;
         }
@@ -293,6 +313,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (input.sqrMagnitude > 1f)
             input.Normalize();
         if (!acceptInput) input = Vector3.zero;
+
+        if (acceptInput) combat?.TryCancelForMovementInput();
 
         // Running is direction-agnostic: any held WASD direction can sprint.
         bool wantsSprint = input.sqrMagnitude > 0.01f &&
@@ -774,6 +796,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             var head = animator.GetBoneTransform(HumanBodyBones.Head);
             if (head != null) focus = head.position + Vector3.up * 0.25f;
         }
+        if (ExternalCameraFocus != null) focus = ExternalCameraFocus.position + Vector3.up * .25f;
         float followDistance = cameraDistance;
         if (enemyLock != null && enemyLock.IsLocked && !Mavis.SahurLoadoutUI.BlocksInput && !PauseSettingsMenu.IsOpen)
         {
@@ -804,6 +827,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             }
         }
         desiredPosition = focus - cameraRotation * Vector3.forward * closest;
+        if (KeepCameraAboveWater && swimmingOcean != null)
+            desiredPosition.y = Mathf.Max(desiredPosition.y, OceanSurfaceSampler.Height(swimmingOcean, desiredPosition, playerCamera) + .8f);
 
         if (!cameraInitialized)
         {
@@ -929,7 +954,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     bool IsGroundedOrOnSea()
     {
-        return characterController != null && characterController.isGrounded;
+        return characterController != null && (characterController.isGrounded || OnFloatingWreckDeck);
     }
 
     bool IsAtSeaSurface()
@@ -944,6 +969,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     bool IsSwimming()
     {
         if (ExternalMovementLock) return false;
+        // A wave washing over a physical wreck deck does not remove its solid footing.
+        if (OnFloatingWreckDeck) return false;
         if (characterController == null || swimmingOcean == null || !swimmingOcean.isActiveAndEnabled ||
             swimExitJumpTimer > 0f || !IsAtSeaSurface()) return false;
         // Grounded does not necessarily mean dry: the new seabed can be far
@@ -1074,6 +1101,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (shader == null)
             return;
         waterVfxMaterial = new Material(shader) { name = "Procedural Water VFX Material" };
+        waterVfxMaterial.SetColor("_Tint", new Color(.9f, .94f, .95f));
 
         waterRippleMesh = CreateRippleMesh();
         waterDropletMesh = CreateDropletMesh();
@@ -1086,12 +1114,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         var ringColor = waterRipples.colorOverLifetime;
         ringColor.enabled = true;
         ringColor.color = new ParticleSystem.MinMaxGradient(CreateFadeGradient(
-            new Color(0.72f, 0.98f, 1f, 0.78f), new Color(0.30f, 0.70f, 0.82f, 0f)));
+            new Color(.88f, .93f, .94f, .20f), new Color(.66f, .74f, .77f, 0f)));
 
         var dropletColor = waterDroplets.colorOverLifetime;
         dropletColor.enabled = true;
         dropletColor.color = new ParticleSystem.MinMaxGradient(CreateFadeGradient(
-            new Color(0.92f, 1f, 1f, 0.92f), new Color(0.38f, 0.76f, 0.88f, 0f)));
+            new Color(.9f, .94f, .96f, .48f), new Color(.65f, .73f, .77f, 0f)));
     }
 
     void UpdateWaterSplash(float impactSpeed)
@@ -1131,9 +1159,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             position = contact,
             rotation3D = new Vector3(0f, Random.Range(0f, 360f), 0f),
-            startSize = Mathf.Lerp(0.55f, 1.35f, intensity),
-            startLifetime = Mathf.Lerp(0.40f, 0.78f, intensity),
-            startColor = new Color(0.75f, 0.98f, 1f, Mathf.Lerp(0.42f, 0.82f, intensity))
+            startSize = Mathf.Lerp(.45f, 1.1f, intensity),
+            startLifetime = Mathf.Lerp(.32f, .60f, intensity),
+            startColor = new Color(.9f, .94f, .95f, Mathf.Lerp(.20f, .42f, intensity))
         };
         waterRipples.Emit(ripple, intensity > 0.82f ? 2 : 1);
 
@@ -1144,10 +1172,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             var particle = new ParticleSystem.EmitParams
             {
                 position = contact + outward * Random.Range(0.06f, 0.30f),
-                velocity = outward * Random.Range(0.8f, 2.8f) * intensity + Vector3.up * Random.Range(2.2f, 4.8f) * intensity,
-                startSize = Random.Range(0.055f, 0.17f) * Mathf.Lerp(0.8f, 1.5f, intensity),
+                velocity = outward * Random.Range(.5f, 1.6f) * intensity + Vector3.up * Random.Range(1.2f, 3f) * intensity,
+                startSize = Random.Range(.025f, .075f) * Mathf.Lerp(.8f, 1.2f, intensity),
                 startLifetime = Random.Range(0.30f, 0.56f),
-                startColor = Color.Lerp(new Color(0.32f, 0.75f, 0.88f, 0.65f), new Color(0.96f, 1f, 1f, 0.95f), Random.value)
+                startColor = Color.Lerp(new Color(.72f, .8f, .84f, .35f), new Color(.94f, .97f, .98f, .65f), Random.value)
             };
             waterDroplets.Emit(particle, 1);
         }
@@ -1173,6 +1201,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         renderer.mesh = mesh;
         renderer.sharedMaterial = waterVfxMaterial;
         renderer.enableGPUInstancing = false;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         particleSystem.Play();
         return particleSystem;
     }
@@ -1230,7 +1259,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void UpdateUnderwaterPresentation(bool swimming)
     {
-        float targetBlend = swimming ? underwaterOverlayStrength : 0f;
+        float targetBlend = swimming ? underwaterOverlayStrength * .65f : 0f;
         underwaterBlend = Mathf.MoveTowards(underwaterBlend, targetBlend, Time.deltaTime * 2.8f);
         if (underwaterOverlayRenderer == null || underwaterOverlayMaterial == null)
             return;
@@ -1243,6 +1272,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     {
         if (underwaterBubbles == null)
             return;
+        // Staying still at the surface should not create a perpetual bubble fountain.
+        if (!moving) { underwaterBubbleTimer = underwaterBubbleInterval; return; }
 
         underwaterBubbleTimer -= Time.deltaTime;
         float interval = moving ? underwaterBubbleInterval : underwaterBubbleInterval * 2.8f;
@@ -1254,12 +1285,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             position = transform.position + trail + Vector3.up * Random.Range(0.18f, 0.62f),
             velocity = trail * Random.Range(0.45f, 1.0f) + Vector3.up * Random.Range(0.32f, 0.72f),
-            startSize = Random.Range(0.045f, moving ? 0.13f : 0.09f),
+            startSize = Random.Range(.018f, .055f),
             startLifetime = Random.Range(0.82f, 1.45f),
-            startColor = new Color(0.76f, 0.96f, 1f, Random.Range(0.42f, 0.72f))
+            startColor = new Color(.86f, .91f, .94f, Random.Range(.20f, .36f))
         };
-        underwaterBubbles.Emit(bubble, moving ? Random.Range(1, 3) : 1);
-        underwaterBubbleTimer = interval;
+        underwaterBubbles.Emit(bubble, 1);
+        underwaterBubbleTimer = interval * 1.8f;
     }
 
     static Gradient CreateFadeGradient(Color start, Color end)
@@ -1280,8 +1311,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             float angle = index / (float)segments * Mathf.PI * 2f;
             Vector3 direction = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
-            vertices[index * 2] = direction * 0.60f;
-            vertices[index * 2 + 1] = direction;
+            float radius = 1f + .055f * Mathf.Sin(angle * 5f) + .035f * Mathf.Sin(angle * 9f + 1.4f);
+            vertices[index * 2] = direction * (radius - .055f);
+            vertices[index * 2 + 1] = direction * radius;
             int next = (index + 1) % segments;
             int tri = index * 6;
             triangles[tri] = index * 2;

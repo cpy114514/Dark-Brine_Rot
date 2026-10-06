@@ -5,11 +5,11 @@ using UnityEngine.InputSystem;
 /// <summary>Shared keyboard bindings for Sahur; stored separately from the menu prefab.</summary>
 public static class GameInputSettings
 {
-    public enum Action { Forward, Back, Left, Right, Sprint, Jump, Dodge }
+    public enum Action { Forward, Back, Left, Right, Sprint, Jump, Dodge, Heal }
 
     static readonly Key[] Defaults =
     {
-        Key.W, Key.S, Key.A, Key.D, Key.LeftShift, Key.Space, Key.LeftCtrl
+        Key.W, Key.S, Key.A, Key.D, Key.LeftShift, Key.Space, Key.LeftCtrl, Key.H
     };
 
     static readonly Key[] Current = (Key[])Defaults.Clone();

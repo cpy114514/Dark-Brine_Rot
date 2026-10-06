@@ -217,16 +217,19 @@ namespace Mavis
             var shade = (RectTransform)panel.transform;
             shade.anchorMin = Vector2.zero; shade.anchorMax = Vector2.one; shade.sizeDelta = Vector2.zero;
             shade.GetComponent<Image>().raycastTarget = true;
-            var window = Box(shade, "Loadout window", new Vector2(.5f, .5f), Vector2.zero, new Vector2(1040, 680), GameUITheme.Surface);
+            var window = Box(shade, "Loadout window", new Vector2(.5f, .5f), Vector2.zero, new Vector2(1080, 700), GameUITheme.Surface);
+            GameUITheme.Rule(window,new Vector2(0,350),new Vector2(1080,1),GameUITheme.Muted);
+            GameUITheme.Rule(window,new Vector2(0,242),new Vector2(968,1),GameUITheme.Track);
+            GameUITheme.Rule(window,new Vector2(-196,-8),new Vector2(1,424),GameUITheme.Track);
             Label(window, "SAHUR  /  装备与技能", new Vector2(-245, 285), new Vector2(470, 48), 30, Color.white);
             Button(window, "关闭  [I]", new Vector2(408, 285), new Vector2(150, 42), () => SetOpen(false));
-            Label(window, "装备", new Vector2(-345, 210), new Vector2(250, 35), 23, accent);
+            Label(window, "装备", new Vector2(-345, 210), new Vector2(250, 35), 16, GameUITheme.Secondary);
             for (int i = 0; i < 5; i++)
             {
                 int index = i;
                 equipmentLabels[i] = Button(window, equipmentNames[i] + "     空", new Vector2(-345, 140 - i * 80), new Vector2(270, 62), () => SelectEquipment((EquipmentSlot)index));
             }
-            Label(window, "技能配置  /  四个槽位", new Vector2(105, 210), new Vector2(570, 35), 23, accent);
+            Label(window, "技能配置  /  四个槽位", new Vector2(105, 210), new Vector2(570, 35), 16, GameUITheme.Secondary);
             for (int i = 0; i < 4; i++)
             {
                 int index = i;
@@ -237,7 +240,7 @@ namespace Mavis
             var info = Box(window, "Available skills and detail", new Vector2(.5f, .5f), new Vector2(110, -80), new Vector2(590, 265), track);
             details = Label(info, "", Vector2.zero, new Vector2(540, 225), 21, Color.white);
             details.alignment = TextAnchor.UpperLeft;
-            Label(window, "I / Esc 关闭   ·   装备可收集，穿戴与技能稍后加入", new Vector2(0, -290), new Vector2(940, 36), 18, GameUITheme.Secondary);
+            Label(window, "I / Esc 关闭", new Vector2(0, -304), new Vector2(940, 36), 15, GameUITheme.Secondary);
         }
 
         RectTransform Box(Transform parent, string name, Vector2 anchor, Vector2 position, Vector2 size, Color color)

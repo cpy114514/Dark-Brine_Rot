@@ -182,6 +182,7 @@ public sealed class Story1FloatingPlank : MonoBehaviour
         if (shader == null) return;
         runtimeSurfMaterial = surfMaterial != null ? new Material(surfMaterial) : new Material(shader);
         runtimeSurfMaterial.name = "Plank Surf Spray (runtime)";
+        runtimeSurfMaterial.SetColor("_Tint",new Color(.9f,.94f,.96f));
         sprayMesh = new Mesh { name = "Plank Water Droplet" };
         sprayMesh.vertices = new[] { Vector3.up, Vector3.down, Vector3.right, Vector3.left, Vector3.forward, Vector3.back };
         sprayMesh.triangles = new[] { 0,2,4, 0,4,3, 0,3,5, 0,5,2, 1,4,2, 1,3,4, 1,5,3, 1,2,5 };
@@ -196,7 +197,7 @@ public sealed class Story1FloatingPlank : MonoBehaviour
         main.loop = true;
         main.playOnAwake = false;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.maxParticles = 220;
+        main.maxParticles = 80;
         main.startLifetime = .65f;
         main.startSpeed = 0f;
         main.gravityModifier = .8f;
@@ -207,8 +208,8 @@ public sealed class Story1FloatingPlank : MonoBehaviour
         var color = surfSpray.colorOverLifetime;
         color.enabled = true;
         var gradient = new Gradient();
-        gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(new Color(.55f, .85f, .95f), 1f) },
-            new[] { new GradientAlphaKey(.9f, 0f), new GradientAlphaKey(.65f, .4f), new GradientAlphaKey(0f, 1f) });
+        gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(new Color(.72f, .79f, .82f), 1f) },
+            new[] { new GradientAlphaKey(.55f, 0f), new GradientAlphaKey(.3f, .4f), new GradientAlphaKey(0f, 1f) });
         color.color = gradient;
         var size = surfSpray.sizeOverLifetime;
         size.enabled = true;
@@ -247,21 +248,21 @@ public sealed class Story1FloatingPlank : MonoBehaviour
         if (surfSpray == null || speed <= .4f) { sprayTimer = 0f; return; }
         sprayTimer -= deltaTime;
         if (sprayTimer > 0f) return;
-        sprayTimer = Mathf.Lerp(.13f, .045f, strength);
+        sprayTimer = Mathf.Lerp(.20f, .11f, strength);
         for (int side = -1; side <= 1; side += 2)
         {
             Vector3 contact = transform.position + direction * (halfLength * .8f) + across * (side * halfWidth);
             contact.y = ocean != null ? ocean.SampleSurfaceHeight(contact, time) + .1f : transform.position.y - freeboard + .1f;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 2; i++)
             {
                 var droplet = new ParticleSystem.EmitParams
                 {
                     position = contact + across * Random.Range(-.15f, .15f),
-                    velocity = across * (side * Random.Range(1f, 2.7f) * strength) - direction * (speed * .35f) +
-                        Vector3.up * Random.Range(1.4f, 3.2f) * (.4f + strength),
-                    startSize = Random.Range(.07f, .20f) * (.65f + strength),
+                    velocity = across * (side * Random.Range(.6f, 1.6f) * strength) - direction * (speed * .25f) +
+                        Vector3.up * Random.Range(.8f, 1.7f) * (.4f + strength),
+                    startSize = Random.Range(.025f, .07f) * (.65f + strength),
                     startLifetime = Random.Range(.4f, .75f),
-                    startColor = new Color(.83f, .98f, 1f, .9f)
+                    startColor = new Color(.9f, .94f, .96f, .55f)
                 };
                 surfSpray.Emit(droplet, 1);
             }

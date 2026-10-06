@@ -9,6 +9,7 @@ Shader "DarkBrine/Procedural Sky"
         _CloudCoverage ("Weather coverage", Range(0, 1)) = 0.55
         _CloudStrength ("Cloud strength", Range(0, 1)) = 0.72
         _CloudDetail ("Raymarch quality", Range(1, 5)) = 4
+        _CloudRenderDistance ("Cloud render distance (m)", Range(4000, 48000)) = 12000
         _CloudSpeed ("Wind speed", Range(0, 1)) = 0.10
         _SunGlow ("Sunlight intensity", Range(0, 1)) = 0.72
         _Daylight ("Daylight", Range(0, 1)) = 1
@@ -43,6 +44,7 @@ Shader "DarkBrine/Procedural Sky"
                 half _CloudCoverage;
                 half _CloudStrength;
                 half _CloudDetail;
+                float _CloudRenderDistance;
                 half _CloudSpeed;
                 half _SunGlow;
                 half _Daylight;
@@ -205,20 +207,23 @@ Shader "DarkBrine/Procedural Sky"
                 float cloudTop = cloudBase + cloudThickness;
                 float3 cloudLight = 0.0;
 
-                // Near the horizon, a cloud ray travels tens of kilometres and
-                // sparse volume samples alias into white speckles. The distant
-                // angular cloud layer below covers that range instead.
-                if (rayDirection.y > 0.14)
+                // Extend detailed clouds toward the horizon, then blend into the
+                // angular layer beyond the view distance to avoid undersampled rays.
+                float cloudDistance = clamp(_CloudRenderDistance, 4000.0, 48000.0);
+                float horizonStart = (cloudBase - rayOrigin.y) / cloudDistance;
+                if (rayDirection.y > horizonStart)
                 {
                     float entry = max(0.0, (cloudBase - rayOrigin.y) / rayDirection.y);
-                    float exit = min(24000.0, (cloudTop - rayOrigin.y) / rayDirection.y);
+                    float exit = min(cloudDistance, (cloudTop - rayOrigin.y) / rayDirection.y);
                     if (exit > entry)
                     {
                         int steps = _CloudDetail < 3.0 ? 8 : (_CloudDetail < 5.0 ? 14 : 20);
-                        if (entry > 3500.0) steps = max(10, steps * 3 / 4);
+                        if (entry > 3500.0) steps = max(10, steps);
                         else if (entry > 1600.0) steps = max(6, steps * 3 / 4);
                         float segmentLength = (exit - entry) / steps;
-                        float jitter = Hash31(rayDirection * 127.7) - 0.5;
+                        // Smooth angular jitter breaks up sampling bands without
+                        // introducing pixel-sized grain in the distant cloud layer.
+                        float jitter = ValueNoise(rayDirection * 37.7) - 0.5;
                         float jitterStrength = 0.65 * (1.0 - saturate((entry - 4000.0) / 8000.0));
                         float transmittance = 1.0;
                         [loop]
@@ -246,7 +251,7 @@ Shader "DarkBrine/Procedural Sky"
                 }
 
                 float3 cloudColor = cloudLight / max(cloudAlpha, 0.001);
-                float horizonMix = 1.0 - smoothstep(0.08, 0.22, rayDirection.y);
+                float horizonMix = 1.0 - smoothstep(horizonStart, horizonStart * 4.0, rayDirection.y);
                 if (horizonMix > 0.0)
                 {
                     float2 farWind = _Time.y * _CloudSpeed * float2(0.021, -0.014);

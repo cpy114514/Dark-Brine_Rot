@@ -51,20 +51,13 @@ Shader "DarkBrine/Underwater Overlay"
             half4 frag(Varyings input) : SV_Target
             {
                 float2 uv = input.uv;
-                float time = _Time.y;
                 float2 centred = uv * 2.0 - 1.0;
                 float vignette = saturate(1.0 - dot(centred, centred) * 0.36);
 
-                // Two moving interference patterns make restrained caustics
-                // without requiring a texture or a screen-space post effect.
-                float causticA = sin((uv.x * 17.0 + uv.y * 8.0) + time * 1.25);
-                float causticB = sin((uv.x * -10.0 + uv.y * 19.0) - time * 0.85);
-                float caustics = pow(saturate((causticA + causticB) * 0.5), 5.0) * vignette;
-                float surfaceDrift = sin(uv.y * 34.0 + time * 2.0 + sin(uv.x * 8.0)) * 0.018;
-
-                half alpha = saturate(_Intensity * (0.43 + (1.0 - vignette) * 0.20 + surfaceDrift));
-                half3 color = _Tint.rgb + half3(0.08, 0.18, 0.16) * caustics;
-                return half4(color, alpha);
+                // Absorption remains subtle; caustics belong on submerged
+                // geometry rather than being drawn over the entire camera image.
+                half alpha = saturate(_Intensity * (0.35 + (1.0 - vignette) * 0.10));
+                return half4(_Tint.rgb, alpha);
             }
             ENDHLSL
         }

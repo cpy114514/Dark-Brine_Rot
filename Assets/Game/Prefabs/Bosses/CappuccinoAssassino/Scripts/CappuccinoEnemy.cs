@@ -24,7 +24,6 @@ namespace Mavis
 
         Health health;
         CappuccinoUltimate ultimate;
-        MaterialPropertyBlock properties;
         Vector3 restPosition;
         Quaternion restRotation;
         float hitTime = -100f;
@@ -36,12 +35,12 @@ namespace Mavis
 
         void Awake()
         {
+            FitBodyCollision();
             health = GetComponent<Health>();
             ultimate = GetComponent<CappuccinoUltimate>();
             health.OnDamaged ??= new UnityEvent<float>();
             health.OnDeath ??= new UnityEvent();
             health.OnHealthChanged ??= new UnityEvent<float, float>();
-            properties = new MaterialPropertyBlock();
             if (visual != null)
             {
                 restPosition = visual.localPosition;
@@ -51,6 +50,30 @@ namespace Mavis
             health.OnDamaged.AddListener(OnHit);
             health.OnDeath.AddListener(OnDeath);
             if (health.IsDead) OnDeath();
+        }
+
+        public void FitBodyCollision()
+        {
+            var motor=GetComponent<CharacterController>();
+            if(motor==null||bodyRenderers==null)return;
+            // Fit the cup, excluding its swords. The old 1.65 m radius left the
+            // sides of the 4.48 m wide cup outside the physical character body.
+            foreach(var renderer in bodyRenderers)
+            {
+                if(renderer==null||renderer.name!="Capuchino")continue;
+                Bounds source=renderer.localBounds;
+                var frame=renderer is SkinnedMeshRenderer skin&&skin.rootBone!=null?skin.rootBone:renderer.transform;
+                var matrix=transform.worldToLocalMatrix*frame.localToWorldMatrix;
+                Bounds local=new Bounds(matrix.MultiplyPoint3x4(source.center),Vector3.zero);
+                for(int x=-1;x<=1;x+=2)for(int y=-1;y<=1;y+=2)for(int z=-1;z<=1;z+=2)
+                    local.Encapsulate(matrix.MultiplyPoint3x4(source.center+Vector3.Scale(source.extents,new Vector3(x,y,z))));
+                motor.radius=Mathf.Max(local.extents.x,local.extents.z)+.06f;
+                motor.height=Mathf.Max(local.size.y,motor.radius*2);
+                motor.center=local.center;
+                motor.detectCollisions=true;
+                bodyCollider=motor;
+                break;
+            }
         }
 
         void OnHit(float amount)
@@ -66,10 +89,27 @@ namespace Mavis
 
         public bool TryPlayAttack() => TryPlayAttack(Time.time);
 
+        // The boss action clock owns the authored pose and the matching damage window.
+        internal void SetBossPose(float normalized, bool mirrored = false)
+        {
+            if (animator == null || deathTime >= 0f) return;
+            animator.ResetTrigger(AttackTrigger);
+            animator.speed = 0f;
+            animator.Play(mirrored ? "AttackMirrored" : "Attack", 0, Mathf.Clamp01(normalized));
+        }
+
+        internal void ResumeLocomotion()
+        {
+            if (animator == null || deathTime >= 0f) return;
+            animator.speed = 1f;
+            animator.ResetTrigger(AttackTrigger);
+            animator.CrossFadeInFixedTime("Idle", .14f);
+        }
+
         internal bool TryPlayAttack(float now)
         {
             if (animator == null || deathTime >= 0f ||
-                (health != null && health.IsDead) || now < nextAttackTime) return false;
+                (health != null && health.IsDead) || (ultimate != null && ultimate.AttackLocked) || now < nextAttackTime) return false;
             animator.SetTrigger(AttackTrigger);
             nextAttackTime = now + (attackClip != null ? attackClip.length : 1.5f) + 0.25f;
             return true;
@@ -82,6 +122,7 @@ namespace Mavis
             if (bodyCollider != null) bodyCollider.enabled = false;
             if (animator != null && deathClip != null)
             {
+                animator.speed = 1f;
                 animator.ResetTrigger(AttackTrigger);
                 animator.SetTrigger(DeathTrigger);
                 motionRig?.SetDeathGrounding();
@@ -94,15 +135,6 @@ namespace Mavis
         void Update()
         {
             float hit = Mathf.Clamp01(1f - (Time.time - hitTime) / Mathf.Max(0.01f, hitReactionDuration));
-            Color combatColor = ultimate != null && ultimate.IsEmpowered ? new Color(1f, 0.6f, 0.3f) : Color.white;
-            if (bodyRenderers != null)
-                foreach (var renderer in bodyRenderers)
-                {
-                    if (renderer == null) continue;
-                    renderer.GetPropertyBlock(properties);
-                    properties.SetColor("_BaseColor", Color.Lerp(combatColor, hitColor, hit));
-                    renderer.SetPropertyBlock(properties);
-                }
             if (visual == null) return;
             if (deathTime >= 0f)
             {

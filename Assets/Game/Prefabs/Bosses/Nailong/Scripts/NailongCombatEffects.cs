@@ -8,14 +8,6 @@ namespace Mavis
         readonly List<NailongSpitProjectile> projectiles = new List<NailongSpitProjectile>();
         NailongAttackMotion motion;
         Material salivaMaterial;
-        Material waveMaterial;
-        LineRenderer wave;
-        float waveStarted;
-        float waveRadius;
-        float tauntEnds;
-        TextMesh taunt;
-        Font tauntFont;
-        bool ownsTauntFont;
         AudioSource voice;
         AudioClip roarClip;
         AudioClip scoldClip;
@@ -25,8 +17,7 @@ namespace Mavis
         void Awake()
         {
             motion = GetComponent<NailongAttackMotion>();
-            salivaMaterial = MakeMaterial("Nailong Saliva", new Color(0.65f, 0.95f, 0.3f));
-            waveMaterial = MakeMaterial("Nailong Roar Wave", new Color(1f, 0.8f, 0.25f));
+            salivaMaterial = MakeMaterial("Nailong Saliva", new Color(0.46f, 0.52f, 0.39f));
             voice = gameObject.AddComponent<AudioSource>();
             voice.spatialBlend = 1f;
             voice.minDistance = 4f;
@@ -40,7 +31,7 @@ namespace Mavis
 
         static Material MakeMaterial(string name, Color color)
         {
-            var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
+            var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Sprites/Default");
             if (shader == null) return null;
             var material = new Material(shader) { name = name };
             if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", color);
@@ -66,50 +57,9 @@ namespace Mavis
             return clip;
         }
 
-        public void ShowTaunt(float seconds)
-        {
-            if (taunt == null)
-            {
-                var obj = new GameObject("Nailong Taunt");
-                obj.transform.SetParent(transform, false);
-                taunt = obj.AddComponent<TextMesh>();
-                tauntFont = GameLocalization.Font ? GameLocalization.Font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-                ownsTauntFont = false;
-                taunt.font = tauntFont;
-                taunt.GetComponent<MeshRenderer>().sharedMaterial = tauntFont.material;
-                taunt.text = GameLocalization.Text("nailong.taunt");
-                taunt.fontSize = 40;
-                taunt.characterSize = 0.06f;
-                taunt.anchor = TextAnchor.MiddleCenter;
-                taunt.color = GameUITheme.Foreground;
-            }
-            taunt.gameObject.SetActive(true);
-            taunt.text = GameLocalization.Text("nailong.taunt");
-            tauntEnds = Time.time + seconds;
-            voice.PlayOneShot(scoldClip);
-        }
-
-        public void HideTaunt() { if (taunt != null) taunt.gameObject.SetActive(false); }
-
-        public void Roar(float radius)
-        {
-            if (wave == null)
-            {
-                var obj = new GameObject("Nailong Roar Shockwave");
-                obj.transform.SetParent(transform, false);
-                wave = obj.AddComponent<LineRenderer>();
-                wave.positionCount = 65;
-                wave.loop = true;
-                wave.useWorldSpace = true;
-                wave.widthMultiplier = 0.14f;
-                wave.sharedMaterial = waveMaterial;
-                wave.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            }
-            waveStarted = Time.time;
-            waveRadius = radius;
-            wave.enabled = true;
-            voice.PlayOneShot(roarClip);
-        }
+        public void ShowTaunt(float seconds) { voice.PlayOneShot(scoldClip); }
+        public void HideTaunt() { }
+        public void Roar(float radius) { voice.PlayOneShot(roarClip); }
 
         public NailongSpitProjectile Spit(Transform target, float speed, float damage)
         {
@@ -126,46 +76,12 @@ namespace Mavis
             ownCollider.enabled = false;
             Destroy(ownCollider);
             obj.GetComponent<MeshRenderer>().sharedMaterial = salivaMaterial;
-            var trail = obj.AddComponent<TrailRenderer>();
-            trail.time = 0.12f;
-            trail.startWidth = 0.14f;
-            trail.endWidth = 0.02f;
-            trail.sharedMaterial = salivaMaterial;
-            trail.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             var projectile = obj.AddComponent<NailongSpitProjectile>();
             projectile.Launch(transform, target, velocity, damage);
             projectiles.RemoveAll(p => p == null);
             projectiles.Add(projectile);
             voice.PlayOneShot(spitClip, 0.5f);
             return projectile;
-        }
-
-        void LateUpdate()
-        {
-            if (taunt != null && taunt.gameObject.activeSelf)
-            {
-                taunt.text = GameLocalization.Text("nailong.taunt");
-                if (Time.time > tauntEnds) HideTaunt();
-                else
-                {
-                    taunt.transform.position = (motion != null ? motion.MouthPosition : transform.position + Vector3.up * 2f) + Vector3.up * 1.1f;
-                    var camera = Camera.main;
-                    if (camera != null) taunt.transform.rotation = camera.transform.rotation;
-                }
-            }
-            if (wave == null || !wave.enabled) return;
-            float progress = Mathf.Clamp01((Time.time - waveStarted) / 0.55f);
-            if (progress >= 1f) { wave.enabled = false; return; }
-            float radius = Mathf.Lerp(0.5f, waveRadius, progress);
-            var capsule = GetComponent<CapsuleCollider>();
-            Vector3 center = transform.position;
-            center.y = capsule != null ? capsule.bounds.min.y + 0.1f : center.y + 0.1f;
-            for (int i = 0; i < wave.positionCount; i++)
-            {
-                float angle = i * Mathf.PI * 2f / (wave.positionCount - 1);
-                wave.SetPosition(i, center + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * radius);
-            }
-            wave.widthMultiplier = 0.16f * (1f - progress) + 0.015f;
         }
 
         public void Cancel()
@@ -178,7 +94,6 @@ namespace Mavis
         public void StopPresentation()
         {
             HideTaunt();
-            if (wave != null) wave.enabled = false;
             if (voice != null) voice.Stop();
         }
 
@@ -187,12 +102,9 @@ namespace Mavis
         {
             Cancel();
             if (salivaMaterial != null) Destroy(salivaMaterial);
-            if (waveMaterial != null) Destroy(waveMaterial);
             if (roarClip != null) Destroy(roarClip);
             if (scoldClip != null) Destroy(scoldClip);
             if (spitClip != null) Destroy(spitClip);
-            // Built-in fonts are shared assets, unlike dynamically created OS fonts.
-            if (tauntFont != null && ownsTauntFont) Destroy(tauntFont);
         }
     }
 }

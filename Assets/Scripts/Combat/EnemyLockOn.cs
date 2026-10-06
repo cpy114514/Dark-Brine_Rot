@@ -12,7 +12,7 @@ namespace Mavis
         public float obstructionGrace = 0.8f;
         public Transform Target { get; private set; }
         public bool IsLocked => Target != null;
-        public Vector3 AimPoint => targetRenderer != null ? targetRenderer.bounds.center
+        public Vector3 AimPoint => targetHealth is Story1SharkHealth shark ? shark.LockPoint : targetRenderer != null ? targetRenderer.bounds.center
             : targetCollider != null ? targetCollider.bounds.center : Target != null ? Target.position + Vector3.up : transform.position;
         Component targetHealth;
         Renderer targetRenderer;
@@ -43,6 +43,8 @@ namespace Mavis
         }
         Vector3 Point(Component hp)
         {
+            // Keep the partly submerged story shark's marker on its exposed dorsal area.
+            if(hp is Story1SharkHealth shark)return shark.LockPoint;
             var skin = hp.GetComponentInChildren<SkinnedMeshRenderer>();
             if (skin != null) return skin.bounds.center;
             var collider = hp.GetComponentInChildren<Collider>();

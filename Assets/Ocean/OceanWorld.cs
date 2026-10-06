@@ -86,6 +86,8 @@ public sealed class OceanWorld : MonoBehaviour
 
     // Initial conditions are replaced by DayNightCycle once the lighting scene is active.
     [Header("Dynamic Sky")]
+    [Tooltip("Distance in metres before detailed clouds fade into the horizon sky.")]
+    [Range(4000f, 48000f)] public float cloudRenderDistance = 12000f;
     [HideInInspector]
     [Range(0f, 1f)] public float cloudiness = 0.62f;
     [HideInInspector]
@@ -433,6 +435,15 @@ public sealed class OceanWorld : MonoBehaviour
         generatedMaterial.SetVector("_WakeDirection", direction);
         generatedMaterial.SetVectorArray("_WakeTrail", trail);
         generatedMaterial.SetInt("_WakeCount", count);
+        generatedMaterial.SetFloat("_ShipWakeMode", 0f);
+    }
+
+    public void SetShipSailingWake(Vector4 hull, Vector4 direction, Vector4[] trail, Vector4[] settings, int count)
+    {
+        SetShipWake(hull, direction, trail, count);
+        if (generatedMaterial == null) return;
+        generatedMaterial.SetVectorArray("_WakeTrailSettings", settings);
+        generatedMaterial.SetFloat("_ShipWakeMode", 1f);
     }
 
     public void ClearShipWake()
@@ -440,6 +451,7 @@ public sealed class OceanWorld : MonoBehaviour
         if (generatedMaterial == null) return;
         generatedMaterial.SetVector("_WakeDirection", Vector4.zero);
         generatedMaterial.SetInt("_WakeCount", 0);
+        generatedMaterial.SetFloat("_ShipWakeMode", 0f);
     }
 
     public void SetShipHullMask(Matrix4x4 worldToHull, Vector4[] widths)
@@ -508,6 +520,7 @@ public sealed class OceanWorld : MonoBehaviour
 
         int cloudDetail = effectsQuality == EffectsQuality.Low ? 2 : effectsQuality == EffectsQuality.Medium ? 4 : 5;
         skyMaterial.SetFloat("_CloudDetail", cloudDetail);
+        skyMaterial.SetFloat("_CloudRenderDistance", Mathf.Clamp(cloudRenderDistance, 4000f, 48000f));
         skyMaterial.SetFloat("_CloudStrength", effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.72f : 0.80f);
         // Coverage directly controls the raymarched cloud volume; there is no secondary
         // mesh-cloud layer competing with it.

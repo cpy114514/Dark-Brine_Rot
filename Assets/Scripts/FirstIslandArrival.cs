@@ -169,7 +169,20 @@ public sealed class FirstIslandArrival : MonoBehaviour
         }
         float sole = capsule != null ? (capsule.center.y - capsule.height * .5f) * Mathf.Abs(player.transform.lossyScale.y) : 0;
         Vector3 standing = landing; standing.y = landingBottom - sole;
-        player.RestoreSavedPose(standing, upright);
+        // The lying pose faces out to sea. Hand control back facing inland so
+        // the third-person camera shows the island and the lost-stick objective.
+        Vector3 inland = islandGround != null
+            ? Vector3.ProjectOnPlane(islandGround.bounds.center - standing, Vector3.up)
+            : heading;
+        if (inland.sqrMagnitude < .001f) inland = heading;
+        Quaternion standingRotation = Quaternion.LookRotation(inland, Vector3.up);
+        for (float elapsed = 0; elapsed < .55f; elapsed += Time.deltaTime)
+        {
+            player.transform.rotation = Quaternion.Slerp(upright, standingRotation, Mathf.SmoothStep(0, 1, elapsed / .55f));
+            FocusCamera(heading);
+            yield return null;
+        }
+        player.RestoreSavedPose(standing, standingRotation);
         IsGettingUp = false; HasLanded = IsAwake = true; ReleaseCinematic();
         hint.text = "棍子被冲走了。沿着沙滩找到棍子。";
         blackout.color = Color.clear;

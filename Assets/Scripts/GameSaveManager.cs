@@ -32,6 +32,9 @@ namespace Mavis
             public bool hasArrivalState;
             public bool hasLanded;
             public bool hasStick;
+            public bool hasHealingPacks;
+            public int healingPacksRemaining;
+            public string healingCampaign;
         }
 
         static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
@@ -99,6 +102,8 @@ namespace Mavis
             GameSaveManager manager = EnsureManager();
             manager.pendingSave = data;
             manager.restorePending = true;
+            HealingPackSupply.RestoreCampaign(data.hasHealingPacks ? data.healingCampaign : "legacy",
+                data.hasHealingPacks ? data.healingPacksRemaining : HealingPackSupply.Total);
             return true;
         }
 
@@ -130,7 +135,10 @@ namespace Mavis
                     version = SaveVersion,
                     playerPosition = player.transform.position,
                     playerRotation = player.transform.rotation,
-                    savedAtUtcTicks = DateTime.UtcNow.Ticks
+                    savedAtUtcTicks = DateTime.UtcNow.Ticks,
+                    hasHealingPacks = true,
+                    healingPacksRemaining = HealingPackSupply.Remaining,
+                    healingCampaign = HealingPackSupply.Campaign
                 };
                 if (arrival != null)
                 {

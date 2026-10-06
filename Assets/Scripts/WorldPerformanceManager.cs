@@ -1,29 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 namespace Mavis
 {
-    /// <summary>
-    /// Applies conservative runtime culling to the unusually dense imported foliage.
-    /// It does not alter scenes or assets: authoring renderer states are preserved and
-    /// only Renderer.forceRenderingOff is changed while the game is running.
-    /// </summary>
+    /// <summary>Runtime foliage detail and batching; authoring objects and source assets stay intact.</summary>
     [DefaultExecutionOrder(-900)]
     public sealed class WorldPerformanceManager : MonoBehaviour
     {
-        const string TargetFrameRateKey = "Mavis.TargetFrameRate";
-        const string VSyncKey = "Mavis.VSync";
-
-        const float LegacyTreeDistance = 240f;
-        const float GrassDistance = 105f;
-        const float UpdateInterval = 0.25f;
-
-        readonly List<Renderer> legacyTrees = new List<Renderer>();
-        readonly List<Renderer> grassRenderers = new List<Renderer>();
-        readonly List<Renderer> managedRenderers = new List<Renderer>();
-
+        sealed class Foliage
+        {
+            public MeshRenderer renderer;
+            public MeshFilter filter;
+            public Mesh original;
+            public Material[] materials;
+            public FoliageMeshLibrary.Entry detail;
+            public Bounds bounds;
+            public ShadowCastingMode shadows;
+            public bool forced, occlusion, grass, duplicate, legacy;
+            public bool batchable;
+            public Material drawMaterial;
+            public float anchor, inverseHeight, response, stiffness;
+        }
+        sealed class GrassBatch
+        {
+            public const int Capacity = 256;
+            public Mesh mesh;
+            public Material material;
+            public int count;
+            public readonly Matrix4x4[] matrices = new Matrix4x4[Capacity];
+            public readonly float[] anchors = new float[Capacity], heights = new float[Capacity], responses = new float[Capacity], stiffness = new float[Capacity];
+            public readonly MaterialPropertyBlock properties = new MaterialPropertyBlock();
+        }
+        readonly List<Foliage> foliage = new List<Foliage>();
+        readonly Dictionary<(Mesh, Material, Vector2Int), List<GrassBatch>> grassBatches = new Dictionary<(Mesh, Material, Vector2Int), List<GrassBatch>>();
+        readonly Dictionary<Material, Material> instancedMaterials = new Dictionary<Material, Material>();
+        readonly Dictionary<Mesh, FoliageMeshLibrary.Entry> details = new Dictionary<Mesh, FoliageMeshLibrary.Entry>();
         Camera mainCamera;
         float nextUpdate;
         Coroutine cacheRoutine;
@@ -31,144 +45,171 @@ namespace Mavis
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Install()
         {
-            if (FindAnyObjectByType<WorldPerformanceManager>() != null)
-                return;
-
-            var managerObject = new GameObject("World Performance Manager");
-            managerObject.hideFlags = HideFlags.DontSave;
-            DontDestroyOnLoad(managerObject);
-            managerObject.AddComponent<WorldPerformanceManager>();
+            if (FindAnyObjectByType<WorldPerformanceManager>() != null) return;
+            var holder = new GameObject("World Performance Manager");
+            holder.hideFlags = HideFlags.DontSave;
+            DontDestroyOnLoad(holder);
+            holder.AddComponent<WorldPerformanceManager>();
         }
-
         void Awake()
         {
-            ConfigureWindowsRuntime();
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+            int rate = Mathf.Clamp(PlayerPrefs.GetInt("Mavis.TargetFrameRate", 60), 30, 240);
+            int sync = Mathf.Clamp(PlayerPrefs.GetInt("Mavis.VSync", 0), 0, 2);
+            QualitySettings.vSyncCount = sync;
+            Application.targetFrameRate = sync == 0 ? rate : -1;
+            Application.runInBackground = false;
+#endif
+            var library = Resources.Load<FoliageMeshLibrary>("FoliagePerformance/Library");
+            if (library != null)
+                foreach (var entry in library.entries)
+                    if (entry.source != null) details[entry.source] = entry;
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
-
-        IEnumerator Start()
-        {
-            yield return null;
-            CacheWorldRenderers();
-        }
-
-        void OnDestroy()
-        {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            RestoreManagedRenderers();
-        }
-
+        void OnEnable() { if (Application.isPlaying) cacheRoutine = StartCoroutine(CacheAfterSceneLoad()); }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (cacheRoutine != null)
-                StopCoroutine(cacheRoutine);
+            if (!isActiveAndEnabled) return;
+            if (cacheRoutine != null) StopCoroutine(cacheRoutine);
             cacheRoutine = StartCoroutine(CacheAfterSceneLoad());
         }
-
-        IEnumerator CacheAfterSceneLoad()
-        {
-            yield return null;
-            CacheWorldRenderers();
-            cacheRoutine = null;
-        }
-
+        IEnumerator CacheAfterSceneLoad() { yield return null; CacheWorldRenderers(); cacheRoutine = null; }
         void LateUpdate()
         {
-            if (Time.unscaledTime < nextUpdate)
-                return;
-
-            nextUpdate = Time.unscaledTime + UpdateInterval;
-            if (mainCamera == null || !mainCamera.isActiveAndEnabled)
-                mainCamera = Camera.main;
-            if (mainCamera == null)
-                return;
-
+            if (mainCamera == null || !mainCamera.isActiveAndEnabled) mainCamera = Camera.main;
+            if (mainCamera == null) return;
+            if (Time.unscaledTime >= nextUpdate)
+            {
+            nextUpdate = Time.unscaledTime + .2f;
+            foreach (var groups in grassBatches.Values) foreach (var batch in groups) batch.count = 0;
             Vector3 cameraPosition = mainCamera.transform.position;
-            ApplyDistanceCulling(legacyTrees, cameraPosition, LegacyTreeDistance * LegacyTreeDistance);
-            ApplyDistanceCulling(grassRenderers, cameraPosition, GrassDistance * GrassDistance);
+            foreach (var item in foliage)
+            {
+                if (item.renderer == null) continue;
+                // Distance to bounds keeps large patches visible until their nearest edge is far away.
+                float squared = item.bounds.SqrDistance(cameraPosition);
+                float cutoff = item.grass ? 110f : item.legacy ? 260f : 550f;
+                bool hidden = item.forced || item.duplicate || squared > cutoff * cutoff;
+                bool forced = hidden || item.batchable;
+                if (item.renderer.forceRenderingOff != forced) item.renderer.forceRenderingOff = forced;
+                if (hidden || item.filter == null) continue;
+                if (item.detail != null)
+                {
+                    float transition = item.grass ? 28f : 65f;
+                    Mesh mesh = squared > transition * transition ? item.detail.far : item.detail.near;
+                    if (mesh != null && item.filter.sharedMesh != mesh) item.filter.sharedMesh = mesh;
+                }
+                if (item.batchable && item.renderer.enabled && item.renderer.gameObject.activeInHierarchy) AddToBatch(item);
+                // Trees retain nearby shadows; distant crowns skip extra shadow passes.
+                if (!item.grass)
+                {
+                    var shadows = squared > 120f * 120f ? ShadowCastingMode.Off : item.shadows;
+                    if (item.renderer.shadowCastingMode != shadows) item.renderer.shadowCastingMode = shadows;
+                }
+            }
+            foreach (var groups in grassBatches.Values) foreach (var batch in groups)
+            {
+                if (batch.count == 0) continue;
+                batch.properties.SetFloatArray("_MavisWindAnchorY", batch.anchors);
+                batch.properties.SetFloatArray("_MavisWindInvHeight", batch.heights);
+                batch.properties.SetFloatArray("_MavisWindResponse", batch.responses);
+                batch.properties.SetFloatArray("_WindTrunkStiffness", batch.stiffness);
+            }
+            }
+            foreach (var groups in grassBatches.Values) foreach (var batch in groups)
+                if (batch.count > 0)
+                    Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.matrices, batch.count, batch.properties,
+                        ShadowCastingMode.Off, true, 0, null, LightProbeUsage.Off);
         }
-
+        void AddToBatch(Foliage item)
+        {
+            var center = item.bounds.center;
+            var key = (item.filter.sharedMesh, item.drawMaterial, new Vector2Int(Mathf.FloorToInt(center.x / 32f), Mathf.FloorToInt(center.z / 32f)));
+            if (!grassBatches.TryGetValue(key, out var groups)) grassBatches[key] = groups = new List<GrassBatch>();
+            GrassBatch batch = null;
+            foreach (var candidate in groups) if (candidate.count < GrassBatch.Capacity) { batch = candidate; break; }
+            if (batch == null) { batch = new GrassBatch { mesh=key.Item1,material=key.Item2 }; groups.Add(batch); }
+            int index = batch.count++;
+            batch.matrices[index] = item.renderer.localToWorldMatrix;
+            batch.anchors[index] = item.anchor; batch.heights[index] = item.inverseHeight;
+            batch.responses[index] = item.response; batch.stiffness[index] = item.stiffness;
+        }
         void CacheWorldRenderers()
         {
             RestoreManagedRenderers();
-            legacyTrees.Clear();
-            grassRenderers.Clear();
-            managedRenderers.Clear();
-
-            foreach (MeshRenderer renderer in FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            foreach (var renderer in FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
-                MeshFilter filter = renderer.GetComponent<MeshFilter>();
-                Mesh mesh = filter != null ? filter.sharedMesh : null;
-                if (mesh == null)
-                    continue;
-
-                // These imported trees have no LODGroup and each contains 1.5M triangles.
-                // Fog already hides their fine detail at this range, so avoid submitting them.
-                if (renderer.name.StartsWith("20260918140331_c8541e3e"))
+                var filter = renderer.GetComponent<MeshFilter>();
+                var mesh = filter != null ? filter.sharedMesh : null;
+                if (mesh == null || renderer.GetComponentInParent<ProceduralIsland>() != null ||
+                    renderer.GetComponentInParent<ProceduralSeabed>() != null) continue;
+                details.TryGetValue(mesh, out var detail);
+                bool grass = detail != null && detail.grass;
+                if (!grass)
+                    for (Transform t = renderer.transform; t != null; t = t.parent)
+                    {
+                        string name = t.name.ToLowerInvariant();
+                        if (name.Contains("grass") || name.StartsWith("rostlinka")) { grass = true; break; }
+                    }
+                bool duplicate = renderer.name.Contains("geometry_nodes");
+                bool legacy = renderer.name.StartsWith("20260918140331_c8541e3e");
+                if (!grass && detail == null && !duplicate && !legacy) continue;
+                var item = new Foliage { renderer=renderer,filter=filter,original=mesh,detail=detail,grass=grass,
+                    duplicate=duplicate,legacy=legacy,bounds=renderer.bounds,materials=renderer.sharedMaterials,
+                    shadows=renderer.shadowCastingMode,forced=renderer.forceRenderingOff,occlusion=renderer.allowOcclusionWhenDynamic };
+                foliage.Add(item);
+                renderer.allowOcclusionWhenDynamic = true;
+                if (grass) renderer.shadowCastingMode = ShadowCastingMode.Off;
+                var materials = (Material[])item.materials.Clone();
+                bool changed = false;
+                for (int i=0;i<materials.Length;i++)
                 {
-                    AddManaged(renderer, legacyTrees);
-                    renderer.allowOcclusionWhenDynamic = true;
-                    continue;
+                    var material=materials[i];
+                    if(material==null || (material.shader.name!="Mavis/FoliageWind" &&
+                        !(grass && material.shader.name=="Universal Render Pipeline/Lit")))continue;
+                    if(!instancedMaterials.TryGetValue(material,out var instance))
+                    {
+                        instance=new Material(material){name=material.name+" (Runtime Instanced)",hideFlags=HideFlags.DontSave,enableInstancing=true};
+                        instancedMaterials.Add(material,instance);
+                    }
+                    materials[i]=instance;changed=true;
                 }
-
-                // The grass pack is made from hundreds of small renderers. Unity still
-                // frustum-culls them normally; this adds the missing distance cutoff.
-                if (mesh.name == "Forest001" || mesh.name == "rostlinka_7c_scater")
+                if(changed)renderer.sharedMaterials=materials;
+                item.batchable = grass && SystemInfo.supportsInstancing && materials.Length == 1 && materials[0] != null && materials[0].enableInstancing &&
+                    (materials[0].shader.name == "Mavis/FoliageWind" || materials[0].shader.name == "Universal Render Pipeline/Lit");
+                if (item.batchable)
                 {
-                    AddManaged(renderer, grassRenderers);
-                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                    renderer.allowOcclusionWhenDynamic = true;
+                    item.drawMaterial=materials[0];
+                    var block=new MaterialPropertyBlock(); renderer.GetPropertyBlock(block);
+                    item.anchor=block.GetFloat("_MavisWindAnchorY");item.inverseHeight=block.GetFloat("_MavisWindInvHeight");
+                    item.response=block.GetFloat("_MavisWindResponse");item.stiffness=block.GetFloat("_WindTrunkStiffness");
                 }
             }
-
-            // Imported geometry_nodes meshes duplicate the visible LOD0 tree geometry.
-            // Keep them suppressed without changing prefab or scene serialization.
-            foreach (MeshFilter filter in FindObjectsByType<MeshFilter>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-            {
-                if (!filter.name.Contains("geometry_nodes"))
-                    continue;
-
-                MeshRenderer renderer = filter.GetComponent<MeshRenderer>();
-                if (renderer != null)
-                    renderer.forceRenderingOff = true;
-            }
+            nextUpdate=0;
         }
-
-        void AddManaged(Renderer renderer, List<Renderer> category)
-        {
-            category.Add(renderer);
-            managedRenderers.Add(renderer);
-        }
-
-        static void ApplyDistanceCulling(List<Renderer> renderers, Vector3 cameraPosition, float maximumDistanceSquared)
-        {
-            foreach (Renderer renderer in renderers)
-            {
-                if (renderer == null)
-                    continue;
-
-                renderer.forceRenderingOff = (renderer.bounds.center - cameraPosition).sqrMagnitude > maximumDistanceSquared;
-            }
-        }
-
         void RestoreManagedRenderers()
         {
-            foreach (Renderer renderer in managedRenderers)
+            foreach(var item in foliage)
             {
-                if (renderer != null)
-                    renderer.forceRenderingOff = false;
+                if(item.renderer==null)continue;
+                item.renderer.forceRenderingOff=item.forced;
+                item.renderer.allowOcclusionWhenDynamic=item.occlusion;
+                item.renderer.shadowCastingMode=item.shadows;
+                item.renderer.sharedMaterials=item.materials;
+                if(item.filter!=null)item.filter.sharedMesh=item.original;
             }
+            foliage.Clear();
+            grassBatches.Clear();
+            foreach(var material in instancedMaterials.Values)
+                if(material!=null){if(Application.isPlaying)Destroy(material);else DestroyImmediate(material);}
+            instancedMaterials.Clear();
         }
-
-        static void ConfigureWindowsRuntime()
+        void OnDisable()
         {
-#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
-            int targetFrameRate = Mathf.Clamp(PlayerPrefs.GetInt(TargetFrameRateKey, 60), 30, 240);
-            int vSync = Mathf.Clamp(PlayerPrefs.GetInt(VSyncKey, 0), 0, 2);
-            QualitySettings.vSyncCount = vSync;
-            Application.targetFrameRate = vSync == 0 ? targetFrameRate : -1;
-            Application.runInBackground = false;
-#endif
+            if (cacheRoutine != null) StopCoroutine(cacheRoutine);
+            cacheRoutine = null;
+            RestoreManagedRenderers();
         }
+        void OnDestroy() { SceneManager.sceneLoaded-=OnSceneLoaded; RestoreManagedRenderers(); }
     }
 }

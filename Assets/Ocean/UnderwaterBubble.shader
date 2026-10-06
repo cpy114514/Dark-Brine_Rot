@@ -2,7 +2,7 @@ Shader "DarkBrine/Underwater Bubble"
 {
     Properties
     {
-        _Tint ("Bubble Tint", Color) = (0.78, 0.96, 1.0, 0.72)
+        _Tint ("Bubble Tint", Color) = (0.88, 0.93, 0.95, 0.40)
     }
 
     SubShader
@@ -52,10 +52,10 @@ Shader "DarkBrine/Underwater Bubble"
             half4 frag(Varyings input) : SV_Target
             {
                 float radius = length(input.uv * 2.0 - 1.0);
-                float rim = smoothstep(0.58, 0.76, radius) * (1.0 - smoothstep(0.82, 1.0, radius));
+                float rim = smoothstep(0.76, 0.88, radius) * (1.0 - smoothstep(0.92, 1.0, radius));
                 float highlight = 1.0 - smoothstep(0.02, 0.28, length(input.uv - float2(0.34, 0.68)));
                 half alpha = input.color.a * saturate(rim + highlight * 0.58);
-                return half4(input.color.rgb + highlight * 0.22, alpha);
+                return half4(input.color.rgb + highlight * 0.06, alpha);
             }
             ENDHLSL
         }

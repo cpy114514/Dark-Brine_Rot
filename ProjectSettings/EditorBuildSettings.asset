@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main Menu/MainMenu.unity
     guid: 66df33b0bbf09d54dad62c20522d6c61
   - enabled: 1
+    path: Assets/Scenes/First story/Story1.unity
+    guid: dbc48cfd72b7b694cb283b73ecd39118
+  - enabled: 1
     path: Assets/Scenes/First Island/Main.unity
     guid: 5f6c26654d6c9b544a711c724e43a695
   - enabled: 1

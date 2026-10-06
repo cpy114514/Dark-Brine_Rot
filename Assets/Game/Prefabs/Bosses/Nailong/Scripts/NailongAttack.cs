@@ -13,6 +13,24 @@ namespace Mavis
         public string targetTag = "Player";
         readonly Collider[] roarHits = new Collider[64];
         readonly HashSet<Transform> roarVictims = new HashSet<Transform>();
+        readonly RaycastHit[] sightHits = new RaycastHit[32];
+
+        public bool HasLineOfSight(Transform target)
+        {
+            if (!target) return false;
+            var capsule = target.GetComponentInParent<CharacterController>();
+            Vector3 from = transform.position + Vector3.up * 1.8f;
+            Vector3 to = capsule ? capsule.bounds.center : target.position + Vector3.up;
+            Vector3 ray = to-from;
+            int count=Physics.RaycastNonAlloc(from,ray.normalized,sightHits,ray.magnitude,~0,QueryTriggerInteraction.Ignore);
+            for(int i=0;i<count;i++)
+            {
+                var hit=sightHits[i].transform;
+                if(hit.IsChildOf(transform)||hit.IsChildOf(target)||target.IsChildOf(hit))continue;
+                return false;
+            }
+            return true;
+        }
 
         public int Roar(float radius, float multiplier, float pushDistance, Transform mainTarget)
         {
@@ -51,6 +69,8 @@ namespace Mavis
             if (!ignoreFacing && delta.sqrMagnitude > 0.01f &&
                 Vector3.Angle(transform.forward, delta) > attackArc * 0.5f)
                 return false;
+
+            if (!HasLineOfSight(target)) return false;
 
             IDamageable victim = target.GetComponentInParent<IDamageable>();
             if (victim == null) return false;

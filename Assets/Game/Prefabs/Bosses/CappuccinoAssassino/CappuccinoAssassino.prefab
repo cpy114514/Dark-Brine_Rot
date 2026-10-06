@@ -694,6 +694,7 @@ GameObject:
   - component: {fileID: 2475720658066552573}
   - component: {fileID: 3846388174187095151}
   - component: {fileID: 2700781274081184855}
+  - component: {fileID: 8906083485748290430}
   m_Layer: 0
   m_Name: CappuccinoAssassino
   m_TagString: Enemy
@@ -788,13 +789,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 5.4
-  m_Radius: 1.65
+  m_Height: 5.4000006
+  m_Radius: 2.3010988
   m_SlopeLimit: 48
   m_StepOffset: 0.65
   m_SkinWidth: 0.06
   m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 2.7, z: 0}
+  m_Center: {x: 0, y: 2.7000005, z: -0.37284827}
 --- !u!114 &3846388174187095151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -830,6 +831,14 @@ MonoBehaviour:
   retreatCooldown: 3.5
   lowHealthRatio: 0.3
   crowdedDistance: 2.5
+  arenaRadius: 42
+  openingSeconds: 1.1
+  telegraphSeconds: 0.65
+  dashReach: 13
+  dashSpeed: 17
+  dashCooldown: 6
+  staggerThreshold: 85
+  staggerSeconds: 1.5
 --- !u!114 &2700781274081184855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -849,6 +858,20 @@ MonoBehaviour:
   healthMultiplier: 2
   damageMultiplier: 2
   showWarnings: 1
+  chargeSeconds: 0.95
+--- !u!114 &8906083485748290430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1227971975867940508}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d8e873ab66d534428153180505f17e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.CappuccinoBossPresentation
+  effectsTemplate: {fileID: 2100000, guid: 100f362f6bcea734bbb81eb1b38d971c, type: 2}
 --- !u!1 &1306850407319414275
 GameObject:
   m_ObjectHideFlags: 0
@@ -3469,7 +3492,7 @@ Canvas:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4013256627061756476}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_RenderMode: 2
   m_Camera: {fileID: 0}
@@ -3492,7 +3515,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4013256627061756476}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2b63480f6ead2cd46a366bfcf34e222f, type: 3}
   m_Name: 

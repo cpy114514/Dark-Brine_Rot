@@ -6,9 +6,10 @@ using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>Minimal title-screen navigation for the first-island build.</summary>
+/// <summary>Starts the sailing prologue or resumes saved first-island progress.</summary>
 public sealed class MainMenuController : MonoBehaviour
 {
+    const string StoryScenePath = "Assets/Scenes/First story/Story1.unity";
     const string GameScenePath = "Assets/Scenes/First Island/Main.unity";
 
     public Button continueButton;
@@ -32,6 +33,7 @@ public sealed class MainMenuController : MonoBehaviour
         if (saveStatusTransform != null)
             saveStatus = saveStatusTransform.GetComponent<TMP_Text>();
         RefreshSaveStatus();
+        MinimalMenuLayout.MainMenu(this);
     }
 
     void Update()
@@ -45,8 +47,14 @@ public sealed class MainMenuController : MonoBehaviour
 
     public void NewGame()
     {
+        if (!Application.CanStreamedLevelBeLoaded(StoryScenePath))
+        {
+            Debug.LogError("[Main Menu] Story1 is missing from Build Settings.", this);
+            return;
+        }
+        HealingPackSupply.StartNewGame();
         GameSaveManager.CancelPendingContinue();
-        StartGame();
+        StartGame(StoryScenePath);
     }
 
     public void ContinueGame()
@@ -57,19 +65,19 @@ public sealed class MainMenuController : MonoBehaviour
             return;
         }
 
-        StartGame();
+        StartGame(GameScenePath);
     }
 
-    void StartGame()
+    void StartGame(string scenePath)
     {
-        if (!Application.CanStreamedLevelBeLoaded(GameScenePath))
+        if (!Application.CanStreamedLevelBeLoaded(scenePath))
         {
             GameSaveManager.CancelPendingContinue();
-            Debug.LogError("[Main Menu] First Island/Main is missing from Build Settings.", this);
+            Debug.LogError($"[Main Menu] {scenePath} is missing from Build Settings.", this);
             return;
         }
         Time.timeScale = 1f;
-        SceneManager.LoadScene(GameScenePath, LoadSceneMode.Single);
+        SceneManager.LoadScene(scenePath, LoadSceneMode.Single);
     }
 
     void RefreshSaveStatus()

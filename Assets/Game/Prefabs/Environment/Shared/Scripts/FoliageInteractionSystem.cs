@@ -21,12 +21,9 @@ namespace Mavis
         readonly List<Trail> trails = new List<Trail>(8);
         readonly Dictionary<Vector2Int, List<Renderer>> grass = new Dictionary<Vector2Int, List<Renderer>>();
         readonly Vector4[] positions = new Vector4[12], motions = new Vector4[12];
-        float nextScan, nextLeaves;
-        ParticleSystem leaves;
+        float nextScan;
         AudioSource rustle;
         AudioClip rustleClip;
-        Material leafMaterial;
-        Mesh leafMesh;
         static Vector2Int Cell(Vector3 p) { return new Vector2Int(Mathf.FloorToInt(p.x / 10f), Mathf.FloorToInt(p.z / 10f)); }
 
         void OnEnable() { RebuildGrassIndex(); nextScan = 0f; }
@@ -124,13 +121,8 @@ namespace Mavis
                     EnsureEffects();
                     rustle.transform.position = feet + Vector3.up * .6f;
                     soundVolume = Mathf.Min(.065f, speed * .009f);
-                    if (Time.time >= nextLeaves)
-                    {
-                        nextLeaves = Time.time + .14f;
-                        var emit = new ParticleSystem.EmitParams { position = feet + Vector3.up * .45f,
-                            velocity = direction * .4f + Vector3.up * .65f, startColor = new Color(.43f,.55f,.21f,.65f) };
-                        leaves.Emit(emit, speed > 4f ? 3 : 1);
-                    }
+                    // Passing through grass bends the stems; it does not tear off
+                    // a constant stream of floating leaf fragments.
                 }
                 body.previous = feet; body.initialized = true;
             }
@@ -153,30 +145,8 @@ namespace Mavis
 
         void EnsureEffects()
         {
-            if (leaves) return;
-            var holder = new GameObject("Foliage brush effects"); holder.transform.SetParent(transform, false);
-            leaves = holder.AddComponent<ParticleSystem>(); leaves.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            var main = leaves.main; main.loop = true; main.playOnAwake = false; main.maxParticles = 40;
-            main.simulationSpace = ParticleSystemSimulationSpace.World; main.startLifetime = .65f;
-            main.startSize = new ParticleSystem.MinMaxCurve(.04f, .09f); main.gravityModifier = .25f;
-            var emission = leaves.emission; emission.enabled = false;
-            var shape = leaves.shape; shape.enabled = false;
-            var rotation = leaves.rotationOverLifetime; rotation.enabled = true; rotation.z = 5f;
-            var color = leaves.colorOverLifetime; color.enabled = true;
-            var gradient = new Gradient(); gradient.SetKeys(new[] { new GradientColorKey(Color.white,0),new GradientColorKey(Color.white,1) },new[] {new GradientAlphaKey(1,0),new GradientAlphaKey(0,1)}); color.color = gradient;
-            var shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
-            if (!shader) shader = Shader.Find("Universal Render Pipeline/Unlit");
-            leafMaterial = new Material(shader) { hideFlags = HideFlags.DontSave };
-            leafMaterial.SetFloat("_Surface", 1f); leafMaterial.SetFloat("_Blend", 0f);
-            leafMaterial.SetFloat("_SrcBlend", (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            leafMaterial.SetFloat("_DstBlend", (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            leafMaterial.SetFloat("_ZWrite", 0f); leafMaterial.EnableKeyword("_SURFACE_TYPE_TRANSPARENT"); leafMaterial.renderQueue = 3000;
-            leafMesh = new Mesh { name = "Tiny grass fragment", hideFlags = HideFlags.DontSave };
-            leafMesh.vertices = new[] {new Vector3(-.12f,-.5f,0),new Vector3(.12f,-.5f,0),new Vector3(.04f,.5f,0),new Vector3(-.04f,.5f,0)};
-            leafMesh.uv = new[] {Vector2.zero,Vector2.right,Vector2.one,Vector2.up}; leafMesh.triangles = new[] {0,2,1,0,3,2}; leafMesh.RecalculateNormals();
-            var renderer = leaves.GetComponent<ParticleSystemRenderer>(); renderer.renderMode = ParticleSystemRenderMode.Mesh; renderer.mesh = leafMesh; renderer.sharedMaterial = leafMaterial;
-            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            leaves.Play(); // Emission remains manual; simulation must keep running to fade fragments.
+            if (rustle) return;
+            var holder = new GameObject("Foliage rustle"); holder.transform.SetParent(transform, false);
             rustle = holder.AddComponent<AudioSource>(); rustle.loop = true; rustle.spatialBlend = 1f; rustle.minDistance = 2f; rustle.maxDistance = 12f; rustle.volume = 0f;
             const int samples = 22050; var noise = new float[samples]; var random = new System.Random(9271); float filtered = 0f;
             for (int i=0;i<samples;i++) { filtered = Mathf.Lerp(filtered,(float)random.NextDouble()*2f-1f,.3f); noise[i] = filtered * Mathf.Sin(Mathf.PI*i/(samples-1)); }
@@ -185,8 +155,8 @@ namespace Mavis
         void OnDisable() { Shader.SetGlobalInt("_MavisFoliageBodyCount", 0); trails.Clear(); bodies.Clear(); if (rustle) rustle.Stop(); }
         void OnDestroy()
         {
-            if (leaves) Destroy(leaves.gameObject);
-            if (rustleClip) Destroy(rustleClip); if (leafMaterial) Destroy(leafMaterial); if (leafMesh) Destroy(leafMesh);
+            if (rustle) Destroy(rustle.gameObject);
+            if (rustleClip) Destroy(rustleClip);
         }
     }
 }

@@ -13,8 +13,13 @@ namespace Mavis
         public bool IsShaking => remaining > 0f;
         public void Pulse(float strength, float seconds)
         {
-            amplitude = Mathf.Max(amplitude, Mathf.Clamp(strength, 0f, 0.075f));
+            amplitude = Mathf.Max(amplitude, Mathf.Clamp(strength * .45f, 0f, 0.035f));
             remaining = duration = Mathf.Max(remaining, Mathf.Clamp(seconds, 0.01f, 0.22f));
+        }
+        public void PulseStoryImpact(float strength, float seconds)
+        {
+            amplitude = Mathf.Max(amplitude, Mathf.Clamp(strength * .65f, 0, .25f));
+            remaining = duration = Mathf.Max(remaining, Mathf.Clamp(seconds, .01f, .8f));
         }
         void RemoveOffset()
         {
@@ -34,7 +39,7 @@ namespace Mavis
         {
             if (remaining <= 0f || Time.timeScale <= 0f) return;
             float a = amplitude * Mathf.Pow(remaining / duration, 2f);
-            float phase = Time.time * 150f;
+            float phase = (duration - remaining) * 48f;
             offset = transform.right * (Mathf.Sin(phase) * a) + transform.up * (Mathf.Sin(phase * 1.37f) * a * 0.65f);
             rotation = Quaternion.Euler(Mathf.Sin(phase * 0.8f) * a * 7f, 0f, Mathf.Sin(phase) * a * 5f);
             transform.position += offset;

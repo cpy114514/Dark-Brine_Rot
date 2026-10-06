@@ -4,6 +4,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 public static class VerifyStorySharkLiveliness
 {
+    public static async Task<object> RunFresh()
+    {
+        var loading=UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Assets/Scenes/First story/Story1.unity");
+        while(!loading.isDone)await Task.Delay(40);await Task.Delay(350);
+        return await Run();
+    }
     const BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
     static object Field(object obj, string name) => obj.GetType().GetField(name,Private).GetValue(obj);
     static void Check(bool value,string message) { if (!value) throw new Exception(message); }
@@ -30,15 +36,11 @@ public static class VerifyStorySharkLiveliness
                 if (sequence.VoyageTime < sequence.impactAfterSeconds * .7f)
                 { minSide = Mathf.Min(minSide,lateral); maxSide = Mathf.Max(maxSide,lateral); }
                 maxBank = Mathf.Max(maxBank,Mathf.Abs((float)Field(sequence,"swimBank")));
-                var rest = (Vector3[])Field(animator,"restVertices");
-                var moved = (Vector3[])Field(animator,"movedVertices");
-                float tailStart = (float)Field(animator,"tailStart"), bodyStart = (float)Field(animator,"bodyStart");
-                for(int i=0;i<rest.Length;i++)
+                Check(animator.UsesBlenderRig,"Story voyage fell back to the old mesh deformation.");
+                foreach(var bone in animator.BoneAnimator.GetComponentsInChildren<Transform>())
                 {
-                    Check(!float.IsNaN(moved[i].x),"Invalid deformed shark vertex.");
-                    if(rest[i].z > tailStart && rest[i].z < bodyStart)
-                        bodyMotion = Mathf.Max(bodyMotion,Mathf.Abs(moved[i].x-rest[i].x));
-                    if(rest[i].z >= bodyStart) Check((moved[i]-rest[i]).sqrMagnitude < 1e-10f,"Nose was deformed.");
+                    Check(float.IsFinite(bone.position.x),"Invalid skeletal shark pose.");
+                    if(bone.name=="Spine_Rear")bodyMotion=Mathf.Max(bodyMotion,Quaternion.Angle(Quaternion.identity,bone.localRotation));
                 }
             }
             Check(maxSide-minSide > 10f,"Shark hunting sweeps are not visible.");
@@ -48,7 +50,7 @@ public static class VerifyStorySharkLiveliness
             Check(!sequence.ship.enabled && !sequence.storyCamera.GetComponent<ShipFollowCamera>().enabled,
                 "Cinematic did not take over from sailing controls.");
             return new { lateralSweep = maxSide-minSide, maximumBank = maxBank, bodyMotion,
-                noseStable = true, collisionTriggered = sequence.HasImpacted, collisionTime = sequence.VoyageTime };
+                blenderRigUsed = true, collisionTriggered = sequence.HasImpacted, collisionTime = sequence.VoyageTime };
         }
         finally { Time.timeScale = oldScale; }
     }

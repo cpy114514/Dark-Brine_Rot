@@ -64,7 +64,9 @@ public static class OceanSurfaceSampler
         Vector2 direction = wave.direction.sqrMagnitude < 0.0001f ? Vector2.right : wave.direction.normalized;
         float phase = Mathf.PI * 2f / Mathf.Max(0.001f, wave.wavelength) * (Vector2.Dot(direction, p) - wave.speed * time) + offset;
         float horizontal = Mathf.Min(wave.steepness, 0.95f) * wave.amplitude * weight * Mathf.Cos(phase);
-        return new Vector3(direction.x * horizontal, wave.amplitude * weight * Mathf.Sin(phase), direction.y * horizontal);
+        float sine = Mathf.Sin(phase), cosine = Mathf.Cos(phase);
+        float verticalShape = sine - 0.08f * (cosine * cosine - sine * sine);
+        return new Vector3(direction.x * horizontal, wave.amplitude * weight * verticalShape, direction.y * horizontal);
     }
 
     static float Smooth(float min, float max, float value) => Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(min, max, value));

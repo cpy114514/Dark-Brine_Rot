@@ -1,0 +1,122 @@
+[
+  {
+    "asset": "island_tree_02",
+    "role": "model",
+    "path": "Models/island_tree_02_2k.fbx",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/island_tree_02/island_tree_02_2k.fbx",
+    "md5": "bf13783c29b131ad4ae6ce55e006efea",
+    "size": 32258924
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "branches_diff",
+    "path": "Textures/coastal_branches_diff_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_branches_diff_2k.png",
+    "md5": "f288bf34ce29dde5e1675374edb9cd04",
+    "size": 19963299
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "branches_nor_gl",
+    "path": "Textures/coastal_branches_nor_gl_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_branches_nor_gl_2k.png",
+    "md5": "98af2803beca2055fde16a4ca8f2151a",
+    "size": 20594936
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "branches_rough",
+    "path": "Textures/coastal_branches_rough_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_branches_rough_2k.png",
+    "md5": "f2c70d75834aa97f7ef173c119f92f8d",
+    "size": 4730461
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "leaves_alpha",
+    "path": "Textures/coastal_leaves_alpha_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_leaves_alpha_2k.png",
+    "md5": "063774afef8fe1d35ce52d56bf41bf81",
+    "size": 139077
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "leaves_diff",
+    "path": "Textures/coastal_leaves_diff_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_leaves_diff_2k.png",
+    "md5": "d54fd06a5611278810df55d427cc4b1b",
+    "size": 6428036
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "leaves_nor_gl",
+    "path": "Textures/coastal_leaves_nor_gl_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_leaves_nor_gl_2k.png",
+    "md5": "3d3d53270e1a5d6be297307c7ab8629c",
+    "size": 10109651
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "leaves_rough",
+    "path": "Textures/coastal_leaves_rough_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_leaves_rough_2k.png",
+    "md5": "a49ed311f1d7f504a17d917ffbc83bd1",
+    "size": 2723975
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "Diffuse",
+    "path": "Textures/island_tree_02_Diffuse_2k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/island_tree_02/island_tree_02_diff_2k.jpg",
+    "md5": "1593cf55910abff0a418b2799870471a",
+    "size": 2684467
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "nor_gl",
+    "path": "Textures/island_tree_02_nor_gl_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_nor_gl_2k.png",
+    "md5": "5797d7a40d3bd61ab2621f0fe252c645",
+    "size": 19273040
+  },
+  {
+    "asset": "island_tree_02",
+    "role": "Rough",
+    "path": "Textures/island_tree_02_Rough_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_02/island_tree_02_rough_2k.png",
+    "md5": "9f630ad6764529738109c395c8db3926",
+    "size": 5250491
+  },
+  {
+    "asset": "island_tree_03",
+    "role": "model",
+    "path": "Models/island_tree_03_2k.fbx",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/island_tree_03/island_tree_03_2k.fbx",
+    "md5": "f1697bd7da04cb04d9466fadb97f5ffc",
+    "size": 62536620
+  },
+  {
+    "asset": "island_tree_03",
+    "role": "Diffuse",
+    "path": "Textures/island_tree_03_Diffuse_2k.jpg",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/island_tree_03/island_tree_03_diff_2k.jpg",
+    "md5": "91582e78a04764cdd32082dff1a700f2",
+    "size": 2751789
+  },
+  {
+    "asset": "island_tree_03",
+    "role": "nor_gl",
+    "path": "Textures/island_tree_03_nor_gl_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_03/island_tree_03_nor_gl_2k.png",
+    "md5": "db057188b4ef1b0cf57249a5fd5d8866",
+    "size": 17942188
+  },
+  {
+    "asset": "island_tree_03",
+    "role": "Rough",
+    "path": "Textures/island_tree_03_Rough_2k.png",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/2k/island_tree_03/island_tree_03_rough_2k.png",
+    "md5": "78b63cd1af4ccac4259571c357384eb9",
+    "size": 4460531
+  }
+]

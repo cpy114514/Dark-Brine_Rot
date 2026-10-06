@@ -2611,6 +2611,9 @@ MonoBehaviour:
     m_Bits: 4294967295
   enemyTag: Enemy
   damage: 25
+  comboReach: 4.8
+  comboArc: 150
+  weaponHitPadding: 0.55
   swingWindowStart: 0.2
   swingWindowEnd: 0.65
   heavySwingWindowStart: 0.35

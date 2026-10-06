@@ -239,6 +239,13 @@ namespace Mavis
             returning = false;
             nextThrow = Time.time + cooldown;
         }
+        internal void CancelThrowForMovement()
+        {
+            if (!IsThrowing) return;
+            if (!released) Catch();
+            else FinishThrow();
+        }
+
         void FinishThrow()
         {
             if (!IsThrowing) return;

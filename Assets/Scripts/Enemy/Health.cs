@@ -29,7 +29,7 @@ namespace Mavis
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
         }
 
-        public void ApplyDamage(float amount, Vector3 hitPoint)
+        public virtual void ApplyDamage(float amount, Vector3 hitPoint)
         {
             if (IsDead || amount <= 0f) return;
             currentHealth = Mathf.Max(0f, currentHealth - amount);

@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Animates the single-mesh Tralalero model without requiring a skeleton.
-/// Its negative local Z end is the tail; the nose stays stable while the rear body undulates.
+/// Plays the anatomical rig and actions authored on the original shark in Blender.
+/// A mesh fallback remains for older scenes without the rig resource.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class TralaleroSwimAnimator : MonoBehaviour
@@ -35,14 +35,50 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     bool slapping;
     Vector3 noseTip;
     Vector3 tailTip;
+    TralaleroAnimationSet animationSet;
+    Animator rigAnimator;
+    Transform rigInstance, noseMarker, tailMarker;
+    Bounds rootMeshBounds;
+    Renderer originalRenderer;
+    float actionUntil;
+    bool powerfulTail;
+    public bool UsesBlenderRig => rigAnimator != null;
+    public Renderer VisualRenderer { get; private set; }
+    public Animator BoneAnimator => rigAnimator;
 
-    public Vector3 NoseWorldPoint => meshFilter != null ? meshFilter.transform.TransformPoint(noseTip) : transform.position;
+    public Vector3 NoseWorldPoint => noseMarker != null ? noseMarker.position : meshFilter != null ? meshFilter.transform.TransformPoint(noseTip) : transform.position;
+    public Vector3 TailWorldPoint => tailMarker != null ? tailMarker.position : meshFilter != null ? meshFilter.transform.TransformPoint(tailTip) : transform.position;
+    public Bounds RootMeshBounds => rootMeshBounds;
+    public Vector3 ShipSmashContactLocalPoint => rigAnimator!=null ?
+        transform.InverseTransformPoint(meshFilter.transform.TransformPoint(animationSet.shipSmashContact)) : TailContactLocalPoint;
+
+    // The imported root is below the torso: sinking that root by a fixed amount leaves the body exposed.
+    public float SurfaceRootY(float waterHeight, Quaternion rotation, float exposedHeightFraction = .15f)
+    {
+        Vector3 half=Vector3.Scale(rootMeshBounds.extents,transform.lossyScale);
+        float height=Mathf.Abs((rotation*new Vector3(half.x,0,0)).y)+
+            Mathf.Abs((rotation*new Vector3(0,half.y,0)).y)+Mathf.Abs((rotation*new Vector3(0,0,half.z)).y);
+        float centerY=(rotation*Vector3.Scale(rootMeshBounds.center,transform.lossyScale)).y;
+        return waterHeight-centerY-height*(1-2*Mathf.Clamp01(exposedHeightFraction));
+    }
+
+    public void SynchronizeShipTailContact()
+    {
+        if(rigAnimator==null)return;
+        rigAnimator.Play("Ship_Smash",0,TailContactTime/1.15f);
+        rigAnimator.Update(0);
+    }
 
     public Vector3 TailContactLocalPoint
     {
         get
         {
             if (meshFilter == null) return Vector3.back;
+            if (rigAnimator != null)
+            {
+                Vector3 contact=powerfulTail ? animationSet.shipSmashContact : animationSet.tailStrikeContact;
+                return transform.InverseTransformPoint(meshFilter.transform.TransformPoint(contact));
+            }
             Vector3 point = tailTip + Vector3.right * (slapSwing * EvaluateSlap(TailContactTime));
             return transform.InverseTransformPoint(meshFilter.transform.TransformPoint(point));
         }
@@ -59,6 +95,31 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         }
 
         sourceMesh = meshFilter.sharedMesh;
+        bool firstCorner=true;
+        for(int x=-1;x<=1;x+=2)for(int y=-1;y<=1;y+=2)for(int z=-1;z<=1;z+=2)
+        {
+            Vector3 point=transform.InverseTransformPoint(meshFilter.transform.TransformPoint(sourceMesh.bounds.center+
+                Vector3.Scale(sourceMesh.bounds.extents,new Vector3(x,y,z))));
+            if(firstCorner){rootMeshBounds=new Bounds(point,Vector3.zero);firstCorner=false;}else rootMeshBounds.Encapsulate(point);
+        }
+        originalRenderer=meshFilter.GetComponent<Renderer>();VisualRenderer=originalRenderer;
+        animationSet=Resources.Load<TralaleroAnimationSet>("SharkAnimation/TralaleroAnimations");
+        if(animationSet!=null && animationSet.rigPrefab!=null)
+        {
+            rigInstance=Instantiate(animationSet.rigPrefab,meshFilter.transform,false).transform;
+            rigInstance.name="Blender shark anatomy";
+            rigAnimator=rigInstance.GetComponentInChildren<Animator>();
+            foreach(var skin in rigInstance.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                skin.sharedMaterials=originalRenderer.sharedMaterials;skin.updateWhenOffscreen=true;
+                VisualRenderer=skin;
+            }
+            noseMarker=System.Array.Find(rigInstance.GetComponentsInChildren<Transform>(),t=>t.name=="Nose_Marker");
+            tailMarker=System.Array.Find(rigInstance.GetComponentsInChildren<Transform>(),t=>t.name=="Tail_Marker");
+            originalRenderer.enabled=false;
+            rigAnimator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
+            rigAnimator.Rebind();rigAnimator.Update(0);return;
+        }
         restVertices = sourceMesh.vertices;
         restNormals = sourceMesh.normals;
         movedVertices = new Vector3[restVertices.Length];
@@ -89,14 +150,32 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         meshFilter.sharedMesh = animatedMesh;
     }
 
-    public void PlayTailSlap(float elapsedSeconds = 0f)
+    public void PlayTailSlap(float elapsedSeconds = 0f, bool powerful = false)
     {
+        powerfulTail=powerful;
+        if(rigAnimator!=null){PlayRigAction(powerful ? "Ship_Smash" : "Tail_Strike",1.15f,elapsedSeconds);return;}
         slapping = true;
         slapStartTime = Time.time - Mathf.Max(0f, elapsedSeconds);
     }
 
+    void PlayRigAction(string state,float duration,float offset=0)
+    {
+        rigAnimator.speed=1;actionUntil=Time.time+Mathf.Max(0,duration-offset);
+        rigAnimator.CrossFadeInFixedTime(state,.055f,0,offset);
+    }
+    public void PlayBite(){if(rigAnimator!=null)PlayRigAction("Bite_Lunge",1.1f);else PlayTailSlap();}
+    public void PlayRecoil(){if(rigAnimator!=null)PlayRigAction("Hit_Recoil",.8f);}
+    public void PlayThreat(){if(rigAnimator!=null)PlayRigAction("Threat",1.8f);}
+
     void LateUpdate()
     {
+        if(rigAnimator!=null)
+        {
+            float effort=Mathf.Clamp01((tailBeatFrequency-7)/5);
+            rigAnimator.SetFloat("SwimEffort",effort,.2f,Time.deltaTime);
+            rigAnimator.speed=Time.time<actionUntil ? 1 : Mathf.Clamp(tailBeatFrequency/7,.7f,1.6f);
+            return;
+        }
         if (animatedMesh == null)
             return;
 
@@ -163,9 +242,14 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
 
     void OnDestroy()
     {
+        if(rigInstance!=null)Destroy(rigInstance.gameObject);
+        if(originalRenderer!=null && rigAnimator!=null)originalRenderer.enabled=true;
         if (meshFilter != null && meshFilter.sharedMesh == animatedMesh)
             meshFilter.sharedMesh = sourceMesh;
         if (animatedMesh != null)
-            Destroy(animatedMesh);
+        {
+            if (Application.isPlaying) Destroy(animatedMesh);
+            else DestroyImmediate(animatedMesh);
+        }
     }
 }
