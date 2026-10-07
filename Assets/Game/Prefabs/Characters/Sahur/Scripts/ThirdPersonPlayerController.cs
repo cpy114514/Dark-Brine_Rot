@@ -1105,8 +1105,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         waterRippleMesh = CreateRippleMesh();
         waterDropletMesh = CreateDropletMesh();
-        waterRipples = CreateWaterParticleSystem("Water Ripple Rings", waterRippleMesh, 90, 0.62f, 0f);
-        waterDroplets = CreateWaterParticleSystem("Water Splash Columns", waterDropletMesh, 130, 0.44f, 1.35f);
+        waterRipples = CreateWaterParticleSystem("Water Ripple Rings", waterRippleMesh, 12, 0.62f, 0f);
+        waterDroplets = CreateWaterParticleSystem("Water Splash Columns", waterDropletMesh, 24, 0.44f, 1.35f);
 
         var size = waterRipples.sizeOverLifetime;
         size.enabled = true;
@@ -1244,7 +1244,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         main.loop = false;
         main.playOnAwake = false;
         main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.maxParticles = 80;
+        main.maxParticles = 16;
         main.startLifetime = new ParticleSystem.MinMaxCurve(0.8f, 1.55f);
         main.startSize = new ParticleSystem.MinMaxCurve(0.045f, 0.13f);
         main.gravityModifier = -0.16f;

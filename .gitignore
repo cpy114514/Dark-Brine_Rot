@@ -157,6 +157,13 @@ InitTestScene*.unity*
 AgentScripts/
 # Unity Temp folder inside Assets/ (root /Temp/ already covered above)
 /Assets/Temp/
+/Assets/Temp.meta
+
+# Generated inspection images; game artwork remains under Assets/.
+/Tools/*.png
+/Tools/*.gif
+/Tools/*.webp
+/ocean-*.png
 
 # Local repair snapshots and bundled Blender runtime caches.
 /ProjectRepairBackups/

@@ -8,12 +8,15 @@ namespace Mavis
         public string pointName = "小岛复活点";
         public bool isDefault = true;
         public float activationRadius = 3f;
+        PlayerDeathRespawn player;
+        float nextSearch;
         void Update()
         {
-            var player = FindFirstObjectByType<PlayerDeathRespawn>();
+            if(player==null && Time.unscaledTime>=nextSearch)
+            {player=FindFirstObjectByType<PlayerDeathRespawn>();nextSearch=Time.unscaledTime+.5f;}
             if (player == null || player.IsDead) return;
             if ((player.transform.position - transform.position).sqrMagnitude < activationRadius * activationRadius)
-                player.SetCheckpoint(this);
+                if(player.Checkpoint!=this)player.SetCheckpoint(this);
         }
         public Vector3 GroundPosition => transform.position;
         void OnDrawGizmos()

@@ -33,14 +33,18 @@ namespace Mavis
                 // scene-owned runtime font materials to a shared project's fallback table.
                 tmp.font = GameLocalization.TMPFont;
             }
-            GameLocalization.Changed += ReadAndRefresh;
+            GameLocalization.Changed += LanguageChanged;
             Refresh();
         }
         void LateUpdate() { ReadAndRefresh(); }
         void ReadAndRefresh()
+            => ReadAndRefresh(false);
+        void LanguageChanged() => ReadAndRefresh(true);
+        void ReadAndRefresh(bool force)
         {
             if(tmp && GameLocalization.TMPFont && tmp.font!=GameLocalization.TMPFont)tmp.font=GameLocalization.TMPFont;
             string current = tmp ? tmp.text : legacy ? legacy.text : "";
+            if(!force && current==output)return;
             if (current != output) source = current;
             Refresh();
         }
@@ -50,6 +54,6 @@ namespace Mavis
             if (tmp) { if(tmp.text != output) tmp.text = output; }
             else if (legacy && legacy.text != output) legacy.text = output;
         }
-        void OnDestroy() { GameLocalization.Changed -= ReadAndRefresh; }
+        void OnDestroy() { GameLocalization.Changed -= LanguageChanged; }
     }
 }

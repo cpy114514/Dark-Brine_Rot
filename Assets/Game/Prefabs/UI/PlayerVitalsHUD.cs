@@ -14,6 +14,8 @@ namespace Mavis
         public Vector2 screenMargin = new Vector2(28f, 26f);
 
         PlayerHealth health;
+        ThirdPersonPlayerController movement;
+        float nextPlayerSearch;
         PlayerStamina stamina;
         SahurHealingPacks healing;
         Text healingLabel, healingFeedback, hpValue;
@@ -41,7 +43,7 @@ namespace Mavis
             FindPlayerVitals();
             if (canvasGroup != null)
                 canvasGroup.alpha = health != null && health.isActiveAndEnabled && health.currentHealth > 0f &&
-                    health.GetComponent<ThirdPersonPlayerController>() is ThirdPersonPlayerController movement && movement.isActiveAndEnabled &&
+                    movement != null && movement.isActiveAndEnabled &&
                     !global::PauseSettingsMenu.IsOpen && !SahurLoadoutUI.IsOpen && !IslandMapUI.BlocksInput && !PlayerDeathRespawn.IsOpen ? 1f : 0f;
             RefreshBars(false);
             RefreshHealing();
@@ -163,9 +165,14 @@ namespace Mavis
 
         void FindPlayerVitals()
         {
-            if (health == null) health = FindFirstObjectByType<PlayerHealth>();
-            if (stamina == null) stamina = FindFirstObjectByType<PlayerStamina>();
-            if (healing == null && health != null) healing = health.GetComponent<SahurHealingPacks>();
+            if (health != null) return;
+            if (Time.unscaledTime < nextPlayerSearch) return;
+            nextPlayerSearch = Time.unscaledTime + .5f;
+            health = FindFirstObjectByType<PlayerHealth>();
+            if (health == null) return;
+            movement = health.GetComponent<ThirdPersonPlayerController>();
+            stamina = health.GetComponent<PlayerStamina>();
+            healing = health.GetComponent<SahurHealingPacks>();
         }
 
         void RefreshBars(bool immediate)

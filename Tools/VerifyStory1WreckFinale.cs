@@ -105,6 +105,7 @@ public static class VerifyStory1WreckFinale
                 await Task.Delay(capture ? 33 : 50);
             }
             if(capture)File.WriteAllText(Path.GetFullPath(".codex/shark-finale-preview/frame-times.json"),Newtonsoft.Json.JsonConvert.SerializeObject(times));
+            Require(film.LargestContactGap<.03f && film.LargestContactCorrection<.3f,"The shark missed contact or snapped into the hit pose.");
             Require(film.HeroCounterCount==4 && film.SharkCounterCount==3 && film.HasLostStick,"Finale omitted an exchange or lost stick.");
             Require(hp.currentHealth==0 && !PlayerDeathRespawn.IsOpen && Time.timeScale==1,"Finishing blow failed or opened respawn.");
             int counters=film.HeroCounterCount, sharkCounters=film.SharkCounterCount;
@@ -115,7 +116,8 @@ public static class VerifyStory1WreckFinale
             Require(AudioListener.volume==0,"Scene transition restored sound effects.");
             var result=new{fromWater,realHullFragments=202,contactVfx=true,randomDeadline=deadline,sharkHealthDoesNotEndFightEarly=true,
                 lowPlayerHealthStartsFinale=lowHealth,timerStartsFinale=!lowHealth,heroCounters=counters,sharkCounters,lostStick=true,actualLethalFinish=true,soundMutedAfterSceneChange=true,
-                noRespawn=true,unconsciousUnarmedIsland=true,previewFrames=frame};
+                noRespawn=true,unconsciousUnarmedIsland=true,previewFrames=frame,
+                contactGap=film.LargestContactGap,contactCorrection=film.LargestContactCorrection};
             Directory.CreateDirectory(Path.GetFullPath(".codex/wreck-water-audio-timer"));
             File.WriteAllText(Path.GetFullPath(".codex/wreck-water-audio-timer/finale-verification.json"),Newtonsoft.Json.JsonConvert.SerializeObject(result));
             return result;

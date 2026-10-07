@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.Rendering.Universal;
 
 namespace Mavis
 {
@@ -23,6 +24,13 @@ namespace Mavis
         CursorLockMode previousCursor;
         bool previousVisible;
         Text playerArrow, coordinates;
+        Camera suspendedCamera;
+        UniversalAdditionalCameraData cameraData;
+        int worldMask;
+        bool worldShadows,worldPost;
+        CameraOverrideOption worldDepth,worldColor;
+        Vector3 shownCoordinates=new Vector3(float.NaN,float.NaN,float.NaN);
+        GameLanguage coordinateLanguage;
         readonly List<RectTransform> markers = new List<RectTransform>();
         readonly List<Transform> targets = new List<Transform>();
 
@@ -56,6 +64,7 @@ namespace Mavis
                 MapGraphic.Refresh(transform.position);
                 RebuildMarkers();
                 RefreshMarkers();
+                SuspendWorldRendering();
                 Time.timeScale = 0f;
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
@@ -64,6 +73,7 @@ namespace Mavis
             else
             {
                 root.SetActive(false);
+                RestoreWorldRendering();
                 if (active == this)
                 {
                     active = null;
@@ -103,7 +113,33 @@ namespace Mavis
                 markers[i].gameObject.SetActive(visible);
                 if (visible) markers[i].anchoredPosition = MapGraphic.WorldToMap(target.position);
             }
-            coordinates.text = GameLocalization.Format("map.coordinates", transform.position.x.ToString("F0"), transform.position.z.ToString("F0"), MapGraphic.WorldSpan.ToString("F0"));
+            var rounded=new Vector3(Mathf.Round(transform.position.x),Mathf.Round(transform.position.z),Mathf.Round(MapGraphic.WorldSpan));
+            if(rounded!=shownCoordinates || coordinateLanguage!=GameLocalization.Language)
+            {
+                shownCoordinates=rounded;coordinateLanguage=GameLocalization.Language;
+                coordinates.text=GameLocalization.Format("map.coordinates",rounded.x.ToString("F0"),rounded.y.ToString("F0"),rounded.z.ToString("F0"));
+            }
+        }
+        void SuspendWorldRendering()
+        {
+            suspendedCamera=Camera.main;if(!suspendedCamera)return;
+            worldMask=suspendedCamera.cullingMask;suspendedCamera.cullingMask=0;
+            cameraData=suspendedCamera.GetComponent<UniversalAdditionalCameraData>();
+            if(!cameraData)return;
+            worldShadows=cameraData.renderShadows;worldPost=cameraData.renderPostProcessing;
+            worldDepth=cameraData.requiresDepthOption;worldColor=cameraData.requiresColorOption;
+            cameraData.renderShadows=false;cameraData.renderPostProcessing=false;
+            cameraData.requiresDepthOption=CameraOverrideOption.Off;cameraData.requiresColorOption=CameraOverrideOption.Off;
+        }
+        void RestoreWorldRendering()
+        {
+            if(suspendedCamera)suspendedCamera.cullingMask=worldMask;
+            if(cameraData)
+            {
+                cameraData.renderShadows=worldShadows;cameraData.renderPostProcessing=worldPost;
+                cameraData.requiresDepthOption=worldDepth;cameraData.requiresColorOption=worldColor;
+            }
+            suspendedCamera=null;cameraData=null;
         }
         void Build()
         {
@@ -163,10 +199,11 @@ namespace Mavis
             text.color = color; text.alignment = TextAnchor.MiddleCenter; text.raycastTarget = false;
             LocalizedGameText.Bind(text); return text;
         }
-        void OnDisable() { if (PanelVisible) SetOpen(false); }
+        void OnDisable() { if (PanelVisible) SetOpen(false); RestoreWorldRendering(); }
         void OnDestroy()
         {
             if (PanelVisible) SetOpen(false);
+            RestoreWorldRendering();
             if (root != null) Destroy(root);
             if (ownsFont && font != null) Destroy(font);
         }

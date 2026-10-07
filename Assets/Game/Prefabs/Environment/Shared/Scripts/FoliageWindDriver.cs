@@ -36,19 +36,20 @@ namespace Mavis
         static readonly int RootStiffnessId = Shader.PropertyToID("_WindTrunkStiffness");
         readonly List<FoliageRenderer> foliage = new List<FoliageRenderer>();
         MaterialPropertyBlock propertyBlock;
+        bool profilesDirty;
 
         void OnEnable()
         {
             propertyBlock = new MaterialPropertyBlock();
             if (windZone == null)
                 windZone = FindFirstObjectByType<WindZone>();
-            CacheRendererProfiles();
+            if(Application.isPlaying) profilesDirty=true; else CacheRendererProfiles();
             SceneManager.sceneLoaded += SceneLoaded;
             if (Application.isPlaying && GetComponent<FoliageInteractionSystem>() == null)
                 gameObject.AddComponent<FoliageInteractionSystem>();
         }
 
-        void SceneLoaded(Scene scene, LoadSceneMode mode) { CacheRendererProfiles(); }
+        void SceneLoaded(Scene scene, LoadSceneMode mode) { profilesDirty=true; }
         void OnDisable()
         {
             SceneManager.sceneLoaded -= SceneLoaded;
@@ -67,6 +68,8 @@ namespace Mavis
 
         void Update()
         {
+            if(profilesDirty && !AdditiveSceneBootstrap.IsLoading)
+            {CacheRendererProfiles();profilesDirty=false;}
             Vector3 dir = baseDirection;
             float strength = 1f;
             float main = 1.0f;

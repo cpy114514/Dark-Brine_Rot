@@ -12,12 +12,16 @@ namespace Mavis
         AudioClip roarClip;
         AudioClip scoldClip;
         AudioClip spitClip;
-        public int ActiveProjectileCount => projectiles.FindAll(p => p != null).Count;
+        public int ActiveProjectileCount
+        {
+            get { int count=0;foreach(var projectile in projectiles)if(projectile!=null)count++;return count; }
+        }
 
         void Awake()
         {
             motion = GetComponent<NailongAttackMotion>();
             salivaMaterial = MakeMaterial("Nailong Saliva", new Color(0.46f, 0.52f, 0.39f));
+            if (!GameAudioPolicy.SoundEnabled) return;
             voice = gameObject.AddComponent<AudioSource>();
             voice.spatialBlend = 1f;
             voice.minDistance = 4f;
@@ -57,9 +61,9 @@ namespace Mavis
             return clip;
         }
 
-        public void ShowTaunt(float seconds) { voice.PlayOneShot(scoldClip); }
+        public void ShowTaunt(float seconds) { if(voice != null) voice.PlayOneShot(scoldClip); }
         public void HideTaunt() { }
-        public void Roar(float radius) { voice.PlayOneShot(roarClip); }
+        public void Roar(float radius) { if(voice != null) voice.PlayOneShot(roarClip); }
 
         public NailongSpitProjectile Spit(Transform target, float speed, float damage)
         {
@@ -80,7 +84,7 @@ namespace Mavis
             projectile.Launch(transform, target, velocity, damage);
             projectiles.RemoveAll(p => p == null);
             projectiles.Add(projectile);
-            voice.PlayOneShot(spitClip, 0.5f);
+            if(voice != null) voice.PlayOneShot(spitClip, 0.5f);
             return projectile;
         }
 

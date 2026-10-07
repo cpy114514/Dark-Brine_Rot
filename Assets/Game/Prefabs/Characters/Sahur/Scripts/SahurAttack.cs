@@ -436,7 +436,9 @@ namespace Mavis
         public bool TryCancelForMovementInput()
         {
             if (movementCancelFrame == Time.frameCount) return true;
-            if (!enabled || !IsCombatMotionActive || PauseSettingsMenu.IsOpen ||
+            // Charging and the right-arm heavy strike share locomotion with running.
+            // New direction presses must not clear their pose or charge timer.
+            if (!enabled || !IsCombatMotionActive || CanMoveDuringCombat || PauseSettingsMenu.IsOpen ||
                 SahurLoadoutUI.BlocksInput || Cursor.lockState != CursorLockMode.Locked ||
                 (controller != null && (!controller.enabled || controller.ExternalControlLock || controller.ExternalMovementLock)))
                 return false;

@@ -26,7 +26,7 @@ namespace Mavis
         AudioClip rustleClip;
         static Vector2Int Cell(Vector3 p) { return new Vector2Int(Mathf.FloorToInt(p.x / 10f), Mathf.FloorToInt(p.z / 10f)); }
 
-        void OnEnable() { RebuildGrassIndex(); nextScan = 0f; }
+        void OnEnable() { if(!AdditiveSceneBootstrap.IsLoading)RebuildGrassIndex(); nextScan = 0f; }
         public void RebuildGrassIndex()
         {
             grass.Clear();
@@ -85,6 +85,7 @@ namespace Mavis
 
         void LateUpdate()
         {
+            if(AdditiveSceneBootstrap.IsLoading)return;
             if (Time.time >= nextScan) { ScanBodies(); nextScan = Time.time + 1.5f; }
             float dt = Time.deltaTime;
             if (dt <= 0f) return; // Paused map/backpack/death keeps both wind and interaction frozen.
@@ -118,9 +119,12 @@ namespace Mavis
                 }
                 if (body.player && speed > .3f && NearGrass(feet))
                 {
-                    EnsureEffects();
-                    rustle.transform.position = feet + Vector3.up * .6f;
-                    soundVolume = Mathf.Min(.065f, speed * .009f);
+                    if(GameAudioPolicy.SoundEnabled)
+                    {
+                        EnsureEffects();
+                        rustle.transform.position = feet + Vector3.up * .6f;
+                        soundVolume = Mathf.Min(.065f, speed * .009f);
+                    }
                     // Passing through grass bends the stems; it does not tear off
                     // a constant stream of floating leaf fragments.
                 }

@@ -223,6 +223,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: -2467127307690086958}
     m_Position: {x: 860, y: 710, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 1985737871538137507}
+    m_Position: {x: 895, y: 775, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 69523594465518798}
@@ -434,7 +437,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Finale Knockdown
-  m_Speed: 0.7301588
+  m_Speed: 1.1428572
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -446,7 +449,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 51578ea4b45940743b6ed8845eb0281b, type: 2}
+  m_Motion: {fileID: 1038164469866789310, guid: 92baeb4f280360744824e1725669d952, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -542,7 +545,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 5047704512850479675, guid: c500012ac8e016c45b8f354e99372d52, type: 3}
+  m_Motion: {fileID: -7788140712200663775, guid: 92baeb4f280360744824e1725669d952, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -690,6 +693,32 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
+--- !u!1102 &1985737871538137507
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Finale Block
+  m_Speed: 1.5
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 5047704512850479675, guid: c500012ac8e016c45b8f354e99372d52, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &2800686994734075118
 AnimatorState:
   serializedVersion: 6
@@ -724,7 +753,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Finale Stagger
-  m_Speed: 1
+  m_Speed: 0.8
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -736,7 +765,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 937510309337268382, guid: c500012ac8e016c45b8f354e99372d52, type: 3}
+  m_Motion: {fileID: -2547592662905567392, guid: 92baeb4f280360744824e1725669d952, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

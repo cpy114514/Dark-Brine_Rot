@@ -5,20 +5,29 @@ namespace Mavis
     {
         public Material material;
         float age;
+        ParticleSystem particles;
         public void Initialize(float radius)
         {
-            material = NaturalParticleEffects.Material("Impact dust and smoke", Color.white);
-            var particles = NaturalParticleEffects.Emitter(transform, "Impact smoke", material, 48, -.025f);
+            age = 0f;
+            if (particles == null)
+            {
+                material = NaturalParticleEffects.SmokeMaterial("Impact dust and smoke", Color.white);
+                particles = NaturalParticleEffects.Emitter(transform, "Impact smoke", material, 32, -.025f);
+            }
+            else particles.Clear();
+            var main=particles.main;main.startRotation=new ParticleSystem.MinMaxCurve(0f,Mathf.PI*2f);
+            var rotation=particles.rotationOverLifetime;rotation.enabled=true;rotation.z=new ParticleSystem.MinMaxCurve(-.15f,.15f);
             var size = particles.sizeOverLifetime; size.enabled = true;
             size.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.EaseInOut(0, .6f, 1, 1.7f));
             var drag = particles.limitVelocityOverLifetime; drag.enabled = true; drag.dampen = .35f; drag.limit = 3f;
-            for (int i = 0; i < 32; i++)
+            int count = NaturalParticleEffects.BurstBudget(transform.position, 24);
+            for (int i = 0; i < count; i++)
             {
                 Vector3 outward = Random.insideUnitSphere; outward.y = Mathf.Abs(outward.y);
                 particles.Emit(new ParticleSystem.EmitParams {
                     position = transform.position + outward * radius * .14f,
                     velocity = outward * Random.Range(2f, 6f),
-                    startSize = Random.Range(.22f, .55f) * Mathf.Clamp(radius, 1, 5),
+                    startSize = Random.Range(.32f, .65f) * Mathf.Clamp(radius, 1, 5),
                     startLifetime = Random.Range(.7f, 1.5f),
                     startColor = Color.Lerp(new Color(.30f, .28f, .25f, .38f), new Color(.42f, .39f, .34f, .5f), Random.value)
                 }, 1);

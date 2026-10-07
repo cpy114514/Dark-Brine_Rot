@@ -16,6 +16,7 @@ public sealed class BossHudPanel
     float delayed = 1f, damageHold;
     float previousRatio = 1f;
     string previousTitle, previousSubtitle, previousNumbers, previousStatus;
+    int previousHp=int.MinValue, previousMaxHp=int.MinValue;
 
     public float DisplayedFraction => health.fillAmount;
     public bool IsVisible => group.alpha > .01f;
@@ -67,7 +68,9 @@ public sealed class BossHudPanel
         pressureTrack.gameObject.SetActive(posture >= 0); pressure.fillAmount = Mathf.Clamp01(posture);
         Set(title, ref previousTitle, bossTitle);
         Set(subtitle, ref previousSubtitle, detail);
-        Set(numbers, ref previousNumbers, Mathf.CeilToInt(hp) + " / " + Mathf.CeilToInt(maxHp));
+        int shownHp=Mathf.CeilToInt(hp),shownMaxHp=Mathf.CeilToInt(maxHp);
+        if(shownHp!=previousHp || shownMaxHp!=previousMaxHp)
+        {previousHp=shownHp;previousMaxHp=shownMaxHp;Set(numbers,ref previousNumbers,shownHp+" / "+shownMaxHp);}
         Set(status, ref previousStatus, advice);
     }
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Display-only grayscale copies; preserves the authored sprite swaps and UV alignment.</summary>
+/// <summary>Preserves artwork color, authored sprite swaps and UV alignment within the neutral menu.</summary>
 [DisallowMultipleComponent, RequireComponent(typeof(Image))]
 public sealed class MinimalArtworkStyle : MonoBehaviour
 {
@@ -19,8 +19,8 @@ public sealed class MinimalArtworkStyle : MonoBehaviour
         var shader=source&&source.HasProperty("_Saturation")?source.shader:Shader.Find("UI/Hand Drawn Contrast");
         if(!shader)return null;
         var material=source&&source.shader==shader?new Material(source):new Material(shader);
-        material.name="Monochrome menu artwork";material.SetFloat("_Saturation",0);
-        if(!source){material.SetFloat("_Contrast",1.1f);material.SetFloat("_Pivot",.5f);}
+        material.name="Menu artwork";material.SetFloat("_Saturation",1);
+        if(!source){material.SetFloat("_Contrast",1);material.SetFloat("_Pivot",.5f);}
         return material;
     }
     void OnDestroy(){Release(normal);Release(hover);}

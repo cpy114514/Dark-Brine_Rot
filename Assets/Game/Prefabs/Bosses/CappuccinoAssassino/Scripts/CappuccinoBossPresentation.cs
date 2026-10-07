@@ -72,6 +72,7 @@ namespace Mavis
 
         void CreateAudio()
         {
+            if (!GameAudioPolicy.SoundEnabled) return;
             var obj=new GameObject("Capri combat audio");obj.transform.SetParent(transform,false);
             audioSource=obj.AddComponent<AudioSource>();audioSource.playOnAwake=false;audioSource.spatialBlend=1f;
             audioSource.minDistance=4f;audioSource.maxDistance=38f;audioSource.volume=.5f;

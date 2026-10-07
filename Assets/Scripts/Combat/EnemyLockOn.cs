@@ -23,6 +23,7 @@ namespace Mavis
         GameObject hud;
         RectTransform marker;
         Font font;
+        RaycastHit[] sightHits=new RaycastHit[32];
 
         void Awake() { movement = GetComponent<ThirdPersonPlayerController>(); health = GetComponent<PlayerHealth>(); }
         void Update()
@@ -54,8 +55,17 @@ namespace Mavis
         {
             Vector3 origin = camera != null ? camera.transform.position : transform.position + Vector3.up * 1.5f;
             Vector3 ray = point - origin;
-            foreach (var hit in Physics.RaycastAll(origin, ray.normalized, ray.magnitude, ~0, QueryTriggerInteraction.Ignore))
+            int count;
+            while(true)
             {
+                count=Physics.RaycastNonAlloc(origin,ray.normalized,sightHits,ray.magnitude,~0,QueryTriggerInteraction.Ignore);
+                if(count<sightHits.Length)break;
+                // Retry crowded sight lines so a full buffer never hides an obstruction.
+                System.Array.Resize(ref sightHits,sightHits.Length*2);
+            }
+            for(int i=0;i<count;i++)
+            {
+                var hit=sightHits[i];
                 if (hit.collider.transform.IsChildOf(transform) || hit.collider.transform.IsChildOf(hp.transform)) continue;
                 return false;
             }

@@ -50,8 +50,8 @@ public static class MinimalMenuLayout
         marker.rectTransform.anchorMin=marker.rectTransform.anchorMax=new Vector2(0,1);
         marker.text="01  /  FIRST ISLAND";marker.color=GameUITheme.Secondary;
         Mavis.LocalizedGameText.Bind(marker);
-        // Authored decoration drawings already contain black-and-white silhouettes.
-        // Keep their sprite swaps and interactive island rotation intact.
+        // Artwork keeps its authored colors and hover swaps independently of the neutral UI palette.
+        // Keep the interactive island rotation intact.
         foreach(var text in root.GetComponentsInChildren<TMP_Text>(true))
         {var shadow=text.GetComponent<Shadow>();if(shadow)shadow.enabled=false;}
         foreach(var image in root.GetComponentsInChildren<Image>(true))

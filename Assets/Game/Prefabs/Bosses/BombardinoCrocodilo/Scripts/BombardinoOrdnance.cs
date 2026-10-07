@@ -39,12 +39,13 @@ namespace Mavis
             }
             if(kind==Kind.Missile)
             {
-                smokeMaterial=NaturalParticleEffects.Material("Missile exhaust",new Color(.52f,.51f,.48f,.28f));
-                var smoke=NaturalParticleEffects.Emitter(transform,"Missile exhaust smoke",smokeMaterial,40,-.035f);
+                smokeMaterial=NaturalParticleEffects.SmokeMaterial("Missile exhaust",new Color(.52f,.51f,.48f,.42f));
+                var smoke=NaturalParticleEffects.Emitter(transform,"Missile exhaust smoke",smokeMaterial,16,-.035f);
                 smoke.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
                 smoke.transform.localPosition=Vector3.down*.5f;smoke.transform.localRotation=Quaternion.LookRotation(Vector3.down);
-                var main=smoke.main;main.loop=true;main.startSpeed=.8f;main.startSize=new ParticleSystem.MinMaxCurve(.08f,.18f);main.startLifetime=new ParticleSystem.MinMaxCurve(.35f,.65f);
-                var emission=smoke.emission;emission.enabled=true;emission.rateOverTime=14;
+                var main=smoke.main;main.loop=true;main.startSpeed=.8f;main.startSize=new ParticleSystem.MinMaxCurve(.12f,.25f);main.startLifetime=new ParticleSystem.MinMaxCurve(.35f,.65f);main.startRotation=new ParticleSystem.MinMaxCurve(0f,Mathf.PI*2f);
+                var size=smoke.sizeOverLifetime;size.enabled=true;size.size=new ParticleSystem.MinMaxCurve(1,AnimationCurve.Linear(0,.5f,1,1.6f));
+                var emission=smoke.emission;emission.enabled=true;emission.rateOverTime=12;
                 smoke.Play();
             }
         }

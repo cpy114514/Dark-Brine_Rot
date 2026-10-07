@@ -45,11 +45,67 @@ public static class FoliagePerformanceBuilder
         EditorApplication.update += Pump;
         Next();
     }
+    public static object ExtendCoastalLibrary()
+    {
+        var library=AssetDatabase.LoadAssetAtPath<FoliageMeshLibrary>(Folder+"/Library.asset");
+        if(library==null)throw new InvalidOperationException("Build the base foliage library first.");
+        var combined=new List<FoliageMeshLibrary.Entry>(library.entries);
+        int original=combined.Count;AddCoastalLevels(combined);
+        library.entries=combined.ToArray();EditorUtility.SetDirty(library);AssetDatabase.SaveAssets();
+        return new {added=combined.Count-original,total=combined.Count,closeDetailPreserved=true};
+    }
+    public static async Task<object> OptimizeHeavyTrees()
+    {
+        if(Application.isPlaying)throw new InvalidOperationException("Stop Play Mode before building foliage assets.");
+        if(pending!=null || queue.Count!=0)throw new InvalidOperationException("Build already running");
+        var library=AssetDatabase.LoadAssetAtPath<FoliageMeshLibrary>(Folder+"/Library.asset");
+        var report=new List<object>();
+        foreach(var entry in library.entries)
+        {
+            if(entry.grass || entry.near==null)continue;
+            var input=entry.close!=null?entry.close:entry.near;
+            long before=Enumerable.Range(0,input.subMeshCount).Sum(i=>(long)input.GetIndexCount(i)/3);
+            if(before<150000)continue;
+            string path=Folder+"/"+entry.source.name+"_BalancedNear.asset";
+            var mesh=AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if(mesh==null)
+            {
+                var source=new Data {positions=input.vertices,normals=input.normals,tangents=input.tangents,uv=input.uv,
+                    indices=Enumerable.Range(0,input.subMeshCount).Select(i=>input.GetTriangles(i)).ToArray()};
+                // Keep every disconnected leaf/branch, simplifying each piece rather than
+                // deleting whole leaves to meet a global polygon budget.
+                var levels=await Task.Run(()=>Build(source,false,2));var d=levels[0];
+                mesh=new Mesh {name=entry.source.name+"_BalancedNear",indexFormat=d.positions.Length>65535?IndexFormat.UInt32:IndexFormat.UInt16};
+                mesh.vertices=d.positions;mesh.normals=d.normals;
+                if(d.uv.Length==d.positions.Length)mesh.uv=d.uv;
+                if(d.tangents.Length==d.positions.Length)mesh.tangents=d.tangents;
+                mesh.subMeshCount=d.indices.Length;for(int s=0;s<d.indices.Length;s++)mesh.SetTriangles(d.indices[s],s,false);
+                mesh.bounds=input.bounds;AssetDatabase.CreateAsset(mesh,path);
+            }
+            entry.close=input;entry.near=mesh;entry.fullDetailDistance=18f;
+            report.Add(new {source=entry.source.name,before,after=Enumerable.Range(0,mesh.subMeshCount).Sum(i=>(long)mesh.GetIndexCount(i)/3)});
+        }
+        EditorUtility.SetDirty(library);AssetDatabase.SaveAssets();return report;
+    }
+    static void AddCoastalLevels(List<FoliageMeshLibrary.Entry> target)
+    {
+        const string root="Assets/Game/Prefabs/Environment/Trees/CoastalTrees/Meshes/";
+        foreach(int tree in new[]{2,3})foreach(string part in new[]{"Branches","Leaves","Trunk"})
+        {
+            Mesh[] lod=new Mesh[3];
+            for(int i=0;i<3;i++)lod[i]=AssetDatabase.LoadAssetAtPath<Mesh>(root+"IslandTree0"+tree+"_"+part+"_LOD"+i+".asset");
+            if(lod.Any(m=>m==null))continue;
+            for(int i=0;i<3;i++)
+                if(!target.Any(e=>e.source==lod[i]))target.Add(new FoliageMeshLibrary.Entry
+                {source=lod[i],near=lod[Mathf.Max(1,i)],far=lod[2],fullDetailDistance=i==0?35:0});
+        }
+    }
     static void Next()
     {
         if (queue.Count == 0)
         {
             var library = ScriptableObject.CreateInstance<FoliageMeshLibrary>();
+            AddCoastalLevels(entries);
             library.entries = entries.ToArray();
             var existing = AssetDatabase.LoadAssetAtPath<FoliageMeshLibrary>(Folder + "/Library.asset");
             if (existing != null) { existing.entries = library.entries; EditorUtility.SetDirty(existing); UnityEngine.Object.DestroyImmediate(library); }
@@ -66,7 +122,7 @@ public static class FoliagePerformanceBuilder
         bool isGrass = grass;
         pending = Task.Run(() => Build(data, isGrass));
     }
-    static Data[] Build(Data source, bool isGrass)
+    static Data[] Build(Data source, bool isGrass, int treeNearTriangles=8)
     {
         var levels = new Data[2];
         var parts = new List<Data>[2] {new List<Data>(),new List<Data>()};
@@ -97,7 +153,7 @@ public static class FoliagePerformanceBuilder
                 }
                 else
                 {
-                    near.Add(Reduce(piece,isGrass?6:8));
+                    near.Add(Reduce(piece,isGrass?6:treeNearTriangles));
                     uint hash=(uint)group.Key*747796405u+2891336453u;hash=((hash>>(int)((hash>>28)+4))^hash)*277803737u;
                     if(((hash>>22)^hash)/(float)uint.MaxValue < (isGrass?.22f:.45f))far.Add(Reduce(piece,2));
                 }
