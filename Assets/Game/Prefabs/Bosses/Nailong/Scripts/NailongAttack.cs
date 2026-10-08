@@ -7,19 +7,22 @@ namespace Mavis
     // a child collider while OnTriggerEnter lived on the root, so hits were lost.
     public sealed class NailongAttack : MonoBehaviour
     {
-        [Min(0f)] public float damage = 9f;
+        [Min(0f)] public float damage = 20f;
         [Range(20f, 180f)] public float attackArc = 130f;
         [Min(0f)] public float verticalTolerance = 2.5f;
         public string targetTag = "Player";
         readonly Collider[] roarHits = new Collider[64];
         readonly HashSet<Transform> roarVictims = new HashSet<Transform>();
         readonly RaycastHit[] sightHits = new RaycastHit[32];
+        NailongAttackMotion motion;
+
+        void Awake() => motion = GetComponent<NailongAttackMotion>();
 
         public bool HasLineOfSight(Transform target)
         {
             if (!target) return false;
             var capsule = target.GetComponentInParent<CharacterController>();
-            Vector3 from = transform.position + Vector3.up * 1.8f;
+            Vector3 from = motion ? motion.MouthPosition : transform.TransformPoint(Vector3.up * 1.8f);
             Vector3 to = capsule ? capsule.bounds.center : target.position + Vector3.up;
             Vector3 ray = to-from;
             int count=Physics.RaycastNonAlloc(from,ray.normalized,sightHits,ray.magnitude,~0,QueryTriggerInteraction.Ignore);
@@ -53,7 +56,7 @@ namespace Mavis
         }
 
         public bool TryHit(Transform target, float reach, float damageMultiplier = 1f,
-            float pushDistance = 0f, bool ignoreFacing = false)
+            float pushDistance = 0f, bool ignoreFacing = false, Vector3? rangeOrigin = null)
         {
             if (target == null) return false;
             var playerHealth = target.GetComponentInParent<PlayerHealth>();
@@ -62,7 +65,8 @@ namespace Mavis
             // carries PlayerHealth, without changing the player's prefab.
             if (!string.IsNullOrEmpty(targetTag) && target.tag != targetTag &&
                 target.GetComponentInParent<PlayerHealth>() == null) return false;
-            Vector3 delta = target.position - transform.position;
+            Vector3 origin = rangeOrigin ?? NailongSize.Feet(transform);
+            Vector3 delta = NailongSize.Feet(target) - origin;
             if (Mathf.Abs(delta.y) > verticalTolerance) return false;
             delta.y = 0f;
             if (delta.sqrMagnitude > reach * reach) return false;

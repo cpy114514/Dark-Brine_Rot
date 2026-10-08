@@ -1216,8 +1216,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30bc85cc405a65d45b6d26fc01d3b2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongHealth
-  maxHealth: 160
-  currentHealth: 160
+  maxHealth: 300
+  currentHealth: 300
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -1233,6 +1233,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85d4166d19fcfd5449dfdbcf0ac34da9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongAI
+  slamWindup: 1.05
+  slamRadius: 6
+  slamDamageMultiplier: 1.65
+  slamRecovery: 1.1
+  slamCooldown: 7
   flurryWindup: 0.45
   flurryInterval: 0.28
   flurryCount: 4
@@ -1252,7 +1257,7 @@ MonoBehaviour:
   spitCooldown: 5
   skillRecovery: 0.7
   targetTag: Player
-  sightRange: 12
+  sightRange: 16
   giveUpRange: 35
   followStopDistance: 2.4
   chaseSpeed: 4.2
@@ -1285,6 +1290,8 @@ MonoBehaviour:
   health: {fileID: 3929618944930166014}
   attack: {fileID: 7919335226212313832}
   attackMotion: {fileID: 7410499902333440630}
+  arenaRadius: 38
+  openingSeconds: 0.9
 --- !u!114 &7919335226212313832
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1297,7 +1304,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 655b7d27986ff154d84c48aaf72ea44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongAttack
-  damage: 9
+  damage: 20
   attackArc: 130
   verticalTolerance: 2.5
   targetTag: Player

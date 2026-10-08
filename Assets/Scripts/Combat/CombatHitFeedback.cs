@@ -10,6 +10,8 @@ namespace Mavis
         public int HitCount { get; private set; }
         readonly AudioClip[] clips = new AudioClip[6];
         AudioSource source;
+        Camera viewer;
+        CombatCameraShake cameraShake;
         int soundFrame = -1;
 
         public static bool Apply(GameObject attacker, IDamageable target, float damage, Vector3 point, CombatHitKind kind)
@@ -30,6 +32,8 @@ namespace Mavis
 
         void Awake()
         {
+            // Silent gameplay must not synthesize six clips on the first hit.
+            if (!GameAudioPolicy.SoundEnabled) return;
             var audioObject = new GameObject("Wood impact audio");
             audioObject.transform.SetParent(transform, false);
             source = audioObject.AddComponent<AudioSource>();
@@ -55,24 +59,31 @@ namespace Mavis
             }
         }
 
+        void Start() => BindCamera();
+        void BindCamera()
+        {
+            viewer=Camera.main;
+            if(!viewer){cameraShake=null;return;}
+            cameraShake=viewer.GetComponent<CombatCameraShake>();
+            if(!cameraShake)cameraShake=viewer.gameObject.AddComponent<CombatCameraShake>();
+        }
+
         void Emit(Vector3 point, CombatHitKind kind)
         {
             LastHitKind = kind;
             HitCount++;
             // An area hit can damage several enemies, but should not multiply loudness or camera motion.
-            if (soundFrame != Time.frameCount)
+            if (source != null && soundFrame != Time.frameCount)
             {
                 soundFrame = Time.frameCount;
                 source.transform.position = point;
                 source.PlayOneShot(clips[(int)kind], kind == CombatHitKind.ChargedHeavy ? 0.85f : 0.65f);
             }
-            var camera = Camera.main;
-            if (camera == null) return;
-            var shake = camera.GetComponent<CombatCameraShake>();
-            if (shake == null) shake = camera.gameObject.AddComponent<CombatCameraShake>();
+            if(viewer!=Camera.main||!cameraShake)BindCamera();
+            if(!cameraShake)return;
             float strength = kind == CombatHitKind.ChargedHeavy ? 0.065f : kind == CombatHitKind.JumpSlash ? 0.055f
                 : kind == CombatHitKind.ComboFinisher ? 0.038f : kind == CombatHitKind.ComboTwo ? 0.024f : 0.016f;
-            shake.Pulse(strength, kind == CombatHitKind.ChargedHeavy || kind == CombatHitKind.JumpSlash ? 0.18f : 0.11f);
+            cameraShake.Pulse(strength, kind == CombatHitKind.ChargedHeavy || kind == CombatHitKind.JumpSlash ? 0.18f : 0.11f);
         }
 
         void OnDestroy()

@@ -120,6 +120,9 @@ namespace Mavis
                 cross.rectTransform.sizeDelta=horizontal?new Vector2(10,2):new Vector2(2,10);
             }
             healingLabel = HealingText(hud.transform,"Healing supply",new Vector2(48,-78),new Vector2(panelWidth-48,26));
+            healingLabel.fontSize = 15;
+            healingLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
+            healingLabel.verticalOverflow = VerticalWrapMode.Truncate;
             healingFeedback = HealingText(hud.transform,"Healing feedback",new Vector2(0,32),new Vector2(470,26));
         }
 

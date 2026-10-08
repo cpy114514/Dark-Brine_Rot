@@ -24,6 +24,7 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
 
     public bool IsStowed => stowed;
     public bool Climbing { get; set; }
+    public bool CinematicTraversal { get; set; }
 
     void Awake()
     {
@@ -57,10 +58,11 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
         colliderEnabled = new bool[colliders.Length];
     }
 
-    void LateUpdate()
+    void LateUpdate()=>RefreshPose();
+    public void RefreshPose()
     {
         if (controller == null || stick == null || mesh == null) return;
-        bool swimming = controller.enabled && (controller.Swimming || Climbing);
+        bool swimming = CinematicTraversal || controller.enabled && (controller.Swimming || Climbing);
         if (!swimming) { RestoreGrip(); return; }
         animator = attack != null ? attack.animator : GetComponentInChildren<Animator>();
         if (animator == null || !animator.isHuman) return;

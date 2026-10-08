@@ -1,0 +1,35 @@
+{
+  "diagnostics": [],
+  "compileMs": 76,
+  "executeMs": 585,
+  "assemblyName": "PipelineRunScript_UnityAnimationImport_cd253c588ff84801b79a9970c5ed20e5",
+  "success": true,
+  "result": {
+    "passed": true,
+    "import": {
+      "asset": "Assets/AnimationStaging/TEST_Humanoid_v005/StandingMeleeAttackDownward.fbx",
+      "action": "SahurStandingMeleeDownward",
+      "unity_clip": "TEST_Humanoid_Existing_001",
+      "frameRate": 30,
+      "length": 2.266667,
+      "isLooping": false,
+      "firstFrame": 0,
+      "lastFrame": 68,
+      "sourceFrameOffset": 0,
+      "rigType": "Human",
+      "avatarValid": true,
+      "avatarHuman": true,
+      "globalScale": 1,
+      "fileScale": 0.01,
+      "bakeAxisConversion": false,
+      "motionNodeName": "",
+      "rootPath": "mixamorig:Hips",
+      "curveCount": 130,
+      "animatedPaths": [
+        ""
+      ],
+      "warning": "Staged only. Gameplay camera, contacts, runtime motion ownership and Humanoid retargeting need action-specific review."
+    },
+    "scope": "Existing Humanoid source copy with an explicit compatible source Avatar; retargeted gameplay quality remains action-specific."
+  }
+}

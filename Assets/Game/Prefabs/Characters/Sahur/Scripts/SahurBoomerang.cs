@@ -76,6 +76,7 @@ namespace Mavis
 
         public bool TryThrow()
         {
+            if (GetComponent<SahurWeaponLoadout>()?.UsesTwinBlades ?? false) return false;
             if (!enabled || IsBusy || stick == null || mesh == null || mesh.sharedMesh == null ||
                 PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || Time.time < nextThrow || attack == null || !attack.enabled ||
                 attack.IsCombatMotionActive || movement == null || !movement.enabled || movement.Swimming)
@@ -121,6 +122,20 @@ namespace Mavis
             for (int i = 0; i < heldColliders.Length; i++)
             { heldCollision[i] = heldColliders[i].enabled; heldColliders[i].enabled = false; }
             center = launchCenter = stick.TransformPoint(mesh.sharedMesh.bounds.center);
+            // The story shark is partially submerged. Aim from the actual animated
+            // release point at its exposed head, inside a narrow facing cone.
+            // Ordinary island throws retain their existing trajectory and sweeps.
+            var storyShark=FindFirstObjectByType<Story1SharkHealth>();
+            if(storyShark!=null && !storyShark.IsDead)
+            {
+                Vector3 aim=storyShark.LockPoint-launchCenter;
+                Vector3 flat=Vector3.ProjectOnPlane(aim,Vector3.up);
+                if(aim.sqrMagnitude>.25f && aim.sqrMagnitude<=throwDistance*throwDistance &&
+                    Vector3.Angle(direction,flat)<=22)
+                {
+                    direction=aim.normalized;spinAxis=Vector3.Cross(Vector3.up,direction).normalized;
+                }
+            }
             rotation = stick.rotation;
             elapsed = 0f;
             returning = false;

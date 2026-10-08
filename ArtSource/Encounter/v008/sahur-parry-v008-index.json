@@ -1,0 +1,23 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v008\\sahur-parry-v008.blend",
+    "rig": "Armature",
+    "action": "CH1_SahurParry_v008",
+    "unity_clip": "CH1_SahurParry_v008",
+    "revision": "v008",
+    "frame_start": 1,
+    "frame_end": 67,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "mixamorig:Hips",
+    "rig_type": "Humanoid",
+    "stage": "FIRST PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v006.md",
+    "approval_reference": "2026-10-07 user PLEASE IMPLEMENT THIS PLAN",
+    "review_status": "pending",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/StandingMeleeAttackDownward.fbx",
+    "contact_seconds": 0.484
+  }
+]

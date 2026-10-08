@@ -25,6 +25,7 @@ namespace Mavis
             ai = GetComponent<CappuccinoAI>(); enemy = GetComponent<CappuccinoEnemy>();
             ultimate = GetComponent<CappuccinoUltimate>(); health = GetComponent<Health>();
             if (!Application.isPlaying) return;
+            if(GetComponent<BossWeaponTrails>()==null)gameObject.AddComponent<BossWeaponTrails>();
             BuildHUD(); CreateAudio();
         }
 
@@ -32,6 +33,18 @@ namespace Mavis
         {
             Initialize();
             if (kind == CueKind.Defeated) victoryAt = Time.time;
+            if(Application.isPlaying&&!PauseSettingsMenu.IsOpen)
+            {
+                if(kind==CueKind.Hit)
+                {
+                    Vector3 point=ai.target?ai.target.position+Vector3.up:transform.position+transform.forward*1.6f+Vector3.up;
+                    var body=ai.target?ai.target.GetComponent<Collider>():null;
+                    if(body)point=body.ClosestPoint(transform.position+Vector3.up);
+                    BossCombatVfx.Burst(point,transform.forward,new Color(.72f,.71f,.65f,.7f),8,1.5f);
+                }
+                else if(kind==CueKind.Stagger||kind==CueKind.Surge)BossCombatVfx.Burst(transform.position,Vector3.up,new Color(.55f,.48f,.36f,.55f),16,3);
+                else if(kind==CueKind.Swing&&ai.CurrentAttack==CappuccinoAI.AttackKind.DashThrust)BossCombatVfx.Burst(transform.position-transform.forward*.5f,Vector3.up,new Color(.42f,.37f,.29f,.5f),10,2);
+            }
             if (audioSource != null && !PauseSettingsMenu.IsOpen)
             {
                 int index = kind == CueKind.Swing ? 1 : kind == CueKind.Hit || kind == CueKind.Stagger ? 2 : 0;

@@ -1,0 +1,181 @@
+[
+  {
+    "action": "CH1_SahurDiagonalSlash_v001",
+    "unity_clip": "CH1_SahurDiagonalSlash_v001",
+    "revision": "v001",
+    "frame_start": 1,
+    "frame_end": 97,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "mixamorig:Hips",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design.md",
+    "approval_reference": "User 2026-10-07: \u597d\uff0c\u5f00\u59cb\u5236\u4f5c\u5427; no further questions, autonomous revisions authorized",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/source-review.md",
+    "gameplay": {
+      "startup": [
+        1,
+        54
+      ],
+      "active": [
+        54,
+        59
+      ],
+      "recovery": [
+        59,
+        97
+      ]
+    },
+    "format_version": 1,
+    "duration_seconds": 1.6,
+    "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v001\\sahur-encounter-v001.blend",
+    "blender_version": "5.2.2 LTS",
+    "rig": "Armature",
+    "slot": "OBSlot",
+    "animated_bones": [
+      "mixamorig:Head",
+      "mixamorig:HeadTop_End",
+      "mixamorig:Hips",
+      "mixamorig:LeftArm",
+      "mixamorig:LeftFoot",
+      "mixamorig:LeftForeArm",
+      "mixamorig:LeftHand",
+      "mixamorig:LeftHandIndex1",
+      "mixamorig:LeftHandIndex2",
+      "mixamorig:LeftHandIndex3",
+      "mixamorig:LeftHandIndex4",
+      "mixamorig:LeftHandMiddle1",
+      "mixamorig:LeftHandMiddle2",
+      "mixamorig:LeftHandMiddle3",
+      "mixamorig:LeftHandMiddle4",
+      "mixamorig:LeftHandPinky1",
+      "mixamorig:LeftHandPinky2",
+      "mixamorig:LeftHandPinky3",
+      "mixamorig:LeftHandPinky4",
+      "mixamorig:LeftHandRing1",
+      "mixamorig:LeftHandRing2",
+      "mixamorig:LeftHandRing3",
+      "mixamorig:LeftHandRing4",
+      "mixamorig:LeftHandThumb1",
+      "mixamorig:LeftHandThumb2",
+      "mixamorig:LeftHandThumb3",
+      "mixamorig:LeftHandThumb4",
+      "mixamorig:LeftLeg",
+      "mixamorig:LeftShoulder",
+      "mixamorig:LeftToeBase",
+      "mixamorig:LeftToe_End",
+      "mixamorig:LeftUpLeg",
+      "mixamorig:Neck",
+      "mixamorig:RightArm",
+      "mixamorig:RightFoot",
+      "mixamorig:RightForeArm",
+      "mixamorig:RightHand",
+      "mixamorig:RightHandIndex1",
+      "mixamorig:RightHandIndex2",
+      "mixamorig:RightHandIndex3",
+      "mixamorig:RightHandIndex4",
+      "mixamorig:RightHandMiddle1",
+      "mixamorig:RightHandMiddle2",
+      "mixamorig:RightHandMiddle3",
+      "mixamorig:RightHandMiddle4",
+      "mixamorig:RightHandPinky1",
+      "mixamorig:RightHandPinky2",
+      "mixamorig:RightHandPinky3",
+      "mixamorig:RightHandPinky4",
+      "mixamorig:RightHandRing1",
+      "mixamorig:RightHandRing2",
+      "mixamorig:RightHandRing3",
+      "mixamorig:RightHandRing4",
+      "mixamorig:RightHandThumb1",
+      "mixamorig:RightHandThumb2",
+      "mixamorig:RightHandThumb3",
+      "mixamorig:RightHandThumb4",
+      "mixamorig:RightLeg",
+      "mixamorig:RightShoulder",
+      "mixamorig:RightToeBase",
+      "mixamorig:RightToe_End",
+      "mixamorig:RightUpLeg",
+      "mixamorig:Spine",
+      "mixamorig:Spine1",
+      "mixamorig:Spine2"
+    ],
+    "selected_meshes": [],
+    "axis_forward": "-Z",
+    "axis_up": "Y",
+    "unit_scale": 1.0,
+    "validation": {
+      "passed": true,
+      "errors": [],
+      "warnings": [],
+      "checks": {
+        "root_displacement_world_m": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "in_place_max_excursion_m": 0.0,
+        "in_place_axes": [
+          "X",
+          "Y"
+        ],
+        "contacts": "not observed: no contact intervals supplied"
+      },
+      "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+    },
+    "gameplay_timing": {
+      "startup": [
+        {
+          "frames": [
+            1,
+            54
+          ],
+          "seconds": [
+            0.0,
+            0.8833333333333333
+          ],
+          "normalized": [
+            0.0,
+            0.5520833333333334
+          ]
+        }
+      ],
+      "active": [
+        {
+          "frames": [
+            54,
+            59
+          ],
+          "seconds": [
+            0.8833333333333333,
+            0.9666666666666667
+          ],
+          "normalized": [
+            0.5520833333333334,
+            0.6041666666666666
+          ]
+        }
+      ],
+      "recovery": [
+        {
+          "frames": [
+            59,
+            97
+          ],
+          "seconds": [
+            0.9666666666666667,
+            1.6
+          ],
+          "normalized": [
+            0.6041666666666666,
+            1.0
+          ]
+        }
+      ]
+    },
+    "fbx": "CH1_SahurDiagonalSlash_v001.fbx"
+  }
+]

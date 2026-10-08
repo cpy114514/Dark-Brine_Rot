@@ -7,8 +7,8 @@ namespace Mavis
     // Uses the same damage contract as Sahur's stick attack.
     public sealed class NailongHealth : MonoBehaviour, IDamageable
     {
-        [Min(1f)] public float maxHealth = 160f;
-        public float currentHealth = 160f;
+        [Min(1f)] public float maxHealth = 300f;
+        public float currentHealth = 300f;
         public UnityEvent OnDeath = new UnityEvent();
 
         public event Action<float> Damaged;

@@ -26,7 +26,7 @@ public sealed class SahurCombatGuardIK : MonoBehaviour
             return;
         }
         if(layerIndex!=0) return;
-        bool authored=attack && (attack.IsCharging || attack.IsHeavyAttackActive);
+        bool authored=attack && (attack.UsesTwinBlades || attack.IsCharging || attack.IsHeavyAttackActive);
         bool guarding=attack && attack.enabled && attack.IsCombatMotionActive && !authored &&
             !(attack.GetComponent<Mavis.SahurBoomerang>()?.IsThrowing ?? false);
         weight=authored ? 0 : Mathf.MoveTowards(weight,guarding ? guardStrength : 0,

@@ -60,7 +60,7 @@ public static class VerifyStory1WreckBattle
             sequence.BeginImpact();
             for (int k=0;k<360 && battle.CurrentPhase!=Story1WreckBattle.Phase.Fighting;k++) await Task.Delay(25);
             Require(battle.CurrentPhase==Story1WreckBattle.Phase.Fighting,"Ship did not shatter into the live encounter.");
-            Require(!sequence.ship.gameObject.activeInHierarchy && battle.PlankCount==44,"Hull was not replaced by solid fragments.");
+            Require(!sequence.ship.gameObject.activeInHierarchy && battle.PlankCount==20,"Hull was not replaced by solid fragments.");
             Require(battle.ShipFragmentCount==202,"The rest of the original ship did not break into fragments.");
             foreach(var board in UnityEngine.Object.FindObjectsByType<Story1WreckPlank>(FindObjectsSortMode.None))
                 Require(board.GetComponent<MeshFilter>().sharedMesh.name.StartsWith("deck_Object_30_")||

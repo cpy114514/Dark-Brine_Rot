@@ -1,0 +1,36 @@
+{
+  "verified": true,
+  "original_codex_settings_preserved": true,
+  "source_hashes_preserved_during_final_inspection": true,
+  "source_hashes": {
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\SharkAnimation\\tralalero_animated.blend": "f6b8119fab289b89c0c00f700c7517cd6ee44a7334fc5bc9fa5797b905eba2f5",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\BlenderWork\\character_fixed.blend": "2701014344a5881fc03f70cdf0c903c2b5cd1b2805e74ca5e9544e3f00a09367",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Assets\\Game\\Prefabs\\Characters\\Sahur\\Animations\\Source\\StandingMeleeAttackDownward.fbx": "fafb1a38aca783851f74c10596b2311b2b1a045d384fffd1674ec006b0607fac",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Assets\\Game\\Prefabs\\Characters\\Sahur\\Animations\\SahurGrounded.controller": "b1fe549f7bc39b8f42beeaf83747c1b6856fd51a8220b8a20b8be108301971ca"
+  },
+  "helper_cli_tests": [
+    {
+      "helper": "inspect_actions.py",
+      "passed": true,
+      "report": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\shark-actions-final.json"
+    },
+    {
+      "helper": "inspect_animation.py",
+      "passed": true,
+      "report": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\shark-curves-final.json"
+    }
+  ],
+  "environment": {
+    "blender": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\portable\\blender-5.2.2-windows-x64\\blender.exe",
+    "python": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\venv\\Scripts\\python.exe",
+    "server": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\venv\\Scripts\\mcp-blender.exe",
+    "host": "127.0.0.1",
+    "port": 9876,
+    "source_commit": "4ae5645aa1f0c8f099c2a90969fdd392c0cc9851",
+    "general_skill_commit": "59dda21f52824ddfb1a3fe07ad843fc0cdc23334"
+  },
+  "blender_zip_sha256": "3849D17A682CBA006075AAA3F3597ECB5C9C30EC31035B2E092C53E40679B535",
+  "portable_blender_license": "GPL",
+  "mcp_blender_license": "AGPL-3.0-or-later",
+  "compatibility_patch": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\blender-5x-compatibility.patch"
+}

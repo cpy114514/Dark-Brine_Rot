@@ -65,7 +65,7 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     public void SynchronizeShipTailContact()
     {
         if(rigAnimator==null)return;
-        rigAnimator.Play("Ship_Smash",0,TailContactTime/1.15f);
+        rigAnimator.Play("Ship_Smash",0,TailContactTime/ActionDuration("Ship_Smash"));
         rigAnimator.Update(0);
     }
 
@@ -153,7 +153,7 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     public void PlayTailSlap(float elapsedSeconds = 0f, bool powerful = false)
     {
         powerfulTail=powerful;
-        if(rigAnimator!=null){PlayRigAction(powerful ? "Ship_Smash" : "Tail_Strike",1.15f,elapsedSeconds);return;}
+        if(rigAnimator!=null){string state=powerful ? "Ship_Smash" : "Tail_Strike";PlayRigAction(state,ActionDuration(state),elapsedSeconds);return;}
         slapping = true;
         slapStartTime = Time.time - Mathf.Max(0f, elapsedSeconds);
     }
@@ -163,15 +163,23 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         rigAnimator.speed=1;actionUntil=Time.time+Mathf.Max(0,duration-offset);
         rigAnimator.CrossFadeInFixedTime(state,.055f,0,offset);
     }
-    public void PlayBite(){if(rigAnimator!=null)PlayRigAction("Bite_Lunge",1.1f);else PlayTailSlap();}
-    public void PlayRecoil(){if(rigAnimator!=null)PlayRigAction("Hit_Recoil",.8f);}
+    public void PlayBite(){if(rigAnimator!=null)PlayRigAction("Bite_Lunge",ActionDuration("Bite_Lunge"));else PlayTailSlap();}
+    public void PlayRecoil(){if(rigAnimator!=null)PlayRigAction("Hit_Recoil",ActionDuration("Hit_Recoil"));}
     public void PlayThreat(){if(rigAnimator!=null)PlayRigAction("Threat",1.8f);}
 
     bool cinematicAnimation;
+    public string CinematicAction { get; private set; }
+    public float CinematicActionSeconds { get; private set; }
     public void SampleCinematicAction(string state,float seconds)
     {
         if(rigAnimator==null)return;
-        float duration=state=="Threat" ? 1.8f : state=="Hit_Recoil" ? .8f : state=="Bite_Lunge" ? 1.1f : 1.15f;
+        CinematicAction=state;CinematicActionSeconds=seconds;
+        if(state=="Tail_Strike" || state=="Ship_Smash")powerfulTail=state=="Ship_Smash";
+        if(state=="Swim")
+        {
+            cinematicAnimation=true;rigAnimator.speed=0;rigAnimator.Play("Swim",0,Mathf.Max(0,seconds)/1.6f);rigAnimator.Update(0);return;
+        }
+        float duration=ActionDuration(state);
         cinematicAnimation=true;rigAnimator.speed=0;
         if(seconds<=duration+.12f)
         {
@@ -182,6 +190,13 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         else{rigAnimator.Play("Swim",0,(seconds-duration)/1.6f);rigAnimator.Update(0);}
     }
     public void ReleaseCinematicAnimation(){cinematicAnimation=false;if(rigAnimator!=null)rigAnimator.speed=1;}
+    float ActionDuration(string state)
+    {
+        string suffix=state=="Tail_Strike" ? "Tail" : state=="Ship_Smash" ? "ShipSmash" : state=="Bite_Lunge" ? "Bite" : state=="Hit_Recoil" ? "Recoil" : state;
+        foreach(var clip in rigAnimator.runtimeAnimatorController.animationClips)
+            if(clip.name=="CH1_Shark"+suffix+"_v006" || clip.name==state)return clip.length;
+        return state=="Breach" ? 3.2f : state=="Threat" ? 1.8f : state=="Hit_Recoil" ? .8f : state=="Bite_Lunge" ? 1.1f : 1.15f;
+    }
 
     void LateUpdate()
     {

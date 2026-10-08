@@ -81,21 +81,64 @@ namespace Mavis
             get
             {
                 if (!IsGroundComboActive || animator == null) return false;
-                var state = animator.GetCurrentAnimatorStateInfo(0);
-                if (animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).fullPathHash == activeAttackHash)
-                    state = animator.GetNextAnimatorStateInfo(0);
-                if (state.fullPathHash != activeAttackHash) return false;
+                int layer=AttackAnimationLayer;
+                var state = animator.GetCurrentAnimatorStateInfo(layer);
+                if (animator.IsInTransition(layer) && animator.GetNextAnimatorStateInfo(layer).fullPathHash == AttackAnimationHash)
+                    state = animator.GetNextAnimatorStateInfo(layer);
+                if (state.fullPathHash != AttackAnimationHash) return false;
                 Vector2 window = comboStep == 0 ? comboOneHitWindow : comboStep == 1 ? comboTwoHitWindow : comboThreeHitWindow;
                 // Steering belongs to anticipation and recovery, not the damaging arc.
                 return state.normalizedTime < window.x || state.normalizedTime > window.y;
             }
         }
         public bool IsHeavyAttackActive => attacking && activeAttackHash == heavyStateHash;
-        public bool CanMoveDuringCombat => charging || (IsHeavyAttackActive && usesRightArmHeavy);
-        public bool UsesAnimationRootMotion => attacking && activeAttackHash != jumpSlashStateHash && !usesRightArmHeavy;
+        public bool CanMoveDuringCombat => charging || usesUpperBodyLight || (IsHeavyAttackActive && usesRightArmHeavy);
+        public bool UsesAnimationRootMotion => attacking && activeAttackHash != jumpSlashStateHash && !usesRightArmHeavy && !usesUpperBodyLight;
+        public bool SafeForCinematic => !IsCombatMotionActive || (attacking && !charging && CurrentAttackPhase>=CurrentWindowEnd+.04f);
+        public float CurrentAttackPhase => animator!=null && attacking ? animator.GetCurrentAnimatorStateInfo(AttackAnimationLayer).normalizedTime : 0;
+        float CurrentWindowEnd => comboStep==0 ? comboOneHitWindow.y : comboStep==1 ? comboTwoHitWindow.y : comboStep==2 ? comboThreeHitWindow.y : IsHeavyAttackActive ? heavySwingWindowEnd : swingWindowEnd;
         public int CurrentComboStage => IsGroundComboActive ? comboStep : -1;
         public bool IsCharging => charging;
+        public bool UsesTwinBlades { get; private set; }
+        Collider originalStickHitbox, twinRight, twinLeft, secondBlade;
+        AnimationClip originalChargeClip, originalChargedStrikeClip;
+        Vector2 originalWindowOne, originalWindowTwo, originalWindowThree, originalJumpWindow;
+        float originalReach, originalChargePhase, originalArc;
         public float ChargeElapsed => charging ? Mathf.Max(0f, Time.time - chargeStartedAt) : 0f;
+        bool capturedWeaponSettings;
+
+        public void SetTwinBladeMode(bool useBlades, Collider right, Collider left)
+        {
+            if (!capturedWeaponSettings)
+            {
+                originalStickHitbox = stickHitbox;
+                originalChargeClip = chargeClip; originalChargedStrikeClip = chargedStrikeClip;
+                originalWindowOne = comboOneHitWindow; originalWindowTwo = comboTwoHitWindow; originalWindowThree = comboThreeHitWindow;
+                originalJumpWindow = jumpSlashHitWindow; originalReach = comboReach; originalChargePhase = maxChargePosePhase; originalArc = comboArc;
+                capturedWeaponSettings = true;
+            }
+            CancelForMovement();
+            if (twinLeft) twinLeft.enabled = false;
+            if (twinRight) twinRight.enabled = false;
+            UsesTwinBlades = useBlades;
+            twinRight = right; twinLeft = left; secondBlade = null;
+            stickHitbox = useBlades ? right : originalStickHitbox;
+            for (int i = 0; i < 3; i++) comboStateHashes[i] = Animator.StringToHash("Base Layer." +
+                (useBlades ? "Capri Combo " + (i + 1) : i == 0 ? comboOneState : i == 1 ? comboTwoState : comboThreeState));
+            heavyStateHash = Animator.StringToHash("Base Layer." + (useBlades ? "Capri Heavy" : heavyAttackState));
+            chargeStateHash = Animator.StringToHash("Base Layer." + (useBlades ? "Capri Charge" : chargeState));
+            jumpSlashStateHash = Animator.StringToHash("Base Layer." + (useBlades ? "Capri Jump Slash" : jumpSlashState));
+            chargeClip = useBlades ? Resources.Load<AnimationClip>("Equipment/Capri/CapriSlash") : originalChargeClip;
+            chargedStrikeClip = useBlades ? null : originalChargedStrikeClip;
+            comboOneHitWindow = useBlades ? new Vector2(.28f,.62f) : originalWindowOne;
+            comboTwoHitWindow = useBlades ? new Vector2(.28f,.62f) : originalWindowTwo;
+            comboThreeHitWindow = useBlades ? new Vector2(.28f,.74f) : originalWindowThree;
+            jumpSlashHitWindow = useBlades ? new Vector2(.28f,.62f) : originalJumpWindow;
+            comboReach = useBlades ? 5.4f : originalReach;
+            comboArc = useBlades ? 150f : originalArc;
+            maxChargePosePhase = useBlades ? .22f : originalChargePhase;
+            if (stickHitbox) stickHitbox.enabled = false;
+        }
         public float Charge01 => charging ? Mathf.Clamp01(ChargeElapsed / Mathf.Max(0.2f, fullChargeTime)) : 0f;
         public float ChargePose01 => Mathf.SmoothStep(0f, 1f,
             Mathf.Clamp01(ChargeElapsed / Mathf.Max(0.05f, chargeWindupTime))) * Mathf.Clamp01(maxChargePosePhase);
@@ -118,6 +161,8 @@ namespace Mavis
         Vector3 previousWeaponA, previousWeaponB;
         bool hasWeaponSample;
         float previousHitPhase;
+        float observedAttackPhase=-1f;
+        Vector3 observedA,observedB,observedSecondA,observedSecondB;
         readonly int[] comboStateHashes = new int[3];
         ThirdPersonPlayerController controller;
         CharacterController strikeController;
@@ -143,10 +188,12 @@ namespace Mavis
         int upperBodyChargeStateHash;
         int rightArmHeavyStateHash;
         bool usesRightArmHeavy;
+        bool usesUpperBodyLight;
+        readonly int[] upperComboHashes=new int[3];
         static readonly int HeavyPlaybackSpeedHash = Animator.StringToHash("HeavyPlaybackSpeed");
         bool hasHeavyPlaybackSpeed;
-        int AttackAnimationLayer => usesRightArmHeavy ? chargeLayerIndex : 0;
-        int AttackAnimationHash => usesRightArmHeavy ? rightArmHeavyStateHash : activeAttackHash;
+        int AttackAnimationLayer => usesRightArmHeavy || usesUpperBodyLight ? chargeLayerIndex : 0;
+        int AttackAnimationHash => usesRightArmHeavy ? rightArmHeavyStateHash : usesUpperBodyLight && comboStep>=0 ? upperComboHashes[comboStep] : activeAttackHash;
         int chargeLayerIndex = -1;
         bool usesUpperBodyCharge;
         int chargeTimeHash;
@@ -183,6 +230,9 @@ namespace Mavis
             comboStateHashes[0] = Animator.StringToHash("Base Layer." + comboOneState);
             comboStateHashes[1] = Animator.StringToHash("Base Layer." + comboTwoState);
             comboStateHashes[2] = Animator.StringToHash("Base Layer." + comboThreeState);
+            upperComboHashes[0]=Animator.StringToHash(ChargeUpperBodyLayer+"."+comboOneState);
+            upperComboHashes[1]=Animator.StringToHash(ChargeUpperBodyLayer+"."+comboTwoState);
+            upperComboHashes[2]=Animator.StringToHash(ChargeUpperBodyLayer+"."+comboThreeState);
             if (swingAudio == null) swingAudio = GetComponent<AudioSource>();
             if (stickHitbox != null) stickHitbox.enabled = false;
             if (animator != null)
@@ -254,12 +304,14 @@ namespace Mavis
 
         void LateUpdate()
         {
+            if (secondBlade) secondBlade.enabled = false;
             // Sample the pose Unity rendered this frame, after Animator/root motion.
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
                 (controller != null && controller.Swimming))
             {
                 if (stickHitbox != null) stickHitbox.enabled = false;
                 hasWeaponSample = false;
+                observedAttackPhase=-1f;
                 return;
             }
             if (TryCancelForMovementInput()) return;
@@ -291,11 +343,12 @@ namespace Mavis
                 // temporarily lifts Sahur off the ground.
                 if (comboStep >= 0 && comboStep < 2 && animator != null)
                 {
-                    var state = animator.GetCurrentAnimatorStateInfo(0);
-                    if (animator.IsInTransition(0) &&
-                        animator.GetNextAnimatorStateInfo(0).fullPathHash == activeAttackHash)
-                        state = animator.GetNextAnimatorStateInfo(0);
-                    if (state.fullPathHash == activeAttackHash &&
+                    int layer=AttackAnimationLayer;
+                    var state = animator.GetCurrentAnimatorStateInfo(layer);
+                    if (animator.IsInTransition(layer) &&
+                        animator.GetNextAnimatorStateInfo(layer).fullPathHash == AttackAnimationHash)
+                        state = animator.GetNextAnimatorStateInfo(layer);
+                    if (state.fullPathHash == AttackAnimationHash &&
                         state.normalizedTime >= comboQueueOpen &&
                         state.normalizedTime <= comboQueueClose)
                         comboContinueQueued = true;
@@ -360,7 +413,11 @@ namespace Mavis
 
             comboStep = stage;
             comboContinueQueued = false;
-            controller?.BeginComboSourceTravel(stage);
+            chargeLayerIndex=animator.GetLayerIndex(ChargeUpperBodyLayer);
+            var loadout=GetComponent<SahurWeaponLoadout>();
+            usesUpperBodyLight=(loadout==null || !loadout.UsesTwinBlades) && chargeLayerIndex>0 && animator.HasState(chargeLayerIndex,upperComboHashes[stage]);
+            if(usesUpperBodyLight)controller?.PrepareChargeLocomotion();
+            else controller?.BeginComboSourceTravel(stage);
             float multiplier = stage == 1 ? comboTwoDamageMultiplier :
                 stage == 2 ? comboThreeDamageMultiplier : 1f;
             BeginAttack(comboStateHashes[stage], damage * multiplier, 0f,
@@ -378,7 +435,7 @@ namespace Mavis
             // The gameplay controller hands the Animator from the root to the
             // visual child in Awake, so resolve the layer on the live Animator.
             chargeLayerIndex = animator.GetLayerIndex(ChargeUpperBodyLayer);
-            usesUpperBodyCharge = chargeClip != null && chargeLayerIndex > 0 &&
+            usesUpperBodyCharge = !UsesTwinBlades && chargeClip != null && chargeLayerIndex > 0 &&
                                   animator.HasState(chargeLayerIndex, upperBodyChargeStateHash);
             if (!usesUpperBodyCharge && !animator.HasState(0, chargeStateHash))
             {
@@ -456,7 +513,7 @@ namespace Mavis
         {
             movementCancelFrame = Time.frameCount;
             boomerang?.CancelThrowForMovement();
-            charging = attacking = usesRightArmHeavy = activeAttackEntered = false;
+            charging = attacking = usesRightArmHeavy = usesUpperBodyLight = activeAttackEntered = false;
             attackQueued = comboContinueQueued = airImpactArmed = false;
             comboStep = -1;
             activeAttackHash = 0;
@@ -494,7 +551,7 @@ namespace Mavis
 
         void UpdateChargeLayerWeight()
         {
-            if (!usesUpperBodyCharge || animator == null || chargeLayerIndex < 0) return;
+            if ((!usesUpperBodyCharge && !usesUpperBodyLight) || animator == null || chargeLayerIndex < 0) return;
             if (hasHeavyPlaybackSpeed)
             {
                 float phase = HeavyAttackPhase;
@@ -511,7 +568,7 @@ namespace Mavis
             // keeps the idle/walk/run pose instead of taking over the whole body.
             if (IsHeavyAttackActive && !usesRightArmHeavy && animator.GetLayerWeight(chargeLayerIndex) > 0f)
                 animator.SetFloat(chargeTimeHash, HeavyAttackPhase);
-            bool ownsArm = charging || (IsHeavyAttackActive && usesRightArmHeavy);
+            bool ownsArm = charging || usesUpperBodyLight || (IsHeavyAttackActive && usesRightArmHeavy);
             float target = ownsArm ? 1f : 0f;
             float duration = ownsArm ? ChargeLayerFadeIn : ChargeLayerFadeOut;
             float weight = Mathf.MoveTowards(animator.GetLayerWeight(chargeLayerIndex),
@@ -550,7 +607,7 @@ namespace Mavis
             activeAttackHash = stateHash;
             usesRightArmHeavy = stateHash == heavyStateHash && chargeClip != null && usesUpperBodyCharge &&
                 chargeLayerIndex > 0 && animator.HasState(chargeLayerIndex, rightArmHeavyStateHash);
-            if (!usesRightArmHeavy && chargeLayerIndex > 0)
+            if (!usesRightArmHeavy && !usesUpperBodyLight && chargeLayerIndex > 0)
                 animator.SetLayerWeight(chargeLayerIndex, 0f);
             swingDamage = amount;
             attacking = true;
@@ -566,6 +623,12 @@ namespace Mavis
                           comboSwishes[0] : null;
             swishPlayed = false;
             if (stickHitbox != null) stickHitbox.enabled = false;
+            if(usesUpperBodyLight)
+            {
+                animator.SetLayerWeight(chargeLayerIndex,1);
+                animator.CrossFadeInFixedTime(AttackAnimationHash,blend,chargeLayerIndex,0);
+                return;
+            }
             if (usesRightArmHeavy && chargeClip != null)
             {
                 if (hasHeavyPlaybackSpeed) animator.SetFloat(HeavyPlaybackSpeedHash, 1f);
@@ -631,6 +694,7 @@ namespace Mavis
                 StartComboStage(comboStep + 1);
                 return;
             }
+            if(usesUpperBodyLight && inActiveAttack && current.normalizedTime>=.98f){FinishAttack();return;}
 
             // Keep consuming the source root delta during the outgoing blend.
             // Ending at phase 1 would cut off the clip-to-locomotion motion.
@@ -644,6 +708,8 @@ namespace Mavis
         {
             attacking = false;
             usesRightArmHeavy = false;
+            if(usesUpperBodyLight && animator!=null && chargeLayerIndex>0)animator.SetLayerWeight(chargeLayerIndex,0);
+            usesUpperBodyLight=false;
             if (stickHitbox != null) stickHitbox.enabled = false;
             activeAttackEntered = false;
             comboStep = -1;
@@ -654,15 +720,21 @@ namespace Mavis
 
         void UpdateHitbox()
         {
+            if (secondBlade) secondBlade.enabled = false;
             if (stickHitbox == null || animator == null || !attacking)
             {
                 if (stickHitbox != null) stickHitbox.enabled = false;
                 hasWeaponSample = false;
+                observedAttackPhase=-1f;
                 return;
             }
 
             int layer = AttackAnimationLayer;
             var info = animator.GetCurrentAnimatorStateInfo(layer);
+            bool transitioning=animator.IsInTransition(layer);
+            if(transitioning && animator.GetNextAnimatorStateInfo(layer).fullPathHash==AttackAnimationHash)
+                info=animator.GetNextAnimatorStateInfo(layer);
+            bool activePose=info.fullPathHash==AttackAnimationHash;
             float start;
             float end;
             if (activeAttackHash == jumpSlashStateHash)
@@ -679,34 +751,60 @@ namespace Mavis
             }
             else
             {
-                start = activeAttackHash == heavyStateHash ? heavySwingWindowStart : swingWindowStart;
-                end = activeAttackHash == heavyStateHash ? heavySwingWindowEnd : swingWindowEnd;
+                start = UsesTwinBlades ? .28f : activeAttackHash == heavyStateHash ? heavySwingWindowStart : swingWindowStart;
+                end = UsesTwinBlades ? .62f : activeAttackHash == heavyStateHash ? heavySwingWindowEnd : swingWindowEnd;
             }
             // Start the whoosh just before the actual strike, rather than at
             // the beginning of the windup or the start of a combo transition.
             if (!swishPlayed && info.fullPathHash == AttackAnimationHash &&
                 info.normalizedTime >= Mathf.Max(0f, start - 0.08f) &&
-                !animator.IsInTransition(layer))
+                activePose)
             {
                 swishPlayed = true;
                 if (swingAudio != null && activeSwish != null)
                     swingAudio.PlayOneShot(activeSwish);
             }
-            stickHitbox.enabled = info.fullPathHash == AttackAnimationHash &&
-                                  info.normalizedTime >= start && info.normalizedTime <= end &&
-                                  !animator.IsInTransition(layer);
+            float phase=info.normalizedTime;
+            // Preserve a short strike crossed between rendered frames. Never
+            // bridge a new stage, a cancellation, or a large clock jump.
+            bool skippedWindow=activePose && observedAttackPhase>=0 && observedAttackPhase<start &&
+                phase>end && phase<=1.05f && phase-observedAttackPhase<=.6f;
+            stickHitbox.enabled = activePose && (phase>=start && phase<=end || skippedWindow);
             if (stickHitbox.enabled)
             {
+                if (secondBlade) secondBlade.enabled = true;
                 Physics.SyncTransforms();
-                ScanHits();
+                if(skippedWindow)ScanCrossedWindow(start,end,phase);
+                else ScanHits();
             }
             else hasWeaponSample = false;
+            if(activePose)
+            {
+                GetWeaponVolume(out observedA,out observedB,out _);
+                if(secondBlade)
+                {
+                    var first=stickHitbox;stickHitbox=secondBlade;
+                    GetWeaponVolume(out observedSecondA,out observedSecondB,out _);stickHitbox=first;
+                }
+                observedAttackPhase=phase;
+            }
+            else observedAttackPhase=-1f;
+            // An interpolated crossing is a query, not a trigger left alive in recovery.
+            if(skippedWindow){stickHitbox.enabled=false;if(secondBlade)secondBlade.enabled=false;hasWeaponSample=false;}
         }
 
         void ScanHits()
         {
             GetWeaponVolume(out Vector3 a, out Vector3 b, out float radius);
             ScanWeaponSegment(a, b, radius);
+            if (secondBlade && secondBlade.enabled)
+            {
+                Collider first = stickHitbox;
+                stickHitbox = secondBlade;
+                GetWeaponVolume(out Vector3 secondA, out Vector3 secondB, out float secondRadius);
+                stickHitbox = first;
+                ScanWeaponSegment(secondA, secondB, secondRadius);
+            }
             float phase = animator.GetCurrentAnimatorStateInfo(AttackAnimationLayer).normalizedTime;
             // Sweep only consecutive damaging poses. Do not bridge a cancelled
             // swing, a new combo stage, or the anticipation before the first hit.
@@ -717,14 +815,39 @@ namespace Mavis
             }
             previousWeaponA = a; previousWeaponB = b; previousHitPhase = phase;
             hasWeaponSample = true;
+            ScanComboArc();
+        }
+
+        void ScanCrossedWindow(float start,float end,float phase)
+        {
+            float from=Mathf.InverseLerp(observedAttackPhase,phase,start);
+            float to=Mathf.InverseLerp(observedAttackPhase,phase,end);
+            ScanInterpolatedWeapon(observedA,observedB,from,to);
+            if(secondBlade)
+            {
+                var first=stickHitbox;stickHitbox=secondBlade;
+                ScanInterpolatedWeapon(observedSecondA,observedSecondB,from,to);stickHitbox=first;
+            }
+            ScanComboArc();
+        }
+        void ScanInterpolatedWeapon(Vector3 oldA,Vector3 oldB,float from,float to)
+        {
+            GetWeaponVolume(out var a,out var b,out float radius);
+            Vector3 startA=Vector3.Lerp(oldA,a,from),startB=Vector3.Lerp(oldB,b,from);
+            Vector3 endA=Vector3.Lerp(oldA,a,to),endB=Vector3.Lerp(oldB,b,to);
+            ScanWeaponSegment(startA,startB,radius);ScanWeaponSegment(endA,endB,radius);
+            ScanWeaponSegment(startA,endA,radius);ScanWeaponSegment(startB,endB,radius);
+        }
+
+        float StrikeScale => Mathf.Max(.01f, Mathf.Abs(transform.lossyScale.y) / 3f);
+        void ScanComboArc()
+        {
             if (comboStep < 0 || comboReach <= 0f) return;
             int count = Physics.OverlapSphereNonAlloc(StrikeOrigin, comboReach * StrikeScale,
                 nearbyColliders, hitMask, QueryTriggerInteraction.Collide);
             for (int i = 0; i < count; i++)
                 TryHit(nearbyColliders[i], false);
         }
-
-        float StrikeScale => Mathf.Max(.01f, Mathf.Abs(transform.lossyScale.y) / 3f);
         Vector3 StrikeOrigin => strikeController != null ? strikeController.bounds.center : transform.position;
 
         void GetWeaponVolume(out Vector3 a, out Vector3 b, out float radius)
@@ -816,9 +939,7 @@ namespace Mavis
                   !targetComponent.transform.root.CompareTag(enemyTag)))) return;
             Vector3 point = other.ClosestPoint(StrikeOrigin);
             Vector3 direction = Vector3.ProjectOnPlane(other.bounds.center - StrikeOrigin, Vector3.up);
-            bool inComboArc = comboStep >= 0 && (point - StrikeOrigin).sqrMagnitude <= Mathf.Pow(comboReach * StrikeScale, 2f) &&
-                Vector3.Angle(transform.forward, direction) <= comboArc * .5f;
-            if (!weaponContact && !inComboArc && !Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
+            if (!weaponContact && !Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
                     stickHitbox.transform.rotation, other, other.transform.position,
                     other.transform.rotation, out _, out _)) return;
             if (StrikeBlocked(other)) return;
@@ -835,6 +956,7 @@ namespace Mavis
             charging = false;
             attacking = false;
             usesRightArmHeavy = false;
+            usesUpperBodyLight = false;
             activeAttackEntered = false;
             attackQueued = false;
             comboContinueQueued = false;

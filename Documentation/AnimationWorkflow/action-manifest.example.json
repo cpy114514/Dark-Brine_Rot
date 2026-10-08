@@ -1,0 +1,21 @@
+{
+  "action": "PLAYER_ATK_Heavy_01",
+  "unity_clip": "PLAYER_ATK_Heavy_01",
+  "revision": "v001",
+  "frame_start": 1,
+  "frame_end": 61,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "REPLACE_WITH_INSPECTED_ROOT",
+  "in_place_axes": ["X", "Y"],
+  "rig_type": "Humanoid",
+  "stage": "DESIGN",
+  "design_status": "pending",
+  "design_reference": "",
+  "approval_reference": "",
+  "review_status": "pending",
+  "review_reference": "",
+  "gameplay": {},
+  "contacts": []
+}

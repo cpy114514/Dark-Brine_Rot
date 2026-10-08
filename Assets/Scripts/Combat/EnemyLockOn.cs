@@ -81,9 +81,9 @@ namespace Mavis
             {
                 if (!Alive(candidate) || candidate.transform.IsChildOf(transform)) return;
                 if (candidate is Health && !candidate.CompareTag("Enemy") && !candidate.transform.root.CompareTag("Enemy")) return;
-                float distance = Vector3.Distance(transform.position, candidate.transform.position);
-                if (distance > acquireRange) return;
-                Vector3 point = Point(candidate);
+                Vector3 point=Point(candidate);
+                float distance=Vector3.Distance(transform.position,candidate is Story1SharkHealth ? point : candidate.transform.position);
+                if(distance>acquireRange)return;
                 Vector3 screen = camera.WorldToViewportPoint(point);
                 if (screen.z <= 0f || screen.x < 0f || screen.x > 1f || screen.y < 0f || screen.y > 1f || !Visible(candidate, point, camera)) return;
                 float score = new Vector2(screen.x - .5f, screen.y - .5f).sqrMagnitude * 4f + distance / acquireRange * .15f;
@@ -103,13 +103,14 @@ namespace Mavis
         public void Validate(float deltaTime)
         {
             if (!IsLocked) { Clear(); return; }
-            if (!Alive(targetHealth) || Vector3.Distance(transform.position, Target.position) > releaseRange) { Clear(); return; }
+            if (!Alive(targetHealth) || Vector3.Distance(transform.position,targetHealth is Story1SharkHealth ? AimPoint : Target.position) > releaseRange) { Clear(); return; }
             blockedTime = Visible(targetHealth, AimPoint, Camera.main) ? 0f : blockedTime + Mathf.Max(0f, deltaTime);
             if (blockedTime >= obstructionGrace) Clear();
         }
         public Quaternion FacingRotation()
         {
-            Vector3 direction = Target != null ? Target.position - transform.position : transform.forward;
+            Vector3 point=targetHealth is Story1SharkHealth shark ? shark.LockPoint : Target!=null ? Target.position : transform.position+transform.forward;
+            Vector3 direction=point-transform.position;
             direction.y = 0f;
             return direction.sqrMagnitude > .0001f ? Quaternion.LookRotation(direction) : transform.rotation;
         }

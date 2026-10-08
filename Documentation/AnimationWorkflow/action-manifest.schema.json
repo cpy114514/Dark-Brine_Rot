@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Animation source/design and exported FBX manifest v1",
+  "type": "object",
+  "required": ["action", "unity_clip", "revision", "frame_start", "frame_end", "fps", "loop", "root_motion", "root_bone", "rig_type", "stage", "design_status", "design_reference", "approval_reference", "review_status", "review_reference"],
+  "properties": {
+    "format_version": {"const": 1},
+    "action": {"type": "string", "minLength": 1},
+    "unity_clip": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]+$"},
+    "revision": {"type": "string", "minLength": 1},
+    "frame_start": {"type": "integer"},
+    "frame_end": {"type": "integer"},
+    "fps": {"type": "number", "exclusiveMinimum": 0},
+    "loop": {"type": "boolean"},
+    "root_motion": {"enum": ["in_place", "root_motion"]},
+    "root_bone": {"type": "string", "minLength": 1},
+    "in_place_axes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["X", "Y", "Z"]}},
+    "rig_type": {"enum": ["Humanoid", "Generic"]},
+    "stage": {"enum": ["DESIGN", "BLOCKING", "FIRST PASS", "SECOND PASS", "POLISH", "FINAL", "APPROVED"]},
+    "design_status": {"enum": ["pending", "approved", "approval_waived"]},
+    "design_reference": {"type": "string"},
+    "approval_reference": {"type": "string"},
+    "review_status": {"enum": ["pending", "changes_needed", "accepted_for_stage"]},
+    "review_reference": {"type": "string"},
+    "release_approval_reference": {"type": "string"},
+    "gameplay": {
+      "type": "object",
+      "properties": {
+        "startup": {"$ref": "#/$defs/windows"}, "active": {"$ref": "#/$defs/windows"},
+        "recovery": {"$ref": "#/$defs/windows"}, "hitbox": {"$ref": "#/$defs/windows"},
+        "cancel": {"$ref": "#/$defs/windows"}, "combo": {"$ref": "#/$defs/windows"}
+      },
+      "additionalProperties": false
+    },
+    "contacts": {"type": "array", "items": {
+      "type": "object", "required": ["bone", "start", "end"],
+      "properties": {"bone": {"type": "string"}, "start": {"type": "number"}, "end": {"type": "number"},
+        "max_drift_m": {"type": "number", "minimum": 0},
+        "gameplay_velocity_mps": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}}
+    }},
+    "fbx": {"type": "string"}, "duration_seconds": {"type": "number", "minimum": 0}
+  },
+  "$defs": {
+    "window": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "windows": {"type": "array", "items": {"$ref": "#/$defs/window"}}
+  },
+  "$comment": "The schema permits pending design documents. Export additionally requires a production stage, real design/review evidence, correct range/window ordering and measured rig validation. It cannot prove the authenticity of human approval."
+}

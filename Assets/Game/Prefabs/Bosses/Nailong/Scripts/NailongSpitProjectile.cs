@@ -10,15 +10,17 @@ namespace Mavis
         Vector3 velocity;
         float damage;
         float expires;
+        float collisionRadius = .11f;
         bool resolved;
         public bool HasImpacted => resolved;
 
-        public void Launch(Transform source, Transform target, Vector3 initialVelocity, float amount)
+        public void Launch(Transform source, Transform target, Vector3 initialVelocity, float amount, float radius = .11f)
         {
             owner = source;
             intendedTarget = target;
             velocity = initialVelocity;
             damage = amount;
+            collisionRadius = Mathf.Max(.01f, radius);
             expires = Time.time + 3f;
         }
 
@@ -28,11 +30,12 @@ namespace Mavis
         {
             if (resolved || PauseSettingsMenu.IsOpen || deltaTime <= 0f) return;
             if (owner == null || Time.time >= expires) { Destroy(gameObject); return; }
-            Vector3 step = velocity * deltaTime;
+            float dt=Mathf.Min(deltaTime,.1f);velocity+=Vector3.down*3.5f*dt;
+            Vector3 step = velocity * dt;
             float distance = step.magnitude;
             if (distance > 0f)
             {
-                int count = Physics.SphereCastNonAlloc(transform.position, 0.11f, step / distance,
+                int count = Physics.SphereCastNonAlloc(transform.position, collisionRadius, step / distance,
                     hits, distance, ~0, QueryTriggerInteraction.Collide);
                 int closest = -1;
                 float nearest = float.MaxValue;
@@ -57,14 +60,15 @@ namespace Mavis
                     bool intended = intendedTarget != null &&
                         (hit.collider.transform.IsChildOf(intendedTarget) || intendedTarget.IsChildOf(hit.collider.transform));
                     if (victim != null && (player != null || intended)) victim.ApplyDamage(damage, hit.point);
-                    // Leave a short visible splash instead of disappearing mid-air.
+                    BossCombatVfx.Burst(hit.point,hit.normal,new Color(.55f,.65f,.36f,.75f),10,1.6f);
                     velocity = Vector3.zero;
-                    transform.localScale = new Vector3(0.32f, 0.06f, 0.32f);
+                    transform.localScale = new Vector3(0.32f, 0.06f, 0.32f) * (collisionRadius / .11f);
                     Destroy(gameObject, 0.16f);
                     return;
                 }
             }
             transform.position += step;
+            if(velocity.sqrMagnitude>.01f)transform.rotation=Quaternion.LookRotation(velocity);
         }
     }
 }

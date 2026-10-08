@@ -228,32 +228,65 @@ Shader "DarkBrine/Procedural Ocean"
                 return foam;
             }
 
-            half SailingFoam(float2 p, float detail, float breakup)
+            half SailingFoam(float2 p, float3 surfaceWS, float detail, float breakup)
             {
                 if (_ShipWakeMode < 0.5) return SurfingFoam(p, detail);
+                p = surfaceWS.xz;
                 float2 offset = p - _WakeHull.xy;
                 if (dot(offset, offset) > 90000.0) return 0;
                 float2 direction = _WakeDirection.xy;
                 float along = dot(offset, direction);
-                float across = abs(dot(offset, float2(-direction.y, direction.x)));
+                float signedAcross = dot(offset, float2(-direction.y, direction.x));
+                float across = abs(signedAcross);
                 float halfLength = max(_WakeHull.z, 1.0);
                 float fromBow = halfLength - along;
                 float progress = saturate(fromBow / (halfLength * 2.0));
-                // A bow wave hugs the waterline before peeling away from the
-                // stern. Its endpoint matches the first historical wake sample.
+                // Thin breaking water follows the hull shoulder. World-space
+                // turbulence makes the two sides break at different places.
                 float hullWidth = _WakeHull.w * 0.73 * pow(saturate(sin(progress * PI)), 0.65);
-                float divergentWidth = fromBow * 0.195 + _WakeHull.w * 0.08;
+                float divergentWidth = fromBow * 0.13 + _WakeHull.w * 0.12;
                 float sideWidth = max(hullWidth + 0.65, divergentWidth);
                 float hullGate = smoothstep(-halfLength - 2.5, -halfLength, along)
                     * (1.0 - smoothstep(halfLength - 1.5, halfLength + 1.5, along));
-                float sideDistance = abs(across - sideWidth - (breakup - 0.5) * 1.8);
-                float sideRibbon = 1.0 - smoothstep(0.5, 3.2, sideDistance);
-                float lace = lerp(0.12, 1.0, smoothstep(0.26, 0.66, detail * 0.55 + breakup * 0.45));
-                half foam = sideRibbon * hullGate * _WakeDirection.z * lace * 0.82;
+                float2 foamFlow = p - normalize(_Wave1.xy) * _Time.y * 0.13;
+                float patches = ValueNoise(foamFlow * 0.16 + float2(31.7, -8.4));
+                float grain = ValueNoise(foamFlow * 0.83 + float2(-4.2, 13.8));
+                float swirl = ValueNoise(foamFlow * 0.055 + float2(17.8, 24.3));
+                float sideDistance = across - sideWidth - (patches - 0.5) * 1.9;
+                float hullDistance = across - hullWidth - 0.65;
+                if (_ShipHullMaskEnabled > 0.5)
+                {
+                    // Use the same measured hull sections as the water mask.
+                    // An approximate ellipse otherwise puts fresh foam inside
+                    // the ship, where its closed hull correctly hides it.
+                    float3 hull = mul(_ShipHullWorldToLocal, float4(surfaceWS, 1)).xyz;
+                    float section = clamp((hull.x + 50.0) / 5.0, 0.0, 19.999);
+                    int index = (int)floor(section);
+                    float4 widths = lerp(_ShipHullWidths[index], _ShipHullWidths[index + 1], frac(section));
+                    float measuredWidth = hull.y < 0 ? widths.x * saturate((hull.y + 2.2) / 2.2) :
+                        hull.y < 3 ? lerp(widths.x, widths.y, hull.y / 3) :
+                        hull.y < 6 ? lerp(widths.y, widths.z, (hull.y - 3) / 3) :
+                        lerp(widths.z, widths.w, saturate((hull.y - 6) / 3));
+                    float unitsPerMetre = max(length(_ShipHullWorldToLocal[2].xyz), 0.001);
+                    hullDistance = (abs(hull.z) - measuredWidth) / unitsPerMetre - 0.55;
+                }
+                hullDistance -= (patches - 0.5) * 0.8;
+                float hullRim = 1.0 - smoothstep(0.2, 1.65, abs(hullDistance));
+                float hullWash = (1.0 - smoothstep(0.35, 3.6, max(hullDistance, 0.0)))
+                    * smoothstep(-0.4, 0.2, hullDistance);
+                float rim = 1.0 - smoothstep(0.25, 1.8, abs(sideDistance));
+                float wash = (1.0 - smoothstep(0.3, 4.2, max(sideDistance, 0.0)))
+                    * smoothstep(-0.65, 0.25, sideDistance);
+                float lace = smoothstep(0.28, 0.70, patches * 0.65 + breakup * 0.35);
+                float bubbles = lerp(0.28, 1.0, smoothstep(0.26, 0.72, grain));
+                float shoulder = smoothstep(0.01, 0.13, progress) * (1.0 - smoothstep(0.7, 1.0, progress));
+                half foam = max((rim * lace * 0.38 + wash * lace * 0.16),
+                    (hullRim * (0.18 + lace * 0.72) + hullWash * lace * 0.28) * shoulder)
+                    * bubbles * hullGate * _WakeDirection.z;
                 // Join the live stern to the latest fixed sample between emissions,
                 // so the wake cannot detach as the ship advances or turns.
                 float4 liveStern = float4(_WakeHull.xy - direction * halfLength, _Time.y,
-                    halfLength * 2.0 * 0.195 + _WakeHull.w * 0.08);
+                    halfLength * 2.0 * 0.13 + _WakeHull.w * 0.12);
                 [loop] for (int i = 0; i < _WakeCount; i++)
                 {
                     int previousIndex = max(0, i - 1);
@@ -267,26 +300,30 @@ Shader "DarkBrine/Procedural Ocean"
                     float t = saturate(alongSegment / segmentLength);
                     float age = max(0.0, _Time.y - lerp(a.z, b.z, t));
                     float life = max(_WakeDirection.w, 0.1);
-                    float fade = 1.0 - smoothstep(life * 0.12, life, age);
+                    float fade = exp(-age * 0.12) * (1.0 - smoothstep(life * 0.2, life, age));
                     float4 newestSettings = float4(direction, _WakeDirection.z, _WakeTrailSettings[0].w);
                     float4 settings = lerp(i == 0 ? newestSettings : _WakeTrailSettings[previousIndex],
                         _WakeTrailSettings[i], t);
                     float2 normal = float2(-segment.y, segment.x) / segmentLength;
                     float lateralDistance = abs(dot(p - lerp(a.xy, b.xy, t), normal));
                     float width = lerp(a.w, b.w, t) + age * settings.w;
-                    float bandWidth = lerp(2.3, 6.0, saturate(age / life));
-                    float meander = (breakup - 0.5) * lerp(1.8, 4.0, saturate(age / life));
-                    float ribbon = 1.0 - smoothstep(bandWidth * 0.18, bandWidth,
+                    float bandWidth = lerp(2.0, 7.5, saturate(age / life));
+                    float meander = (swirl - 0.5) * lerp(1.5, 5.5, saturate(age / life))
+                        + (patches - 0.5) * 2.0;
+                    float ribbon = 1.0 - smoothstep(bandWidth * 0.12, bandWidth,
                         abs(lateralDistance - width - meander));
                     // Longitudinal gates make open ribbons; clamped point distance
                     // would add a visible semicircle at every trail endpoint.
                     float endGate = smoothstep(-2.0, 0.0, alongSegment)
                         * (1.0 - smoothstep(segmentLength, segmentLength + 2.0, alongSegment));
-                    float innerWash = (1.0 - smoothstep(width * 0.18, width * 0.55, lateralDistance))
-                        * exp(-age * 0.7) * 0.18 * detail;
-                    float dissolvedLace = lerp(lace, detail * 0.6, saturate(age / life));
-                    foam = max(foam, (ribbon * dissolvedLace + innerWash) * endGate
-                        * fade * settings.z * 0.9);
+                    float innerWash = (1.0 - smoothstep(width * 0.15, width * 0.95, lateralDistance))
+                        * exp(-age * 0.45) * 0.22 * smoothstep(0.40, 0.75, patches);
+                    // Older sheets open into patches and fine bubbles, rather
+                    // than keeping two equally opaque parallel stripes.
+                    float dissolvedLace = smoothstep(lerp(0.26, 0.5, saturate(age/life)), 0.78,
+                        patches * 0.65 + breakup * 0.35);
+                    foam = max(foam, (ribbon * dissolvedLace * bubbles + innerWash) * endGate
+                        * fade * settings.z * 0.78);
                 }
                 return foam;
             }
@@ -443,7 +480,7 @@ Shader "DarkBrine/Procedural Ocean"
                     (0.34h + foamNoise * 0.58h + foamDetail * 0.24h) * patchMask;
                 breakerFoam *= (0.60h + waveCrest * 0.40h) * (0.65h + foamLace * 0.35h);
                 half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
-                foam = max(foam, SailingFoam(p, foamDetail, foamNoise));
+                foam = max(foam, SailingFoam(p, input.positionWS, foamDetail, foamNoise));
                 // Lace stays white in daylight, but is no longer self-lit at night
                 // or under tree/island shadows.
                 half3 foamIllumination = saturate(ambient + sun.color *

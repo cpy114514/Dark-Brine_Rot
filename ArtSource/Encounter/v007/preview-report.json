@@ -1,0 +1,92 @@
+[
+  {
+    "action": "PLAYER_SwimIdle_v007",
+    "fps": 60.0,
+    "frames": [
+      1,
+      23,
+      46,
+      68,
+      91
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\front-0023.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\front-0046.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\front-0068.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\front-0091.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\side-0023.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\side-0046.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\side-0068.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\side-0091.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\three-quarter-0023.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\three-quarter-0046.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\three-quarter-0068.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimIdle_v007\\three-quarter-0091.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "PLAYER_Swim_v007",
+    "fps": 60.0,
+    "frames": [
+      1,
+      18,
+      36,
+      55,
+      73
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\front-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\front-0036.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\front-0055.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\front-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\side-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\side-0036.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\side-0055.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\side-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\three-quarter-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\three-quarter-0036.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\three-quarter-0055.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_Swim_v007\\three-quarter-0073.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "PLAYER_SwimFast_v007",
+    "fps": 60.0,
+    "frames": [
+      1,
+      12,
+      24,
+      37,
+      49
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\front-0012.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\front-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\front-0037.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\front-0049.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\side-0012.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\side-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\side-0037.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\side-0049.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\three-quarter-0012.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\three-quarter-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\three-quarter-0037.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v007\\previews\\PLAYER_SwimFast_v007\\three-quarter-0049.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  }
+]

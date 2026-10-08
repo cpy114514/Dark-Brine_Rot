@@ -5,10 +5,13 @@ using UnityEngine;
 public sealed class Story1SharkHealth : Health
 {
     public int ReceivedHits { get; private set; }
+    Collider head;
+    public void ConfigureHead(Collider collider) => head=collider;
     public Vector3 LockPoint
     {
         get
         {
+            if(head!=null)return head.bounds.center+Vector3.up*.2f;
             var hitbox=GetComponent<BoxCollider>();
             return hitbox!=null ? hitbox.bounds.center+Vector3.up*(hitbox.bounds.extents.y*.95f) : transform.position;
         }

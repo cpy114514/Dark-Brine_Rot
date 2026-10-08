@@ -1,0 +1,8 @@
+{
+  "stage": "FIRST PASS",
+  "reviewer": "Codex",
+  "purpose": "Accept new source actions for isolated Unity import and actual Sahur review; final gameplay acceptance remains pending.",
+  "evidence": [".codex/encounter-v007/previews/PLAYER_SwimFast_v007/side-0024.00.png", ".codex/encounter-v006/isolated/samples.json"],
+  "findings": "Original rigs and bind transforms retained. Alternating freestyle visibly differs from the normal stroke. Forward guard uses the inspected frontal source pose instead of the previous rearward weapon pose. Loop endpoints settled to exact first pose.",
+  "accepted_for_staging": ["CH1_SahurGuard_v007", "CH1_SahurParry_v007", "CH1_SahurBrace_v007", "PLAYER_SwimIdle_v007", "PLAYER_Swim_v007", "PLAYER_SwimFast_v007"]
+}

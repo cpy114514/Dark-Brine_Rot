@@ -1,0 +1,22 @@
+{
+  "revision": "v003",
+  "stage": "FINAL",
+  "design_status": "approval_waived",
+  "review_status": "accepted_for_stage",
+  "human_final_visual_approval": false,
+  "review_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/traversal-v003-review.md",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/traversal-v003-design.md",
+  "blender_action": "CH1_SharkBreach_v003",
+  "blender_fps": 60,
+  "blender_frames": [1, 193],
+  "hero_clip": "CH1_SahurBoardJump_v003",
+  "hero_fps": 30,
+  "cinematic_duration_seconds": 20.8,
+  "observed_board_hops": 3,
+  "observed_breaches": 2,
+  "original_rigs_preserved": true,
+  "unity_grounded_verification": ".codex/encounter-v003-final-release/verification.json",
+  "unity_water_verification": ".codex/encounter-v003-water/verification.json",
+  "unity_defeat_pose_verification": ".codex/finale-pose-hold-20261007/v003-final-hold.json",
+  "gameplay_preview": ".codex/encounter-v003-final-release/encounter-gameplay.mp4"
+}

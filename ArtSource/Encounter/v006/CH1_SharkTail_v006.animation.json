@@ -1,0 +1,72 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v006\\shark-v006.blend",
+  "rig": "Tralalero_Rig",
+  "action": "CH1_SharkTail_v006",
+  "unity_clip": "CH1_SharkTail_v006",
+  "revision": "v006",
+  "frame_start": 1,
+  "frame_end": 91,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "Body",
+  "rig_type": "Generic",
+  "stage": "FIRST PASS",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v006.md",
+  "approval_reference": "2026-10-07 user PLEASE IMPLEMENT THIS PLAN",
+  "review_status": "accepted_for_stage",
+  "avatar": "",
+  "contact_seconds": 0.65,
+  "review_reference": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v006\\source-review.json",
+  "format_version": 1,
+  "duration_seconds": 1.5,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v006\\shark-v006.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBTralalero_Rig",
+  "animated_bones": [
+    "Body",
+    "Dorsal",
+    "Fin_Left",
+    "Fin_Right",
+    "Foot_Left",
+    "Foot_Rear",
+    "Foot_Right",
+    "Head",
+    "Jaw",
+    "Nose_Marker",
+    "Spine_Mid",
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Marker",
+    "Tail_Mid",
+    "Tail_Tip"
+  ],
+  "selected_meshes": [
+    "Tralalero_Skin"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {},
+  "fbx": "CH1_SharkTail_v006.fbx"
+}

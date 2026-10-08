@@ -3,10 +3,12 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Mavis;
 public static class CaptureWreckImpact
 {
     public static async Task<object> Capture()
     {
+        GameSaveManager.CancelPendingContinue();
         var loading=SceneManager.LoadSceneAsync("Assets/Scenes/First story/Story1.unity");
         while(!loading.isDone)await Task.Delay(30);await Task.Delay(400);
         var s=UnityEngine.Object.FindFirstObjectByType<Story1SharkCollisionSequence>();var battle=s.GetComponent<Story1WreckBattle>();
@@ -18,7 +20,8 @@ public static class CaptureWreckImpact
             times.Add(Time.time-start);Shot(s.storyCamera,Path.Combine(dir,(times.Count-1).ToString("D4")+".png"));await Task.Delay(33);
         }
         File.WriteAllText(Path.GetFullPath(".codex/shark-finale-preview/impact-times.json"),Newtonsoft.Json.JsonConvert.SerializeObject(times));
-        return new{frames=times.Count,battle.ShipFragmentCount,battle.PlankCount,battle.Effects.ImpactCount,battle.CurrentPhase};
+        return new{frames=times.Count,battle.ShipFragmentCount,battle.PlankCount,battle.Effects.ImpactCount,battle.CurrentPhase,
+            battle.ImpactTailGap,battle.ImpactNoseGap,battle.MaximumHullKickDegrees};
     }
     static void Shot(Camera camera,string path)
     {

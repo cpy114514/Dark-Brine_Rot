@@ -170,7 +170,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3481320565341823827}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -528,9 +528,10 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  engageDistance: 65
-  leashRadius: 100
-  cruiseAltitude: 24
+  engageDistance: 100
+  leashRadius: 160
+  cruiseAltitude: 55
+  patrolRadius: 32
   cruiseSpeed: 20
   rushSpeed: 72
   lowAltitude: 3.6

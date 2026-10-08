@@ -1,0 +1,454 @@
+{
+  "tool_count": 218,
+  "version": {
+    "version": [
+      5,
+      2,
+      2
+    ],
+    "version_string": "5.2.2 LTS",
+    "is_5_0": true,
+    "is_4_2": true
+  },
+  "scene": {
+    "name": "Scene",
+    "frame_start": 1,
+    "frame_end": 250,
+    "frame_current": 1,
+    "fps": 24,
+    "object_count": 3,
+    "render_engine": "BLENDER_EEVEE",
+    "resolution_x": 1920,
+    "resolution_y": 1080
+  },
+  "objects": {
+    "objects": [
+      {
+        "name": "Cube",
+        "type": "MESH"
+      },
+      {
+        "name": "Light",
+        "type": "LIGHT"
+      },
+      {
+        "name": "Camera",
+        "type": "CAMERA"
+      }
+    ]
+  },
+  "actions": {
+    "actions": [],
+    "count": 0
+  },
+  "stdio_handshake": true,
+  "armature": {
+    "success": true,
+    "stdout": "",
+    "stderr": "",
+    "error": null,
+    "result": {
+      "rig": "TEST_b033e8037d_Rig",
+      "bones": [
+        "root",
+        "tip"
+      ],
+      "scene": "TEST_b033e8037d"
+    }
+  },
+  "create_action": {
+    "action": "TEST_b033e8037d_Action",
+    "frame_range": [
+      0.0,
+      0.0
+    ],
+    "assigned_to": "TEST_b033e8037d_Rig"
+  },
+  "pose_keyframes": {
+    "success": true,
+    "stdout": "",
+    "stderr": "",
+    "error": null,
+    "result": {
+      "action": "TEST_b033e8037d_Action",
+      "pose_keyframes": 3
+    }
+  },
+  "edit_keyframe": true,
+  "fcurves": {
+    "object": "TEST_b033e8037d_Rig",
+    "has_animation": true,
+    "action": "TEST_b033e8037d_Action",
+    "keyframes": {
+      "pose.bones[\"tip\"].rotation_euler": [
+        {
+          "frame": 1.0,
+          "value": 0.0,
+          "array_index": 0
+        },
+        {
+          "frame": 24.0,
+          "value": 0.3499999940395355,
+          "array_index": 0
+        },
+        {
+          "frame": 49.0,
+          "value": 0.0,
+          "array_index": 0
+        },
+        {
+          "frame": 1.0,
+          "value": -0.0,
+          "array_index": 1
+        },
+        {
+          "frame": 24.0,
+          "value": -0.0,
+          "array_index": 1
+        },
+        {
+          "frame": 49.0,
+          "value": -0.0,
+          "array_index": 1
+        },
+        {
+          "frame": 1.0,
+          "value": 0.0,
+          "array_index": 2
+        },
+        {
+          "frame": 24.0,
+          "value": 0.0,
+          "array_index": 2
+        },
+        {
+          "frame": 49.0,
+          "value": 0.0,
+          "array_index": 2
+        }
+      ],
+      "location": [
+        {
+          "frame": 1.0,
+          "value": 0.0,
+          "array_index": 0
+        },
+        {
+          "frame": 49.0,
+          "value": 0.0,
+          "array_index": 0
+        },
+        {
+          "frame": 1.0,
+          "value": 0.0,
+          "array_index": 1
+        },
+        {
+          "frame": 49.0,
+          "value": 0.0,
+          "array_index": 1
+        },
+        {
+          "frame": 1.0,
+          "value": 0.0,
+          "array_index": 2
+        },
+        {
+          "frame": 49.0,
+          "value": 0.0,
+          "array_index": 2
+        }
+      ]
+    }
+  },
+  "frame": {
+    "frame": 24,
+    "frame_start": 1,
+    "frame_end": 49
+  },
+  "play": {
+    "playing": true,
+    "frame": 24
+  },
+  "stop": {
+    "playing": false,
+    "frame": 24
+  },
+  "helpers": {
+    "success": true,
+    "stdout": "\nFBX export starting... 'C:\\\\Users\\\\pinyu\\\\.codex\\\\tools\\\\blender-workflow\\\\verification\\\\TEST_b033e8037d\\\\.TEST_Connectivity_001.exporting.fbx'\n(bpy.data.armatures['TEST_b033e8037d_Rig'], 'POSE')\nexport finished in 0.0125 sec.\n",
+    "stderr": "",
+    "error": null,
+    "result": {
+      "rig": {
+        "rig": "TEST_b033e8037d_Rig",
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "dimensions": [
+          0.0,
+          0.34289780259132385,
+          1.9393727779388428
+        ],
+        "animation": "TEST_b033e8037d_Action",
+        "bones": [
+          {
+            "name": "root",
+            "parent": null,
+            "deform": true,
+            "head": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "tail": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "rotation_mode": "QUATERNION",
+            "constraints": []
+          },
+          {
+            "name": "tip",
+            "parent": "root",
+            "deform": true,
+            "head": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "tail": [
+              0.0,
+              0.0,
+              2.0
+            ],
+            "rotation_mode": "XYZ",
+            "constraints": []
+          }
+        ],
+        "bound_meshes": [
+          "TEST_b033e8037d_Skin"
+        ],
+        "fps": 24.0,
+        "frame_range": [
+          1,
+          49
+        ]
+      },
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      },
+      "negative_checks": {
+        "unapproved_design_refused": true,
+        "fps_mismatch_refused": true,
+        "matching_loop_endpoints_accepted": true,
+        "mid_clip_root_travel_refused": true
+      },
+      "previews": {
+        "action": "TEST_b033e8037d_Action",
+        "fps": 24.0,
+        "frames": [
+          1,
+          24,
+          49
+        ],
+        "previews": [
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0001.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0024.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0049.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0001.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0024.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0049.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0001.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0024.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0049.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0001.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0024.00.png",
+          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0049.00.png"
+        ],
+        "gameplay_camera": "rendered",
+        "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+      },
+      "preview_motion_verified": true,
+      "export": {
+        "action": "TEST_b033e8037d_Action",
+        "unity_clip": "TEST_Connectivity_001",
+        "revision": "TEST_b033e8037d",
+        "frame_start": 1,
+        "frame_end": 49,
+        "fps": 24,
+        "loop": false,
+        "root_motion": "in_place",
+        "root_bone": "root",
+        "rig_type": "Generic",
+        "stage": "BLOCKING",
+        "design_status": "approval_waived",
+        "design_reference": "User request: isolated non-destructive connectivity verification",
+        "approval_reference": "Pasted workflow requirements authorize temporary operation tests; not approval for game animation production",
+        "review_status": "accepted_for_stage",
+        "review_reference": "Technical fixture only; no artistic production acceptance",
+        "gameplay": {
+          "startup": [
+            [
+              1,
+              10
+            ]
+          ],
+          "active": [
+            [
+              10,
+              16
+            ]
+          ],
+          "recovery": [
+            [
+              16,
+              49
+            ]
+          ],
+          "hitbox": [
+            [
+              10,
+              16
+            ]
+          ]
+        },
+        "contacts": [],
+        "format_version": 1,
+        "duration_seconds": 2.0,
+        "source_blend": "",
+        "blender_version": "5.2.2 LTS",
+        "rig": "TEST_b033e8037d_Rig",
+        "slot": "OBTEST_b033e8037d_Rig",
+        "animated_bones": [
+          "tip"
+        ],
+        "selected_meshes": [
+          "TEST_b033e8037d_Skin"
+        ],
+        "axis_forward": "-Z",
+        "axis_up": "Y",
+        "unit_scale": 1.0,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "warnings": [],
+          "checks": {
+            "root_displacement_world_m": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "in_place_max_excursion_m": 0.0,
+            "in_place_axes": [
+              "X",
+              "Y"
+            ],
+            "contacts": "not observed: no contact intervals supplied"
+          },
+          "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+        },
+        "gameplay_timing": {
+          "startup": [
+            {
+              "frames": [
+                1,
+                10
+              ],
+              "seconds": [
+                0.0,
+                0.375
+              ],
+              "normalized": [
+                0.0,
+                0.1875
+              ]
+            }
+          ],
+          "active": [
+            {
+              "frames": [
+                10,
+                16
+              ],
+              "seconds": [
+                0.375,
+                0.625
+              ],
+              "normalized": [
+                0.1875,
+                0.3125
+              ]
+            }
+          ],
+          "recovery": [
+            {
+              "frames": [
+                16,
+                49
+              ],
+              "seconds": [
+                0.625,
+                2.0
+              ],
+              "normalized": [
+                0.3125,
+                1.0
+              ]
+            }
+          ],
+          "hitbox": [
+            {
+              "frames": [
+                10,
+                16
+              ],
+              "seconds": [
+                0.375,
+                0.625
+              ],
+              "normalized": [
+                0.1875,
+                0.3125
+              ]
+            }
+          ]
+        },
+        "fbx": "TEST_Connectivity_001.fbx"
+      },
+      "state_preserved": true,
+      "overwrite_refused": true
+    }
+  },
+  "output": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d",
+  "cleanup": {
+    "success": true,
+    "stdout": "",
+    "stderr": "",
+    "error": null,
+    "result": {
+      "fixture_removed": true,
+      "scene": "Scene",
+      "file_saved": false
+    }
+  }
+}

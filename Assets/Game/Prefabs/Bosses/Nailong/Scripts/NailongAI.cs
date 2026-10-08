@@ -8,7 +8,24 @@ namespace Mavis
     public sealed class NailongAI : MonoBehaviour
     {
         public enum State { Idle, Chase, Attack, Dead, Staggered, Recover, Returning }
-        enum AttackPattern { None, Slap, CryingBurst, ShamelessCharge, UnreasonableTantrum, ClawFlurry, Roar, ScoldingSpit }
+        enum AttackPattern { None, Slap, CryingBurst, ShamelessCharge, UnreasonableTantrum, ClawFlurry, Roar, ScoldingSpit, GroundSlam }
+
+        [Header("Ground slam")]
+        public float slamWindup = 1.05f, slamRadius = 6f, slamDamageMultiplier = 1.65f, slamRecovery = 1.1f, slamCooldown = 7f;
+        [Header("Jumpable sonar rings — fixed 15 damage per ring")]
+        [Range(1,6)] public int sonarPulseCount=3;
+        [Min(.4f)] public float sonarPulseInterval=1f;
+        [Min(.6f)] public float sonarTravelSeconds=2.4f;
+        [Min(.1f)] public float sonarRingWidth=.4f;
+        public float SonarLifetime=>(Mathf.Clamp(sonarPulseCount,1,6)-1)*Mathf.Max(.4f,sonarPulseInterval)+Mathf.Max(.6f,sonarTravelSeconds);
+        float nextSlamTime;
+        public bool ClawActive(int hand)
+        {
+            if(state!=State.Attack || activeAttack!=AttackPattern.ClawFlurry)return false;
+            float t=Time.time-attackStartedAt-flurryWindup;
+            for(int i=0;i<flurryCount;i++)if(i%2==hand && t-i*flurryInterval>=-.10f && t-i*flurryInterval<=.11f)return true;
+            return false;
+        }
 
         [Header("乱抓连击")]
         [Min(0.1f)] public float flurryWindup = 0.45f;
@@ -85,16 +102,26 @@ namespace Mavis
         public NailongAttackMotion attackMotion;
 
         public State CurrentState => state;
+        public float SizeFactor => NailongSize.RangeFactor(transform);
+        public float EffectiveAttackRange => attackRange * SizeFactor;
+        public float EffectiveAttackReach => attackReach * SizeFactor;
+        public float EffectiveSpitRange => spitRange * SizeFactor;
+        public float EffectiveSpitSpeed => spitSpeed * SizeFactor;
+        public float EffectiveSlamRadius => slamRadius * SizeFactor;
+        public float EffectiveFollowStopDistance => followStopDistance * SizeFactor;
+        public float EffectiveSightRange => sightRange * SizeFactor;
+        float EffectiveGiveUpRange => Mathf.Max(giveUpRange, Mathf.Max(EffectiveSightRange, EffectiveSpitRange) + 5f);
+        float EffectiveArenaRadius => Mathf.Max(arenaRadius, EffectiveSightRange + 5f);
         public bool FightActive => engaged && state != State.Returning && state != State.Dead;
         public bool IsExposed => state == State.Recover || state == State.Staggered;
         public int FightPhase => health != null && health.HealthFraction <= .45f ? 2 : 1;
-        public string AttackName => activeAttack == AttackPattern.ClawFlurry ? "CLAW FLURRY" :
+        public string AttackName => activeAttack == AttackPattern.GroundSlam ? "WAVE BREAKER" : activeAttack == AttackPattern.ClawFlurry ? "CLAW FLURRY" :
             activeAttack == AttackPattern.Roar ? "ROAR" : activeAttack == AttackPattern.ScoldingSpit ? "SPIT VOLLEY" :
             activeAttack == AttackPattern.ShamelessCharge ? "BELLY RUSH" : activeAttack == AttackPattern.UnreasonableTantrum ? "TRIPLE STOMP" :
             activeAttack == AttackPattern.CryingBurst ? "CRYING WAVE" : "PALM STRIKE";
         public string CombatHint => state == State.Staggered ? "STAGGERED  /  Counterattack now" :
             state == State.Recover ? "OPENING  /  Step in and strike" : state == State.Attack ?
-            AttackName + "  /  " + (activeAttack == AttackPattern.ScoldingSpit || activeAttack == AttackPattern.ShamelessCharge ?
+            AttackName + "  /  " + (activeAttack==AttackPattern.GroundSlam?"JUMP OVER EACH RING  /  15 DAMAGE":activeAttack == AttackPattern.ScoldingSpit || activeAttack == AttackPattern.ShamelessCharge ?
             "Move sideways" : activeAttack == AttackPattern.ClawFlurry || activeAttack == AttackPattern.Slap ? "Step out of reach" : "Back away") : "Watch his wind-up. Save stamina for a dodge.";
         [Header("Encounter pacing")]
         [Min(10f)] public float arenaRadius = 38f;
@@ -148,6 +175,7 @@ namespace Mavis
 
         void Awake()
         {
+            BossCombatVfx.PrewarmImpacts();
             agent = GetComponent<NavMeshAgent>();
             visualArmature = transform.Find("Armature");
             if (health == null) health = GetComponent<NailongHealth>();
@@ -184,7 +212,7 @@ namespace Mavis
             if (agent != null && agent.enabled && agent.isOnNavMesh)
             {
                 agent.speed = chaseSpeed;
-                agent.stoppingDistance = followStopDistance;
+                agent.stoppingDistance = EffectiveFollowStopDistance;
                 agent.isStopped = true;
             }
             if (agent == null || !agent.enabled || !agent.isOnNavMesh)
@@ -225,11 +253,11 @@ namespace Mavis
             }
 
             float distance = FlatDistance(target.position, transform.position);
-            if (engaged && (distance > giveUpRange || FlatDistance(target.position, home) > arenaRadius || FlatDistance(transform.position, home) > arenaRadius + 2f))
+            if (engaged && (distance > EffectiveGiveUpRange || FlatDistance(target.position, home) > EffectiveArenaRadius || FlatDistance(transform.position, home) > EffectiveArenaRadius + 2f))
             {
                 BeginReturn(); return;
             }
-            if (!engaged && distance <= sightRange && attack.HasLineOfSight(target))
+            if (!engaged && distance <= EffectiveSightRange && attack.HasLineOfSight(target))
             { engaged = true; nextActionTime = Time.time + openingSeconds; }
             if (!engaged) return;
 
@@ -239,7 +267,7 @@ namespace Mavis
                 EnterIdle();
             }
             // Commit melee direction before impact. A dodge can leave the attack arc.
-            float windup = activeAttack == AttackPattern.ClawFlurry ? flurryWindup : attackWindup;
+            float windup = activeAttack == AttackPattern.ClawFlurry ? flurryWindup : activeAttack==AttackPattern.GroundSlam?slamWindup:activeAttack==AttackPattern.ScoldingSpit?spitWindup:attackWindup;
             if (state != State.Attack || (Time.time-attackStartedAt < windup*.55f &&
                 activeAttack != AttackPattern.ShamelessCharge)) FaceTarget();
             if (state == State.Attack)
@@ -255,8 +283,8 @@ namespace Mavis
             }
 
             // A small hysteresis stops the walk animation flickering at the edge.
-            float resumeDistance = followStopDistance + 0.4f;
-            if (distance <= followStopDistance || (state == State.Idle && distance <= resumeDistance))
+            float resumeDistance = EffectiveFollowStopDistance + 0.4f;
+            if (distance <= EffectiveFollowStopDistance || (state == State.Idle && distance <= resumeDistance))
                 EnterIdle();
             else
             {
@@ -319,22 +347,15 @@ namespace Mavis
         AttackPattern ChooseAttack(float distance)
         {
             if (Time.time < nextActionTime || !attack.HasLineOfSight(target)) return AttackPattern.None;
-            bool close = distance <= attackRange;
-            bool angry = FightPhase == 2;
-            // Use the authored move set; never spam the same special twice in a row.
-            if (angry && distance <= tantrumRadius && Time.time >= nextTantrumTime && previousAttack != AttackPattern.UnreasonableTantrum)
-                return AttackPattern.UnreasonableTantrum;
-            if (distance > attackRange + .7f && distance <= skillRange && Time.time >= nextChargeTime && previousAttack != AttackPattern.ShamelessCharge)
-                return AttackPattern.ShamelessCharge;
-            if (distance <= cryingRadius && Time.time >= nextCryingTime && attackCounter % 4 == 3 && previousAttack != AttackPattern.CryingBurst)
-                return AttackPattern.CryingBurst;
-            if (distance <= roarRadius && Time.time >= nextRoarTime && (attackCounter % 3 == 2 || distance < 2f) && previousAttack != AttackPattern.Roar)
-                return AttackPattern.Roar;
-            if (close && Time.time >= nextAttackTime)
-                return previousAttack == AttackPattern.ClawFlurry ? AttackPattern.Slap : AttackPattern.ClawFlurry;
-            if (distance <= spitRange && Time.time >= nextSpitTime && previousAttack != AttackPattern.ScoldingSpit)
+            bool close = distance <= EffectiveAttackRange;
+            // Three readable signatures, with recovery and committed attack directions.
+            if(distance<=EffectiveSlamRadius && Time.time>=nextSlamTime && previousAttack!=AttackPattern.GroundSlam && attackCounter>0)
+                return AttackPattern.GroundSlam;
+            if(close && Time.time>=nextAttackTime && previousAttack!=AttackPattern.ClawFlurry)
+                return AttackPattern.ClawFlurry;
+            if (distance <= EffectiveSpitRange && Time.time >= nextSpitTime && previousAttack != AttackPattern.ScoldingSpit)
                 return AttackPattern.ScoldingSpit;
-            if (close && Time.time >= nextAttackTime) return AttackPattern.Slap;
+            if(close && Time.time>=nextAttackTime)return AttackPattern.ClawFlurry;
             return AttackPattern.None;
         }
 
@@ -351,8 +372,9 @@ namespace Mavis
 
             float duration = AttackDuration(pattern);
             if (attackMotion != null)
-                attackMotion.Begin(MotionFor(pattern), duration);
+                attackMotion.Begin(MotionFor(pattern),pattern==AttackPattern.GroundSlam?slamWindup+slamRecovery:duration);
             Play("Idle");
+            if(pattern==AttackPattern.GroundSlam){nextSlamTime=Time.time+slamCooldown;attackMotion?.ConfigureCue(slamWindup);}
             if (pattern == AttackPattern.ClawFlurry)
             {
                 nextAttackTime = Time.time + AttackDuration(pattern) + attackCooldown;
@@ -368,6 +390,7 @@ namespace Mavis
             {
                 nextSpitTime = Time.time + spitCooldown;
                 attackMotion?.ConfigureCue(spitWindup);
+                attackMotion?.ConfigureSpit(spitInterval,spitCount);
                 effects?.ShowTaunt(AttackDuration(pattern));
             }
 
@@ -397,6 +420,14 @@ namespace Mavis
             float elapsed = Time.time - attackStartedAt;
             switch (activeAttack)
             {
+                case AttackPattern.GroundSlam:
+                    if(!attackResolved && elapsed>=slamWindup)
+                    {
+                        attackResolved=true;
+                        effects?.GroundSlam(attack,EffectiveSlamRadius,sonarPulseCount,sonarPulseInterval,sonarTravelSeconds,sonarRingWidth);
+                    }
+                    if(elapsed>=AttackDuration(activeAttack))FinishAttack();
+                    break;
                 case AttackPattern.ClawFlurry:
                     // Each individual swipe owns one hit, not damage every frame.
                     while (strikesDone < flurryCount && elapsed >= flurryWindup + strikesDone * flurryInterval)
@@ -404,7 +435,7 @@ namespace Mavis
                         float cue = flurryWindup + strikesDone * flurryInterval;
                         strikesDone++;
                         attackResolved = true;
-                        if(elapsed-cue <= .2f)TryHit(attackReach, flurryDamageMultiplier, 0.16f);
+                        if(elapsed-cue <= .2f)TryHit(EffectiveAttackReach, flurryDamageMultiplier, 0.16f);
                     }
                     if (elapsed >= AttackDuration(activeAttack)) FinishAttack();
                     break;
@@ -425,7 +456,7 @@ namespace Mavis
                     {
                         strikesDone++;
                         attackResolved = true;
-                        if (target != null) effects?.Spit(target, spitSpeed, attack.damage * spitDamageMultiplier);
+                        if (target != null) effects?.Spit(target, EffectiveSpitSpeed, attack.damage * spitDamageMultiplier);
                     }
                     if (elapsed >= AttackDuration(activeAttack)) FinishAttack();
                     break;
@@ -434,7 +465,7 @@ namespace Mavis
                     if (!attackResolved && elapsed >= attackWindup)
                     {
                         attackResolved = true;
-                        TryHit(attackReach, 1f, 0.55f);
+                        TryHit(EffectiveAttackReach, 1f, 0.55f);
                     }
                     if (elapsed >= attackWindup + attackRecovery) FinishAttack();
                     break;
@@ -540,7 +571,10 @@ namespace Mavis
 
         void FinishAttack()
         {
-            nextActionTime = Time.time + (FightPhase == 2 ? .55f : .8f);
+            // A missed slam leaves a longer punish window than a short spit volley.
+            float pause=activeAttack==AttackPattern.GroundSlam?1.05f:
+                activeAttack==AttackPattern.ClawFlurry?.65f:.45f;
+            nextActionTime = Time.time + pause*(FightPhase==2?.8f:1f);
             effects?.HideTaunt();
             activeAttack = AttackPattern.None;
             HideWarning();
@@ -553,6 +587,7 @@ namespace Mavis
         {
             switch (pattern)
             {
+                case AttackPattern.GroundSlam: return slamWindup+Mathf.Max(slamRecovery,SonarLifetime);
                 case AttackPattern.ClawFlurry: return flurryWindup + flurryInterval * (flurryCount - 1) + flurryRecovery;
                 case AttackPattern.Roar: return roarWindup + skillRecovery;
                 case AttackPattern.ScoldingSpit: return spitWindup + spitInterval * (spitCount - 1) + skillRecovery;
@@ -569,6 +604,7 @@ namespace Mavis
         {
             switch (pattern)
             {
+                case AttackPattern.GroundSlam: return NailongAttackMotion.Style.GroundSlam;
                 case AttackPattern.ClawFlurry: return NailongAttackMotion.Style.Flurry;
                 case AttackPattern.Roar: return NailongAttackMotion.Style.Roar;
                 case AttackPattern.ScoldingSpit: return NailongAttackMotion.Style.PointAndSpit;
@@ -621,7 +657,7 @@ namespace Mavis
             }
 
             Vector3 delta = Vector3.ProjectOnPlane(target.position-transform.position,Vector3.up);
-            float step = Mathf.Min(chaseSpeed*Time.deltaTime,Mathf.Max(0,delta.magnitude-followStopDistance));
+            float step = Mathf.Min(chaseSpeed*Time.deltaTime,Mathf.Max(0,delta.magnitude-EffectiveFollowStopDistance));
             if (groundMotor != null && !groundMotor.Move(delta.normalized*step)) EnterIdle();
         }
 
@@ -654,7 +690,7 @@ namespace Mavis
         void BeginReturn()
         {
             EnterIdle(); activeAttack = AttackPattern.None; engaged = false;
-            HideWarning(); attackMotion?.Stop(); effects?.StopPresentation();
+            HideWarning(); attackMotion?.Stop(); effects?.Cancel();
             state = State.Returning; Play("Walk");
             if (agent != null && agent.enabled && agent.isOnNavMesh) agent.isStopped = false;
         }
@@ -670,7 +706,7 @@ namespace Mavis
                 return;
             }
             health.currentHealth=health.maxHealth; previousAttack=AttackPattern.None;attackCounter=0;
-            nextAttackTime=nextCryingTime=nextChargeTime=nextTantrumTime=nextRoarTime=nextSpitTime=Time.time+1;
+            nextAttackTime=nextCryingTime=nextChargeTime=nextTantrumTime=nextRoarTime=nextSpitTime=nextSlamTime=Time.time+1;
             nextActionTime=Time.time+openingSeconds; EnterIdle();
         }
 

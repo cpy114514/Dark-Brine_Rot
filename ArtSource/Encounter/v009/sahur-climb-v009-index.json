@@ -1,0 +1,23 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v009\\sahur-climb-v009.blend",
+    "rig": "Armature",
+    "action": "PLAYER_Climb_v009",
+    "unity_clip": "PLAYER_Climb_v009",
+    "revision": "v009",
+    "frame_start": 1,
+    "frame_end": 70,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "FIRST PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v006.md",
+    "approval_reference": "2026-10-07 user PLEASE IMPLEMENT THIS PLAN",
+    "review_status": "pending",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+    "contact_seconds": 0.55
+  }
+]

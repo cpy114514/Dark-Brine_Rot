@@ -35,7 +35,8 @@ namespace Mavis
         bool Ground(Vector3 at, out RaycastHit ground)
         {
             ground=default;float nearest=float.PositiveInfinity;
-            int count=Physics.RaycastNonAlloc(at+Vector3.up*6,Vector3.down,hits,20,~0,QueryTriggerInteraction.Ignore);
+            float bodyHeight = motor.height * Mathf.Abs(transform.lossyScale.y);
+            int count=Physics.RaycastNonAlloc(at+Vector3.up*Mathf.Max(6f,bodyHeight*.75f),Vector3.down,hits,Mathf.Max(20f,bodyHeight*2f),~0,QueryTriggerInteraction.Ignore);
             for(int i=0;i<count;i++)
             {
                 var hit=hits[i];
@@ -50,7 +51,7 @@ namespace Mavis
         {
             if(!motor||!motor.enabled||delta.sqrMagnitude<.000001f)return false;
             Vector3 before=transform.position;
-            float scale=Mathf.Abs(transform.lossyScale.y),radius=motor.radius*scale;
+            float scale=Mathf.Abs(transform.lossyScale.y),radius=motor.radius*Mathf.Max(Mathf.Abs(transform.lossyScale.x),Mathf.Abs(transform.lossyScale.z));
             foreach(float angle in angles)
             {
                 if(!avoid&&angle!=0)continue;
@@ -58,7 +59,8 @@ namespace Mavis
                 Vector3 lookahead=transform.position+move.normalized*Mathf.Max(move.magnitude,radius*.55f);
                 if(!Ground(lookahead,out var ground))continue;
                 float sole=transform.position.y+Sole;
-                if(ground.point.y<sole-1.1f||ground.point.y>sole+1.4f)continue;
+                float terrainTolerance = NailongSize.RangeFactor(transform);
+                if(ground.point.y<sole-1.1f*terrainTolerance||ground.point.y>sole+1.4f*terrainTolerance)continue;
                 if(ocean&&ground.point.y<ocean.oceanHeight+.15f)continue;
                 Vector3 center=transform.TransformPoint(motor.center);
                 float half=Mathf.Max(0,motor.height*scale*.5f-radius);

@@ -90,7 +90,8 @@ public static class VerifyChargeSprintInput
             reports.Add(new{scenario="Charge while sprinting, turn through three directions",preserved=true,speed=velocity.magnitude});
             await Step(false,s,l);Require(attack.IsHeavyAttackActive,"Second charge failed to release.");
             attack.SuspendForSwimming();
-            for(int i=0;i<14;i++)await Step(false);
+            // Respect the normal .5s attack cooldown after the second heavy release.
+            for(int i=0;i<28;i++)await Step(false);
             attack.TriggerAttack();Require(attack.IsGroundComboActive,"Light attack fixture failed to start.");
             await Step(false,r);Require(!attack.IsGroundComboActive,"The fix changed ordinary attack movement cancellation.");
             return new{reports,chargeTimerContinuous=true,releaseAttacks=true,movableHeavyTurnPreserved=true,ordinaryAttackCancellationPreserved=true};

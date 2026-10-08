@@ -35,6 +35,7 @@ namespace Mavis
 
         void Awake()
         {
+            if (GetComponent<CappuccinoWeaponLoot>() == null) gameObject.AddComponent<CappuccinoWeaponLoot>();
             FitBodyCollision();
             health = GetComponent<Health>();
             ultimate = GetComponent<CappuccinoUltimate>();
@@ -119,6 +120,9 @@ namespace Mavis
         {
             if (deathTime >= 0f) return;
             deathTime = Time.time;
+            GetComponent<CappuccinoWeaponLoot>()?.Drop();
+            if (bodyRenderers != null) foreach (var renderer in bodyRenderers)
+                if (renderer && renderer.name == "Katana") renderer.enabled = false;
             if (bodyCollider != null) bodyCollider.enabled = false;
             if (animator != null && deathClip != null)
             {

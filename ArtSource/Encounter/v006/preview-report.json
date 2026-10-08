@@ -1,0 +1,182 @@
+[
+  {
+    "action": "PLAYER_BoardDrive_v006",
+    "fps": 60.0,
+    "frames": [
+      1,
+      24,
+      48,
+      73,
+      97
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\front-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\front-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\front-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\front-0097.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\side-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\side-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\side-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\side-0097.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\three-quarter-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\three-quarter-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\three-quarter-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_BoardDrive_v006\\three-quarter-0097.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "PLAYER_Climb_v006",
+    "fps": 60.0,
+    "frames": [
+      1,
+      18,
+      35,
+      52,
+      70
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\front-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\front-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\front-0052.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\front-0070.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\side-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\side-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\side-0052.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\side-0070.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\three-quarter-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\three-quarter-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\three-quarter-0052.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_Climb_v006\\three-quarter-0070.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "PLAYER_JumpStart_v006",
+    "fps": 60.0,
+    "frames": [
+      1,
+      4,
+      8,
+      11,
+      15
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\front-0004.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\front-0008.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\front-0011.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\front-0015.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\side-0004.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\side-0008.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\side-0011.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\side-0015.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\three-quarter-0004.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\three-quarter-0008.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\three-quarter-0011.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpStart_v006\\three-quarter-0015.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "PLAYER_JumpLand_v006",
+    "fps": 60.0,
+    "frames": [
+      1,
+      6,
+      13,
+      20,
+      26
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\front-0006.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\front-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\front-0020.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\front-0026.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\side-0006.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\side-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\side-0020.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\side-0026.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\three-quarter-0006.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\three-quarter-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\three-quarter-0020.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\PLAYER_JumpLand_v006\\three-quarter-0026.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "CH1_SharkTail_v006",
+    "fps": 60.0,
+    "frames": [
+      1,
+      23,
+      46,
+      68,
+      91
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\front-0023.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\front-0046.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\front-0068.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\front-0091.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\side-0023.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\side-0046.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\side-0068.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\side-0091.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\three-quarter-0023.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\three-quarter-0046.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\three-quarter-0068.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkTail_v006\\three-quarter-0091.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "CH1_SharkBreach_v006",
+    "fps": 60.0,
+    "frames": [
+      1,
+      48,
+      96,
+      145,
+      193
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\front-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\front-0096.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\front-0145.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\front-0193.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\side-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\side-0096.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\side-0145.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\side-0193.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\three-quarter-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\three-quarter-0096.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\three-quarter-0145.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v006\\previews\\CH1_SharkBreach_v006\\three-quarter-0193.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  }
+]

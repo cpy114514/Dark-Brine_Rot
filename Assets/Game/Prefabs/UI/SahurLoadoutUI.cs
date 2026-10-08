@@ -28,6 +28,9 @@ namespace Mavis
         readonly Image[] skillFrames = new Image[4];
         readonly Text[] equipmentLabels = new Text[5];
         EquipmentInventory inventory;
+        SahurWeaponLoadout weapons;
+        Text weaponHint, stickButtonText, bladesButtonText;
+        GameObject weaponChoices;
         Text pickupNotice;
         float noticeUntil;
         int editingEquipment = -1;
@@ -58,6 +61,8 @@ namespace Mavis
             movement = GetComponent<ThirdPersonPlayerController>();
             health = GetComponent<PlayerHealth>();
             inventory = GetComponent<EquipmentInventory>();
+            weapons = GetComponent<SahurWeaponLoadout>();
+            if (weapons != null) weapons.Changed += RefreshLanguage;
             if (inventory != null) inventory.Collected += OnCollected;
             SelectSkill(0);
             SelectSkillForAssignment(0);
@@ -75,7 +80,7 @@ namespace Mavis
             var keys = Keyboard.current;
             if (keys.iKey.wasPressedThisFrame) SetOpen(!IsOpen);
             else if (IsOpen && keys.escapeKey.wasPressedThisFrame) { SetOpen(false); consumedFrame = Time.frameCount; }
-            if (IsOpen || Cursor.lockState == CursorLockMode.Locked)
+            if (IsOpen)
             {
                 if (keys.digit1Key.wasPressedThisFrame || keys.numpad1Key.wasPressedThisFrame) SelectSkill(0);
                 if (keys.digit2Key.wasPressedThisFrame || keys.numpad2Key.wasPressedThisFrame) SelectSkill(1);
@@ -96,6 +101,11 @@ namespace Mavis
                 if (gameplay) hintRemaining = Mathf.Max(0f, hintRemaining - Time.unscaledDeltaTime);
             }
             if (pickupNotice != null) pickupNotice.gameObject.SetActive(gameplay && Time.unscaledTime < noticeUntil);
+            if (weaponHint != null)
+            {
+                weaponHint.gameObject.SetActive(gameplay);
+                weaponHint.text = weapons != null ? weapons.WeaponName + "\n[1] STICK   /   [2] " + (weapons.HasTwinBlades ? "TWIN BLADES" : "TWIN BLADES LOCKED") : "";
+            }
         }
 
         public void SelectSkill(int index)
@@ -111,6 +121,7 @@ namespace Mavis
             if (index < 0 || index >= 4 || details == null) return;
             EditingSkill = index;
             editingEquipment = -1;
+            if (weaponChoices) weaponChoices.SetActive(false);
             for (int i = 0; i < 4; i++) skillFrames[i].color = i == index ? accent : GameUITheme.Muted;
             details.text = GameLocalization.Format("skill.details", index + 1);
         }
@@ -120,6 +131,16 @@ namespace Mavis
             int index = (int)slot;
             if (index < 0 || index >= 5 || details == null) return;
             editingEquipment = index;
+            if (weaponChoices) weaponChoices.SetActive(slot == EquipmentSlot.Weapon);
+            if (slot == EquipmentSlot.Weapon && weapons != null)
+            {
+                details.text = "WEAPON LOADOUT\n\nEquipped: " + weapons.WeaponName +
+                    "\n\n[1] Sahur Stick — always available\n[2] Capri Twin Blades — " + (weapons.HasTwinBlades ? "collected" : "defeat Capri to unlock") +
+                    "\n\nLeft click: combo  /  Right hold: heavy attack";
+                stickButtonText.text = weapons.UsesTwinBlades ? "EQUIP STICK  [1]" : "STICK  /  EQUIPPED";
+                bladesButtonText.text = !weapons.HasTwinBlades ? "TWIN BLADES  /  LOCKED" : weapons.UsesTwinBlades ? "TWIN BLADES  /  EQUIPPED" : "EQUIP TWIN BLADES  [2]";
+                return;
+            }
             string contents = "";
             if (inventory != null)
                 foreach (var pair in inventory.Items)
@@ -212,6 +233,8 @@ namespace Mavis
                 Label(frame, (i + 1) + "   空", Vector2.zero, new Vector2(76, 50), 18, Color.white);
             }
             loadoutHint = Label(root.transform, "I  装备 / 技能", new Vector2(-120, 30), new Vector2(220, 30), 18, Color.white, new Vector2(1, 0));
+            weaponHint = Label(root.transform, "", new Vector2(278, 214), new Vector2(500, 58), 16, GameUITheme.Secondary, new Vector2(0,0));
+            weaponHint.alignment = TextAnchor.MiddleLeft;
             pickupNotice = Label(root.transform, "", new Vector2(0, 164), new Vector2(1100, 36), 22, accent, new Vector2(.5f, 0));
             panel = Box(root.transform, "Loadout overlay", new Vector2(.5f, .5f), Vector2.zero, new Vector2(1920, 1080), new Color(0, 0, 0, .72f)).gameObject;
             var shade = (RectTransform)panel.transform;
@@ -240,6 +263,11 @@ namespace Mavis
             var info = Box(window, "Available skills and detail", new Vector2(.5f, .5f), new Vector2(110, -80), new Vector2(590, 265), track);
             details = Label(info, "", Vector2.zero, new Vector2(540, 225), 21, Color.white);
             details.alignment = TextAnchor.UpperLeft;
+            weaponChoices = new GameObject("Weapon choices", typeof(RectTransform));
+            weaponChoices.transform.SetParent(window, false);
+            stickButtonText = Button(weaponChoices.transform, "EQUIP STICK  [1]", new Vector2(-30,-246), new Vector2(245,40), () => weapons?.TryEquip(SahurWeaponLoadout.Weapon.Stick, true));
+            bladesButtonText = Button(weaponChoices.transform, "TWIN BLADES  [2]", new Vector2(250,-246), new Vector2(265,40), () => weapons?.TryEquip(SahurWeaponLoadout.Weapon.CapriTwinBlades, true));
+            weaponChoices.SetActive(false);
             Label(window, "I / Esc 关闭", new Vector2(0, -304), new Vector2(940, 36), 15, GameUITheme.Secondary);
         }
 
@@ -291,6 +319,7 @@ namespace Mavis
         {
             GameLocalization.Changed -= RefreshLanguage;
             if (inventory != null) inventory.Collected -= OnCollected;
+            if (weapons != null) weapons.Changed -= RefreshLanguage;
             if (active == this) { SetOpen(false); active = null; IsOpen = false; consumedFrame = -1; }
             if (root != null) Destroy(root);
             if (ownsFont && font != null) Destroy(font);

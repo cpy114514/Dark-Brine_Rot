@@ -1,0 +1,72 @@
+{
+  "passed": true,
+  "validated": [
+    {
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\action-designer",
+      "format_valid": true,
+      "description": "Design character moves, combat attacks and boss actions interactively before animation production. Use for vague requests such as make a heavy attack, movement design, move timing or animation intent; interview and produce an approval-ready action specification.",
+      "ui_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\character-animation",
+      "format_valid": true,
+      "description": "Produce and revise Blender gameplay character animation: idle, locomotion, turns, jumps, landings, dodges, interactions, traversal, hit reactions and death, from an approved action design and requested production stage.",
+      "ui_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\combat-animation",
+      "format_valid": true,
+      "description": "Animate or revise Blender gameplay attacks, charged strikes, combos, parries, blocks, finishers, dodge attacks, launchers and combat reactions, preserving approved startup, active, recovery and Unity gameplay windows.",
+      "ui_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\boss-animation",
+      "format_valid": true,
+      "description": "Create or revise Blender creature and boss animation: bites, tail strikes, slams, charges, roars, area attacks, phases, stagger, enrage and death, emphasizing readable telegraphs, scale, inertia and fair recovery windows.",
+      "ui_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\animation-review",
+      "format_valid": true,
+      "description": "Review Blender or Unity animation results and preview renders for gameplay quality. Diagnose frame-specific silhouette, weight, timing, contact, foot sliding, arcs, clipping, weapon paths, root motion and combat readability; propose targeted revisions and re-review.",
+      "ui_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\unity-animation-pipeline",
+      "format_valid": true,
+      "description": "Prepare, validate and export approved Blender Actions to FBX for Unity 6; handle naming, FPS/frame ranges, timing metadata, scale/axes, humanoid or generic Avatar setup, loop/root-motion settings and isolated Unity import verification.",
+      "ui_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender",
+      "format_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender\\actions-fcurves",
+      "format_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender\\addons-panels",
+      "format_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender\\cameras-lights",
+      "format_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender\\linked-libraries",
+      "format_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender\\material-nodes",
+      "format_valid": true
+    },
+    {
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender\\python-api",
+      "format_valid": true
+    }
+  ],
+  "design_gate_present": true,
+  "targeted_review_loop_present": true,
+  "description_routing": "Descriptions/UI prompts checked for role-specific requests; autonomous model routing was not separately benchmarked."
+}

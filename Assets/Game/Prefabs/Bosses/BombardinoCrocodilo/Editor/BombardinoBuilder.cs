@@ -38,6 +38,7 @@ public static class BombardinoBuilder
         var root=new GameObject("Bombardino Crocodilo");root.SetActive(false);root.tag="Enemy";
         try{
             var visual=new GameObject("Textured flying crocodile",typeof(MeshFilter),typeof(MeshRenderer));visual.transform.SetParent(root.transform,false);visual.GetComponent<MeshFilter>().sharedMesh=baked;visual.GetComponent<MeshRenderer>().sharedMaterials=materials;
+            visual.transform.localRotation=Quaternion.Euler(0,180,0);
             var collider=root.AddComponent<BoxCollider>();collider.center=baked.bounds.center;collider.size=baked.bounds.size;
             var rb=root.AddComponent<Rigidbody>();rb.isKinematic=true;rb.useGravity=false;rb.collisionDetectionMode=CollisionDetectionMode.ContinuousSpeculative;
             var health=root.AddComponent<Health>();health.maxHealth=health.currentHealth=700;

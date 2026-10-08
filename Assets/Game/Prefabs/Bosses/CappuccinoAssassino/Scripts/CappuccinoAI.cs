@@ -79,6 +79,7 @@ namespace Mavis
 
         void Awake()
         {
+            BossCombatVfx.PrewarmImpacts();
             health = GetComponent<Health>();
             presentation = GetComponent<CappuccinoEnemy>();
             motor = GetComponent<CharacterController>();
@@ -280,8 +281,19 @@ namespace Mavis
                 presentation.SetBossPose(Mathf.Lerp(.12f,.22f,Mathf.Clamp01((stageElapsed-swingSeconds)/.18f)), (index+1)%2==1);
                 return;
             }
-            float normalized = Mathf.Lerp(.22f, 1f, ActionProgress);
+            // Anticipation, fast cut, then a longer follow-through, all on the
+            // imported blade clip and the same authored damage window.
+            float normalized = ActionProgress<.16f?Mathf.Lerp(.22f,.28f,Mathf.SmoothStep(0,1,ActionProgress/.16f)):
+                ActionProgress<.52f?Mathf.Lerp(.28f,.62f,(ActionProgress-.16f)/.36f):
+                Mathf.Lerp(.62f,1f,Mathf.SmoothStep(0,1,(ActionProgress-.52f)/.48f));
             presentation.SetBossPose(normalized, CurrentAttack == AttackKind.TwinSlash && swingIndex % 2 == 1);
+            if(CurrentAttack==AttackKind.TwinSlash && ActionProgress>=.16f && ActionProgress<.52f &&
+                target!=null && !(ultimate!=null && ultimate.MovementLocked))
+            {
+                float gap=Vector3.ProjectOnPlane(target.position-transform.position,Vector3.up).magnitude;
+                float room=Mathf.Max(0,gap-attackReach*.55f);
+                Move(committedDirection,Mathf.Min(2.1f,room/Mathf.Max(.001f,dt)),dt,1f,false);
+            }
             if (CurrentAttack == AttackKind.DashThrust && ActionProgress < .68f && !(ultimate != null && ultimate.MovementLocked))
             {
                 float remaining = Mathf.Max(0f,dashReach - attackReach + .5f -

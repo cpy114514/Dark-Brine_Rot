@@ -23,8 +23,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
       [HideInInspector] public AnimationCurve[] comboSourceZ;
       [Tooltip("Scales the sword animation's long lunges to suit Sahur's stick attacks.")]
       [Range(0.1f, 1f)] public float comboTravelScale = 0.65f;
-    [Range(0f, 0.3f)] public float coyoteTime = 0.12f;
-    [Range(0f, 0.3f)] public float jumpBufferTime = 0.12f;
+    [Range(0f, 0.3f)] public float coyoteTime = 0.10f;
+    [Range(0f, 0.3f)] public float jumpBufferTime = 0.15f;
     public float seaLevel = 0f;
 
     [Header("Evasion")]
@@ -104,6 +104,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Quaternion attackRecoveryStart;
     float attackRecoveryElapsed;
     readonly RaycastHit[] attackGroundHits = new RaycastHit[16];
+    readonly RaycastHit[] cameraObstacles = new RaycastHit[96];
     float visualBaseOffset;
     float coyoteTimer;
     float jumpBufferTimer;
@@ -114,6 +115,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     bool airFlipUsed;
     Quaternion airFlipVisualSpin = Quaternion.identity;
     Vector3 planarVelocity;
+    Vector3 platformCarryVelocity;
     Vector3 rollDirection;
     bool cameraInitialized;
     int motionState;
@@ -129,7 +131,20 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     float swimRippleTimer;
     readonly RaycastHit[] waterGroundHits = new RaycastHit[32];
     public bool Swimming => IsSwimming();
+    public float VerticalSpeed => verticalSpeed;
     public Animator CharacterAnimator => animator;
+    public SahurMotionContext Motion { get; private set; }
+    public Vector3 WorldVelocity => planarVelocity+platformCarryVelocity+Vector3.up*verticalSpeed;
+    public Vector3 RequestedMoveDirection
+    {
+        get
+        {
+            if(ExternalControlLock || Cursor.lockState!=CursorLockMode.Locked)return Vector3.zero;
+            float z=(GameInputSettings.Pressed(GameInputSettings.Action.Forward)?1:0)-(GameInputSettings.Pressed(GameInputSettings.Action.Back)?1:0);
+            float x=(GameInputSettings.Pressed(GameInputSettings.Action.Right)?1:0)-(GameInputSettings.Pressed(GameInputSettings.Action.Left)?1:0);
+            return Quaternion.Euler(0,yaw,0)*Vector3.ClampMagnitude(new Vector3(x,0,z),1);
+        }
+    }
     public bool FastSwimming { get; private set; }
     // Story cinematics can keep buoyancy, animation and the camera running while withholding input.
     public bool ExternalControlLock { get; set; }
@@ -140,13 +155,22 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool KeepCameraAboveWater { get; set; }
 
     // Leave a moving deck through the usual jump, stamina and gravity code.
-    public void LeaveMovingPlatform(Vector3 velocity)
+    public void LeaveMovingPlatform(Vector3 velocity, bool jumping = false)
     {
-        planarVelocity = Vector3.ProjectOnPlane(velocity, Vector3.up);
+        platformCarryVelocity = Vector3.ProjectOnPlane(velocity, Vector3.up);
+        planarVelocity = Vector3.zero;
         verticalSpeed = -groundStickSpeed;
         coyoteTimer = coyoteTime;
+        // The rider releases its deck flag before this controller samples water.
+        // Protect a deliberate jump from a wave crest during that handoff.
+        if (jumping) swimExitJumpTimer = Mathf.Max(swimExitJumpTimer, .6f);
     }
     public float LowestFootWorldOffset => GetLowestFootOffset();
+    public void NotifyPlatformLanding()
+    {
+        platformCarryVelocity=Vector3.zero;airborneTime=0;verticalSpeed=-groundStickSpeed;
+        landingTimer=.42f;SetMotion(4,"Land",.06f);
+    }
     ParticleSystem waterRipples;
     ParticleSystem waterDroplets;
     ParticleSystem underwaterBubbles;
@@ -184,6 +208,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         pitch = 10f;
         verticalSpeed = 0f;
         planarVelocity = Vector3.zero;
+        platformCarryVelocity = Vector3.zero;
         rollTimer = 0f;
         rollCooldownTimer = 0f;
         airFlipTimer = 0f;
@@ -195,11 +220,16 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void Awake()
     {
+        Motion=GetComponent<SahurMotionContext>();if(Motion==null)Motion=gameObject.AddComponent<SahurMotionContext>();
         characterController = GetComponent<CharacterController>();
         combat = GetComponent<Mavis.SahurAttack>();
         swimmingOcean = FindFirstObjectByType<OceanWorld>();
         playerStamina = GetComponent<Mavis.PlayerStamina>();
         Animator rootAnimator = GetComponent<Animator>();
+        var revised=Resources.Load<RuntimeAnimatorController>("Encounter/v006/SahurGameplay");
+        if(rootAnimator!=null && rootAnimator.runtimeAnimatorController!=null && rootAnimator.runtimeAnimatorController.name=="SahurGrounded" && revised!=null)
+            rootAnimator.runtimeAnimatorController=revised;
+        coyoteTime=.10f;jumpBufferTime=.15f;
         visualTransform = transform.Find("Pbr Sahur Visual");
         Animator visualAnimator = visualTransform != null ? visualTransform.GetComponent<Animator>() : null;
         if (rootAnimator != null && visualAnimator != null)
@@ -244,6 +274,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (GetComponent<Mavis.IslandMapUI>() == null) gameObject.AddComponent<Mavis.IslandMapUI>();
         enemyLock = GetComponent<Mavis.EnemyLockOn>();
         if (enemyLock == null) enemyLock = gameObject.AddComponent<Mavis.EnemyLockOn>();
+        if(GetComponent<SahurMovementPose>()==null)gameObject.AddComponent<SahurMovementPose>();
         if (GetComponent<Mavis.EquipmentInventory>() == null)
             gameObject.AddComponent<Mavis.EquipmentInventory>();
         if (GetComponent<Mavis.SahurLoadoutUI>() == null)
@@ -325,6 +356,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Vector3 moveDirection = cameraForward * input.z + cameraRight * input.x;
         UpdateComboFacing(moveDirection, look.x, Time.deltaTime);
         Vector3 desiredVelocity = moveDirection * moveSpeed * (wantsSprint ? sprintMultiplier : 1f);
+        Motion.Locomotion(IsSwimming(),IsGroundedOrOnSea());
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
         bool armCombatMovementAllowed = combat != null && combat.CanMoveDuringCombat;
         bool movementLocked = combatLocked && !armCombatMovementAllowed;
@@ -377,6 +409,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             desiredVelocity *= Mathf.Lerp(1f, wadingSpeedMultiplier, Mathf.Clamp01(waterDepth / swimStartDepth));
 
         bool grounded = verticalSpeed <= 0f && IsGroundedOrOnSea();
+        if(grounded && coyoteTimer<=0)platformCarryVelocity=Vector3.zero;
         bool isRolling = rollTimer > 0f;
         bool dodgePressed = acceptInput && !combatLocked &&
                             GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge);
@@ -425,6 +458,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             else
             {
                 verticalSpeed = Mathf.Sqrt(jumpHeight * 2f * gravity);
+                // A wet floating deck can lie below a passing crest. Let its jump
+                // clear the water before the swimming system can cancel ascent.
+                if(OnFloatingWreckDeck)swimExitJumpTimer=Mathf.Max(swimExitJumpTimer,.6f);
                 coyoteTimer = 0f;
                 jumpBufferTimer = 0f;
                 grounded = false;
@@ -498,7 +534,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         float downwardSpeedBeforeMove = verticalSpeed;
         if (!attackRootMotion)
-            characterController.Move((planarVelocity + Vector3.up * verticalSpeed) * Time.deltaTime);
+            characterController.Move((planarVelocity + platformCarryVelocity + Vector3.up * verticalSpeed) * Time.deltaTime);
         UpdateWaterSplash(Mathf.Max(0f, -downwardSpeedBeforeMove));
 
         // The exit velocity was already blended above, before the controller
@@ -510,6 +546,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
 
         bool onGround = verticalSpeed <= 0f && IsGroundedOrOnSea();
+        if(onGround)platformCarryVelocity=Vector3.zero;
         if (airFlipTimer > 0f)
             airFlipTimer = onGround ? 0f : Mathf.Max(0f, airFlipTimer - Time.deltaTime);
         if (!onGround && !isRolling)
@@ -520,7 +557,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         else if (onGround && (motionState == 2 || motionState == 3 || motionState == 7))
         {
-            landingTimer = 0.25f;
+            landingTimer = 0.42f;
             SetMotion(4, "Land", 0.09f);
         }
         if (motionState == 4)
@@ -626,7 +663,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     public void ApplyAttackRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
     {
-        if (ExternalMovementLock || characterController == null || combat == null || !combat.UsesAnimationRootMotion ||
+        if (!isActiveAndEnabled || ExternalMovementLock || characterController == null || !characterController.enabled || combat == null || !combat.UsesAnimationRootMotion ||
             PauseSettingsMenu.IsOpen)
             return;
 
@@ -819,9 +856,15 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         float closest = followDistance;
         if (cameraCollision)
         {
-            foreach (var hit in Physics.SphereCastAll(focus, 0.12f, (desiredPosition-focus).normalized,
-                         followDistance, ~0, QueryTriggerInteraction.Ignore))
+            int count=Physics.SphereCastNonAlloc(focus,0.12f,(desiredPosition-focus).normalized,
+                cameraObstacles,followDistance,~0,QueryTriggerInteraction.Ignore);
+            // Exceptionally dense foliage uses the full query rather than losing a wall.
+            var hits=count==cameraObstacles.Length?Physics.SphereCastAll(focus,.12f,
+                (desiredPosition-focus).normalized,followDistance,~0,QueryTriggerInteraction.Ignore):cameraObstacles;
+            if(hits!=cameraObstacles)count=hits.Length;
+            for(int i=0;i<count;i++)
             {
+                var hit=hits[i];
                 if (hit.collider.transform.IsChildOf(transform)) continue;
                 closest = Mathf.Min(closest, Mathf.Max(0.4f, hit.distance - 0.08f));
             }
@@ -840,8 +883,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
 
         float smoothFactor = 1f - Mathf.Exp(-cameraFollowSharpness * Time.deltaTime);
+        // Obstruction contraction is immediate; easing only on release avoids
+        // spending several frames inside the wall while the camera catches up.
+        Vector3 followPosition=Vector3.Lerp(playerCamera.transform.position,desiredPosition,smoothFactor);
+        Vector3 fromFocus=followPosition-focus;
+        if(cameraCollision && closest<followDistance && fromFocus.magnitude>closest)
+            followPosition=focus+fromFocus.normalized*closest;
         playerCamera.transform.SetPositionAndRotation(
-            Vector3.Lerp(playerCamera.transform.position, desiredPosition, smoothFactor),
+            followPosition,
             Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
         UpdateUnderwaterPresentation(IsCameraUnderwater());
         enemyLock?.RefreshMarker();
@@ -893,7 +942,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void SetMotion(int state, string name, float blend)
     {
-        if (combat != null && combat.IsCombatMotionActive) return;
+        if (combat != null && combat.IsCombatMotionActive && !combat.CanMoveDuringCombat) return;
         if (motionState == state) return;
         motionState = state;
         if (animator != null) animator.CrossFadeInFixedTime(name, blend, 0, 0f);
@@ -999,6 +1048,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void UpdateSwimming(Vector3 input, Vector3 desiredVelocity, bool wantsFastSwim, bool jumpPressed)
     {
+        platformCarryVelocity=Vector3.zero;
         rollTimer = 0f;
         rollInheritedSpeed = 0f;
         rollCooldownTimer = 0f;
@@ -1060,7 +1110,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             swimRippleTimer = FastSwimming ? 0.25f : 0.4f;
         }
         // Sprint uses its own freestyle stroke; exhaustion immediately returns to the normal swim.
-        SetMotion(!moving ? 6 : FastSwimming ? 8 : 5,
+        bool blendedSwim=animator!=null && animator.HasState(0,Animator.StringToHash("Swimming"));
+        if(blendedSwim)
+        {
+            animator.SetFloat("SwimAmount",Mathf.Clamp01(planarVelocity.magnitude/Mathf.Max(.1f,swimSpeed)),.18f,Time.deltaTime);
+            animator.SetFloat("SwimFastBlend",FastSwimming ? 1 : 0,.25f,Time.deltaTime);
+            SetMotion(5,"Swimming",.18f);
+        }
+        else SetMotion(!moving ? 6 : FastSwimming ? 8 : 5,
             !moving ? "Swim Idle" : FastSwimming ? "Swim Fast" : "Swim Forward", 0.18f);
         if (animator != null)
             animator.SetFloat(SpeedId, moving ? planarVelocity.magnitude : 0f, 0.08f, Time.deltaTime);

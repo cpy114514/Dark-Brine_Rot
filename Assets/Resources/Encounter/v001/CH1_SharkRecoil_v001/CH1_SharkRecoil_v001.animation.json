@@ -1,0 +1,130 @@
+{
+  "action": "CH1_SharkRecoil_v001",
+  "unity_clip": "CH1_SharkRecoil_v001",
+  "revision": "v001",
+  "frame_start": 1,
+  "frame_end": 49,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "Body",
+  "rig_type": "Generic",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design.md",
+  "approval_reference": "User 2026-10-07: \u597d\uff0c\u5f00\u59cb\u5236\u4f5c\u5427; no further questions, autonomous revisions authorized",
+  "review_status": "accepted_for_stage",
+  "review_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/source-review.md",
+  "gameplay": {
+    "startup": [
+      1,
+      8
+    ],
+    "active": [
+      8,
+      13
+    ],
+    "recovery": [
+      13,
+      49
+    ]
+  },
+  "format_version": 1,
+  "duration_seconds": 0.8,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v001\\shark-encounter-v001.blend",
+  "blender_version": "5.2.2 LTS",
+  "rig": "Tralalero_Rig",
+  "slot": "OBTralalero_Rig",
+  "animated_bones": [
+    "Body",
+    "Dorsal",
+    "Fin_Left",
+    "Fin_Right",
+    "Foot_Left",
+    "Foot_Rear",
+    "Foot_Right",
+    "Head",
+    "Jaw",
+    "Spine_Mid",
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Mid",
+    "Tail_Tip"
+  ],
+  "selected_meshes": [
+    "Tralalero_Skin"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {
+    "startup": [
+      {
+        "frames": [
+          1,
+          8
+        ],
+        "seconds": [
+          0.0,
+          0.11666666666666667
+        ],
+        "normalized": [
+          0.0,
+          0.14583333333333334
+        ]
+      }
+    ],
+    "active": [
+      {
+        "frames": [
+          8,
+          13
+        ],
+        "seconds": [
+          0.11666666666666667,
+          0.2
+        ],
+        "normalized": [
+          0.14583333333333334,
+          0.25
+        ]
+      }
+    ],
+    "recovery": [
+      {
+        "frames": [
+          13,
+          49
+        ],
+        "seconds": [
+          0.2,
+          0.8
+        ],
+        "normalized": [
+          0.25,
+          1.0
+        ]
+      }
+    ]
+  },
+  "fbx": "CH1_SharkRecoil_v001.fbx"
+}

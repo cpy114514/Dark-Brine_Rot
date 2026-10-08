@@ -1,0 +1,16 @@
+{
+  "stage": "FINAL",
+  "design_status": "approved",
+  "review_status": "autonomous_review_completed",
+  "authority": "User explicitly approved production and waived further stage questions in this chat on 2026-10-07.",
+  "review_reference": "final-review.md",
+  "export_metadata_note": "Per-FBX metadata records the original BLOCKING export stage; this record documents subsequent Unity integration and final revisions without rewriting historical export reports.",
+  "actions": ["CH1_SahurDiagonalSlash_v001", "CH1_SahurGuard_v002", "CH1_SahurBrace_v002", "CH1_SharkBite_v001", "CH1_SharkTail_v001", "CH1_SharkRecoil_v001", "CH1_ShipTailSmash_v001"],
+  "finale_seconds": 14.4,
+  "ship_contact_seconds": 1.95,
+  "local_tail_contact_seconds": 0.65,
+  "no_impact_root_corrections": true,
+  "unity_compilation_passed": true,
+  "saved_game_restored_sha256": "8D8664A0E3EEA197CD5FA6D48D998783932DB75077DE62CEC62AC628DC725B57",
+  "committed_or_pushed": false
+}

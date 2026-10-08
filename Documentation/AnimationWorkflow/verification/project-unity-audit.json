@@ -1,0 +1,309 @@
+{
+  "unity": "6000.3.23f1",
+  "models": [
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Models/sahur.fbx",
+      "exists": true,
+      "type": "Generic",
+      "scale": 1,
+      "avatar": "NoAvatar",
+      "clips": []
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+      "exists": true,
+      "type": "Human",
+      "scale": 1,
+      "avatar": "CreateFromThisModel",
+      "clips": []
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/StandingMeleeAttackDownward.fbx",
+      "exists": true,
+      "type": "Human",
+      "scale": 1,
+      "avatar": "CreateFromThisModel",
+      "clips": [
+        {
+          "name": "SahurStandingMeleeDownward",
+          "frameRate": 30,
+          "length": 2.266667,
+          "isLooping": false
+        }
+      ]
+    },
+    {
+      "path": "Assets/Resources/SharkAnimation/TralaleroAnimated.fbx",
+      "exists": true,
+      "type": "Generic",
+      "scale": 1,
+      "avatar": "CreateFromThisModel",
+      "clips": [
+        {
+          "name": "Bite_Lunge",
+          "frameRate": 60,
+          "length": 1.1,
+          "isLooping": false
+        },
+        {
+          "name": "Hit_Recoil",
+          "frameRate": 60,
+          "length": 0.8000001,
+          "isLooping": false
+        },
+        {
+          "name": "Ship_Smash",
+          "frameRate": 60,
+          "length": 1.1500001,
+          "isLooping": false
+        },
+        {
+          "name": "Swim_Cruise",
+          "frameRate": 60,
+          "length": 1.60000014,
+          "isLooping": true
+        },
+        {
+          "name": "Swim_Fast",
+          "frameRate": 60,
+          "length": 1,
+          "isLooping": true
+        },
+        {
+          "name": "Tail_Strike",
+          "frameRate": 60,
+          "length": 1.1500001,
+          "isLooping": false
+        },
+        {
+          "name": "Threat",
+          "frameRate": 60,
+          "length": 1.80000007,
+          "isLooping": false
+        }
+      ]
+    }
+  ],
+  "player": {
+    "prefab": "SahurPlayer",
+    "avatar": "PbrSahurAvatar",
+    "avatarValid": true,
+    "avatarHuman": true,
+    "avatarSource": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "applyRootMotion": false,
+    "controller": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+    "layers": [
+      {
+        "name": "Base Layer",
+        "defaultWeight": 0,
+        "mask": null,
+        "states": [
+          {
+            "name": "Locomotion",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller"
+          },
+          {
+            "name": "Roll",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Jump Start",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Jump Loop",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Land",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Swim Forward",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Swim Idle",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Attack",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx"
+          },
+          {
+            "name": "Charge Windup",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim"
+          },
+          {
+            "name": "Heavy Attack",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim"
+          },
+          {
+            "name": "Combo 1",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx"
+          },
+          {
+            "name": "Combo 2",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx"
+          },
+          {
+            "name": "Combo 3",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx"
+          },
+          {
+            "name": "Jump Slash",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/KayKitSkeletons/SahurJumpSlash.anim"
+          },
+          {
+            "name": "Air Flip",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Boomerang Throw",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx"
+          },
+          {
+            "name": "Swim Fast",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurFastFreestyle.anim"
+          },
+          {
+            "name": "Shore Get Up",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim"
+          },
+          {
+            "name": "Wreck Climb",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx"
+          },
+          {
+            "name": "Wreck Surf",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx"
+          },
+          {
+            "name": "Finale Guard",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Finale Stagger",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Finale Knockdown",
+            "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx"
+          },
+          {
+            "name": "Finale Block",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx"
+          }
+        ]
+      },
+      {
+        "name": "Charge Upper Body",
+        "defaultWeight": 0,
+        "mask": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurChargeUpperBody.mask",
+        "states": [
+          {
+            "name": "Charge Windup",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim"
+          },
+          {
+            "name": "Heavy Attack",
+            "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim"
+          }
+        ]
+      }
+    ],
+    "charge": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+    "strike": "",
+    "fullChargeTime": 1.8,
+    "chargeWindupTime": 0.48,
+    "maxChargePosePhase": 0.28,
+    "heavySwingWindowStart": 0.35,
+    "heavySwingWindowEnd": 0.43
+  },
+  "clips": [
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/DownloadedHeavy/SahurChargedSwing.anim",
+      "name": "SahurChargedSwing",
+      "frameRate": 30,
+      "length": 1.4000001,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/DownloadedHeavy/SahurNativeDiagonalSlash.anim",
+      "name": "SahurNativeDiagonalSlash",
+      "frameRate": 60,
+      "length": 0.7886508,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/KayKitSkeletons/SahurJumpSlash.anim",
+      "name": "SahurJumpSlash",
+      "frameRate": 30,
+      "length": 1.33333337,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/KayKitSkeletons/SahurStickCombo1.anim",
+      "name": "SahurStickCombo1",
+      "frameRate": 30,
+      "length": 1.06666672,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/KayKitSkeletons/SahurStickCombo2.anim",
+      "name": "SahurStickCombo2",
+      "frameRate": 30,
+      "length": 1,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/KayKitSkeletons/SahurStickCombo3.anim",
+      "name": "SahurStickCombo3",
+      "frameRate": 30,
+      "length": 1.06666672,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurDiagonalChargedStrike.anim",
+      "name": "SahurDiagonalChargedStrike",
+      "frameRate": 60,
+      "length": 1.06666672,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurFastFreestyle.anim",
+      "name": "SahurFastFreestyle",
+      "frameRate": 60,
+      "length": 1.38,
+      "isLooping": true
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurOneHandHeavy.anim",
+      "name": "SahurOneHandHeavy",
+      "frameRate": 60,
+      "length": 1.12,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim",
+      "name": "SahurShoreGetUp",
+      "frameRate": 30,
+      "length": 1.53333342,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+      "name": "SahurStandingMeleeDownward",
+      "frameRate": 30,
+      "length": 2.266667,
+      "isLooping": false
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurWreckKnockdown.anim",
+      "name": "SahurWreckKnockdown",
+      "frameRate": 30,
+      "length": 1.53333342,
+      "isLooping": false
+    }
+  ]
+}

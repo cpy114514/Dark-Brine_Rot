@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3134650691fc34ab4988386fe8d636, type: 3}
+  m_Name: CapriTwinBlades
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
+  id: capri_twin_blades
+  displayName: Capri Twin Blades
+  slot: 4
+  worldModel: {fileID: 2170892048367634808, guid: c86490fa1511dd749a43f0cde8ea9b0e, type: 3}
+  icon: {fileID: 0}

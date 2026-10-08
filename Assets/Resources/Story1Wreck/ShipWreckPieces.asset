@@ -19,142 +19,426 @@ MonoBehaviour:
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 60fffb5d9ed6dce4dbd9337ae293f9db, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 17.371609, y: 6.2098784, z: -5.9833393}
-    sourceSize: {x: 2.574276, y: 0.7503052, z: 6.1787376}
+    sourceCenter: {x: 18.642918, y: 6.431764, z: -3.8541324}
+    sourceSize: {x: 5.6026025, y: 1.0800447, z: 7.1414213}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 77124c995b4cfdb489718d8019bd99a1, type: 2}
+      localCenter: {x: 0.14126043, y: -0.07883425, z: -0.04306758}
+      localSize: {x: 0.71747917, y: 0.8248778, z: 0.87258935}
+    - mesh: {fileID: 4300000, guid: 75383e37ee6a14945ab93d0923f49031, type: 2}
+      localCenter: {x: -0.23900163, y: 0.13323426, z: 0.22882132}
+      localSize: {x: 0.52199686, y: 0.7335315, z: 0.54235774}
+    - mesh: {fileID: 4300000, guid: fd14e959f06b52e4abdc677ff5a30d43, type: 2}
+      localCenter: {x: -0.2599678, y: -0.2808088, z: -0.23420922}
+      localSize: {x: 0.3654271, y: 0.43838194, z: 0.53158134}
   - name: deck_Object_30_00_01_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 94a0835c8ea2f8044994023f29a54fed, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 19.12345, y: 7.0324087, z: -2.3328505}
-    sourceSize: {x: 4.728204, y: 2.151958, z: 9.698501}
+    sourceCenter: {x: 21.960135, y: 7.19518, z: -0.5832627}
+    sourceSize: {x: 5.553491, y: 1.5959029, z: 4.143917}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 9384f90bd13078148ac1c0528df686e8, type: 2}
+      localCenter: {x: -0.32058913, y: 0.063043736, z: 0.15704042}
+      localSize: {x: 0.3588218, y: 0.80079365, z: 0.64593536}
+    - mesh: {fileID: 4300000, guid: 9dafcfc4c7543a74cbab7aefb9fa7a68, type: 2}
+      localCenter: {x: 0.06706726, y: -0.37374982, z: -0.3181378}
+      localSize: {x: 0.49062368, y: 0.25250062, z: 0.3637245}
+    - mesh: {fileID: 4300000, guid: 0286e629e8b365247adb471a55303901, type: 2}
+      localCenter: {x: 0.3845067, y: -0.13278183, z: 0.060052834}
+      localSize: {x: 0.23098665, y: 0.4591265, z: 0.5141351}
+    - mesh: {fileID: 4300000, guid: 8cd57ac989cc407449f18339b38ec3ff, type: 2}
+      localCenter: {x: 0.058264393, y: 0.17143309, z: 0.3042959}
+      localSize: {x: 0.441512, y: 0.6571335, z: 0.39140782}
+    - mesh: {fileID: 4300000, guid: 00beea07cca48094f8c7a3b05b3af3f3, type: 2}
+      localCenter: {x: 0.049563244, y: -0.20866062, z: -0.02242974}
+      localSize: {x: 0.4522127, y: 0.30115145, z: 0.33839592}
   - name: deck_Object_30_00_02_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: aa19c7e4a17df164ab6b1c672a488f9b, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 19.132866, y: 6.9149294, z: 2.332637}
-    sourceSize: {x: 4.7277703, y: 2.1562042, z: 9.701254}
+    sourceCenter: {x: 18.406471, y: 6.494813, z: 2.1004877}
+    sourceSize: {x: 8.303813, y: 1.3457875, z: 8.791584}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 49886f4d74a5af14db4255bc7b4fdda4, type: 2}
+      localCenter: {x: -0.22639406, y: -0.2174455, z: -0.12914594}
+      localSize: {x: 0.5472119, y: 0.5441571, z: 0.69044393}
+    - mesh: {fileID: 4300000, guid: 49e79f856ffb2324d909e4c88251263a, type: 2}
+      localCenter: {x: 0.19476992, y: -0.2642265, z: -0.18929031}
+      localSize: {x: 0.6104603, y: 0.47154772, z: 0.62141913}
+    - mesh: {fileID: 4300000, guid: 10e038f2ac3e5614e81bf282a079e02e, type: 2}
+      localCenter: {x: 0.23468795, y: 0.12664045, z: 0.2751084}
+      localSize: {x: 0.31164175, y: 0.51301926, z: 0.3335228}
+    - mesh: {fileID: 4300000, guid: f5b28f969a786f043ab3c1222c3d1493, type: 2}
+      localCenter: {x: 0.0056134057, y: 0.17641437, z: 0.29676384}
+      localSize: {x: 0.30019647, y: 0.64717054, z: 0.40647215}
   - name: deck_Object_30_00_03_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 10628a728b4c2ea46a7cd2f5f6b8988a, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 17.37159, y: 6.209875, z: 5.983362}
-    sourceSize: {x: 2.5742383, y: 0.7503061, z: 6.1786995}
+    sourceCenter: {x: 18.935303, y: 6.709284, z: 4.543616}
+    sourceSize: {x: 5.1224813, y: 1.4550009, z: 8.520395}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 785aa221cb8368a4a9ff3b73b2ca01b7, type: 2}
+      localCenter: {x: -0.12835748, y: -0.11452278, z: -0.05621539}
+      localSize: {x: 0.74328506, y: 0.77095413, z: 0.8875695}
+    - mesh: {fileID: 4300000, guid: f1cd8502feb906f4c8eb49016a222039, type: 2}
+      localCenter: {x: 0.34573585, y: 0.2702816, z: 0.3891725}
+      localSize: {x: 0.30852816, y: 0.45943642, z: 0.22165474}
+    - mesh: {fileID: 4300000, guid: 8d8d6538955f2934ebad78347fe7bce9, type: 2}
+      localCenter: {x: 0.18361653, y: -0.08322851, z: 0.08946798}
+      localSize: {x: 0.3512345, y: 0.44292378, z: 0.39578}
   - name: deck_Object_30_01_00_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: fd126f2b8c13ea4448215f79920d931f, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 9.440041, y: 5.7865467, z: -6.8886757}
-    sourceSize: {x: 4.384498, y: 0.33976698, z: 9.700422}
+    sourceCenter: {x: 11.237311, y: 5.851085, z: -5.226489}
+    sourceSize: {x: 7.302643, y: 0.4688444, z: 10.008574}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 42609d8fbfc0bb3499760897b8cb4fa0, type: 2}
+      localCenter: {x: 0.24514775, y: 0.02854548, z: 0.22072594}
+      localSize: {x: 0.23757838, y: 0.6006074, z: 0.31887278}
+    - mesh: {fileID: 4300000, guid: 87023293bed510a45b7f4d49f083ea07, type: 2}
+      localCenter: {x: 0.23728317, y: -0.24334393, z: -0.20276853}
+      localSize: {x: 0.52543384, y: 0.5133132, z: 0.5944628}
+    - mesh: {fileID: 4300000, guid: 040a2cc0aebcf734caa15e586ce8521c, type: 2}
+      localCenter: {x: 0.08119973, y: 0.03333374, z: 0.14802822}
+      localSize: {x: 0.33238286, y: 0.9333315, z: 0.70394367}
+    - mesh: {fileID: 4300000, guid: f4a7aa3503ebed44f8f682810860a57f, type: 2}
+      localCenter: {x: -0.26532358, y: 0.061929055, z: 0.23180209}
+      localSize: {x: 0.469353, y: 0.7355686, z: 0.4330875}
+    - mesh: {fileID: 4300000, guid: 9307f3b8593daf548b6e32b08cffa84c, type: 2}
+      localCenter: {x: -0.12542854, y: -0.2496781, z: -0.116430715}
+      localSize: {x: 0.2507428, y: 0.42306542, z: 0.29483017}
   - name: deck_Object_30_01_01_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 898a2113c0b0ba1488a1c287d7f59558, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 9.440055, y: 5.788436, z: -2.3482585}
-    sourceSize: {x: 4.696563, y: 0.34345627, z: 9.700451}
+    sourceCenter: {x: 9.194967, y: 5.7943625, z: -2.0318303}
+    sourceSize: {x: 8.484744, y: 0.3553238, z: 10.583568}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 0f3529d082ffe9f49ab06a4eaa847210, type: 2}
+      localCenter: {x: -0.30673867, y: -0.22855115, z: -0.2604313}
+      localSize: {x: 0.38652268, y: 0.54264945, z: 0.47913766}
+    - mesh: {fileID: 4300000, guid: a1178acffc1498c4d80c6c69cfffcb2b, type: 2}
+      localCenter: {x: 0.22097783, y: -0.14519678, z: -0.062372692}
+      localSize: {x: 0.55804443, y: 0.7096064, z: 0.7390765}
+    - mesh: {fileID: 4300000, guid: cec11dffffb43f847b4619718a1055ec, type: 2}
+      localCenter: {x: -0.09988989, y: -0.11872088, z: -0.06145442}
+      localSize: {x: 0.37510216, y: 0.7623435, z: 0.82792675}
+    - mesh: {fileID: 4300000, guid: 0caeac72621e4774ebe20a174e3e2727, type: 2}
+      localCenter: {x: -0.099521175, y: 0.1761737, z: 0.3936627}
+      localSize: {x: 0.30771965, y: 0.6476526, z: 0.21267472}
+    - mesh: {fileID: 4300000, guid: 8549f2d8bdb6fa34dbf7ede517a3f5ca, type: 2}
+      localCenter: {x: -0.15648097, y: -0.1089137, z: 0.13369323}
+      localSize: {x: 0.3959507, y: 0.6717009, z: 0.37540358}
   - name: deck_Object_30_01_02_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 757c1c5a32af83a4e84207ffd8a37c83, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 9.440054, y: 5.7884235, z: 2.3482268}
-    sourceSize: {x: 4.696633, y: 0.3434372, z: 9.700455}
+    sourceCenter: {x: 9.507504, y: 5.801099, z: 3.1583524}
+    sourceSize: {x: 7.0171385, y: 0.3688054, z: 10.467842}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 95b76ef98b275aa4fb2073c05a478ab1, type: 2}
+      localCenter: {x: 0.25326517, y: 0.036869004, z: 0.25339717}
+      localSize: {x: 0.49346963, y: 0.8149904, z: 0.42754534}
+    - mesh: {fileID: 4300000, guid: 74497f18d2e71c34aa09cf2afc60a2ef, type: 2}
+      localCenter: {x: 0.20477451, y: -0.24652947, z: -0.19516517}
+      localSize: {x: 0.33844668, y: 0.5067704, z: 0.60883325}
+    - mesh: {fileID: 4300000, guid: 86acd869e37a42a449cbacda457b6de8, type: 2}
+      localCenter: {x: -0.052626442, y: -0.016267562, z: -0.009558849}
+      localSize: {x: 0.24955495, y: 0.9673679, z: 0.9804512}
+    - mesh: {fileID: 4300000, guid: 6094406d9d96f7141a53af5d20dbade8, type: 2}
+      localCenter: {x: -0.29120216, y: 0, z: -0.000000023270596}
+      localSize: {x: 0.41759574, y: 1, z: 1}
   - name: deck_Object_30_01_03_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 98240860e43afb942b6bd1321fc66b84, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: 9.440056, y: 5.7866077, z: 6.8886795}
-    sourceSize: {x: 4.384498, y: 0.33989954, z: 9.70045}
+    sourceCenter: {x: 9.467425, y: 5.803212, z: 7.0111156}
+    sourceSize: {x: 4.207139, y: 0.3731079, z: 10.697248}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 2deb2f40ae32c4649a45eff2ba6ed918, type: 2}
+      localCenter: {x: 0.22447316, y: -0.24553461, z: -0.271724}
+      localSize: {x: 0.5510539, y: 0.5088285, z: 0.45398042}
+    - mesh: {fileID: 4300000, guid: 2c43f34fcf3778c4d8861457121c9a58, type: 2}
+      localCenter: {x: 0.12220734, y: -0.03362327, z: 0.17974335}
+      localSize: {x: 0.40577024, y: 0.8319181, z: 0.51582116}
+    - mesh: {fileID: 4300000, guid: b7b8a3368aaf20c4495103a9c9dee5de, type: 2}
+      localCenter: {x: -0.0330778, y: 0.06117342, z: 0.26898593}
+      localSize: {x: 0.27338347, y: 0.8776532, z: 0.4620282}
+    - mesh: {fileID: 4300000, guid: e73e8470f778bb64785ba06a9b81cd24, type: 2}
+      localCenter: {x: -0.1944617, y: -0.12902574, z: 0.11458714}
+      localSize: {x: 0.29598254, y: 0.6170776, z: 0.34423536}
+    - mesh: {fileID: 4300000, guid: 970adf9e640a0064cbb538b67947e6ff, type: 2}
+      localCenter: {x: -0.1942229, y: -0.24478698, z: -0.2699967}
+      localSize: {x: 0.6115541, y: 0.51042604, z: 0.46000668}
   - name: deck_Object_30_02_00_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 7a0676b69e2791d4d888462dff81a3d6, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -0.2580061, y: 5.854004, z: -7.044792}
-    sourceSize: {x: 4.6965637, y: 0.35029745, z: 9.699572}
+    sourceCenter: {x: 1.2760214, y: 5.7899675, z: -6.8531427}
+    sourceSize: {x: 5.079862, y: 0.29627466, z: 10.454038}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: c32f41c980313084daf3281ffe1c3cf6, type: 2}
+      localCenter: {x: 0.23317747, y: -0.05540829, z: 0.020499721}
+      localSize: {x: 0.5336451, y: 0.8831496, z: 0.95097524}
+    - mesh: {fileID: 4300000, guid: aef4baa4e57dd3a47834fe1393f0d8c2, type: 2}
+      localCenter: {x: -0.20036837, y: -0.15004836, z: 0.26150987}
+      localSize: {x: 0.59926337, y: 0.69990647, z: 0.47698036}
+    - mesh: {fileID: 4300000, guid: ed7cebf4f2ce193419f0168655bbc53d, type: 2}
+      localCenter: {x: -0.11065865, y: 0.11175167, z: -0.22294162}
+      localSize: {x: 0.68849385, y: 0.77649504, z: 0.55411685}
   - name: deck_Object_30_02_01_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 77e6dab238b85e24981ceb85a2de2c50, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -0.2580061, y: 5.8521185, z: -2.3482587}
-    sourceSize: {x: 4.6966805, y: 0.34782648, z: 9.699572}
+    sourceCenter: {x: 0.27586985, y: 5.830846, z: -1.7108418}
+    sourceSize: {x: 6.433425, y: 0.33077002, z: 10.014051}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 480cffb784ed01847b99626c768580fb, type: 2}
+      localCenter: {x: -0.20115848, y: -0.19426389, z: 0.15406811}
+      localSize: {x: 0.59768313, y: 0.51728547, z: 0.5201271}
+    - mesh: {fileID: 4300000, guid: f4be137c43dc0934eb0bb5ffc5a650c5, type: 2}
+      localCenter: {x: 0.02736991, y: 0.0644394, z: -0.2987834}
+      localSize: {x: 0.5236542, y: 0.8711183, z: 0.40243325}
+    - mesh: {fileID: 4300000, guid: 956dd9dd4191796438007bae7da1f71d, type: 2}
+      localCenter: {x: 0.28846037, y: -0.02486467, z: 0.011075025}
+      localSize: {x: 0.4230793, y: 0.9502721, z: 0.97785}
+    - mesh: {fileID: 4300000, guid: f080127f2c4f5fc4097cd2de962c5255, type: 2}
+      localCenter: {x: 0.062818445, y: -0.21265866, z: 0.21279068}
+      localSize: {x: 0.44566175, y: 0.55396694, z: 0.5382599}
   - name: deck_Object_30_02_02_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 55172ab2ae5da1440bf5a8411dabdeae, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -0.25800514, y: 5.8521338, z: 2.348298}
-    sourceSize: {x: 4.6966085, y: 0.34784842, z: 9.69957}
+    sourceCenter: {x: -0.8182864, y: 5.884335, z: 2.4280312}
+    sourceSize: {x: 7.5829473, y: 0.40153313, z: 10.198124}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: e99d6c9f1290c5c4f949ec2ef1228dfb, type: 2}
+      localCenter: {x: 0.09367013, y: -0.29009733, z: 0.16554177}
+      localSize: {x: 0.55720437, y: 0.41980535, z: 0.6689165}
+    - mesh: {fileID: 4300000, guid: 37d41a9e16e0736449beebc3a2322dee, type: 2}
+      localCenter: {x: 0.10969849, y: 0.007234501, z: -0.26074332}
+      localSize: {x: 0.7806031, y: 0.8922829, z: 0.42443883}
+    - mesh: {fileID: 4300000, guid: 1b12fac4392dcec4396dd2da80c37f05, type: 2}
+      localCenter: {x: -0.0713839, y: -0.29012465, z: 0.1919435}
+      localSize: {x: 0.19386311, y: 0.41972932, z: 0.6161038}
+    - mesh: {fileID: 4300000, guid: c04031f604c252845ac5eb22470ac540, type: 2}
+      localCenter: {x: -0.29101852, y: -0.2898349, z: 0.30069387}
+      localSize: {x: 0.256791, y: 0.41910705, z: 0.39805576}
+    - mesh: {fileID: 4300000, guid: b2376b292cf61134eb78c3e93c49b5eb, type: 2}
+      localCenter: {x: -0.33294663, y: 0.030520998, z: -0.17703803}
+      localSize: {x: 0.33410674, y: 0.9389568, z: 0.64592403}
   - name: deck_Object_30_02_03_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 1f4fb89fa70185046a8f1e35c08d06ad, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -0.2580061, y: 5.854002, z: 7.044796}
-    sourceSize: {x: 4.6965637, y: 0.35029078, z: 9.699572}
+    sourceCenter: {x: -1.0963049, y: 5.900379, z: 7.2995625}
+    sourceSize: {x: 4.187031, y: 0.4282751, z: 10.4759035}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: eabbd2bb5862abb49a73e43090ab1872, type: 2}
+      localCenter: {x: -0.31980163, y: -0.3055743, z: 0.27666593}
+      localSize: {x: 0.3408962, y: 0.38546002, z: 0.44336197}
+    - mesh: {fileID: 4300000, guid: 605b487b43f6ae2409bb2610b8ef4a9d, type: 2}
+      localCenter: {x: -0.24495786, y: 0.025436504, z: -0.21143773}
+      localSize: {x: 0.510084, y: 0.949127, z: 0.5771246}
+    - mesh: {fileID: 4300000, guid: 5c279907e10e0dc4db72708798eca736, type: 2}
+      localCenter: {x: 0.20145068, y: -0.045397356, z: 0.027138175}
+      localSize: {x: 0.59709877, y: 0.9092042, z: 0.9457237}
+    - mesh: {fileID: 4300000, guid: c54aa866728dc714fa563374841bbe58, type: 2}
+      localCenter: {x: -0.01861178, y: -0.03015171, z: 0.017778736}
+      localSize: {x: 0.51008445, y: 0.9370801, z: 0.9618908}
   - name: deck_Object_30_03_00_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 17a7bebc68a418c4ab95be7621ba4f38, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -9.950001, y: 12.407361, z: -7.0107393}
-    sourceSize: {x: 4.6284432, y: 13.001966, z: 9.70264}
+    sourceCenter: {x: -9.308487, y: 12.357388, z: -6.2023273}
+    sourceSize: {x: 6.3396044, y: 13.1742325, z: 12.077229}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 9fc8903381ce3244699dd3e7e15408a2, type: 2}
+      localCenter: {x: -0.17914961, y: -0.005833497, z: 0.09730808}
+      localSize: {x: 0.64170086, y: 0.9845931, z: 0.74851096}
+    - mesh: {fileID: 4300000, guid: fa5c472036bddb34baddb3f62f961138, type: 2}
+      localCenter: {x: 0.27926317, y: -0.48288187, z: 0.3058515}
+      localSize: {x: 0.4414736, y: 0.034236334, z: 0.38829705}
+    - mesh: {fileID: 4300000, guid: 9bfc1c50d2739304dbb3564964fc836a, type: 2}
+      localCenter: {x: 0.13469502, y: 0.009514207, z: -0.14578837}
+      localSize: {x: 0.3887413, y: 0.97512543, z: 0.61639005}
+    - mesh: {fileID: 4300000, guid: ed88fbfbd254a7f4a9064317600de570, type: 2}
+      localCenter: {x: 0.32059276, y: 0.0039121383, z: -0.050078586}
+      localSize: {x: 0.2862119, y: 0.95970446, z: 0.35725927}
+    - mesh: {fileID: 4300000, guid: 216726bc40f735046a22d77f41f70f48, type: 2}
+      localCenter: {x: 0.2395321, y: 0.023994975, z: -0.3532379}
+      localSize: {x: 0.31525064, y: 0.95201004, z: 0.2935243}
   - name: deck_Object_30_03_01_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 8aade0a8c8d0db745a5c54ce1e002c05, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -9.950001, y: 12.403654, z: -2.3482587}
-    sourceSize: {x: 4.6967845, y: 13.000825, z: 9.70264}
+    sourceCenter: {x: -11.251524, y: 12.492777, z: -2.4449894}
+    sourceSize: {x: 8.935379, y: 13.043387, z: 10.46415}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 848a01636487a4941abd3b25e1276e86, type: 2}
+      localCenter: {x: -0.27893248, y: -0.002732474, z: 0.05277494}
+      localSize: {x: 0.4232789, y: 0.97444445, z: 0.509174}
+    - mesh: {fileID: 4300000, guid: c137933f55bdc8c4a976ef0baffb6844, type: 2}
+      localCenter: {x: 0.33113387, y: 0.0032080174, z: -0.059887927}
+      localSize: {x: 0.33773243, y: 0.98585397, z: 0.731716}
+    - mesh: {fileID: 4300000, guid: a4a46b24a2a8eac41b0c4ef6b21ab5da, type: 2}
+      localCenter: {x: 0.14671567, y: -0.0000064341675, z: 0.00017663902}
+      localSize: {x: 0.46579257, y: 0.999987, z: 0.99964696}
+    - mesh: {fileID: 4300000, guid: 4b178cd4b5b79ba41bb166570c0a1102, type: 2}
+      localCenter: {x: -0.28080752, y: 0.015698858, z: -0.23769028}
+      localSize: {x: 0.4369014, y: 0.94731873, z: 0.12598364}
+    - mesh: {fileID: 4300000, guid: c3547e0d391ba774194f082594b5f7b3, type: 2}
+      localCenter: {x: -0.27728057, y: 0.024522293, z: -0.38006252}
+      localSize: {x: 0.44543883, y: 0.9509555, z: 0.23987499}
   - name: deck_Object_30_03_02_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: a1d2ecf9df60d7e46ba1dec03444d39f, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -9.949989, y: 12.404529, z: 2.3483276}
-    sourceSize: {x: 4.6966515, y: 13.002535, z: 9.702618}
+    sourceCenter: {x: -8.728688, y: 12.3188, z: 1.2505114}
+    sourceSize: {x: 8.585167, y: 13.000713, z: 9.511164}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 2e27e88f61b40604cbc1f70a9964eb3a, type: 2}
+      localCenter: {x: 0.094986826, y: 0.010166051, z: -0.19728386}
+      localSize: {x: 0.34448123, y: 0.96736175, z: 0.3426662}
+    - mesh: {fileID: 4300000, guid: b09abd333fcaa0a4b8cc09ac6c7f96a4, type: 2}
+      localCenter: {x: -0.116245255, y: 0.0043632607, z: -0.07788011}
+      localSize: {x: 0.25221124, y: 0.99127346, z: 0.84423983}
+    - mesh: {fileID: 4300000, guid: 757aaf835a8bfa24095f7ec340881976, type: 2}
+      localCenter: {x: -0.3247677, y: 0.0012243773, z: -0.011075443}
+      localSize: {x: 0.35046452, y: 0.9866785, z: 0.74251807}
+    - mesh: {fileID: 4300000, guid: bbaf5cd12640cd8499f3f380b6d99b17, type: 2}
+      localCenter: {x: 0.12600403, y: -0.4847877, z: 0.29324493}
+      localSize: {x: 0.7479918, y: 0.030424576, z: 0.4135102}
+    - mesh: {fileID: 4300000, guid: 74d947d2f3d2f4d4c9182e1aaa6cafd3, type: 2}
+      localCenter: {x: 0.11403972, y: 0.0009182646, z: 0.0004488161}
+      localSize: {x: 0.53039545, y: 0.9630661, z: 0.24568759}
   - name: deck_Object_30_03_03_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 2b7bbd87dffb15740b197c8307fe54e4, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -9.949999, y: 12.40738, z: 7.010742}
-    sourceSize: {x: 4.628441, y: 13.001951, z: 9.702638}
+    sourceCenter: {x: -10.987253, y: 12.477296, z: 5.6354103}
+    sourceSize: {x: 7.246342, y: 13.045225, z: 10.493606}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: e88d74e56e626b847a2b2890aa48fe34, type: 2}
+      localCenter: {x: -0.015983798, y: -0.012987219, z: 0.25064594}
+      localSize: {x: 0.7100266, y: 0.97402555, z: 0.49870807}
+    - mesh: {fileID: 4300000, guid: db80818ebe0c3bb4fabe25698509421f, type: 2}
+      localCenter: {x: 0.15040882, y: 0.011778716, z: -0.2087703}
+      localSize: {x: 0.6991826, y: 0.9764426, z: 0.5824595}
+    - mesh: {fileID: 4300000, guid: 3b9d25ae6b8e21e4fa8c897540f84b40, type: 2}
+      localCenter: {x: -0.08697686, y: 0.0102477465, z: -0.18570197}
+      localSize: {x: 0.30359203, y: 0.97947556, z: 0.62799776}
+    - mesh: {fileID: 4300000, guid: 0122d4b172bdafd469cd69459f550ccb, type: 2}
+      localCenter: {x: -0.35998464, y: -0.013439886, z: 0.26033798}
+      localSize: {x: 0.28003088, y: 0.96886957, z: 0.40199247}
+    - mesh: {fileID: 4300000, guid: 8ac8e69c10fcb72488e192b5a3ec93fe, type: 2}
+      localCenter: {x: -0.3397805, y: 0.010902696, z: -0.19255716}
+      localSize: {x: 0.23540588, y: 0.9770181, z: 0.58818734}
   - name: deck_Object_30_04_00_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: a1a2575c54cb13349a7c890ebe378681, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -19.63437, y: 13.179891, z: -6.564534}
-    sourceSize: {x: 3.736032, y: 12.964289, z: 9.69046}
+    sourceCenter: {x: -19.856432, y: 13.204228, z: -6.3278275}
+    sourceSize: {x: 4.123031, y: 12.915617, z: 9.246338}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 575991b76e5395746b5179fbd47bdc6a, type: 2}
+      localCenter: {x: 0.22253472, y: -0.012794427, z: 0.21404496}
+      localSize: {x: 0.5549306, y: 0.97441113, z: 0.57191014}
+    - mesh: {fileID: 4300000, guid: 2cf71d4b846daff4c9fa2453cb9c441f, type: 2}
+      localCenter: {x: 0.15002976, y: 0.027187096, z: -0.28071308}
+      localSize: {x: 0.36857232, y: 0.94562197, z: 0.4385741}
+    - mesh: {fileID: 4300000, guid: cc03b6dae49e2bc449573426674a108d, type: 2}
+      localCenter: {x: -0.25590834, y: 0.00814066, z: -0.09422468}
+      localSize: {x: 0.47790936, y: 0.9837187, z: 0.8115509}
+    - mesh: {fileID: 4300000, guid: e5983cc3976103544a9d5ab9db17d519, type: 2}
+      localCenter: {x: -0.26822227, y: -0.013067483, z: 0.22831468}
+      localSize: {x: 0.46355554, y: 0.9674079, z: 0.4685653}
+    - mesh: {fileID: 4300000, guid: a3eff028a599d0542a73593392ca63b6, type: 2}
+      localCenter: {x: -0.15073743, y: 0.0183525, z: -0.16356745}
+      localSize: {x: 0.25490612, y: 0.9441102, z: 0.3519369}
   - name: deck_Object_30_04_01_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: a0100c82cc845a7478d7e65f528adfbd, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -19.63437, y: 13.177543, z: -2.348261}
-    sourceSize: {x: 4.6971927, y: 12.969118, z: 9.69046}
+    sourceCenter: {x: -20.42052, y: 13.2722845, z: -1.8313546}
+    sourceSize: {x: 5.439393, y: 12.779634, z: 8.118158}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 6249a27fe082f46409e41f6b1fd93424, type: 2}
+      localCenter: {x: -0.077754974, y: -0.009830067, z: 0.17632765}
+      localSize: {x: 0.47239318, y: 0.979283, z: 0.6299306}
+    - mesh: {fileID: 4300000, guid: 78092bafcfa7b934a865a68e435cd524, type: 2}
+      localCenter: {x: -0.1890876, y: 0.025363911, z: -0.2826139}
+      localSize: {x: 0.62182474, y: 0.94927216, z: 0.43477255}
+    - mesh: {fileID: 4300000, guid: 8ddde99a1f32a584eab6663dcb65b551, type: 2}
+      localCenter: {x: 0.2519484, y: 0.000032909422, z: -0.00055680773}
+      localSize: {x: 0.31746027, y: 0.99992913, z: 0.9988868}
+    - mesh: {fileID: 4300000, guid: 9d5da4ac2a6cd494384e3dc83c9b77a8, type: 2}
+      localCenter: {x: 0.38550672, y: -0.013273765, z: 0.2457815}
+      localSize: {x: 0.17473903, y: 0.97345245, z: 0.5084366}
+    - mesh: {fileID: 4300000, guid: fe5ca217c7d87a448a402ffc4e45ade8, type: 2}
+      localCenter: {x: 0.3445461, y: 0.02113449, z: -0.24092506}
+      localSize: {x: 0.31090796, y: 0.95772475, z: 0.5181503}
   - name: deck_Object_30_04_02_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: 18608ca08342ea940aea09919b7725f0, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -19.63437, y: 13.177557, z: 2.348429}
-    sourceSize: {x: 4.696854, y: 12.969089, z: 9.69046}
+    sourceCenter: {x: -19.659483, y: 13.181149, z: 1.620022}
+    sourceSize: {x: 6.9905305, y: 12.96188, z: 9.640236}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: bba49b80bc078024b8556a36f1460238, type: 2}
+      localCenter: {x: -0.27788842, y: 0.001944154, z: -0.024257584}
+      localSize: {x: 0.44422325, y: 0.99610907, z: 0.95148486}
+    - mesh: {fileID: 4300000, guid: 799413d091e12f248b9153620e26506c, type: 2}
+      localCenter: {x: 0.117251866, y: 0.014568647, z: -0.16238363}
+      localSize: {x: 0.5614338, y: 0.9708626, z: 0.6752326}
+    - mesh: {fileID: 4300000, guid: d53020862dcef394abd5ebb0d68c1082, type: 2}
+      localCenter: {x: 0.36288577, y: -0.015017162, z: 0.26046452}
+      localSize: {x: 0.27422845, y: 0.9544189, z: 0.29133722}
+    - mesh: {fileID: 4300000, guid: e67ea6b5847b2ea4e93aa6bcaf7c711f, type: 2}
+      localCenter: {x: 0.022258013, y: -0.019480387, z: 0.3166662}
+      localSize: {x: 0.45956147, y: 0.96103925, z: 0.36666772}
   - name: deck_Object_30_04_03_00
     sourceObject: Object_30
     mesh: {fileID: 4300000, guid: e7dd5d55e3f37d446bec5213ffacdd60, type: 2}
     material: {fileID: 2100000, guid: 1ff80564e05b491ea1370533889d44bb, type: 2}
-    sourceCenter: {x: -19.63437, y: 13.179939, z: 6.563642}
-    sourceSize: {x: 3.7342405, y: 12.964185, z: 9.69046}
+    sourceCenter: {x: -20.249317, y: 13.255103, z: 5.9125876}
+    sourceSize: {x: 4.8397703, y: 12.81389, z: 8.460567}
     floatRotation: 0
+    splinters:
+    - mesh: {fileID: 4300000, guid: 99b3ed2c3ea75b0499292bb7e27e0493, type: 2}
+      localCenter: {x: -0.1867796, y: -0.0000010419506, z: -0.00000001273693}
+      localSize: {x: 0.6264408, y: 0.9999979, z: 1}
+    - mesh: {fileID: 4300000, guid: e33523f9a3b9d634187295ce25c90de3, type: 2}
+      localCenter: {x: 0.2334677, y: 0.029235123, z: -0.31015718}
+      localSize: {x: 0.53306484, y: 0.94152975, z: 0.3796857}
+    - mesh: {fileID: 4300000, guid: 26cca4483d5528049a18912af95f1914, type: 2}
+      localCenter: {x: 0.22885852, y: -0.009674287, z: 0.17068547}
+      localSize: {x: 0.291664, y: 0.97783124, z: 0.6114597}
+    - mesh: {fileID: 4300000, guid: 2d15cbdf8452a9b4092d2293a6bec0be, type: 2}
+      localCenter: {x: -0.06409601, y: -0.010432158, z: 0.1840166}
+      localSize: {x: 0.45285767, y: 0.97851884, z: 0.6170492}
   hulls:
   - name: hull_Object_22_00_00_00
     sourceObject: Object_22
@@ -163,6 +447,16 @@ MonoBehaviour:
     sourceCenter: {x: 19.554974, y: 3.2885761, z: -3.142852}
     sourceSize: {x: 3.9140368, y: 6.2849975, z: 6.0426464}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 3c1978727035f9d4e83a778a25553280, type: 2}
+      localCenter: {x: 0.079754226, y: -0.25472882, z: -0.111936}
+      localSize: {x: 0.8404916, y: 0.49054235, z: 0.7761283}
+    - mesh: {fileID: 4300000, guid: 0f1d07d5d83936d489137fe88a93cf34, type: 2}
+      localCenter: {x: 0.20086169, y: 0.22292967, z: 0.26620165}
+      localSize: {x: 0.59827656, y: 0.5541406, z: 0.46759638}
+    - mesh: {fileID: 4300000, guid: 6c61b4149eed9ae4f899def2204a9379, type: 2}
+      localCenter: {x: -0.22693703, y: 0.22993693, z: -0.21657422}
+      localSize: {x: 0.5461258, y: 0.5400919, z: 0.56685215}
   - name: hull_Object_22_00_00_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: c2a787865dec1d74884f43611a8955cc, type: 2}
@@ -170,6 +464,19 @@ MonoBehaviour:
     sourceCenter: {x: 20.550976, y: 7.6184273, z: -3.3173027}
     sourceSize: {x: 4.7456665, y: 6.634609, z: 8.034651}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 3256292ad1976da49a83e76468dc0ca9, type: 2}
+      localCenter: {x: 0.08384423, y: 0.2927808, z: 0.40481347}
+      localSize: {x: 0.83231163, y: 0.41443846, z: 0.19037282}
+    - mesh: {fileID: 4300000, guid: f47e5d3c550f41b44b6ec0220763fe6e, type: 2}
+      localCenter: {x: -0.039864216, y: 0.22017291, z: 0.20573008}
+      localSize: {x: 0.9202713, y: 0.5595592, z: 0.3141071}
+    - mesh: {fileID: 4300000, guid: 985ba5b88a05ce242b6f24262d63eadd, type: 2}
+      localCenter: {x: -0.10831756, y: -0.37863547, z: -0.29741782}
+      localSize: {x: 0.7833649, y: 0.24272916, z: 0.4051648}
+    - mesh: {fileID: 4300000, guid: f1e6ac06fb254554d8b4d29cef3b68de, type: 2}
+      localCenter: {x: -0.05969886, y: -0.15268348, z: 0.048253387}
+      localSize: {x: 0.880602, y: 0.27224213, z: 0.45744908}
   - name: hull_Object_22_00_01_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: a4e407588668d9041b65b5eb4a990b1c, type: 2}
@@ -177,6 +484,19 @@ MonoBehaviour:
     sourceCenter: {x: 19.554974, y: 3.2738457, z: 3.1428826}
     sourceSize: {x: 3.9434981, y: 6.285053, z: 6.0426464}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: cfa7c5a289a63a74aaae557b9d49e741, type: 2}
+      localCenter: {x: -0.08044701, y: -0.25328282, z: -0.16237244}
+      localSize: {x: 0.83910596, y: 0.49343428, z: 0.6752554}
+    - mesh: {fileID: 4300000, guid: 8de61d047cc2f944cab1b4a8f4b83bd1, type: 2}
+      localCenter: {x: 0.28191137, y: 0.21246965, z: -0.2173482}
+      localSize: {x: 0.43617713, y: 0.5750267, z: 0.5653036}
+    - mesh: {fileID: 4300000, guid: dccc4de71d48eb9418e25bef75934a43, type: 2}
+      localCenter: {x: -0.17566939, y: 0.36119947, z: 0.23431553}
+      localSize: {x: 0.64866114, y: 0.27760103, z: 0.5313686}
+    - mesh: {fileID: 4300000, guid: bea165dafb0cc0d4ba8e55e58f6e2118, type: 2}
+      localCenter: {x: -0.17555948, y: 0.1315135, z: 0.18134919}
+      localSize: {x: 0.648881, y: 0.5294989, z: 0.63261235}
   - name: hull_Object_22_00_01_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 0e6f9c7acfdb0d64d909bc7d4c98ecec, type: 2}
@@ -184,6 +504,19 @@ MonoBehaviour:
     sourceCenter: {x: 20.550976, y: 7.6184273, z: 3.3173065}
     sourceSize: {x: 4.745666, y: 6.6346097, z: 8.034651}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 2ae47e5aaf8d5ca4f9ff590fbc3d2106, type: 2}
+      localCenter: {x: 0, y: 0.31745243, z: 0.34116673}
+      localSize: {x: 1, y: 0.36509508, z: 0.3176663}
+    - mesh: {fileID: 4300000, guid: 5101fa5da080e924da2f93961dbadc17, type: 2}
+      localCenter: {x: 0.11380511, y: -0.37243828, z: -0.32399014}
+      localSize: {x: 0.7723897, y: 0.25512347, z: 0.35202}
+    - mesh: {fileID: 4300000, guid: 1be0893043077ba42b422679f3ebf33f, type: 2}
+      localCenter: {x: 0.026396492, y: 0.075463146, z: 0.25863823}
+      localSize: {x: 0.9472068, y: 0.1629866, z: 0.32003567}
+    - mesh: {fileID: 4300000, guid: d4c14fba864b5f84c88028e69797f2da, type: 2}
+      localCenter: {x: 0.057653528, y: -0.16300036, z: 0.061404813}
+      localSize: {x: 0.88469285, y: 0.31646603, z: 0.44884536}
   - name: hull_Object_22_01_00_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: e4e4b5131b527aa488e25fb8e695db3c, type: 2}
@@ -191,6 +524,19 @@ MonoBehaviour:
     sourceCenter: {x: 12.516325, y: 2.6765902, z: -4.2166276}
     sourceSize: {x: 5.138008, y: 8.433259, z: 8.03465}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 600621d3db37b8a4a86921e055ab75e0, type: 2}
+      localCenter: {x: 0.13731816, y: -0.18711407, z: 0.2495697}
+      localSize: {x: 0.7253637, y: 0.3841112, z: 0.5008606}
+    - mesh: {fileID: 4300000, guid: 13c5068907eb56f419a9b618030cf0e0, type: 2}
+      localCenter: {x: 0.10454453, y: -0.26830938, z: -0.20753035}
+      localSize: {x: 0.79091096, y: 0.4633813, z: 0.5849394}
+    - mesh: {fileID: 4300000, guid: 3f30e36380cec0144be4076c2657e725, type: 2}
+      localCenter: {x: -0.19879512, y: 0.11104096, z: 0}
+      localSize: {x: 0.3210049, y: 0.37815413, z: 1}
+    - mesh: {fileID: 4300000, guid: 0fd6769b8b9011e4aaa9aba1212ebc72, type: 2}
+      localCenter: {x: -0.36211187, y: 0.3242075, z: 0}
+      localSize: {x: 0.27577627, y: 0.351585, z: 1}
   - name: hull_Object_22_01_00_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 62cef033c882406448e0e26fd67723bf, type: 2}
@@ -198,6 +544,22 @@ MonoBehaviour:
     sourceCenter: {x: 12.516325, y: 6.958845, z: -7.378064}
     sourceSize: {x: 3.4265013, y: 2.4278698, z: 8.03465}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 91ec2df22f8e40c4194570f5a0d2ec5d, type: 2}
+      localCenter: {x: 0, y: 0.25928214, z: 0.35043308}
+      localSize: {x: 1, y: 0.48143592, z: 0.2991336}
+    - mesh: {fileID: 4300000, guid: a57dd31f5e465cf4fa4b7b9ce4800910, type: 2}
+      localCenter: {x: -0.019408302, y: 0.05181581, z: 0.10853109}
+      localSize: {x: 0.96118367, y: 0.26580206, z: 0.21754348}
+    - mesh: {fileID: 4300000, guid: 31e834e11b2212b429504273e55a8cdd, type: 2}
+      localCenter: {x: -0.049967337, y: -0.17625578, z: -0.025730744}
+      localSize: {x: 0.59652746, y: 0.22664866, z: 0.26215056}
+    - mesh: {fileID: 4300000, guid: 76e0dff312c02544e834af4694db325e, type: 2}
+      localCenter: {x: -0.02528899, y: -0.13557395, z: -0.054431003}
+      localSize: {x: 0.949422, y: 0.343568, z: 0.28686824}
+    - mesh: {fileID: 4300000, guid: 9478687715452b740aa72ed7e77073eb, type: 2}
+      localCenter: {x: -0.034860242, y: -0.29863665, z: -0.33957934}
+      localSize: {x: 0.9302795, y: 0.40272668, z: 0.3208414}
   - name: hull_Object_22_01_01_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 94f6dd1f1a73f5e48b020c0b5a3082c4, type: 2}
@@ -205,6 +567,22 @@ MonoBehaviour:
     sourceCenter: {x: 12.516325, y: 2.6765902, z: 4.216652}
     sourceSize: {x: 5.138009, y: 8.4333, z: 8.03465}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 8ca0bcc86513b9c4389d2af0fa3f7df9, type: 2}
+      localCenter: {x: -0.16085991, y: -0.22012661, z: 0.26787415}
+      localSize: {x: 0.67828006, y: 0.29955786, z: 0.46425155}
+    - mesh: {fileID: 4300000, guid: 873b097e155a0a14fac1f892bbc48ef9, type: 2}
+      localCenter: {x: 0.36949712, y: 0.35410413, z: 0}
+      localSize: {x: 0.26100564, y: 0.29179174, z: 1}
+    - mesh: {fileID: 4300000, guid: e8a3fa46c6f32b34c91f7eb5acb0853f, type: 2}
+      localCenter: {x: 0.17946899, y: 0.12798308, z: 0}
+      localSize: {x: 0.40708244, y: 0.398738, z: 1}
+    - mesh: {fileID: 4300000, guid: 7446857d3f3e0df44882b98be85fe4ae, type: 2}
+      localCenter: {x: -0.13610587, y: -0.25558293, z: -0.029592255}
+      localSize: {x: 0.72778815, y: 0.37113783, z: 0.30953404}
+    - mesh: {fileID: 4300000, guid: d834f2b9ebcce304586e56eba7d76370, type: 2}
+      localCenter: {x: -0.10390466, y: -0.28457475, z: -0.30673498}
+      localSize: {x: 0.7921906, y: 0.43085045, z: 0.38653007}
   - name: hull_Object_22_01_01_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 51bf8c573bfd111479fb3ed0bd40cd7b, type: 2}
@@ -212,6 +590,22 @@ MonoBehaviour:
     sourceCenter: {x: 12.516325, y: 6.958843, z: 7.407398}
     sourceSize: {x: 3.4264975, y: 2.3692088, z: 8.03465}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 4640991d4cf00df42b2a9bf9e0bb48f4, type: 2}
+      localCenter: {x: 0.07181466, y: -0.2213213, z: -0.12887378}
+      localSize: {x: 0.8126777, y: 0.55735743, z: 0.7422525}
+    - mesh: {fileID: 4300000, guid: 32a976e49b97a7b42852f970ce53533d, type: 2}
+      localCenter: {x: 0.02672795, y: -0.20616911, z: -0.23504093}
+      localSize: {x: 0.9465441, y: 0.49606135, z: 0.52991813}
+    - mesh: {fileID: 4300000, guid: 72f66410e01b3754fb5c94b35a1a49c7, type: 2}
+      localCenter: {x: 0, y: 0.35134348, z: 0.39522913}
+      localSize: {x: 1, y: 0.29731345, z: 0.20954153}
+    - mesh: {fileID: 4300000, guid: 150751c0753670040b0b135e8f36d9c8, type: 2}
+      localCenter: {x: 0.009992644, y: 0.13163531, z: 0.26612127}
+      localSize: {x: 0.980015, y: 0.27532554, z: 0.23167688}
+    - mesh: {fileID: 4300000, guid: aed8c3a8be00bc440a6f230b98c787d5, type: 2}
+      localCenter: {x: 0.021681948, y: 0.023990301, z: 0.090627104}
+      localSize: {x: 0.95663637, y: 0.22594555, z: 0.13359524}
   - name: hull_Object_22_02_00_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 48915eec7b912c94bbd2618de2a4e37b, type: 2}
@@ -219,6 +613,16 @@ MonoBehaviour:
     sourceCenter: {x: 4.4816747, y: 2.6765902, z: -4.595496}
     sourceSize: {x: 5.138008, y: 9.190996, z: 8.03465}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: b29577a5721855143bef749e373b7970, type: 2}
+      localCenter: {x: -0.39671913, y: 0.23477753, z: 0}
+      localSize: {x: 0.20656176, y: 0.530445, z: 1}
+    - mesh: {fileID: 4300000, guid: be24c2ca52d2bb44fb9351c2d9d42177, type: 2}
+      localCenter: {x: 0.08775201, y: -0.25114423, z: 0.13089296}
+      localSize: {x: 0.8244961, y: 0.45718426, z: 0.7382141}
+    - mesh: {fileID: 4300000, guid: 48080df6b61a5724fa3b222bfc8dc853, type: 2}
+      localCenter: {x: 0.087581754, y: -0.26418936, z: -0.28647617}
+      localSize: {x: 0.8248366, y: 0.4716213, z: 0.42704767}
   - name: hull_Object_22_02_00_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: d8ba5ba7c6601974a9432aedf16aa931, type: 2}
@@ -226,6 +630,22 @@ MonoBehaviour:
     sourceCenter: {x: 4.4816747, y: 6.8453417, z: -8.674041}
     sourceSize: {x: 3.1994953, y: 1.3160954, z: 8.03465}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: ee3a5f6bce7e67645bbebae89aaa3a3d, type: 2}
+      localCenter: {x: -0.0098285675, y: 0.03739857, z: 0.11731874}
+      localSize: {x: 0.98034257, y: 0.5869389, z: 0.31764135}
+    - mesh: {fileID: 4300000, guid: fe6be1427bb8e304a920423264dd4613, type: 2}
+      localCenter: {x: -0.010844093, y: -0.14923559, z: 0.071052484}
+      localSize: {x: 0.97831154, y: 0.4211167, z: 0.33737504}
+    - mesh: {fileID: 4300000, guid: 55a64b0b994bc134cb29f59ffa7307ca, type: 2}
+      localCenter: {x: -0.009221697, y: 0.17453222, z: 0.3151329}
+      localSize: {x: 0.9815566, y: 0.6509356, z: 0.36973423}
+    - mesh: {fileID: 4300000, guid: 78dc91a9e83e73545a821a819840505c, type: 2}
+      localCenter: {x: -0.0067664925, y: -0.13332285, z: -0.1209372}
+      localSize: {x: 0.9864667, y: 0.54872227, z: 0.18179587}
+    - mesh: {fileID: 4300000, guid: 8cfb4266a29034d4c8fee16ae76648cf, type: 2}
+      localCenter: {x: 0, y: -0.2153945, z: -0.35400048}
+      localSize: {x: 1, y: 0.569211, z: 0.291999}
   - name: hull_Object_22_02_01_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 512fdf7a77d5f5f4297a22d7c088ebac, type: 2}
@@ -233,6 +653,19 @@ MonoBehaviour:
     sourceCenter: {x: 4.4816747, y: 2.6765902, z: 4.5973496}
     sourceSize: {x: 5.138009, y: 9.194695, z: 8.03465}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: c4027453c47804f4b8ec87cbacd45ce6, type: 2}
+      localCenter: {x: 0.33235157, y: 0.17004639, z: 0.24562742}
+      localSize: {x: 0.3352968, y: 0.6599072, z: 0.5087452}
+    - mesh: {fileID: 4300000, guid: 14444bf90d2e8044fb445cc21eee97ff, type: 2}
+      localCenter: {x: 0.36221033, y: 0.17248656, z: -0.1418966}
+      localSize: {x: 0.27557927, y: 0.6550269, z: 0.7162068}
+    - mesh: {fileID: 4300000, guid: f8df0f13e4826384d844aa028b20ffda, type: 2}
+      localCenter: {x: 0.04875141, y: -0.289164, z: 0}
+      localSize: {x: 0.48161155, y: 0.29290715, z: 1}
+    - mesh: {fileID: 4300000, guid: 8eb19b7eb6f3be74092da6ef2529a9b9, type: 2}
+      localCenter: {x: -0.1691775, y: -0.33122241, z: 0}
+      localSize: {x: 0.66164494, y: 0.33755514, z: 1}
   - name: hull_Object_22_02_01_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 0e145bde889c64d4fae51f0f68a68323, type: 2}
@@ -240,6 +673,19 @@ MonoBehaviour:
     sourceCenter: {x: 4.4816747, y: 6.845339, z: 8.703376}
     sourceSize: {x: 3.1994896, y: 1.2574329, z: 8.03465}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 7ec0b90d92a5c1c4685369718ce0784b, type: 2}
+      localCenter: {x: 0.009221415, y: 0.1469389, z: 0.31573698}
+      localSize: {x: 0.9815572, y: 0.70612293, z: 0.36852595}
+    - mesh: {fileID: 4300000, guid: f428fe09561628a4186ba2cb41b606ea, type: 2}
+      localCenter: {x: 0.007991576, y: -0.016194746, z: 0.0026378226}
+      localSize: {x: 0.98401684, y: 0.474243, z: 0.28870374}
+    - mesh: {fileID: 4300000, guid: 53712d4134c1ab04d839c9c5743a8b49, type: 2}
+      localCenter: {x: 0, y: -0.21094732, z: -0.25430587}
+      localSize: {x: 1, y: 0.5781046, z: 0.49138826}
+    - mesh: {fileID: 4300000, guid: 8420f7f2afce0a54d99acef70c3ae996, type: 2}
+      localCenter: {x: 0.036240637, y: -0.30020234, z: -0.15074037}
+      localSize: {x: 0.9275184, y: 0.3687401, z: 0.47297406}
   - name: hull_Object_22_03_00_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: d2f0d4202cda00141baa61aa6fb1fc4e, type: 2}
@@ -247,6 +693,22 @@ MonoBehaviour:
     sourceCenter: {x: -3.5529754, y: 2.6765902, z: -4.6240616}
     sourceSize: {x: 5.138008, y: 9.248127, z: 8.034651}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 4c7ed637ae1ab2d478b093ba12f0c93e, type: 2}
+      localCenter: {x: 0.089741714, y: -0.27024335, z: 0.2153456}
+      localSize: {x: 0.82051665, y: 0.45951334, z: 0.5693087}
+    - mesh: {fileID: 4300000, guid: 171c56dd7152d4943bb4e311b97ac559, type: 2}
+      localCenter: {x: 0.10629104, y: -0.3010224, z: -0.26136914}
+      localSize: {x: 0.78741795, y: 0.38643965, z: 0.4772617}
+    - mesh: {fileID: 4300000, guid: cbcd05c854401d742817f0c7109dcd75, type: 2}
+      localCenter: {x: -0.32610756, y: 0.072377965, z: 0}
+      localSize: {x: 0.20646186, y: 0.4622123, z: 1}
+    - mesh: {fileID: 4300000, guid: 610c31a0b7523014193bc41952620b19, type: 2}
+      localCenter: {x: -0.4274134, y: 0.28428885, z: 0.2968534}
+      localSize: {x: 0.14517327, y: 0.4314223, z: 0.40629315}
+    - mesh: {fileID: 4300000, guid: d9f96762b664f8c428e0acb611e5d77a, type: 2}
+      localCenter: {x: -0.43718928, y: 0.3146749, z: -0.12935391}
+      localSize: {x: 0.12562142, y: 0.37065017, z: 0.7412921}
   - name: hull_Object_22_03_00_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 4f8e5efd0364d37428c949a0acbfce82, type: 2}
@@ -254,6 +716,16 @@ MonoBehaviour:
     sourceCenter: {x: -3.5529754, y: 7.007064, z: -8.979801}
     sourceSize: {x: 3.5229397, y: 0.82647514, z: 8.034651}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: c77f91ab288d0b84aae7b1ceb1e238c2, type: 2}
+      localCenter: {x: -0.026984058, y: -0.07989527, z: 0.19164497}
+      localSize: {x: 0.94603187, y: 0.8402095, z: 0.61671}
+    - mesh: {fileID: 4300000, guid: a512e5e68f76b544f81da462d7cbe5bd, type: 2}
+      localCenter: {x: -0.023176875, y: -0.031450853, z: 0.009423448}
+      localSize: {x: 0.95364624, y: 0.69981146, z: 0.21613105}
+    - mesh: {fileID: 4300000, guid: 09551ac04fc6d8a4595bb96017c2a2bf, type: 2}
+      localCenter: {x: 0, y: 0.03174856, z: -0.28792977}
+      localSize: {x: 1, y: 0.936504, z: 0.42414036}
   - name: hull_Object_22_03_01_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 5836fac444791f14fac97ff4039026d9, type: 2}
@@ -261,6 +733,16 @@ MonoBehaviour:
     sourceCenter: {x: -3.5529754, y: 2.6765902, z: 4.624066}
     sourceSize: {x: 5.138009, y: 9.248128, z: 8.034651}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: aa03506bafb97804e97e3703b645db49, type: 2}
+      localCenter: {x: 0.37331355, y: 0.17890161, z: 0}
+      localSize: {x: 0.25337285, y: 0.6421968, z: 1}
+    - mesh: {fileID: 4300000, guid: e6c4427aa28dd7f4082ef65cd2cadf95, type: 2}
+      localCenter: {x: -0.08143043, y: -0.24432364, z: 0.27134773}
+      localSize: {x: 0.83713907, y: 0.51135266, z: 0.45730445}
+    - mesh: {fileID: 4300000, guid: bd6d604fdfc1eed40901e5e4f85eb239, type: 2}
+      localCenter: {x: -0.088808164, y: -0.26397878, z: -0.13924514}
+      localSize: {x: 0.8223836, y: 0.46513888, z: 0.72150964}
   - name: hull_Object_22_03_01_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: bb3f98744a0547c4e947223bd604a6b8, type: 2}
@@ -268,6 +750,22 @@ MonoBehaviour:
     sourceCenter: {x: -3.5529754, y: 7.007061, z: 9.009141}
     sourceSize: {x: 3.522934, y: 0.76780415, z: 8.034651}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: f36bdee4a332bd74781bd4d877e0e756, type: 2}
+      localCenter: {x: -0.0127241975, y: 0.084258996, z: 0.005624638}
+      localSize: {x: 0.88410246, y: 0.45177436, z: 0.21278197}
+    - mesh: {fileID: 4300000, guid: fd784b1921df9a24d91d7a34b898c680, type: 2}
+      localCenter: {x: 0.0062278295, y: 0.06985831, z: -0.24579722}
+      localSize: {x: 0.98754406, y: 0.7278814, z: 0.31320852}
+    - mesh: {fileID: 4300000, guid: 0519574dc011ded4d8442a481b129396, type: 2}
+      localCenter: {x: -0, y: 0.04758782, z: -0.33253822}
+      localSize: {x: 1, y: 0.9048244, z: 0.3349235}
+    - mesh: {fileID: 4300000, guid: ec0ae10136a488a499ad11fd51661c0a, type: 2}
+      localCenter: {x: 0.03667803, y: -0.07934284, z: 0.35259843}
+      localSize: {x: 0.9266439, y: 0.8146841, z: 0.29480308}
+    - mesh: {fileID: 4300000, guid: 696a423e78c1e3544a89fe9d895e067b, type: 2}
+      localCenter: {x: 0.024900218, y: -0.117728084, z: -0.0021965434}
+      localSize: {x: 0.9501993, y: 0.76454383, z: 0.43600327}
   - name: hull_Object_22_04_00_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: a7137a5da27d5c74fa9cf3c5be40985b, type: 2}
@@ -275,6 +773,22 @@ MonoBehaviour:
     sourceCenter: {x: -11.5876255, y: 2.6765902, z: -4.465516}
     sourceSize: {x: 5.138008, y: 8.931036, z: 8.034651}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 9429fdeb2c51f11478d8d5355402ba13, type: 2}
+      localCenter: {x: 0.09661835, y: -0.18099792, z: -0.22082289}
+      localSize: {x: 0.8067633, y: 0.53574157, z: 0.5583544}
+    - mesh: {fileID: 4300000, guid: 9550642560504294981331db68d27723, type: 2}
+      localCenter: {x: -0.37156934, y: 0.2390851, z: 0}
+      localSize: {x: 0.22759832, y: 0.44216123, z: 1}
+    - mesh: {fileID: 4300000, guid: b2918a0a8fe88b24d9f782c1c9292a68, type: 2}
+      localCenter: {x: -0.40625617, y: 0.3313018, z: 0}
+      localSize: {x: 0.18748772, y: 0.3373964, z: 1}
+    - mesh: {fileID: 4300000, guid: 4d1ce2076e47fb44fbc629a406cf5912, type: 2}
+      localCenter: {x: 0.09073947, y: -0.23382492, z: 0.32510385}
+      localSize: {x: 0.81852114, y: 0.5323501, z: 0.34979227}
+    - mesh: {fileID: 4300000, guid: 75a9e647018415142ba557d662f95847, type: 2}
+      localCenter: {x: 0.090963595, y: -0.2056604, z: 0.16691723}
+      localSize: {x: 0.8180728, y: 0.5103939, z: 0.24955413}
   - name: hull_Object_22_04_00_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 352643cc6500b2f4e8e7d3ea5f2126e0, type: 2}
@@ -282,6 +796,16 @@ MonoBehaviour:
     sourceCenter: {x: -11.5876255, y: 7.30371, z: -8.319502}
     sourceSize: {x: 4.116232, y: 1.722538, z: 8.034651}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 9c70444a1bd830a4e9522e1daff81d75, type: 2}
+      localCenter: {x: -0.06471321, y: 0.15262493, z: 0}
+      localSize: {x: 0.87057334, y: 0.69475013, z: 1}
+    - mesh: {fileID: 4300000, guid: 55648f1ce129673449f30cf2c1712cf0, type: 2}
+      localCenter: {x: -0.029796474, y: -0.17350234, z: 0.17519397}
+      localSize: {x: 0.94040704, y: 0.6529959, z: 0.6496119}
+    - mesh: {fileID: 4300000, guid: 057e123d3e686a746b08d7485c2e1ee6, type: 2}
+      localCenter: {x: 0, y: 0.13805744, z: -0.31352928}
+      localSize: {x: 1, y: 0.70134073, z: 0.37294155}
   - name: hull_Object_22_04_01_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 83ecd6d9568412943aebeefb39bd6b89, type: 2}
@@ -289,6 +813,16 @@ MonoBehaviour:
     sourceCenter: {x: -11.5876255, y: 2.6765902, z: 4.4653497}
     sourceSize: {x: 5.138009, y: 8.930696, z: 8.034651}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 39c426e69b327324dbc9f2b094e0fe31, type: 2}
+      localCenter: {x: -0.098519735, y: -0.26696387, z: 0}
+      localSize: {x: 0.80296046, y: 0.4660723, z: 1}
+    - mesh: {fileID: 4300000, guid: 566cac308cb21fd4a9f881dd9fbfa9c6, type: 2}
+      localCenter: {x: 0.3401049, y: 0.1746818, z: 0.19742356}
+      localSize: {x: 0.31979015, y: 0.6506364, z: 0.6051527}
+    - mesh: {fileID: 4300000, guid: db1f1070242f3ef41aa76ed8661a6a47, type: 2}
+      localCenter: {x: 0.045507196, y: 0.099484965, z: -0.21847177}
+      localSize: {x: 0.9089856, y: 0.80103004, z: 0.56305647}
   - name: hull_Object_22_04_01_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 1ffbc1d4fa4f5c146acf338848c4706e, type: 2}
@@ -296,6 +830,16 @@ MonoBehaviour:
     sourceCenter: {x: -11.5876255, y: 7.303708, z: 8.321582}
     sourceSize: {x: 4.116228, y: 1.7183857, z: 8.034651}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: c597e979e06cd98478dbf0a536b6e901, type: 2}
+      localCenter: {x: 0.04984178, y: -0.30264926, z: 0.11919501}
+      localSize: {x: 0.9003162, y: 0.39470202, z: 0.7616098}
+    - mesh: {fileID: 4300000, guid: db732eb3e0b2c9f43a21b361841d88d3, type: 2}
+      localCenter: {x: 0.048091855, y: -0.14277595, z: 0.30452922}
+      localSize: {x: 0.90381604, y: 0.24600385, z: 0.39094138}
+    - mesh: {fileID: 4300000, guid: 4565dc5df61363c458156378491e6fb6, type: 2}
+      localCenter: {x: -0, y: 0.15829882, z: -0.19498438}
+      localSize: {x: 1, y: 0.6834029, z: 0.61003125}
   - name: hull_Object_22_05_00_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: eb7d4fe432e716949afe2511eb47fb8d, type: 2}
@@ -303,6 +847,16 @@ MonoBehaviour:
     sourceCenter: {x: -18.409597, y: 2.6765902, z: -3.7291155}
     sourceSize: {x: 5.1380086, y: 7.458235, z: 5.609292}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 71293c2c58ec952458587c9c6bc9bb86, type: 2}
+      localCenter: {x: 0.10063493, y: -0.11346679, z: 0.00000034003375}
+      localSize: {x: 0.79873013, y: 0.77306634, z: 0.99999964}
+    - mesh: {fileID: 4300000, guid: 58a92fcd0e307ec4d8d23da51083f51e, type: 2}
+      localCenter: {x: -0.38621545, y: 0.26515368, z: 0.33265197}
+      localSize: {x: 0.22756904, y: 0.46969268, z: 0.3346964}
+    - mesh: {fileID: 4300000, guid: c4e3170eeb45c5f46a685bc2af089e3a, type: 2}
+      localCenter: {x: 0, y: 0.30402347, z: -0.16011679}
+      localSize: {x: 1, y: 0.39195305, z: 0.6797666}
   - name: hull_Object_22_05_00_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: a48111b8734d6c14ab2abf6ec2be384c, type: 2}
@@ -310,6 +864,19 @@ MonoBehaviour:
     sourceCenter: {x: -19.622276, y: 7.814599, z: -4.0852404}
     sourceSize: {x: 5.138009, y: 8.170486, z: 8.03465}
     floatRotation: -90
+    splinters:
+    - mesh: {fileID: 4300000, guid: b89a58c1ce68dbb4495e89c36916b18a, type: 2}
+      localCenter: {x: -0.21050978, y: 0.19303125, z: -0.30586612}
+      localSize: {x: 0.57898057, y: 0.61393726, z: 0.21545717}
+    - mesh: {fileID: 4300000, guid: 6fb00e6df83e6b348939d274ee303ce6, type: 2}
+      localCenter: {x: 0.19894487, y: 0.17021398, z: -0.42068994}
+      localSize: {x: 0.60210997, y: 0.659572, z: 0.15862022}
+    - mesh: {fileID: 4300000, guid: 8b0fa6fdfef6bf8439fccb0a2a9cf71c, type: 2}
+      localCenter: {x: -0.052719276, y: -0.39838156, z: 0.20412463}
+      localSize: {x: 0.89456147, y: 0.20323691, z: 0.591751}
+    - mesh: {fileID: 4300000, guid: 689e03c0169fa25439b65bd9e51081ac, type: 2}
+      localCenter: {x: -0.000003155398, y: -0.21135129, z: -0.16435581}
+      localSize: {x: 0.99999386, y: 0.27724883, z: 0.67128825}
   - name: hull_Object_22_05_01_00
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 2d1b1425263d2104997843052ea9b5d4, type: 2}
@@ -317,6 +884,19 @@ MonoBehaviour:
     sourceCenter: {x: -18.409597, y: 2.6765902, z: 3.7311952}
     sourceSize: {x: 5.138009, y: 7.462386, z: 5.609292}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: a38fd9d8a1a1cde429be2ff0c7fdcf0f, type: 2}
+      localCenter: {x: -0.15256372, y: -0.29742834, z: 0}
+      localSize: {x: 0.69487256, y: 0.40514332, z: 1}
+    - mesh: {fileID: 4300000, guid: 3748e84c68d82bd44948349e6d6abdc3, type: 2}
+      localCenter: {x: 0.16930288, y: 0.17825326, z: 0.1665975}
+      localSize: {x: 0.66139424, y: 0.6434935, z: 0.666805}
+    - mesh: {fileID: 4300000, guid: 6152b538f1fb2ee4db5f8fc2ce4662ab, type: 2}
+      localCenter: {x: -0, y: 0.28479925, z: -0.23684949}
+      localSize: {x: 0.9999999, y: 0.4304015, z: 0.5263012}
+    - mesh: {fileID: 4300000, guid: e0596e896f5896e498103709aaafe6fe, type: 2}
+      localCenter: {x: -0.1588353, y: -0.0004887616, z: -0.30142903}
+      localSize: {x: 0.68232936, y: 0.3346161, z: 0.39714175}
   - name: hull_Object_22_05_01_01
     sourceObject: Object_22
     mesh: {fileID: 4300000, guid: 19f380702b90f8f49915e6d57b4faa29, type: 2}
@@ -324,6 +904,22 @@ MonoBehaviour:
     sourceCenter: {x: -19.622276, y: 7.814598, z: 4.0852447}
     sourceSize: {x: 5.1380067, y: 8.1704855, z: 8.03465}
     floatRotation: 90
+    splinters:
+    - mesh: {fileID: 4300000, guid: 24a4aefc5d425644a98955772763103b, type: 2}
+      localCenter: {x: 0.26914814, y: 0.2267955, z: -0.28231415}
+      localSize: {x: 0.4617038, y: 0.54633164, z: 0.16835323}
+    - mesh: {fileID: 4300000, guid: 4a0ba6056906a8d459f26bfc8e2ee5aa, type: 2}
+      localCenter: {x: 0.00000018561173, y: -0.18337782, z: -0.17638011}
+      localSize: {x: 0.9999997, y: 0.2956397, z: 0.6472399}
+    - mesh: {fileID: 4300000, guid: 83af488702f8cb146aef3da156fe76af, type: 2}
+      localCenter: {x: 0.04705016, y: -0.3932913, z: 0.17319836}
+      localSize: {x: 0.90589976, y: 0.21341735, z: 0.65360326}
+    - mesh: {fileID: 4300000, guid: 29194e3691592554d87e58e40d1c81d2, type: 2}
+      localCenter: {x: 0.121577635, y: 0.22486459, z: -0.33656687}
+      localSize: {x: 0.46417764, y: 0.5502037, z: 0.18026903}
+    - mesh: {fileID: 4300000, guid: b1602ca565022fd4181d02e4bf0b4a06, type: 2}
+      localCenter: {x: -0.14713831, y: 0.22252761, z: -0.4003043}
+      localSize: {x: 0.70572317, y: 0.5549448, z: 0.19939154}
   details:
   - name: detail_Object_10_00_00_02
     sourceObject: Object_10
@@ -332,6 +928,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.598625, y: 35.081444, z: -15.632824}
     sourceSize: {x: 0.75380325, y: 0.60266876, z: 0.72975826}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_00_01_00
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: 3862187bd9a264e4b9a9de0d1f443f22, type: 2}
@@ -339,6 +936,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.4953194, y: 8.100208, z: -0.02289328}
     sourceSize: {x: 2.1035628, y: 1.3287053, z: 1.5500352}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_00_01_02
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: e4001267869fba2428812d7ad7d99e4a, type: 2}
@@ -346,6 +944,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.599335, y: 34.98484, z: -0.03647019}
     sourceSize: {x: 0.7294769, y: 0.25515008, z: 0.7296448}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_00_02_02
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: 973553cd377a378438b874aecd7a4965, type: 2}
@@ -353,6 +952,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.598838, y: 35.08126, z: 15.632469}
     sourceSize: {x: 0.7541313, y: 0.6034517, z: 0.7293358}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_01_00_00
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: 159e9737cbfdc32499f779ee9e9b49cf, type: 2}
@@ -360,6 +960,7 @@ MonoBehaviour:
     sourceCenter: {x: -11.868408, y: 11.075104, z: -7.845099}
     sourceSize: {x: 1.3364, y: 0.14457703, z: 1.1948175}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_01_01_00
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: 5db1565dd970a5c43b1a7815866ba5d5, type: 2}
@@ -367,6 +968,7 @@ MonoBehaviour:
     sourceCenter: {x: -9.5378, y: 10.6751, z: -0.025097013}
     sourceSize: {x: 1.3364019, y: 7.2580814, z: 0.0625}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_01_02_00
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: d960c7a844209144892addc534967a87, type: 2}
@@ -374,6 +976,7 @@ MonoBehaviour:
     sourceCenter: {x: -11.868408, y: 11.0751, z: 7.8444138}
     sourceSize: {x: 1.3364, y: 0.1393404, z: 1.1948175}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_02_00_00
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: 7a22c372e943e8644ae8efce8c8bda1f, type: 2}
@@ -381,6 +984,7 @@ MonoBehaviour:
     sourceCenter: {x: -15.897458, y: 11.425104, z: -7.090804}
     sourceSize: {x: 2.0364008, y: 1.3743329, z: 6.863283}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_10_02_02_00
     sourceObject: Object_10
     mesh: {fileID: 4300000, guid: a934d310b72b25d4c98fbdd6485b1ed3, type: 2}
@@ -388,6 +992,7 @@ MonoBehaviour:
     sourceCenter: {x: -15.897458, y: 11.4251, z: 7.090227}
     sourceSize: {x: 2.0364008, y: 1.374105, z: 6.863283}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_11_00_00_00
     sourceObject: Object_11
     mesh: {fileID: 4300000, guid: 05dd8803c1cd63e47adcc71f678e9489, type: 2}
@@ -395,6 +1000,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.46145, y: 7.5968475, z: -5.468848}
     sourceSize: {x: 1.4439707, y: 0.80907965, z: 1.3549004}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_11_00_01_00
     sourceObject: Object_11
     mesh: {fileID: 4300000, guid: fa0adc1b9698a91459671c58d4cc102e, type: 2}
@@ -402,6 +1008,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.46145, y: 7.5968437, z: 5.468853}
     sourceSize: {x: 1.4439688, y: 0.8090806, z: 1.3549004}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_11_01_00_00
     sourceObject: Object_11
     mesh: {fileID: 4300000, guid: dcc923d1b028ca740b04c5580abf1513, type: 2}
@@ -409,6 +1016,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.8430586, y: 12.208601, z: -0.30045643}
     sourceSize: {x: 0.3448, y: 0.60093427, z: 1.4650769}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_11_01_01_00
     sourceObject: Object_11
     mesh: {fileID: 4300000, guid: 7fe8f3f50f1176d46a99086de438d84a, type: 2}
@@ -416,6 +1024,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.84306, y: 12.208603, z: 0.30017886}
     sourceSize: {x: 0.34480286, y: 0.6003727, z: 1.4650745}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_11_02_00_00
     sourceObject: Object_11
     mesh: {fileID: 4300000, guid: 4efd8c5408d76484fad4c08614b91bcb, type: 2}
@@ -423,6 +1032,7 @@ MonoBehaviour:
     sourceCenter: {x: -7.60722, y: 7.436784, z: -9.592175}
     sourceSize: {x: 1.4762197, y: 0.3769102, z: 1.47264}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_11_02_01_00
     sourceObject: Object_11
     mesh: {fileID: 4300000, guid: 70b2821d3b725524dac1463421c9dde5, type: 2}
@@ -430,6 +1040,7 @@ MonoBehaviour:
     sourceCenter: {x: -7.60722, y: 7.436778, z: 9.592178}
     sourceSize: {x: 1.4762197, y: 0.3769102, z: 1.47264}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_12_00_00_00
     sourceObject: Object_12
     mesh: {fileID: 4300000, guid: 215c879468ea33c44ab2aae63a25cb26, type: 2}
@@ -437,6 +1048,7 @@ MonoBehaviour:
     sourceCenter: {x: -19.788807, y: 1.6934292, z: -0.005828291}
     sourceSize: {x: 2.95712, y: 0.7147328, z: 1.754633}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_13_00_00_00
     sourceObject: Object_13
     mesh: {fileID: 4300000, guid: 6b780d97e699cbf43b80407d7764682f, type: 2}
@@ -444,6 +1056,7 @@ MonoBehaviour:
     sourceCenter: {x: -12.590972, y: 11.166272, z: -4.459909}
     sourceSize: {x: 3.5113792, y: 8.919076, z: 7.5384846}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_13_00_01_00
     sourceObject: Object_13
     mesh: {fileID: 4300000, guid: ea63ba89025648b47ac156b560381aa5, type: 2}
@@ -451,6 +1064,7 @@ MonoBehaviour:
     sourceCenter: {x: -12.590972, y: 11.166268, z: 4.459166}
     sourceSize: {x: 3.5113792, y: 8.919076, z: 7.5384846}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_13_01_00_00
     sourceObject: Object_13
     mesh: {fileID: 4300000, guid: 77e9c57063aabfb45a68d2faee0b7bd2, type: 2}
@@ -458,6 +1072,7 @@ MonoBehaviour:
     sourceCenter: {x: -20.129457, y: 9.420921, z: -3.9382074}
     sourceSize: {x: 9.15216, y: 7.8756723, z: 7.5384865}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_13_01_01_00
     sourceObject: Object_13
     mesh: {fileID: 4300000, guid: 84b3735e0d52f1046b36ff2c9e225ff8, type: 2}
@@ -465,6 +1080,7 @@ MonoBehaviour:
     sourceCenter: {x: -20.12922, y: 9.420936, z: 3.937616}
     sourceSize: {x: 9.15213, y: 7.875975, z: 7.5380116}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_14_00_00_02
     sourceObject: Object_14
     mesh: {fileID: 4300000, guid: 76dbd96aab23dd04d91893e951ab1067, type: 2}
@@ -472,6 +1088,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.599009, y: 35.252308, z: -10.786325}
     sourceSize: {x: 1.063797, y: 10.786334, z: 0.72899914}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_14_00_01_02
     sourceObject: Object_14
     mesh: {fileID: 4300000, guid: 9c76e200e904fa743812e2f5a4c59646, type: 2}
@@ -479,6 +1096,7 @@ MonoBehaviour:
     sourceCenter: {x: 9.162033, y: 38.45395, z: 0.000009536743}
     sourceSize: {x: 7.5225334, y: 10.786335, z: 1.8550425}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_14_00_02_02
     sourceObject: Object_14
     mesh: {fileID: 4300000, guid: 58ab8f3489ef9404abf267f4c66054da, type: 2}
@@ -486,6 +1104,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.5990095, y: 35.2523, z: 10.786345}
     sourceSize: {x: 1.063797, y: 10.786336, z: 0.7290001}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_14_01_01_00
     sourceObject: Object_14
     mesh: {fileID: 4300000, guid: 71b3bd1fc859e5446ba7e64c978a584f, type: 2}
@@ -493,6 +1112,7 @@ MonoBehaviour:
     sourceCenter: {x: -9.359381, y: 9.000086, z: -0.10009974}
     sourceSize: {x: 5.20003, y: 2.8001971, z: 0.45060062}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_00_01_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: ca28526f8e29f2a4ea2e97a578bfcb63, type: 2}
@@ -500,6 +1120,7 @@ MonoBehaviour:
     sourceCenter: {x: 29.910759, y: 13.632444, z: -0.024488598}
     sourceSize: {x: 5.6023674, y: 0.4655171, z: 8.753082}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_00_01_01
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 141ae026ce3acbd43bca70dc4a026a11, type: 2}
@@ -507,6 +1128,7 @@ MonoBehaviour:
     sourceCenter: {x: 36.48065, y: 18.584415, z: -0.02510956}
     sourceSize: {x: 4.3015747, y: 0.3811954, z: 5.8752975}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_01_01_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: a40d8a294dc6cad4fa2c116ad8683d56, type: 2}
@@ -514,6 +1136,7 @@ MonoBehaviour:
     sourceCenter: {x: 23.343203, y: 10.955181, z: 0.83630925}
     sourceSize: {x: 4.40304, y: 2.222609, z: 4.382038}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_01_01_02
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: b5a1a14bfb68b9a4e97f5e02e860486e, type: 2}
@@ -521,6 +1144,7 @@ MonoBehaviour:
     sourceCenter: {x: 14.606809, y: 38.624992, z: -0.0034364536}
     sourceSize: {x: 0.60177994, y: 0.16243404, z: 0.5738182}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_00_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: da9a9507f2e5f614f9d87d6ef05da90b, type: 2}
@@ -528,6 +1152,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.3706062, y: 11.731215, z: -13.036587}
     sourceSize: {x: 1.481617, y: 7.7628193, z: 11.209091}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_00_02
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: de43cabe726f6f54bbdf671c42af8824, type: 2}
@@ -535,6 +1160,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.599635, y: 36.099632, z: -11.558327}
     sourceSize: {x: 0.65192795, y: 11.583335, z: 0.6519394}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_01_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 500233ecbc2aca243a106d6affb6c583, type: 2}
@@ -542,6 +1168,7 @@ MonoBehaviour:
     sourceCenter: {x: 2.115435, y: 10.810564, z: -0.06094563}
     sourceSize: {x: 11.246128, y: 1.2906581, z: 8.69875}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_01_01
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 83a15e992df23c140b5ad1c89e1faaf4, type: 2}
@@ -549,6 +1176,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.1118517, y: 22.05669, z: -0.02499336}
     sourceSize: {x: 11.24613, y: 0.9058918, z: 2.226152}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_01_02
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 3509d7aa56b26f44da4ccbf5a097eb87, type: 2}
@@ -556,6 +1184,7 @@ MonoBehaviour:
     sourceCenter: {x: 7.6685286, y: 33.30282, z: 0.025009394}
     sourceSize: {x: 11.246128, y: 11.583336, z: 2.591951}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_01_03
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: a6f5c1b9ff690ac4398e61f5c36c820d, type: 2}
@@ -563,6 +1192,7 @@ MonoBehaviour:
     sourceCenter: {x: 7.26223, y: 44.54895, z: 0.02233684}
     sourceSize: {x: 11.246128, y: 2.1156304, z: 5.3444195}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_02_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: e82f1687f0535e6499f51cffed3836bb, type: 2}
@@ -570,6 +1200,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.3706062, y: 11.731207, z: 13.036594}
     sourceSize: {x: 1.4816208, y: 7.762821, z: 11.209091}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_02_02_02
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 55055e0e6d1f2f44fa03e2ac7438a7fa, type: 2}
@@ -577,6 +1208,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.600001, y: 36.099632, z: 11.608345}
     sourceSize: {x: 0.65192413, y: 11.583337, z: 0.6526718}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_03_00_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 37d40bef8949f8c4e94bf6c366de4e81, type: 2}
@@ -584,6 +1216,7 @@ MonoBehaviour:
     sourceCenter: {x: -3.5772798, y: 11.1243, z: -9.564724}
     sourceSize: {x: 3.0058107, y: 1.0219488, z: 2.6866803}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_03_01_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 3191ad7362d018a4e8a62e4aa68d07d5, type: 2}
@@ -591,6 +1224,7 @@ MonoBehaviour:
     sourceCenter: {x: -5.0129547, y: 13.627805, z: -0.02865801}
     sourceSize: {x: 1.2724609, y: 0.47445938, z: 5.5580306}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_03_02_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: f971a8411a85e5d4b875521f2f930818, type: 2}
@@ -598,6 +1232,7 @@ MonoBehaviour:
     sourceCenter: {x: -3.5772798, y: 11.124294, z: 9.564731}
     sourceSize: {x: 3.0058107, y: 1.021946, z: 2.6866803}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_04_01_00
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: 262b9706fcea80d49818401c54100921, type: 2}
@@ -605,6 +1240,7 @@ MonoBehaviour:
     sourceCenter: {x: -25.437534, y: 13.20788, z: -0.024995126}
     sourceSize: {x: 6.451497, y: 0.50000006, z: 5.259466}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_15_04_01_01
     sourceObject: Object_15
     mesh: {fileID: 4300000, guid: ec9a71301bfdefa4cb4fc0909636d2c4, type: 2}
@@ -612,6 +1248,7 @@ MonoBehaviour:
     sourceCenter: {x: -28.794106, y: 17.833265, z: -0.024898067}
     sourceSize: {x: 2.7992744, y: 0.37783366, z: 2.415987}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_00_00_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: ca5b763ac5d7e2743af390ebb539ca17, type: 2}
@@ -619,6 +1256,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.113888, y: 6.8587904, z: -4.027252}
     sourceSize: {x: 7.165868, y: 7.97093, z: 12.393624}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_00_01_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: 7e66be8fd79e38548ace4af7537340f9, type: 2}
@@ -626,6 +1264,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.113888, y: 9.256158, z: 3.9436755}
     sourceSize: {x: 2.367982, y: 7.9709277, z: 12.393624}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_01_00_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: 09be5ff2180288445bc27c250cd2af20, type: 2}
@@ -633,6 +1272,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.720263, y: 5.485676, z: -7.940892}
     sourceSize: {x: 6.0285025, y: 3.3574095, z: 12.393624}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_01_01_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: c1cb1f517c1d1cd4e98e4e8107923ca6, type: 2}
@@ -640,6 +1280,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.720263, y: 5.4889746, z: 8.184012}
     sourceSize: {x: 6.0337076, y: 2.710092, z: 12.393624}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_02_00_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: 6ab19c35dbaadcf458f10251145647df, type: 2}
@@ -647,6 +1288,7 @@ MonoBehaviour:
     sourceCenter: {x: -5.6733613, y: 7.2828574, z: -4.872789}
     sourceSize: {x: 9.224599, y: 9.662003, z: 12.393624}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_02_01_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: cc1b163762e473f4f983c8679b21e4f6, type: 2}
@@ -654,6 +1296,7 @@ MonoBehaviour:
     sourceCenter: {x: -5.6733613, y: 7.273623, z: 4.7892127}
     sourceSize: {x: 9.244624, y: 9.662002, z: 12.393624}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_03_00_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: 9fb63ceea0fd60447857c99ed5500bdb, type: 2}
@@ -661,6 +1304,7 @@ MonoBehaviour:
     sourceCenter: {x: -18.066986, y: 9.92639, z: -4.565438}
     sourceSize: {x: 6.780227, y: 9.047303, z: 12.393624}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_16_03_01_00
     sourceObject: Object_16
     mesh: {fileID: 4300000, guid: 612da23ce146396498f27a134a729587, type: 2}
@@ -668,6 +1312,7 @@ MonoBehaviour:
     sourceCenter: {x: -18.06519, y: 9.923525, z: 4.477435}
     sourceSize: {x: 6.785954, y: 9.038446, z: 12.390031}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_00_00_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: 195ed6168414854458832f1f52f59ec7, type: 2}
@@ -675,6 +1320,7 @@ MonoBehaviour:
     sourceCenter: {x: 18.615011, y: 6.3095374, z: -4.0668893}
     sourceSize: {x: 7.3632483, y: 8.009864, z: 12.063068}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_00_01_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: 63ed3727cf77bc24fa62c2bf696d7b25, type: 2}
@@ -682,6 +1328,7 @@ MonoBehaviour:
     sourceCenter: {x: 18.620245, y: 6.308551, z: 3.9429731}
     sourceSize: {x: 7.3746777, y: 8.009861, z: 12.073536}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_01_00_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: 650804ed9e56cb34eb917541992b62df, type: 2}
@@ -689,6 +1336,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.5467095, y: 5.2526145, z: -8.022464}
     sourceSize: {x: 5.557793, y: 3.4754415, z: 12.073535}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_01_01_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: affe71639829e574cbf0f0148d85fd4e, type: 2}
@@ -696,6 +1344,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.5467095, y: 5.254046, z: 7.945571}
     sourceSize: {x: 5.5692844, y: 3.3715992, z: 12.073535}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_02_00_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: 5128ec9df98c84044befbe1a32358817, type: 2}
@@ -703,6 +1352,7 @@ MonoBehaviour:
     sourceCenter: {x: -5.5268254, y: 5.589617, z: -8.75169}
     sourceSize: {x: 5.817568, y: 2.1489515, z: 12.073535}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_02_01_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: 5543d09405e2b8940a2f32d3fa4efd9b, type: 2}
@@ -710,6 +1360,7 @@ MonoBehaviour:
     sourceCenter: {x: -5.5268254, y: 5.5874295, z: 8.633988}
     sourceSize: {x: 5.8206987, y: 2.136526, z: 12.073535}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_03_00_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: 098bad1d802abaa4b98835d363d27ef3, type: 2}
@@ -717,6 +1368,7 @@ MonoBehaviour:
     sourceCenter: {x: -17.60036, y: 6.240407, z: -4.6501613}
     sourceSize: {x: 3.5187902, y: 9.176409, z: 12.073536}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_17_03_01_00
     sourceObject: Object_17
     mesh: {fileID: 4300000, guid: 81110ac9b6bd6a44daf3745edea7d5dd, type: 2}
@@ -724,6 +1376,7 @@ MonoBehaviour:
     sourceCenter: {x: -17.563622, y: 6.240404, z: 4.517154}
     sourceSize: {x: 3.5187936, y: 9.158223, z: 12.000059}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_18_00_00_00
     sourceObject: Object_18
     mesh: {fileID: 4300000, guid: f90d88f6486d2c1458fb9afb922756e5, type: 2}
@@ -731,6 +1384,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.64536, y: 8.106026, z: -0.11315474}
     sourceSize: {x: 0.61560965, y: 1.8365064, z: 0.21605968}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_18_02_00_00
     sourceObject: Object_18
     mesh: {fileID: 4300000, guid: 96cab9bee51785c49a7d5f34a9454b24, type: 2}
@@ -738,6 +1392,7 @@ MonoBehaviour:
     sourceCenter: {x: -21.2, y: 16.185102, z: 0.000004529953}
     sourceSize: {x: 6.2202034, y: 13.950003, z: 4.8500004}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_19_00_00_00
     sourceObject: Object_19
     mesh: {fileID: 4300000, guid: 385e71424cf10b24986a829d3f4acf2a, type: 2}
@@ -745,6 +1400,7 @@ MonoBehaviour:
     sourceCenter: {x: 18.979282, y: 2.8703055, z: 0.0018437505}
     sourceSize: {x: 6.5688953, y: 1.3170714, z: 9.759615}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_19_00_00_01
     sourceObject: Object_19
     mesh: {fileID: 4300000, guid: 2556fb884f190794a8624c3514286001, type: 2}
@@ -752,6 +1408,7 @@ MonoBehaviour:
     sourceCenter: {x: 21.179466, y: 9.775845, z: 0.003029108}
     sourceSize: {x: 7.242183, y: 13.41202, z: 8.1755295}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_19_01_00_00
     sourceObject: Object_19
     mesh: {fileID: 4300000, guid: 94cc4a180223a2c4faed3c1f83fae715, type: 2}
@@ -759,6 +1416,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.5155945, y: -0.14409918, z: 0.0018429458}
     sourceSize: {x: 1.8866622, y: 1.3170705, z: 11.167759}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_19_02_00_00
     sourceObject: Object_19
     mesh: {fileID: 4300000, guid: 3e1bd8d91b254ad45b8e229f6bbabde6, type: 2}
@@ -766,6 +1424,7 @@ MonoBehaviour:
     sourceCenter: {x: -2.6521626, y: -0.24961966, z: 0.001842916}
     sourceSize: {x: 1.6756215, y: 1.3170705, z: 11.167759}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_19_03_00_00
     sourceObject: Object_19
     mesh: {fileID: 4300000, guid: 71d93ac33fffff54a8bd6ffa9a9dfcbf, type: 2}
@@ -773,6 +1432,7 @@ MonoBehaviour:
     sourceCenter: {x: -13.81992, y: -0.2840942, z: 0.0018428862}
     sourceSize: {x: 1.6066723, y: 1.3170705, z: 11.167758}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_2_00_00_00
     sourceObject: Object_2
     mesh: {fileID: 4300000, guid: b041d714405c48a4cabbdc53797d8fa3, type: 2}
@@ -780,6 +1440,7 @@ MonoBehaviour:
     sourceCenter: {x: 12.969107, y: 17.425003, z: -11.266663}
     sourceSize: {x: 12.449997, y: 11.266668, z: 8.538213}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_2_00_00_01
     sourceObject: Object_2
     mesh: {fileID: 4300000, guid: 2377df4d50bb0684386ad26d5e2438a0, type: 2}
@@ -787,6 +1448,7 @@ MonoBehaviour:
     sourceCenter: {x: 12.977932, y: 29.875004, z: -11.26666}
     sourceSize: {x: 12.4500065, y: 11.2666645, z: 8.555863}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_2_00_01_00
     sourceObject: Object_2
     mesh: {fileID: 4300000, guid: 178f3a27e356e0b49943b3acfa486389, type: 2}
@@ -794,6 +1456,7 @@ MonoBehaviour:
     sourceCenter: {x: 14.09872, y: 18.704067, z: 0.00000667572}
     sourceSize: {x: 9.891869, y: 11.26667, z: 6.590307}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_2_00_01_01
     sourceObject: Object_2
     mesh: {fileID: 4300000, guid: 49519de6b236f3c4398f532b1779cbb9, type: 2}
@@ -801,6 +1464,7 @@ MonoBehaviour:
     sourceCenter: {x: 13.0564995, y: 29.875002, z: 0.00000667572}
     sourceSize: {x: 12.450001, y: 11.26667, z: 8.713}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_2_00_02_00
     sourceObject: Object_2
     mesh: {fileID: 4300000, guid: 5c0d269cc0c6d45429d77af5a907f255, type: 2}
@@ -808,6 +1472,7 @@ MonoBehaviour:
     sourceCenter: {x: 12.5644455, y: 17.425, z: 11.266673}
     sourceSize: {x: 12.4500065, y: 11.266666, z: 7.7288904}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_2_00_02_01
     sourceObject: Object_2
     mesh: {fileID: 4300000, guid: ca700476029c0004d8a1ac710bf7e752, type: 2}
@@ -815,6 +1480,7 @@ MonoBehaviour:
     sourceCenter: {x: 12.585196, y: 29.875002, z: 11.266676}
     sourceSize: {x: 12.450001, y: 11.26667, z: 7.7703905}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_00_00_00
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 9011a65f2608acd4280373617e327f47, type: 2}
@@ -822,6 +1488,7 @@ MonoBehaviour:
     sourceCenter: {x: 21.851048, y: 7.8605757, z: -3.3058362}
     sourceSize: {x: 3.7257304, y: 6.6116447, z: 9.233892}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_00_00_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 35b5ccc48bef79f4d975f231228c78a4, type: 2}
@@ -829,6 +1496,7 @@ MonoBehaviour:
     sourceCenter: {x: 22.116749, y: 11.490972, z: -3.305836}
     sourceSize: {x: 3.5350618, y: 6.6116443, z: 9.765299}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_00_01_00
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: d44f4f114a9408f41bd3972997893ecf, type: 2}
@@ -836,6 +1504,7 @@ MonoBehaviour:
     sourceCenter: {x: 21.851048, y: 7.8605757, z: 3.305825}
     sourceSize: {x: 3.7257318, y: 6.6116776, z: 9.233892}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_00_01_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: d1f841716550c5a4fb4cbb2653d20f2c, type: 2}
@@ -843,6 +1512,7 @@ MonoBehaviour:
     sourceCenter: {x: 22.116749, y: 11.490972, z: 3.3058252}
     sourceSize: {x: 3.535061, y: 6.611678, z: 9.765299}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_01_00_00
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 3477727cf8630864a8942e13ebd9dd6b, type: 2}
@@ -850,6 +1520,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.35253, y: 6.787201, z: -0.6018461}
     sourceSize: {x: 3.2532601, y: 1.2036647, z: 0.8147001}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_01_00_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: f7d3bcdcf21961b4d9ef0c53f8a3514b, type: 2}
@@ -857,6 +1528,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.98669, y: 11.266602, z: -0.17500545}
     sourceSize: {x: 1.9040012, y: 0.3499833, z: 1.6113198}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_01_00_03
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 80697c77f1be83046a9a2ed974a964a1, type: 2}
@@ -864,6 +1536,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.9276443, y: 39.26478, z: -0.17500123}
     sourceSize: {x: 5.850048, y: 0.34997514, z: 6.555892}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_01_01_00
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: d73bf62a6f87f6a44996afae6b443d09, type: 2}
@@ -871,6 +1544,7 @@ MonoBehaviour:
     sourceCenter: {x: 6.35253, y: 6.796897, z: 0.50571406}
     sourceSize: {x: 3.2338676, y: 1.0114559, z: 0.8147001}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_01_01_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: a268fb0f4182a2a44865634d4c84bd54, type: 2}
@@ -878,6 +1552,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.98669, y: 11.266602, z: 0.14999484}
     sourceSize: {x: 1.9040012, y: 0.30001733, z: 1.6113198}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_01_01_03
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 5dc2edba95435d54a81e93b876d8cac5, type: 2}
@@ -885,6 +1560,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.9276443, y: 39.26464, z: 0.14999905}
     sourceSize: {x: 5.8503304, y: 0.30002576, z: 6.555892}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_02_00_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 59c27e505f60b544aa8d240feaac7bee, type: 2}
@@ -892,6 +1568,7 @@ MonoBehaviour:
     sourceCenter: {x: -10.085101, y: 15.259853, z: -4.852229}
     sourceSize: {x: 6.2863016, y: 7.5814066, z: 1.8801022}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_02_00_03
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: cf4a71e5ce5b8fb409f8736b2db279aa, type: 2}
@@ -899,6 +1576,7 @@ MonoBehaviour:
     sourceCenter: {x: 0.7427305, y: 36.094826, z: -0.07207371}
     sourceSize: {x: 1.1379623, y: 0.14411984, z: 1.8139355}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_02_01_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 1de01a134b69dab45bd3099fbb2018dd, type: 2}
@@ -906,6 +1584,7 @@ MonoBehaviour:
     sourceCenter: {x: -10.085101, y: 15.259851, z: 4.8522196}
     sourceSize: {x: 6.286298, y: 7.581372, z: 1.8801022}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_02_01_03
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 46c9e12e2fb11284a8b3d0123f22e00d, type: 2}
@@ -913,6 +1592,7 @@ MonoBehaviour:
     sourceCenter: {x: 0.7426789, y: 36.094852, z: 0.07397949}
     sourceSize: {x: 1.1384888, y: 0.14798665, z: 1.8140397}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_03_00_00
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 3c49842ec05e66648bf83d0c6505925e, type: 2}
@@ -920,6 +1600,7 @@ MonoBehaviour:
     sourceCenter: {x: -20.8322, y: 2.13908, z: -0.13356358}
     sourceSize: {x: 6.47552, y: 0.2670995, z: 2.317999}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_03_00_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: b3073b83c832d624380b76b2b10b388a, type: 2}
@@ -927,6 +1608,7 @@ MonoBehaviour:
     sourceCenter: {x: -17.362577, y: 15.51683, z: -4.2881923}
     sourceSize: {x: 6.500349, y: 8.576357, z: 12.67485}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_03_01_00
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 7860d8b443430b24f9d92317ecb1acb9, type: 2}
@@ -934,6 +1616,7 @@ MonoBehaviour:
     sourceCenter: {x: -20.8322, y: 2.13908, z: 0.13355036}
     sourceSize: {x: 6.475521, y: 0.26712838, z: 2.317999}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_20_03_01_01
     sourceObject: Object_20
     mesh: {fileID: 4300000, guid: 241569a36cbdd08428d2934c47fff3a9, type: 2}
@@ -941,6 +1624,7 @@ MonoBehaviour:
     sourceCenter: {x: -17.362577, y: 15.516827, z: 4.2881823}
     sourceSize: {x: 6.500346, y: 8.576392, z: 12.67485}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_21_00_00_00
     sourceObject: Object_21
     mesh: {fileID: 4300000, guid: e77f65e568064374fbe1e5adbfb76c7b, type: 2}
@@ -948,6 +1632,7 @@ MonoBehaviour:
     sourceCenter: {x: -2.4988954, y: 7.2393227, z: -9.940443}
     sourceSize: {x: 2.036399, y: 1.5938168, z: 6.2987247}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_21_00_01_00
     sourceObject: Object_21
     mesh: {fileID: 4300000, guid: 62b4218a11324d6448d247f5797888c4, type: 2}
@@ -955,6 +1640,7 @@ MonoBehaviour:
     sourceCenter: {x: -2.4835908, y: 7.238047, z: 9.944133}
     sourceSize: {x: 2.0338583, y: 1.5865288, z: 6.3136563}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_00_01_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: eaaac400669ba87478a8ae85c1e43987, type: 2}
@@ -962,6 +1648,7 @@ MonoBehaviour:
     sourceCenter: {x: 38.87833, y: 19.935852, z: -0.00770964}
     sourceSize: {x: 0.32364082, y: 0.046680875, z: 0.48296356}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_00_01_01
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: e7184da9ce6e0e44e9d10543d5efd3dc, type: 2}
@@ -969,6 +1656,7 @@ MonoBehaviour:
     sourceCenter: {x: 32.072296, y: 25.201717, z: -0.009281302}
     sourceSize: {x: 10.20809, y: 0.048630767, z: 13.387093}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_01_01_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 91c94830fa1a0e24b87895f51f550478, type: 2}
@@ -976,6 +1664,7 @@ MonoBehaviour:
     sourceCenter: {x: 16.440376, y: 11.176047, z: 1.2575502}
     sourceSize: {x: 3.1559067, y: 1.3042917, z: 9.60538}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_01_01_01
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: ee9f16f9eed147041b3685e4b99eea19, type: 2}
@@ -983,6 +1672,7 @@ MonoBehaviour:
     sourceCenter: {x: 23.503244, y: 31.361164, z: -0.008792754}
     sourceSize: {x: 2.7917652, y: 0.051160477, z: 3.751011}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_01_01_02
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 9e15dee979960eb41ab549332edfecda, type: 2}
@@ -990,6 +1680,7 @@ MonoBehaviour:
     sourceCenter: {x: 16.900887, y: 36.770405, z: -0.0071038883}
     sourceSize: {x: 8.026718, y: 0.05878391, z: 10.526401}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_00_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 066c6d1c83b032a47a947b9ae27af6ce, type: 2}
@@ -997,6 +1688,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.286667, y: 14.415554, z: -11.27187}
     sourceSize: {x: 11.364241, y: 11.271872, z: 10.7800865}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_00_01
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: ee2af5635211eea428dbe25854817790, type: 2}
@@ -1004,6 +1696,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.9839811, y: 26.42736, z: -10.009552}
     sourceSize: {x: 12.659372, y: 8.74724, z: 9.335663}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_00_02
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: e783a92d2f31b274b9f7a1e71b17a9a9, type: 2}
@@ -1011,6 +1704,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.530269, y: 33.89696, z: -12.287024}
     sourceSize: {x: 2.279831, y: 6.5267076, z: 0.67588425}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_01_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 3c023402d5feb7c479b31899280bb31d, type: 2}
@@ -1018,6 +1712,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.968039, y: 13.946144, z: 0.0000042915344}
     sourceSize: {x: 12.3030615, y: 11.271874, z: 5.3392954}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_01_01
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: bb014dac7156eb3479b410d4f041c709, type: 2}
@@ -1025,6 +1720,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.438547, y: 26.427359, z: 0.000004053116}
     sourceSize: {x: 12.659374, y: 11.271873, z: 8.43224}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_01_02
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 511df5290c3fb634d921d08768fa02ed, type: 2}
@@ -1032,6 +1728,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.7671556, y: 39.08673, z: 0.000009775162}
     sourceSize: {x: 12.65937, y: 10.0724945, z: 13.741064}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_02_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: e23970a07e0ddad49943ed42e9773d64, type: 2}
@@ -1039,6 +1736,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.286747, y: 14.417136, z: 11.271877}
     sourceSize: {x: 11.3610735, y: 11.271875, z: 10.780247}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_02_01
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 7b4f23d3e0e0f9f409ce61a96dfaaf7f, type: 2}
@@ -1046,6 +1744,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.9860654, y: 26.42736, z: 10.009067}
     sourceSize: {x: 12.659372, y: 8.746252, z: 9.340041}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_02_02_02
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: dd0e2f0707f98f34c93625f0662b9305, type: 2}
@@ -1053,6 +1752,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.524298, y: 33.896942, z: 12.286171}
     sourceSize: {x: 2.2797928, y: 6.525214, z: 0.68782616}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_03_00_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 0ebb4dfe2b6193e42bab67c3da8673db, type: 2}
@@ -1060,6 +1760,7 @@ MonoBehaviour:
     sourceCenter: {x: -4.909914, y: 11.520935, z: -10.086376}
     sourceSize: {x: 8.165265, y: 3.9676514, z: 5.6130767}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_03_01_01
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 487dfe12da2c3714e967ae6a0d1ff3c1, type: 2}
@@ -1067,6 +1768,7 @@ MonoBehaviour:
     sourceCenter: {x: -12.621012, y: 30.501827, z: -0.0061171902}
     sourceSize: {x: 4.510437, y: 0.050785754, z: 6.4468565}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_03_01_02
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 6d72f5ecd4568d44f84dcbacb42fbece, type: 2}
@@ -1074,6 +1776,7 @@ MonoBehaviour:
     sourceCenter: {x: -5.8116517, y: 35.35255, z: -0.0076994747}
     sourceSize: {x: 5.1910095, y: 0.047973894, z: 7.4165525}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_03_02_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 31fd00d8db5dd9640a4b9d8aa14ae1d2, type: 2}
@@ -1081,6 +1784,7 @@ MonoBehaviour:
     sourceCenter: {x: -4.9106307, y: 11.521552, z: 10.08337}
     sourceSize: {x: 8.162485, y: 3.974864, z: 5.6145105}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_04_01_00
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: 210cc8883f07a2a43946b2e7360cc8cf, type: 2}
@@ -1088,6 +1792,7 @@ MonoBehaviour:
     sourceCenter: {x: -28.538689, y: 19.377445, z: 0.0001540631}
     sourceSize: {x: 1.4404583, y: 0.06403041, z: 2.093626}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_23_04_01_01
     sourceObject: Object_23
     mesh: {fileID: 4300000, guid: c6967ed69ae511e4b9b72ea068af4e50, type: 2}
@@ -1095,6 +1800,7 @@ MonoBehaviour:
     sourceCenter: {x: -21.725595, y: 24.214027, z: -0.0035010371}
     sourceSize: {x: 8.232706, y: 0.056542903, z: 11.762317}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_24_00_00_02
     sourceObject: Object_24
     mesh: {fileID: 4300000, guid: a0d89f8dfaf2609498a4d7b9010beab8, type: 2}
@@ -1102,6 +1808,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.485119, y: 42.376884, z: -0.000012785196}
     sourceSize: {x: 6.2813606, y: 1.2144462, z: 1.9358325}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_24_01_00_00
     sourceObject: Object_24
     mesh: {fileID: 4300000, guid: b8bfc36244c0d3240b015a3ff4cb7529, type: 2}
@@ -1109,6 +1816,7 @@ MonoBehaviour:
     sourceCenter: {x: -7.32977, y: 13.972057, z: -0.03724569}
     sourceSize: {x: 0.81091785, y: 0.6263354, z: 0.49531984}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_24_02_00_00
     sourceObject: Object_24
     mesh: {fileID: 4300000, guid: f131e0144ffb75440a9b5cd735835711, type: 2}
@@ -1116,6 +1824,7 @@ MonoBehaviour:
     sourceCenter: {x: -29.570625, y: 18.67436, z: -0.0001321435}
     sourceSize: {x: 0.4551506, y: 0.45435894, z: 0.53481865}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_25_00_00_00
     sourceObject: Object_25
     mesh: {fileID: 4300000, guid: 595f64b8a0268154ca881ba8f5f8a0fa, type: 2}
@@ -1123,6 +1832,7 @@ MonoBehaviour:
     sourceCenter: {x: 39.12175, y: 19.729862, z: 0.0007773191}
     sourceSize: {x: 0.508337, y: 0.44335115, z: 0.50452423}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_00_00_00
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: a8a87186865e152499ffbf7964b0d3ca, type: 2}
@@ -1130,6 +1840,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.685104, y: 14.775964, z: -3.814277}
     sourceSize: {x: 8.365709, y: 7.629484, z: 3.638132}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_00_00_01
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: 685779dd5746edd4d8906613f24d5a9c, type: 2}
@@ -1137,6 +1848,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.3160326, y: 24.571255, z: -4.872536}
     sourceSize: {x: 11.224871, y: 3.6906338, z: 2.8999896}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_00_00_02
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: a54164e0c6824944bb820dbafda61d67, type: 2}
@@ -1144,6 +1856,7 @@ MonoBehaviour:
     sourceCenter: {x: 5.6502504, y: 35.793446, z: -1.6550062}
     sourceSize: {x: 11.219513, y: 3.310942, z: 6.824656}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_00_01_00
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: 0f39640499b4bbd4eab69a49230bd50d, type: 2}
@@ -1151,6 +1864,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.6850479, y: 14.776365, z: 3.7975419}
     sourceSize: {x: 8.364905, y: 7.5941534, z: 3.63802}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_00_01_01
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: dd509e1c25985fc4988e5de8ed81bc23, type: 2}
@@ -1158,6 +1872,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.3143513, y: 24.571255, z: 4.8603187}
     sourceSize: {x: 11.224871, y: 3.6725636, z: 2.896627}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_00_01_02
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: ec90c079ca231f74a8bf574524ffb7c9, type: 2}
@@ -1165,6 +1880,7 @@ MonoBehaviour:
     sourceCenter: {x: 5.657545, y: 35.796124, z: 1.6576468}
     sourceSize: {x: 11.224869, y: 3.3143644, z: 6.8231697}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_01_00_00
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: 367415610ab9cde4c93bc9edf37cb0c7, type: 2}
@@ -1172,6 +1888,7 @@ MonoBehaviour:
     sourceCenter: {x: -1.7300088, y: 13.347722, z: -8.485275}
     sourceSize: {x: 11.222195, y: 3.8294406, z: 7.1920943}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_01_00_01
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: 00fd95a0ddb7ce04fb321ca476c73a85, type: 2}
@@ -1179,6 +1896,7 @@ MonoBehaviour:
     sourceCenter: {x: 0.12613964, y: 24.029366, z: -5.345248}
     sourceSize: {x: 10.141096, y: 3.466746, z: 3.4797978}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_01_01_00
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: db53fe6d80e92894e927c28b1d880eb8, type: 2}
@@ -1186,6 +1904,7 @@ MonoBehaviour:
     sourceCenter: {x: -1.7355077, y: 13.346384, z: 8.477574}
     sourceSize: {x: 11.224869, y: 3.8467035, z: 7.203092}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_26_01_01_01
     sourceObject: Object_26
     mesh: {fileID: 4300000, guid: 2bb50f1dd56376047b1df61a4dffb153, type: 2}
@@ -1193,6 +1912,7 @@ MonoBehaviour:
     sourceCenter: {x: 0.12968612, y: 24.01779, z: 5.342204}
     sourceSize: {x: 10.117943, y: 3.4707491, z: 3.4727044}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_27_00_00_00
     sourceObject: Object_27
     mesh: {fileID: 4300000, guid: 8629cea167ec7d3438c01d4a2a486c48, type: 2}
@@ -1200,6 +1920,7 @@ MonoBehaviour:
     sourceCenter: {x: -8.02933, y: 10.756893, z: -3.837497}
     sourceSize: {x: 9.336222, y: 7.6750016, z: 3.0795002}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_27_00_01_00
     sourceObject: Object_27
     mesh: {fileID: 4300000, guid: 9aa5a26d1192b6040bf0ba0c18c1ce6d, type: 2}
@@ -1207,6 +1928,7 @@ MonoBehaviour:
     sourceCenter: {x: -8.03082, y: 10.757269, z: 3.8375046}
     sourceSize: {x: 9.3354645, y: 7.6750016, z: 3.0765204}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_28_00_00_00
     sourceObject: Object_28
     mesh: {fileID: 4300000, guid: b861f6a8221015147a7b1a7df455ea79, type: 2}
@@ -1214,6 +1936,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.3459, y: 7.639343, z: -5.2609634}
     sourceSize: {x: 1.025661, y: 0.82754946, z: 1.0578003}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_28_00_01_00
     sourceObject: Object_28
     mesh: {fileID: 4300000, guid: 4a900863eb3c1854697d9a609cac7dda, type: 2}
@@ -1221,6 +1944,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.3459, y: 7.6393394, z: 5.2609673}
     sourceSize: {x: 1.0256591, y: 0.8275504, z: 1.0578003}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_28_01_00_00
     sourceObject: Object_28
     mesh: {fileID: 4300000, guid: bfbb42a425a8a9945be2af949822c4be, type: 2}
@@ -1228,6 +1952,7 @@ MonoBehaviour:
     sourceCenter: {x: -7.60987, y: 7.4339285, z: -9.350599}
     sourceSize: {x: 0.9605899, y: 0.5092602, z: 0.9891796}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_28_01_01_00
     sourceObject: Object_28
     mesh: {fileID: 4300000, guid: 9162561447cafb341bb7e4b7e47e52e0, type: 2}
@@ -1235,6 +1960,7 @@ MonoBehaviour:
     sourceCenter: {x: -7.60987, y: 7.4339232, z: 9.350603}
     sourceSize: {x: 0.9605899, y: 0.5092602, z: 0.9891796}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_29_00_00_00
     sourceObject: Object_29
     mesh: {fileID: 4300000, guid: 86a5930dff495f444b775921db8d35a9, type: 2}
@@ -1242,6 +1968,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.41267, y: 7.3000007, z: -0.024995267}
     sourceSize: {x: 4.6475, y: 1.1691701, z: 1.7328799}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_29_01_00_00
     sourceObject: Object_29
     mesh: {fileID: 4300000, guid: fd2835d2581ece243a719da6b1018628, type: 2}
@@ -1249,6 +1976,7 @@ MonoBehaviour:
     sourceCenter: {x: -10.082525, y: 13.754501, z: 0.029389799}
     sourceSize: {x: 3.1113997, y: 2.6487684, z: 0.6795492}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_3_00_00_00
     sourceObject: Object_3
     mesh: {fileID: 4300000, guid: a9289a69061b14145a0b481dd6d86711, type: 2}
@@ -1256,6 +1984,7 @@ MonoBehaviour:
     sourceCenter: {x: 32.271576, y: 20.938986, z: 1.2659113}
     sourceSize: {x: 9.529232, y: 2.5818074, z: 11.804249}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_3_00_00_01
     sourceObject: Object_3
     mesh: {fileID: 4300000, guid: de8600a49a98da6498ff1a2f12cad78b, type: 2}
@@ -1263,6 +1992,7 @@ MonoBehaviour:
     sourceCenter: {x: 28.85395, y: 27.617733, z: 0.67838794}
     sourceSize: {x: 3.8282642, y: 1.3922824, z: 4.969}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_3_01_00_00
     sourceObject: Object_3
     mesh: {fileID: 4300000, guid: cb5f7ef4d4b17b441bb5fef7d95e2132, type: 2}
@@ -1270,6 +2000,7 @@ MonoBehaviour:
     sourceCenter: {x: 23.13887, y: 19.242252, z: 1.3703464}
     sourceSize: {x: 12.922701, y: 2.2916317, z: 6.4611588}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_3_01_00_01
     sourceObject: Object_3
     mesh: {fileID: 4300000, guid: dd5b0269dcfa9fd48bc2d34954846658, type: 2}
@@ -1277,6 +2008,7 @@ MonoBehaviour:
     sourceCenter: {x: 20.467325, y: 32.164955, z: 0.78721046}
     sourceSize: {x: 12.922703, y: 1.5994027, z: 11.80425}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_4_00_00_00
     sourceObject: Object_4
     mesh: {fileID: 4300000, guid: cf56802e22e68064d84143ef86d95420, type: 2}
@@ -1284,6 +2016,7 @@ MonoBehaviour:
     sourceCenter: {x: 3.263348, y: 19.150127, z: 0.49867946}
     sourceSize: {x: 13.61425, y: 0.9973512, z: 5.768136}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_4_00_00_01
     sourceObject: Object_4
     mesh: {fileID: 4300000, guid: 0d28b60d408141e42a8eeff2bbe3b31e, type: 2}
@@ -1291,6 +2024,7 @@ MonoBehaviour:
     sourceCenter: {x: 4.10896, y: 32.764378, z: 0.48228556}
     sourceSize: {x: 13.61425, y: 0.96455646, z: 7.45936}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_4_01_00_00
     sourceObject: Object_4
     mesh: {fileID: 4300000, guid: 82b72d1007cf67a4b9369c69edfc013f, type: 2}
@@ -1298,6 +2032,7 @@ MonoBehaviour:
     sourceCenter: {x: -3.3504, y: 19.456644, z: 0.49831715}
     sourceSize: {x: 13.001217, y: 0.9966263, z: 7.45936}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_4_01_00_01
     sourceObject: Object_4
     mesh: {fileID: 4300000, guid: 296719e82e6ef6a4db086c21bbe705a2, type: 2}
@@ -1305,6 +2040,7 @@ MonoBehaviour:
     sourceCenter: {x: -1.0514592, y: 30.887129, z: 0.4745348}
     sourceSize: {x: 9.859753, y: 0.9490502, z: 2.8614786}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_5_00_00_00
     sourceObject: Object_5
     mesh: {fileID: 4300000, guid: d203821b0a9d70647aae434857f919bc, type: 2}
@@ -1312,6 +2048,7 @@ MonoBehaviour:
     sourceCenter: {x: -9.501815, y: 8.792545, z: -0.100097656}
     sourceSize: {x: 4.62691, y: 2.268181, z: 0.24242973}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_6_00_00_00
     sourceObject: Object_6
     mesh: {fileID: 4300000, guid: a734f599b29603b4199d0f620459fac5, type: 2}
@@ -1319,6 +2056,7 @@ MonoBehaviour:
     sourceCenter: {x: -16.366955, y: 11.529152, z: -4.998127}
     sourceSize: {x: 2.7907019, y: 5.8085413, z: 13.623691}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_6_00_01_00
     sourceObject: Object_6
     mesh: {fileID: 4300000, guid: f47b0c011119baf4db4102e97a3014ce, type: 2}
@@ -1326,6 +2064,7 @@ MonoBehaviour:
     sourceCenter: {x: -16.351536, y: 11.52915, z: 4.9744787}
     sourceSize: {x: 2.7907019, y: 5.84997, z: 13.654931}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_7_00_00_00
     sourceObject: Object_7
     mesh: {fileID: 4300000, guid: be670690834ec574c9dcb04cee7e0064, type: 2}
@@ -1333,6 +2072,7 @@ MonoBehaviour:
     sourceCenter: {x: 11.804195, y: 47.562057, z: 0.5608395}
     sourceSize: {x: 2.6709023, y: 1.1169486, z: 5.33741}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_00_00_00
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 9bca73dbee672204896ac56d035a04e8, type: 2}
@@ -1340,6 +2080,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.363827, y: 6.0230484, z: -5.9315352}
     sourceSize: {x: 3.7710075, y: 1.0487194, z: 2.3518982}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_00_01_00
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 540bb4c7a815057409f0bc8eda8213cf, type: 2}
@@ -1347,6 +2088,7 @@ MonoBehaviour:
     sourceCenter: {x: 20.179302, y: 6.133823, z: 0.0012712479}
     sourceSize: {x: 3.5275545, y: 10.816894, z: 1.6395321}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_00_01_02
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: ac9a9b146268a4843b71bfa8495d203b, type: 2}
@@ -1354,6 +2096,7 @@ MonoBehaviour:
     sourceCenter: {x: 9.766363, y: 41.886208, z: 0.015423328}
     sourceSize: {x: 0.101177216, y: 0.55768514, z: 0.096282005}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_00_02_00
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: cf482bbac4b93cf478729712746f13f8, type: 2}
@@ -1361,6 +2104,7 @@ MonoBehaviour:
     sourceCenter: {x: 19.355602, y: 6.02318, z: 5.932808}
     sourceSize: {x: 3.770739, y: 1.0461798, z: 2.3354473}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_01_00_02
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 4545d6a17f7ff9743940335147208eac, type: 2}
@@ -1368,6 +2112,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.595519, y: 35.448006, z: -12.893012}
     sourceSize: {x: 1.1539993, y: 6.662114, z: 0.16748047}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_01_01_02
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 256e55cbe2a37334580914829e5a4cbb, type: 2}
@@ -1375,6 +2120,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.931127, y: 38.49806, z: 0.00037384033}
     sourceSize: {x: 7.1348877, y: 10.706308, z: 0.84457207}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_01_02_02
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 86c51b62c15173e4e8128fed774b9b3a, type: 2}
@@ -1382,6 +2128,7 @@ MonoBehaviour:
     sourceCenter: {x: 8.597946, y: 35.447704, z: 12.894788}
     sourceSize: {x: 1.1517868, y: 6.6636496, z: 0.17232132}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_02_00_01
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 68a1c036676ee854da3d803314bce78a, type: 2}
@@ -1389,6 +2136,7 @@ MonoBehaviour:
     sourceCenter: {x: -10.9519825, y: 17.883112, z: -7.161437}
     sourceSize: {x: 1.1995964, y: 3.508523, z: 4.2615385}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_02_01_01
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 5a0fb818dd528574cb6ad8f3ad8b0960, type: 2}
@@ -1396,6 +2144,7 @@ MonoBehaviour:
     sourceCenter: {x: -8.88702, y: 17.777386, z: 0.0012712479}
     sourceSize: {x: 0.9604397, y: 10.816894, z: 0.13161469}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_02_02_01
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: a30327cb80a83f14ab87fadbb915e72e, type: 2}
@@ -1403,6 +2152,7 @@ MonoBehaviour:
     sourceCenter: {x: -10.952146, y: 17.882505, z: 7.1655693}
     sourceSize: {x: 1.2008667, y: 3.5117025, z: 4.2612114}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_03_00_01
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 44840082b9ba49b4892eaaac797715cc, type: 2}
@@ -1410,6 +2160,7 @@ MonoBehaviour:
     sourceCenter: {x: -18.763054, y: 18.483463, z: -6.9550343}
     sourceSize: {x: 1.7222843, y: 3.0957165, z: 11.360606}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_03_01_01
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 21f8d49ab7c69c747bbc4e9443c0714c, type: 2}
@@ -1417,6 +2168,7 @@ MonoBehaviour:
     sourceCenter: {x: -24.375366, y: 18.873632, z: 0.0012712479}
     sourceSize: {x: 0.9007416, y: 10.816894, z: 0.13438034}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_8_03_02_01
     sourceObject: Object_8
     mesh: {fileID: 4300000, guid: 9a87ab3bc0ccb8b45876a439af6cf82d, type: 2}
@@ -1424,6 +2176,7 @@ MonoBehaviour:
     sourceCenter: {x: -18.763054, y: 18.487633, z: 6.956354}
     sourceSize: {x: 1.713934, y: 3.0932732, z: 11.360606}
     floatRotation: 90
+    splinters: []
   - name: detail_Object_9_00_00_00
     sourceObject: Object_9
     mesh: {fileID: 4300000, guid: 5ef8e38833956c742a615514da00da72, type: 2}
@@ -1431,3 +2184,4 @@ MonoBehaviour:
     sourceCenter: {x: -10.326707, y: 13.998577, z: 0.02849263}
     sourceSize: {x: 2.0288506, y: 2.0582438, z: 0.10982704}
     floatRotation: 90
+    splinters: []

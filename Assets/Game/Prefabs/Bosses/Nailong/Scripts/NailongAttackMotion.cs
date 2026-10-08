@@ -6,7 +6,9 @@ namespace Mavis
     // It runs in LateUpdate, after Animator has written the humanoid bones.
     public sealed class NailongAttackMotion : MonoBehaviour
     {
-        public enum Style { LeftClaw, RightClaw, DoubleClaw, ShoulderBump, Cry, Tantrum, Flurry, Roar, PointAndSpit }
+        public enum Style { LeftClaw, RightClaw, DoubleClaw, ShoulderBump, Cry, Tantrum, Flurry, Roar, PointAndSpit, GroundSlam }
+        public Transform LeftHand => leftHand;
+        public Transform RightHand => rightHand;
 
         Transform leftShoulder;
         Transform leftForeArm;
@@ -26,9 +28,12 @@ namespace Mavis
         float flurryWindup;
         float flurryInterval;
         int flurryCount;
+        float spitInterval=.28f;
+        int spitCount=3;
+        public void ConfigureSpit(float interval,int count){spitInterval=Mathf.Max(.05f,interval);spitCount=count;}
         public Vector3 MouthPosition => head != null
-            ? head.position + transform.forward * 0.48f + transform.up * 0.05f
-            : transform.position + Vector3.up * 1.9f + transform.forward * 0.6f;
+            ? head.position + transform.TransformVector(new Vector3(0f, .05f, .23f))
+            : transform.TransformPoint(new Vector3(0f, 1.9f, .6f));
         public void ConfigureCue(float seconds) => cueTime = seconds;
         public void ConfigureFlurry(float windup, float interval, int count)
         {
@@ -83,6 +88,16 @@ namespace Mavis
             if (phase >= 1f) { Stop(); return; }
 
             float envelope = Smooth(phase / 0.10f) * (1f - Smooth((phase - 0.80f) / 0.20f));
+            if(style==Style.GroundSlam)
+            {
+                float raise=Smooth(Mathf.InverseLerp(0,cueTime*.65f,elapsed))*(1-Smooth(Mathf.InverseLerp(cueTime-.16f,cueTime,elapsed)));
+                float impact=Smooth(Mathf.InverseLerp(cueTime-.16f,cueTime,elapsed))*(1-Smooth(Mathf.InverseLerp(cueTime+.12f,duration,elapsed)));
+                Lean(-18*raise+42*impact,0);
+                SlamArm(leftShoulder,leftHand,raise,impact);
+                SlamArm(rightShoulder,rightHand,raise,impact);
+                if(head)head.rotation=Quaternion.AngleAxis(-12*raise+20*impact,transform.right)*head.rotation;
+                return;
+            }
             if (style == Style.Flurry)
             {
                 float leftStrike = 0f, rightStrike = 0f, flurryLeftWind = 0f, flurryRightWind = 0f;
@@ -115,12 +130,21 @@ namespace Mavis
             }
             if (style == Style.PointAndSpit)
             {
-                float jab = elapsed < cueTime ? Mathf.Sin(elapsed * 15f) * 4f : Mathf.Sin((elapsed - cueTime) * 22f) * 2f;
-                Lean((6f + jab) * envelope, 5f * envelope);
-                PoseArm(false, 0f, envelope, false);
+                float inhale=Smooth(Mathf.InverseLerp(0,cueTime*.7f,elapsed)) *
+                    (1-Smooth(Mathf.InverseLerp(cueTime-.12f,cueTime,elapsed)));
+                float spit=0;
+                for(int i=0;i<spitCount;i++)
+                {
+                    float cue=cueTime+i*spitInterval;
+                    float pulse=Smooth(Mathf.InverseLerp(cue-.08f,cue,elapsed)) *
+                        (1-Smooth(Mathf.InverseLerp(cue+.035f,cue+.20f,elapsed)));
+                    spit=Mathf.Max(spit,pulse);
+                }
+                Lean((-12f*inhale+18f*spit)*envelope, 5f*envelope);
+                PoseArm(false, .25f*inhale*envelope, .65f*spit*envelope, false);
                 PoseArm(true, 0.35f * envelope, 0f, true);
                 PointFinger(envelope);
-                if (head != null) head.rotation = Quaternion.AngleAxis(jab * envelope, transform.right) * head.rotation;
+                if (head != null) head.rotation = Quaternion.AngleAxis((-10f*inhale+15f*spit)*envelope, transform.right) * head.rotation;
                 return;
             }
 
@@ -193,12 +217,23 @@ namespace Mavis
         void PointFinger(float amount)
         {
             if (rightHand == null) return;
-            foreach (Transform finger in rightHand.GetComponentsInChildren<Transform>())
+            foreach (var pair in fingerRest)
             {
+                Transform finger=pair.Key;
                 if (finger == rightHand || finger.name.Contains("Index")) continue;
                 if (finger.name.Contains("Middle") || finger.name.Contains("Ring") || finger.name.Contains("Pinky"))
-                    finger.localRotation = fingerRest[finger] * Quaternion.Euler(0f, 0f, 55f * amount);
+                    finger.localRotation = pair.Value * Quaternion.Euler(0f, 0f, 55f * amount);
             }
+        }
+
+        void SlamArm(Transform shoulder,Transform hand,float raise,float impact)
+        {
+            if(!shoulder||!hand)return;
+            Vector3 arm=hand.position-shoulder.position;
+            if(arm.sqrMagnitude<.001f)return;
+            Vector3 desired=Vector3.Slerp(arm.normalized,(transform.up+transform.forward*.15f).normalized,raise);
+            desired=Vector3.Slerp(desired,(transform.forward*.65f-transform.up).normalized,impact);
+            shoulder.rotation=Quaternion.FromToRotation(arm,desired)*shoulder.rotation;
         }
 
         void PoseCryingArm(bool left)

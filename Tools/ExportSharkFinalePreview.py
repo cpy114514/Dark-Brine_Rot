@@ -6,9 +6,10 @@ import imageio_ffmpeg
 
 root = Path(__file__).resolve().parents[1] / '.codex' / 'shark-finale-preview'
 lines = []
-for folder, timing, end in [('impact-frames', 'impact-times.json', 2.05),
-                            ('frames', 'frame-times.json', 14.4)]:
+for folder, timing in [('impact-frames', 'impact-times.json'),
+                      ('frames', 'frame-times.json')]:
     times = json.loads((root / timing).read_text())
+    end = times[-1] + (times[-1]-times[-2] if len(times)>1 else 1/30)
     for i, time in enumerate(times):
         path = (root / folder / f'{i:04d}.png').resolve().as_posix()
         duration = max(.025, (times[i + 1] if i + 1 < len(times) else end) - time)

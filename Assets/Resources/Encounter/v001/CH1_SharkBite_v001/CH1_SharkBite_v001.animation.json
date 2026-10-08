@@ -1,0 +1,130 @@
+{
+  "action": "CH1_SharkBite_v001",
+  "unity_clip": "CH1_SharkBite_v001",
+  "revision": "v001",
+  "frame_start": 1,
+  "frame_end": 67,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "Body",
+  "rig_type": "Generic",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design.md",
+  "approval_reference": "User 2026-10-07: \u597d\uff0c\u5f00\u59cb\u5236\u4f5c\u5427; no further questions, autonomous revisions authorized",
+  "review_status": "accepted_for_stage",
+  "review_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/source-review.md",
+  "gameplay": {
+    "startup": [
+      1,
+      27
+    ],
+    "active": [
+      27,
+      32
+    ],
+    "recovery": [
+      32,
+      67
+    ]
+  },
+  "format_version": 1,
+  "duration_seconds": 1.1,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v001\\shark-encounter-v001.blend",
+  "blender_version": "5.2.2 LTS",
+  "rig": "Tralalero_Rig",
+  "slot": "OBTralalero_Rig",
+  "animated_bones": [
+    "Body",
+    "Dorsal",
+    "Fin_Left",
+    "Fin_Right",
+    "Foot_Left",
+    "Foot_Rear",
+    "Foot_Right",
+    "Head",
+    "Jaw",
+    "Spine_Mid",
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Mid",
+    "Tail_Tip"
+  ],
+  "selected_meshes": [
+    "Tralalero_Skin"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {
+    "startup": [
+      {
+        "frames": [
+          1,
+          27
+        ],
+        "seconds": [
+          0.0,
+          0.43333333333333335
+        ],
+        "normalized": [
+          0.0,
+          0.3939393939393939
+        ]
+      }
+    ],
+    "active": [
+      {
+        "frames": [
+          27,
+          32
+        ],
+        "seconds": [
+          0.43333333333333335,
+          0.5166666666666667
+        ],
+        "normalized": [
+          0.3939393939393939,
+          0.4696969696969697
+        ]
+      }
+    ],
+    "recovery": [
+      {
+        "frames": [
+          32,
+          67
+        ],
+        "seconds": [
+          0.5166666666666667,
+          1.1
+        ],
+        "normalized": [
+          0.4696969696969697,
+          1.0
+        ]
+      }
+    ]
+  },
+  "fbx": "CH1_SharkBite_v001.fbx"
+}

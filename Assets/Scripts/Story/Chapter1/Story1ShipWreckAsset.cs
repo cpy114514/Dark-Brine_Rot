@@ -11,6 +11,12 @@ public sealed class Story1ShipWreckAsset : ScriptableObject
         public Material material;
         public Vector3 sourceCenter, sourceSize;
         public float floatRotation;
+        public Shard[] splinters;
+    }
+    [Serializable] public sealed class Shard
+    {
+        public Mesh mesh;
+        public Vector3 localCenter,localSize;
     }
     public GameObject originalShip;
     public string sourceSha256;

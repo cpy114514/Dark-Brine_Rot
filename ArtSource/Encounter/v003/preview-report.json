@@ -1,0 +1,38 @@
+{
+  "action": "CH1_SharkBreach_v003",
+  "fps": 60.0,
+  "frames": [
+    1,
+    31,
+    61,
+    91,
+    127,
+    163,
+    193
+  ],
+  "previews": [
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\front-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\front-0031.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\front-0061.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\front-0091.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\front-0127.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\front-0163.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\front-0193.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\side-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\side-0031.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\side-0061.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\side-0091.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\side-0127.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\side-0163.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\side-0193.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\three-quarter-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\three-quarter-0031.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\three-quarter-0061.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\three-quarter-0091.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\three-quarter-0127.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\three-quarter-0163.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v003\\blender-breach\\three-quarter-0193.00.png"
+  ],
+  "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+  "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+}

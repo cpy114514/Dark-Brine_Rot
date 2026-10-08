@@ -21,7 +21,7 @@ public sealed class SahurRootMotionRelay : MonoBehaviour
 
     void OnAnimatorMove()
     {
-        if (movement == null || attack == null || !attack.UsesAnimationRootMotion)
+        if (movement == null || !movement.isActiveAndEnabled || attack == null || !attack.UsesAnimationRootMotion || Time.deltaTime<=0f)
             return;
 
         movement.ApplyAttackRootMotion(animator.deltaPosition, animator.deltaRotation);

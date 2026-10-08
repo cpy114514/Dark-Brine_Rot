@@ -52,6 +52,8 @@ public sealed class FirstIslandArrival : MonoBehaviour
         capsule = player.GetComponent<CharacterController>();
         continuing = GameSaveManager.IsContinuePending;
         if (continuing) { HasLanded = IsAwake = true; return; }
+        var motion=player.GetComponent<SahurMotionContext>() ?? player.gameObject.AddComponent<SahurMotionContext>();
+        motion.Claim(this,SahurControlState.Unconscious);
         SetStick(false);
         previousMovementEnabled = player.enabled;
         previousCapsuleEnabled = capsule != null && capsule.enabled;
@@ -145,6 +147,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         yield return new WaitForSeconds(unconsciousSeconds);
         blackout.color = Color.clear; hint.text = "海浪把你推上了岸。";
         IsGettingUp = true;
+        player.Motion.Claim(this,SahurControlState.Cinematic);
         for (float elapsed = 0; elapsed < getUpSeconds; elapsed += Time.deltaTime)
         {
             float phase = Mathf.Clamp01(elapsed / getUpSeconds);
@@ -218,6 +221,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         if (animator != null) animator.speed = previousAnimatorSpeed;
         if (capsule != null) capsule.enabled = previousCapsuleEnabled;
         player.ExternalControlLock = false; player.enabled = previousMovementEnabled;
+        player.Motion?.Release(this);
         if (auxiliary != null)
             for (int i = 0; i < auxiliary.Length; i++) if (auxiliary[i] != null) auxiliary[i].enabled = auxiliaryEnabled[i];
         Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;

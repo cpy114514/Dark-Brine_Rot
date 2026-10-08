@@ -1,0 +1,460 @@
+{
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\SharkAnimation\\tralalero_animated.blend",
+  "blender": "5.2.2 LTS",
+  "fps": 60.0,
+  "units": {
+    "system": "METRIC",
+    "scale_length": 1.0
+  },
+  "scene_range": [
+    1,
+    97
+  ],
+  "rigs": [
+    {
+      "rig": "Tralalero_Rig",
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "dimensions": [
+        10.997782707214355,
+        23.71623992919922,
+        11.127447128295898
+      ],
+      "animation": "Swim_Cruise",
+      "bones": [
+        {
+          "name": "Body",
+          "parent": null,
+          "deform": true,
+          "head": [
+            0.0,
+            0.0,
+            5.300000190734863
+          ],
+          "tail": [
+            0.0,
+            1.5,
+            5.300000190734863
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Spine_Mid",
+          "parent": "Body",
+          "deform": true,
+          "head": [
+            0.0,
+            1.5,
+            5.300000190734863
+          ],
+          "tail": [
+            0.0,
+            3.5,
+            5.300000190734863
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Spine_Rear",
+          "parent": "Spine_Mid",
+          "deform": true,
+          "head": [
+            0.0,
+            3.5,
+            5.300000190734863
+          ],
+          "tail": [
+            0.0,
+            5.5,
+            5.199999809265137
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Tail_Base",
+          "parent": "Spine_Rear",
+          "deform": true,
+          "head": [
+            0.0,
+            5.5,
+            5.199999809265137
+          ],
+          "tail": [
+            0.0,
+            8.199999809265137,
+            5.400000095367432
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Tail_Mid",
+          "parent": "Tail_Base",
+          "deform": true,
+          "head": [
+            0.0,
+            8.199999809265137,
+            5.400000095367432
+          ],
+          "tail": [
+            0.0,
+            10.199999809265137,
+            5.599999904632568
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Tail_Tip",
+          "parent": "Tail_Mid",
+          "deform": true,
+          "head": [
+            0.0,
+            10.199999809265137,
+            5.599999904632568
+          ],
+          "tail": [
+            0.0,
+            12.300000190734863,
+            5.900000095367432
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Tail_Marker",
+          "parent": "Tail_Tip",
+          "deform": false,
+          "head": [
+            0.00022554818133357912,
+            12.31657886505127,
+            10.690281867980957
+          ],
+          "tail": [
+            0.00022554818133357912,
+            12.616579055786133,
+            10.690281867980957
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Dorsal",
+          "parent": "Spine_Mid",
+          "deform": true,
+          "head": [
+            0.0,
+            1.5,
+            7.0
+          ],
+          "tail": [
+            0.0,
+            1.5,
+            11.899999618530273
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Foot_Rear",
+          "parent": "Spine_Mid",
+          "deform": true,
+          "head": [
+            0.0,
+            4.0,
+            3.0
+          ],
+          "tail": [
+            0.0,
+            4.0,
+            0.800000011920929
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Head",
+          "parent": "Body",
+          "deform": true,
+          "head": [
+            0.0,
+            -3.5,
+            5.300000190734863
+          ],
+          "tail": [
+            0.0,
+            -10.5,
+            5.300000190734863
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Jaw",
+          "parent": "Head",
+          "deform": true,
+          "head": [
+            0.0,
+            -6.800000190734863,
+            5.199999809265137
+          ],
+          "tail": [
+            0.0,
+            -11.5,
+            4.800000190734863
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Nose_Marker",
+          "parent": "Head",
+          "deform": false,
+          "head": [
+            0.0002252997801406309,
+            -12.30239200592041,
+            7.036472320556641
+          ],
+          "tail": [
+            0.0002252997801406309,
+            -12.602392196655273,
+            7.036472320556641
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Fin_Left",
+          "parent": "Body",
+          "deform": true,
+          "head": [
+            -2.5,
+            0.5,
+            4.5
+          ],
+          "tail": [
+            -5.5,
+            1.0,
+            4.199999809265137
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Fin_Right",
+          "parent": "Body",
+          "deform": true,
+          "head": [
+            2.5,
+            0.5,
+            4.5
+          ],
+          "tail": [
+            5.5,
+            1.0,
+            4.199999809265137
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Foot_Left",
+          "parent": "Body",
+          "deform": true,
+          "head": [
+            -2.0999999046325684,
+            0.0,
+            3.0
+          ],
+          "tail": [
+            -3.5,
+            -0.20000000298023224,
+            0.800000011920929
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        },
+        {
+          "name": "Foot_Right",
+          "parent": "Body",
+          "deform": true,
+          "head": [
+            2.0999999046325684,
+            0.0,
+            3.0
+          ],
+          "tail": [
+            3.5,
+            -0.20000000298023224,
+            0.800000011920929
+          ],
+          "rotation_mode": "XYZ",
+          "constraints": []
+        }
+      ],
+      "bound_meshes": [
+        "Tralalero_Skin"
+      ],
+      "fps": 60.0,
+      "frame_range": [
+        1,
+        97
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "name": "Bite_Lunge",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        67.0
+      ],
+      "key_range": [
+        1.0,
+        67.0
+      ],
+      "curves": 42,
+      "keys": 2814,
+      "slots": [
+        {
+          "identifier": "OBTralalero_Rig",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "Hit_Recoil",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        49.0
+      ],
+      "key_range": [
+        1.0,
+        49.0
+      ],
+      "curves": 42,
+      "keys": 2058,
+      "slots": [
+        {
+          "identifier": "OBTralalero_Rig",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "Ship_Smash",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        70.0
+      ],
+      "key_range": [
+        1.0,
+        70.0
+      ],
+      "curves": 42,
+      "keys": 2940,
+      "slots": [
+        {
+          "identifier": "OBTralalero_Rig",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "Swim_Cruise",
+      "users": 2,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        97.0
+      ],
+      "key_range": [
+        1.0,
+        97.0
+      ],
+      "curves": 42,
+      "keys": 4074,
+      "slots": [
+        {
+          "identifier": "OBTralalero_Rig",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "Swim_Fast",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        61.0
+      ],
+      "key_range": [
+        1.0,
+        61.0
+      ],
+      "curves": 42,
+      "keys": 2562,
+      "slots": [
+        {
+          "identifier": "OBTralalero_Rig",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "Tail_Strike",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        70.0
+      ],
+      "key_range": [
+        1.0,
+        70.0
+      ],
+      "curves": 42,
+      "keys": 2940,
+      "slots": [
+        {
+          "identifier": "OBTralalero_Rig",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "Threat",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        109.0
+      ],
+      "key_range": [
+        1.0,
+        109.0
+      ],
+      "curves": 42,
+      "keys": 4578,
+      "slots": [
+        {
+          "identifier": "OBTralalero_Rig",
+          "target": "OBJECT"
+        }
+      ]
+    }
+  ]
+}

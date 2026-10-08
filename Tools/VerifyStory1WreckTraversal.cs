@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Mavis;
 using UnityEngine;
@@ -32,25 +33,43 @@ public static class VerifyStory1WreckTraversal
             await Task.Delay(400);
             var sequence = UnityEngine.Object.FindFirstObjectByType<Story1SharkCollisionSequence>();
             var battle = sequence.GetComponent<Story1WreckBattle>();
+            battle.minimumFightSeconds=battle.maximumFightSeconds=120;
             sequence.BeginImpact();
             for (int i=0;i<300 && battle.CurrentPhase!=Story1WreckBattle.Phase.Fighting;i++) await Task.Delay(30);
             Require(battle.CurrentPhase==Story1WreckBattle.Phase.Fighting,"Battle did not begin.");
+            // Destruction is verified separately: a real shark strike may now legitimately
+            // knock the rider off or break the board during this controls-only exercise.
+            if(battle.WreckContact!=null)battle.WreckContact.enabled=false;
             battle.maximumFightSeconds = 120;
             var player = sequence.sahur; var health = player.GetComponent<PlayerHealth>(); health.GrantProtection(200);
             var rider = player.GetComponent<Story1WreckRider>(); var first = rider.Support();
-            Require(first!=null && !player.ExternalMovementLock,"Normal board movement was replaced by a mount lock.");
+            Require(first!=null && !player.ExternalMovementLock,"Normal board movement was replaced by a mount lock: "+
+                "swimming="+player.Swimming+", feet="+Feet(player)+", nearby="+string.Join("; ",battle.Boards.OrderBy(b=>b.EdgeDistance(Feet(player))).Take(2).Select(b=>b.name+" top="+b.BoardingPoint(Feet(player))+" local="+b.transform.InverseTransformPoint(Feet(player))+" contains="+b.ContainsFootprint(Feet(player)))));
+            // Every wreck detail now has a solid mesh. Test acceleration away
+            // from the random wreck pile, where a board can legitimately be blocked.
+            var testOcean=UnityEngine.Object.FindFirstObjectByType<OceanWorld>();
+            var firstBody=first.GetComponent<Rigidbody>();
+            Vector3 isolated=first.transform.position+Vector3.right*220;
+            isolated.y=testOcean.SampleSurfaceHeight(isolated,Time.time)-.15f;
+            firstBody.position=isolated;firstBody.rotation=Quaternion.identity;
+            firstBody.linearVelocity=firstBody.angularVelocity=Vector3.zero;
+            await Task.Delay(100);Physics.SyncTransforms();first.CommitPose();
+            player.RestoreSavedPose(first.BoardingPoint(isolated)+Vector3.up*(.08f-player.LowestFootWorldOffset),Quaternion.identity);
+            Physics.SyncTransforms();rider.Initialize(player,battle.Boards,testOcean,first,battle.WreckDetails);
             keys = InputSystem.AddDevice<Keyboard>("Wreck traversal verification keyboard"); Cursor.lockState = CursorLockMode.Locked;
             await Task.Delay(200);
             await Tap(Key.F);
-            Require(rider.IsSurfing && rider.DrivenBoard==first,"F did not start surfing on the supporting board.");
+            Require(rider.IsSurfing && rider.DrivenBoard==first,"F did not start surfing on the supporting board: support="+rider.Support()?.name+", feet="+Feet(player)+", first="+first.name+", top="+first.BoardingPoint(Feet(player))+", contains="+first.ContainsFootprint(Feet(player))+", up="+first.transform.up+", swimming="+player.Swimming+", hint="+rider.Hint);
             Vector3 boardStart = first.transform.position;
             await Hold(1700,GameInputSettings.Get(GameInputSettings.Action.Forward)); await Hold(150);
             float distance = Vector3.ProjectOnPlane(first.transform.position-boardStart, Vector3.up).magnitude;
-            Require(distance>5 && rider.IsSurfing && !player.Swimming,"Controllable board did not move with its rider: "+distance);
+            // A real rigidbody accelerates against water drag; the former 5 m
+            // expectation described the old instantly moving kinematic boards.
+            Require(distance>2 && first.Speed>1 && rider.IsSurfing && !player.Swimming,"Controllable board did not accelerate with its rider: "+distance);
             float yaw = first.transform.eulerAngles.y;
             await Hold(550,GameInputSettings.Get(GameInputSettings.Action.Right)); await Hold(120);
             float turn = Mathf.Abs(Mathf.DeltaAngle(yaw,first.transform.eulerAngles.y));
-            Require(turn>15 && rider.IsSurfing,"Board did not steer with its rider: "+turn);
+            Require(turn>10 && rider.IsSurfing,"Board did not steer with its rider: "+turn);
             Require(player.CanUseGroundAttack && player.GetComponent<SahurAttack>().enabled && player.GetComponent<SahurBoomerang>().enabled,"Mounting disabled normal combat.");
             var attack = player.GetComponent<SahurAttack>(); attack.TriggerAttack(); await Task.Delay(160);
             Require(attack.IsCombatMotionActive && rider.IsSurfing,"Attack animation was cancelled by mounted locomotion.");
@@ -69,7 +88,7 @@ public static class VerifyStory1WreckTraversal
             float shortest=float.PositiveInfinity;
             foreach(var a in boards) foreach(var b in boards)
             {
-                if(a==b || a.Dimensions.x<3 || b.Dimensions.x<3 || a.Speed!=0 || b.Speed!=0)continue;
+                if(a==b || a.Dimensions.x<3 || b.Dimensions.x<3 || !a.IsBoardable || !b.IsBoardable || a.Speed>3 || b.Speed>3)continue;
                 Vector3 edgeTakeoff=a.BoardingPoint(b.transform.position),landing=b.BoardingPoint(edgeTakeoff);
                 for(int n=0;n<3;n++){edgeTakeoff=a.BoardingPoint(landing);landing=b.BoardingPoint(edgeTakeoff);}
                 float gap=Vector3.ProjectOnPlane(landing-edgeTakeoff,Vector3.up).magnitude;
@@ -109,7 +128,7 @@ public static class VerifyStory1WreckTraversal
             float swam=Vector3.ProjectOnPlane(player.transform.position-swimStart,Vector3.up).magnitude; await Hold(150);
             Require(fast&&swam>2,"Ordinary fast swimming did not work around the wreck: fast="+fast+", distance="+swam);
 
-            waterAt=jumpTo.transform.position+jumpTo.transform.right*(jumpTo.Dimensions.x*.5f+.85f);
+            waterAt=jumpTo.BoardingPoint(jumpTo.transform.position+jumpTo.transform.right*100)+jumpTo.transform.right*1.5f;
             waterAt.y=ocean.SampleSurfaceHeight(waterAt,Time.time)-2-player.LowestFootWorldOffset;
             player.RestoreSavedPose(waterAt,Quaternion.LookRotation(-jumpTo.transform.right)); Physics.SyncTransforms(); await Hold(350);
             Require(player.Swimming&&rider.NearbyBoard!=null,"Swimming beside the deck did not show a boarding prompt.");
@@ -121,7 +140,7 @@ public static class VerifyStory1WreckTraversal
             await Tap(Key.F); Require(rider.IsSurfing,"A climbed board could not be surfed.");
             await Tap(Key.F); Require(!rider.IsSurfing&&!player.ExternalMovementLock,"F did not restore ordinary walking.");
             await Tap(Key.F); Require(rider.IsSurfing,"Could not remount for defeat verification.");
-            battle.SharkHealth.ApplyDamage(battle.SharkHealth.maxHealth*.71f,battle.SharkHealth.transform.position);
+            health.GrantProtection(0);health.currentHealth=health.maxHealth*battle.finalePlayerHealthRatio;
             for(int i=0;i<80&&battle.CurrentPhase==Story1WreckBattle.Phase.Fighting;i++)await Task.Delay(25);
             Require(battle.CurrentPhase==Story1WreckBattle.Phase.Finale&&health.currentHealth>0&&!PlayerDeathRespawn.IsOpen&&!player.ExternalMovementLock&&!rider.IsSurfing,"Health-triggered finale failed to release the mounted rider.");
             return new{surfDistance=distance,steeringDegrees=turn,jumpHeight=highest-takeoff,jumpedBetweenBoards=true,

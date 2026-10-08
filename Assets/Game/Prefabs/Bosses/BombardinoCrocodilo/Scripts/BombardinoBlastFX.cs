@@ -9,6 +9,8 @@ namespace Mavis
         public void Initialize(float radius)
         {
             age = 0f;
+            BossCombatVfx.Burst(transform.position+Vector3.up*.25f,Vector3.up,new Color(1,.55f,.15f,.8f),18,radius,true);
+            BossCombatVfx.Burst(transform.position,Vector3.up,new Color(.26f,.23f,.19f,.65f),12,radius*.75f);
             if (particles == null)
             {
                 material = NaturalParticleEffects.SmokeMaterial("Impact dust and smoke", Color.white);

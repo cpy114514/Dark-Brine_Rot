@@ -1,0 +1,71 @@
+{
+  "skills": [
+    {
+      "name": "action-designer",
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\action-designer\\SKILL.md",
+      "enabled": true,
+      "description": "Design character moves, combat attacks and boss actions interactively before animation production. Use for vague requests such as make a heavy attack, movement design, move timing or animation intent; interview and produce an approval-ready action specification."
+    },
+    {
+      "name": "animation-review",
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\animation-review\\SKILL.md",
+      "enabled": true,
+      "description": "Review Blender or Unity animation results and preview renders for gameplay quality. Diagnose frame-specific silhouette, weight, timing, contact, foot sliding, arcs, clipping, weapon paths, root motion and combat readability; propose targeted revisions and re-review."
+    },
+    {
+      "name": "blender",
+      "path": "C:\\Users\\pinyu\\.codex\\skills\\blender\\SKILL.md",
+      "enabled": true,
+      "description": "Use when work depends on Blender Manual or Blender Python API facts: bpy scripting, operators, add-ons and extensions; actions, F-curves, keyframes and animation; materials, shader nodes, textures and images; cameras, lights and rendering; linked libraries and append/link; and panels, properties and operators. Routes to six area sub-skills. Not for other DCC tools or non-Blender Python."
+    },
+    {
+      "name": "boss-animation",
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\boss-animation\\SKILL.md",
+      "enabled": true,
+      "description": "Create or revise Blender creature and boss animation: bites, tail strikes, slams, charges, roars, area attacks, phases, stagger, enrage and death, emphasizing readable telegraphs, scale, inertia and fair recovery windows."
+    },
+    {
+      "name": "character-animation",
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\character-animation\\SKILL.md",
+      "enabled": true,
+      "description": "Produce and revise Blender gameplay character animation: idle, locomotion, turns, jumps, landings, dodges, interactions, traversal, hit reactions and death, from an approved action design and requested production stage."
+    },
+    {
+      "name": "combat-animation",
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\combat-animation\\SKILL.md",
+      "enabled": true,
+      "description": "Animate or revise Blender gameplay attacks, charged strikes, combos, parries, blocks, finishers, dodge attacks, launchers and combat reactions, preserving approved startup, active, recovery and Unity gameplay windows."
+    },
+    {
+      "name": "unity-animation-pipeline",
+      "path": "C:\\Users\\pinyu\\.agents\\skills\\unity-animation-pipeline\\SKILL.md",
+      "enabled": true,
+      "description": "Prepare, validate and export approved Blender Actions to FBX for Unity 6; handle naming, FPS/frame ranges, timing metadata, scale/axes, humanoid or generic Avatar setup, loop/root-motion settings and isolated Unity import verification."
+    }
+  ],
+  "mcp_server": "blender_animation",
+  "mcp_tools": [
+    "blender_action_create",
+    "blender_action_list",
+    "blender_animation_goto_frame",
+    "blender_animation_play",
+    "blender_execute_script",
+    "blender_export_fbx",
+    "blender_get_version",
+    "blender_keyframe_delete",
+    "blender_keyframe_insert",
+    "blender_keyframe_list",
+    "blender_object_get",
+    "blender_object_list",
+    "blender_render_image",
+    "blender_render_multi_angle",
+    "blender_render_screenshot",
+    "blender_render_set_engine",
+    "blender_render_set_resolution",
+    "blender_rig_validate",
+    "blender_scene_info",
+    "blender_scene_new",
+    "blender_scene_set_frame_range"
+  ],
+  "tools_error": null
+}

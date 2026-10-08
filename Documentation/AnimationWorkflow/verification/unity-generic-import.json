@@ -1,0 +1,42 @@
+{
+  "diagnostics": [],
+  "compileMs": 156,
+  "executeMs": 430,
+  "assemblyName": "PipelineRunScript_UnityAnimationImport_d79de66ae5694f49ba906275f9f77227",
+  "success": true,
+  "result": {
+    "passed": true,
+    "import": {
+      "asset": "Assets/AnimationStaging/TEST_b033e8037d/TEST_Connectivity_001.fbx",
+      "action": "TEST_b033e8037d_Action",
+      "unity_clip": "TEST_Connectivity_001",
+      "frameRate": 24,
+      "length": 2,
+      "isLooping": false,
+      "firstFrame": 1,
+      "lastFrame": 49,
+      "sourceFrameOffset": 0,
+      "rigType": "Generic",
+      "avatarValid": true,
+      "avatarHuman": false,
+      "globalScale": 1,
+      "fileScale": 1,
+      "bakeAxisConversion": false,
+      "motionNodeName": "",
+      "rootPath": "TEST_b033e8037d_Rig/root",
+      "curveCount": 30,
+      "animatedPaths": [
+        "TEST_b033e8037d_Rig",
+        "TEST_b033e8037d_Rig/root",
+        "TEST_b033e8037d_Rig/root/tip"
+      ],
+      "warning": "Staged only. Gameplay camera, contacts, runtime motion ownership and Humanoid retargeting need action-specific review."
+    },
+    "boneLength": 0.9999999,
+    "up": 1,
+    "poseAngleDegrees": 20.0535183,
+    "skinnedVertices": 24,
+    "uniqueVertices": 8,
+    "cleanup": "Temporary staging revision deleted by AssetDatabase in finally"
+  }
+}

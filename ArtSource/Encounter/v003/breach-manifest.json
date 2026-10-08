@@ -1,0 +1,32 @@
+{
+  "action": "CH1_SharkBreach_v003",
+  "unity_clip": "CH1_SharkBreach_v003",
+  "revision": "v003",
+  "frame_start": 1,
+  "frame_end": 193,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "Body",
+  "rig_type": "Generic",
+  "stage": "SECOND PASS",
+  "design_status": "approval_waived",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/traversal-v003-design.md",
+  "approval_reference": "User 2026-10-07 requested board hopping and shark breaches; autonomous production/review waiver persists",
+  "review_status": "accepted_for_stage",
+  "review_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/traversal-v003-review.md",
+  "gameplay": {
+    "startup": [
+      1,
+      43
+    ],
+    "active": [
+      43,
+      127
+    ],
+    "recovery": [
+      127,
+      193
+    ]
+  }
+}

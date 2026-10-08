@@ -4,29 +4,31 @@ using UnityEngine;
 public sealed class Story1WreckEffects : MonoBehaviour
 {
     public int ImpactCount {get; private set;}
-    ParticleSystem water, wood, mist;
-    Material waterMaterial, mistMaterial;
+    ParticleSystem water, wood;
+    Material waterMaterial;
     Mesh splinterMesh;
     OceanWorld ocean;
     public void Initialize(Material hullMaterial, Mesh hullMesh)
     {
         ocean = FindFirstObjectByType<OceanWorld>();
         waterMaterial = NaturalParticleEffects.Material("Contact water spray", new Color(.88f, .92f, .94f));
-        water = NaturalParticleEffects.Emitter(transform, "Contact water droplets", waterMaterial, 192, 1.7f);
+        water = NaturalParticleEffects.Emitter(transform, "Contact water droplets", waterMaterial, 480, 1f);
         var renderer = water.GetComponent<ParticleSystemRenderer>();
         renderer.renderMode = ParticleSystemRenderMode.Stretch;
-        renderer.velocityScale = .014f; renderer.lengthScale = .65f;
+        renderer.velocityScale = .025f; renderer.lengthScale = .8f;
         var shrink = water.sizeOverLifetime; shrink.enabled = true;
         shrink.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.EaseInOut(0, 1, 1, .35f));
-        mistMaterial = NaturalParticleEffects.SmokeMaterial("Low density sea spray", new Color(.86f,.92f,.95f));
-        mist = NaturalParticleEffects.Emitter(transform, "Contact sea mist", mistMaterial, 24, .15f);
-        var expand = mist.sizeOverLifetime; expand.enabled = true;
-        expand.size = new ParticleSystem.MinMaxCurve(1, AnimationCurve.Linear(0,.6f,1,1.6f));
-        wood = NaturalParticleEffects.Emitter(transform, "Small hull splinters", hullMaterial, 32, 1f);
-        var woodMain = wood.main; woodMain.startSize3D = true; woodMain.startRotation3D = true;
+        wood = NaturalParticleEffects.Emitter(transform, "Small hull splinters", hullMaterial, 70, 1f);
         var woodRenderer = wood.GetComponent<ParticleSystemRenderer>();
-        splinterMesh = CreateSplinterMesh(hullMesh);
-        woodRenderer.renderMode = ParticleSystemRenderMode.Mesh; woodRenderer.mesh = splinterMesh;
+        woodRenderer.renderMode = ParticleSystemRenderMode.Mesh;
+        // A whole ship-hull mesh per tiny particle multiplies geometry and reads as miniature ships.
+        splinterMesh=new Mesh {name="Twelve triangle wood splinter"};
+        splinterMesh.vertices=new[]{new Vector3(-.08f,-.5f,-.03f),new Vector3(.08f,-.5f,-.03f),new Vector3(.08f,.5f,-.03f),new Vector3(-.08f,.5f,-.03f),
+            new Vector3(-.08f,-.5f,.03f),new Vector3(.08f,-.5f,.03f),new Vector3(.08f,.5f,.03f),new Vector3(-.08f,.5f,.03f)};
+        splinterMesh.triangles=new[]{0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,3,7,6,3,6,2,0,4,7,0,7,3,1,2,6,1,6,5};
+        splinterMesh.uv=new[]{Vector2.zero,Vector2.right,Vector2.one,Vector2.up,Vector2.zero,Vector2.right,Vector2.one,Vector2.up};
+        splinterMesh.RecalculateNormals();splinterMesh.RecalculateBounds();splinterMesh.UploadMeshData(true);
+        woodRenderer.mesh=splinterMesh;woodRenderer.enableGPUInstancing=true;
     }
     public void Impact(Vector3 at, Vector3 direction, float strength, bool splinters = false)
     {
@@ -54,12 +56,10 @@ public sealed class Story1WreckEffects : MonoBehaviour
     }
     void EmitSplinters(Vector3 at, Vector3 direction)
     {
-        int count = NaturalParticleEffects.BurstBudget(at, 18);
-        for (int i = 0; i < count; i++) wood.Emit(new ParticleSystem.EmitParams {
+        for (int i = 0; i < 24; i++) wood.Emit(new ParticleSystem.EmitParams {
             position = at + Random.insideUnitSphere * 1.5f,
             velocity = Random.insideUnitSphere * 5 + Vector3.up * 4 + direction * Random.Range(3f, 8f),
-            startSize3D = new Vector3(Random.Range(.2f,.45f), Random.Range(.25f,.6f), Random.Range(.15f,.4f)),
-            startLifetime = Random.Range(.55f, 1.4f),
+            startSize = Random.Range(.3f, 1.1f), startLifetime = Random.Range(.55f, 1.4f),
             rotation3D = Random.insideUnitSphere * 180, angularVelocity3D = Random.insideUnitSphere * 160
         }, 1);
     }
@@ -81,18 +81,9 @@ public sealed class Story1WreckEffects : MonoBehaviour
                 startColor = new Color(.9f, .94f, .96f, Random.Range(.35f, .6f))
             }, 1);
         }
-        int mistCount = NaturalParticleEffects.BurstBudget(at, 12);
-        for (int i=0;i<mistCount;i++)
-        {
-            var contact=at+across*Random.Range(-5f,5f);
-            contact.y=ocean!=null?surface.Height(contact)+.35f:at.y+.35f;
-            mist.Emit(new ParticleSystem.EmitParams {
-                position=contact,velocity=direction*Random.Range(3f,7f)+Vector3.up*Random.Range(.8f,2f),
-                startSize=Random.Range(.5f,1.2f),startLifetime=Random.Range(.4f,.8f),
-                rotation=Random.Range(0f,360f),startColor=new Color(.9f,.94f,.96f,.22f)
-            },1);
-        }
+
     }
+    void OnDestroy() {if (waterMaterial != null) Destroy(waterMaterial);if(splinterMesh!=null)Destroy(splinterMesh);}
 
     static Mesh CreateSplinterMesh(Mesh hull)
     {
@@ -112,6 +103,5 @@ public sealed class Story1WreckEffects : MonoBehaviour
         var mesh=new Mesh{name="Tapered wood chip (12 triangles)"};mesh.vertices=vertices;mesh.uv=uv;mesh.triangles=triangles;
         mesh.RecalculateNormals();mesh.RecalculateBounds();return mesh;
     }
-    void OnDestroy() {Release(waterMaterial);Release(mistMaterial);Release(splinterMesh);}
     static void Release(Object value) {if(value==null)return;if(Application.isPlaying)Destroy(value);else DestroyImmediate(value);}
 }

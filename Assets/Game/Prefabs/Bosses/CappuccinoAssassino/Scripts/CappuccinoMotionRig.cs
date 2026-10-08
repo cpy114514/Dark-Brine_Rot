@@ -40,6 +40,7 @@ namespace Mavis
         Vector3 rigRestPosition;
         float floorHeight;
         CappuccinoAI boss;
+        Health health;
 
         public void Initialize()
         {
@@ -62,6 +63,7 @@ namespace Mavis
             sourceHips = motionAnimator.GetBoneTransform(HumanBodyBones.Hips);
             rigRestPosition = rigRoot.localPosition;
             boss = GetComponentInParent<CappuccinoAI>();
+            health = GetComponentInParent<Health>();
             floorHeight = visualFrame.position.y;
         }
 
@@ -87,12 +89,25 @@ namespace Mavis
                 Quaternion sourceRotation = Quaternion.Inverse(sourceFrame.rotation) * sourceBones[i].rotation;
                 Quaternion desired = visualFrame.rotation * sourceRotation *
                     Quaternion.Inverse(mirrored ? mirroredReferences[i] : binding.sourceReferenceRotation) * binding.targetReferenceRotation;
+                bool bodyBone=binding.sourceBone==HumanBodyBones.Hips || binding.sourceBone==HumanBodyBones.Spine ||
+                    binding.sourceBone==HumanBodyBones.Chest || binding.sourceBone==HumanBodyBones.UpperChest;
+                if(bodyBone && boss!=null && health!=null && !health.IsDead &&
+                    (boss.CurrentState==CappuccinoAI.State.Attack || boss.CurrentState==CappuccinoAI.State.Windup))
+                {
+                    // The human sword clip folds its torso far enough to topple
+                    // the cup. Preserve its twist while limiting the heavy body's lean.
+                    var delta=Quaternion.Inverse(visualFrame.rotation)*desired*Quaternion.Inverse(binding.targetReferenceRotation);
+                    var angles=delta.eulerAngles;
+                    angles.x=Mathf.Clamp(Mathf.DeltaAngle(0,angles.x),-26,26);
+                    angles.z=Mathf.Clamp(Mathf.DeltaAngle(0,angles.z),-22,22);
+                    desired=visualFrame.rotation*Quaternion.Euler(angles)*binding.targetReferenceRotation;
+                }
                 // Smooth a change of sword hand without blurring the attack's event clock.
                 Quaternion local = binding.target.parent != null ? Quaternion.Inverse(binding.target.parent.rotation) * desired : desired;
                 float blend = Application.isPlaying ? 1f - Mathf.Exp(-30f * Time.deltaTime) : 1f;
                 binding.target.localRotation = Quaternion.Slerp(binding.target.localRotation,local,blend);
             }
-            if (boss != null && !boss.GetComponent<Health>().IsDead)
+            if (boss != null && health!=null && !health.IsDead)
             {
                 bool rushing = boss.CurrentAttack == CappuccinoAI.AttackKind.DashThrust && boss.CurrentState == CappuccinoAI.State.Attack;
                 bool staggered = boss.CurrentState == CappuccinoAI.State.Staggered;
@@ -116,7 +131,8 @@ namespace Mavis
                 var state = motionAnimator.GetCurrentAnimatorStateInfo(0);
                 bool walking = state.IsName("Walk") || state.IsName("Retreat");
                 // Different source proportions can leave both cup boots floating during a walk cycle.
-                if (lowest < -0.001f || (walking && lowest > 0.025f))
+                bool groundedBoss=boss!=null && health!=null && !health.IsDead;
+                if (lowest < -0.001f || ((walking || groundedBoss) && lowest > 0.025f))
                     rigRoot.position += Vector3.up * ((0.015f - lowest) / Mathf.Max(0.2f, normal.y));
             }
             KeepBladesAboveFloor();
