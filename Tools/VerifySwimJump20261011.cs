@@ -85,9 +85,15 @@ public static class VerifySwimJump20261011
             var capsule=actor.GetComponent<CharacterController>();
             ceiling.transform.position=new Vector3(actor.transform.position.x,capsule.bounds.max.y+.35f,actor.transform.position.z);
             ceiling.AddComponent<BoxCollider>().size=new Vector3(10,.2f,10);Physics.SyncTransforms();
-            Tick(jump);bool stoppedByCeiling=false;
-            for(int i=0;i<18;i++){float previous=player.VerticalSpeed;Tick();if(previous>1 && player.VerticalSpeed<=0)stoppedByCeiling=true;}
-            Require(stoppedByCeiling,"Ceiling collision retained upward momentum");UnityEngine.Object.DestroyImmediate(ceiling);
+            Tick(jump);bool stoppedByCeiling=(capsule.collisionFlags&CollisionFlags.Above)!=0 && player.VerticalSpeed<=0;
+            var ceilingTrace=new System.Collections.Generic.List<object>();
+            for(int i=0;i<30;i++)
+            {
+                float previous=player.VerticalSpeed;Tick();
+                if((capsule.collisionFlags&CollisionFlags.Above)!=0 && player.VerticalSpeed<=0)stoppedByCeiling=true;
+                ceilingTrace.Add(new{i,previous,current=player.VerticalSpeed,flags=capsule.collisionFlags.ToString(),top=capsule.bounds.max.y,ceiling=ceiling.transform.position.y});
+            }
+            Require(stoppedByCeiling,"Ceiling collision retained upward momentum: "+Newtonsoft.Json.JsonConvert.SerializeObject(ceilingTrace));UnityEngine.Object.DestroyImmediate(ceiling);
             var animator=player.CharacterAnimator;
             var hips=animator.GetBoneTransform(HumanBodyBones.Hips);var head=animator.GetBoneTransform(HumanBodyBones.Head);
             var left=animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);var right=animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
@@ -100,7 +106,24 @@ public static class VerifySwimJump20261011
                 Require(dot>.95f,"Swim pose faces away from actual heading: "+dot);
                 facing.Add(new{heading,fast,phase,dot});
             }
-            var result=new{jumpSamples=samples,coyoteVelocity,bufferedJump=buffered,inheritedSpeed,ceilingStopsAscent=stoppedByCeiling,swimFacing=facing};
+            var swimming=new System.Collections.Generic.List<object>();
+            foreach(bool fast in new[]{false,true})foreach(var direction in new[]{Vector3.forward,Vector3.right,Vector3.back,Vector3.left})
+            {
+                player.RestoreSavedPose(new Vector3(2600,-50,2600),Quaternion.identity);
+                animator.SetFloat("SwimAmount",1);animator.SetFloat("SwimFastBlend",fast?1:0);animator.Play("Swimming",0,0);animator.Update(0);
+                animatorField.SetValue(player,5);Vector3 start=actor.transform.position;
+                for(int i=0;i<60;i++)
+                {
+                    swim.Invoke(player,new object[]{Vector3.forward,direction,fast,false});animator.Update(Time.deltaTime);
+                }
+                Vector3 travelled=Vector3.ProjectOnPlane(actor.transform.position-start,Vector3.up);
+                float movementDot=Vector3.Dot(travelled.normalized,direction);
+                float faceDot=Vector3.Dot(Vector3.ProjectOnPlane(head.position-hips.position,Vector3.up).normalized,direction);
+                Require(movementDot>.99f && faceDot>.95f && travelled.magnitude>4,"Swim movement and pose disagree");
+                Require(player.FastSwimming==fast,"Fast swimming did not select requested stroke");
+                swimming.Add(new{fast,direction=direction.ToString(),distance=travelled.magnitude,movementDot,faceDot});
+            }
+            var result=new{jumpSamples=samples,coyoteVelocity,bufferedJump=buffered,inheritedSpeed,ceilingStopsAscent=stoppedByCeiling,swimFacing=facing,swimming};
             Directory.CreateDirectory(".codex/swim-jump-fix-20261011");File.WriteAllText(".codex/swim-jump-fix-20261011/runtime-verification.json",Newtonsoft.Json.JsonConvert.SerializeObject(result,Newtonsoft.Json.Formatting.Indented));
             return result;
         }
