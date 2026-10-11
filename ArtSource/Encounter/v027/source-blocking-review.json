@@ -1,0 +1,24 @@
+{
+  "revision": "v027",
+  "stage": "BLOCKING",
+  "review_status": "accepted_for_stage",
+  "scope": "Source skeleton blocking only; isolated native Humanoid import is the next review stage.",
+  "preview": ".codex/encounter-v027/source-preview/diagnostic-stances.jpg",
+  "reviewed_views": [
+    "front",
+    "side",
+    "three-quarter"
+  ],
+  "findings": [
+    "Narrowed stance and knee compression remain continuous through guard, parry, slash and brace.",
+    "Original rest hierarchy and right-arm local animation retained by source audit.",
+    "Diagnostic bone tubes show no knee inversion in reviewed blocking frames."
+  ],
+  "limitations": [
+    "Diagnostic geometry is not Sahur skin and is not exported.",
+    "Native Sahur retargeting, weapon contact, support error and complete encounter require further review.",
+    "Ordinary walk, run, roll and gameplay attacks are unchanged."
+  ],
+  "accepted_for": "BLOCKING export and isolated native import only",
+  "final_gameplay_approval": false
+}

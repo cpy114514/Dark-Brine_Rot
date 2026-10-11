@@ -1,0 +1,8 @@
+{
+  "stage":"FIRST PASS",
+  "accepted_for_staging":["CH1_SharkTail_v019","CH1_SharkShipSmash_v019"],
+  "reviewer":"Codex animation-review; source-stage review",
+  "evidence":".codex/encounter-v019/previews; front/side/three-quarter frames1/16/28/40/53/68/91",
+  "observed":"At contact the caudal fin is lifted by rear-spine articulation while the body stays approximately horizontal. Tail lift follows the rear spine in sequence and settles after the strike. Original16 bones and correctedv016 caudal weights retained. This addresses the previous native gameplay silhouette of the whole animal standing upright to reach a guard.",
+  "not_observed":"Native control, collision, actual skin contact and final gameplay exposure still require Unity integration and continuous review. Staging acceptance is not final release approval."
+}

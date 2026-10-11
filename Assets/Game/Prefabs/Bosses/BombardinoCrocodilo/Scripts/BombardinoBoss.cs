@@ -7,7 +7,7 @@ namespace Mavis
     [DisallowMultipleComponent,RequireComponent(typeof(Health))]
     public sealed class BombardinoBoss : MonoBehaviour
     {
-        public enum State { Patrol, Telegraph, Attack, Exposed, Returning, Dead }
+        public enum State { Patrol, Telegraph, Attack, Exposed, Returning, Dead, Circling }
         public enum AttackKind { HighBombing, SpeedRun, Missiles, FlameRun }
         public Transform visual;
         public Transform target;
@@ -15,8 +15,11 @@ namespace Mavis
         public LayerMask groundMask=~0;
         public float engageDistance=100f, leashRadius=160f, cruiseAltitude=55f;
         [Min(10f)] public float patrolRadius=32f;
-        public float cruiseSpeed=20f, rushSpeed=72f, lowAltitude=3.6f;
-        public float telegraphSeconds=1.5f, exposedSeconds=3.3f;
+        public float cruiseSpeed=20f, rushSpeed=72f;
+        public float telegraphSeconds=1.5f;
+        [Min(1f)] public float attackInterval=5f;
+        // Retain old serialized fields for existing scenes; landing/cooling is no longer used.
+        [HideInInspector] public float lowAltitude=3.6f, exposedSeconds;
         public float bombDamage=28f, missileDamage=23f, rushDamage=30f, fireDamage=8f;
         public UnityEvent onDefeated=new UnityEvent();
         public State CurrentState { get; private set; }
@@ -24,27 +27,27 @@ namespace Mavis
         public bool FightActive { get; private set; }
         public bool IsDead=>health!=null&&health.IsDead;
         public bool Enraged=>health!=null&&health.Ratio<=.5f;
-        public bool IsExposed=>CurrentState==State.Exposed && exposureSettled;
+        public bool IsExposed=>false;
         public int BombsReleased { get; private set; }
         public int MissilesLaunched { get; private set; }
         public int FlameZonesCreated { get; private set; }
         public int RushHits { get; private set; }
         public string AttackName=>CurrentAttack==AttackKind.HighBombing?"HIGH-ALTITUDE BOMBING":CurrentAttack==AttackKind.SpeedRun?"SUPERSONIC STRAFE":CurrentAttack==AttackKind.Missiles?"MISSILE LOCK":"NAPALM RUN";
-        public string Hint=>IsDead?"BOMBARDINO DOWN":IsExposed?"ENGINE COOLING — ATTACK NOW!":CurrentState==State.Exposed?"DESCENDING — GET READY TO COUNTER!":CurrentState==State.Telegraph?
+        public string Hint=>IsDead?"BOMBARDINO DOWN":CurrentState==State.Circling?"CIRCLING — WATCH FOR THE NEXT ATTACK!":CurrentState==State.Telegraph?
             CurrentAttack==AttackKind.HighBombing?"BOMBING INCOMING — MOVE OUT OF THE TARGET AREA!":CurrentAttack==AttackKind.SpeedRun?"LOW PASS — DODGE SIDEWAYS!":CurrentAttack==AttackKind.Missiles?"MISSILE LOCK — KEEP MOVING!":"NAPALM INCOMING — LEAVE THE MARKED STRIP!":AttackName;
         Health health;
         PlayerHealth targetHealth;
-        Vector3 home, committed, heading, runStart, previousTarget, targetVelocity;
+        Vector3 home, committed, heading, previousTarget, targetVelocity;
         Quaternion visualRest;
         float clock, age, acquireAt, shotAt, deathGround;
         float turnBank;
+        float orbitAngle, attackAt, nextAttackAt;
         int attackCounter, shots;
         bool initialized,crashed;
-        Vector3 exposureLanding;
-        bool exposureSettled;
         readonly List<BombardinoOrdnance> ordnance=new List<BombardinoOrdnance>();
         readonly List<GameObject> effects=new List<GameObject>();
         readonly List<LineRenderer> markers=new List<LineRenderer>();
+        Material warningMaterial;
         readonly HashSet<PlayerHealth> rushVictims=new HashSet<PlayerHealth>();
         readonly RaycastHit[] casts=new RaycastHit[96];
         Renderer[] bodyRenderers;
@@ -63,12 +66,13 @@ namespace Mavis
                 new Vector3(launchBounds.center.x+launchBounds.extents.x*.52f*side,launchBounds.min.y-.3f,launchBounds.center.z+launchBounds.extents.z*.15f);
             return transform.TransformPoint(local);
         }
-        public Vector3 FlameContact => Ground(WeaponOrigin(true)+transform.forward*3);
+        public Vector3 FlameContact => Ground(transform.position);
 
         void Awake()=>Initialize();
         public void Initialize()
         {
             if(initialized)return;initialized=true;health=GetComponent<Health>();
+            if(GetComponent<BossWeaknessSetup>()==null)gameObject.AddComponent<BossWeaknessSetup>();
             BossCombatVfx.PrewarmImpacts();
             health.OnDamaged??=new UnityEvent<float>();health.OnDeath??=new UnityEvent();health.OnDamaged.AddListener(OnHit);health.OnDeath.AddListener(OnDeath);
             Physics.SyncTransforms();home=Ground(transform.position);visualRest=visual!=null?visual.localRotation:Quaternion.identity;
@@ -82,13 +86,16 @@ namespace Mavis
             protectPlayersAt=clock+2f;
             if(effectMaterial==null)effectMaterial=Resources.Load<Material>("StoryBattle/Sea");
             if(GameAudioPolicy.SoundEnabled){audioSource=gameObject.AddComponent<AudioSource>();audioSource.playOnAwake=false;audioSource.spatialBlend=.75f;audioSource.minDistance=8;audioSource.maxDistance=100;}
-            transform.position=new Vector3(transform.position.x,Mathf.Max(transform.position.y,home.y+cruiseAltitude),transform.position.z);
+            transform.position=ClearGround(OrbitPoint(orbitAngle)+Vector3.up*cruiseAltitude);
+            transform.rotation=Quaternion.LookRotation(OrbitTangent(orbitAngle));
             // Allocate warning renderers at encounter loading, not on a weapon hit.
+            warningMaterial=new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+            warningMaterial.SetColor("_BaseColor",new Color(1,.24f,.05f));
             for(int i=0;i<6;i++)
             {
                 var go=new GameObject("Bombardino attack warning");go.transform.SetParent(transform,false);
-                var line=go.AddComponent<LineRenderer>();line.sharedMaterial=effectMaterial;line.positionCount=MarkerSegments+1;
-                line.startWidth=line.endWidth=.065f;line.startColor=line.endColor=new Color(.58f,.49f,.36f,.32f);
+                var line=go.AddComponent<LineRenderer>();line.sharedMaterial=warningMaterial;line.positionCount=MarkerSegments+1;
+                line.startWidth=line.endWidth=.13f;line.startColor=line.endColor=Color.white;
                 line.useWorldSpace=true;line.enabled=false;line.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
                 line.receiveShadows=false;markers.Add(line);
             }
@@ -117,6 +124,12 @@ namespace Mavis
             if(FightActive&&(targetHealth==null||targetHealth.currentHealth<=0||Vector3.Distance(Ground(target.position),home)>leashRadius))
             {FightActive=false;SetState(State.Returning);ClearHazards();}
             if(target!=null){targetVelocity=Vector3.ClampMagnitude((target.position-previousTarget)/Mathf.Max(.001f,dt),12);previousTarget=target.position;}
+            // Schedule warning + attack against the previous attack's start, so travel,
+            // burst length and the enraged phase never add an extra cooling delay.
+            if(FightActive&&CurrentState!=State.Telegraph&&clock>=nextAttackAt-Windup)
+            {
+                attackCounter++;StartAttack((AttackKind)(attackCounter%4));
+            }
             // Ground clearance must use this frame's banking pose, including scaled wings.
             if(visual!=null)
             {
@@ -126,24 +139,23 @@ namespace Mavis
             switch(CurrentState)
             {
                 case State.Patrol:
-                    Fly(home+new Vector3(Mathf.Sin(clock*.28f)*patrolRadius,cruiseAltitude,Mathf.Cos(clock*.28f)*patrolRadius),cruiseSpeed*.65f,dt);break;
-                case State.Returning:
-                    Fly(home+Vector3.up*cruiseAltitude,cruiseSpeed,dt);
-                    if(Vector3.Distance(transform.position,home+Vector3.up*cruiseAltitude)<2){health.currentHealth=health.maxHealth;attackCounter=0;SetState(State.Patrol);}break;
-                case State.Telegraph:
-                    float windup=telegraphSeconds*(Enraged?.8f:1);
-                    Fly(runStart,cruiseSpeed*1.8f,dt);UpdateMarkers();
-                    if(age>=windup&&Vector3.Distance(transform.position,runStart)<2){SetState(State.Attack);shotAt=0;shots=0;}break;
-                case State.Attack:UpdateMarkers();RunAttack(dt);break;
+                case State.Circling:
                 case State.Exposed:
-                    var landing=Fly(exposureLanding,cruiseSpeed*1.5f,dt);
-                    // Commit the landing once. Running away must not reset the opening.
-                    if(!exposureSettled)
+                    FlyOrbit(cruiseAltitude,cruiseSpeed,dt);break;
+                case State.Returning:
+                    FlyOrbit(cruiseAltitude,cruiseSpeed,dt);
+                    if(age>=1f){health.currentHealth=health.maxHealth;attackCounter=0;nextAttackAt=0;SetState(State.Patrol);}break;
+                case State.Telegraph:
+                    var from=transform.position;
+                    FlyOrbit(AttackAltitude,cruiseSpeed,dt);UpdateMarkers();
+                    if(clock>=attackAt)
                     {
-                        age=0;
-                        if(Vector3.Distance(transform.position,landing)<=2)exposureSettled=true;
+                        SetState(State.Attack);shotAt=0;shots=0;
+                        nextAttackAt=attackAt+Mathf.Max(1f,attackInterval);
+                        RunAttack(dt,from);
                     }
-                    else if(age>=exposedSeconds*(Enraged?.85f:1)){attackCounter++;StartAttack((AttackKind)(attackCounter%4));}break;
+                    break;
+                case State.Attack:UpdateMarkers();RunAttack(dt);break;
             }
         }
         void Acquire()
@@ -160,39 +172,39 @@ namespace Mavis
         void StartAttack(AttackKind kind)
         {
             if(target==null||IsDead)return;CurrentAttack=kind;committed=Ground(target.position+targetVelocity*.3f);
-            heading=Vector3.ProjectOnPlane(committed-transform.position,Vector3.up).normalized;if(heading.sqrMagnitude<.1f)heading=transform.forward;
-            runStart=kind==AttackKind.HighBombing?committed-heading*30+Vector3.up*(cruiseAltitude+8):kind==AttackKind.Missiles?committed-heading*42+Vector3.up*(cruiseAltitude*.6f):Ground(committed-heading*44)+Vector3.up*(kind==AttackKind.SpeedRun?5:12);
+            heading=OrbitTangent(orbitAngle);
+            attackAt=FightActive&&nextAttackAt>clock?nextAttackAt:clock+Windup;
             rushVictims.Clear();SetState(State.Telegraph);BuildMarkers(kind);
         }
+        float Windup=>Mathf.Min(Mathf.Max(.1f,telegraphSeconds),Mathf.Max(1f,attackInterval)*.5f);
+        float AttackAltitude=>CurrentAttack==AttackKind.HighBombing?cruiseAltitude+8:
+            CurrentAttack==AttackKind.Missiles?cruiseAltitude*.6f:CurrentAttack==AttackKind.SpeedRun?5:12;
+        float AttackSpeed=>CurrentAttack==AttackKind.SpeedRun?rushSpeed*(Enraged?1.2f:1):cruiseSpeed;
+        float AttackDuration=>CurrentAttack==AttackKind.SpeedRun?1.6f:CurrentAttack==AttackKind.FlameRun?2.4f:
+            CurrentAttack==AttackKind.Missiles?1.8f:1.5f;
         void SetState(State state)
         {
-            CurrentState=state;age=0;exposureSettled=false;
-            if(state==State.Exposed)
-            {
-                ClearMarkers();
-                var point=(target!=null?target.position:home)-heading*7;
-                exposureLanding=Ground(point)+Vector3.up*lowAltitude;
-            }
+            CurrentState=state==State.Exposed?State.Circling:state;age=0;
+            if(CurrentState==State.Circling)ClearMarkers();
         }
-        void RunAttack(float dt)
+        void RunAttack(float dt)=>RunAttack(dt,FlyAttack(dt));
+        Vector3 FlyAttack(float dt)
+        {
+            var from=transform.position;FlyOrbit(AttackAltitude,AttackSpeed,dt);return from;
+        }
+        void RunAttack(float dt,Vector3 from)
         {
             float power=Enraged?1.15f:1;
             if(CurrentAttack==AttackKind.HighBombing)
             {
-                Fly(committed+heading*22+Vector3.up*(cruiseAltitude+8),cruiseSpeed*.75f,dt);
                 if(age>=shotAt&&shots<6){var ground=Ground(committed+heading*((shots-2.5f)*3));Spawn(BombardinoOrdnance.Kind.Bomb,WeaponOrigin(false,shots%2==0?-1:1),Vector3.down,ground,bombDamage*power,4.3f);BombsReleased++;shots++;shotAt+=.22f;}
-                if(age>3.6f)SetState(State.Exposed);
             }
             else if(CurrentAttack==AttackKind.Missiles)
             {
-                Fly(runStart+Vector3.right*Mathf.Sin(age)*3,cruiseSpeed*.4f,dt);
                 if(age>=shotAt&&shots<3){var body=target!=null?target.GetComponent<Collider>():null;Vector3 aim=body!=null?body.bounds.center:committed;Vector3 mount=WeaponOrigin(false,shots%2==0?-1:1);Spawn(BombardinoOrdnance.Kind.Missile,mount,(aim-mount).normalized,aim,missileDamage*power,3.5f);MissilesLaunched++;shots++;shotAt+=.6f;}
-                if(age>3.8f)SetState(State.Exposed);
             }
             else
             {
-                Vector3 from=transform.position;float speed=CurrentAttack==AttackKind.SpeedRun?rushSpeed*(Enraged?1.2f:1):cruiseSpeed*1.6f;
-                Vector3 destination=committed+heading*48;destination=Ground(destination)+Vector3.up*(CurrentAttack==AttackKind.SpeedRun?5:12);Fly(destination,speed,dt);
                 if(CurrentAttack==AttackKind.SpeedRun)
                 {
                     // Keep the low-pass attack volume on its ground strip even when
@@ -208,8 +220,8 @@ namespace Mavis
                     Vector3 point=FlameContact;float flight=Vector3.Distance(point,WeaponOrigin(true))/30f;
                     fireImpacts.Add((point,clock+flight,fireDamage*power));shots++;shotAt=age+.23f;
                 }
-                if(age>(CurrentAttack==AttackKind.SpeedRun?1.6f:2.4f))SetState(State.Exposed);
             }
+            if(age>=AttackDuration)SetState(State.Circling);
         }
         void Spawn(BombardinoOrdnance.Kind kind,Vector3 point,Vector3 direction,Vector3 aim,float damage,float radius)
         {
@@ -217,16 +229,16 @@ namespace Mavis
             var payload=go.AddComponent<BombardinoOrdnance>();payload.Launch(this,kind,direction,target,aim,damage,radius);
         }
         public void RegisterOrdnance(BombardinoOrdnance payload){ordnance.RemoveAll(p=>p==null);if(payload!=null&&!ordnance.Contains(payload))ordnance.Add(payload);}
-        Vector3 Fly(Vector3 point,float speed,float dt)
+        Vector3 OrbitTangent(float angle)=>new Vector3(Mathf.Cos(angle),0,-Mathf.Sin(angle));
+        Vector3 OrbitPoint(float angle,float radiusOffset=0)=>Ground(home+new Vector3(Mathf.Sin(angle),0,Mathf.Cos(angle))*(Mathf.Max(10f,patrolRadius)+radiusOffset));
+        void FlyOrbit(float altitude,float speed,float dt)
         {
-            point=ClearGround(point);
-            Vector3 travel=point-transform.position;Vector3 flat=Vector3.ProjectOnPlane(travel,Vector3.up);
-            float wantedBank=flat.sqrMagnitude>.2f?-Mathf.Clamp(Vector3.SignedAngle(transform.forward,flat,Vector3.up)*.4f,-24,24):0;
-            turnBank=Mathf.Lerp(turnBank,wantedBank,1-Mathf.Exp(-4*dt));
-            if(flat.sqrMagnitude>.2f)transform.rotation=Quaternion.RotateTowards(transform.rotation,Quaternion.LookRotation(flat),180*dt);
-            transform.position=Vector3.MoveTowards(transform.position,point,speed*dt);
-            transform.position=ClearGround(transform.position);
-            return point;
+            orbitAngle=Mathf.Repeat(orbitAngle+Mathf.Max(1f,speed)/Mathf.Max(10f,patrolRadius)*dt,Mathf.PI*2);
+            var point=OrbitPoint(orbitAngle)+Vector3.up*altitude;
+            point.y=Mathf.MoveTowards(transform.position.y,point.y,cruiseSpeed*dt);
+            turnBank=Mathf.Lerp(turnBank,-Mathf.Clamp(speed*.8f,12,28),1-Mathf.Exp(-4*dt));
+            transform.rotation=Quaternion.RotateTowards(transform.rotation,Quaternion.LookRotation(OrbitTangent(orbitAngle)),180*dt);
+            transform.position=ClearGround(point);
         }
         public void ConfigureBodyCollision(bool rebuild=true)
         {
@@ -344,7 +356,19 @@ namespace Mavis
         }
         void BuildMarkers(AttackKind kind)
         {
-            ClearMarkers();int count=kind==AttackKind.HighBombing?6:kind==AttackKind.FlameRun?5:1;
+            ClearMarkers();int count=kind==AttackKind.HighBombing?6:1;
+            if(kind==AttackKind.SpeedRun || kind==AttackKind.FlameRun)
+            {
+                // Telegraph the curved ground track that the circling aircraft will cross.
+                float start=orbitAngle+cruiseSpeed/Mathf.Max(10f,patrolRadius)*Mathf.Max(0,attackAt-clock);
+                float sweep=AttackSpeed/Mathf.Max(10f,patrolRadius)*AttackDuration;
+                float width=kind==AttackKind.SpeedRun?2.6f:2.8f;
+                const int segments=15;
+                for(int i=0;i<=segments;i++)markerPoints[i]=OrbitPoint(start+sweep*i/segments,width)+Vector3.up*.15f;
+                for(int i=0;i<=segments;i++)markerPoints[segments+1+i]=OrbitPoint(start+sweep*(segments-i)/segments,-width)+Vector3.up*.15f;
+                markerPoints[MarkerSegments]=markerPoints[0];
+                markers[0].SetPositions(markerPoints);markers[0].enabled=true;return;
+            }
             for(int n=0;n<count;n++)
             {
                 var line=markers[n];
@@ -355,7 +379,7 @@ namespace Mavis
             }
         }
         void UpdateMarkers(){ }
-        void ClearMarkers(){foreach(var line in markers)if(line!=null)line.enabled=false;}
+        void ClearMarkers(){foreach(var line in markers)if(line!=null)line.enabled=false;GetComponent<BossAttackWarning>()?.Clear();}
         public void Explosion(Vector3 p,float radius)
         {
             var go=new GameObject("Bombardino impact smoke");UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go,gameObject.scene);go.transform.position=p;
@@ -365,7 +389,7 @@ namespace Mavis
         void OnDeath(){if(CurrentState==State.Dead)return;FightActive=false;SetState(State.Dead);deathGround=Ground(transform.position).y;ClearHazards();foreach(var c in GetComponentsInChildren<Collider>())c.enabled=false;onDefeated.Invoke();}
         void ClearHazards(){fireImpacts.Clear();ClearMarkers();foreach(var p in ordnance)if(p!=null)Release(p.gameObject);ordnance.Clear();foreach(var e in effects)if(e!=null)Release(e);effects.Clear();}
         void OnDisable(){ClearHazards();if(audioSource!=null)audioSource.Stop();}
-        void OnDestroy(){ClearHazards();foreach(var pair in ignoredPlayerPairs)if(pair.body!=null&&pair.player!=null)Physics.IgnoreCollision(pair.body,pair.player,false);if(health!=null){health.OnDamaged?.RemoveListener(OnHit);health.OnDeath?.RemoveListener(OnDeath);}}
+        void OnDestroy(){ClearHazards();if(warningMaterial!=null)Release(warningMaterial);foreach(var pair in ignoredPlayerPairs)if(pair.body!=null&&pair.player!=null)Physics.IgnoreCollision(pair.body,pair.player,false);if(health!=null){health.OnDamaged?.RemoveListener(OnHit);health.OnDeath?.RemoveListener(OnDeath);}}
         static void Release(Object o){if(Application.isPlaying)Destroy(o);else DestroyImmediate(o);}
     }
 }

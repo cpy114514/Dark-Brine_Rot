@@ -27,7 +27,8 @@ public sealed class Story1WreckEffects : MonoBehaviour
             new Vector3(-.08f,-.5f,.03f),new Vector3(.08f,-.5f,.03f),new Vector3(.08f,.5f,.03f),new Vector3(-.08f,.5f,.03f)};
         splinterMesh.triangles=new[]{0,2,1,0,3,2,4,5,6,4,6,7,0,1,5,0,5,4,3,7,6,3,6,2,0,4,7,0,7,3,1,2,6,1,6,5};
         splinterMesh.uv=new[]{Vector2.zero,Vector2.right,Vector2.one,Vector2.up,Vector2.zero,Vector2.right,Vector2.one,Vector2.up};
-        splinterMesh.RecalculateNormals();splinterMesh.RecalculateBounds();splinterMesh.UploadMeshData(true);
+        // ParticleSystem needs the CPU mesh data when creating its particle geometry.
+        splinterMesh.RecalculateNormals();splinterMesh.RecalculateBounds();splinterMesh.UploadMeshData(false);
         woodRenderer.mesh=splinterMesh;woodRenderer.enableGPUInstancing=true;
     }
     public void Impact(Vector3 at, Vector3 direction, float strength, bool splinters = false)

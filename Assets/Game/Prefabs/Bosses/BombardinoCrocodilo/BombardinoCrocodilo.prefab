@@ -416,6 +416,7 @@ GameObject:
   - component: {fileID: 4817790527637405076}
   - component: {fileID: 2210442357627000765}
   - component: {fileID: 4718948326702578214}
+  - component: {fileID: 7469762341815369260}
   m_Layer: 0
   m_Name: BombardinoCrocodilo
   m_TagString: Enemy
@@ -536,7 +537,8 @@ MonoBehaviour:
   rushSpeed: 72
   lowAltitude: 3.6
   telegraphSeconds: 1.5
-  exposedSeconds: 3.3
+  attackInterval: 5
+  exposedSeconds: 0
   bombDamage: 28
   missileDamage: 23
   rushDamage: 30
@@ -556,6 +558,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 688c3b80472d0df4aa69caa503ae20f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.BombardinoBossHUD
+--- !u!114 &7469762341815369260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8740227178540518113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c4b5d0a719ebef46b64ccfbc18fc7c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.BossWeaknessSetup
 --- !u!1 &8801204955172122502
 GameObject:
   m_ObjectHideFlags: 0

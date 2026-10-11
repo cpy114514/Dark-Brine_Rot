@@ -1,0 +1,60 @@
+{
+  "original_rest_rig_retained": true,
+  "original_actions_retained": true,
+  "source_action": "CH1_SahurSlash_v032",
+  "time_map_seconds": [
+    [
+      0,
+      0
+    ],
+    [
+      0.06,
+      0.12
+    ],
+    [
+      0.14,
+      0.27
+    ],
+    [
+      0.22,
+      0.35
+    ],
+    [
+      0.32,
+      0.44
+    ],
+    [
+      0.42,
+      0.52
+    ],
+    [
+      0.54,
+      0.575
+    ],
+    [
+      0.63,
+      0.6
+    ],
+    [
+      0.75,
+      0.625
+    ],
+    [
+      0.92,
+      0.7
+    ],
+    [
+      1.15,
+      1
+    ],
+    [
+      1.4,
+      1.4
+    ]
+  ],
+  "source_contact_seconds": 0.6,
+  "native_contact_seconds": 0.63,
+  "seconds": 1.4,
+  "fps": 60,
+  "native_review_required": true
+}

@@ -1118,6 +1118,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a0579fa34ed4147439a32b3201494819, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5868874853257744513}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a0579fa34ed4147439a32b3201494819, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2357366160247427764}
   m_SourcePrefab: {fileID: 100100000, guid: a0579fa34ed4147439a32b3201494819, type: 3}
 --- !u!4 &1958093111465054081 stripped
 Transform:
@@ -1238,7 +1241,11 @@ MonoBehaviour:
   slamDamageMultiplier: 1.65
   slamRecovery: 1.1
   slamCooldown: 7
-  flurryWindup: 0.45
+  sonarPulseCount: 3
+  sonarPulseInterval: 1
+  sonarTravelSeconds: 2.4
+  sonarRingWidth: 0.4
+  flurryWindup: 0.7
   flurryInterval: 0.28
   flurryCount: 4
   flurryDamageMultiplier: 0.55
@@ -1264,7 +1271,7 @@ MonoBehaviour:
   turnSpeed: 600
   attackRange: 3.05
   attackReach: 3.35
-  attackWindup: 0.34
+  attackWindup: 0.65
   attackRecovery: 0.5
   attackCooldown: 1.2
   cryingRadius: 5.6
@@ -1359,6 +1366,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a6b9d966669fd14b9b9eafbba7ebf60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongCombatEffects
+--- !u!114 &2357366160247427764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3960477964465410676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c4b5d0a719ebef46b64ccfbc18fc7c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.BossWeaknessSetup
 --- !u!4 &4069364082922344787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 166159824728751734, guid: a0579fa34ed4147439a32b3201494819, type: 3}

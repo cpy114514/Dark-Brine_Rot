@@ -1,0 +1,11 @@
+{
+  "observations": [
+    "Actual side and three-quarter contact pose reviewed: head rises independently while the original Body remains nearly horizontal and the tail retains delayed propulsion. Jaw closes at original .52s contact.",
+    "Original16 bones/rest transforms/skin and original1.3s timing are retained.",
+    "Native collision, bulk immersion and full paired contact acceptance remain pending. This is a staging review only."
+  ],
+  "stage": "FIRST PASS",
+  "accepted_for_staging": [
+    "CH1_SharkBite_v023"
+  ]
+}

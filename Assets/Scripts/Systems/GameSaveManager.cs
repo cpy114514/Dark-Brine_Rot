@@ -35,12 +35,25 @@ namespace Mavis
             public bool hasHealingPacks;
             public int healingPacksRemaining;
             public string healingCampaign;
+            public bool ownsWeaknessGlasses, weaknessGlassesEquipped;
+            public float weaknessActiveRemaining, weaknessCooldownRemaining;
+            public bool hasWeaponState, ownsTwinBlades;
+            public int selectedWeapon;
         }
 
         static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
 
         public static bool HasSave => TryReadSave(out _);
         public static bool IsContinuePending => instance != null && instance.restorePending;
+        public static bool HasSavableGame => CanSavePlayer(FindFirstObjectByType<ThirdPersonPlayerController>());
+
+        static bool CanSavePlayer(ThirdPersonPlayerController player)
+        {
+            if (player == null || player.gameObject.scene.name != GameplaySceneName ||
+                player.GetComponent<GameSaveExcluded>() != null) return false;
+            var arrival = player.GetComponent<FirstIslandArrival>();
+            return arrival == null || arrival.IsAwake;
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics()
@@ -119,14 +132,8 @@ namespace Mavis
         public static bool SaveCurrentGame()
         {
             ThirdPersonPlayerController player = FindFirstObjectByType<ThirdPersonPlayerController>();
-            if (player == null)
-                return false;
-
-            if (player.GetComponent<GameSaveExcluded>() != null)
-                return false;
-
+            if (!CanSavePlayer(player)) return false;
             var arrival = player.GetComponent<FirstIslandArrival>();
-            if (arrival != null && !arrival.IsAwake) return false;
 
             try
             {
@@ -148,6 +155,12 @@ namespace Mavis
                 }
 
                 PlayerHealth health = player.GetComponent<PlayerHealth>();
+                var glasses=player.GetComponent<WeaknessGlasses>();
+                if(glasses!=null)
+                {
+                    data.ownsWeaknessGlasses=glasses.Owned;data.weaknessGlassesEquipped=glasses.Equipped;
+                    data.weaknessActiveRemaining=glasses.ActiveRemaining;data.weaknessCooldownRemaining=glasses.CooldownRemaining;
+                }
                 if (health != null)
                 {
                     data.hasHealth = true;
@@ -161,10 +174,24 @@ namespace Mavis
                     data.stamina = stamina.currentStamina;
                 }
 
+                var weapons = player.GetComponent<SahurWeaponLoadout>();
+                if (weapons != null)
+                {
+                    weapons.Initialize();
+                    data.hasWeaponState = true;
+                    data.ownsTwinBlades = weapons.HasTwinBlades;
+                    data.selectedWeapon = (int)weapons.CurrentWeapon;
+                }
+
                 string directory = Path.GetDirectoryName(SavePath);
                 if (!string.IsNullOrEmpty(directory))
                     Directory.CreateDirectory(directory);
-                File.WriteAllText(SavePath, JsonUtility.ToJson(data, true));
+                // Commit only a completely written file, preserving the previous save
+                // if writing is interrupted or the replacement cannot be completed.
+                string temporary = SavePath + ".tmp";
+                File.WriteAllText(temporary, JsonUtility.ToJson(data, true));
+                if (File.Exists(SavePath)) File.Replace(temporary, SavePath, null);
+                else File.Move(temporary, SavePath);
                 PlayerPrefs.Save();
                 Debug.Log("[Save] Game progress saved.");
                 return true;
@@ -214,6 +241,7 @@ namespace Mavis
             {
                 SaveData data = pendingSave;
                 player.RestoreSavedPose(data.playerPosition, data.playerRotation);
+                player.GetComponent<WeaknessGlasses>()?.Restore(data.ownsWeaknessGlasses,data.weaknessGlassesEquipped,data.weaknessActiveRemaining,data.weaknessCooldownRemaining);
                 var arrival = player.GetComponent<FirstIslandArrival>();
                 if (arrival != null)
                     arrival.RestoreProgress(!data.hasArrivalState || data.hasLanded, !data.hasArrivalState || data.hasStick);
@@ -225,6 +253,9 @@ namespace Mavis
                 PlayerStamina stamina = player.GetComponent<PlayerStamina>();
                 if (data.hasStamina && stamina != null)
                     stamina.currentStamina = Mathf.Clamp(data.stamina, 0f, stamina.maxStamina);
+
+                if (data.hasWeaponState)
+                    player.GetComponent<SahurWeaponLoadout>()?.Restore(data.ownsTwinBlades, (SahurWeaponLoadout.Weapon)data.selectedWeapon);
 
                 Debug.Log("[Save] Saved game progress restored.");
             }
@@ -253,7 +284,9 @@ namespace Mavis
                     !IsFinite(data.playerRotation.x) || !IsFinite(data.playerRotation.y) ||
                     !IsFinite(data.playerRotation.z) || !IsFinite(data.playerRotation.w) ||
                     (data.hasHealth && !IsFinite(data.health)) ||
-                    (data.hasStamina && !IsFinite(data.stamina)))
+                    (data.hasStamina && !IsFinite(data.stamina)) ||
+                    !IsFinite(data.weaknessActiveRemaining) || !IsFinite(data.weaknessCooldownRemaining) ||
+                    (data.hasWeaponState && (data.selectedWeapon < 0 || data.selectedWeapon > 1)))
                 {
                     data = null;
                     return false;

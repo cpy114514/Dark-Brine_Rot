@@ -6,7 +6,7 @@ using UnityEngine.InputSystem.UI;
 
 namespace Mavis
 {
-    /// <summary>Collected equipment display and placeholder skill slots. No stats or skill execution.</summary>
+    /// <summary>Mouse-driven equipment browser and loadout management.</summary>
     [DisallowMultipleComponent, DefaultExecutionOrder(-120)]
     public sealed class SahurLoadoutUI : MonoBehaviour
     {
@@ -29,8 +29,15 @@ namespace Mavis
         readonly Text[] equipmentLabels = new Text[5];
         EquipmentInventory inventory;
         SahurWeaponLoadout weapons;
-        Text weaponHint, stickButtonText, bladesButtonText;
-        GameObject weaponChoices;
+        Text weaponHint;
+        RectTransform itemContent;
+        GameObject itemBrowser, skillChoices;
+        Text categoryTitle, itemTitle, actionText, unequipText, selectionStatus;
+        Button equipButton, unequipButton;
+        readonly Image[] categoryFrames=new Image[5];
+        readonly System.Collections.Generic.List<GameObject> itemRows=new System.Collections.Generic.List<GameObject>();
+        int selectedWeapon=-1;
+        EquipmentItem selectedItem;
         Text pickupNotice;
         float noticeUntil;
         int editingEquipment = -1;
@@ -42,7 +49,6 @@ namespace Mavis
         float hintRemaining = 8f;
         Text details;
         Font font;
-        bool ownsFont;
         readonly System.Collections.Generic.List<EquipmentItem> recentPickups = new System.Collections.Generic.List<EquipmentItem>();
         float previousTimeScale;
         CursorLockMode previousCursor;
@@ -54,9 +60,7 @@ namespace Mavis
         {
             if (active != null && active != this) { enabled = false; return; }
             active = this;
-            foreach (string name in Font.GetOSInstalledFontNames())
-                if (name == "Microsoft YaHei") { font = Font.CreateDynamicFontFromOSFont(name, 24); ownsFont = true; break; }
-            if (font == null) font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            font = GameLocalization.Font ? GameLocalization.Font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             Build();
             movement = GetComponent<ThirdPersonPlayerController>();
             health = GetComponent<PlayerHealth>();
@@ -82,6 +86,12 @@ namespace Mavis
             else if (IsOpen && keys.escapeKey.wasPressedThisFrame) { SetOpen(false); consumedFrame = Time.frameCount; }
             if (IsOpen)
             {
+                if (editingEquipment == (int)EquipmentSlot.Weapon)
+                {
+                    if (keys.digit1Key.wasPressedThisFrame || keys.numpad1Key.wasPressedThisFrame) weapons?.TryEquip(SahurWeaponLoadout.Weapon.Stick, true);
+                    if (keys.digit2Key.wasPressedThisFrame || keys.numpad2Key.wasPressedThisFrame) weapons?.TryEquip(SahurWeaponLoadout.Weapon.CapriTwinBlades, true);
+                    return;
+                }
                 if (keys.digit1Key.wasPressedThisFrame || keys.numpad1Key.wasPressedThisFrame) SelectSkill(0);
                 if (keys.digit2Key.wasPressedThisFrame || keys.numpad2Key.wasPressedThisFrame) SelectSkill(1);
                 if (keys.digit3Key.wasPressedThisFrame || keys.numpad3Key.wasPressedThisFrame) SelectSkill(2);
@@ -104,7 +114,7 @@ namespace Mavis
             if (weaponHint != null)
             {
                 weaponHint.gameObject.SetActive(gameplay);
-                weaponHint.text = weapons != null ? weapons.WeaponName + "\n[1] STICK   /   [2] " + (weapons.HasTwinBlades ? "TWIN BLADES" : "TWIN BLADES LOCKED") : "";
+                weaponHint.text = weapons != null ? weapons.WeaponName + "\n[1] STICK   /   [2] " + (weapons.HasTwinBlades ? "TWIN BLADES" : "TWIN BLADES LOCKED") + "   /   [I] GEAR" : "";
             }
         }
 
@@ -121,7 +131,14 @@ namespace Mavis
             if (index < 0 || index >= 4 || details == null) return;
             EditingSkill = index;
             editingEquipment = -1;
-            if (weaponChoices) weaponChoices.SetActive(false);
+            if(itemBrowser)itemBrowser.SetActive(false);
+            if(skillChoices)skillChoices.SetActive(true);
+            if(categoryTitle)categoryTitle.text="技能槽位";
+            if(itemTitle)itemTitle.text="技能 " + (index+1);
+            if(actionText){actionText.text="暂无可配置技能";equipButton.interactable=false;}
+            if(unequipButton)unequipButton.gameObject.SetActive(false);
+            if(selectionStatus)selectionStatus.text="选择槽位查看说明";
+            for(int i=0;i<5;i++)if(categoryFrames[i])SetSelected(categoryFrames[i].GetComponent<Button>(),false);
             for (int i = 0; i < 4; i++) skillFrames[i].color = i == index ? accent : GameUITheme.Muted;
             details.text = GameLocalization.Format("skill.details", index + 1);
         }
@@ -131,23 +148,89 @@ namespace Mavis
             int index = (int)slot;
             if (index < 0 || index >= 5 || details == null) return;
             editingEquipment = index;
-            if (weaponChoices) weaponChoices.SetActive(slot == EquipmentSlot.Weapon);
-            if (slot == EquipmentSlot.Weapon && weapons != null)
+            itemContent.anchoredPosition=Vector2.zero;
+            if(itemBrowser)itemBrowser.SetActive(true);if(skillChoices)skillChoices.SetActive(false);
+            if(categoryTitle)categoryTitle.text=equipmentNames[index]+"装备";
+            for(int i=0;i<5;i++)SetSelected(categoryFrames[i].GetComponent<Button>(),i==index);
+            foreach(var row in itemRows){row.SetActive(false);Destroy(row);}itemRows.Clear();
+            int count=0;
+            if(slot==EquipmentSlot.Weapon)
             {
-                details.text = "WEAPON LOADOUT\n\nEquipped: " + weapons.WeaponName +
-                    "\n\n[1] Sahur Stick — always available\n[2] Capri Twin Blades — " + (weapons.HasTwinBlades ? "collected" : "defeat Capri to unlock") +
-                    "\n\nLeft click: combo  /  Right hold: heavy attack";
-                stickButtonText.text = weapons.UsesTwinBlades ? "EQUIP STICK  [1]" : "STICK  /  EQUIPPED";
-                bladesButtonText.text = !weapons.HasTwinBlades ? "TWIN BLADES  /  LOCKED" : weapons.UsesTwinBlades ? "TWIN BLADES  /  EQUIPPED" : "EQUIP TWIN BLADES  [2]";
-                return;
+                AddItemRow("萨胡尔木棍",weapons!=null&&!weapons.UsesTwinBlades?"已装备":"可装备",count++,()=>InspectWeapon(0));
+                AddItemRow("卡布奇诺双刀",weapons!=null&&weapons.HasTwinBlades?(weapons.UsesTwinBlades?"已装备":"可装备"):"未解锁 · 击败卡布奇诺",count++,()=>InspectWeapon(1));
+                InspectWeapon(selectedWeapon>=0?selectedWeapon:weapons!=null&&weapons.UsesTwinBlades?1:0);
             }
-            string contents = "";
-            if (inventory != null)
-                foreach (var pair in inventory.Items)
-                    if (pair.Key.slot == slot) contents += "\n" + pair.Key.LocalizedName + "  × " + pair.Value;
-            details.text = GameLocalization.Format("gear.details", GameLocalization.Text(equipmentNames[index]),
-                contents.Length == 0 ? GameLocalization.Text("gear.none") : GameLocalization.Text("gear.collected") + contents);
+            else
+            {
+                EquipmentItem first=null;bool retainsSelection=false;
+                if(inventory!=null)foreach(var pair in inventory.Items)
+                    if(pair.Key && pair.Key.slot==slot)
+                    {
+                        var item=pair.Key;if(first==null)first=item;if(item==selectedItem)retainsSelection=true;
+                        var glasses=GetComponent<WeaknessGlasses>();
+                        AddItemRow(item.LocalizedName,item.id=="nailong_weakness_glasses"&&glasses&&glasses.Equipped?"已装备":"已收集 × "+pair.Value,count++,()=>InspectItem(item));
+                    }
+                if(slot==EquipmentSlot.Head && first==null)
+                    AddItemRow("弱点眼镜","未解锁 · 击败奶龙",count++,()=>InspectItem(Resources.Load<EquipmentItem>(WeaknessGlasses.ItemPath)));
+                InspectItem(retainsSelection?selectedItem:first);
+                if(count==0)itemRows.Add(Label(itemContent,"这里还没有装备\n探索岛屿，收集 Boss 掉落",new Vector2(0,-80),new Vector2(290,110),18,GameUITheme.Secondary,new Vector2(.5f,1)).gameObject);
+            }
+            itemContent.sizeDelta=new Vector2(0,Mathf.Max(430,count*104));
         }
+
+        void AddItemRow(string title,string status,int index,UnityEngine.Events.UnityAction click)
+        {
+            var label=Button(itemContent,title+"\n"+status,new Vector2(0,-54-index*104),new Vector2(304,90),click);
+            var rect=(RectTransform)label.transform.parent;rect.anchorMin=rect.anchorMax=new Vector2(.5f,1);
+            label.fontSize=20;label.resizeTextMaxSize=20;itemRows.Add(rect.gameObject);
+        }
+        void InspectWeapon(int index)
+        {
+            selectedWeapon=index;selectedItem=null;
+            bool owned=index==0 || weapons!=null&&weapons.HasTwinBlades;
+            bool equipped=weapons!=null && (index==1)==weapons.UsesTwinBlades;
+            itemTitle.text=index==0?"萨胡尔木棍":"卡布奇诺双刀";
+            selectionStatus.text=equipped?"当前已装备":owned?"已解锁 · 可装备":"尚未解锁";
+            details.text=index==0?"熟悉的三连击木棍。\n\n左键：三连击\n按住右键：蓄力攻击\n\n命中 Boss 的弱点部位造成 1.5 倍伤害。":"击败卡布奇诺并拾取双刀后解锁。\n\n左键：双刀连击\n按住右键：蓄力攻击\n\n点击下方按钮切换武器。";
+            actionText.text=equipped?"已装备":owned?"装备这件武器":"击败卡布奇诺后解锁";
+            equipButton.interactable=owned&&!equipped;unequipButton.gameObject.SetActive(false);
+            HighlightSelection();
+        }
+        void InspectItem(EquipmentItem item)
+        {
+            selectedItem=item;selectedWeapon=-1;
+            var glasses=GetComponent<WeaknessGlasses>();bool isGlasses=item&&item.id=="nailong_weakness_glasses";
+            bool owned=item&&inventory!=null&&inventory.Count(item)>0;
+            itemTitle.text=item?item.LocalizedName:"暂无装备";
+            selectionStatus.text=isGlasses&&glasses&&glasses.Equipped?"当前已装备":owned?"已收集":item?"尚未解锁":"收集装备后会显示在这里";
+            details.text=isGlasses?"奶龙掉落的弱点眼镜。\n\n装备后，关闭装备栏按 G 开启弱点显示。\n持续 30 秒，冷却 15 分钟。\n\n弱点以青绿色标记显示；命中该部位造成 1.5 倍伤害。":item?"已收集的岛屿掉落物。\n\n这件收藏道具目前没有可装备的能力。":"选择左侧分类，查看已收集的物品。";
+            actionText.text=isGlasses?(owned?(glasses&&glasses.Equipped?"已装备":"装备弱点眼镜"):"击败奶龙后解锁"):"收藏道具";
+            equipButton.interactable=isGlasses&&owned&&glasses&&!glasses.Equipped;
+            unequipButton.gameObject.SetActive(isGlasses&&glasses&&glasses.Equipped);
+            HighlightSelection();
+        }
+        void HighlightSelection()
+        {
+            foreach(var row in itemRows)
+            {
+                var image=row.GetComponent<Image>();var label=row.GetComponentInChildren<Text>();
+                if(image&&label)SetSelected(row.GetComponent<Button>(),label.text.StartsWith(itemTitle.text));
+            }
+        }
+        void SetSelected(Button button,bool selected)
+        {
+            if(!button)return;button.image.color=Color.white;var colors=button.colors;
+            colors.normalColor=selected?new Color(.16f,.31f,.33f):GameUITheme.Gray(.08f);
+            colors.selectedColor=colors.normalColor;colors.highlightedColor=selected?new Color(.22f,.4f,.42f):GameUITheme.Gray(.22f);button.colors=colors;
+        }
+        public void EquipSelection()
+        {
+            if(!IsOpen)return;
+            if(selectedWeapon>=0)weapons?.TryEquip((SahurWeaponLoadout.Weapon)selectedWeapon,true);
+            else if(selectedItem&&selectedItem.id=="nailong_weakness_glasses")GetComponent<WeaknessGlasses>()?.Equip();
+            RefreshLanguage();
+        }
+        public void UnequipSelection(){if(!IsOpen)return;GetComponent<WeaknessGlasses>()?.Unequip();RefreshLanguage();}
 
         void OnCollected(EquipmentItem item)
         {
@@ -174,6 +257,9 @@ namespace Mavis
                 equipmentLabels[i].text = count > 0 ? GameLocalization.Format("gear.count", GameLocalization.Text(equipmentNames[i]), count) :
                     GameLocalization.Format("gear.empty", GameLocalization.Text(equipmentNames[i]));
             }
+            if(weapons!=null)equipmentLabels[(int)EquipmentSlot.Weapon].text=GameLocalization.Text("武器")+"\n"+(weapons.UsesTwinBlades?"卡布奇诺双刀":"萨胡尔木棍");
+            var glasses=GetComponent<WeaknessGlasses>();
+            if(glasses && glasses.Equipped)equipmentLabels[(int)EquipmentSlot.Head].text=GameLocalization.Text("头部")+"\n弱点眼镜 · 已装备";
             if (editingEquipment >= 0) SelectEquipment((EquipmentSlot)editingEquipment);
             else SelectSkillForAssignment(EditingSkill);
         }
@@ -194,7 +280,7 @@ namespace Mavis
                 Time.timeScale = 0f;
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
-                SelectSkillForAssignment(SelectedSkill);
+                SelectEquipment(EquipmentSlot.Weapon);
             }
             else
             {
@@ -240,35 +326,43 @@ namespace Mavis
             var shade = (RectTransform)panel.transform;
             shade.anchorMin = Vector2.zero; shade.anchorMax = Vector2.one; shade.sizeDelta = Vector2.zero;
             shade.GetComponent<Image>().raycastTarget = true;
-            var window = Box(shade, "Loadout window", new Vector2(.5f, .5f), Vector2.zero, new Vector2(1080, 700), GameUITheme.Surface);
-            GameUITheme.Rule(window,new Vector2(0,350),new Vector2(1080,1),GameUITheme.Muted);
-            GameUITheme.Rule(window,new Vector2(0,242),new Vector2(968,1),GameUITheme.Track);
-            GameUITheme.Rule(window,new Vector2(-196,-8),new Vector2(1,424),GameUITheme.Track);
-            Label(window, "SAHUR  /  装备与技能", new Vector2(-245, 285), new Vector2(470, 48), 30, Color.white);
-            Button(window, "关闭  [I]", new Vector2(408, 285), new Vector2(150, 42), () => SetOpen(false));
-            Label(window, "装备", new Vector2(-345, 210), new Vector2(250, 35), 16, GameUITheme.Secondary);
+            var window = Box(shade, "Loadout window", new Vector2(.5f, .5f), Vector2.zero, new Vector2(1180, 760), GameUITheme.Surface);
+            GameUITheme.Rule(window,new Vector2(0,278),new Vector2(1080,1),GameUITheme.Track);
+            GameUITheme.Rule(window,new Vector2(-330,-16),new Vector2(1,518),GameUITheme.Track);
+            GameUITheme.Rule(window,new Vector2(82,-16),new Vector2(1,518),GameUITheme.Track);
+            var heading=Label(window, "SAHUR  /  装备栏", new Vector2(-270, 327), new Vector2(520, 48), 32, Color.white);heading.alignment=TextAnchor.MiddleLeft;
+            Button(window, "关闭  ×", new Vector2(480, 327), new Vector2(130, 44), () => SetOpen(false));
+            Label(window, "装备部位", new Vector2(-456, 235), new Vector2(220, 30), 16, GameUITheme.Secondary);
             for (int i = 0; i < 5; i++)
             {
                 int index = i;
-                equipmentLabels[i] = Button(window, equipmentNames[i] + "     空", new Vector2(-345, 140 - i * 80), new Vector2(270, 62), () => SelectEquipment((EquipmentSlot)index));
+                equipmentLabels[i] = Button(window, equipmentNames[i] + "     空", new Vector2(-456, 165 - i * 78), new Vector2(214, 62), () => SelectEquipment((EquipmentSlot)index));
+                categoryFrames[i]=equipmentLabels[i].transform.parent.GetComponent<Image>();
             }
-            Label(window, "技能配置  /  四个槽位", new Vector2(105, 210), new Vector2(570, 35), 16, GameUITheme.Secondary);
+            Button(window,"技能槽位  ›",new Vector2(-456,-247),new Vector2(214,48),()=>SelectSkillForAssignment(EditingSkill));
+            categoryTitle=Label(window,"武器装备",new Vector2(-118,235),new Vector2(330,30),18,GameUITheme.Secondary);
+            itemBrowser=new GameObject("Equipment browser",typeof(RectTransform));itemBrowser.transform.SetParent(window,false);
+            var viewport=Box(itemBrowser.transform,"Scrollable item list",new Vector2(.5f,.5f),new Vector2(-118,-32),new Vector2(330,470),new Color(.055f,.07f,.08f));
+            viewport.GetComponent<Image>().raycastTarget=true;viewport.gameObject.AddComponent<RectMask2D>();
+            var contentObject=new GameObject("Item cards",typeof(RectTransform));contentObject.transform.SetParent(viewport,false);itemContent=(RectTransform)contentObject.transform;
+            itemContent.anchorMin=new Vector2(0,1);itemContent.anchorMax=new Vector2(1,1);itemContent.pivot=new Vector2(.5f,1);itemContent.sizeDelta=new Vector2(0,430);
+            var scroll=viewport.gameObject.AddComponent<ScrollRect>();scroll.viewport=viewport;scroll.content=itemContent;scroll.horizontal=false;scroll.vertical=true;scroll.movementType=ScrollRect.MovementType.Clamped;scroll.scrollSensitivity=30;
+            skillChoices=new GameObject("Skill choices",typeof(RectTransform));skillChoices.transform.SetParent(window,false);
             for (int i = 0; i < 4; i++)
             {
                 int index = i;
-                var frame = Box(window, "Assignment slot " + (i + 1), new Vector2(.5f, .5f), new Vector2(-105 + i * 145, 125), new Vector2(126, 92), Color.gray);
+                var frame = Box(skillChoices.transform, "Assignment slot " + (i + 1), new Vector2(.5f, .5f), new Vector2(-118,155-i*105), new Vector2(306,90), Color.gray);
                 skillFrames[i] = frame.GetComponent<Image>();
-                Button(frame, (i + 1) + "\n未配置", Vector2.zero, new Vector2(122, 88), () => SelectSkillForAssignment(index));
+                Button(frame, "技能 " + (i + 1) + "    /    未配置", Vector2.zero, new Vector2(302, 86), () => SelectSkillForAssignment(index));
             }
-            var info = Box(window, "Available skills and detail", new Vector2(.5f, .5f), new Vector2(110, -80), new Vector2(590, 265), track);
-            details = Label(info, "", Vector2.zero, new Vector2(540, 225), 21, Color.white);
+            itemTitle=Label(window,"",new Vector2(330,218),new Vector2(400,48),28,Color.white);itemTitle.alignment=TextAnchor.MiddleLeft;
+            selectionStatus=Label(window,"",new Vector2(330,174),new Vector2(400,30),16,new Color(.45f,.85f,.8f));selectionStatus.alignment=TextAnchor.MiddleLeft;
+            var info = Box(window, "Item description", new Vector2(.5f, .5f), new Vector2(330,-43), new Vector2(410,350), track);
+            details = Label(info, "", Vector2.zero, new Vector2(370, 310), 21, Color.white);
             details.alignment = TextAnchor.UpperLeft;
-            weaponChoices = new GameObject("Weapon choices", typeof(RectTransform));
-            weaponChoices.transform.SetParent(window, false);
-            stickButtonText = Button(weaponChoices.transform, "EQUIP STICK  [1]", new Vector2(-30,-246), new Vector2(245,40), () => weapons?.TryEquip(SahurWeaponLoadout.Weapon.Stick, true));
-            bladesButtonText = Button(weaponChoices.transform, "TWIN BLADES  [2]", new Vector2(250,-246), new Vector2(265,40), () => weapons?.TryEquip(SahurWeaponLoadout.Weapon.CapriTwinBlades, true));
-            weaponChoices.SetActive(false);
-            Label(window, "I / Esc 关闭", new Vector2(0, -304), new Vector2(940, 36), 15, GameUITheme.Secondary);
+            actionText=Button(window,"装备",new Vector2(330,-261),new Vector2(410,52),EquipSelection);equipButton=actionText.transform.parent.GetComponent<Button>();
+            unequipText=Button(window,"卸下眼镜",new Vector2(330,-319),new Vector2(410,40),UnequipSelection);unequipButton=unequipText.transform.parent.GetComponent<Button>();
+            Label(window, "鼠标选择分类与物品  ·  点击按钮装备  ·  I / Esc 关闭", new Vector2(-155, -342), new Vector2(760, 32), 15, GameUITheme.Secondary);
         }
 
         RectTransform Box(Transform parent, string name, Vector2 anchor, Vector2 position, Vector2 size, Color color)
@@ -322,7 +416,6 @@ namespace Mavis
             if (weapons != null) weapons.Changed -= RefreshLanguage;
             if (active == this) { SetOpen(false); active = null; IsOpen = false; consumedFrame = -1; }
             if (root != null) Destroy(root);
-            if (ownsFont && font != null) Destroy(font);
         }
     }
 }

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3134650691fc34ab4988386fe8d636, type: 3}
+  m_Name: WeaknessGlasses
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
+  id: nailong_weakness_glasses
+  displayName: "\u5F31\u70B9\u773C\u955C"
+  slot: 0
+  worldModel: {fileID: 23126860613380479, guid: 1467195d2a6046e4a9886f141cd48081, type: 3}
+  icon: {fileID: 0}

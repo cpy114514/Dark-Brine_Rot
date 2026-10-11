@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Mavis;
@@ -13,7 +14,8 @@ public static class VerifyCausalHandoffV011
  static async Task<Story1WreckBattle> Begin()
  {
   GameSaveManager.CancelPendingContinue();var load=SceneManager.LoadSceneAsync("Assets/Scenes/First story/Story1.unity");while(!load.isDone)await Task.Delay(20);await Task.Delay(300);
-  var sequence=UnityEngine.Object.FindFirstObjectByType<Story1SharkCollisionSequence>();var battle=sequence.GetComponent<Story1WreckBattle>();battle.minimumFightSeconds=battle.maximumFightSeconds=120;sequence.BeginImpact();
+  var sequence=UnityEngine.Object.FindFirstObjectByType<Story1SharkCollisionSequence>();var battle=sequence.GetComponent<Story1WreckBattle>();battle.minimumFightSeconds=battle.maximumFightSeconds=120;
+  var hp=sequence.sahur.GetComponent<PlayerHealth>();hp.currentHealth=hp.maxHealth;hp.GrantProtection(120);sequence.BeginImpact();
   for(int i=0;i<500 && battle.CurrentPhase!=Story1WreckBattle.Phase.Fighting;i++)await Task.Delay(20);
   Require(battle.CurrentPhase==Story1WreckBattle.Phase.Fighting,"No playable fight");sequence.sahur.GetComponent<PlayerHealth>().GrantProtection(120);return battle;
  }
@@ -26,6 +28,17 @@ public static class VerifyCausalHandoffV011
   try
   {
    var battle=await Begin();var p=UnityEngine.Object.FindFirstObjectByType<Story1SharkCollisionSequence>().sahur;var attack=p.GetComponent<SahurAttack>();
+   // A charge deadline needs uninterrupted support. Use a real released
+   // narrow hull piece in the same isolated controls fixture, not whichever
+   // random starting deck happens to submerge during the one-second hold.
+   var rider=p.GetComponent<Story1WreckRider>();var ocean=UnityEngine.Object.FindFirstObjectByType<OceanWorld>();
+   var board=battle.Boards.Where(b=>!b.IsBroken && Story1WreckPlank.SurfboardShape(b.Dimensions)).OrderBy(b=>(b.transform.position-p.transform.position).sqrMagnitude).First();
+   var body=board.GetComponent<Rigidbody>();rider.Release();Vector3 isolated=board.transform.position+Vector3.right*220;
+   isolated.y=ocean.SampleSurfaceHeight(isolated,Time.time)-.15f;body.position=isolated;body.rotation=Quaternion.identity;body.linearVelocity=body.angularVelocity=Vector3.zero;
+   await Task.Delay(1500);Physics.SyncTransforms();board.CommitPose();rider.Release();
+   p.RestoreSavedPose(board.BoardingPoint(isolated)+Vector3.up*(.05f-p.LowestFootWorldOffset),Quaternion.identity);
+   rider.Initialize(p,battle.Boards,ocean,board,battle.WreckDetails);
+   for(int i=0;i<100 && !rider.IsSurfing;i++)await Task.Delay(20);Require(rider.IsSurfing,"No actual supported charge fixture");
    keys.MakeCurrent();mouse.MakeCurrent();Cursor.lockState=CursorLockMode.Locked;InputSystem.QueueStateEvent(keys,new KeyboardState());InputSystem.QueueStateEvent(mouse,new MouseState().WithButton(MouseButton.Right));await Task.Delay(350);Require(attack.IsCharging,"Native charge did not start");
    Request(p,battle);float at=Time.time;
    while(battle.Finale==null && Time.time-at<2)
@@ -33,8 +46,11 @@ public static class VerifyCausalHandoffV011
     await Task.Delay(25);float elapsed=Time.time-at;
     if(elapsed>.2f && elapsed<.85f)Require(attack.IsCharging && p.enabled,"Safe handoff interrupted a held charge early");
    }
-   float duration=Time.time-at;Require(battle.Finale!=null && duration>=.95f && duration<=1.2f,"Held charge missed the one-second safe handoff: "+duration);
-   var data=new{nativeHeldCharge=true,waitedForDeadline=true,seconds=duration,state=battle.Handoff.state.ToString()};Record("charged-handoff",data);return data;
+   float observedAfterInitialization=Time.time-at;
+   float requested=(float)typeof(Story1WreckBattle).GetField("finaleRequestedAt",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(battle);
+   float duration=p.Motion.LastClaimTime-requested;
+   Require(battle.Finale!=null && duration>=.95f && duration<=1.075f,"Held charge missed the one-second safe handoff (native ownership timestamp): "+duration);
+   var data=new{nativeHeldCharge=true,waitedForDeadline=true,seconds=duration,observedAfterInitialization,state=battle.Handoff.state.ToString()};Record("charged-handoff",data);return data;
   }
   finally{InputSystem.RemoveDevice(keys);InputSystem.RemoveDevice(mouse);oldKeys?.MakeCurrent();oldMouse?.MakeCurrent();GameSaveManager.CancelPendingContinue();if(original!=null)File.WriteAllBytes(save,original);}
  }

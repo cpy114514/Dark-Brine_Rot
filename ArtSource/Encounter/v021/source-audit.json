@@ -1,0 +1,12 @@
+[
+  {
+    "action": "PLAYER_BoardPaddle_v021",
+    "max_support_ankle_drift": 2.9124051758188106e-07,
+    "max_water_target_error": 4.071488368696928e-07
+  },
+  {
+    "action": "PLAYER_BoardPaddleReverse_v021",
+    "max_support_ankle_drift": 2.9124051758188106e-07,
+    "max_water_target_error": 4.0535540904806387e-07
+  }
+]

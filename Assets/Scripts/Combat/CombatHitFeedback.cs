@@ -17,6 +17,7 @@ namespace Mavis
         public static bool Apply(GameObject attacker, IDamageable target, float damage, Vector3 point, CombatHitKind kind)
         {
             if (target == null || damage <= 0f) return false;
+            if (BossWeakPoint.Contains(target as Component, point)) damage *= BossWeakPoint.DamageMultiplier;
             if (target is Health genericHealth && genericHealth.IsDead) return false;
             if (target is NailongHealth boss)
             {

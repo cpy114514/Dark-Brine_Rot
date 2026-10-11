@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd0a35de9194d94a962599ee1f5e098, type: 3}
   m_Name: TralaleroAnimations
   m_EditorClassIdentifier: Assembly-CSharp::TralaleroAnimationSet
-  rigPrefab: {fileID: 8991519565126085515, guid: c5fd908065f9ff9418d3014152d8ad93, type: 3}
-  tailStrikeContact: {x: 0.071677424, y: 0.114622265, z: -0.056121446}
-  shipSmashContact: {x: 0.074430145, y: 0.11256589, z: -0.0408075}
+  rigPrefab: {fileID: 3215423325675427737, guid: d2bc9d58590993148bbcad2ad8f32bf5, type: 3}
+  tailStrikeContact: {x: 0.03423493, y: 0.13070089, z: -0.02267662}
+  shipSmashContact: {x: 0.028402178, y: 0.12664427, z: -0.011589474}
   cruiseSeconds: 1.6

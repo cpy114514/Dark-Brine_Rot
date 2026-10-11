@@ -2432,6 +2432,7 @@ GameObject:
   - component: {fileID: 5610018856762232532}
   - component: {fileID: 4747575031338363534}
   - component: {fileID: 5080858521627766709}
+  - component: {fileID: 4829387997127292071}
   m_Layer: 0
   m_Name: SahurPlayer
   m_TagString: Untagged
@@ -3396,9 +3397,9 @@ MonoBehaviour:
   comboBlendTime: 0.09
   comboTwoDamageMultiplier: 1.2
   comboThreeDamageMultiplier: 1.6
-  comboOneHitWindow: {x: 0.49, y: 0.66}
-  comboTwoHitWindow: {x: 0.46, y: 0.66}
-  comboThreeHitWindow: {x: 0.42, y: 0.61}
+  comboOneHitWindow: {x: 0.57, y: 0.86}
+  comboTwoHitWindow: {x: 0.12, y: 0.34}
+  comboThreeHitWindow: {x: 0.32, y: 0.55}
   jumpSlashState: Jump Slash
   jumpSlashDamageMultiplier: 1.7
   jumpSlashHitWindow: {x: 0.16, y: 0.82}
@@ -3609,6 +3610,18 @@ MonoBehaviour:
   backOffset: 0.55
   heightOffset: 0.04
   diagonalAngle: 22
+--- !u!114 &4829387997127292071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6548037495126515326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bb33572434013a4281194632c973cc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.WeaknessGlasses
 --- !u!1 &6599514254367242517
 GameObject:
   m_ObjectHideFlags: 0

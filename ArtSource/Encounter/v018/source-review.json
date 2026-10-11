@@ -1,0 +1,8 @@
+{
+  "stage":"FIRST PASS",
+  "accepted_for_staging":["PLAYER_BoardPaddle_v018","PLAYER_BoardPaddleReverse_v018"],
+  "reviewer":"Codex animation-review; source only",
+  "evidence":".codex/encounter-v018/previews/PLAYER_BoardPaddle_v018-sheet.jpg and PLAYER_BoardPaddleReverse_v018-sheet.jpg; front/side/three-quarter frames1/13/24/39/53/64/73",
+  "observed":"Supporting left ankle retained across the cycle. Right leg extends into the power stroke, sweeps backward, lifts the heel and folds the knee for recovery; reverse changes the power direction. Asymmetric knees and delayed spine load preserve a recognizable supporting silhouette. Original UAL2 skeleton and rest pose preserved.",
+  "not_observed":"Sahur retargeting, actual water immersion, actual board clearance and continuous gameplay still require native Unity review. This is staging acceptance, not final release approval."
+}

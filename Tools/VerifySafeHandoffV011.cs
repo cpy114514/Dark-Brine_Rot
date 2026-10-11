@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Mavis;
 using UnityEngine;
@@ -25,7 +26,20 @@ public static class VerifySafeHandoffV011
             var sequence=UnityEngine.Object.FindFirstObjectByType<Story1SharkCollisionSequence>();var battle=sequence.GetComponent<Story1WreckBattle>();battle.minimumFightSeconds=battle.maximumFightSeconds=120;
             sequence.BeginImpact();for(int i=0;i<500 && battle.CurrentPhase!=Story1WreckBattle.Phase.Fighting;i++)await Task.Delay(20);
             Require(battle.CurrentPhase==Story1WreckBattle.Phase.Fighting,"Break did not end");var player=sequence.sahur;var health=player.GetComponent<PlayerHealth>();health.GrantProtection(200);
-            keys=InputSystem.AddDevice<Keyboard>();await Hold(200);var rider=player.GetComponent<Story1WreckRider>();Require(rider.IsSurfing,"No actual mounted support");
+            keys=InputSystem.AddDevice<Keyboard>();await Hold(200);var rider=player.GetComponent<Story1WreckRider>();
+            // Isolate one genuinely released small hull mesh only for this
+            // input fixture. Production debris and choreography are untouched.
+            var board=battle.Boards.Where(p=>!p.IsBroken && Story1WreckPlank.SurfboardShape(p.Dimensions))
+                .OrderBy(p=>(p.transform.position-player.transform.position).sqrMagnitude).First();
+            var ocean=UnityEngine.Object.FindFirstObjectByType<OceanWorld>();var body=board.GetComponent<Rigidbody>();
+            rider.Release();Vector3 isolated=board.transform.position+Vector3.right*220;
+            isolated.y=ocean.SampleSurfaceHeight(isolated,Time.time)-.15f;
+            body.position=isolated;body.rotation=Quaternion.identity;body.linearVelocity=body.angularVelocity=Vector3.zero;
+            await Hold(1500);Physics.SyncTransforms();board.CommitPose();rider.Release();
+            player.RestoreSavedPose(board.BoardingPoint(isolated)+Vector3.up*(.05f-player.LowestFootWorldOffset),Quaternion.identity);
+            rider.Initialize(player,battle.Boards,ocean,board,battle.WreckDetails);
+            for(int i=0;i<100 && !rider.IsSurfing;i++)await Hold(20);
+            Require(rider.IsSurfing,"No actual supported takeoff after automatic mounting");
             float start=Time.time;await Hold(60,GameInputSettings.Get(GameInputSettings.Action.Jump));await Hold(80);
             Require(!rider.IsSurfing && player.VerticalSpeed>1,"Jump did not leave support");
             health.currentHealth=health.maxHealth*battle.finalePlayerHealthRatio+1;health.GrantProtection(0);health.ApplyDamage(1,player.transform.position);

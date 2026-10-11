@@ -1,0 +1,31 @@
+{
+  "original_rest_rig_retained": true,
+  "right_hand_source_arcs_retained": true,
+  "stage": "FIRST PASS; native Sahur retarget review pending",
+  "actions": [
+    {
+      "action": "CH1_SahurGuard_v027",
+      "max_ankle_target_error_source_cm": 2.5872535641194413e-05,
+      "max_stance_span_metres": 0.5189870591893138,
+      "right_arm_local_rotation_error_radians": 0
+    },
+    {
+      "action": "CH1_SahurParry_v027",
+      "max_ankle_target_error_source_cm": 3.606667155714165e-05,
+      "max_stance_span_metres": 0.52659554526717,
+      "right_arm_local_rotation_error_radians": 0
+    },
+    {
+      "action": "CH1_SahurSlash_v027",
+      "max_ankle_target_error_source_cm": 4.1798795701620345e-05,
+      "max_stance_span_metres": 0.541349721624483,
+      "right_arm_local_rotation_error_radians": 0
+    },
+    {
+      "action": "CH1_SahurBrace_v027",
+      "max_ankle_target_error_source_cm": 3.688636704600089e-05,
+      "max_stance_span_metres": 0.5189870591893138,
+      "right_arm_local_rotation_error_radians": 0
+    }
+  ]
+}

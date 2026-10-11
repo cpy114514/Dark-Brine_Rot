@@ -175,6 +175,8 @@ namespace Mavis
 
         void Awake()
         {
+            if(GetComponent<BossWeaknessSetup>()==null)gameObject.AddComponent<BossWeaknessSetup>();
+            attackWindup=Mathf.Max(.65f,attackWindup);flurryWindup=Mathf.Max(.7f,flurryWindup);
             BossCombatVfx.PrewarmImpacts();
             agent = GetComponent<NavMeshAgent>();
             visualArmature = transform.Find("Armature");
@@ -412,12 +414,22 @@ namespace Mavis
                 ShowWarning(transform.position, tantrumRadius, new Color(1f, 0.48f, 0.18f, 0.95f));
             else if (pattern == AttackPattern.ShamelessCharge && target != null)
                 ShowWarning(target.position, 1.8f, new Color(1f, 0.76f, 0.22f, 0.95f));
+            var warning=BossAttackWarning.For(gameObject);
+            if(pattern==AttackPattern.GroundSlam)warning.Circle(transform.position,EffectiveSlamRadius,slamWindup);
+            else if(pattern==AttackPattern.Slap || pattern==AttackPattern.ClawFlurry)
+                warning.Sector(transform.position,transform.forward,EffectiveAttackReach,attack!=null?attack.attackArc:150,pattern==AttackPattern.Slap?attackWindup:flurryWindup+flurryInterval*(flurryCount-1)+.2f);
+            else if(pattern==AttackPattern.ScoldingSpit && target!=null)
+                warning.Lane(transform.position,target.position,.6f,spitWindup+spitInterval*(spitCount-1));
         }
 
         void TickAttack()
         {
             if (state != State.Attack) return;
             float elapsed = Time.time - attackStartedAt;
+            if(activeAttack==AttackPattern.ScoldingSpit && target!=null && strikesDone<spitCount)
+                BossAttackWarning.For(gameObject).Lane(transform.position,target.position,.6f,.2f);
+            if((activeAttack==AttackPattern.Slap && !attackResolved) || (activeAttack==AttackPattern.ClawFlurry && strikesDone<flurryCount))
+                BossAttackWarning.For(gameObject).Sector(transform.position,transform.forward,EffectiveAttackReach,attack!=null?attack.attackArc:150,.2f);
             switch (activeAttack)
             {
                 case AttackPattern.GroundSlam:
@@ -615,9 +627,14 @@ namespace Mavis
             }
         }
 
-        // Windup motion carries the cue; avoid coloured ground-space circles.
-        void ShowWarning(Vector3 center, float radius, Color color) { }
-        void HideWarning() { }
+        void ShowWarning(Vector3 center, float radius, Color color)
+        {
+            var warning=BossAttackWarning.For(gameObject);
+            if(activeAttack==AttackPattern.ShamelessCharge)
+                warning.Lane(transform.position,transform.position+chargeDirection*shamelessChargeSpeed*shamelessChargeDuration,1.9f,.6f);
+            else warning.Circle(center,radius*SizeFactor,AttackDuration(activeAttack));
+        }
+        void HideWarning() { GetComponent<BossAttackWarning>()?.Clear(); }
 
         static Color WarningColor(float r, float g, float b, float a) => new Color(r, g, b, a);
 

@@ -1,0 +1,7 @@
+{
+  "stage": "FIRST PASS",
+  "reviewer": "Codex animation review, source staging only",
+  "accepted_for_staging": ["PLAYER_BoardPaddle_v020", "PLAYER_BoardPaddleReverse_v020"],
+  "observed": "Actual original-rig mesh side and three-quarter key poses inspected. Right thigh abduction now moves the water leg outward instead of crossing the supporting leg. Forward/reverse sweep, knee recovery and preserved left supporting ankle remain readable. Original bones, rest pose and source Actions are retained.",
+  "native_review_required": "Actual Sahur skin sole must clear the real timber during power and touch water. No final gameplay or contact approval is implied by the source review. Supporting blend and ordinary attack transitions require native measurement."
+}

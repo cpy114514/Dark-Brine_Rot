@@ -1,0 +1,114 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using Mavis;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+
+public static class VerifySwimJump20261011
+{
+    const BindingFlags Flags=BindingFlags.Instance|BindingFlags.NonPublic;
+    static void Require(bool ok,string message){if(!ok)throw new Exception(message);}
+    public static async Task<object> Verify()
+    {
+        Require(Application.isPlaying,"Play Mode required");
+        var previousKeyboard=Keyboard.current;var previousMouse=Mouse.current;var cursor=Cursor.lockState;
+        float capture=Time.captureDeltaTime;
+        var keyboard=InputSystem.AddDevice<Keyboard>("Swim jump regression");
+        var mouse=InputSystem.AddDevice<Mouse>("Swim jump regression mouse");
+        var holder=new GameObject("Temporary isolated swim jump regression");holder.SetActive(false);
+        holder.transform.position=new Vector3(2600,500,2600);
+        var floor=new GameObject("Temporary jump regression floor");floor.transform.position=holder.transform.position-Vector3.up*.5f;
+        var floorCollider=floor.AddComponent<BoxCollider>();floorCollider.size=new Vector3(80,1,80);
+        var actor=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Characters/Sahur/SahurPlayer.prefab"),holder.transform);
+        actor.AddComponent<GameSaveExcluded>();var player=actor.GetComponent<ThirdPersonPlayerController>();player.waterSplashes=false;
+        foreach(var input in actor.GetComponentsInChildren<PlayerInput>(true))input.enabled=false;
+        var update=typeof(ThirdPersonPlayerController).GetMethod("Update",Flags);
+        var swim=typeof(ThirdPersonPlayerController).GetMethod("UpdateSwimming",Flags);
+        var vertical=typeof(ThirdPersonPlayerController).GetField("verticalSpeed",Flags);
+        var animatorField=typeof(ThirdPersonPlayerController).GetField("motionState",Flags);
+        var samples=new System.Collections.Generic.List<object>();
+        void Tick(params Key[] held)
+        {
+            keyboard.MakeCurrent();mouse.MakeCurrent();Cursor.lockState=CursorLockMode.Locked;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(held));InputSystem.Update();
+            update.Invoke(player,null);player.CharacterAnimator.Update(Time.deltaTime);
+        }
+        void Reset(float gap=.02f)
+        {
+            floorCollider.enabled=true;
+            player.RestoreSavedPose(holder.transform.position+Vector3.up*(gap-player.LowestFootWorldOffset),Quaternion.identity);
+            actor.GetComponent<PlayerStamina>().currentStamina=100;
+            Physics.SyncTransforms();Tick();Tick();
+        }
+        try
+        {
+            holder.SetActive(true);await Task.Delay(250);
+            foreach(var behaviour in actor.GetComponentsInChildren<MonoBehaviour>())behaviour.enabled=false;
+            player.CharacterAnimator.enabled=false;
+            Key jump=GameInputSettings.Get(GameInputSettings.Action.Jump);
+            foreach(float dt in new[]{1f/60,1f/20,1f/10})
+            {
+                Time.captureDeltaTime=dt;await Task.Delay(100);
+                Require(Mathf.Abs(Time.deltaTime-dt)<.002f,"Capture timestep not applied");
+                Reset();Require(player.CanUseGroundAttack,"Native capsule did not ground");
+                float start=actor.transform.position.y,highest=start;int takeoffs=0;float before=player.VerticalSpeed;
+                for(int i=0;i<Mathf.CeilToInt(1.5f/dt);i++)
+                {
+                    Tick(i==0 ? new[]{jump}:Array.Empty<Key>());
+                    highest=Mathf.Max(highest,actor.transform.position.y);
+                    if(player.VerticalSpeed>1 && before<=0)takeoffs++;before=player.VerticalSpeed;
+                }
+                float height=highest-start;
+                Require(Mathf.Abs(height-player.jumpHeight)<.08f,"Jump height changed with frame rate: "+height+" at "+dt);
+                Require(takeoffs==1 && player.CanUseGroundAttack,"Jump did not land once: "+takeoffs);
+                samples.Add(new{dt,height,targetHeight=player.jumpHeight,takeoffs,landed=true});
+            }
+            Time.captureDeltaTime=1f/60;await Task.Delay(100);Reset();
+            // Coyote jump after stepping away from an actual collider.
+            floorCollider.enabled=false;Physics.SyncTransforms();Tick();Tick();Tick();Tick(jump);
+            float coyoteVelocity=player.VerticalSpeed;Require(coyoteVelocity>1,"Coyote jump failed");
+            Reset();player.RestoreSavedPose(holder.transform.position+Vector3.up*(.34f-player.LowestFootWorldOffset),Quaternion.identity);
+            vertical.SetValue(player,-4f);Physics.SyncTransforms();Tick(jump);
+            bool buffered=false;for(int i=0;i<10;i++){Tick();buffered|=player.VerticalSpeed>1;}
+            Require(buffered,"Buffered landing jump failed");
+            Reset();player.LeaveMovingPlatform(new Vector3(4,0,2),true);Tick(jump);
+            Require(player.VerticalSpeed>1,"Moving board handoff did not jump");
+            Require(Vector3.ProjectOnPlane(player.WorldVelocity,Vector3.up).magnitude>4,"Moving board momentum was lost");
+            float inheritedSpeed=Vector3.ProjectOnPlane(player.WorldVelocity,Vector3.up).magnitude;
+            Reset();
+            var ceiling=new GameObject("Temporary regression ceiling");ceiling.transform.SetParent(holder.transform);
+            var capsule=actor.GetComponent<CharacterController>();
+            ceiling.transform.position=new Vector3(actor.transform.position.x,capsule.bounds.max.y+.35f,actor.transform.position.z);
+            ceiling.AddComponent<BoxCollider>().size=new Vector3(10,.2f,10);Physics.SyncTransforms();
+            Tick(jump);bool stoppedByCeiling=false;
+            for(int i=0;i<18;i++){float previous=player.VerticalSpeed;Tick();if(previous>1 && player.VerticalSpeed<=0)stoppedByCeiling=true;}
+            Require(stoppedByCeiling,"Ceiling collision retained upward momentum");UnityEngine.Object.DestroyImmediate(ceiling);
+            var animator=player.CharacterAnimator;
+            var hips=animator.GetBoneTransform(HumanBodyBones.Hips);var head=animator.GetBoneTransform(HumanBodyBones.Head);
+            var left=animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);var right=animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+            var facing=new System.Collections.Generic.List<object>();
+            foreach(float heading in new[]{0f,90f,180f,270f})foreach(float fast in new[]{0f,1f})foreach(float phase in new[]{0f,.25f,.5f,.75f})
+            {
+                actor.transform.rotation=Quaternion.Euler(0,heading,0);animator.SetFloat("SwimAmount",1);animator.SetFloat("SwimFastBlend",fast);
+                animator.Play("Swimming",0,phase);animator.Update(0);
+                float dot=Vector3.Dot(Vector3.ProjectOnPlane(head.position-hips.position,Vector3.up).normalized,actor.transform.forward);
+                Require(dot>.95f,"Swim pose faces away from actual heading: "+dot);
+                facing.Add(new{heading,fast,phase,dot});
+            }
+            var result=new{jumpSamples=samples,coyoteVelocity,bufferedJump=buffered,inheritedSpeed,ceilingStopsAscent=stoppedByCeiling,swimFacing=facing};
+            Directory.CreateDirectory(".codex/swim-jump-fix-20261011");File.WriteAllText(".codex/swim-jump-fix-20261011/runtime-verification.json",Newtonsoft.Json.JsonConvert.SerializeObject(result,Newtonsoft.Json.Formatting.Indented));
+            return result;
+        }
+        finally
+        {
+            Time.captureDeltaTime=capture;UnityEngine.Object.DestroyImmediate(holder);UnityEngine.Object.DestroyImmediate(floor);
+            InputSystem.RemoveDevice(keyboard);InputSystem.RemoveDevice(mouse);
+            previousKeyboard?.MakeCurrent();previousMouse?.MakeCurrent();Cursor.lockState=cursor;
+        }
+    }
+}

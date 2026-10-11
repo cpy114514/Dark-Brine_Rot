@@ -33,6 +33,9 @@ public sealed class Story1WreckBattle : MonoBehaviour
     public float FightElapsed { get; private set; }
     public float FinaleAfterSeconds { get; private set; }
     public int ShipFragmentCount => planks.Count + detailPieces.Count;
+    public int InitialFragmentCount { get; private set; }
+    public int ExpectedInitialFragments { get; private set; }
+    public readonly List<string> InitiallyFracturedSources=new List<string>();
     public IReadOnlyList<Story1WreckPlank> Boards => planks;
     public IReadOnlyList<Story1WreckDebris> WreckDetails => detailPieces;
     public int BrokenBoardCount { get; private set; }
@@ -214,7 +217,11 @@ public sealed class Story1WreckBattle : MonoBehaviour
         {
             if(finaleRequestedAt<0)finaleRequestedAt=Time.time;
             var attack=player.GetComponent<SahurAttack>();
-            bool supported=player.Swimming || player.CanUseGroundAttack;
+            // Deck proximity grants gameplay attack grace while descending.
+            // A cinematic must wait for actual controller landing or a board
+            // that already owns the rider; grace is not physical support.
+            bool supported=player.Swimming || (rider!=null && rider.IsSurfing) ||
+                (capsule.enabled && capsule.isGrounded && player.VerticalSpeed<=0);
             // An airborne player keeps their physical trajectory until landing/splashing.
             if(supported && (rider==null || !rider.IsClimbing) &&
                 (attack.SafeForCinematic || Time.time-finaleRequestedAt>=1)){BeginFinale();return;}
@@ -361,24 +368,49 @@ public sealed class Story1WreckBattle : MonoBehaviour
         shipModelScale = sequence.ship.transform.lossyScale * .01f;
         deckSources = shipWreck.decks.OrderBy(p => (shipModelToWorld.MultiplyPoint3x4(p.sourceCenter) - passengerStart).sqrMagnitude).ToArray();
         scatter = new System.Random(System.Guid.NewGuid().GetHashCode());
-        foreach(var source in deckSources)AddPlank(source);
-        foreach(var source in shipWreck.hulls)AddShipDetail(source);
-        foreach(var source in shipWreck.details)AddShipDetail(source);
+        ExpectedInitialFragments=shipWreck.decks.Length+shipWreck.hulls.Length+shipWreck.details.Length;
+        foreach(var source in deckSources)if(!ReleaseSmallBoardSource(source))AddPlank(source);
+        foreach(var source in shipWreck.hulls)if(!ReleaseSmallBoardSource(source))AddShipDetail(source);
+        foreach(var source in shipWreck.details)if(!ReleaseSmallBoardSource(source))AddShipDetail(source);
+        InitialFragmentCount=ShipFragmentCount;
         debrisRoot.SetActive(true);
     }
-    Story1WreckPlank FindLandingBoard(Vector3 from,float minimumLength=0)
+    bool ReleaseSmallBoardSource(Story1ShipWreckAsset.Fragment source)
+    {
+        Vector3 size=Vector3.Scale(source.sourceSize,shipModelScale);
+        if(source.splinters==null || !source.splinters.Any(s=>Story1WreckPlank.SurfboardShape(Vector3.Scale(size,s.localSize))))return false;
+        // The destructive hull tail strike propagates through these deck
+        // joints. Release their already-cut ORIGINAL timber immediately,
+        // at its ship-space location, never place a gameplay board in water.
+        var original=preparedPieces[source];Vector3 from=shipModelToWorld.MultiplyPoint3x4(source.sourceCenter);
+        original.transform.SetPositionAndRotation(from,Story1ShipWreckAsset.SourceRotation(sequence.ship.transform,source));original.transform.localScale=size;
+        Vector3 launch=FragmentVelocity(from),spin=FragmentSpin()*Mathf.Deg2Rad;
+        SpawnBrokenFragments(source,original.transform,point=>launch+Vector3.Cross(spin,point-from),sequence.HullImpactPoint,Vector3.zero);
+        original.SetActive(false);InitiallyFracturedSources.Add(source.name);
+        ExpectedInitialFragments+=source.splinters.Length-1;return true;
+    }
+    Story1WreckPlank FindLandingBoard(Vector3 from,float minimumLength=0,bool thinDeckOnly=false)
     {
         Story1WreckPlank best=null;float score=float.PositiveInfinity;
         // Prefer real flat deck sections; tall hull bounds are poor footing and block swings.
-        for(int i=0;i<Mathf.Min(20,planks.Count);i++)
+        for(int i=0;i<planks.Count;i++)
         {
             var board=planks[i];
+            if(thinDeckOnly && board.Dimensions.y>1.2f)continue;
             if(!board.IsBoardable || board.Dimensions.z<minimumLength || Mathf.Abs(board.transform.up.y)<.82f)continue;
             var body=board.GetComponent<Rigidbody>();
             float value=board.EdgeDistance(from)+Mathf.Max(0,board.Dimensions.y-1.1f)*35+
                 Mathf.Abs(body.linearVelocity.y)*5+(1-Mathf.Abs(board.transform.up.y))*25;
             Vector3 footing=board.BoardingPoint(from);
-            if(ocean!=null)value+=Mathf.Max(0,ocean.SampleSurfaceHeight(footing,Time.time)-footing.y+.15f)*20;
+            if(ocean!=null)
+            {
+                float water=ocean.SampleSurfaceHeight(footing,Time.time);
+                // A flat fragment may still be several metres underwater
+                // after the real explosion. Its footprint cannot authorize
+                // climbing or standing before gravity/buoyancy bring it back.
+                if(water-footing.y>.6f || footing.y-water>2.5f)continue;
+                value+=Mathf.Max(0,water-footing.y+.15f)*20;
+            }
             if(value<score){score=value;best=board;}
         }
         return best;
@@ -620,7 +652,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
             go.GetComponent<MeshFilter>().sharedMesh=shard.mesh;go.GetComponent<MeshRenderer>().sharedMaterial=source.material;
             Vector3 away=(at-point).normalized;
             Vector3 velocity=pointVelocity(at)+impulse*.45f+away*ScatterRange(2,5)+Vector3.up*ScatterRange(.5f,2.5f);
-            if(Mathf.Min(size.x,size.z)>2 && Mathf.Max(size.x,size.z)>4 && size.y<2)
+            if(Story1WreckPlank.SurfboardShape(size) || Mathf.Min(size.x,size.z)>2 && Mathf.Max(size.x,size.z)>4 && size.y<2)
             {
                 var piece=go.AddComponent<Story1WreckPlank>();piece.Initialize(at,rotation,size,ocean,velocity,FragmentSpin()*.3f);
                 piece.SharkContactAfter=Time.time+.3f;planks.Add(piece);
@@ -665,8 +697,13 @@ public sealed class Story1WreckBattle : MonoBehaviour
         Handoff=player.Motion.Capture(player);
         var board = rider != null ? rider.Support() : null;
         if (board == null)
-            board = FindLandingBoard(player.transform.position, 8) ?? FindLandingBoard(player.transform.position) ?? planks[0];
-        bool fromWater = player.Swimming || board.EdgeDistance(player.transform.position + Vector3.up * player.LowestFootWorldOffset) > 2;
+            board = FindLandingBoard(player.transform.position, 8, true) ?? FindLandingBoard(player.transform.position, 8) ?? FindLandingBoard(player.transform.position) ?? planks[0];
+        Vector3 feet=player.transform.position+Vector3.up*player.LowestFootWorldOffset;
+        Vector3 normal=board.transform.up;if(normal.y<0)normal=-normal;
+        float reach=Mathf.Max(2,board.Dimensions.y+1);
+        bool onActualDeck=board.Collision.Raycast(new Ray(feet+normal*reach,-normal),out var supportHit,reach*2)
+            && Vector3.Dot(supportHit.normal,Vector3.up)>.5f && Vector3.Distance(feet,supportHit.point)<.65f;
+        bool fromWater=player.Swimming || !onActualDeck;
         if (rider != null) rider.enabled = false;
         player.GetComponent<SahurLoadoutUI>()?.SetOpen(false); player.GetComponent<IslandMapUI>()?.SetOpen(false);
         player.GetComponent<SahurAttack>().SuspendForSwimming(); player.GetComponent<SahurAttack>().enabled = false;

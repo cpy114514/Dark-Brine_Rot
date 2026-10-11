@@ -41,7 +41,7 @@ public sealed class V006WaterReview : MonoBehaviour
             {
                 Vector3 chest=hero.CharacterAnimator.GetBoneTransform(HumanBodyBones.Chest).position;
                 float clearance=chest.y-ocean.SampleSurfaceHeight(chest,Time.time);
-                if(clearance<minimumFightingChestClearance){minimumFightingChestClearance=clearance;worstChestTime=film.CinematicTime;var foot=hero.CharacterAnimator.GetBoneTransform(HumanBodyBones.LeftFoot).position;worstChestDetails="chest="+chest+" foot="+foot+" water="+ocean.SampleSurfaceHeight(chest,Time.time)+" root="+hero.transform.position+" beat="+film.CurrentBeat;}
+                if(clearance<minimumFightingChestClearance){minimumFightingChestClearance=clearance;worstChestTime=film.CinematicTime;var foot=hero.CharacterAnimator.GetBoneTransform(HumanBodyBones.LeftFoot).position;var board=(Story1WreckPlank)typeof(Story1WreckFinale).GetField("board",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(film);worstChestDetails="chest="+chest+" foot="+foot+" water="+ocean.SampleSurfaceHeight(chest,Time.time)+" root="+hero.transform.position+" beat="+film.CurrentBeat+" board="+board.name+" dimensions="+board.Dimensions+" tilt="+Vector3.Angle(Vector3.up,board.transform.up)+" centre="+board.transform.position;}
             }
             var battle=film.GetComponent<Story1WreckBattle>();
             if(film.CinematicTime>=0 && film.CinematicTime<=20.8f && battle.WreckContact!=null)
@@ -121,7 +121,7 @@ public static class VerifyEncounterV006
             }
             for(int i=0;i<300 && battle.CurrentPhase!=Story1WreckBattle.Phase.Fighting;i++)await Task.Delay(30);
             Require(battle.CurrentPhase==Story1WreckBattle.Phase.Fighting,"Break did not restore player.");
-            Require(battle.ShipFragmentCount==202 && battle.Effects.ImpactCount>0,"Ship contact VFX or real fragments missing.");
+            Require(battle.InitialFragmentCount==battle.ExpectedInitialFragments && battle.InitialFragmentCount>=202 && battle.Effects.ImpactCount>0,"Ship contact or original-source fragments missing.");
             Require(battle.ImpactTailGap<=.05f,"Ship broke without actual tail-tip contact: "+battle.ImpactTailGap);
             hp.GrantProtection(60);
             float deadline=battle.FinaleAfterSeconds;
@@ -139,7 +139,25 @@ public static class VerifyEncounterV006
             {
                 hero.GetComponent<Story1WreckRider>().Release();hero.OnFloatingWreckDeck=false;
                 var ocean=UnityEngine.Object.FindFirstObjectByType<OceanWorld>();
-                Vector3 at=hero.transform.position+hero.transform.right*45;
+                Vector3 origin=hero.transform.position,at=origin;bool open=false;
+                var shapes=UnityEngine.Object.FindObjectsByType<Story1WreckMeshCollision>(FindObjectsSortMode.None);
+                foreach(float distance in new[]{12f,24f,36f,48f,60f})
+                {
+                    for(int angle=0;angle<360;angle+=30)
+                    {
+                        Vector3 candidate=origin+Quaternion.AngleAxis(angle,Vector3.up)*hero.transform.right*distance;
+                        candidate.y=ocean.SampleSurfaceHeight(candidate,Time.time)-.5f;
+                        bool clear=true;
+                        foreach(var shape in shapes)
+                        {
+                            if(!shape.Active || shape.WorldBounds.SqrDistance(candidate)>16)continue;
+                            if(Vector3.Distance(shape.ClosestPoint(candidate),candidate)<3){clear=false;break;}
+                        }
+                        if(clear){at=candidate;open=true;break;}
+                    }
+                    if(open)break;
+                }
+                Require(open,"No actual open-water fixture beside the randomly scattered wreck.");
                 at.y=ocean.SampleSurfaceHeight(at,Time.time)-2-hero.LowestFootWorldOffset;
                 hero.RestoreSavedPose(at,hero.transform.rotation);Physics.SyncTransforms();await Task.Delay(400);
                 Require(hero.Swimming,"Water-entry test did not swim.");
@@ -173,7 +191,11 @@ public static class VerifyEncounterV006
             float[] views={1.7f,4.2f,5.5f,6.8f,8,11.9f,12.8f,15.3f,17.95f,18.7f};int viewIndex=0;
             var reviewTimes=new System.Collections.Generic.List<float>();float lastReview=-1;
             float minimumFloatHeadClearance=float.PositiveInfinity;
-            while(!film.IsComplete)
+            // A real broken/submerged support now releases cinematic ownership.
+            // Never keep observing a destroyed first film while the game starts
+            // a later natural retry, then misreport that later narrative defeat
+            // as an early death in this take.
+            while(film!=null && object.ReferenceEquals(battle.Finale,film) && !film.IsComplete)
             {
                 Require(hp.currentHealth>0,"Hero died before the finishing animation.");
                 if(capture){await ShotLate(Path.Combine("frames",(frame++).ToString("D4")));times.Add(film.Elapsed);}
@@ -190,7 +212,12 @@ public static class VerifyEncounterV006
             }
             if(capture)File.WriteAllText(Path.GetFullPath(previewRoot+"/frame-times.json"),Newtonsoft.Json.JsonConvert.SerializeObject(times));
             if(movingReview)File.WriteAllText(Path.GetFullPath(multiViewRoot+"/times.json"),Newtonsoft.Json.JsonConvert.SerializeObject(reviewTimes));
+            File.WriteAllText(Path.GetFullPath(previewRoot+"/ownership-exit.json"),Newtonsoft.Json.JsonConvert.SerializeObject(new{firstFilmStillOwned=object.ReferenceEquals(battle.Finale,film),film.IsComplete,film.CinematicTime,phase=battle.CurrentPhase.ToString(),health=hp.currentHealth,actualPlayerControlsRestored=hero.enabled && !hero.ExternalControlLock}));
             File.WriteAllText(Path.GetFullPath(previewRoot+"/pose-metrics.json"),Newtonsoft.Json.JsonConvert.SerializeObject(new{film.HeroCounterCount,film.SharkCounterCount,film.BoardJumpCount,film.SharkBreachCount,film.LargestFootHeightError,film.LargestPlantSlide,film.WorstFootTime,film.ContactAttemptGaps,film.ContactObstructions,film.LargestLandingError,film.LeadInSeconds,film.ContactGaps,waterReview.minimumHeadClearance,waterReview.maximumSharkWoodPenetration,waterReview.minimumFightingChestClearance,waterReview.worstChestTime,waterReview.worstChestDetails,battle.WreckContact.ConstraintHoldCount,battle.WreckContact.LargeEscapeCount,waterReview.filmLargeEscapeCount,waterReview.counterRecoilSamples,battle.WreckContact.LargeEscapes}));
+            File.WriteAllText(Path.GetFullPath(previewRoot+"/tail-compliance.json"),Newtonsoft.Json.JsonConvert.SerializeObject(new{film.LargestTailSkinAdjustment,film.LargestTailSkinRotation}));
+            File.WriteAllText(Path.GetFullPath(previewRoot+"/plant-diagnostics.json"),Newtonsoft.Json.JsonConvert.SerializeObject(new{film.LargestPlantSlide,film.WorstPlantTime,film.WorstPlantDetails}));
+            Require(film.IsComplete && object.ReferenceEquals(battle.Finale,film),"First cinematic released ownership before completion; t="+film.CinematicTime+", phase="+battle.CurrentPhase+", hp="+hp.currentHealth);
+            Require(film.LargestTailSkinAdjustment<=.15001f && film.LargestTailSkinRotation<=5.001f,"Tail skin compliance exceeded its authored-pose bound");
             Require(film.LargestContactGap<=.05f && film.LargestContactCorrection==0,"A reported hit lacked contact; gap="+film.LargestContactGap);
             Require(film.HeroCounterCount==4 && film.SharkCounterCount==2,"Choreographed contacts were obstructed: "+string.Join(",",film.ContactAttemptGaps));
             Require(film.LargestFootHeightError<=.03f && film.LargestLandingError<=.03f,"Actual support/landing error exceeds 3cm: "+film.LargestFootHeightError+"/"+film.LargestLandingError);
@@ -213,11 +240,12 @@ public static class VerifyEncounterV006
             Require(arrival!=null && !arrival.HasStick && !arrival.IsAwake,"Finale did not hand off to unconscious, unarmed island arrival.");
             if(arrival.player.GetComponent<GameSaveExcluded>()==null)arrival.player.gameObject.AddComponent<GameSaveExcluded>();
             Require(AudioListener.volume==0,"Scene transition restored sound effects.");
-            var result=new{fromWater,realHullFragments=202,contactVfx=true,randomDeadline=deadline,sharkHealthDoesNotEndFightEarly=true,
+            var result=new{fromWater,realHullFragments=battle.InitialFragmentCount,initiallyFracturedOriginalSources=battle.InitiallyFracturedSources.ToArray(),contactVfx=true,randomDeadline=deadline,sharkHealthDoesNotEndFightEarly=true,
                 lowPlayerHealthStartsFinale=lowHealth,timerStartsFinale=!lowHealth,heroCounters=counters,sharkCounters,lostStick=true,actualLethalFinish=true,soundMutedAfterSceneChange=true,
                 noRespawn=true,unconsciousUnarmedIsland=true,previewFrames=frame,
                 contactGap=film.LargestContactGap,contactCorrection=film.LargestContactCorrection,film.LeadInSeconds,pairedPausePreservesPose=true,minimumFloatHeadClearance,maximumSharkWoodPenetration,brokenWood,
-                jumps=film.BoardJumpCount,breaches=film.SharkBreachCount,landingError=film.LargestLandingError,breachClearance=film.LargestBreachClearance,contactGaps=film.ContactGaps.ToArray()};
+                jumps=film.BoardJumpCount,breaches=film.SharkBreachCount,landingError=film.LargestLandingError,breachClearance=film.LargestBreachClearance,contactGaps=film.ContactGaps.ToArray(),
+                reversalContact="Actual tail skin against the right-hand guard weapon",defeatContact="Actual tail skin against the torso"};
             Directory.CreateDirectory(Path.GetFullPath(".codex/wreck-water-audio-timer"));
             File.WriteAllText(Path.GetFullPath(".codex/wreck-water-audio-timer/finale-verification.json"),Newtonsoft.Json.JsonConvert.SerializeObject(result));
             if(!string.IsNullOrEmpty(revision))
@@ -226,6 +254,15 @@ public static class VerifyEncounterV006
                 File.WriteAllText(Path.GetFullPath(".codex/encounter-"+revision+"/verification.json"),Newtonsoft.Json.JsonConvert.SerializeObject(result,Newtonsoft.Json.Formatting.Indented));
             }
             return result;
+        }
+        catch(Exception error)
+        {
+            if(!string.IsNullOrEmpty(revision))
+            {
+                string folder=Path.GetFullPath(".codex/encounter-"+revision);Directory.CreateDirectory(folder);
+                File.WriteAllText(Path.Combine(folder,"verification-failure.json"),Newtonsoft.Json.JsonConvert.SerializeObject(new{error=error.ToString(),completedUtc=DateTime.UtcNow},Newtonsoft.Json.Formatting.Indented));
+            }
+            throw;
         }
         finally
         {

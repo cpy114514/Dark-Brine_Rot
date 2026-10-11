@@ -34,7 +34,7 @@ namespace Mavis
         [Min(0f)] public float comboTwoDamageMultiplier = 1.2f;
         [Min(0f)] public float comboThreeDamageMultiplier = 1.6f;
         public Vector2 comboOneHitWindow = new Vector2(0.57f, 0.86f);
-        public Vector2 comboTwoHitWindow = new Vector2(0.34f, 0.75f);
+        public Vector2 comboTwoHitWindow = new Vector2(0.12f, 0.34f);
         public Vector2 comboThreeHitWindow = new Vector2(0.32f, 0.55f);
 
         [Header("Air jump slash")]
@@ -875,7 +875,12 @@ namespace Mavis
         void ScanWeaponSegment(Vector3 a, Vector3 b, float radius)
         {
             int count = Physics.OverlapCapsuleNonAlloc(a, b, radius, nearbyColliders, hitMask, QueryTriggerInteraction.Collide);
-            for (int i = 0; i < count; i++) TryHit(nearbyColliders[i], true);
+            // Resolve a contacted weak point before the enclosing body. Both
+            // resolve to the same health component and still count as one hit.
+            for (int i = 0; i < count; i++)
+                if (nearbyColliders[i].GetComponent<BossWeakPoint>() != null) TryHit(nearbyColliders[i], true);
+            for (int i = 0; i < count; i++)
+                if (nearbyColliders[i].GetComponent<BossWeakPoint>() == null) TryHit(nearbyColliders[i], true);
         }
 
         bool StrikeBlocked(Collider target)

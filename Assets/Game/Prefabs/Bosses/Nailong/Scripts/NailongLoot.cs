@@ -11,6 +11,11 @@ namespace Mavis
         void Awake()
         {
             if (drops == null || drops.Length == 0) drops = Resources.LoadAll<EquipmentItem>("Equipment/Nailong");
+            var glasses=Resources.Load<EquipmentItem>(WeaknessGlasses.ItemPath);
+            if(glasses!=null && !System.Array.Exists(drops,item=>item==glasses))
+            {
+                System.Array.Resize(ref drops,drops.Length+1);drops[drops.Length-1]=glasses;
+            }
         }
 
         public int Drop()

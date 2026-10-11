@@ -1,0 +1,22 @@
+{
+  "revision": "v027",
+  "stage": "BLOCKING",
+  "status": "accepted_for_native_encounter_trial",
+  "isolatedOnly": true,
+  "images": ".codex/encounter-v027/native-preview/review-{front,side,three-quarter}.jpg",
+  "reviewed": [
+    "front",
+    "side",
+    "three-quarter"
+  ],
+  "findings": [
+    "Actual original Sahur skin retargets all four 60 FPS Actions without inverted legs or weapon-hand detachment in sampled frames.",
+    "Narrower stance and hip/knee compression are visible. Right-hand original swing and recovery remain.",
+    "Maximum sampled horizontal foot-root radius is 0.912 m across actions."
+  ],
+  "limitations": [
+    "Full continuous scene contact, wave/support and neighbor-board route acceptance remain pending.",
+    "Does not approve ordinary walk/run/roll changes; those are untouched."
+  ],
+  "finalApproval": false
+}

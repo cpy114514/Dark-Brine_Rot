@@ -159,7 +159,7 @@ namespace Mavis
                 attack.comboQueueClose = 0.96f;
                 attack.comboChainPoint = 0.98f;
                 attack.comboOneHitWindow = new Vector2(0.57f, 0.86f);
-                attack.comboTwoHitWindow = new Vector2(0.34f, 0.75f);
+                attack.comboTwoHitWindow = new Vector2(0.12f, 0.34f);
                 attack.comboThreeHitWindow = new Vector2(0.32f, 0.55f);
                 attack.chargeTimeParameter = chargePhase;
                 attack.chargeClip = windupClip;

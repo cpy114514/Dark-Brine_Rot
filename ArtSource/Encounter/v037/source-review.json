@@ -1,0 +1,8 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": ["CH1_SharkTail_v037", "CH1_SharkShipSmash_v037"],
+  "observed": "Original corrected caudal skin and all 16 original bone rest matrices retained on a versioned copy of v019. Both seven-pose front/side/three-quarter source sheets were inspected. Rear spine and tail base lift further in sequence while head/body stay level; source tail-tip rise relative to Body at .65 s increases from 3.805 to 4.490 m for Tail and 3.892 to 4.546 m for ShipSmash. Original 1.5 s/60 FPS/.65 contact and historical Actions retained.",
+  "evidence": ".codex/encounter-v037/previews",
+  "not_observed": "Native Generic import, actual native caudal point calibration, water exposure and collision/ship fracture runtime regression remain required before activation.",
+  "final_art_accepted": false
+}

@@ -5,6 +5,16 @@ using UnityEngine;
 [DefaultExecutionOrder(1200)]
 public sealed class Story1SharkWreckContact : MonoBehaviour
 {
+    public struct AnatomyPose
+    {
+        public Vector3 head,body,tailBase,tailTip,nose,tailMarker;
+    }
+    public AnatomyPose CaptureAnatomy()
+    {
+        Vector3 Local(Vector3 point)=>shark.transform.InverseTransformPoint(point);
+        return new AnatomyPose{head=Local(head.position),body=Local(body.position),tailBase=Local(tailBase.position),
+            tailTip=Local(tailTip.position),nose=Local(shark.NoseWorldPoint),tailMarker=Local(shark.TailWorldPoint)};
+    }
     public int BlockedContactCount { get; private set; }
     public float MaximumResidualPenetration { get; private set; }
     public Vector3 LastCorrection { get; private set; }
@@ -22,6 +32,7 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
     TralaleroSwimAnimator shark;
     Transform head,body,tailBase,tailTip;
     CapsuleCollider[] volumes;
+    CapsuleCollider[] planningVolumes;
     CapsuleCollider attackVolume;
     GameObject root;
     Vector3 previousRoot,previousTip;
@@ -83,11 +94,18 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
         head=Bone("Head");body=Bone("Body");tailBase=Bone("Tail_Base");tailTip=Bone("Tail_Tip");
         root=new GameObject("Shark anatomical wreck contact");root.transform.SetParent(transform,false);
         volumes=new CapsuleCollider[4];
+        planningVolumes=new CapsuleCollider[4];
         for(int i=0;i<5;i++)
         {
             var go=new GameObject(i==4 ? "Swept attack" : "Solid anatomy "+i);go.transform.SetParent(root.transform,false);
             var collider=go.AddComponent<CapsuleCollider>();collider.direction=2;collider.isTrigger=true;
             if(i<4)volumes[i]=collider;else attackVolume=collider;
+        }
+        for(int i=0;i<planningVolumes.Length;i++)
+        {
+            var go=new GameObject("Planning anatomy "+i);go.transform.SetParent(root.transform,false);go.transform.localPosition=Vector3.down*10000;
+            var collider=go.AddComponent<CapsuleCollider>();collider.direction=2;collider.isTrigger=true;
+            planningVolumes[i]=collider;
         }
         previousRoot=shark.transform.position;previousRotation=shark.transform.rotation;
         poseBones=animator.BoneAnimator.GetComponentsInChildren<Transform>();
@@ -126,18 +144,56 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
     }
     public float PoseObstruction(Vector3 marker,Quaternion rotation,bool tail)
     {
-        Vector3 at=shark.transform.position;Quaternion facing=shark.transform.rotation;
-        Vector3 local=shark.transform.InverseTransformPoint(tail ? shark.TailWorldPoint : shark.NoseWorldPoint);
-        shark.transform.SetPositionAndRotation(marker-rotation*Vector3.Scale(local,shark.transform.lossyScale),rotation);UpdateVolumes();
+        return PoseObstruction(CaptureAnatomy(),marker,rotation,tail);
+    }
+    public float PoseObstruction(AnatomyPose pose,Vector3 marker,Quaternion rotation,bool tail)
+    {
+        // A pose is sampled once and can be tested at many approach attitudes.
+        // Hypothetical geometry must not repeatedly evaluate the Animator or
+        // move the rendered rig while searching a collision-free route.
+        Vector3 scale=shark.transform.lossyScale;
+        Vector3 at=marker-rotation*Vector3.Scale(tail ? pose.tailMarker : pose.nose,scale);
+        Vector3 World(Vector3 local)=>at+rotation*Vector3.Scale(local,scale);
+        float radius=Mathf.Clamp(shark.RootMeshBounds.extents.x*Mathf.Abs(scale.x)*.48f,1.2f,2),headRadius=radius*.45f;
+        Vector3 nose=World(pose.nose),headPoint=World(pose.head),bodyPoint=World(pose.body),basePoint=World(pose.tailBase),tipPoint=World(pose.tailTip);
         float cost=0;
-        foreach(var volume in volumes)
+        void Grade(int index,Vector3 a,Vector3 b,float capsuleRadius)
         {
+            // ComputePenetration accepts an explicit hypothetical transform.
+            // Searching attitudes must not move/resize the live solid anatomy
+            // thousands of times or invalidate its physics broadphase.
+            var volume=planningVolumes[index];Vector3 along=b-a,position=(a+b)*.5f;
+            Quaternion facing=along.sqrMagnitude>.00001f ? Quaternion.LookRotation(along) : Quaternion.identity;
+            float height=along.magnitude+2*capsuleRadius;
+            if(volume.radius!=capsuleRadius)volume.radius=capsuleRadius;
+            if(volume.height!=height)volume.height=height;
+            Vector3 halfAxis=along*.5f;
+            Bounds bounds=new Bounds(position,2*(new Vector3(Mathf.Abs(halfAxis.x),Mathf.Abs(halfAxis.y),Mathf.Abs(halfAxis.z))+Vector3.one*capsuleRadius));
             foreach(var board in battle.Boards)
-                if(Overlap(volume,board,out var normal,out var depth))cost+=depth*depth;
+            {
+                if(board==null || board.IsBroken || !board.gameObject.activeInHierarchy || board.Deck==null || !board.Deck.enabled || Time.time<board.SharkContactAfter)continue;
+                cost+=PlanningPenetration(volume,position,facing,bounds,board.Collision);
+            }
             foreach(var piece in battle.WreckDetails)
-                if(OverlapShape(volume,piece.Collision,Vector3.zero,out var normal,out var depth))cost+=depth*depth;
+                cost+=PlanningPenetration(volume,position,facing,bounds,piece.Collision);
         }
-        shark.transform.SetPositionAndRotation(at,facing);UpdateVolumes();return cost;
+        Grade(0,nose+(headPoint-nose).normalized*headRadius,headPoint,headRadius);
+        Grade(1,headPoint,bodyPoint,radius);
+        Grade(2,bodyPoint,basePoint,radius*.7f);
+        Grade(3,basePoint,tipPoint,radius*.32f);
+        return cost;
+    }
+    static float PlanningPenetration(CapsuleCollider capsule,Vector3 position,Quaternion rotation,Bounds bounds,Story1WreckMeshCollision shape)
+    {
+        if(shape==null || !shape.Active || !shape.WorldBounds.Intersects(bounds))return 0;
+        float depth=0;
+        for(int i=0;i<shape.Parts.Length;i++)
+        {
+            if(!shape.PartBounds(i).Intersects(bounds))continue;
+            if(Physics.ComputePenetration(capsule,position,rotation,shape.Parts[i],shape.PartPosition(i),shape.PartRotation(i),out _,out var penetration))
+                depth=Mathf.Max(depth,penetration);
+        }
+        return depth*depth;
     }
     static bool Overlap(Collider anatomy,Story1WreckPlank board,out Vector3 direction,out float depth)
     {
@@ -197,7 +253,7 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
         attackWasActive=active;previousTip=tip;
     }
     void LateUpdate()=>ResolvePose();
-    void PushFloatingWood(int anatomy,Rigidbody timber,Story1WreckMeshCollision shape,Vector3 normal,float depth,bool occupied=false)
+    void PushFloatingWood(int anatomy,Rigidbody timber,Story1WreckMeshCollision shape,Vector3 normal,float depth)
     {
         if(timber==null || timber.isKinematic || !pushedBodies.Add(timber))return;
         Vector3 point=shape.ClosestPoint(volumes[anatomy].transform.position);
@@ -207,7 +263,9 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
         // correction still keeps its anatomy solid; the physics engine moves wood.
         const float animalMass=1500;
         float reducedMass=timber.mass*animalMass/(timber.mass+animalMass);
-        float limit=occupied ? 1 : timber.mass>=30 ? 2.5f : 6;
+        // Support protection controls fracture, not the physical momentum of
+        // the same free rigidbody. Its passenger follows that actual motion.
+        float limit=timber.mass>=30 ? 2.5f : 6;
         float separating=Mathf.Max(0,Vector3.Dot(timber.GetPointVelocity(point),-normal));
         float impulseSpeed=Mathf.Max(0,Mathf.Min(limit,closing+correction)-separating);
         timber.AddForceAtPosition(-normal*(impulseSpeed*reducedMass),point,ForceMode.Impulse);
@@ -246,8 +304,7 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
                     for(int n=0;n<volumes.Length;n++)
                     {
                         if(!Overlap(volumes[n],board,out var direction,out float depth) || depth<.001f)continue;
-                        PushFloatingWood(n,board.GetComponent<Rigidbody>(),board.Collision,direction,depth,
-                            battle.CurrentPhase==Story1WreckBattle.Phase.Finale ? battle.Finale.ProtectsBoard(board) : battle.BoardCarriesPlayer(board));
+                        PushFloatingWood(n,board.GetComponent<Rigidbody>(),board.Collision,direction,depth);
                         if(battle.CurrentPhase==Story1WreckBattle.Phase.Finale && battle.Finale.CanBreakBoards && !battle.Finale.ProtectsBoard(board) && board.FractureSource!=null)
                         {
                             if(battle.DamageBoard(board,100,board.Collision.ClosestPoint(volumes[n].transform.position),shark.transform.forward*5+Vector3.up*2))break;

@@ -1,0 +1,10 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_encounter_trial": ["CH1_SahurSlash_v033"],
+  "native_preview": ".codex/encounter-v033/native-preview",
+  "actual_reviewed_views": ["front-comparison.jpg", "side-comparison.jpg", "three-quarter-comparison.jpg"],
+  "actual_avatar": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/StandingMeleeAttackDownward.fbx",
+  "observed": "96 actual Sahur mesh images comparing v027 and v033 at 16 sampled times. New fixed .63s pose places the descending shaft forward/down, direction (-.605,-.347,+.717), instead of the original backward shaft (-.482,-.392,-.784). Right hand extends .914m farther forward and .470m higher at that cue, due to both actual torso/arm pose modification and retiming. Three-quarter/side views show a readable raised wind-up, outward descending contact and slower follow-through. Left arm counterbalances; one right hand grips. Original rig/Avatar and legacy gameplay walk/run/roll retained.",
+  "limits": "This is isolated retarget blocking acceptance only. Foot positions at the same time differ because the full authored action was retimed; this is not a planted-foot error measurement. Actual timber support, slides, weapon/wood intersections and genuine paired contact still require native full-film verification. Continuous full-speed artistic acceptance outstanding.",
+  "final_art_accepted": false
+}

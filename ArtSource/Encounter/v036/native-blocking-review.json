@@ -1,0 +1,13 @@
+{
+  "stage": "BLOCKING",
+  "accepted_scope": "Isolated original-Avatar windup revision accepted for full encounter trial",
+  "actual_native_mesh_samples": 510,
+  "evidence": ".codex/encounter-v036/native-continuous/native-comparison.json",
+  "reviewed": "Front, side and three-quarter dense frame sequences through .983 s were inspected. Overhead preparation begins earlier and proceeds through more intermediate shoulder/elbow poses; the one-hand downward strike and follow-through remain clear. Recovery is numerically identical to v033, whose dense side/three-quarter recovery sequence was inspected separately.",
+  "preparation_peak_shaft_degrees_per_60fps_frame_before": 47.63236,
+  "preparation_peak_shaft_degrees_per_60fps_frame_after": 27.45932,
+  "contact_pose_direction_difference": 0,
+  "post_contact_max_position_difference_metres": 0.00000026923,
+  "not_observed": "Full encounter support/contact regressions, continuous gameplay artistic acceptance and reliable neighboring hops remain mandatory.",
+  "final_art_accepted": false
+}

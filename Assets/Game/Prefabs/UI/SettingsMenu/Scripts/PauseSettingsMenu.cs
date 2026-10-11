@@ -307,7 +307,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             footerHint.text = "SELECT AGAIN TO EXIT  /  ESC TO CANCEL";
             return;
         }
-        bool hasActiveGame = FindFirstObjectByType<ThirdPersonPlayerController>() != null;
+        bool hasActiveGame = GameSaveManager.HasSavableGame;
         bool savedGame = GameSaveManager.SaveCurrentGame();
         if (hasActiveGame && !savedGame)
         {

@@ -1,0 +1,51 @@
+{
+  "bones_retained": [
+    "Body",
+    "Spine_Mid",
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Mid",
+    "Tail_Tip",
+    "Tail_Marker",
+    "Dorsal",
+    "Foot_Rear",
+    "Head",
+    "Jaw",
+    "Nose_Marker",
+    "Fin_Left",
+    "Fin_Right",
+    "Foot_Left",
+    "Foot_Right"
+  ],
+  "skin_source": "ArtSource/Encounter/v019/shark-lift-v019.blend",
+  "contact_poses": [
+    {
+      "action": "CH1_SharkTail_v037",
+      "body": [
+        0.0,
+        0.0,
+        5.300000190734863
+      ],
+      "tail_tip": [
+        -4.143829345703125,
+        5.153842926025391,
+        9.790193557739258
+      ],
+      "root_bone_unchanged": true
+    },
+    {
+      "action": "CH1_SharkShipSmash_v037",
+      "body": [
+        0.0,
+        0.0,
+        5.300000190734863
+      ],
+      "tail_tip": [
+        -4.192571640014648,
+        4.157461166381836,
+        9.846250534057617
+      ],
+      "root_bone_unchanged": true
+    }
+  ]
+}

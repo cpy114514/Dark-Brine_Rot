@@ -38,6 +38,8 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     TralaleroAnimationSet animationSet;
     Animator rigAnimator;
     Transform rigInstance, noseMarker, tailMarker;
+    Transform tailSurfaceBone;
+    Vector3 tailSurfaceLocal;
     Bounds rootMeshBounds;
     Renderer originalRenderer;
     float actionUntil;
@@ -47,7 +49,27 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     public Animator BoneAnimator => rigAnimator;
 
     public Vector3 NoseWorldPoint => noseMarker != null ? noseMarker.position : meshFilter != null ? meshFilter.transform.TransformPoint(noseTip) : transform.position;
-    public Vector3 TailWorldPoint => tailMarker != null ? tailMarker.position : meshFilter != null ? meshFilter.transform.TransformPoint(tailTip) : transform.position;
+    public Vector3 TailWorldPoint => tailSurfaceBone!=null ? tailSurfaceBone.TransformPoint(tailSurfaceLocal) : tailMarker != null ? tailMarker.position : meshFilter != null ? meshFilter.transform.TransformPoint(tailTip) : transform.position;
+    public static bool FindVisibleTailContact(SkinnedMeshRenderer skin,Transform marker,out Transform bone,out Vector3 local)
+    {
+        bone=null;local=Vector3.zero;
+        if(skin==null || marker==null)return false;
+        int tip=System.Array.FindIndex(skin.bones,b=>b.name=="Tail_Tip");
+        if(tip<0)return false;
+        var vertices=skin.sharedMesh.vertices;var weights=skin.sharedMesh.boneWeights;
+        var bind=skin.sharedMesh.bindposes[tip];float best=float.PositiveInfinity;
+        for(int i=0;i<vertices.Length;i++)
+        {
+            var weight=weights[i];
+            float amount=(weight.boneIndex0==tip ? weight.weight0 : 0)+(weight.boneIndex1==tip ? weight.weight1 : 0)+
+                (weight.boneIndex2==tip ? weight.weight2 : 0)+(weight.boneIndex3==tip ? weight.weight3 : 0);
+            if(amount<.9999f)continue;
+            Vector3 point=bind.MultiplyPoint3x4(vertices[i]);
+            float distance=(skin.bones[tip].TransformPoint(point)-marker.position).sqrMagnitude;
+            if(distance<best){best=distance;bone=skin.bones[tip];local=point;}
+        }
+        return bone!=null;
+    }
     public Bounds RootMeshBounds => rootMeshBounds;
     public Vector3 ShipSmashContactLocalPoint => rigAnimator!=null ?
         transform.InverseTransformPoint(meshFilter.transform.TransformPoint(animationSet.shipSmashContact)) : TailContactLocalPoint;
@@ -118,7 +140,9 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
             tailMarker=System.Array.Find(rigInstance.GetComponentsInChildren<Transform>(),t=>t.name=="Tail_Marker");
             originalRenderer.enabled=false;
             rigAnimator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
-            rigAnimator.Rebind();rigAnimator.Update(0);return;
+            rigAnimator.Rebind();rigAnimator.Update(0);
+            FindVisibleTailContact(VisualRenderer as SkinnedMeshRenderer,tailMarker,out tailSurfaceBone,out tailSurfaceLocal);
+            return;
         }
         restVertices = sourceMesh.vertices;
         restNormals = sourceMesh.normals;
@@ -194,7 +218,7 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     {
         string suffix=state=="Tail_Strike" ? "Tail" : state=="Ship_Smash" ? "ShipSmash" : state=="Bite_Lunge" ? "Bite" : state=="Hit_Recoil" ? "Recoil" : state;
         foreach(var clip in rigAnimator.runtimeAnimatorController.animationClips)
-            if(clip.name=="CH1_Shark"+suffix+"_v006" || clip.name==state)return clip.length;
+            if(clip.name.StartsWith("CH1_Shark"+suffix+"_v",System.StringComparison.Ordinal) || clip.name==state)return clip.length;
         return state=="Breach" ? 3.2f : state=="Threat" ? 1.8f : state=="Hit_Recoil" ? .8f : state=="Bite_Lunge" ? 1.1f : 1.15f;
     }
 

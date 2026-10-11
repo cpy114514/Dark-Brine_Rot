@@ -21,11 +21,23 @@ public static class Story1CapsuleContact
         Segment(first,out var a,out var b,out float ra);Segment(second,out var c,out var d,out float rb);
         return Gap(a,b,ra,c,d,rb,out contact);
     }
+    public static float Separation(CapsuleCollider first,CapsuleCollider second,out Vector3 delta)
+    {
+        Segment(first,out var a,out var b,out float ra);Segment(second,out var c,out var d,out float rb);
+        return Gap(a,b,ra,c,d,rb,out _,out delta);
+    }
     public static float PointGap(Vector3 point,CapsuleCollider body,out Vector3 contact)
     {
         Segment(body,out var c,out var d,out float radius);return Gap(point,point,0,c,d,radius,out contact);
     }
+    public static float PointSeparation(Vector3 point,CapsuleCollider body,out Vector3 delta)
+    {
+        Segment(body,out var a,out var b,out float radius);
+        return Gap(a,b,radius,point,point,0,out _,out delta);
+    }
     static float Gap(Vector3 p,Vector3 q,float ra,Vector3 r,Vector3 u,float rb,out Vector3 contact)
+        =>Gap(p,q,ra,r,u,rb,out contact,out _);
+    static float Gap(Vector3 p,Vector3 q,float ra,Vector3 r,Vector3 u,float rb,out Vector3 contact,out Vector3 separation)
     {
         Vector3 a=q-p,b=u-r,w=p-r;float aa=Vector3.Dot(a,a),bb=Vector3.Dot(b,b),ab=Vector3.Dot(a,b),aw=Vector3.Dot(a,w),bw=Vector3.Dot(b,w),s,t;
         if(aa<.000001f){s=0;t=bb>.000001f ? Mathf.Clamp01(bw/bb) : 0;}
@@ -36,6 +48,6 @@ public static class Story1CapsuleContact
             t=(ab*s+bw)/bb;if(t<0){t=0;s=Mathf.Clamp01(-aw/aa);}else if(t>1){t=1;s=Mathf.Clamp01((ab-aw)/aa);}
         }
         Vector3 x=p+a*s,y=r+b*t,along=(y-x).normalized;contact=(x+along*ra+y-along*rb)*.5f;
-        return Mathf.Max(0,Vector3.Distance(x,y)-ra-rb);
+        float gap=Mathf.Max(0,Vector3.Distance(x,y)-ra-rb);separation=along*gap;return gap;
     }
 }

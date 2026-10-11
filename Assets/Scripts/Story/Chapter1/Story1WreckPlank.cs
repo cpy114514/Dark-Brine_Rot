@@ -14,12 +14,30 @@ public sealed class Story1WreckPlank : MonoBehaviour
     public Vector3 Dimensions => size;
     public Vector3 Velocity => floating!=null ? floating.Body.linearVelocity : Vector3.zero;
     public float Speed => Vector3.ProjectOnPlane(Velocity,Vector3.up).magnitude;
+    public Vector3 SurfForward=>Vector3.ProjectOnPlane(transform.rotation*(size.x>size.z ? Vector3.right : Vector3.forward),Vector3.up).normalized;
     public Vector3 ShipSourcePosition { get; private set; }
     public float TopLocalY => transform.up.y>=0 ? .5f : -.5f;
     public bool IsBoardable => !IsBroken && gameObject.activeInHierarchy && Deck!=null && Deck.enabled && Mathf.Abs(transform.up.y)>.65f;
+    // Large hull sections are standing platforms. Only a thin, narrow piece
+    // of the real released timber can be paddled like a surfboard.
+    public bool IsSurfboard
+    {
+        get
+        {
+            return IsBoardable && SurfboardShape(size);
+        }
+    }
+    public static bool SurfboardShape(Vector3 dimensions)
+    {
+        float width=Mathf.Min(dimensions.x,dimensions.z),length=Mathf.Max(dimensions.x,dimensions.z);
+        return width>=1.15f && width<=3.8f && length>=3.2f && length<=9.5f &&
+            length>=width*1.6f && dimensions.y<=Mathf.Min(.9f,width*.4f);
+    }
     Story1WreckFloatBody floating;
     Vector3 size;
     float throttle,steer;
+    float paddlePower=1;
+    float surfDirection=1;
     Transform rider;
     Matrix4x4 previousPose;
     Vector2[] footprint;
@@ -99,18 +117,25 @@ public sealed class Story1WreckPlank : MonoBehaviour
         }
         return Vector3.ProjectOnPlane(transform.TransformDirection(new Vector3(outward.x,0,outward.y)),Vector3.up).normalized;
     }
-    public void Drive(float forward,float turn,Transform occupant)
+    public void Drive(float forward,float turn,Transform occupant,float strokePower=1,float direction=1)
     {
-        throttle=Mathf.Clamp(forward,-1,1);steer=Mathf.Clamp(turn,-1,1);rider=occupant;
+        throttle=IsSurfboard ? Mathf.Clamp(forward,-1,1) : 0;
+        steer=IsSurfboard ? Mathf.Clamp(turn,-1,1) : 0;rider=IsSurfboard ? occupant : null;
+        paddlePower=Mathf.Clamp01(strokePower);
+        surfDirection=direction<0 ? -1 : 1;
     }
     void FixedUpdate()
     {
         if(rider==null || floating==null || !floating.InWater)return;
         var body=floating.Body;
-        Vector3 forward=Vector3.ProjectOnPlane(body.rotation*Vector3.forward,Vector3.up).normalized;
+        Vector3 forward=Vector3.ProjectOnPlane(body.rotation*(size.x>size.z ? Vector3.right : Vector3.forward),Vector3.up).normalized*surfDirection;
         float wanted=throttle>=0 ? throttle*10 : throttle*4.5f;
         float current=Vector3.Dot(body.linearVelocity,forward);
-        body.AddForce(forward*Mathf.Clamp((wanted-current)*3,-7,7),ForceMode.Acceleration);
+        float drive=Mathf.Clamp((wanted-current)*3,-7,7);
+        // Power is transferred only during the authored leg's water stroke.
+        // Recovery coasts; releasing input uses the normal physical brake.
+        if(Mathf.Abs(throttle)>.05f && Mathf.Sign(drive)==Mathf.Sign(throttle))drive*=paddlePower;
+        body.AddForce(forward*drive,ForceMode.Acceleration);
         float turn=steer*90*Mathf.Deg2Rad;
         body.AddTorque(Vector3.up*((turn-body.angularVelocity.y)*4),ForceMode.Acceleration);
     }

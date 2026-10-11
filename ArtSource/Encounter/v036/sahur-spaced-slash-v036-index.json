@@ -1,0 +1,23 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v036\\sahur-spaced-slash-v036.blend",
+    "rig": "Armature",
+    "action": "CH1_SahurSlash_v036",
+    "unity_clip": "CH1_SahurSlash_v036",
+    "revision": "v036",
+    "frame_start": 1,
+    "frame_end": 85,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "mixamorig:Hips",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v006.md",
+    "approval_reference": "2026-10-07 user PLEASE IMPLEMENT THIS PLAN",
+    "review_status": "pending_native_review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/StandingMeleeAttackDownward.fbx",
+    "contact_seconds": 0.63
+  }
+]

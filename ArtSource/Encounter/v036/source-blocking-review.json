@@ -1,0 +1,10 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": ["CH1_SahurSlash_v036"],
+  "accepted_scope": "Original rest-rig identity and monotonic timing-map audit for isolated native review only",
+  "source_audit": "source-timing-audit.json",
+  "native_problem_reference": ".codex/encounter-v033/native-continuous/native-motion-spacing.json",
+  "observed": "Original rest matrices and historical Actions retained. Map is strictly increasing; .63 s still samples source .600 s. Native v033 dense review showed abrupt overhead preparation at .433-.483 s, up to 47.63 degrees of actual held-shaft direction per 60 FPS frame. This revision distributes the original preparation earlier while preserving contact, follow-through and recovery timing.",
+  "not_observed": "Native revised animation, support, contacts and artistic acceptance must still be reviewed.",
+  "final_art_accepted": false
+}

@@ -25,6 +25,7 @@ namespace Mavis
         {
             owner=source;owner.RegisterOrdnance(this);Payload=kind;target=victim;aim=point;damage=amount;radius=blastRadius;
             velocity=direction.normalized*(kind==Kind.Missile?12f:2f);
+            if(kind!=Kind.Fire)BossAttackWarning.For(gameObject).Circle(point,blastRadius,6f);
             if(kind==Kind.Bomb)
             {
                 float flight=Mathf.Sqrt(Mathf.Max(.5f,transform.position.y-point.y)*2/25f);
@@ -93,6 +94,7 @@ namespace Mavis
             {
                 // Only steer during the first second, giving a committed dodge window.
                 if(age<.85f&&target!=null){var body=target.GetComponent<Collider>();aim=body!=null?body.bounds.center:target.position;}
+                BossAttackWarning.For(gameObject).Circle(aim,radius,.2f);
                 Vector3 wanted=aim-transform.position;
                 float speed=Mathf.Lerp(12,36,Mathf.Clamp01((age-.12f)/.65f));
                 if(age<1.2f&&wanted.sqrMagnitude>.01f)velocity=Vector3.RotateTowards(velocity,wanted.normalized*speed,55f*Mathf.Deg2Rad*dt,80*dt);

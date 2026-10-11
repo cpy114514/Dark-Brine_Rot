@@ -1,20 +1,23 @@
 using UnityEngine;
+
 namespace Mavis
 {
+    /// <summary>Runtime dimensions; authored tuning stays unchanged when the model is resized.</summary>
     public static class NailongSize
     {
-        public static float RangeFactor(Transform actor)=>Mathf.Max(.01f,Mathf.Abs(actor.lossyScale.x));
-        public static Vector3 Feet(Transform actor)
+        // Range grows more slowly than the mesh to keep the enlarged boss dodgeable.
+        public static float RangeFactor(Transform root) =>
+            Mathf.Sqrt(Mathf.Max(.01f, Mathf.Max(Mathf.Abs(root.lossyScale.x), Mathf.Abs(root.lossyScale.z))));
+
+        public static Vector3 Feet(Transform root)
         {
-            var capsule=actor.GetComponent<CharacterController>();
-            if(capsule!=null && capsule.enabled)return new Vector3(actor.position.x,capsule.bounds.min.y,actor.position.z);
-            var animator=actor.GetComponentInChildren<Animator>();
-            if(animator!=null && animator.isHuman)
-            {
-                var a=animator.GetBoneTransform(HumanBodyBones.LeftFoot);var b=animator.GetBoneTransform(HumanBodyBones.RightFoot);
-                if(a!=null && b!=null)return new Vector3(actor.position.x,Mathf.Min(a.position.y,b.position.y),actor.position.z);
-            }
-            return actor.position;
+            var motor = root.GetComponent<CharacterController>();
+            if (motor && motor.enabled)
+                return root.TransformPoint(motor.center - Vector3.up * motor.height * .5f);
+            var body = root.GetComponent<CapsuleCollider>();
+            if (body && body.direction == 1)
+                return root.TransformPoint(body.center - Vector3.up * body.height * .5f);
+            return root.position;
         }
     }
 }

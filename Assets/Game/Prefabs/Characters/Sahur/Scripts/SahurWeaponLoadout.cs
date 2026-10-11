@@ -21,6 +21,7 @@ namespace Mavis
         GameObject left, right;
         CapsuleCollider leftHitbox, rightHitbox;
         bool initialized;
+        Weapon? restoredWeapon;
         public static Vector3 GripShaft(float side) => new Vector3(side * .18f, .41f, -.89f).normalized;
 
         void Start() => Initialize();
@@ -46,6 +47,7 @@ namespace Mavis
         void Update()
         {
             if (!initialized) Initialize();
+            if (restoredWeapon.HasValue) TryEquip(restoredWeapon.Value);
             if (!initialized || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
                 Cursor.lockState != CursorLockMode.Locked || Keyboard.current == null) return;
             var keys = Keyboard.current;
@@ -61,16 +63,27 @@ namespace Mavis
                 (movement && (!movement.enabled || movement.Swimming || movement.ExternalControlLock)) ||
                 (GetComponent<SahurBoomerang>()?.IsBusy ?? false)) return false;
             if (weapon == Weapon.CapriTwinBlades && !HasTwinBlades) return false;
-            if (weapon == CurrentWeapon) return true;
+            if (weapon == CurrentWeapon) { restoredWeapon = null; return true; }
             if (weapon == Weapon.CapriTwinBlades && !CreateBlades()) return false;
             attack.SetTwinBladeMode(weapon == Weapon.CapriTwinBlades, rightHitbox, leftHitbox);
             CurrentWeapon = weapon;
+            restoredWeapon = null;
             GetComponent<SahurTwinBladeLocomotion>()?.Refresh();
             if (stickRenderers != null) foreach (var r in stickRenderers) if (r) r.enabled = !UsesTwinBlades;
             if (left) left.SetActive(UsesTwinBlades);
             if (right) right.SetActive(UsesTwinBlades);
             Changed?.Invoke();
             return true;
+        }
+
+        public void Restore(bool ownsTwinBlades, Weapon selected)
+        {
+            Initialize();
+            if (ownsTwinBlades && inventory && twinBlades && !HasTwinBlades) inventory.Collect(twinBlades);
+            restoredWeapon = selected == Weapon.CapriTwinBlades && HasTwinBlades ? selected : Weapon.Stick;
+            // A saved pose may still be swimming or finishing its arrival sequence.
+            // Retry on Update once normal weapon switching is available.
+            TryEquip(restoredWeapon.Value);
         }
 
         bool CreateBlades()

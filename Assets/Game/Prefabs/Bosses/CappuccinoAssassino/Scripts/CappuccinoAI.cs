@@ -79,6 +79,7 @@ namespace Mavis
 
         void Awake()
         {
+            if(GetComponent<BossWeaknessSetup>()==null)gameObject.AddComponent<BossWeaknessSetup>();
             BossCombatVfx.PrewarmImpacts();
             health = GetComponent<Health>();
             presentation = GetComponent<CappuccinoEnemy>();
@@ -251,6 +252,10 @@ namespace Mavis
             if (ActionProgress < .62f) Face(toTarget, dt * .6f);
             committedDirection = transform.forward; committedRotation = transform.rotation;
             presentation.SetBossPose(Mathf.Lerp(.10f, .22f, Mathf.SmoothStep(0f,1f,ActionProgress)));
+            var warning=BossAttackWarning.For(gameObject);
+            if(CurrentAttack==AttackKind.DashThrust)warning.Lane(transform.position,transform.position+committedDirection*dashReach,attackReach*Mathf.Sin(32.5f*Mathf.Deg2Rad),.2f);
+            else if(CurrentAttack==AttackKind.Whirlwind)warning.Circle(transform.position,attackReach*1.05f,.2f);
+            else warning.Sector(transform.position,committedDirection,attackReach,attackArc,.2f);
             if (ActionProgress < 1f) return;
             CurrentState = State.Attack; attackStartedAt = now;
             attackStartPosition = transform.position;
@@ -265,6 +270,10 @@ namespace Mavis
 
         void TickAttack(float dt, float now)
         {
+            var warning=BossAttackWarning.For(gameObject);
+            if(CurrentAttack==AttackKind.DashThrust)warning.Lane(attackStartPosition,attackStartPosition+committedDirection*dashReach,attackReach*Mathf.Sin(32.5f*Mathf.Deg2Rad),.2f);
+            else if(CurrentAttack==AttackKind.Whirlwind)warning.Circle(transform.position,attackReach*1.05f,.2f);
+            else warning.Sector(transform.position,committedDirection,attackReach,attackArc,.2f);
             float elapsed = Mathf.Max(0f, now - attackStartedAt);
             float cycle = swingSeconds + .18f;
             int index = Mathf.Min(swingCount - 1, Mathf.FloorToInt(elapsed / cycle));

@@ -16,22 +16,22 @@ MonoBehaviour:
   fps: 60
   beats:
   - label: Measure the bite
-    clip: CH1_SahurGuard_v007
+    clip: CH1_SahurGuard_v027
     start: 0
     end: 0.7
     action: 0
   - label: Sidestep and parry
-    clip: CH1_SahurParry_v008
+    clip: CH1_SahurParry_v027
     start: 0.7
     end: 1.8
     action: 1
   - label: Answer the probe
-    clip: CH1_SahurSlash_v006
+    clip: CH1_SahurSlash_v036
     start: 1.8
     end: 3.2
     action: 2
   - label: Recover the guard
-    clip: CH1_SahurGuard_v007
+    clip: CH1_SahurGuard_v027
     start: 3.2
     end: 4
     action: 0
@@ -46,7 +46,7 @@ MonoBehaviour:
     end: 6.4
     action: 4
   - label: Landing diagonal counter
-    clip: CH1_SahurSlash_v006
+    clip: CH1_SahurSlash_v036
     start: 6.4
     end: 7.8
     action: 2
@@ -56,12 +56,12 @@ MonoBehaviour:
     end: 9.8
     action: 5
   - label: Hold the advantage
-    clip: CH1_SahurGuard_v007
+    clip: CH1_SahurGuard_v027
     start: 9.8
     end: 10
     action: 0
   - label: Track the submerged flank
-    clip: CH1_SahurGuard_v007
+    clip: CH1_SahurGuard_v027
     start: 10
     end: 11.6
     action: 6
@@ -71,7 +71,7 @@ MonoBehaviour:
     end: 14
     action: 4
   - label: Defend before settling
-    clip: CH1_SahurBrace_v007
+    clip: CH1_SahurBrace_v027
     start: 14
     end: 14.65
     action: 7
@@ -81,17 +81,17 @@ MonoBehaviour:
     end: 15.4
     action: 8
   - label: Recover after the tail
-    clip: CH1_SahurGuard_v007
+    clip: CH1_SahurGuard_v027
     start: 15.4
     end: 16
     action: 0
   - label: Final counter misses
-    clip: CH1_SahurSlash_v006
+    clip: CH1_SahurSlash_v036
     start: 16
     end: 17.4
     action: 9
   - label: Tail overwhelms the guard
-    clip: CH1_SahurBrace_v007
+    clip: CH1_SahurBrace_v027
     start: 17.4
     end: 18.05
     action: 7

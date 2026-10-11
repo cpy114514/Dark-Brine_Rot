@@ -1,0 +1,51 @@
+{
+  "bones_retained": [
+    "Body",
+    "Spine_Mid",
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Mid",
+    "Tail_Tip",
+    "Tail_Marker",
+    "Dorsal",
+    "Foot_Rear",
+    "Head",
+    "Jaw",
+    "Nose_Marker",
+    "Fin_Left",
+    "Fin_Right",
+    "Foot_Left",
+    "Foot_Right"
+  ],
+  "skin_source": "ArtSource/Encounter/v016/shark-skin-v016.blend",
+  "contact_poses": [
+    {
+      "action": "CH1_SharkTail_v019",
+      "body": [
+        0.0,
+        0.0,
+        5.300000190734863
+      ],
+      "tail_tip": [
+        -4.74965763092041,
+        5.862637996673584,
+        9.105449676513672
+      ],
+      "root_bone_unchanged": true
+    },
+    {
+      "action": "CH1_SharkShipSmash_v019",
+      "body": [
+        0.0,
+        0.0,
+        5.300000190734863
+      ],
+      "tail_tip": [
+        -4.991791725158691,
+        4.861944198608398,
+        9.191747665405273
+      ],
+      "root_bone_unchanged": true
+    }
+  ]
+}

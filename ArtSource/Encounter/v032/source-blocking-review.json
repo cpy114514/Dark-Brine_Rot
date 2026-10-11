@@ -1,0 +1,9 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": ["CH1_SahurSlash_v032"],
+  "accepted_scope": "Original rig identity, unchanged lower-body channels, complete source-frame arm reach audit and compatible export for isolated native retarget review only",
+  "source_audit": "source-pose-audit.json",
+  "observed": "85 source frames, 60 FPS, 1.4 seconds, .63 second contact. Real right arm two-bone solve, torso loading and follow-through. Maximum hand target error .000029794 cm; lower-body channel difference zero; no rest-bone changes.",
+  "not_observed": "No Sahur skin exists in this source. Native silhouette, weapon reach direction, knee/arm articulation, collision and continuous motion still require review.",
+  "final_art_accepted": false
+}

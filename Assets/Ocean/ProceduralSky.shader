@@ -217,9 +217,9 @@ Shader "DarkBrine/Procedural Sky"
                     float exit = min(cloudDistance, (cloudTop - rayOrigin.y) / rayDirection.y);
                     if (exit > entry)
                     {
-                        int steps = _CloudDetail < 3.0 ? 8 : (_CloudDetail < 5.0 ? 14 : 20);
-                        if (entry > 3500.0) steps = max(10, steps);
-                        else if (entry > 1600.0) steps = max(6, steps * 3 / 4);
+                        uint steps = _CloudDetail < 3.0 ? 8u : (_CloudDetail < 5.0 ? 14u : 20u);
+                        if (entry > 3500.0) steps = max(10u, steps);
+                        else if (entry > 1600.0) steps = max(6u, (steps * 3u) >> 2u);
                         float segmentLength = (exit - entry) / steps;
                         // Smooth angular jitter breaks up sampling bands without
                         // introducing pixel-sized grain in the distant cloud layer.
@@ -227,7 +227,7 @@ Shader "DarkBrine/Procedural Sky"
                         float jitterStrength = 0.65 * (1.0 - saturate((entry - 4000.0) / 8000.0));
                         float transmittance = 1.0;
                         [loop]
-                        for (int i = 0; i < 20; i++)
+                        for (uint i = 0u; i < 20u; i++)
                         {
                             if (i >= steps || transmittance < 0.015) break;
                             float travel = entry + (i + 0.5 + jitter * jitterStrength) * segmentLength;

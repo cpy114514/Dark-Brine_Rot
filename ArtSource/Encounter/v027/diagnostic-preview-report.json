@@ -1,0 +1,118 @@
+{
+  "diagnostic_bones_only": true,
+  "native_sahur_skin_review_required": true,
+  "previews": [
+    {
+      "action": "CH1_SahurGuard_v027",
+      "fps": 60.0,
+      "frames": [
+        1,
+        49,
+        97
+      ],
+      "previews": [
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\front-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\front-0049.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\front-0097.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\side-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\side-0049.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\side-0097.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\three-quarter-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\three-quarter-0049.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Guard\\three-quarter-0097.00.png"
+      ],
+      "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+      "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+    },
+    {
+      "action": "CH1_SahurParry_v027",
+      "fps": 60.0,
+      "frames": [
+        1,
+        16,
+        30.04,
+        43,
+        67
+      ],
+      "previews": [
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\front-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\front-0016.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\front-0030.04.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\front-0043.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\front-0067.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\side-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\side-0016.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\side-0030.04.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\side-0043.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\side-0067.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\three-quarter-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\three-quarter-0016.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\three-quarter-0030.04.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\three-quarter-0043.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Parry\\three-quarter-0067.00.png"
+      ],
+      "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+      "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+    },
+    {
+      "action": "CH1_SahurSlash_v027",
+      "fps": 60.0,
+      "frames": [
+        1,
+        20,
+        38.8,
+        56,
+        85
+      ],
+      "previews": [
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\front-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\front-0020.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\front-0038.80.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\front-0056.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\front-0085.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\side-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\side-0020.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\side-0038.80.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\side-0056.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\side-0085.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\three-quarter-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\three-quarter-0020.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\three-quarter-0038.80.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\three-quarter-0056.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Slash\\three-quarter-0085.00.png"
+      ],
+      "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+      "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+    },
+    {
+      "action": "CH1_SahurBrace_v027",
+      "fps": 60.0,
+      "frames": [
+        1,
+        16,
+        35.32,
+        50,
+        79
+      ],
+      "previews": [
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\front-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\front-0016.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\front-0035.32.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\front-0050.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\front-0079.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\side-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\side-0016.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\side-0035.32.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\side-0050.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\side-0079.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\three-quarter-0001.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\three-quarter-0016.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\three-quarter-0035.32.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\three-quarter-0050.00.png",
+        "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\encounter-v027\\source-preview\\Brace\\three-quarter-0079.00.png"
+      ],
+      "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+      "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+    }
+  ]
+}

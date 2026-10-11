@@ -220,6 +220,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void Awake()
     {
+        if(GetComponent<Mavis.WeaknessGlasses>()==null)gameObject.AddComponent<Mavis.WeaknessGlasses>();
         Motion=GetComponent<SahurMotionContext>();if(Motion==null)Motion=gameObject.AddComponent<SahurMotionContext>();
         characterController = GetComponent<CharacterController>();
         combat = GetComponent<Mavis.SahurAttack>();
@@ -277,6 +278,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if(GetComponent<SahurMovementPose>()==null)gameObject.AddComponent<SahurMovementPose>();
         if (GetComponent<Mavis.EquipmentInventory>() == null)
             gameObject.AddComponent<Mavis.EquipmentInventory>();
+        if (GetComponent<Mavis.SahurWeaponLoadout>() == null)
+            gameObject.AddComponent<Mavis.SahurWeaponLoadout>();
         if (GetComponent<Mavis.SahurLoadoutUI>() == null)
             gameObject.AddComponent<Mavis.SahurLoadoutUI>();
     }
@@ -297,10 +300,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current == null || Mouse.current == null)
+        if (characterController == null || Keyboard.current == null || Mouse.current == null)
             return;
 
-        if (PauseSettingsMenu.IsOpen)
+        if (PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput)
             return;
         if (swimmingOcean == null) swimmingOcean = FindFirstObjectByType<OceanWorld>();
         if (swimmingOcean != null) seaLevel = swimmingOcean.oceanHeight;
@@ -335,6 +338,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             if (animator != null) animator.SetFloat(SpeedId, 0f);
             return;
         }
+
+        // Cutscenes and pose restoration can temporarily disable the capsule.
+        // Keep mounted camera/animation handling above, but never move an inactive controller.
+        if (!characterController.enabled || !characterController.gameObject.activeInHierarchy) return;
 
         Vector3 input = Vector3.zero;
         if (GameInputSettings.Pressed(GameInputSettings.Action.Forward)) input.z += 1f;
@@ -486,10 +493,16 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             verticalSpeed = Mathf.Max(verticalSpeed, gravity * (airFlipDuration + 0.08f) * 0.5f);
             SetMotion(7, "Air Flip", 0.06f);
         }
+        float verticalDisplacement = verticalSpeed * Time.deltaTime;
         if (attackRootMotion)
             verticalSpeed = unsupportedAttackSpeed; // Source lift plus gravity only when there is no floor.
         else
+        {
+            // Integrate the ballistic displacement before gravity changes the
+            // end velocity. Semi-implicit Euler cut jump height at low FPS.
+            verticalDisplacement -= .5f * gravity * Time.deltaTime * Time.deltaTime;
             verticalSpeed -= gravity * Time.deltaTime;
+        }
 
         bool rollFinishedThisFrame = false;
         if (isRolling)
@@ -534,7 +547,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         float downwardSpeedBeforeMove = verticalSpeed;
         if (!attackRootMotion)
-            characterController.Move((planarVelocity + platformCarryVelocity + Vector3.up * verticalSpeed) * Time.deltaTime);
+        {
+            CollisionFlags collisions = characterController.Move(
+                (planarVelocity + platformCarryVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement);
+            if ((collisions & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
+                verticalSpeed = 0f;
+            if ((collisions & CollisionFlags.Below) != 0 && verticalSpeed < 0f)
+                verticalSpeed = -groundStickSpeed;
+        }
         UpdateWaterSplash(Mathf.Max(0f, -downwardSpeedBeforeMove));
 
         // The exit velocity was already blended above, before the controller

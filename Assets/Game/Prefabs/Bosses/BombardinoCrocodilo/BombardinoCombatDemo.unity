@@ -952,7 +952,7 @@ MonoBehaviour:
   comboTwoDamageMultiplier: 1.2
   comboThreeDamageMultiplier: 1.6
   comboOneHitWindow: {x: 0.57, y: 0.86}
-  comboTwoHitWindow: {x: 0.34, y: 0.75}
+  comboTwoHitWindow: {x: 0.12, y: 0.34}
   comboThreeHitWindow: {x: 0.32, y: 0.55}
   jumpSlashState: Jump Slash
   jumpSlashDamageMultiplier: 1.7

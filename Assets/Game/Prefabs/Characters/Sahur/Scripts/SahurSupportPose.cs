@@ -2,6 +2,41 @@ using UnityEngine;
 /// <summary>Bounded two-bone correction of an authored stance onto its actual deck.</summary>
 public static class SahurSupportPose
 {
+    public static void MeasureSoles(Animator animator,ref Vector3 leftSole,ref Vector3 rightSole)
+    {
+        var feet=new[]{animator.GetBoneTransform(HumanBodyBones.LeftFoot),animator.GetBoneTransform(HumanBodyBones.RightFoot)};
+        var toes=new[]{animator.GetBoneTransform(HumanBodyBones.LeftToes),animator.GetBoneTransform(HumanBodyBones.RightToes)};
+        float[] minimum={float.PositiveInfinity,float.PositiveInfinity};var sum=new Vector3[2];var counts=new int[2];
+        foreach(var skin in animator.GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            int[] indices={System.Array.IndexOf(skin.bones,feet[0]),System.Array.IndexOf(skin.bones,feet[1])};
+            int[] toeIndices={System.Array.IndexOf(skin.bones,toes[0]),System.Array.IndexOf(skin.bones,toes[1])};
+            if(indices[0]<0 && indices[1]<0)continue;
+            var baked=new Mesh();skin.BakeMesh(baked,true);var vertices=baked.vertices;var weights=skin.sharedMesh.boneWeights;
+            bool InFoot(BoneWeight weight,int side)
+            {
+                bool Match(int bone)=>indices[side]>=0 && bone==indices[side] || toeIndices[side]>=0 && bone==toeIndices[side];
+                float total=(Match(weight.boneIndex0) ? weight.weight0 : 0)+(Match(weight.boneIndex1) ? weight.weight1 : 0)+
+                    (Match(weight.boneIndex2) ? weight.weight2 : 0)+(Match(weight.boneIndex3) ? weight.weight3 : 0);
+                return total>=.25f;
+            }
+            for(int side=0;side<2;side++)
+            {
+                for(int i=0;i<vertices.Length;i++)if(InFoot(weights[i],side))minimum[side]=Mathf.Min(minimum[side],skin.transform.TransformPoint(vertices[i]).y);
+                for(int i=0;i<vertices.Length;i++)if(InFoot(weights[i],side))
+                {
+                    Vector3 point=skin.transform.TransformPoint(vertices[i]);
+                    if(point.y>minimum[side]+.005f)continue;
+                    sum[side]+=point;counts[side]++;
+                }
+            }
+            Object.Destroy(baked);
+        }
+        // Sample a standing pose once. Swim/attack ankle height is not a
+        // measurement of the original mesh's sole thickness.
+        if(counts[0]>0)leftSole=feet[0].InverseTransformPoint(sum[0]/counts[0]);
+        if(counts[1]>0)rightSole=feet[1].InverseTransformPoint(sum[1]/counts[1]);
+    }
     public static float Anchor(Animator animator,bool left,Vector3 sole,Vector3 target,float limit=.35f)
     {
         var hip=animator.GetBoneTransform(left ? HumanBodyBones.LeftUpperLeg : HumanBodyBones.RightUpperLeg);
@@ -29,6 +64,8 @@ public static class SahurSupportPose
         // Walking and a stagger may deliberately unload one leg. Report the supporting sole.
         return Mathf.Min(a,b);
     }
+    public static float SupportingFoot(Animator animator,Story1WreckPlank board,Vector3 sole,float limit=.35f)
+        =>Foot(animator,board,HumanBodyBones.LeftUpperLeg,HumanBodyBones.LeftLowerLeg,HumanBodyBones.LeftFoot,sole,limit);
     static float Foot(Animator animator,Story1WreckPlank board,HumanBodyBones thigh,HumanBodyBones shin,HumanBodyBones foot,Vector3 sole,float limit)
     {
         Transform hip=animator.GetBoneTransform(thigh),knee=animator.GetBoneTransform(shin),ankle=animator.GetBoneTransform(foot);
