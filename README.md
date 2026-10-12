@@ -2,6 +2,10 @@
 
 A third-person action game with Tung Tung Tung Sahur as main character.
 
+## Click here to play
+
+https://cpy111.itch.io/dark-brine-rot
+
 ## controls
 
 | Action | Input |
