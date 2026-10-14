@@ -1,0 +1,14 @@
+{
+  "stage": "FIRST PASS",
+  "status": "accepted_for_isolated_staging_only",
+  "accepted_for_staging": ["CH1_SharkBite_v069"],
+  "observed": ["side-0032.20.png", "three-quarter-0032.20.png", "side-0013.00.png"],
+  "findings": [
+    "Six-degree added head reach reduces the sharp extra neck fold observed in rejected v068.",
+    "The source head leads upward while the torso/rear chain and jaw timing remain unchanged.",
+    "Rest pose and all16bone names are preserved; unchanged other local rotation channels are measured exactly."
+  ],
+  "limitations": ["Native original-rig import and live contact/submergence acceptance pending.", "Complete normal-speed art review remains pending; no final approval is asserted."],
+  "runtime_activated": true,
+  "activation_stage": "integration_trial_pending_live_regression"
+}

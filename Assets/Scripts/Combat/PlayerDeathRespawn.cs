@@ -105,7 +105,16 @@ namespace Mavis
                 position = Checkpoint.GroundPosition + Vector3.up * (0.08f - sole);
                 rotation = Checkpoint.transform.rotation;
             }
-            if (movement != null) movement.RestoreSavedPose(position, rotation);
+            if (movement != null)
+            {
+                GetComponent<Story1WreckRider>()?.Release();
+                movement.Motion?.Release(movement.Motion.Owner);
+                movement.ExternalMovementLock=movement.ExternalControlLock=false;
+                movement.ExternalMovementAnimation=null;
+                movement.ExternalCameraFocus=null;
+                movement.KeepCameraAboveWater=movement.OnFloatingWreckDeck=false;
+                movement.RestoreSavedPose(position, rotation);
+            }
             else transform.SetPositionAndRotation(position, rotation);
             health.currentHealth = health.maxHealth;
             health.GrantProtection(protectionSeconds);

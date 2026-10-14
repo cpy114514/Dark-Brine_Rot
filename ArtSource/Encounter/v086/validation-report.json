@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "root_displacement_world_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "in_place_max_excursion_m": 6.752098623506901e-09,
+    "in_place_axes": [
+      "X",
+      "Y"
+    ],
+    "contacts": [
+      {
+        "bone": "LeftFoot",
+        "frames": [
+          1,
+          31
+        ],
+        "max_drift_m": 4.4653884056926475e-07
+      },
+      {
+        "bone": "LeftFoot",
+        "frames": [
+          81,
+          112
+        ],
+        "max_drift_m": 3.874952669167314e-07
+      },
+      {
+        "bone": "RightFoot",
+        "frames": [
+          1,
+          31
+        ],
+        "max_drift_m": 3.704369930820481e-07
+      },
+      {
+        "bone": "RightFoot",
+        "frames": [
+          81,
+          112
+        ],
+        "max_drift_m": 3.7371922147227685e-07
+      }
+    ]
+  },
+  "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+}

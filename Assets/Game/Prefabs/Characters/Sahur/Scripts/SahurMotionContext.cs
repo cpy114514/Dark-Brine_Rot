@@ -26,14 +26,14 @@ public sealed class SahurMotionContext : MonoBehaviour
     public SahurMotionSnapshot Capture(ThirdPersonPlayerController actor)
     {
         var rider=actor.GetComponent<Story1WreckRider>();
-        var board=rider!=null ? rider.DrivenBoard ?? rider.Support() : null;
+        var board=rider!=null ? rider.Support() : null;
         // Capture can run after this frame's physical landing but before the
         // controller's next Update. Refresh ordinary ownership from that
         // actual contact instead of exporting the previous airborne state.
         if(!Scripted)
         {
             var capsule=actor.GetComponent<CharacterController>();
-            Locomotion(actor.Swimming,capsule!=null && capsule.isGrounded && actor.VerticalSpeed<=0);
+            Locomotion(actor.Swimming,capsule!=null && (capsule.isGrounded || actor.OnFloatingWreckDeck) && actor.VerticalSpeed<=0);
         }
         return new SahurMotionSnapshot {position=actor.transform.position,rotation=actor.transform.rotation,
             velocity=board!=null ? board.Velocity : actor.WorldVelocity,state=State,support=board,

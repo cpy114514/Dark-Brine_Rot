@@ -25,9 +25,47 @@ public sealed class Story1WreckFinale : MonoBehaviour
     public string WorstPlantDetails { get; private set; }
     public float LargestTailSkinAdjustment { get; private set; }
     public float LargestTailSkinRotation { get; private set; }
+    public float LargestRightHandContactAdjustment { get; private set; }
     public readonly float[] ContactAttemptGaps={999,999,999,999,999,999};
     public readonly string[] ContactObstructions=new string[6];
+    public readonly System.Collections.Generic.List<string> EntryAttempts=new System.Collections.Generic.List<string>();
+    public int EntryPlanningQueries { get; private set; }
+    public string EntryPlanningProgress { get; private set; }
+    public string EntrySelectedBoard { get; private set; }
+    public float EntryPoseCost { get; private set; }
+    public float EntryWoodCost { get; private set; }
+    public float EntryPreparationSeconds { get; private set; }
+    public bool EntryFromWater { get; private set; }
+    public float EntrySharkStagingDistance { get; private set; }=2;
+    public bool EntrySharkStagingClear { get; private set; }
+    public float EntrySharkAdmissionDelay { get; private set; }
+    double entryPreparationStarted;
     public const float Duration=20.8f;
+    static readonly Unity.Profiling.ProfilerMarker EntryPlanningMarker=new Unity.Profiling.ProfilerMarker("Wreck.EntryPlanning");
+    static readonly Unity.Profiling.ProfilerMarker FacingPlanningMarker=new Unity.Profiling.ProfilerMarker("Wreck.AttackFacing");
+    static readonly float[] attackPathPhases={.1f,.25f,.5f,.75f,.9f};
+    sealed class AttackPlanningPose
+    {
+        public Story1SharkWreckContact.AnatomyPose contact;
+        public Story1SharkWreckContact.AnatomyPose[] path;
+        public Vector3 marker,bulk;
+    }
+    readonly System.Collections.Generic.Dictionary<string,AttackPlanningPose> attackPlanningPoses=new System.Collections.Generic.Dictionary<string,AttackPlanningPose>();
+    struct FacingCandidate{public Quaternion rotation;public float endpoint,bias;public bool clear;}
+    readonly System.Collections.Generic.List<FacingCandidate> facingCandidates=new System.Collections.Generic.List<FacingCandidate>(160);
+    int facingSearchCursor;
+    public int FacingSearchExtensions { get; private set; }
+    public int FacingBudgetYields { get; private set; }
+    public int BiteTransitionPenaltyCount { get; private set; }
+    public float LargestBiteTransitionExcess { get; private set; }
+    // Nonserialized so existing scenes cannot override the runtime slice.
+    double routeAlternativeBudgetSeconds=.003;
+    readonly Vector3[] routeOffsets=new Vector3[13];
+    struct PlannedFeet{public Vector3 left,right;public float time;}
+    readonly System.Collections.Generic.Dictionary<AnimationClip,PlannedFeet[]> plannedFeet=new System.Collections.Generic.Dictionary<AnimationClip,PlannedFeet[]>();
+    static readonly int[] bothSides={1,-1},oneSide={1};
+    static readonly float[] facingYaws={0,-20,20,-40,40,-65,65,-90,90,-120,120,-150,150,180};
+    static readonly float[] tailPitches={-25,-16,0,12,25},bitePitches={-35,-25,-16,0,12,25,35};
     public int BoardJumpCount { get; private set; }
     public int SharkBreachCount { get; private set; }
     public float LargestLandingError { get; private set; }
@@ -37,9 +75,13 @@ public sealed class Story1WreckFinale : MonoBehaviour
     // Sample crossed cues at their actual sub-frame time, then render the end-of-frame pose.
     static readonly float[] Cues={8.32f,8.94f,9.8f,14.572f,18.05f,18.22f};
     Story1EncounterBeat[] beats;
+    Story1EncounterShot[] shots;
+    readonly RaycastHit[] cameraHits=new RaycastHit[64];
+    readonly Vector3[] cameraSubjects=new Vector3[5];
     readonly System.Collections.Generic.Dictionary<string,AnimationClip> revisedClips=new System.Collections.Generic.Dictionary<string,AnimationClip>();
     readonly System.Collections.Generic.HashSet<int> verifiedContacts=new System.Collections.Generic.HashSet<int>();
     float[] contactTimes={1.184f,2.43f,7.03f,8.94f,14.572f,18.05f};
+    float[] timelineCues;
     Story1EncounterContact[] contacts;
     Story1EncounterAction activeAction;
     Story1WreckPlank anchoredBoard;
@@ -60,6 +102,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
     bool[] heldEnabled,colliderEnabled;
     Collider[] actorColliders;
     SkinnedMeshRenderer[] sampledSkins;
+    SkinnedMeshRenderer[] heroSkins;
     bool[] skinMatrixModes,skinOffscreenModes;
     Transform[] retainedHeroBones;
     Vector3[] retainedHeroPositions;
@@ -121,6 +164,20 @@ public sealed class Story1WreckFinale : MonoBehaviour
     Quaternion entrySharkHeadingLocal;
     Vector3 attackStartRoot;
     Quaternion attackStartRotation;
+    Vector3 intendedTailRoot;
+    float tailRouteStartAge;
+    float lastTailReplanAge=-100;
+    int tailStrokeReplans;
+    bool hasIntendedTailRoot;
+    public int TailRouteReplans { get; private set; }
+    Vector3 intendedBiteRoot;
+    float biteRouteStartAge,lastBiteReplanAge=-100;
+    int biteStrokeReplans;
+    bool hasIntendedBiteRoot;
+    public int BiteRouteReplans { get; private set; }
+    public int ClearRouteEarlyExits { get; private set; }
+    public int PreferredClearRouteEarlyExits { get; private set; }
+    public int ExactBlockedRoutePasses { get; private set; }
     Vector3 leftSole,rightSole;
     Quaternion cameraRotation,projectileRotation,stageRotation;
     Quaternion initialHeroRotation;
@@ -141,10 +198,24 @@ public sealed class Story1WreckFinale : MonoBehaviour
     Transform contactTailBone;
     bool floating;
     bool initialized;
+    bool preparingEntry;
+    bool unconsciousExit;
+    bool unconsciousExitInWater;
+    float unconsciousExitStart;
+    Vector3 unconsciousExitFeet,unconsciousExitVelocity;
+    Quaternion unconsciousExitHeading;
+    public string ExitReason { get; private set; }
+    Vector3 slicedEntryPoint,heldEntryFeetLocal;
+    Quaternion heldEntryHeadingLocal;
+    float heldEntryWater,chosenStanceScore;
+    Vector3 heldEntryRoot;
+    Quaternion heldEntryHeading;
     Vector3 floatingChest,floatDrift;
     Quaternion floatHeading,floatRotation;
     float floatHeightVelocity;
     float cameraSide=1,cameraOccludedSeconds;
+    bool cameraRaised,cameraPendingRaised;
+    float cameraPendingSide=1,cameraVisibilityTime=-1;
     Vector2 deckOffset;
     Vector3 localForward=Vector3.forward;
     float walkSeconds;
@@ -152,6 +223,13 @@ public sealed class Story1WreckFinale : MonoBehaviour
     Vector3 hopStartLocal,hopTakeoffLocal,hopLandingLocal;
     int hopIndex=-1,breachSection=-1;
     bool hopLanded;
+    struct HopPlan{public Story1WreckPlank target;public Vector3 landingLocal;}
+    readonly HopPlan[] hopPlans=new HopPlan[2];
+    readonly bool[] hopPlanningStarted=new bool[2];
+    readonly float[] hopRetryAfter=new float[2];
+    public readonly int[] HopPlanningAttempts=new int[2];
+    public readonly System.Collections.Generic.List<string> HopPlanningDiagnostics=new System.Collections.Generic.List<string>();
+    bool hopPlanningBusy;
     bool releasedControl;
     Quaternion hopFacing;
     Vector3 breachStart,breachTarget,breachDirection;
@@ -187,6 +265,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
     public void Initialize(Story1WreckBattle encounter,ThirdPersonPlayerController player,TralaleroSwimAnimator enemy,
         Camera camera,Story1WreckPlank support,OceanWorld water,bool swimming)
     {
+        using var measurement=new Unity.Profiling.ProfilerMarker("Wreck.InitializeFilm").Auto();
         battle=encounter;hero=player;shark=enemy;shotCamera=camera;board=support;ocean=water;fromWater=swimming;
         swimmingWeapon=hero.GetComponent<SahurSwimmingWeapon>();
         if(shark.BoneAnimator!=null)contactTailBone=shark.BoneAnimator.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="Tail_Tip");
@@ -198,7 +277,8 @@ public sealed class Story1WreckFinale : MonoBehaviour
         retainedHeroPositions=new Vector3[retainedHeroBones.Length];retainedHeroRotations=new Quaternion[retainedHeroBones.Length];
         entryHeroPositions=retainedHeroBones.Select(b=>b.localPosition).ToArray();
         entryHeroRotations=retainedHeroBones.Select(b=>b.localRotation).ToArray();
-        sampledSkins=hero.GetComponentsInChildren<SkinnedMeshRenderer>(true).Concat(shark.GetComponentsInChildren<SkinnedMeshRenderer>(true)).Distinct().ToArray();
+        heroSkins=hero.GetComponentsInChildren<SkinnedMeshRenderer>(true);
+        sampledSkins=heroSkins.Concat(shark.GetComponentsInChildren<SkinnedMeshRenderer>(true)).Distinct().ToArray();
         skinMatrixModes=sampledSkins.Select(s=>s.forceMatrixRecalculationPerRender).ToArray();
         skinOffscreenModes=sampledSkins.Select(s=>s.updateWhenOffscreen).ToArray();
         // Contact planning samples several future poses within one frame.
@@ -211,15 +291,22 @@ public sealed class Story1WreckFinale : MonoBehaviour
         animator.SetFloat("Speed",0);animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;animator.speed=0;
         var library=animator.runtimeAnimatorController.animationClips;
         AnimationClip Find(string name)=>library.First(c=>c.name==name);
-        swim=Resources.LoadAll<AnimationClip>("Encounter/v007/PLAYER_SwimFast_v007/PLAYER_SwimFast_v007").FirstOrDefault(c=>!c.name.StartsWith("__preview__")) ?? Find("SahurFastFreestyle");
+        swim=Story1EncounterClipCache.Find("PLAYER_SwimFast_v007") ?? Find("SahurFastFreestyle");
         leftFoot=animator.GetBoneTransform(HumanBodyBones.LeftFoot);rightFoot=animator.GetBoneTransform(HumanBodyBones.RightFoot);
         startFeet=hero.transform.position+Vector3.up*hero.LowestFootWorldOffset;
+        heldEntryRoot=hero.transform.position;heldEntryHeading=hero.transform.rotation;heldEntryWater=Water(heldEntryRoot);
+        heldEntryFeetLocal=board.transform.InverseTransformPoint(startFeet);
+        heldEntryHeadingLocal=Quaternion.Inverse(board.transform.rotation)*hero.transform.rotation;
         entryStartFeetLocal=board.transform.InverseTransformPoint(startFeet);
         Vector3 landing=board.BoardingPoint(startFeet);
         entryLandingLocal=board.transform.InverseTransformPoint(landing+Vector3.up*.04f);
         entryGripEdgeLocal=board.transform.InverseTransformPoint(landing);
         entryOutwardLocal=board.transform.InverseTransformDirection(board.OpenWaterDirection(landing));
-        Vector3 edge=FindEntryEdge(fromWater ? landing : startFeet);
+        // This is only the initial pose frame. The budgeted preparation below
+        // chooses and validates the actual stance after the graph is ready.
+        // Searching every edge synchronously here repeated the same mesh-ray
+        // work at handoff, before it could produce a usable combat candidate.
+        Vector3 edge=fromWater ? landing : startFeet;
         Vector3 localEdge=board.transform.InverseTransformPoint(edge);
         deckOffset=new Vector2(localEdge.x*board.Dimensions.x,localEdge.z*board.Dimensions.z);FaceOpenWater(edge);
         initialHeroRotation=hero.transform.rotation;
@@ -241,24 +328,38 @@ public sealed class Story1WreckFinale : MonoBehaviour
         }
         else{walkSeconds=Vector3.ProjectOnPlane(startFeet-Deck(-.4f),Vector3.up).magnitude/3;LeadInSeconds=Mathf.Max(.6f,walkSeconds+.25f);}
         var definition=Resources.Load<Story1EncounterDefinition>("Encounter/v006/EncounterDefinition");
-        beats=definition!=null ? definition.beats : Story1EncounterDefinition.ApprovedBeats();
+        shots=definition!=null && definition.shots!=null && definition.shots.Length>0 ? definition.shots : Story1EncounterDefinition.ApprovedShots();
+        beats=(Story1EncounterBeat[])(definition!=null ? definition.beats : Story1EncounterDefinition.ApprovedBeats()).Clone();
+        // Historical serialized timelines may still contain the retired
+        // driving pose. Keep the beat's timing as ordinary grounded defence,
+        // including when loading an older definition, without mutating it.
+        string standingGuard=beats.First(b=>b.action==Story1EncounterAction.Guard).clip;
+        for(int i=0;i<beats.Length;i++)if(beats[i].action==Story1EncounterAction.Surf)
+            beats[i]=new Story1EncounterBeat("Keep footing as the bite passes",beats[i].start,beats[i].end,Story1EncounterAction.Guard,standingGuard);
+        for(int i=0;i<beats.Length;i++)if(beats[i].action==Story1EncounterAction.Throw && beats[i].clip=="PLAYER_Throw_v006")
+            beats[i]=new Story1EncounterBeat(beats[i].label,beats[i].start,beats[i].end,beats[i].action,"PLAYER_Throw_v064");
         contacts=definition!=null && definition.contacts!=null && definition.contacts.Length==6 ? definition.contacts : Story1EncounterDefinition.ApprovedContacts();
         contactTimes=contacts.Select(c=>c.time).ToArray();
-        AnimationClip Revised(string name)=>Resources.LoadAll<AnimationClip>("Encounter/"+name.Substring(name.LastIndexOf('_')+1)+"/"+name+"/"+name).First(c=>!c.name.StartsWith("__preview__"));
+        // Contact windows are immutable for this encounter. Avoid rebuilding
+        // a sorted LINQ/hash-set pipeline every rendered timeline frame.
+        timelineCues=Cues.Concat(contactTimes).Distinct().OrderBy(c=>c).ToArray();
+        AnimationClip Revised(string name)=>Story1EncounterClipCache.Find(name) ?? throw new System.InvalidOperationException("Missing paired encounter clip: "+name);
         foreach(var beat in beats)if(!revisedClips.ContainsKey(beat.clip))revisedClips.Add(beat.clip,Revised(beat.clip));
         slash=Revised(beats.First(b=>b.action==Story1EncounterAction.Slash).clip);guard=Revised(beats.First(b=>b.action==Story1EncounterAction.Guard).clip);block=Revised(beats.First(b=>b.action==Story1EncounterAction.Brace).clip);
-        throwClip=Revised("PLAYER_Throw_v006");stagger=Revised("PLAYER_Stagger_v006");knockdown=Revised("PLAYER_Fall_v006");
+        throwClip=Revised("PLAYER_Throw_v064");stagger=Revised("PLAYER_Stagger_v006");knockdown=Revised("PLAYER_Fall_v006");
         // Older project copies may not contain the v010 export yet. Keep the
         // newest retained Humanoid climb usable instead of aborting the finale.
         climb=new[]{"PLAYER_Climb_v010","PLAYER_Climb_v009","PLAYER_Climb_v006"}
-            .Select(name=>Resources.LoadAll<AnimationClip>("Encounter/"+name.Substring(name.LastIndexOf('_')+1)+"/"+name+"/"+name)
-                .FirstOrDefault(c=>!c.name.StartsWith("__preview__")))
+            .Select(Story1EncounterClipCache.Find)
             .FirstOrDefault(c=>c!=null);
         if(climb==null)throw new System.InvalidOperationException("Wreck finale requires a retained PLAYER_Climb animation.");
         // The user restored legacy walk/run/roll, including supported entry
         // and same-board footwork. Use the same actual controller walk clip.
         walk=library.FirstOrDefault(c=>c.name.Contains("Walk_Loop")) ?? Revised("PLAYER_Walk_v006");
-        jumpStart=Revised("PLAYER_JumpStart_v006");jumpLoop=Revised("PLAYER_JumpAir_v006");jumpLand=Revised("PLAYER_JumpLand_v006");boardJump=null;
+        jumpStart=Revised("PLAYER_JumpStart_v006");jumpLoop=Revised("PLAYER_JumpAir_v006");jumpLand=Revised("PLAYER_JumpLand_v006");
+        boardJump=beats.Where(b=>b.action==Story1EncounterAction.Hop)
+            .Select(b=>revisedClips[b.clip]).FirstOrDefault(c=>c.name.Contains("BoardHop"))
+            ?? Story1EncounterClipCache.Find("CH1_SahurBoardHop_v047");
         // The live Generic Animator includes the retained prefab bind transforms.
         // Measure its authored contact pose once; FBX SampleAnimation metadata can differ from controller evaluation.
         shark.SampleCinematicAction("Tail_Strike",TralaleroSwimAnimator.TailContactTime);
@@ -275,30 +376,74 @@ public sealed class Story1WreckFinale : MonoBehaviour
         SahurSupportPose.MeasureSoles(animator,ref leftSole,ref rightSole);
         supportFootprintRadius=Mathf.Max(.75f,Mathf.Max(Vector3.ProjectOnPlane(leftFoot.TransformPoint(leftSole)-hero.transform.position,Vector3.up).magnitude,
             Vector3.ProjectOnPlane(rightFoot.TransformPoint(rightSole)-hero.transform.position,Vector3.up).magnitude)+.12f);
-        // A nearby surfboard can carry the swimmer's hand without having
+        // A nearby fragment can carry the swimmer's hand without having
         // room for both authored combat feet. Choose another real reachable
         // surface before the swim/climb lead-in; never move a fragment.
+        preparingEntry=true;
+        EntryFromWater=fromWater;entryPreparationStarted=Time.realtimeSinceStartupAsDouble;
+        StartCoroutine(PrepareEntry(landing));
+    }
+    System.Collections.IEnumerator PrepareEntry(Vector3 landing)
+    {
+        Vector3 landingLocal=board.transform.InverseTransformPoint(landing);
+        yield return CacheSupportedFeet();
+        landing=board.transform.TransformPoint(landingLocal);
         Vector3? selectedEntryEdge=null;
         if(fromWater)
         {
-            FindEntryEdge(board,landing);
-            if(stanceCandidateCount==0 && SelectWaterSupport(startFeet,out var replacementLanding,out var replacementEdge))
+            Vector3 afterClimb=board.BoardingPoint(landing-board.OpenWaterDirection(landing)*(supportFootprintRadius+.3f));
+            yield return SearchEntryEdgeSlices(board,afterClimb,refine:false);
+            if(stanceCandidateCount==0)
+                yield return SearchEntryEdgeSlices(board,board.BoardingPoint(board.GetComponent<Rigidbody>().worldCenterOfMass),refine:false);
+            EntryAttempts.Add(board.name+" candidates="+stanceCandidateCount+" wood="+chosenStanceWoodPenetration+" pose="+chosenStancePoseCost);
+            if(stanceCandidateCount>0 && chosenStanceWoodPenetration<=.0004f)selectedEntryEdge=slicedEntryPoint;
+            if(stanceCandidateCount==0 || chosenStanceWoodPenetration>.0004f)
             {
-                landing=replacementLanding;
-                selectedEntryEdge=replacementEdge;
-                entryStartFeetLocal=board.transform.InverseTransformPoint(startFeet);
-                entryGripEdgeLocal=board.transform.InverseTransformPoint(landing);
-                entryOutwardLocal=board.transform.InverseTransformDirection(board.OpenWaterDirection(landing));
+                // Search only real surfaces within a bounded swim. Each
+                // candidate is spread over render frames, with the actual
+                // entering pose restored between hypothetical samples.
+                var candidates=battle.Boards.Where(p=>p!=board && p.IsBoardable && p.Dimensions.y<1.2f && Mathf.Abs(p.transform.up.y)>.82f && p.Speed<5)
+                    .Where(p=>Mathf.Min(p.Dimensions.x,p.Dimensions.z)>supportFootprintRadius*2+.2f && p.EdgeDistance(startFeet)<Mathf.Min(30,hero.swimSpeed*4))
+                    .OrderBy(p=>p.EdgeDistance(startFeet)).Take(8).ToArray();
+                for(int pass=0;pass<2 && !selectedEntryEdge.HasValue;pass++)
+                foreach(var candidate in pass==0 ? candidates : new[]{board}.Concat(candidates))
+                {
+                    Vector3 at=candidate.BoardingPoint(startFeet);
+                    if(Water(at)-at.y>.6f || at.y-Water(at)>2.5f)continue;
+                    Vector3 gripLocal=candidate.transform.InverseTransformPoint(at);
+                    Vector3 climbed=candidate.BoardingPoint(at-candidate.OpenWaterDirection(at)*(supportFootprintRadius+.3f));
+                    Vector3 climbedLocal=candidate.transform.InverseTransformPoint(climbed);
+                    yield return SearchEntryEdgeSlices(candidate,climbed,refine:pass==1);
+                    if(stanceCandidateCount==0)
+                        yield return SearchEntryEdgeSlices(candidate,candidate.BoardingPoint(candidate.GetComponent<Rigidbody>().worldCenterOfMass),refine:pass==1);
+                    EntryAttempts.Add(candidate.name+" candidates="+stanceCandidateCount+" wood="+chosenStanceWoodPenetration+" pose="+chosenStancePoseCost);
+                    if(stanceCandidateCount==0 || chosenStanceWoodPenetration>.0004f)continue;
+                    at=candidate.transform.TransformPoint(gripLocal);
+                    if(!SupportedEntryWalk(candidate,candidate.transform.TransformPoint(climbedLocal),slicedEntryPoint))
+                    {EntryAttempts.Add(candidate.name+" rejected: actual entry walk crosses a mesh edge");continue;}
+                    if(supportBody!=null)supportBody.angularDamping=originalDamping;
+                    board=candidate;supportBody=board.GetComponent<Rigidbody>();originalDamping=supportBody.angularDamping;supportBody.angularDamping=6;
+                    board.Drive(0,0,null);landing=at;selectedEntryEdge=slicedEntryPoint;
+                    landingLocal=gripLocal;
+                    entryStartFeetLocal=board.transform.InverseTransformPoint(startFeet);
+                    entryGripEdgeLocal=board.transform.InverseTransformPoint(landing);
+                    entryOutwardLocal=board.transform.InverseTransformDirection(board.OpenWaterDirection(landing));
+                    break;
+                }
             }
         }
         if(fromWater)
         {
+            landing=board.transform.TransformPoint(landingLocal);
             Vector3 outward=board.transform.TransformDirection(entryOutwardLocal);
             landing=board.BoardingPoint(landing-outward*(supportFootprintRadius+.3f));
             entryLandingLocal=board.transform.InverseTransformPoint(landing+Vector3.up*.04f);
         }
-        edge=selectedEntryEdge ?? FindEntryEdge(fromWater ? landing : startFeet);
-        localEdge=board.transform.InverseTransformPoint(edge);
+        if(!selectedEntryEdge.HasValue && !fromWater)yield return SearchEntryEdgeSlices(board,startFeet);
+        if(fromWater && !selectedEntryEdge.HasValue || stanceCandidateCount==0 || chosenStanceWoodPenetration>.0004f || float.IsInfinity(chosenStancePoseCost))
+        {BeginUnconsciousExit("No reachable supported combat surface");yield break;}
+        Vector3 edge=selectedEntryEdge ?? slicedEntryPoint;
+        Vector3 localEdge=board.transform.InverseTransformPoint(edge);
         deckOffset=new Vector2(localEdge.x*board.Dimensions.x,localEdge.z*board.Dimensions.z);FaceOpenWater(edge);
         slashContactMeasured=parryContactMeasured=false;
         if(fromWater)
@@ -309,11 +454,215 @@ public sealed class Story1WreckFinale : MonoBehaviour
             LeadInSeconds=swimSeconds+1.15f+entryWalkSeconds+.4f;
         }
         else{walkSeconds=Vector3.ProjectOnPlane(startFeet-Deck(-.4f),Vector3.up).magnitude/3;LeadInSeconds=Mathf.Max(.6f,walkSeconds+.25f);}
-        PlanSharkEntry();
+        HoldEntryPose();
+        startFeet=hero.transform.position+Vector3.up*hero.LowestFootWorldOffset;
+        entryStartFeetLocal=board.transform.InverseTransformPoint(startFeet);
+        EntrySelectedBoard=board.name;EntryPoseCost=chosenStancePoseCost;EntryWoodCost=chosenStanceWoodPenetration;
+        yield return PlanSharkEntry();
         LeadInSeconds=Mathf.Max(LeadInSeconds,entrySharkApproachSeconds);
         var post=gameObject.AddComponent<Story1FinalePostProcess>();post.film=this;
-        RenderActors();
-        initialized=true;
+        preparingEntry=false;RenderActors();initialized=true;
+        EntryPreparationSeconds=(float)(Time.realtimeSinceStartupAsDouble-entryPreparationStarted);
+    }
+    System.Collections.IEnumerator CacheSupportedFeet()
+    {
+        var parry=revisedClips[beats.First(b=>b.action==Story1EncounterAction.Parry).clip];
+        double slice=Time.realtimeSinceStartupAsDouble;
+        foreach(var clip in new[]{guard,parry,slash,block,throwClip,walk})
+        {
+            int frames=Mathf.CeilToInt(clip.length*60);var samples=new PlannedFeet[frames+1];
+            var sample=AnimationClipPlayable.Create(poseGraph,clip);sample.SetSpeed(0);
+            mixer.DisconnectInput(1);mixer.ConnectInput(1,sample,0);mixer.SetInputWeight(0,0);mixer.SetInputWeight(1,1);
+            for(int frame=0;frame<=frames;frame++)
+            {
+                float time=Mathf.Min(clip.length-.00001f,frame/60f);sample.SetTime(time);poseGraph.Evaluate(0);
+                Vector3 feet=hero.transform.position+Vector3.up*hero.LowestFootWorldOffset;
+                samples[frame]=new PlannedFeet{left=hero.transform.InverseTransformVector(leftFoot.TransformPoint(leftSole)-feet),right=hero.transform.InverseTransformVector(rightFoot.TransformPoint(rightSole)-feet),time=time};
+                if(Time.realtimeSinceStartupAsDouble-slice>=.002)
+                {
+                    yield return null;
+                    while(PauseSettingsMenu.IsOpen || Time.timeScale<=0)yield return null;
+                    mixer.SetInputWeight(0,0);mixer.SetInputWeight(1,1);slice=Time.realtimeSinceStartupAsDouble;
+                }
+            }
+            mixer.DisconnectInput(1);poseGraph.DestroyPlayable(sample);plannedFeet.Add(clip,samples);
+        }
+        mixer.ConnectInput(1,pose,0);EvaluatePose();
+    }
+    System.Collections.IEnumerator SearchEntryEdgeSlices(Story1WreckPlank support,Vector3 feet,Vector3? jumpFrom=null,float maximumTravel=12,bool refine=true,float stopAtFilm=float.PositiveInfinity)
+    {
+        Vector3 localFeet=support.transform.InverseTransformPoint(feet),bestLocal=localFeet;
+        float best=float.NegativeInfinity,bestPose=float.PositiveInfinity,bestWood=float.PositiveInfinity;
+        int accepted=0;double sliceStart=Time.realtimeSinceStartupAsDouble;
+        var refinements=new System.Collections.Generic.List<(Vector3 local,float footprint,float score,float cost)>();
+        var edges=new System.Collections.Generic.List<(Vector3 local,float footprint,float score)>();
+        foreach(float footprint in new[]{supportFootprintRadius,.6f})
+        for(int angle=0;angle<360;angle+=15)
+        {
+            while(PauseSettingsMenu.IsOpen || Time.timeScale<=0)yield return null;
+            if(support==null || support.IsBroken || FilmTime>=stopAtFilm){stanceCandidateCount=0;yield break;}
+            Vector3 point=FindEntryEdge(support,support.transform.TransformPoint(localFeet),jumpFrom,maximumTravel,angle,angle+15,footprint,false);
+            if(stanceCandidateCount>0)edges.Add((support.transform.InverseTransformPoint(point),footprint,chosenStanceScore));
+            if(Time.realtimeSinceStartupAsDouble-sliceStart>=.002)
+            {
+                yield return null;sliceStart=Time.realtimeSinceStartupAsDouble;
+            }
+        }
+        // Rank all cheap real-support/open-water checks before the expensive
+        // anatomical tests. The former angle-order early exit chose an inner
+        // wreck seam even when a later edge offered an open swimming lane.
+        foreach(var edge in edges.OrderByDescending(candidate=>candidate.score))
+        {
+            while(PauseSettingsMenu.IsOpen || Time.timeScale<=0)yield return null;
+            if(support==null || support.IsBroken || FilmTime>=stopAtFilm){stanceCandidateCount=0;yield break;}
+            Vector3 point=support.transform.TransformPoint(edge.local);
+            yield return GradeEntryCandidateSlices(support,point,edge.footprint,edge.score,false,stopAtFilm);
+            if(FilmTime>=stopAtFilm){stanceCandidateCount=0;yield break;}
+            if(stanceCandidateCount>0 && chosenStanceWoodPenetration>.0004f)
+                refinements.Add((edge.local,edge.footprint,edge.score,chosenStancePoseCost));
+            if(support==null || support.IsBroken){stanceCandidateCount=0;yield break;}
+            point=support.transform.TransformPoint(edge.local);
+            bool candidateClear=chosenStanceWoodPenetration<=.0004f && !float.IsInfinity(chosenStancePoseCost);
+            bool bestClear=bestWood<=.0004f && !float.IsInfinity(bestPose);
+            // A prettier blocked edge cannot outrank a physically valid
+            // edge. Weighted style scores alone could retain a blocked best
+            // and report no surface despite a later clear candidate.
+            if(stanceCandidateCount>0 && (candidateClear && !bestClear || candidateClear==bestClear && chosenStanceScore>best))
+            {
+                accepted+=stanceCandidateCount;best=chosenStanceScore;bestLocal=support.transform.InverseTransformPoint(point);
+                bestPose=chosenStancePoseCost;bestWood=chosenStanceWoodPenetration;
+            }
+            // A clear high-ranked edge needs no further style refinement.
+            if(bestWood<=.0004f && !float.IsInfinity(bestPose))
+            {
+                slicedEntryPoint=support.transform.TransformPoint(bestLocal);stanceCandidateCount=accepted;
+                chosenStancePoseCost=bestPose;chosenStanceWoodPenetration=bestWood;chosenStanceScore=best;yield break;
+            }
+            if(Time.realtimeSinceStartupAsDouble-sliceStart>=.002)
+            {
+                yield return null;sliceStart=Time.realtimeSinceStartupAsDouble;
+            }
+        }
+        foreach(var trial in refine ? refinements.OrderBy(t=>t.cost).ThenByDescending(t=>t.score) : Enumerable.Empty<(Vector3 local,float footprint,float score,float cost)>())
+        {
+            if(support==null || support.IsBroken || FilmTime>=stopAtFilm)break;
+            yield return GradeEntryCandidateSlices(support,support.transform.TransformPoint(trial.local),trial.footprint,trial.score,stopAtFilm:stopAtFilm);
+            if(FilmTime>=stopAtFilm){stanceCandidateCount=0;yield break;}
+            if(stanceCandidateCount==0 || chosenStanceWoodPenetration>.0004f)continue;
+            slicedEntryPoint=support.transform.TransformPoint(trial.local);
+            yield break;
+        }
+        if(FilmTime>=stopAtFilm){stanceCandidateCount=0;yield break;}
+        slicedEntryPoint=support!=null ? support.transform.TransformPoint(bestLocal) : feet;
+        stanceCandidateCount=accepted;chosenStancePoseCost=bestPose;chosenStanceWoodPenetration=bestWood;chosenStanceScore=best;
+    }
+    struct EntryContactGeometry
+    {
+        public Vector3 first,last;
+        public Story1SharkWreckContact.AnatomyPose anatomy;
+        public bool tail,powerful;
+    }
+    System.Collections.IEnumerator GradeEntryCandidateSlices(Story1WreckPlank support,Vector3 point,float footprint,float geometricScore,bool refine=true,float stopAtFilm=float.PositiveInfinity)
+    {
+        if(FilmTime>=stopAtFilm){stanceCandidateCount=0;yield break;}
+        // Capture only four native poses. The thousands of hypothetical
+        // anatomical tests below are budgeted independently of the pose graph.
+        var previousBoard=board;Vector2 previousOffset=deckOffset;Vector3 previousForward=localForward;
+        Vector3 previousPosition=hero.transform.position;Quaternion previousHeading=hero.transform.rotation;
+        string sharkAction=shark.CinematicAction;float sharkSeconds=shark.CinematicActionSeconds;
+        var geometry=new EntryContactGeometry[4];Quaternion localHeading;Vector3 localFeet;
+        try
+        {
+            board=support;Vector3 local=support.transform.InverseTransformPoint(point);
+            deckOffset=new Vector2(local.x*support.Dimensions.x,local.z*support.Dimensions.z);FaceOpenWater(point);
+            // The standing footprint alone does not include the authored
+            // stepping slash. Validate real soles at every used stance even
+            // when the full-size circle happened to fit this jagged fragment.
+            if(!SupportsContinuousStances()){stanceCandidateCount=0;yield break;}
+            localHeading=Quaternion.Inverse(support.transform.rotation)*Quaternion.LookRotation(Forward);
+            localFeet=support.transform.InverseTransformPoint(Deck(-.4f));
+            for(int i=0;i<3;i++)
+            {
+                var clip=i==0 ? revisedClips[beats.First(b=>b.action==Story1EncounterAction.Parry).clip] : i==1 ? slash : block;
+                Vector3 feet=Deck(i==2 ? -.3f : -.4f);
+                var sample=AnimationClipPlayable.Create(poseGraph,clip);sample.SetSpeed(0);sample.SetTime(i==0 ? .484f : i==1 ? .63f : .572f);
+                mixer.DisconnectInput(1);mixer.ConnectInput(1,sample,0);mixer.SetInputWeight(0,0);mixer.SetInputWeight(1,1);
+                hero.transform.SetPositionAndRotation(feet-Vector3.up*hero.LowestFootWorldOffset,Quaternion.LookRotation(Forward));poseGraph.Evaluate(0);PlantFeet(feet,false);
+                Story1CapsuleContact.Segment(weapon,out var a,out var b,out _);
+                if(i<2)
+                {
+                    shark.SampleCinematicAction("Bite_Lunge",.52f);
+                    geometry[i]=new EntryContactGeometry{first=support.transform.InverseTransformPoint(a),last=support.transform.InverseTransformPoint(b),anatomy=battle.WreckContact.CaptureAnatomy()};
+                }
+                else
+                {
+                    var target=GuardContactPoint;
+                    geometry[2]=new EntryContactGeometry{first=support.transform.InverseTransformPoint(target),last=support.transform.InverseTransformPoint(target),anatomy=tailContactAnatomy,tail=true};
+                    target=TailContactTarget;
+                    geometry[3]=new EntryContactGeometry{first=support.transform.InverseTransformPoint(target),last=support.transform.InverseTransformPoint(target),anatomy=shipContactAnatomy,tail=true,powerful=true};
+                }
+                mixer.DisconnectInput(1);poseGraph.DestroyPlayable(sample);mixer.ConnectInput(1,pose,0);
+            }
+        }
+        finally
+        {
+            board=previousBoard;deckOffset=previousOffset;localForward=previousForward;
+            hero.transform.SetPositionAndRotation(previousPosition,previousHeading);EvaluatePose();
+            shark.SampleCinematicAction(sharkAction,sharkSeconds);
+        }
+        double slice=Time.realtimeSinceStartupAsDouble;float worst=0,wood=0;
+        foreach(var contact in geometry)
+        {
+            float best=float.PositiveInfinity,selectedWood=float.PositiveInfinity;bool clearFound=false;
+            for(int tier=0;tier<(refine ? 2 : 1);tier++)
+            {
+            if(tier==1 && clearFound)break;
+            EntryPlanningProgress=support.name+" "+(contact.tail ? contact.powerful ? "strong tail" : "guard tail" : "weapon")+" tier="+tier;
+            int points=contact.tail ? 1 : tier==0 ? 3 : 9;
+            for(int i=0;i<points;i++)foreach(int sign in contact.tail ? bothSides : oneSide)
+            foreach(float yaw in tier==0 ? coarseEntryYaws : entryYaws)foreach(float pitch in tier==0 ? coarseEntryPitches : contact.tail ? entryTailPitches : bitePitches)
+            {
+                if(support==null || support.IsBroken || FilmTime>=stopAtFilm){stanceCandidateCount=0;yield break;}
+                while(PauseSettingsMenu.IsOpen || Time.timeScale<=0)yield return null;
+                Quaternion heading=support.transform.rotation*localHeading;
+                Vector3 forward=Vector3.ProjectOnPlane(heading*Vector3.forward,Vector3.up).normalized,side=Vector3.Cross(Vector3.up,forward);
+                Vector3 marker=support.transform.TransformPoint(Vector3.Lerp(contact.first,contact.last,points==1 ? 0 : (float)i/(points-1)));
+                if(!contact.tail && Vector3.Dot(marker-support.transform.TransformPoint(localFeet),support.transform.up)<1.15f)continue;
+                Quaternion facing=(contact.tail ? Quaternion.LookRotation((side*sign+forward*.75f).normalized) : Quaternion.LookRotation(-forward))*Quaternion.Euler(pitch,yaw,contact.powerful ? -4 : 0);
+                Vector3 bulk=marker-facing*Vector3.Scale((contact.tail ? contact.anatomy.tailMarker : contact.anatomy.nose)-contact.anatomy.body,shark.transform.lossyScale);
+                float exposure=Mathf.Max(0,bulk.y-Water(bulk)+1.4f);
+                // Preserve every clear candidate and the exact best score.
+                // A rejected attitude cannot improve once its partial native
+                // cost already exceeds both the clearance and ranking limits.
+                float limit=Mathf.Max(.0004f,(best-exposure*exposure*.2f)/10000);
+                float penetration=battle.WreckContact.PoseObstructionBounded(contact.anatomy,marker,facing,contact.tail,limit);
+                EntryPlanningQueries++;
+                bool clear=penetration<=.0004f;
+                float cost=penetration*10000+exposure*exposure*.2f;
+                if((clear && !clearFound) || (clear==clearFound && cost<best)){best=cost;selectedWood=penetration;clearFound=clear;}
+                if(clear)goto ContactGraded;
+                if(Time.realtimeSinceStartupAsDouble-slice>=.002){yield return null;slice=Time.realtimeSinceStartupAsDouble;}
+            }
+            }
+            ContactGraded:
+            worst=Mathf.Max(worst,best);wood=Mathf.Max(wood,selectedWood);
+            // All four contacts must be physically reachable. Once this
+            // stance fails one, the remaining contacts cannot make it valid.
+            if(!clearFound)break;
+        }
+        stanceCandidateCount=1;chosenStancePoseCost=worst;chosenStanceWoodPenetration=wood;
+        chosenStanceScore=geometricScore-wood*100000-worst*.2f;
+    }
+    static readonly float[] entryYaws={0,-40,40,-80,80,-120,120,180},entryTailPitches={-25,-16,0,12,25},coarseEntryYaws={0,-80,80,180},coarseEntryPitches={-25,0,25};
+    void HoldEntryPose()
+    {
+        if(!preparingEntry)return;
+        Vector3 position=fromWater ? heldEntryRoot+Vector3.up*(Water(heldEntryRoot)-heldEntryWater) :
+            board.transform.TransformPoint(heldEntryFeetLocal)-Vector3.up*hero.LowestFootWorldOffset;
+        hero.transform.SetPositionAndRotation(position,fromWater ? heldEntryHeading : board.transform.rotation*heldEntryHeadingLocal);
+        for(int i=0;i<retainedHeroBones.Length;i++)
+        {retainedHeroBones[i].localPosition=entryHeroPositions[i];retainedHeroBones[i].localRotation=entryHeroRotations[i];}
+        shark.SampleCinematicAction("Swim",Time.time);
     }
     bool SelectWaterSupport(Vector3 swimmer,out Vector3 landing,out Vector3 combatEdge)
     {
@@ -328,7 +677,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
             if(Water(at)-at.y>.6f || at.y-Water(at)>2.5f)continue;
             Vector3 edge=FindEntryEdge(candidate,at);
             if(stanceCandidateCount==0)edge=FindEntryEdge(candidate,candidate.BoardingPoint(candidate.GetComponent<Rigidbody>().worldCenterOfMass));
-            if(stanceCandidateCount==0 || chosenStanceWoodPenetration>.0015f || float.IsInfinity(chosenStancePoseCost))continue;
+            if(stanceCandidateCount==0 || chosenStanceWoodPenetration>.0004f || float.IsInfinity(chosenStancePoseCost))continue;
             Vector3 afterClimb=candidate.BoardingPoint(at-candidate.OpenWaterDirection(at)*(supportFootprintRadius+.3f));
             if(!SupportedEntryWalk(candidate,afterClimb,edge))continue;
             if(supportBody!=null)supportBody.angularDamping=originalDamping;
@@ -343,6 +692,26 @@ public sealed class Story1WreckFinale : MonoBehaviour
         Vector3 normal=support.transform.up;if(normal.y<0)normal=-normal;
         float reach=Mathf.Max(2,support.Dimensions.y+1);
         int steps=Mathf.Max(1,Mathf.CeilToInt(Vector3.Distance(from,to)/.3f));
+        if(walk!=null && plannedFeet.TryGetValue(walk,out var walkingFeet))
+        {
+            Vector3 direction=Vector3.ProjectOnPlane(to-from,Vector3.up);
+            Quaternion heading=direction.sqrMagnitude>.001f ? Quaternion.LookRotation(direction) : Quaternion.LookRotation(support.OpenWaterDirection(to));
+            float seconds=direction.magnitude/3;
+            for(int i=0;i<=steps;i++)
+            {
+                float u=(float)i/steps,phase=Mathf.Repeat(seconds*u*(3/3.59f),walk.length);
+                var sampled=walkingFeet[Mathf.Min(walkingFeet.Length-1,Mathf.RoundToInt(phase*60))];
+                // Use the retained walk's actual retargeted sole positions.
+                // The much wider combat guard must not reject a safe walking
+                // corridor; its final stance is checked separately.
+                foreach(var offset in new[]{sampled.left,sampled.right})
+                {
+                    Vector3 sole=Vector3.Lerp(from,to,u)+heading*Vector3.ProjectOnPlane(offset,Vector3.up);
+                    if(!support.Collision.Raycast(new Ray(sole+normal*reach,-normal),out var hit,reach*2) || Vector3.Dot(hit.normal,Vector3.up)<=.5f)return false;
+                }
+            }
+            return true;
+        }
         for(int i=0;i<=steps;i++)for(int bearing=0;bearing<360;bearing+=90)
         {
             float u=(float)i/steps;
@@ -351,14 +720,42 @@ public sealed class Story1WreckFinale : MonoBehaviour
         }
         return true;
     }
-    void PlanSharkEntry()
+    System.Collections.IEnumerator PlanSharkEntry()
     {
+        double slice=Time.realtimeSinceStartupAsDouble;
+        // Solid contact can move the animal while the sliced stance search
+        // runs. Its admission route must start at the actual current pose.
+        initialNose=shark.NoseWorldPoint;stageRotation=shark.transform.rotation;
         Vector3 futureFeet=Deck(-.4f,-Mathf.Sin(Ease(1.184f/1.8f)*Mathf.PI)*.3f);
         Vector3 contact=futureFeet+hero.transform.TransformVector(PredictParryTip(futureFeet));
         Quaternion heading=ChooseAttackFacing("Entry preparation",contact,false);
         Vector3 contactRoot=contact-heading*Vector3.Scale(attackContactMarkerLocal,shark.transform.lossyScale);
         Vector3 outward=Vector3.ProjectOnPlane(contact-contactRoot,Vector3.up).normalized;
         Vector3 exitRoot=contactRoot-outward*2;
+        // The admission pose is swimming. Using the later raised bite's
+        // root height here left the whole animal hovering beside the deck
+        // throughout the opening anticipation. Grade the real submerged
+        // swimming endpoint; the ensuing bite still rises to its contact.
+        exitRoot.y=Mathf.Min(exitRoot.y,shark.SurfaceRootY(Water(exitRoot),heading));
+        var swimPoses=new Story1SharkWreckContact.AnatomyPose[4];
+        for(int i=0;i<swimPoses.Length;i++)
+        {shark.SampleCinematicAction("Swim",i*.4f);swimPoses[i]=battle.WreckContact.CaptureAnatomy();}
+        shark.SampleCinematicAction("Swim",0);
+        foreach(float setback in new[]{2f,4,6,8,12})
+        {
+            Vector3 candidate=contactRoot-outward*setback;bool clear=true;
+            candidate.y=Mathf.Min(candidate.y,shark.SurfaceRootY(Water(candidate),heading));
+            foreach(var swimming in swimPoses)
+            {
+                Vector3 nose=candidate+heading*Vector3.Scale(swimming.nose,shark.transform.lossyScale);
+                // Admission is a swimming pose, not the coiled bite pose used
+                // to find the first weapon contact. Test the whole swim cycle
+                // before choosing the closest genuinely clear staging root.
+                if(battle.WreckContact.PoseObstructionBounded(swimming,nose,heading,false,.000001f)>.000001f)
+                {clear=false;break;}
+            }
+            if(clear){exitRoot=candidate;EntrySharkStagingDistance=setback;EntrySharkStagingClear=true;break;}
+        }
         entrySharkExitRootLocal=board.transform.InverseTransformPoint(exitRoot);
         entrySharkHeadingLocal=Quaternion.Inverse(board.transform.rotation)*heading;
         attackFacingKey=null;attackFacingSampleTime=-100;
@@ -368,11 +765,19 @@ public sealed class Story1WreckFinale : MonoBehaviour
         var anatomy=battle.WreckContact.CaptureAnatomy();float best=float.PositiveInfinity;
         foreach(float depth in new[]{0f,3f,7f,12f})foreach(float lateral in new[]{0f,-8f,8f,-16f,16f,-24f,24f})
         {
+            if(Time.realtimeSinceStartupAsDouble-slice>=.002)
+            {
+                yield return null;
+                while(PauseSettingsMenu.IsOpen || Time.timeScale<=0)yield return null;
+                slice=Time.realtimeSinceStartupAsDouble;
+            }
             var route=new[]{initialNose,Vector3.Lerp(initialNose,end,.3f)+Side*lateral,Vector3.Lerp(initialNose,end,.75f)+Side*lateral,end};
             route[1].y=Mathf.Min(route[1].y,Water(route[1])-depth-2);
             route[2].y=Mathf.Min(route[2].y,Water(route[2])-depth-2);
             float length=0,cost=0,rootLength=0,covered=0;
             for(int i=1;i<route.Length;i++)length+=Vector3.Distance(route[i-1],route[i]);
+            float preference=length*.003f+depth*.002f;
+            if(preference>=best)continue;
             Vector3 previousRoot=shark.transform.position;
             // Test the whole swimming anatomy along the route. Wreck sails
             // and masts can extend deep enough to obstruct a surface-only
@@ -385,18 +790,26 @@ public sealed class Story1WreckFinale : MonoBehaviour
                     float fraction=sample*.25f,progress=(covered+fraction*segmentLength)/Mathf.Max(.001f,length);
                     Vector3 at=Vector3.Lerp(route[segment],route[segment+1],fraction);
                     Quaternion rotation=Quaternion.Slerp(stageRotation,heading,Ease(progress/.6f));
-                    cost+=battle.WreckContact.PoseObstruction(anatomy,at,rotation,false)*100;
+                    cost+=battle.WreckContact.PoseObstructionBounded(anatomy,at,rotation,false,(best-cost-preference)/100)*100;
+                    if(cost+preference>=best)goto DominatedEntryRoute;
                     Vector3 root=at-rotation*Vector3.Scale(anatomy.nose,shark.transform.lossyScale);
                     rootLength+=Vector3.Distance(previousRoot,root);previousRoot=root;
+                    if(Time.realtimeSinceStartupAsDouble-slice>=.002)
+                    {
+                        yield return null;
+                        while(PauseSettingsMenu.IsOpen || Time.timeScale<=0)yield return null;
+                        slice=Time.realtimeSinceStartupAsDouble;
+                    }
                 }
                 covered+=segmentLength;
             }
-            cost+=length*.003f+depth*.002f;
+            cost+=preference;
             if(cost<best)
             {
                 best=cost;entrySharkRoute=route;entrySharkRouteLength=length;
                 entrySharkApproachSeconds=Mathf.Max(rootLength/18,Quaternion.Angle(stageRotation,heading)/220)+.5f;
             }
+            DominatedEntryRoute:;
         }
     }
     void RenderSharkEntry()
@@ -412,7 +825,12 @@ public sealed class Story1WreckFinale : MonoBehaviour
         }
         Quaternion heading=board.transform.rotation*entrySharkHeadingLocal;
         Vector3 swimNose=shark.transform.InverseTransformPoint(shark.NoseWorldPoint);
-        Vector3 goal=board.transform.TransformPoint(entrySharkExitRootLocal)+heading*Vector3.Scale(swimNose,shark.transform.lossyScale);
+        Vector3 goalRoot=board.transform.TransformPoint(entrySharkExitRootLocal);
+        // A tilting support must not lift the waiting swimmer into the air.
+        // This endpoint remains a desired pose: the shared solid controller
+        // enforces the actual continuous travel and anatomical clearance.
+        goalRoot.y=Mathf.Min(goalRoot.y,shark.SurfaceRootY(Water(goalRoot),heading));
+        Vector3 goal=goalRoot+heading*Vector3.Scale(swimNose,shark.transform.lossyScale);
         nose+=Vector3.Lerp(Vector3.zero,goal-entrySharkRoute[entrySharkRoute.Length-1],Ease(progress));
         NoseAt(nose,Quaternion.Slerp(stageRotation,heading,Ease(progress/.6f)));
     }
@@ -433,14 +851,15 @@ public sealed class Story1WreckFinale : MonoBehaviour
         pose=AnimationClipPlayable.Create(poseGraph,clip);pose.SetSpeed(0);mixer.ConnectInput(1,pose,0);
     }
     Vector3 FindEntryEdge(Vector3 feet)=>FindEntryEdge(board,feet);
-    Vector3 FindEntryEdge(Story1WreckPlank support,Vector3 feet,Vector3? jumpFrom=null,float maximumTravel=12)
+    Vector3 FindEntryEdge(Story1WreckPlank support,Vector3 feet,Vector3? jumpFrom=null,float maximumTravel=12,int firstAngle=0,int endAngle=360,float footprintOverride=-1,bool gradePose=true)
     {
+        using var measurement=EntryPlanningMarker.Auto();
         Vector3 best=support.BoardingPoint(feet);float bestScore=float.NegativeInfinity;
         chosenStancePoseCost=float.PositiveInfinity;
         chosenStanceWoodPenetration=float.PositiveInfinity;
         var candidates=new System.Collections.Generic.List<(Vector3 point,float score,bool sampledSupport)>();
-        foreach(float footprint in poseGraph.IsValid() && pose.IsValid() ? new[]{supportFootprintRadius,.6f} : new[]{supportFootprintRadius})
-        for(int angle=0;angle<360;angle+=15)
+        foreach(float footprint in footprintOverride>=0 ? new[]{footprintOverride} : poseGraph.IsValid() && pose.IsValid() ? new[]{supportFootprintRadius,.6f} : new[]{supportFootprintRadius})
+        for(int angle=firstAngle;angle<endAngle;angle+=15)
         {
             Vector3 direction=Quaternion.AngleAxis(angle,Vector3.up)*support.transform.forward;
             Vector3 candidate=support.BoardingPoint(feet+direction*100);
@@ -482,16 +901,19 @@ public sealed class Story1WreckFinale : MonoBehaviour
             float score=clearance*2-length*.08f-Mathf.Max(0,Water(candidate)+.1f-candidate.y)*30
                 -Mathf.Max(0,relativeCrest-1.2f)*30;
             candidates.Add((candidate,score,footprint<supportFootprintRadius));
-            if(footprint>=supportFootprintRadius && score>bestScore){bestScore=score;best=candidate;}
+            if((footprint>=supportFootprintRadius || !gradePose) && score>bestScore){bestScore=score;best=candidate;}
         }
         stanceCandidateCount=candidates.Count;
-        if(poseGraph.IsValid() && pose.IsValid() && guard!=null && candidates.Count>0)
+        if(gradePose && poseGraph.IsValid() && pose.IsValid() && guard!=null && candidates.Count>0)
         {
             var oldBoard=board;Vector2 oldOffset=deckOffset;Vector3 oldForward=localForward;
             Vector3 position=hero.transform.position;Quaternion rotation=hero.transform.rotation;
             board=support;bestScore=float.NegativeInfinity;int accepted=0;
             foreach(var candidate in candidates.OrderByDescending(c=>c.score))
             {
+                // Remaining candidates cannot beat a verified stance even
+                // with zero pose penalty. Keep the geometric contract intact.
+                if(candidate.score<=bestScore)break;
                 Vector3 local=support.transform.InverseTransformPoint(candidate.point);
                 deckOffset=new Vector2(local.x*support.Dimensions.x,local.z*support.Dimensions.z);FaceOpenWater(candidate.point);
                 if(candidate.sampledSupport && !SupportsContinuousStances())continue;
@@ -511,56 +933,49 @@ public sealed class Story1WreckFinale : MonoBehaviour
             hero.transform.SetPositionAndRotation(position,rotation);EvaluatePose();
             slashContactMeasured=parryContactMeasured=false;
         }
-        return best;
+        chosenStanceScore=bestScore;return best;
     }
     bool SupportsContinuousStances()
     {
-        Vector3 position=hero.transform.position;Quaternion rotation=hero.transform.rotation;
+        // Sample Humanoid curves once, not hundreds of Animator evaluations
+        // and iterative IK passes for every hypothetical candidate surface.
+        // Final live planting and contact still use the exact mesh/rig solver.
         var parry=revisedClips[beats.First(b=>b.action==Story1EncounterAction.Parry).clip];
-        bool supported=true;
-        // Check the complete supported source curves, including their load
-        // and recovery. A contact-frame-only check missed planted-foot drift
-        // in the rejected v024 edge experiment.
-        foreach(var row in new[]{(guard,-.4f),(parry,-.4f),(slash,.15f),(block,-.3f),(throwClip,.15f)})
+        var heading=Quaternion.LookRotation(Forward);var scale=hero.transform.lossyScale;
+        Vector3 normal=board.transform.up;if(normal.y<0)normal=-normal;
+        float reach=Mathf.Max(2,board.Dimensions.y+1);
+        // The same slash is used at three different physical stances: first
+        // counter, landing counter and the last counter. Validating only the
+        // landing stance allowed a final stepping foot to leave a narrow edge.
+        foreach(var row in new[]{(guard,-.4f),(parry,-.4f),(slash,-.4f),(slash,.15f),(slash,-.3f),(block,-.3f),(block,0f),(throwClip,.15f)})
         {
-            Vector3 feet=Deck(row.Item2),normal=board.transform.up;if(normal.y<0)normal=-normal;
-            float reach=Mathf.Max(2,board.Dimensions.y+1);
-            var sample=AnimationClipPlayable.Create(poseGraph,row.Item1);sample.SetSpeed(0);
-            mixer.DisconnectInput(1);mixer.ConnectInput(1,sample,0);mixer.SetInputWeight(0,0);mixer.SetInputWeight(1,1);
-            Vector3 anchor=default;bool hasAnchor=false,plantLeft=false;
-            try
+            if(!plannedFeet.TryGetValue(row.Item1,out var samples))return false;
+            Vector3 feet=Deck(row.Item2),anchor=default;bool hasAnchor=false,plantLeft=false;
+            foreach(var sample in samples)
             {
-                int frames=Mathf.CeilToInt(row.Item1.length*60);
-                for(int frame=0;frame<=frames;frame++)
+                Vector3 left=feet+heading*Vector3.Scale(sample.left,scale),right=feet+heading*Vector3.Scale(sample.right,scale);
+                bool leftSupported=board.Collision.Raycast(new Ray(left+normal*reach,-normal),out var a,reach*2) && Vector3.Dot(a.normal,Vector3.up)>.5f;
+                bool rightSupported=board.Collision.Raycast(new Ray(right+normal*reach,-normal),out var b,reach*2) && Vector3.Dot(b.normal,Vector3.up)>.5f;
+                bool weightTransfer=row.Item1==slash || row.Item1==throwClip;
+                // The live solver measures the supporting leg during a step
+                // or attack. Requiring the deliberately unloaded leg to stay
+                // on the same plane rejected even flat, wide real decks.
+                // Fixed guard and brace still require both surface rays.
+                if(weightTransfer ? !leftSupported && !rightSupported : !leftSupported || !rightSupported)return false;
+                if(weightTransfer)continue;
+                float leftHeight=Vector3.Dot(left-a.point,normal)/Mathf.Max(.2f,normal.y),rightHeight=Vector3.Dot(right-b.point,normal)/Mathf.Max(.2f,normal.y);
+                float correction=Mathf.Min(leftHeight,rightHeight);
+                if(Mathf.Abs(leftHeight-rightHeight)>.35f)return false;
+                if(sample.time>.14f && row.Item1!=slash && row.Item1!=throwClip)
                 {
-                    float time=Mathf.Min(row.Item1.length-.00001f,frame/60f);sample.SetTime(time);
-                    hero.transform.SetPositionAndRotation(feet-Vector3.up*hero.LowestFootWorldOffset,Quaternion.LookRotation(Forward));
-                    poseGraph.Evaluate(0);PlantFeet(feet,false);
-                    bool OnMesh(Vector3 sole,out Vector3 point,out float height)
-                    {
-                        point=sole;height=float.PositiveInfinity;
-                        if(!board.Collision.Raycast(new Ray(sole+normal*reach,-normal),out var hit,reach*2) || Vector3.Dot(hit.normal,Vector3.up)<=.5f)return false;
-                        point=hit.point;height=Vector3.Dot(sole-hit.point,normal)/Mathf.Max(.2f,normal.y);return height>=-.03f;
-                    }
-                    bool left=OnMesh(leftFoot.TransformPoint(leftSole),out var a,out float leftHeight),right=OnMesh(rightFoot.TransformPoint(rightSole),out var b,out float rightHeight);
-                    // The recovering foot can lift. It must remain over real
-                    // timber, and the actual supporting sole keeps the same
-                    // 3 cm limit used by the native runtime acceptance check.
-                    if(!left || !right || Mathf.Min(Mathf.Abs(leftHeight),Mathf.Abs(rightHeight))>.03f){supported=false;break;}
-                    if(time>.14f && row.Item1!=slash && row.Item1!=throwClip)
-                    {
-                        if(!hasAnchor){plantLeft=Mathf.Abs(leftHeight)<=Mathf.Abs(rightHeight);anchor=plantLeft ? a : b;hasAnchor=true;}
-                        if(SahurSupportPose.Anchor(animator,plantLeft,plantLeft ? leftSole : rightSole,anchor)>.05f){supported=false;break;}
-                    }
+                    if(!hasAnchor){plantLeft=leftHeight<=rightHeight;anchor=plantLeft ? a.point : b.point;hasAnchor=true;}
+                    Vector3 sole=(plantLeft ? left : right)-Vector3.up*correction;
+                    if(Vector3.Distance(sole,anchor)>.35f)return false;
                 }
             }
-            finally{mixer.DisconnectInput(1);poseGraph.DestroyPlayable(sample);}
-            if(!supported)break;
         }
-        mixer.ConnectInput(1,pose,0);hero.transform.SetPositionAndRotation(position,rotation);EvaluatePose();
-        return supported;
-    }
-    float GradeTailStance(Vector3 feet,out float woodPenetration)
+        return true;
+    }    float GradeTailStance(Vector3 feet,out float woodPenetration)
     {
         woodPenetration=0;
         Vector3 position=hero.transform.position;Quaternion heading=hero.transform.rotation;
@@ -578,7 +993,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
                 Quaternion rotation=Quaternion.LookRotation((Side*side+Forward*.75f).normalized)*Quaternion.Euler(pitch,yaw,powerful ? -4 : 0);
                 Vector3 bulk=target-rotation*Vector3.Scale(anatomy.tailMarker-anatomy.body,shark.transform.lossyScale);
                 float exposure=Mathf.Max(0,bulk.y-surface.Height(bulk)+1.4f),bias=exposure*exposure*.2f;
-                float penetration=battle.WreckContact.PoseObstruction(anatomy,target,rotation,true);
+                float penetration=battle.WreckContact.PoseObstructionBounded(anatomy,target,rotation,true,Mathf.Max(.0004f,(best-bias)/10000));
                 bool clear=penetration<=.0004f;if(clearFound && !clear)continue;
                 float cost=penetration*10000+bias;
                 if(clear && !clearFound || cost<best){best=cost;selectedWood=penetration;clearFound=clear;}
@@ -821,7 +1236,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
                 Vector3 bulk=marker-facing*Vector3.Scale(noseLocal-bulkLocal,shark.transform.lossyScale);
                 float exposure=Mathf.Max(0,bulk.y-surface.Height(bulk)+1.4f);
                 float bias=exposure*exposure*.2f+height*.0002f+Mathf.Abs(yaw)*.00005f+Mathf.Abs(pitch+16)*.00005f;
-                float penetration=battle.WreckContact.PoseObstruction(anatomy,marker,facing,false);
+                float penetration=battle.WreckContact.PoseObstructionBounded(anatomy,marker,facing,false,Mathf.Max(.0004f,(best-bias)/10000));
                 bool clear=penetration<=.0004f;if(clearFound && !clear)continue;
                 float cost=penetration*10000+bias;
                 if(clear && !clearFound || cost<best){best=cost;fraction=along;reachableShaftPenetration=penetration;clearFound=clear;}
@@ -845,13 +1260,15 @@ public sealed class Story1WreckFinale : MonoBehaviour
             foreach(var route in routes.GroupBy(r=>r.fraction).SelectMany(g=>g.OrderBy(r=>r.score).Take(3)))
             {
                 float score=route.score;
+                if(score>=best)continue;
                 Vector3 endRoot=route.marker-route.facing*Vector3.Scale(noseLocal,shark.transform.lossyScale);
                 for(int i=0;i<3;i++)
                 {
                     Quaternion heading=Quaternion.RotateTowards(startHeading,route.facing,300*(phases[i]*counterSeconds)+3);
                     Vector3 root=Vector3.Lerp(startRoot,endRoot,phases[i]);
                     Vector3 nose=root+heading*Vector3.Scale(samples[i].nose,shark.transform.lossyScale);
-                    score+=battle.WreckContact.PoseObstruction(samples[i],nose,heading,false)*2000;
+                    score+=battle.WreckContact.PoseObstructionBounded(samples[i],nose,heading,false,(best-score)/2000)*2000;
+                    if(score>=best)break;
                 }
                 if(score<best){best=score;fraction=route.fraction;reachableShaftPenetration=route.penetration;}
             }
@@ -875,41 +1292,163 @@ public sealed class Story1WreckFinale : MonoBehaviour
     }
     Quaternion ChooseAttackFacing(string key,Vector3 marker,bool tail,bool powerful=false,float sampledAge=0)
     {
+        using var measurement=FacingPlanningMarker.Auto();
         attackAim=marker;
         bool same=attackFacingKey==key;
-        if(!same){attackStartRoot=shark.transform.position;attackStartRotation=shark.transform.rotation;}
+        // After the authored contact window, keep the actual strike heading
+        // for follow-through. A recovery pose cannot produce another hit;
+        // repeatedly searching a fresh wind-up here caused 200ms stalls.
+        int contactIndex=key=="Probing bite" ? 0 : key=="First counter" ? 1 : key=="Landing counter" ? 2 : key=="Reversal tail" ? 4 : key=="Defeating tail" ? 5 : -1;
+        if(same && contactIndex>=0 && sampledAge>(tail ? .65f : .52f)+contacts[contactIndex].window)return attackFacing;
+        if(!same){tailStrokeReplans=biteStrokeReplans=0;lastTailReplanAge=lastBiteReplanAge=-100;facingSearchCursor=0;}
+        bool rebaseTail=same && tail && hasIntendedTailRoot && tailStrokeReplans<3 && sampledAge-lastTailReplanAge>.12f && sampledAge<.5f && Vector3.Distance(shark.transform.position,intendedTailRoot)>1;
+        bool rebaseBite=same && !tail && hasIntendedBiteRoot && biteStrokeReplans<3 && sampledAge-lastBiteReplanAge>.12f && sampledAge<.37f && Vector3.Distance(shark.transform.position,intendedBiteRoot)>1;
+        if(!same || rebaseTail || rebaseBite)
+        {
+            facingSearchCursor=0;
+            // A solid escape can put the animal metres away from the requested
+            // breach/tail arc. Plan the remaining stroke from that ACTUAL solved
+            // placement instead of repeatedly steering back through the old arc.
+            attackStartRoot=shark.transform.position;attackStartRotation=shark.transform.rotation;
+            if(tail)tailRouteStartAge=Mathf.Max(sampledAge,powerful ? -1.4f : -.6f);
+            else biteRouteStartAge=sampledAge;
+            hasIntendedTailRoot=false;
+            hasIntendedBiteRoot=false;
+            if(rebaseTail){attackRouteOffset=Vector3.zero;attackFacingSampleTime=-100;TailRouteReplans++;tailStrokeReplans++;lastTailReplanAge=sampledAge;}
+            if(rebaseBite){attackRouteOffset=Vector3.zero;attackFacingSampleTime=-100;BiteRouteReplans++;biteStrokeReplans++;lastBiteReplanAge=sampledAge;}
+        }
         float planningInterval=sampledAge>(tail ? .45f : .3f) ? .04f : .12f;
         if(same && FilmTime-attackFacingSampleTime<planningInterval)return attackFacing;
         float planningDelta=FilmTime-attackFacingSampleTime;
         string sampledAction=shark.CinematicAction;float sampledSeconds=shark.CinematicActionSeconds;
         string action=tail ? powerful ? "Ship_Smash" : "Tail_Strike" : "Bite_Lunge";
-        shark.SampleCinematicAction(action,tail ? .65f : .52f);
-        var contactAnatomy=battle.WreckContact.CaptureAnatomy();
-        float previousCost=same ? battle.WreckContact.PoseObstruction(contactAnatomy,marker,attackFacing,tail) : float.PositiveInfinity;
-        Vector3 localMarker=shark.transform.InverseTransformPoint(tail ? shark.TailWorldPoint : shark.NoseWorldPoint);
-        attackContactMarkerLocal=localMarker;
-        Vector3 localBulk=shark.transform.InverseTransformPoint(battle.WreckContact.BulkBodyPoint);
-        float[] pathPhases={.1f,.25f,.5f,.75f,.9f};
-        var pathPoses=new Story1SharkWreckContact.AnatomyPose[pathPhases.Length];
-        for(int sample=0;sample<pathPhases.Length;sample++)
+        if(!attackPlanningPoses.TryGetValue(key,out var planning))
         {
-            float phase=pathPhases[sample];
-            float biteSeconds=key=="Probing bite" ? 1.184f : key=="Landing counter" ? 2.48f : .63f;
-            float seconds=tail ? Mathf.Max(0,phase*(powerful ? 2.05f : 1.25f)-(powerful ? 1.4f : .6f)) : Mathf.Max(0,phase*biteSeconds-(biteSeconds-.52f));
-            shark.SampleCinematicAction(action,seconds);pathPoses[sample]=battle.WreckContact.CaptureAnatomy();
+            shark.SampleCinematicAction(action,tail ? .65f : .52f);
+            planning=new AttackPlanningPose{contact=battle.WreckContact.CaptureAnatomy(),
+                marker=shark.transform.InverseTransformPoint(tail ? shark.TailWorldPoint : shark.NoseWorldPoint),
+                bulk=shark.transform.InverseTransformPoint(battle.WreckContact.BulkBodyPoint),
+                path=new Story1SharkWreckContact.AnatomyPose[attackPathPhases.Length]};
+            for(int sample=0;sample<attackPathPhases.Length;sample++)
+            {
+                float phase=attackPathPhases[sample];
+                float biteSeconds=key=="Probing bite" ? 1.184f : key=="Landing counter" ? 2.48f : .63f;
+                float seconds=tail ? Mathf.Max(0,phase*(powerful ? 2.05f : 1.25f)-(powerful ? 1.4f : .6f)) : Mathf.Max(0,phase*biteSeconds-(biteSeconds-.52f));
+                shark.SampleCinematicAction(action,seconds);planning.path[sample]=battle.WreckContact.CaptureAnatomy();
+            }
+            attackPlanningPoses.Add(key,planning);
+            shark.SampleCinematicAction(sampledAction,sampledSeconds);
         }
-        shark.SampleCinematicAction(action,tail ? .65f : .52f);
-        float RouteObstruction(Quaternion rotation,float endpointCost,out Vector3 bestOffset)
+        var contactAnatomy=planning.contact;
+        if(rebaseTail || rebaseBite)
+        {
+            // These future poses belong to the remaining wind-up, not the
+            // earlier straight spine that has already passed. Rendered pose
+            // restoration below remains separate from these exact samples.
+            for(int sample=0;sample<attackPathPhases.Length;sample++)
+            {
+                shark.SampleCinematicAction(action,Mathf.Max(0,Mathf.Lerp(tail ? tailRouteStartAge : biteRouteStartAge,tail ? .65f : .52f,attackPathPhases[sample])));
+                planning.path[sample]=battle.WreckContact.CaptureAnatomy();
+            }
+            shark.SampleCinematicAction(sampledAction,sampledSeconds);
+        }
+        float previousCost=same ? battle.WreckContact.PoseObstruction(contactAnatomy,marker,attackFacing,tail) : float.PositiveInfinity;
+        Vector3 localMarker=planning.marker;
+        attackContactMarkerLocal=localMarker;
+        Vector3 localBulk=planning.bulk;
+        var pathPhases=attackPathPhases;var pathPoses=planning.path;
+        routeOffsets[0]=Vector3.zero;routeOffsets[1]=Vector3.down*2;routeOffsets[2]=Vector3.down*4;
+        routeOffsets[3]=Vector3.down*3+Forward*3;routeOffsets[4]=Vector3.down*3-Forward*3;
+        routeOffsets[5]=Vector3.down*3+Side*3;routeOffsets[6]=Vector3.down*3-Side*3;
+        // Real wreck spars can extend well below the water. A fixed four-metre
+        // dive offered no route around those obstructions after the breach.
+        // These are candidate swim arcs, not collision corrections: native
+        // anatomy still grades every arc and the solid solver owns movement.
+        routeOffsets[7]=Vector3.down*7;routeOffsets[8]=Vector3.down*12;
+        routeOffsets[9]=Vector3.down*6+Side*8;routeOffsets[10]=Vector3.down*6-Side*8;
+        routeOffsets[11]=Vector3.down*6+Forward*8;routeOffsets[12]=Vector3.down*6-Forward*8;
+        bool limitRouteExploration=false,routeBudgetYielded=false;
+        long routeExplorationStarted=0;
+        bool YieldRouteExploration()
+        {
+            if(!limitRouteExploration || System.Diagnostics.Stopwatch.GetTimestamp()-routeExplorationStarted<
+                System.Diagnostics.Stopwatch.Frequency*routeAlternativeBudgetSeconds)return false;
+            if(!routeBudgetYielded){FacingBudgetYields++;routeBudgetYielded=true;}
+            return true;
+        }
+        float RouteObstruction(Quaternion rotation,float endpointCost,out Vector3 bestOffset,bool retainedOnly=false,float maximumCost=float.PositiveInfinity,bool clearOnly=false)
         {
             bestOffset=Vector3.zero;float minimum=float.PositiveInfinity;
-            var offsets=!powerful ? new[]{Vector3.zero,Vector3.down*2,Vector3.down*4,
-                Vector3.down*3+Forward*3,Vector3.down*3-Forward*3,Vector3.down*3+Side*3,Vector3.down*3-Side*3} : new[]{Vector3.zero};
-            foreach(var offset in offsets)
+            // First seek an actually clear route, bounding every native test
+            // by the same existing physical-clear threshold. Computing the
+            // full losing penetration score of the first blocked dive used
+            // to dominate a new tail wind-up. If none clears, retain the
+            // original exact blocked-route ranking in a second pass.
+            bool seekClear=!retainedOnly && endpointCost<=.0004f;
+            for(int pass=0;pass<(seekClear && !clearOnly ? 2 : 1);pass++)
             {
+            if(seekClear && pass==1)ExactBlockedRoutePasses++;
+            for(int offsetIndex=0;offsetIndex<(retainedOnly ? 1 : routeOffsets.Length);offsetIndex++)
+            {
+            Vector3 requestedOffset=routeOffsets[offsetIndex];
+            // Grade the actual blended detour, not an instantly reachable
+            // target offset that runtime will only approach at three m/s.
+            Vector3 offset=retainedOnly ? attackRouteOffset : same
+                ? Vector3.MoveTowards(attackRouteOffset,requestedOffset,3*Mathf.Max(0,planningDelta)) : requestedOffset;
             // Clear solid geometry takes precedence over exposure and style.
             // A shallow intersecting pose must not win because its bulk is
             // better submerged; the solver would move it away at impact.
             float cost=endpointCost*10000;
+            if(same && !tail && sampledAge<=.52f)
+            {
+                // Re-selecting a heading changes the current point on this
+                // already-progressed arc. Grade entry into THAT point from
+                // the actual solved root, as well as the full wind-up below.
+                // A clear historical arc cannot make a six-metre late jump
+                // physically reachable in one frame. This is a route penalty;
+                // all native collision and real-contact checks remain intact.
+                float now=Mathf.Clamp01((sampledAge-biteRouteStartAge)/Mathf.Max(.01f,.52f-biteRouteStartAge));
+                Vector3 endpoint=marker-rotation*Vector3.Scale(localMarker,shark.transform.lossyScale);
+                Vector3 requested=Vector3.Lerp(attackStartRoot,endpoint,now)+offset*Mathf.Sin(Mathf.PI*now);
+                float excess=Mathf.Max(0,Vector3.Distance(shark.transform.position,requested)-(24*Mathf.Max(.01f,Time.deltaTime)+.15f));
+                if(excess>.001f){BiteTransitionPenaltyCount++;LargestBiteTransitionExcess=Mathf.Max(LargestBiteTransitionExcess,excess);}
+                cost+=excess*excess*10000;
+            }
+            float offsetCost=offset.sqrMagnitude*.015f;
+            // A clear detour must also be followable at the solid
+            // controller's speed. Tail body easing and rotation about its
+            // centre can be more demanding than the linear bite root arc.
+            float seconds=Mathf.Max(.01f,tail ? .65f-tailRouteStartAge : .52f-biteRouteStartAge);
+            Vector3 previous=attackStartRoot;float excessDistance=0;
+            Vector3 scaledCentre=Vector3.Scale(shark.RootMeshBounds.center,shark.transform.lossyScale);
+            for(int step=1;step<=12;step++)
+            {
+                float phase=step/12f;Vector3 root;
+                if(tail)
+                {
+                    Vector3 endpoint=marker-rotation*Vector3.Scale(localMarker-shark.RootMeshBounds.center,shark.transform.lossyScale);
+                    float advance=Ease(phase);
+                    Vector3 body=Vector3.Lerp(attackStartRoot+attackStartRotation*scaledCentre,endpoint,advance)+offset*Mathf.Sin(Mathf.PI*advance);
+                    Quaternion heading=Quaternion.Slerp(attackStartRotation,rotation,Ease(phase/.55f));
+                    root=body-heading*scaledCentre;
+                }
+                else
+                {
+                    Vector3 endpoint=marker-rotation*Vector3.Scale(localMarker,shark.transform.lossyScale);
+                    root=Vector3.Lerp(attackStartRoot,endpoint,phase)+offset*Mathf.Sin(Mathf.PI*phase);
+                }
+                excessDistance+=Mathf.Max(0,Vector3.Distance(previous,root)-24*seconds/12);
+                previous=root;
+            }
+            cost+=excessDistance*excessDistance*10000;
+            float limit=Mathf.Min(minimum,maximumCost);
+            if(seekClear && pass==0)limit=Mathf.Min(limit,offsetCost+.0015f);
+            // All remaining native penetration terms are nonnegative. Once
+            // this route cannot beat an already fully evaluated route, its
+            // remaining samples cannot affect the selected physical approach.
+            // This bounds work without dropping geometry or accepting a miss.
+            if(cost+offsetCost>=limit)continue;
+            bool dominated=false;
             // A clear endpoint is insufficient when the approach cuts a
             // girder or the occupied deck. Score actual intervening anatomy
             // as well, before selecting the wind-up's facing.
@@ -933,13 +1472,18 @@ public sealed class Story1WreckFinale : MonoBehaviour
                 {
                     Vector3 endRoot=marker-rotation*Vector3.Scale(localMarker,shark.transform.lossyScale);
                     Vector3 root=Vector3.Lerp(attackStartRoot,endRoot,phase)+offset*Mathf.Sin(Mathf.PI*phase);
-                    facing=Quaternion.RotateTowards(attackStartRotation,rotation,300*(phase*(key=="Probing bite" ? 1.184f : key=="Landing counter" ? 2.48f : .63f))+3);
+                    facing=Quaternion.RotateTowards(attackStartRotation,rotation,300*(phase*(.52f-biteRouteStartAge))+3);
                     at=root+facing*Vector3.Scale(anatomy.nose,shark.transform.lossyScale);
                 }
-                cost+=battle.WreckContact.PoseObstruction(anatomy,at,facing,tail)*2000;
+                cost+=battle.WreckContact.PoseObstructionBounded(anatomy,at,facing,tail,(limit-cost-offsetCost)/2000)*2000;
+                if(cost+offsetCost>=limit){dominated=true;break;}
             }
-            cost+=offset.sqrMagnitude*.015f;
+            if(dominated)continue;
+            cost+=offsetCost;
             if(cost<minimum){minimum=cost;bestOffset=offset;}
+            if(seekClear && pass==0 && cost-offsetCost<.0015f){ClearRouteEarlyExits++;return minimum;}
+            if(cost<.0015f)break;
+            }
             }
             return minimum;
         }
@@ -949,12 +1493,67 @@ public sealed class Story1WreckFinale : MonoBehaviour
             Vector3 bulk=marker-rotation*Vector3.Scale(localMarker-localBulk,shark.transform.lossyScale);
             return Mathf.Max(0,bulk.y-(ocean!=null ? waterSnapshot.Height(bulk) : hero.seaLevel)+1.4f);
         }
-        if(same && previousCost<.0004f && Exposure(attackFacing)<.2f && RouteObstruction(attackFacing,previousCost,out _) <.001f){shark.SampleCinematicAction(sampledAction,sampledSeconds);attackFacingSampleTime=FilmTime;return attackFacing;}
+        float retainedRouteCost=float.PositiveInfinity;Vector3 retainedRouteOffset=attackRouteOffset;
+        if(same && previousCost<.0004f)
+        {
+            float routeCost=RouteObstruction(attackFacing,previousCost,out var safeOffset,true);
+            retainedRouteCost=routeCost;retainedRouteOffset=safeOffset;
+            // A submerged detour's artistic length penalty is not a solid
+            // collision. Reuse a genuinely clear route even when the head
+            // rises to meet the weapon, without repeatedly searching it.
+            if(routeCost-safeOffset.sqrMagnitude*.015f<.001f)
+            {attackRouteOffset=safeOffset;shark.SampleCinematicAction(sampledAction,sampledSeconds);attackFacingSampleTime=FilmTime;return attackFacing;}
+        }
         attackFacingKey=key;attackFacingSampleTime=FilmTime;float best=float.PositiveInfinity;bool clearFound=false;Quaternion chosen=Quaternion.LookRotation(-Forward)*Quaternion.Euler(-16,0,0);
-        Vector3 chosenOffset=Vector3.zero;
+        Vector3 chosenOffset=Vector3.zero;float chosenRouteSolid=float.PositiveInfinity;
+        if(!float.IsPositiveInfinity(retainedRouteCost))
+        {
+            float exposure=Exposure(attackFacing),turn=Quaternion.Angle(attackStartRotation,attackFacing);
+            best=retainedRouteCost+exposure*exposure*.2f+turn*turn*.001f;
+            chosen=attackFacing;chosenOffset=retainedRouteOffset;clearFound=true;
+            chosenRouteSolid=retainedRouteCost-retainedRouteOffset.sqrMagnitude*.015f;
+        }
+        // A new stroke often has a clear natural facing. Verify that exact
+        // endpoint, the full authored intermediate anatomy and the same
+        // movement budget before enumerating every cinematic attitude. An
+        // obstructed probe never wins; the original broad search still runs.
+        // These are existing yaw-zero attitudes, not looser collision rules.
+        bool TryPreferredClear(Quaternion facing)
+        {
+            if(same)
+            {
+                float remaining=Mathf.Max(0,(tail ? .65f : .52f)-sampledAge);
+                facing=Quaternion.RotateTowards(shark.transform.rotation,facing,300*(remaining+Mathf.Max(.01f,Time.deltaTime))+3);
+            }
+            float endpoint=battle.WreckContact.PoseObstructionBounded(contactAnatomy,marker,facing,tail,.0004f);
+            if(endpoint>.0004f)return false;
+            float route=RouteObstruction(facing,endpoint,out var offset,clearOnly:true);
+            if(float.IsInfinity(route) || route-offset.sqrMagnitude*.015f>=.0015f)return false;
+            attackFacingKey=key;attackFacingSampleTime=FilmTime;facingSearchCursor=0;
+            attackFacing=facing;attackRouteOffset=offset;attackEndpointCost=endpoint;
+            float exposure=Exposure(facing),turn=Quaternion.Angle(attackStartRotation,facing);
+            attackRouteCost=route+exposure*exposure*.2f+turn*turn*.001f;
+            PreferredClearRouteEarlyExits++;
+            shark.SampleCinematicAction(sampledAction,sampledSeconds);
+            return true;
+        }
+        if(tail)
+        {
+            var positive=Quaternion.LookRotation((Side+Forward*.75f).normalized)*Quaternion.Euler(25,0,powerful ? -4 : 0);
+            var negative=Quaternion.LookRotation((-Side+Forward*.75f).normalized)*Quaternion.Euler(25,0,powerful ? -4 : 0);
+            bool nearerPositive=Quaternion.Angle(attackStartRotation,positive)<=Quaternion.Angle(attackStartRotation,negative);
+            if(TryPreferredClear(nearerPositive ? positive:negative) || TryPreferredClear(nearerPositive ? negative:positive))return attackFacing;
+        }
+        else if(TryPreferredClear(Quaternion.LookRotation(-Forward)*Quaternion.Euler(-16,0,0)))return attackFacing;
+        facingCandidates.Clear();
         // The new authored head rise supplies bite reach. Reserve upright
         // whole-body attitudes for the explicit breach, not ordinary counters.
-        foreach(int side in tail ? new[]{1,-1} : new[]{1})foreach(float yaw in new[]{0f,-20f,20f,-40f,40f,-65f,65f,-90f,90f,-120f,120f,-150f,150f,180f})foreach(float pitch in tail ? new[]{-25f,-16f,0f,12f,25f} : new[]{-35f,-25f,-16f,0f,12f,25f,35f})
+        // A late physical escape already consumed wind-up time. Search the
+        // coarse actual attitudes throughout the remaining stroke rather
+        // than blocking it with the full cinematic style search. All selected
+        // endpoints/routes still receive exact native anatomy tests.
+        bool urgentApproach=tail ? tailStrokeReplans>0 : biteStrokeReplans>0;
+        foreach(int side in tail ? bothSides : oneSide)foreach(float yaw in urgentApproach ? coarseEntryYaws : facingYaws)foreach(float pitch in urgentApproach ? coarseEntryPitches : tail ? tailPitches : bitePitches)
         {
             Quaternion facing=tail ? Quaternion.LookRotation((Side*side+Forward*.75f).normalized)*Quaternion.Euler(pitch,yaw,powerful ? -4 : 0) : Quaternion.LookRotation(-Forward)*Quaternion.Euler(pitch,yaw,0);
             // Grade the orientation that can actually be reached this frame.
@@ -966,19 +1565,63 @@ public sealed class Story1WreckFinale : MonoBehaviour
                 facing=Quaternion.RotateTowards(shark.transform.rotation,facing,300*(remaining+Mathf.Max(.01f,Time.deltaTime))+3);
             }
             float exposure=Exposure(facing);
-            float endpointCost=battle.WreckContact.PoseObstruction(contactAnatomy,marker,facing,tail);
-            bool clear=endpointCost<=.0004f;if(clearFound && !clear)continue;
+            // First classify endpoints at the existing clear threshold. A
+            // blocked pose cannot outrank ANY clear pose, so its exact losing
+            // score is unnecessary unless the entire attitude set is blocked.
+            float endpointCost=battle.WreckContact.PoseObstructionBounded(contactAnatomy,marker,facing,tail,.0004f);
+            bool clear=endpointCost<=.0004f;
             float turn=Quaternion.Angle(attackStartRotation,facing);
             float bias=exposure*exposure*.2f+turn*turn*.001f+Mathf.Abs(yaw)*.00005f+Mathf.Abs(pitch+16)*.00005f;
-            if((!clear || clearFound) && endpointCost*10000+bias>=best)continue;
-            float cost=RouteObstruction(facing,endpointCost,out var routeOffset)+bias;
-            if(clear && !clearFound || cost<best){best=cost;chosen=facing;clearFound=clear;chosenOffset=routeOffset;}
-            if(cost<.0015f && exposure<.05f)goto FacingChosen;
+            facingCandidates.Add(new FacingCandidate{rotation=facing,endpoint=endpointCost,bias=bias,clear=clear});
         }
-        FacingChosen:
+        bool hasClearEndpoint=false;
+        foreach(var candidate in facingCandidates)if(candidate.clear){hasClearEndpoint=true;break;}
+        if(!hasClearEndpoint && !clearFound)
+        {
+            // Lower bounds must never rank blocked routes against each other.
+            // Recover exact costs in this case to preserve that decision.
+            for(int i=0;i<facingCandidates.Count;i++)
+            {
+                var candidate=facingCandidates[i];
+                candidate.endpoint=battle.WreckContact.PoseObstruction(contactAnatomy,marker,candidate.rotation,tail);
+                facingCandidates[i]=candidate;
+            }
+        }
+        // First grade all endpoints cheaply. Full swept-anatomy routes are
+        // evaluated for a bounded shortlist instead of hundreds of attitudes
+        // times seven routes, which caused visible 100ms search frames.
+        facingCandidates.Sort((a,b)=>a.clear!=b.clear ? (a.clear?-1:1) : (a.endpoint*10000+a.bias).CompareTo(b.endpoint*10000+b.bias));
+        // A first wind-up still receives the original complete search. Once
+        // its previous route has been freshly graded against the current
+        // moving wood, alternative attitudes share a soft 3ms slice. Finish
+        // each attitude's full detour search before yielding: restarting its
+        // first few offsets every pass would starve deeper swimming routes.
+        // Exact native tests, contact clock and final solving are unchanged.
+        limitRouteExploration=!float.IsPositiveInfinity(retainedRouteCost);
+        routeExplorationStarted=System.Diagnostics.Stopwatch.GetTimestamp();
+        // Keep at most four new swept routes per planning pass. If those
+        // endpoints all approach through timber, continue down the ranking
+        // on the next pass rather than retrying the same four indefinitely.
+        // Re-grade and retain the previous clear endpoint above, so widening
+        // this search cannot replace it with a worse blocked approach.
+        int first=facingSearchCursor<facingCandidates.Count ? facingSearchCursor : 0,examined=0;
+        if(first>0)FacingSearchExtensions++;
+        for(int index=first;index<Mathf.Min(first+4,facingCandidates.Count);index++)
+        {
+            if(index>first && YieldRouteExploration())break;
+            var candidate=facingCandidates[index];bool clear=candidate.clear;
+            if(clearFound && !clear)break;
+            examined++;
+            float routeLimit=clear && !clearFound ? float.PositiveInfinity : best-candidate.bias;
+            float routeCost=RouteObstruction(candidate.rotation,candidate.endpoint,out var routeOffset,maximumCost:routeLimit),cost=routeCost+candidate.bias;
+            if(clear && !clearFound || cost<best)
+            {best=cost;chosen=candidate.rotation;clearFound=clear;chosenOffset=routeOffset;chosenRouteSolid=routeCost-routeOffset.sqrMagnitude*.015f;}
+            if(clear && chosenRouteSolid<.0015f)break;
+        }
+        facingSearchCursor=chosenRouteSolid<.0015f || examined==0 || first+examined>=facingCandidates.Count ? 0 : first+examined;
         attackEndpointCost=battle.WreckContact.PoseObstruction(contactAnatomy,marker,chosen,tail);
         attackRouteCost=best;
-        attackRouteOffset=same ? Vector3.MoveTowards(attackRouteOffset,chosenOffset,3*Mathf.Max(0,planningDelta)) : chosenOffset;
+        attackRouteOffset=chosenOffset; // Already blended and graded by RouteObstruction.
         // Reach planning samples the contact pose temporarily. Restore the
         // timeline's actual recoil/recovery instead of replacing it with
         // another bite every time the approach is evaluated.
@@ -987,12 +1630,18 @@ public sealed class Story1WreckFinale : MonoBehaviour
     }
     void CounterApproach(float age,float hit,Vector3 aim,float strength)
     {
-        Quaternion facing=ChooseAttackFacing(FilmTime<4 ? "First counter" : "Landing counter",aim,false,false,age-.11f);
+        // The landing counter has 2.48 seconds of approach, while the first
+        // counter has .63. Use the same native bite phase as PlaceBiteRoot;
+        // a fixed .11 offset delayed the landing approach until its last .63s
+        // and disabled remaining-stroke replanning before the actual bite.
+        float sampledAge=age-(hit-.52f);
+        Quaternion facing=ChooseAttackFacing(FilmTime<4 ? "First counter" : "Landing counter",aim,false,false,sampledAge);
         PlaceBiteRoot(age,hit,aim,facing,strength);
     }
     void PlaceBiteRoot(float age,float hit,Vector3 aim,Quaternion facing,float strength)
     {
-        float approach=Mathf.Clamp01(age/hit),retreat=Ease((age-hit)/.65f);
+        float sampledAge=age-(hit-.52f);
+        float approach=Mathf.Clamp01((sampledAge-biteRouteStartAge)/Mathf.Max(.01f,.52f-biteRouteStartAge)),retreat=Ease((age-hit)/.65f);
         Quaternion rotation=Quaternion.RotateTowards(shark.transform.rotation,facing,300*Mathf.Max(.01f,Time.deltaTime)+3);
         Vector3 endRoot=aim-facing*Vector3.Scale(attackContactMarkerLocal,shark.transform.lossyScale);
         // Rotate about the actor's own root. Pinning its nose and turning a
@@ -1006,23 +1655,25 @@ public sealed class Story1WreckFinale : MonoBehaviour
             attackRouteOffset*Mathf.Sin(Mathf.PI*approach)+Forward*(retreat*strength);
         if(age>hit+.15f)root.y=Mathf.Lerp(root.y,shark.SurfaceRootY(Water(root),rotation),retreat*.8f);
         battle.PoseCinematicShark(root+rotation*Vector3.Scale(shark.RootMeshBounds.center,shark.transform.lossyScale),rotation,absoluteHeight:true);
+        intendedBiteRoot=shark.transform.position;hasIntendedBiteRoot=true;
     }
     void TailApproach(float age,Vector3 target,bool powerful)
     {
         Quaternion facing=ChooseAttackFacing(powerful ? "Defeating tail" : "Reversal tail",target,true,powerful,age);
-        float anticipation=powerful ? 1.4f : .6f;
-        float advance=Ease((age+anticipation)/(TralaleroSwimAnimator.TailContactTime+anticipation)),retreat=Ease((age-.74f)/.9f);
+        float phase=Mathf.Clamp01((age-tailRouteStartAge)/Mathf.Max(.01f,TralaleroSwimAnimator.TailContactTime-tailRouteStartAge));
+        float advance=Ease(phase),retreat=Ease((age-.74f)/.9f);
         Vector3 local=powerful ? filmShipTailLocal : filmTailLocal;
         Vector3 end=target-facing*Vector3.Scale(local-shark.RootMeshBounds.center,shark.transform.lossyScale);
         Vector3 startBody=attackStartRoot+attackStartRotation*Vector3.Scale(shark.RootMeshBounds.center,shark.transform.lossyScale);
         Vector3 body=Vector3.Lerp(startBody,end,advance)+attackRouteOffset*Mathf.Sin(Mathf.PI*advance)-Side*(retreat*4);
-        Quaternion rotation=Quaternion.Slerp(attackStartRotation,facing,Ease((age+anticipation)/Mathf.Max(.3f,(TralaleroSwimAnimator.TailContactTime+anticipation)*.55f)));
+        Quaternion rotation=Quaternion.Slerp(attackStartRotation,facing,Ease(phase/.55f));
         if(retreat>0)
         {
             float surface=shark.SurfaceRootY(Water(body),rotation)+(rotation*Vector3.Scale(shark.RootMeshBounds.center,shark.transform.lossyScale)).y;
             body.y=Mathf.Lerp(body.y,surface,retreat);
         }
         battle.PoseCinematicShark(body,rotation,absoluteHeight:true);
+        intendedTailRoot=shark.transform.position;hasIntendedTailRoot=true;
     }
     void RenderActors(float sampledChoreoTime=-1)
     {
@@ -1140,7 +1791,8 @@ public sealed class Story1WreckFinale : MonoBehaviour
         {
             if(t<1.8f)
             {
-                shark.SampleCinematicAction("Bite_Lunge",Mathf.Max(0,t-.664f));
+                bool parried=verifiedContacts.Contains(0) && t>contactTimes[0]+.04f;
+                shark.SampleCinematicAction(parried ? "Hit_Recoil" : "Bite_Lunge",parried ? t-contactTimes[0] : Mathf.Max(0,t-.664f));
                 Vector3 target=ParryContactAim;float u=Ease(t/1.184f),retreat=Ease((t-1.184f)/.6f);
                 Vector3 futureFeet=Deck(-.4f,-Mathf.Sin(Ease(1.184f/1.8f)*Mathf.PI)*.3f);
                 Vector3 futureTip=futureFeet+hero.transform.TransformVector(PredictParryTip(futureFeet));
@@ -1162,7 +1814,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
         {
             bool biting=t>=6.4f && (t<7.03f || !verifiedContacts.Contains(2) && t<=7.03f+contacts[2].window);
             shark.SampleCinematicAction(t<6.4f ? "Swim" : biting ? "Bite_Lunge" : verifiedContacts.Contains(2) ? "Hit_Recoil" : "Swim",t<6.4f ? age : biting ? Mathf.Clamp(t-6.51f,0,.52f) : t-7.03f);
-            if(t<6.4f){board.Drive(.35f,-.2f,hero.transform);NoseAt(SurfaceNose(Deck()+Forward*6-Side*2,Quaternion.LookRotation(-Forward)),Quaternion.LookRotation(-Forward));}
+            if(t<6.4f){NoseAt(SurfaceNose(Deck()+Forward*6-Side*2,Quaternion.LookRotation(-Forward)),Quaternion.LookRotation(-Forward));}
             else{board.Drive(0,0,null);CounterApproach(t-4.55f,2.48f,Deck(.15f)+hero.transform.TransformVector(PredictSlashTip(Deck(.15f))),4);}
         }
         else if(t<10)
@@ -1180,9 +1832,17 @@ public sealed class Story1WreckFinale : MonoBehaviour
         else if(t<11.6f)
         {
             shark.SampleCinematicAction("Swim",age);
-            Vector3 at=Deck()+Forward*Mathf.Lerp(8,3,Ease(age/1.6f))+Side*Mathf.Lerp(0,7,Ease(age/1.6f));
-            at=SurfaceNose(at,Quaternion.LookRotation(-Side));at.y-=Mathf.Sin(age/1.6f*Mathf.PI)*2;
-            NoseAt(Vector3.Lerp(stageNoseStart,at,Ease(age/.5f)),Quaternion.Slerp(stageRotation,Quaternion.LookRotation(-Side),Ease(age/1.6f)));
+            Quaternion facing=Quaternion.LookRotation(-Side);
+            float clearance=Mathf.Max(4,shark.RootMeshBounds.extents.x*Mathf.Abs(shark.transform.lossyScale.x)*.7f+1.5f);
+            Vector3 nose=SurfaceNose(Deck()+Forward*(clearance+3)+Side*5,facing);
+            Vector3 root=nose-facing*Vector3.Scale(shark.transform.InverseTransformPoint(shark.NoseWorldPoint),shark.transform.lossyScale);
+            Vector3 goalBody=root+facing*Vector3.Scale(shark.RootMeshBounds.center,shark.transform.lossyScale);
+            // Turn the mass around its actual body centre in the open-water
+            // lane. Pinning the nose and turning a long rear body around it
+            // swept the tail through the support during this flank.
+            Vector3 body=Vector3.Lerp(stageBodyStart,goalBody,Ease(age/1.6f));
+            body.y-=Mathf.Sin(age/1.6f*Mathf.PI)*3;
+            battle.PoseCinematicShark(body,Quaternion.Slerp(stageRotation,facing,Ease(age/1.6f)),absoluteHeight:true);
         }
         else if(t<16)
         {
@@ -1207,44 +1867,67 @@ public sealed class Story1WreckFinale : MonoBehaviour
             }
         }
     }
+    System.Collections.IEnumerator PrepareHop(int index)
+    {
+        hopPlanningBusy=true;hopPlanningStarted[index]=true;
+        HopPlanningAttempts[index]++;
+        float deadline=index==0 ? 4.45f:11.5f;
+        Vector3 feet=hero.transform.position+Vector3.up*hero.LowestFootWorldOffset;
+        var neighbours=battle.Boards.Where(p=>p!=board && p.IsBoardable && p.Dimensions.y<5 && p.Speed<5 && Mathf.Min(p.Dimensions.x,p.Dimensions.z)>1.6f)
+            .Where(p=>Vector3.ProjectOnPlane(p.BoardingPoint(feet)-feet,Vector3.up).magnitude<12 && Mathf.Abs(p.BoardingPoint(feet).y-feet.y)<1.5f)
+            .OrderBy(p=>p.EdgeDistance(feet)).Take(3).ToArray();
+        if(HopPlanningDiagnostics.Count<32)HopPlanningDiagnostics.Add("hop="+index+" attempt="+HopPlanningAttempts[index]+" time="+FilmTime.ToString("F3")+" neighbours="+neighbours.Length);
+        foreach(var candidate in neighbours)
+        {
+            if(FilmTime>=deadline || hopIndex==index)break;
+            yield return SearchEntryEdgeSlices(candidate,candidate.BoardingPoint(feet),feet,stopAtFilm:deadline);
+            // A search completing after takeoff cannot replace the chosen
+            // supported variant or redirect an already airborne character.
+            if(FilmTime>=deadline || hopIndex==index)break;
+            if(HopPlanningDiagnostics.Count<32)HopPlanningDiagnostics.Add(candidate.name+" candidates="+stanceCandidateCount+" wood="+chosenStanceWoodPenetration+" pose="+chosenStancePoseCost);
+            if(stanceCandidateCount==0 || chosenStanceWoodPenetration>.0004f || Water(slicedEntryPoint)-slicedEntryPoint.y>.6f)continue;
+            if(ApproachClearance(slicedEntryPoint,candidate.OpenWaterDirection(slicedEntryPoint))<.15f)continue;
+            hopPlans[index]=new HopPlan{target=candidate,landingLocal=candidate.transform.InverseTransformPoint(slicedEntryPoint)};break;
+        }
+        hopPlanningBusy=false;
+        // Floating neighbours keep moving during the preceding exchange.
+        // An early unsuccessful search is not a permanent no-neighbour
+        // decision. Retry within the existing sliced budget and lead-in;
+        // takeoff still validates the actual mesh and has no blocking search.
+        if(hopPlans[index].target==null && hopIndex!=index)
+        {hopPlanningStarted[index]=false;hopRetryAfter[index]=FilmTime+.6f;}
+    }
     void BeginHop(int index)
     {
         hopIndex=index;hopFrom=board;hopLanded=false;
         Vector3 feet=hero.transform.position+Vector3.up*hero.LowestFootWorldOffset;
         hopStartLocal=board.transform.InverseTransformPoint(feet);
-        var neighbours=FindObjectsByType<Story1WreckPlank>(FindObjectsSortMode.None)
-            .Where(p=>p!=board && p.IsBoardable && p.Dimensions.y<5 && p.Speed<5 && Mathf.Min(p.Dimensions.x,p.Dimensions.z)>1.6f)
-            .Where(p=>Vector3.ProjectOnPlane(p.BoardingPoint(feet)-feet,Vector3.up).magnitude<12 && Mathf.Abs(p.BoardingPoint(feet).y-feet.y)<1.5f)
-            .OrderBy(p=>Vector3.ProjectOnPlane(p.BoardingPoint(feet)-feet,Vector3.up).magnitude+Mathf.Abs(p.BoardingPoint(feet).y-feet.y)*.6f)
-            .Take(6).ToArray();
-        hopTarget=null;
-        foreach(var candidate in neighbours)
+        var plan=hopPlans[index];hopTarget=plan.target;
+        Vector3 landing=hopTarget!=null ? hopTarget.transform.TransformPoint(plan.landingLocal) : feet;
+        bool valid=hopTarget!=null && hopTarget.IsBoardable && hopTarget.Speed<5 &&
+            Vector3.ProjectOnPlane(landing-feet,Vector3.up).magnitude<12 && Mathf.Abs(landing.y-feet.y)<1.5f;
+        if(valid)
         {
-            Vector3 candidateLanding=candidate.BoardingPoint(feet),edge=FindEntryEdge(candidate,candidateLanding,feet);
-            // Exposure is an artistic preference, not a collision. Keep the
-            // original squared-overlap cost separately from the style score.
-            if(chosenStanceWoodPenetration>.0015f || Water(edge)-edge.y>.6f)continue;
-            bool stance=true;Vector3 normal=candidate.transform.up;if(normal.y<0)normal=-normal;
-            float reach=Mathf.Max(2,candidate.Dimensions.y+1);
-            for(int bearing=0;bearing<360 && stance;bearing+=45)
+            Vector3 normal=hopTarget.transform.up;if(normal.y<0)normal=-normal;
+            float reach=Mathf.Max(2,hopTarget.Dimensions.y+1);
+            for(int bearing=0;bearing<360 && valid;bearing+=45)
             {
-                Vector3 sole=edge+Quaternion.AngleAxis(bearing,Vector3.up)*Vector3.forward*.75f;
-                stance=candidate.Collision.Raycast(new Ray(sole+normal*reach,-normal),out var hit,reach*2) && Vector3.Dot(hit.normal,normal)>.5f;
+                Vector3 sole=landing+Quaternion.AngleAxis(bearing,Vector3.up)*Vector3.forward*.75f;
+                valid=hopTarget.Collision.Raycast(new Ray(sole+normal*reach,-normal),out var hit,reach*2) && Vector3.Dot(hit.normal,normal)>.5f;
             }
-            if(!stance)continue;
-            // A landing is not safe merely because a foot fits: leave actual
-            // space for the approaching head and submerged body. Crowded
-            // neighbouring wreck uses the approved equally timed same-board
-            // variant, rather than landing in an impossible contact corridor.
-            if(ApproachClearance(edge,candidate.OpenWaterDirection(edge))<.15f)continue;
-            hopTarget=candidate;break;
         }
-        if(hopTarget==null)hopTarget=board;
-        // Land on a reachable, real edge facing clear water. The nearest
-        // interior point often left a whole hull between the two combatants.
-        float duration=index==0 ? 1.85f : 2.4f;
-        Vector3 landing=FindEntryEdge(hopTarget,hopTarget.BoardingPoint(feet),feet,hopTarget==board ? 3*(duration-.5f) : 12);
-        // Preparation cannot carry the actor across a whole deck in a few
+        if(!valid)
+        {
+            // Planning has a bounded lead-in. A late or broken destination
+            // selects the same-duration supported exchange, without stopping
+            // the render thread to search for a different board at takeoff.
+            // A planted pose may have shifted the root to load one leg.
+            // That IK-adjusted root is not a new authored deck stance: using
+            // it here rebased every later guard/counter and accumulated slide.
+            // Walk back to this support's validated nominal stance instead.
+            hopTarget=board;landing=Deck();
+        }
+        float duration=index==0 ? 1.85f : 2.4f;        // Preparation cannot carry the actor across a whole deck in a few
         // frames. Limit the supported push-off to an actual short step.
         Vector3 takeoff=board.BoardingPoint(Vector3.MoveTowards(feet,board.BoardingPoint(landing),3*duration*.2f));
         hopTakeoffLocal=board.transform.InverseTransformPoint(takeoff);
@@ -1280,6 +1963,15 @@ public sealed class Story1WreckFinale : MonoBehaviour
             float clearance=Mathf.Max(4,shark.RootMeshBounds.extents.x*Mathf.Abs(shark.transform.lossyScale.x)*.7f+1.5f);
             // Breach beside the abandoned board, leaving a readable escape lane.
             breachTarget=hopFrom.transform.TransformPoint(new Vector3(side*(.5f+clearance/hopFrom.Dimensions.x),hopFrom.TopLocalY,hopTakeoffLocal.z));
+            if(hopTarget==hopFrom)
+            {
+                // There is no destination board to dodge around. The old
+                // local-X default could pick the opposite, obstructed side
+                // of a huge hull instead of the stance's real open-water edge.
+                Vector3 takeoff=hopFrom.BoardingPoint(hopFrom.transform.TransformPoint(hopTakeoffLocal));
+                Vector3 outward=hopFrom.OpenWaterDirection(takeoff);
+                breachTarget=hopFrom.BoardingPoint(takeoff+outward*100)+outward*clearance;
+            }
             breachDirection=Vector3.ProjectOnPlane(breachTarget-breachStart,Vector3.up).normalized;
             if(breachDirection.sqrMagnitude<.1f)breachDirection=-Forward;
         }
@@ -1454,7 +2146,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
                 gap=Mathf.Min(gap,(previous+step*u).magnitude);
             }
             lastContactA[i]=a;lastContactB[i]=b;lastContactTime[i]=t;
-            if(gap<ContactAttemptGaps[i])ContactObstructions[i]="correction="+battle.WreckContact.LastCorrection+" hero="+a+" shark="+b+" aim="+attackAim+" endpoint="+attackEndpointCost+" route="+attackRouteCost+" heading="+attackFacing.eulerAngles+" shaft="+slashShaftFraction+" footprint="+supportFootprintRadius+" stance="+chosenStancePoseCost+" candidates="+stanceCandidateCount+" obstacles="+string.Join(";",battle.WreckContact.LastObstacles);
+            if(gap<ContactAttemptGaps[i])ContactObstructions[i]="correction="+battle.WreckContact.LastCorrection+" hero="+a+" shark="+b+" aim="+attackAim+" endpoint="+attackEndpointCost+" route="+attackRouteCost+" heading="+attackFacing.eulerAngles+" shaft="+slashShaftFraction+" footprint="+supportFootprintRadius+" entryPose="+EntryPoseCost+" entryWood="+EntryWoodCost+" obstacles="+string.Join(";",battle.WreckContact.LastObstacles);
             ContactAttemptGaps[i]=Mathf.Min(ContactAttemptGaps[i],gap);
             if(gap>.05f)continue;
             verifiedContacts.Add(i);ContactGaps.Add(gap);LargestContactGap=Mathf.Max(LargestContactGap,gap);
@@ -1472,28 +2164,93 @@ public sealed class Story1WreckFinale : MonoBehaviour
     void Advance()
     {
         if(battle==null || IsComplete || PauseSettingsMenu.IsOpen || Time.timeScale<=0 || Time.deltaTime<=0)return;
+        if(Elapsed<LeadInSeconds && Elapsed+Time.deltaTime>=LeadInSeconds && EntrySharkAdmissionDelay<1)
+        {
+            Vector3 goal=board.transform.TransformPoint(entrySharkExitRootLocal);
+            Quaternion heading=board.transform.rotation*entrySharkHeadingLocal;
+            if(Vector3.Distance(shark.transform.position,goal)>1 || Quaternion.Angle(shark.transform.rotation,heading)>15)
+            {
+                // Give an actual physical approach up to one extra second;
+                // keep swimming/guarding on the real supports in that time.
+                // Never jump the shark to the planned root to begin the film.
+                float wait=Mathf.Min(Time.deltaTime,1-EntrySharkAdmissionDelay);
+                EntrySharkAdmissionDelay+=wait;LeadInSeconds+=wait;
+            }
+        }
         float old=Elapsed,end=Elapsed+Time.deltaTime;
-        foreach(float cue in Cues.Concat(contactTimes).Distinct().OrderBy(c=>c))
+        foreach(float cue in timelineCues)
         {
             float at=Clock(cue);if(at<=old || at>end)continue;Elapsed=at;
             // Capture the supported pose before the fall starts consuming its launch anchor.
             if(cue==18.05f){RenderActors(cue-.0001f);Cue(cue);RenderActors(cue);}
             else{RenderActors(cue);Cue(cue);}
             // Evaluate the authored contact through solid collision even when a render frame crosses the cue.
-            battle.WreckContact.ResolvePose();AlignRightHandContact();VerifyFinalContact();
+            shark.CommitCinematicPose(Elapsed);
+            battle.WreckContact.ResolvePose();shark.RecordResolvedCinematicPose();AlignRightHandContact();VerifyFinalContact();
         }
-        Elapsed=end;RenderActors();
+        Elapsed=end;RenderActors();shark.CommitCinematicPose(Elapsed);
         if(defeatContactTime>=0 && FilmTime>=defeatContactTime+.17f)LoseStick();
         if(FilmTime>18.05f+contacts[5].window && defeatContactTime<0)
         {
-            IsComplete=true;battle.ResumeAfterMissedFinale(this);return;
+            battle.ResumeAfterMissedFinale(this);return;
         }
         if(FilmTime>=Duration && defeatContactTime>=0){IsComplete=true;CurrentBeat="Defeated";battle.CompleteFinale();}
     }
+    public void BeginUnconsciousExit(string reason)
+    {
+        if(unconsciousExit || IsComplete)return;
+        if(preparingEntry)
+        {
+            EntryPreparationSeconds=(float)(Time.realtimeSinceStartupAsDouble-entryPreparationStarted);
+            EntrySelectedBoard=board!=null ? board.name : null;EntryPoseCost=chosenStancePoseCost;EntryWoodCost=chosenStanceWoodPenetration;
+        }
+        StopAllCoroutines();
+        // A blocked encounter is exhaustion, not an invented shark hit.
+        // Continue from the rendered pose into the existing loss-of-stick,
+        // unconscious float and shore ending, once, without restarting combat.
+        ExitReason=reason;unconsciousExit=true;preparingEntry=false;initialized=true;
+        unconsciousExitStart=Elapsed;
+        unconsciousExitFeet=hero.transform.position+Vector3.up*hero.LowestFootWorldOffset;
+        unconsciousExitHeading=hero.transform.rotation;
+        fallStart=unconsciousExitFeet;
+        Vector3 chestAtExit=animator.GetBoneTransform(HumanBodyBones.Chest).position;
+        // Admission may have begun swimming several seconds before a real
+        // climb. Exhaustion on that board still needs a gravity-driven fall.
+        unconsciousExitInWater=chestAtExit.y<=Water(chestAtExit)+.25f;
+        unconsciousExitVelocity=unconsciousExitInWater ? Vector3.ProjectOnPlane(battle.Handoff.velocity,Vector3.up)*.15f : FindOpenWaterVelocity();
+        LeadInSeconds=Elapsed-(Duration-2.2f);
+        Animate("Exhausted in the wreck",knockdown,Elapsed,knockdown.length/2.2f,0,.22f);
+    }
+    void RenderUnconsciousExit()
+    {
+        if(PauseSettingsMenu.IsOpen || Time.timeScale<=0 || Time.deltaTime<=0)return;
+        Elapsed+=Time.deltaTime;float age=Elapsed-unconsciousExitStart;
+        CurrentBeat="Exhausted in the wreck";
+        Vector3 gravity=unconsciousExitInWater ? Vector3.zero : Vector3.up*(age*1.2f-age*age*4.9f);
+        HeroAt(unconsciousExitFeet+unconsciousExitVelocity*age+gravity,false,unconsciousExitHeading*Vector3.forward);
+        if(age>.2f && !HasLostStick)LoseStick();
+        if(HasLostStick && projectile!=null)
+        {
+            float flight=Mathf.Max(0,FilmTime-stickLossTime);
+            Vector3 center=lostStart+lostVelocity*flight+Vector3.down*(4.9f*flight*flight);
+            center.y=Mathf.Max(center.y,Water(center)+.05f);
+            SpinProjectile(center,flight);
+        }
+        if(age>.35f && !floating)
+        {
+            var chest=animator.GetBoneTransform(HumanBodyBones.Chest);var head=animator.GetBoneTransform(HumanBodyBones.Head);
+            float lift=Mathf.Max(Water(head.position)+.12f-head.position.y,Water(chest.position)+.04f-chest.position.y);
+            if(lift>0){hero.transform.position+=Vector3.up*lift;floating=true;floatingChest=chest.position;floatHeading=floatRotation=hero.transform.rotation;floatDrift=unconsciousExitVelocity.normalized*.25f;}
+        }
+        shark.SampleCinematicAction("Swim",Elapsed);FloatOnWaves();
+        if(age>=2.2f){IsComplete=true;battle.CompleteFinale();}
+    }
     Vector3 FindOpenWaterVelocity()
     {
-        var decks=FindObjectsByType<Story1WreckPlank>(FindObjectsSortMode.None);
+        var decks=FindObjectsByType<Story1WreckPlank>(FindObjectsSortMode.None)
+            .Where(p=>!p.IsBroken && p.Collision!=null).ToArray();
         Vector3 chosen=-Side*7-Forward*2;float best=float.NegativeInfinity;
+        if(decks.Length==0)return chosen/1.25f;
         for(int radius=6;radius<=18;radius+=3)for(int angle=-70;angle<=70;angle+=20)
         {
             Vector3 offset=Quaternion.AngleAxis(angle,Vector3.up)*(-Side*radius);
@@ -1563,6 +2320,22 @@ public sealed class Story1WreckFinale : MonoBehaviour
     {
         AlignTailSkinContact();
         if(weapon==null || battle.WreckContact.HeadVolume==null || HasLostStick || projectile!=null)return;
+        void Reach(Vector3 delta,float weight,bool extended)
+        {
+            var upper=animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
+            var lower=animator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+            var hand=animator.GetBoneTransform(HumanBodyBones.RightHand);
+            Quaternion upperBefore=upper.rotation,lowerBefore=lower.rotation,handBefore=hand.rotation;
+            Vector3 before=weapon.transform.position;
+            float upperLength=Vector3.Distance(upper.position,lower.position),lowerLength=Vector3.Distance(lower.position,hand.position);
+            SahurSupportPose.Hand(animator,false,hand.position+delta*weight,1);hand.rotation=handBefore;
+            bool valid=Vector3.Distance(before,weapon.transform.position)<=.65f &&
+                Mathf.Abs(Vector3.Distance(upper.position,lower.position)-upperLength)<=.001f &&
+                Mathf.Abs(Vector3.Distance(lower.position,hand.position)-lowerLength)<=.001f;
+            if(!valid || extended && !battle.WreckContact.CapsuleTranslationClear(weapon,before,weapon.transform.position))
+            {upper.rotation=upperBefore;lower.rotation=lowerBefore;hand.rotation=handBefore;return;}
+            LargestRightHandContactAdjustment=Mathf.Max(LargestRightHandContactAdjustment,Vector3.Distance(before,weapon.transform.position));
+        }
         float time=FilmTime;
         // Let the held right-hand guard receive the actually solved tail,
         // including a small moving-deck mismatch. The arm reaches within
@@ -1572,12 +2345,10 @@ public sealed class Story1WreckFinale : MonoBehaviour
         if(guardAge>=-.2f && guardAge<=.16f)
         {
             float guardGap=Story1CapsuleContact.PointSeparation(shark.TailWorldPoint,weapon,out var guardDelta);
-            if(guardGap>.001f && guardGap<=.4f)
+            if(guardGap>.001f && guardGap<=.6f)
             {
                 float blend=guardAge<=0 ? Ease((guardAge+.2f)/.2f) : 1-Ease(guardAge/.16f);
-                var guardHand=animator.GetBoneTransform(HumanBodyBones.RightHand);Quaternion guardRotation=guardHand.rotation;
-                SahurSupportPose.Hand(animator,false,guardHand.position+guardDelta*blend,1);
-                guardHand.rotation=guardRotation;
+                Reach(guardDelta,blend,guardGap>.4f);
             }
             return;
         }
@@ -1586,24 +2357,25 @@ public sealed class Story1WreckFinale : MonoBehaviour
         float distance=time-contactTimes[index];
         if(distance<-.2f || distance>.16f)return;
         float gap=Story1CapsuleContact.Separation(weapon,battle.WreckContact.HeadVolume,out var delta);
-        if(gap<.001f || gap>.25f)return;
+        if(gap<.001f || gap>.55f)return;
         float weight=distance<=0 ? Ease((distance+.2f)/.2f) : 1-Ease(distance/.16f);
-        var hand=animator.GetBoneTransform(HumanBodyBones.RightHand);Quaternion rotation=hand.rotation;
-        Vector3 target=hand.position+Vector3.ClampMagnitude(delta*weight,.25f);
-        SahurSupportPose.Hand(animator,false,target,1);hand.rotation=rotation;
+        Reach(Vector3.ClampMagnitude(delta,.55f),weight,gap>.25f);
     }
     void AlignTailSkinContact()
     {
         if(contactTailBone==null || torso==null || defeatContactTime>=0)return;
-        float age=FilmTime-contactTimes[5];
+        int index=FilmTime<16 ? 4 : 5;
+        var receivingShape=index==4 ? weapon : torso;if(receivingShape==null || verifiedContacts.Contains(index))return;
+        float age=FilmTime-contactTimes[index];
         if(age<-.2f || age>.16f)return;
         Vector3 point=shark.TailWorldPoint;
-        float gap=Story1CapsuleContact.PointSeparation(point,torso,out var separation);
+        float gap=Story1CapsuleContact.PointSeparation(point,receivingShape,out var separation);
         if(gap<=.001f || gap>.15f)return;
         float weight=age<=0 ? Ease((age+.2f)/.2f) : 1-Ease(age/.16f);
         Vector3 target=point-separation*weight;
         Vector3 from=point-contactTailBone.position,to=target-contactTailBone.position;
         if(from.sqrMagnitude<.001f || to.sqrMagnitude<.001f)return;
+        float previousPenetration=battle.WreckContact.CurrentPenetration();
         Quaternion previous=contactTailBone.rotation;
         Quaternion rotation=Quaternion.FromToRotation(from,to)*previous;
         contactTailBone.rotation=Quaternion.RotateTowards(previous,rotation,5*weight);
@@ -1620,6 +2392,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
         }
         foreach(var plank in battle.Boards)if(!plank.IsBroken && Intersects(plank.Collision)){clear=false;break;}
         if(clear)foreach(var detail in battle.WreckDetails)if(!detail.IsBroken && Intersects(detail.Collision)){clear=false;break;}
+        if(clear && battle.WreckContact.CurrentPenetration()>Mathf.Max(.003f,previousPenetration+.001f))clear=false;
         if(!clear)contactTailBone.rotation=previous;
         else
         {
@@ -1630,6 +2403,8 @@ public sealed class Story1WreckFinale : MonoBehaviour
     void CatchStick(){if(projectile!=null)Destroy(projectile.gameObject);projectile=null;if(held!=null && !HasLostStick)for(int i=0;i<held.Length;i++)if(held[i]!=null)held[i].enabled=heldEnabled[i];}
     void LateUpdate()
     {
+        if(preparingEntry){HoldEntryPose();return;}
+        if(unconsciousExit && !IsComplete){RenderUnconsciousExit();return;}
         if(!initialized || battle==null)return;
         // Keep the final fallen pose through blackout and scene loading. The
         // Animator still evaluates each frame and otherwise restores locomotion.
@@ -1654,6 +2429,16 @@ public sealed class Story1WreckFinale : MonoBehaviour
             return;
         }
         // Animator's engine evaluation happens after Update. Sample the manual graph after it.
+        if(!hopPlanningBusy && !unconsciousExit)
+        {
+            // The sliced search can take several seconds in dense debris.
+            // Start each destination at the preceding supported beat rather
+            // than after the exchange has already consumed most of its lead-in.
+            // BeginHop still revalidates the real moving mesh at takeoff.
+            int next=FilmTime<6.4f ? 0 : 1;float begin=next==0 ? 0 : 6.4f;
+            float deadline=next==0 ? 4.45f:11.5f;
+            if(!hopPlanningStarted[next] && FilmTime>=begin && FilmTime<deadline && FilmTime>=hopRetryAfter[next])StartCoroutine(PrepareHop(next));
+        }
         Advance();
         FloatOnWaves();
         if(IsComplete)return;
@@ -1663,6 +2448,9 @@ public sealed class Story1WreckFinale : MonoBehaviour
         if(!initialized || battle==null || IsComplete)return;
         if(PauseSettingsMenu.IsOpen || Time.timeScale<=0 || Time.deltaTime<=0)return;
         if(!PauseSettingsMenu.IsOpen && Time.deltaTime>0){AlignRightHandContact();VerifyFinalContact();}
+        // Execution order1300 follows the solid solver at1200. Its retained
+        // bone pose can differ from the raw timeline pose committed at900.
+        shark.RecordResolvedCinematicPose();
         retainedHeroRoot=hero.transform.position;retainedHeroHeading=hero.transform.rotation;
         for(int i=0;i<retainedHeroBones.Length;i++)
         {
@@ -1670,39 +2458,160 @@ public sealed class Story1WreckFinale : MonoBehaviour
             retainedHeroRotations[i]=retainedHeroBones[i].localRotation;
         }
         hasRetainedHeroPose=true;
-        bool traversal=(FilmTime>=4.55f && FilmTime<6.4f)||(FilmTime>=11.6f && FilmTime<14);
+        bool traversal=(FilmTime>=4.55f && FilmTime<6.4f && hopTarget!=null)||(FilmTime>=11.6f && FilmTime<14);
         Vector3 feet=hero.transform.position+Vector3.up*hero.LowestFootWorldOffset,enemy=traversal ? Vector3.Lerp(shark.NoseWorldPoint,shark.VisualRenderer.bounds.center,.25f) : FilmTime>=14 ? shark.TailWorldPoint : shark.NoseWorldPoint;
         Vector3 head=animator.GetBoneTransform(HumanBodyBones.Head).position;
-        Vector3 focus=Vector3.Lerp((feet+head)*.5f,enemy,traversal ? .42f : .28f);float end=Ease((FilmTime-18.05f)/1.1f);
+        Vector3 chest=animator.GetBoneTransform(HumanBodyBones.Chest).position;
+        var framing=shots[0];
+        for(int i=0;i<shots.Length;i++)if(FilmTime>=shots[i].start)framing=shots[i];
+        Vector3 focus=Vector3.Lerp((feet+head)*.5f,enemy,framing.enemyWeight);float end=Ease((FilmTime-18.05f)/1.1f);
         float extent=Mathf.Max(Vector3.Distance(focus,feet),Mathf.Max(Vector3.Distance(focus,head),Vector3.Distance(focus,enemy)));
         if(traversal)extent=Mathf.Max(extent,Vector3.Distance(focus,enemy)+shark.VisualRenderer.bounds.extents.magnitude*.35f);
-        float distance=Mathf.Clamp(extent/Mathf.Sin(47*.5f*Mathf.Deg2Rad)*1.3f,17,traversal ? 50 : 30);
-        Vector3 Candidate(float sign)
+        float minimum=traversal ? framing.minimumDistance : Mathf.Min(12,framing.minimumDistance);
+        float distance=Mathf.Clamp(extent/Mathf.Sin(framing.fieldOfView*.5f*Mathf.Deg2Rad)*framing.framingMargin,minimum,traversal ? 50 : 35);
+        distance+=end*3;
+        var visibilityWater=OceanSurfaceSampler.Capture(ocean,shotCamera,Time.time);
+        float WaterHeight(Vector3 point)=>ocean!=null ? visibilityWater.Height(point) : hero.seaLevel;
+        bool WaterVisible(Vector3 at,Vector3 point)
         {
-            Vector3 at=focus+(traversal ? Side*(sign*.95f)-Forward*.35f+Vector3.up*.65f : Side*(sign*.8f)-Forward*.45f+Vector3.up*.85f).normalized*distance;
-            at.y=Mathf.Max(at.y,Water(at)+8);return at;
+            int samples=Mathf.Clamp(Mathf.CeilToInt(Vector3.Distance(at,point)/2),6,18);
+            for(int i=1;i<samples;i++)
+            {
+                Vector3 along=Vector3.Lerp(at,point,(float)i/samples);
+                if(along.y<WaterHeight(along)+.08f)return false;
+            }
+            return true;
+        }
+        Vector3 Candidate(float sign,bool raised=false)
+        {
+            Vector3 direction=Side*(sign*framing.direction.x)+Vector3.up*framing.direction.y+Forward*framing.direction.z;
+            Vector3 at=focus+direction.normalized*distance;
+            // The ocean is displaced in the shader and has no wave colliders.
+            // A camera above its own crest can still look through another
+            // crest between it and Sahur. Keep the authored shot axis, with a
+            // bounded elevated alternative that clears the head/chest sightline.
+            if(raised)
+            {
+                float baseHeight=at.y;at.y+=Mathf.Max(3,distance*.22f);
+                for(int subject=0;subject<2;subject++)
+                {
+                    Vector3 point=subject==0 ? head : chest;
+                    if(point.y<WaterHeight(point)+.1f)continue;
+                    for(int i=1;i<=10;i++)
+                    {
+                        float phase=i/11f;Vector3 along=Vector3.Lerp(at,point,phase);
+                        at.y=Mathf.Max(at.y,(WaterHeight(along)+.18f-point.y*phase)/(1-phase));
+                    }
+                }
+                at.y=Mathf.Min(at.y,baseHeight+10);
+            }
+            at.y=Mathf.Max(at.y,WaterHeight(at)+2.5f);
+            for(int i=0;i<16 && !battle.WreckContact.CameraClearance(at);i++)at+=direction.normalized*1.5f;
+            return at;
         }
         float ViewScore(Vector3 at)
         {
             float score=0;
-            foreach(var point in new[]{head,animator.GetBoneTransform(HumanBodyBones.Chest).position,WeaponTip})
+            cameraSubjects[0]=head;cameraSubjects[1]=chest;cameraSubjects[2]=WeaponTip;cameraSubjects[3]=enemy;cameraSubjects[4]=feet+Vector3.up*.1f;
+            for(int subject=0;subject<cameraSubjects.Length;subject++)
             {
-                Vector3 delta=point-at;bool blocked=false;
-                foreach(var hit in Physics.RaycastAll(at,delta.normalized,delta.magnitude-.1f,~0,QueryTriggerInteraction.Collide))
-                    if(hit.collider.GetComponentInParent<Story1WreckMeshCollision>()!=null || hit.collider.name.StartsWith("Solid anatomy")){blocked=true;break;}
-                if(!blocked)score+=point==head ? 4 : 3;
+                Vector3 point=cameraSubjects[subject];
+                Vector3 delta=point-at;bool blocked=!WaterVisible(at,point);
+                if(blocked)continue;
+                // Thin, double-sided hull/sail remnants can face away from the
+                // camera. Visibility must count their back faces as occluders.
+                bool previousBackfaces=Physics.queriesHitBackfaces;int count;
+                try
+                {
+                    Physics.queriesHitBackfaces=true;
+                    count=Physics.RaycastNonAlloc(at,delta.normalized,cameraHits,delta.magnitude-.1f,~0,QueryTriggerInteraction.Collide);
+                }
+                finally{Physics.queriesHitBackfaces=previousBackfaces;}
+                blocked=count==cameraHits.Length;
+                for(int i=0;i<count && !blocked;i++)
+                {
+                    var collider=cameraHits[i].collider;
+                    // The nose marker lies inside its own head capsule. That
+                    // receiving shape cannot obscure itself; the remaining
+                    // shark anatomy still obscures the other actor normally.
+                    if(subject==3 && collider==battle.WreckContact.HeadVolume && FilmTime<14)continue;
+                    if(collider.GetComponentInParent<Story1WreckMeshCollision>()!=null || collider.name.StartsWith("Solid "))blocked=true;
+                }
+                if(!blocked)score+=subject==0 ? 5 : subject==1 || subject==2 ? 4 : subject==3 ? 3 : 1;
             }
             return score;
         }
-        Vector3 shot=Candidate(cameraSide),other=Candidate(-cameraSide);
-        cameraOccludedSeconds=ViewScore(other)>ViewScore(shot)+2 ? cameraOccludedSeconds+Time.deltaTime : 0;
-        if(cameraOccludedSeconds>.35f){cameraSide=-cameraSide;cameraOccludedSeconds=0;shot=other;}
-        float opening=Ease(Elapsed/Mathf.Max(.6f,LeadInSeconds));shot=Vector3.Lerp(cameraStart,shot,opening);float blend=1-Mathf.Exp(-5*Time.deltaTime);
-        Vector3 cameraAt=Vector3.Lerp(shotCamera.transform.position,shot,blend);
-        cameraAt.y=Mathf.Max(cameraAt.y,Water(cameraAt)+8);shotCamera.transform.position=cameraAt;
+        Vector3 shot=Candidate(cameraSide,cameraRaised);
+        // Native visibility scans are budgeted to about eight per second,
+        // independent of rendering FPS. Persist the chosen axis between scans.
+        if(cameraVisibilityTime<0 || Time.time-cameraVisibilityTime>=.12f)
+        {
+            float interval=cameraVisibilityTime<0 ? 0 : Time.time-cameraVisibilityTime;
+            cameraVisibilityTime=Time.time;
+            float current=ViewScore(shot),best=current,bestSide=cameraSide;bool bestRaised=cameraRaised;
+            for(int variant=0;variant<4;variant++)
+            {
+                float sign=variant<2 ? cameraSide : -cameraSide;bool raised=(variant&1)!=0;
+                if(sign==cameraSide && raised==cameraRaised)continue;
+                float score=ViewScore(Candidate(sign,raised))-(raised ? .25f : 0f);
+                if(score>best+2){best=score;bestSide=sign;bestRaised=raised;}
+            }
+            if(bestSide!=cameraSide || bestRaised!=cameraRaised)
+            {
+                if(bestSide!=cameraPendingSide || bestRaised!=cameraPendingRaised)cameraOccludedSeconds=0;
+                cameraPendingSide=bestSide;cameraPendingRaised=bestRaised;cameraOccludedSeconds+=interval;
+                // Clear a wave over the face promptly; ordinary changes of
+                // shot side still require persistence to prevent oscillation.
+                float settle=bestRaised && !WaterVisible(shot,head) ? .10f : .35f;
+                if(cameraOccludedSeconds>settle)
+                {cameraSide=bestSide;cameraRaised=bestRaised;cameraOccludedSeconds=0;shot=Candidate(cameraSide,cameraRaised);}
+            }
+            else cameraOccludedSeconds=0;
+        }
+        float opening=Ease(Elapsed/Mathf.Max(.6f,LeadInSeconds));shot=Vector3.Lerp(cameraStart,shot,opening);float blend=1-Mathf.Exp(-4*Time.deltaTime);
+        // Opposite shot sides must orbit the subjects. A straight positional
+        // lerp cuts through the focus and can put the actors behind the lens.
+        Vector3 oldOffset=shotCamera.transform.position-focus,newOffset=shot-focus;
+        Vector3 cameraAt=oldOffset.sqrMagnitude>.01f && newOffset.sqrMagnitude>.01f
+            ? focus+Vector3.Slerp(oldOffset.normalized,newOffset.normalized,blend)*Mathf.Lerp(oldOffset.magnitude,newOffset.magnitude,blend)
+            : Vector3.Lerp(shotCamera.transform.position,shot,blend);
+        for(int i=0;i<16 && !battle.WreckContact.CameraClearance(cameraAt);i++)cameraAt=Vector3.MoveTowards(cameraAt,shot,1.5f);
+        cameraAt.y=Mathf.Max(cameraAt.y,Water(cameraAt)+2.5f);shotCamera.transform.position=cameraAt;
         Quaternion look=Quaternion.LookRotation(focus-shotCamera.transform.position);
-        shotCamera.transform.rotation=Quaternion.Slerp(shotCamera.transform.rotation,Quaternion.Slerp(cameraRotation,look,opening),blend);
-        shotCamera.fieldOfView=Mathf.Lerp(cameraFov,Mathf.Lerp(47,51,end),opening);
+        // The smoothed orbit already supplies a continuous angular path.
+        // A second rotation lag loses the actual subjects during that orbit.
+        shotCamera.transform.rotation=Quaternion.Slerp(cameraRotation,look,opening);
+        float fov=Mathf.Lerp(cameraFov,framing.fieldOfView+end*3,opening);
+        shotCamera.fieldOfView=Mathf.Lerp(shotCamera.fieldOfView,fov,blend);
+        // Lens/aim smoothing can lag a rising plank and the throwing torso.
+        // Fit the ACTUAL rendered subjects after that smoothing, rather than
+        // trusting the earlier target-camera distance to keep their heads in
+        // frame. Open the lens immediately when necessary; close it gradually
+        // so ordinary recovery does not create a repeated zoom pulse.
+        float requiredHalfAngle=0,aspect=Mathf.Max(.5f,shotCamera.aspect);
+        float visibleHeight=CinematicLetterbox.VisibleHeight(aspect);
+        cameraSubjects[0]=head;
+        cameraSubjects[1]=chest;
+        cameraSubjects[2]=WeaponTip;cameraSubjects[3]=enemy;cameraSubjects[4]=feet;
+        void FitPoint(Vector3 subject)
+        {
+            Vector3 local=shotCamera.transform.InverseTransformPoint(subject);
+            float tangent=Mathf.Max(Mathf.Abs(local.y)/visibleHeight,Mathf.Abs(local.x)/aspect)/Mathf.Max(.1f,local.z);
+            requiredHalfAngle=Mathf.Max(requiredHalfAngle,Mathf.Atan(tangent*1.12f)*Mathf.Rad2Deg);
+        }
+        foreach(var subject in cameraSubjects)FitPoint(subject);
+        // A retargeted head may deform relative to the Head bone. Use the
+        // renderer's actual world bounds, not a crown frozen in a different
+        // humanoid pose. Include all eight corners to preserve the whole
+        // silhouette while the arm extends for the throw. No mesh baking.
+        foreach(var skin in heroSkins)
+        {
+            if(skin==null || !skin.enabled || !skin.gameObject.activeInHierarchy)continue;
+            Bounds bounds=skin.bounds;
+            for(int corner=0;corner<8;corner++)FitPoint(bounds.center+Vector3.Scale(bounds.extents,
+                new Vector3((corner&1)==0 ? -1 : 1,(corner&2)==0 ? -1 : 1,(corner&4)==0 ? -1 : 1)));
+        }
+        shotCamera.fieldOfView=Mathf.Max(shotCamera.fieldOfView,Mathf.Min(85,requiredHalfAngle*2));
     }
     void FloatOnWaves()
     {
@@ -1742,6 +2651,7 @@ public sealed class Story1WreckFinale : MonoBehaviour
     }
     public void ReleaseActors()
     {
+        StopAllCoroutines();
         if(supportBody!=null)supportBody.angularDamping=originalDamping;
         CatchStick();if(animator!=null)animator.speed=1;if(poseGraph.IsValid())poseGraph.Destroy();if(shark!=null)shark.ReleaseCinematicAnimation();
         if(actorColliders!=null)for(int i=0;i<actorColliders.Length;i++)if(actorColliders[i]!=null)actorColliders[i].enabled=colliderEnabled[i];

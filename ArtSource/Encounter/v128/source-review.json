@@ -1,0 +1,15 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_staging": ["CH1_SahurSlash_v128"],
+  "scope": "Isolated Unity import and original-player silhouette review only; not gameplay or final release acceptance",
+  "reviewer": "Codex",
+  "source_views": ".codex/opening-optimization-20261012/slash-skeleton-v128/contact-sheet.jpg",
+  "numeric_review": "source-audit-shortest-angle.json",
+  "observed": "Diagnostic skeleton shows loaded legs and early pelvis turn, delayed upper-body and right-arm delivery, lowered follow-through and return to guard. Raised-contact v051 original foot path is retained and full original impact band is unchanged.",
+  "limitations": "Source contains an armature without the player's skin. The rods are diagnostic proxies, not an observed character silhouette. Weapon grip, body volume and clipping require actual Unity Avatar preview. Source's maximum per-frame angular step remains about 24 degrees; inspect continuous playback before integration.",
+  "actual_player_silhouette_observed": false,
+  "normal_speed_art_observed": false,
+  "runtime_activated": false,
+  "final_approved": false
+}
+

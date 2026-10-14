@@ -1,0 +1,27 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_integration_trial": [
+    "CH1_SahurBoardHop_v086"
+  ],
+  "native": true,
+  "frames": 112,
+  "views": [
+    "front",
+    "side",
+    "three-quarter"
+  ],
+  "evidence": ".codex/opening-optimization-20261012/native-framed-v086b",
+  "observed": [
+    "Original PbrSahur Avatar valid, Humanoid60FPS/1.85000014s,130curves.",
+    "Native front48 shows asymmetric tucked legs and single right-hand stick; free left arm balances.",
+    "Native side88 shows compressed knees and forward chest during loading; three-quarter30 shows extension before flight.",
+    "All336native images and three60FPS movies recorded in isolated Edit preview, user scene stays clean."
+  ],
+  "limitations": [
+    "Normal-speed playback not directly observed by agent; sampled curves and rendered key poses reviewed.",
+    "Moving real wood, gameplay camera, collision and phase transitions still require full integration regression.",
+    "native-continuous-v086 images were empty due preview-camera scene assignment; invalid visual evidence. native-framed-v086 interrupted284images; use complete336-image native-framed-v086b only."
+  ],
+  "runtime_activated": true,
+  "integration_status": "active trial; standalone v087 reaches six real contacts, no neighbour jumps in that layout, full live traversal art regression pending"
+}

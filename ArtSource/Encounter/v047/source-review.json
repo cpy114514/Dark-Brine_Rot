@@ -1,0 +1,7 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": ["CH1_SahurGuard_v047", "CH1_SahurBrace_v047", "CH1_SahurBoardHop_v047"],
+  "evidence": ["actual-rig-audit.json", "preview-report.json"],
+  "review": "Inspected the actual retained PbrSahur skinned model from front, side and three-quarter views. The original 28-bone bind rig is unchanged. Defense lowers the centre of mass with an asymmetric stance and a forward right-hand hold; the free arm counterbalances. The hop contains preparation, leg tuck and compressed landing. Source supporting ankle errors remain below 0.00003 cm. The connected hips are compressed through the existing root control while replanted feet stay on their source anchors.",
+  "limitations": "Accepted at BLOCKING stage for isolated Unity import only. Native weapon attachment, full continuous curves, support on moving real timber, landing retiming and exact paired contact still require review. No production activation or final acceptance is implied."
+}

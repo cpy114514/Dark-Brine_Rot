@@ -7,6 +7,8 @@ namespace Mavis
         void Start()=>Initialize();
         public void Initialize()
         {
+            // Also refit existing aircraft points after a runtime/editor refresh.
+            if(GetComponent<BombardinoBoss>() && FitEngineWeakPoints())return;
             if(GetComponentInChildren<BossWeakPoint>())return;
             // Capri renders a fitted cup rig, while its humanoid Animator is only
             // a motion source. Anchor the weak point to the visible rig's chest.
@@ -54,15 +56,7 @@ namespace Mavis
                     bounds.center+Vector3.up*bounds.size.y*.15f-transform.forward*bounds.extents.z*.85f;
                 return;
             }
-            int engines=0;
-            foreach(var c in GetComponentsInChildren<Collider>())
-                if(c.name=="Left engine" || c.name=="Right engine")
-                {
-                    var weak=BossWeakPoint.Create(c.transform,Vector3.zero,Mathf.Max(.65f,c.bounds.size.y*.45f));
-                    weak.LocationLabel=c.name=="Left engine"?"左引擎弱点":"右引擎弱点";
-                    weak.transform.position=c.bounds.center-Vector3.up*c.bounds.extents.y*.65f;engines++;
-                }
-            if(engines>0)return;
+            if(FitEngineWeakPoints())return;
             // Two physical engine weak points on the aircraft's underside.
             foreach(float side in new[]{-1f,1f})
             {
@@ -70,6 +64,27 @@ namespace Mavis
                 weak.LocationLabel=side<0?"左引擎弱点":"右引擎弱点";
                 weak.transform.position=bounds.center+transform.right*(bounds.extents.x*.45f*side)-Vector3.up*(bounds.extents.y*.6f);
             }
+        }
+        bool FitEngineWeakPoints()
+        {
+            int engines=0;
+            foreach(var c in GetComponentsInChildren<BoxCollider>())
+                if(c.name=="Left engine" || c.name=="Right engine")
+                {
+                    // Awake lifts the aircraft before Physics has synced its colliders.
+                    // Fit in engine space, avoiding stale ground bounds and banked AABBs.
+                    Vector3 underside=c.center-Vector3.up*(c.size.y*.325f);
+                    float scale=Mathf.Max(.001f,Mathf.Abs(c.transform.lossyScale.y));
+                    float radius=Mathf.Max(.65f,c.size.y*scale*.45f);
+                    var weak=c.GetComponentInChildren<BossWeakPoint>(true);
+                    if(!weak)weak=BossWeakPoint.Create(c.transform,underside,radius);
+                    weak.transform.localPosition=underside;
+                    weak.transform.localRotation=Quaternion.identity;
+                    weak.transform.localScale=Vector3.one*(radius*2/scale);
+                    weak.LocationLabel=c.name=="Left engine"?"左引擎弱点":"右引擎弱点";
+                    engines++;
+                }
+            return engines>0;
         }
     }
 }

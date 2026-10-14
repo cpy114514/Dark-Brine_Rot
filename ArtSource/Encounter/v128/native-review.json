@@ -1,0 +1,15 @@
+{
+  "stage": "FIRST PASS",
+  "status": "accepted_for_integration_trial",
+  "reviewer": "Codex",
+  "actual_original_player_skin": true,
+  "avatar_preserved": true,
+  "evidence": ".codex/opening-optimization-20261012/native-framed-slash-v128/contact-sheet.jpg",
+  "comparison": ".codex/opening-optimization-20261012/native-framed-slash-v128/comparison.json",
+  "continuous_previews": ".codex/opening-optimization-20261012/native-framed-slash-v128/CH1_SahurSlash_v128-side-review.mp4",
+  "observed": "Three-view original-skin sample sequence shows the single right hand raising and delivering the diagonal stick, the left arm counterbalancing, and the torso folding into follow-through before guard recovery. Earlier hips/chest rotation remains subtle on the cylindrical character. Native original impact band is retained: hand deviation at most 0.031 mm; shaft deviation at most 0.011 degree. Source quaternion hemispheres have been corrected for interpolation.",
+  "limitations": "FIRST PASS integration trial only. Original source ankle lift remains and needs live bounded foot IK. Maximum native shaft step remains 22.499 degrees per 60 FPS frame; full-speed art, actual water, final contact and dense fragment layouts still require verification. No final release approval claimed.",
+  "normal_speed_art_observed": false,
+  "game_contact_acceptance": false,
+  "final_approved": false
+}

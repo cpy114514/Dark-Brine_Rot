@@ -1,0 +1,9 @@
+{
+  "original_rig_retained": true,
+  "bones": 65,
+  "source": "CH1_SahurSlash_v040",
+  "contact_seconds": 0.63,
+  "source_phase_at_contact_seconds": 0.6,
+  "minimum_time_derivative": 0.8483770509799271,
+  "intent": "Meet the head during the accelerated descending arc, retaining impact time, recovery, original rig and one-hand sweep"
+}

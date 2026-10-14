@@ -1,0 +1,9 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_integration_trial": ["CH1_SahurGuard_v050"],
+  "release_approved": false,
+  "evidence": ".codex/opening-optimization-20261012/native-continuous-v050/review-metrics.json",
+  "review": "Actual original-avatar Unity sampling produced 291 rendered frames and three continuous 60 FPS movies. The native right-hand stick is held diagonally forward, the free arm remains independent, knees are compressed and feet stay under the asymmetric stance. Chest/neck/forearm breathing produces 9.7 mm maximum hand travel and a closed loop. Humanoid retargeting produces 3.43 mm uncorrected ankle motion; the original root and leg channels are retained. Full paired timeline contact, moving-board IK and guard transitions are still pending.",
+  "observed_views": ["front", "side", "three-quarter"],
+  "integration_status": "Native original project contains isolated staging asset only; active finale definition unchanged."
+}

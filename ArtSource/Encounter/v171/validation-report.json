@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "root_displacement_world_m": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "in_place_max_excursion_m": 3.3760642480264196e-09,
+    "in_place_axes": [
+      "X",
+      "Y"
+    ],
+    "contacts": [
+      {
+        "bone": "LeftFoot",
+        "frames": [
+          1,
+          67
+        ],
+        "max_drift_m": 3.1495179937696154e-07
+      },
+      {
+        "bone": "RightFoot",
+        "frames": [
+          1,
+          67
+        ],
+        "max_drift_m": 2.2152168672261396e-07
+      }
+    ]
+  },
+  "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+}

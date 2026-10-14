@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 namespace Mavis
@@ -22,6 +23,7 @@ namespace Mavis
         readonly Dictionary<Vector2Int, List<Renderer>> grass = new Dictionary<Vector2Int, List<Renderer>>();
         readonly Vector4[] positions = new Vector4[12], motions = new Vector4[12];
         float nextScan;
+        Coroutine indexRoutine;
         AudioSource rustle;
         AudioClip rustleClip;
         static Vector2Int Cell(Vector3 p) { return new Vector2Int(Mathf.FloorToInt(p.x / 10f), Mathf.FloorToInt(p.z / 10f)); }
@@ -29,9 +31,30 @@ namespace Mavis
         void OnEnable() { if(!AdditiveSceneBootstrap.IsLoading)RebuildGrassIndex(); nextScan = 0f; }
         public void RebuildGrassIndex()
         {
+            if(indexRoutine!=null)StopCoroutine(indexRoutine);
+            if(Application.isPlaying && isActiveAndEnabled)indexRoutine=StartCoroutine(RebuildGrassIndexRoutine());
+            else
+            {
+                var work=BuildGrassIndex();
+                while(work.MoveNext()){}
+            }
+        }
+        IEnumerator RebuildGrassIndexRoutine()
+        {
+            yield return null;
+            yield return BuildGrassIndex();
+            indexRoutine=null;
+        }
+        IEnumerator BuildGrassIndex()
+        {
             grass.Clear();
+            double deadline=Time.realtimeSinceStartupAsDouble+.002;
+            int visited=0;
             foreach (var renderer in FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
+                if(Application.isPlaying && ++visited%32==0 && Time.realtimeSinceStartupAsDouble>=deadline)
+                {yield return null;deadline=Time.realtimeSinceStartupAsDouble+.002;}
+                if(renderer==null)continue;
                 bool isGrass = false;
                 foreach (var material in renderer.sharedMaterials)
                     if (material && material.shader.name == "Mavis/FoliageWind" && material.name.ToLowerInvariant().Contains("grass")) isGrass = true;
@@ -156,7 +179,7 @@ namespace Mavis
             for (int i=0;i<samples;i++) { filtered = Mathf.Lerp(filtered,(float)random.NextDouble()*2f-1f,.3f); noise[i] = filtered * Mathf.Sin(Mathf.PI*i/(samples-1)); }
             rustleClip = AudioClip.Create("Soft grass rustle", samples, 1, 22050, false); rustleClip.SetData(noise,0); rustle.clip = rustleClip; rustle.Play();
         }
-        void OnDisable() { Shader.SetGlobalInt("_MavisFoliageBodyCount", 0); trails.Clear(); bodies.Clear(); if (rustle) rustle.Stop(); }
+        void OnDisable() { if(indexRoutine!=null)StopCoroutine(indexRoutine);indexRoutine=null; Shader.SetGlobalInt("_MavisFoliageBodyCount", 0); trails.Clear(); bodies.Clear(); if (rustle) rustle.Stop(); }
         void OnDestroy()
         {
             if (rustle) Destroy(rustle.gameObject);

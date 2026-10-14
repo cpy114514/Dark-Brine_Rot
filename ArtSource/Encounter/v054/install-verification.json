@@ -1,0 +1,11 @@
+{
+  "forward": "PLAYER_BoardPaddle_v054",
+  "reverse": "PLAYER_BoardPaddleReverse_v054",
+  "seconds": 1.2,
+  "fps": 60.0,
+  "originalWalkRunRollRetained": true,
+  "otherStateMotionsRetained": true,
+  "otherBoardMotionsRetained": true,
+  "nativeBackup": "Assets/Resources/Encounter/v054/PreviousSahurGameplay.controller",
+  "status": "Reviewed SECOND PASS integration trial; actual physical controls regression pending"
+}

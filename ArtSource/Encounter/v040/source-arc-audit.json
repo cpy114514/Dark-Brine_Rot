@@ -1,0 +1,105 @@
+{
+  "original_rig_retained": true,
+  "actions": [
+    {
+      "action": "CH1_SahurGuard_v040",
+      "peak_degrees_per_frame": {
+        "Hips": 0.0,
+        "Spine": 0.09691328732904647,
+        "Spine1": 0.0,
+        "Spine2": 0.07912936237050427,
+        "RightShoulder": 0.0,
+        "RightArm": 0.0,
+        "RightForeArm": 0.0,
+        "RightHand": 0.0,
+        "LeftShoulder": 0.0,
+        "LeftArm": 0.0,
+        "LeftForeArm": 0.0,
+        "LeftHand": 0.0
+      },
+      "foot_replant_error_cm": 1.7993891014207083e-05,
+      "contact_seconds": 0,
+      "source": "CH1_SahurGuard_v039"
+    },
+    {
+      "action": "CH1_SahurParry_v040",
+      "peak_degrees_per_frame": {
+        "Hips": 0.40734354415670126,
+        "Spine": 2.0116087447753492,
+        "Spine1": 2.6211986458873446,
+        "Spine2": 2.8108341524376943,
+        "RightShoulder": 4.897131229230545,
+        "RightArm": 13.298072663049467,
+        "RightForeArm": 12.720528942306116,
+        "RightHand": 20.570137506321608,
+        "LeftShoulder": 0.0,
+        "LeftArm": 0.9337626319518478,
+        "LeftForeArm": 0.0,
+        "LeftHand": 0.0
+      },
+      "foot_replant_error_cm": 2.8101045795741213e-05,
+      "contact_seconds": 0.484,
+      "source": "CH1_SahurParry_v039"
+    },
+    {
+      "action": "CH1_SahurSlash_v040",
+      "peak_degrees_per_frame": {
+        "Hips": 8.345208797738913,
+        "Spine": 1.6827936197340037,
+        "Spine1": 2.8407508078891732,
+        "Spine2": 2.3570474830394486,
+        "RightShoulder": 4.748431180810197,
+        "RightArm": 17.33347136809806,
+        "RightForeArm": 14.015414134403704,
+        "RightHand": 16.676753802043212,
+        "LeftShoulder": 0.0,
+        "LeftArm": 2.953155231060073,
+        "LeftForeArm": 0.0,
+        "LeftHand": 0.0
+      },
+      "foot_replant_error_cm": 3.445127843511284e-05,
+      "contact_seconds": 0.63,
+      "source": "CH1_SahurSlash_v039"
+    },
+    {
+      "action": "CH1_SahurBrace_v040",
+      "peak_degrees_per_frame": {
+        "Hips": 0.6090912439417314,
+        "Spine": 3.301810134649602,
+        "Spine1": 1.1743499623283176,
+        "Spine2": 0.6078048738610947,
+        "RightShoulder": 0.9287197111885571,
+        "RightArm": 2.3195559343550136,
+        "RightForeArm": 1.0452902295880473,
+        "RightHand": 0.0,
+        "LeftShoulder": 0.0,
+        "LeftArm": 1.362550382101024,
+        "LeftForeArm": 0.0,
+        "LeftHand": 0.0
+      },
+      "foot_replant_error_cm": 3.454355292563407e-05,
+      "contact_seconds": 0.572,
+      "source": "CH1_SahurBrace_v039"
+    },
+    {
+      "action": "CH1_SahurMiss_v040",
+      "peak_degrees_per_frame": {
+        "Hips": 8.345208797738913,
+        "Spine": 1.6827936197340037,
+        "Spine1": 2.8407508078891732,
+        "Spine2": 2.3570474830394486,
+        "RightShoulder": 4.748431180810197,
+        "RightArm": 17.538057731854746,
+        "RightForeArm": 14.015414134403704,
+        "RightHand": 16.676753802043212,
+        "LeftShoulder": 0.0,
+        "LeftArm": 2.953155231060073,
+        "LeftForeArm": 0.0,
+        "LeftHand": 0.0
+      },
+      "foot_replant_error_cm": 3.445127843511284e-05,
+      "contact_seconds": 0,
+      "source": "CH1_SahurMiss_v039"
+    }
+  ]
+}

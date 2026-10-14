@@ -1,0 +1,23 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v194\\sahur-outward-parry-v194.blend",
+    "rig": "Armature",
+    "action": "CH1_SahurParry_v194",
+    "unity_clip": "CH1_SahurParry_v194",
+    "revision": "v194",
+    "frame_start": 1,
+    "frame_end": 67,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "FIRST PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v039.md",
+    "approval_reference": "2026-10-14 authorized animation continuation",
+    "review_status": "pending",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "contact_seconds": 0.484
+  }
+]

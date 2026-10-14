@@ -1,0 +1,15 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_staging": [
+    "CH1_SahurParry_v171"
+  ],
+  "evidence": [
+    "source-audit.json",
+    "validation-report.json",
+    "preview-report.json"
+  ],
+  "review": "Inspected actual original28bone Sahur: side/front contact f30.04, front recovery f49 and three-quarter preparation f14. Compared side contact to090: right hand now presents higher near the face and farther forward; free left arm balances, original loaded legs/torso deflection remain. Actual bone rotations solve the new arc, with requested reach clamped to unchanged limb length. Both original foot targets stay planted; measured drift below0.315micrometres, planar root excursion3.38e-9m. Rest matrices, hierarchy and source skin preserved; quaternion components kept in one hemisphere.",
+  "limitations": "FIRST PASS source/native integration accepted in174, not final approval. Native held-weapon right-hand rise0.299m/no bone stretch measured; raw native feet still need existing runtime IK. Full173 had one first-probe miss but genuinely landed086neighbour hop;174all6contacts<=45.331mm/feet1.218mm/slide1.222mm/motion0overruns. Other dense layouts/playable emergency escape/FPS and continuous normal-speed artistic quality remain incomplete.",
+  "runtime_activated": true,
+  "native_integration_review": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/implementation-review-v171.md"
+}

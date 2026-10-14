@@ -1,0 +1,14 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_staging": [
+    "CH1_SahurBoardHop_v086"
+  ],
+  "evidence": [
+    "source-audit.json",
+    "validation-report.json",
+    "preview-report.json"
+  ],
+  "review": "Inspected actual retained 28-bone model: side preparation f19, three-quarter airborne f49, front loaded landing f89. Pelvis lateral loading remains under a stationary planar root; knees flex with soles planted, asymmetric legs tuck in flight, spine/chest and free arm overlap. Original mesh, hierarchy/rest/bind and 1.85s/60FPS source windows preserved. Numeric validation passes with supporting sole drift below0.5micrometres.",
+  "limitations": "Accepted for isolated native Unity import at FIRST PASS only. Native retargeting, actual right-hand stick, continuous joint arcs, real moving supports and integration retiming remain to be reviewed. Not final approval.",
+  "runtime_activated": true
+}

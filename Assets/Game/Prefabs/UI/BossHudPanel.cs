@@ -8,14 +8,13 @@ public sealed class BossHudPanel
     static readonly List<BossHudPanel> panels = new List<BossHudPanel>();
     readonly GameObject root;
     readonly CanvasGroup group;
-    readonly Text title, subtitle, numbers, status;
-    readonly Image health, trail, pressure;
-    readonly RectTransform pressureTrack;
+    readonly Text title, numbers;
+    readonly Image health, trail;
     bool requested;
     float distance;
     float delayed = 1f, damageHold;
     float previousRatio = 1f;
-    string previousTitle, previousSubtitle, previousNumbers, previousStatus;
+    string previousTitle, previousNumbers;
     int previousHp=int.MinValue, previousMaxHp=int.MinValue;
 
     public float DisplayedFraction => health.fillAmount;
@@ -29,27 +28,21 @@ public sealed class BossHudPanel
         canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 160;
         GameUITheme.Scale(canvas);
         group = root.GetComponent<CanvasGroup>(); group.alpha = 0; group.blocksRaycasts = false; group.interactable = false;
-        var panel = GameUITheme.Rect(root.transform, "Encounter", new Vector2(.5f, 1), new Vector2(820, 142));
+        var panel = GameUITheme.Rect(root.transform, "Encounter", new Vector2(.5f, 1), new Vector2(820, 86));
         panel.pivot = new Vector2(.5f, 1); panel.anchoredPosition = new Vector2(0, -30);
         GameUITheme.Image(panel, GameUITheme.Surface);
         GameUITheme.Rule(panel, new Vector2(0, -1), new Vector2(820, 1), GameUITheme.Muted, new Vector2(.5f, 1));
-        subtitle = GameUITheme.Label(panel, "Encounter type", 13, new Vector2(-386, -20), new Vector2(600, 20), TextAnchor.MiddleLeft);
-        subtitle.color = GameUITheme.Secondary;
-        title = GameUITheme.Label(panel, "Boss name", 26, new Vector2(-386, -49), new Vector2(580, 34), TextAnchor.MiddleLeft);
-        numbers = GameUITheme.Label(panel, "Health value", 16, new Vector2(386, -49), new Vector2(170, 28), TextAnchor.MiddleRight);
+        title = GameUITheme.Label(panel, "Boss name", 26, new Vector2(-386, -27), new Vector2(580, 34), TextAnchor.MiddleLeft);
+        numbers = GameUITheme.Label(panel, "Health value", 16, new Vector2(386, -27), new Vector2(170, 28), TextAnchor.MiddleRight);
         var track = GameUITheme.Rect(panel, "Health track", new Vector2(.5f,1), new Vector2(772, 8));
-        track.anchoredPosition = new Vector2(0, -80); GameUITheme.Image(track, GameUITheme.Track);
+        track.anchoredPosition = new Vector2(0, -60); GameUITheme.Image(track, GameUITheme.Track);
         trail = GameUITheme.Fill(track, "Recent damage", GameUITheme.Muted);
         health = GameUITheme.Fill(track, "Health", GameUITheme.Foreground);
-        pressureTrack = GameUITheme.Rect(panel, "Posture track", new Vector2(.5f,1), new Vector2(772, 2));
-        pressureTrack.anchoredPosition = new Vector2(0, -95); GameUITheme.Image(pressureTrack, GameUITheme.Track);
-        pressure = GameUITheme.Fill(pressureTrack, "Posture", GameUITheme.Secondary);
-        status = GameUITheme.Label(panel, "Battle advice", 16, new Vector2(-386, -117), new Vector2(772, 24), TextAnchor.MiddleLeft);
         panels.Add(this);
     }
 
     public void Refresh(bool visible, float cameraDistance, float ratio, float hp, float maxHp,
-        string bossTitle, string detail, string advice, float dt, float posture = -1f)
+        string bossTitle, float dt)
     {
         requested = visible && !GameUITheme.ModalOpen;
         distance = cameraDistance;
@@ -65,13 +58,10 @@ public sealed class BossHudPanel
         else if (damageHold > 0) damageHold -= Mathf.Max(0, dt);
         else delayed = Mathf.MoveTowards(delayed, ratio, Mathf.Max(0, dt) * .48f);
         previousRatio = ratio; health.fillAmount = ratio; trail.fillAmount = delayed;
-        pressureTrack.gameObject.SetActive(posture >= 0); pressure.fillAmount = Mathf.Clamp01(posture);
         Set(title, ref previousTitle, bossTitle);
-        Set(subtitle, ref previousSubtitle, detail);
         int shownHp=Mathf.CeilToInt(hp),shownMaxHp=Mathf.CeilToInt(maxHp);
         if(shownHp!=previousHp || shownMaxHp!=previousMaxHp)
         {previousHp=shownHp;previousMaxHp=shownMaxHp;Set(numbers,ref previousNumbers,shownHp+" / "+shownMaxHp);}
-        Set(status, ref previousStatus, advice);
     }
 
     static void Set(Text label, ref string previous, string value)

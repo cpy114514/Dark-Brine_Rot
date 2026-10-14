@@ -1,0 +1,35 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v090\\sahur-planted-parry-v090.blend",
+  "rig": "Armature",
+  "action": "CH1_SahurParry_v090",
+  "unity_clip": "CH1_SahurParry_v090",
+  "revision": "v090",
+  "frame_start": 1,
+  "frame_end": 67,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "FIRST PASS",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v039.md",
+  "approval_reference": "2026-10-13 user \u7ee7\u7eed\u5236\u4f5c",
+  "review_status": "pending",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "contact_seconds": 0.484,
+  "contacts": [
+    {
+      "bone": "LeftFoot",
+      "start": 1,
+      "end": 67,
+      "max_drift_m": 0.03
+    },
+    {
+      "bone": "RightFoot",
+      "start": 1,
+      "end": 67,
+      "max_drift_m": 0.03
+    }
+  ]
+}

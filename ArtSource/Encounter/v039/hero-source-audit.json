@@ -1,0 +1,81 @@
+{
+  "original_rest_retained": true,
+  "bones": 65,
+  "actions": [
+    {
+      "action": "CH1_SahurGuard_v039",
+      "peak_degrees_per_60fps_frame": {
+        "Hips": 0.0,
+        "Spine": 0.09691328732904647,
+        "Spine1": 0.0,
+        "Spine2": 0.07912936237050427,
+        "RightShoulder": 0.0,
+        "RightArm": 0.0,
+        "RightForeArm": 0.0,
+        "RightHand": 0.0
+      },
+      "source": "CH1_SahurGuard_v027",
+      "contact_seconds": 0
+    },
+    {
+      "action": "CH1_SahurParry_v039",
+      "peak_degrees_per_60fps_frame": {
+        "Hips": 0.45799459953550264,
+        "Spine": 3.7602710013176637,
+        "Spine1": 7.68391842003474,
+        "Spine2": 7.880986453062532,
+        "RightShoulder": 11.743653942869734,
+        "RightArm": 28.75637706622306,
+        "RightForeArm": 48.96753861278901,
+        "RightHand": 58.94858283938786
+      },
+      "source": "CH1_SahurParry_v027",
+      "contact_seconds": 0.484
+    },
+    {
+      "action": "CH1_SahurSlash_v039",
+      "peak_degrees_per_60fps_frame": {
+        "Hips": 11.390796978836768,
+        "Spine": 1.9881254871917877,
+        "Spine1": 3.5756629408832663,
+        "Spine2": 3.452474929673386,
+        "RightShoulder": 10.37636020783355,
+        "RightArm": 30.14948293990637,
+        "RightForeArm": 19.45436804879208,
+        "RightHand": 26.260328830271504
+      },
+      "source": "CH1_SahurSlash_v036",
+      "contact_seconds": 0.63
+    },
+    {
+      "action": "CH1_SahurBrace_v039",
+      "peak_degrees_per_60fps_frame": {
+        "Hips": 0.6795467263036756,
+        "Spine": 3.799619721126107,
+        "Spine1": 1.6494392446958928,
+        "Spine2": 0.6783939717986773,
+        "RightShoulder": 1.1987565761103003,
+        "RightArm": 2.727158999019749,
+        "RightForeArm": 1.2271489254381027,
+        "RightHand": 0.0
+      },
+      "source": "CH1_SahurBrace_v027",
+      "contact_seconds": 0.572
+    },
+    {
+      "action": "CH1_SahurMiss_v039",
+      "peak_degrees_per_60fps_frame": {
+        "Hips": 11.390796978836768,
+        "Spine": 1.9881254871917877,
+        "Spine1": 3.5756629408832663,
+        "Spine2": 3.452474929673386,
+        "RightShoulder": 10.37636020783355,
+        "RightArm": 30.324704612873877,
+        "RightForeArm": 19.45436804879208,
+        "RightHand": 26.260328830271504
+      },
+      "source": "CH1_SahurSlash_v036",
+      "contact_seconds": 0
+    }
+  ]
+}

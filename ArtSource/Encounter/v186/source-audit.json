@@ -1,0 +1,55 @@
+{
+  "original_rest_preserved": true,
+  "bones": 16,
+  "parents": {
+    "Body": null,
+    "Spine_Mid": "Body",
+    "Spine_Rear": "Spine_Mid",
+    "Tail_Base": "Spine_Rear",
+    "Tail_Mid": "Tail_Base",
+    "Tail_Tip": "Tail_Mid",
+    "Tail_Marker": "Tail_Tip",
+    "Dorsal": "Spine_Mid",
+    "Foot_Rear": "Spine_Mid",
+    "Head": "Body",
+    "Jaw": "Head",
+    "Nose_Marker": "Head",
+    "Fin_Left": "Body",
+    "Fin_Right": "Body",
+    "Foot_Left": "Body",
+    "Foot_Right": "Body"
+  },
+  "original_mesh_preserved": true,
+  "source": "CH1_SharkTail_v097",
+  "action": "CH1_SharkTail_v186",
+  "changed_channels": [
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Mid"
+  ],
+  "duration": 1.5,
+  "fps": 60,
+  "contact_seconds": 0.65,
+  "unchanged_other_rotation_error_degrees": 0.0,
+  "source_tip_minus_body": [
+    -4.397701263427734,
+    7.1437602043151855,
+    3.4394607543945312
+  ],
+  "revised_tip_minus_body": [
+    -4.152310848236084,
+    6.742188930511475,
+    3.951475143432617
+  ],
+  "contact_tip_delta": [
+    0.2453904151916504,
+    -0.40157127380371094,
+    0.5120143890380859
+  ],
+  "peak_degrees_per_frame": {
+    "Spine_Rear": 5.905209947890128,
+    "Tail_Base": 8.714508588425039,
+    "Tail_Mid": 7.107048326698279
+  },
+  "runtime_activated": false
+}

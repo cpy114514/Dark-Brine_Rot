@@ -1,0 +1,11 @@
+# v079–v083 production and native review — INCOMPLETE
+
+The user-facing throw fix v064 and original light attack v062 remain verified. v078 actual original-rig Body/Head/Spine_Mid bite is active. v079 records the final solid-resolved bone pose for transitions; three retained-pose join checks pass exactly.
+
+v080 real standalone 1080p/DX12 rendered test passed six contacts in one water layout, but failed the FPS target. v081 bounded asynchronous GPU readback diagnostic compiled and built (0 errors, 1 warning). Standalone v081 completed 2584/2584 rendered-frame readbacks, no errors or pending requests. Finale mean17.085ms, worst-1%-average33.563FPS, maximum55.298ms, one >50ms; target FAILED. One landing contact missed by2.3118m. Changed pacing yields different freely evolving wreck layouts despite the same seed; this is not a controlled causal speedup or six-contact acceptance.
+
+v082 found a concrete timing mismatch: CounterApproach always passed age-.11 to ChooseAttackFacing, including the2.48s landing counter. PlaceBiteRoot instead used age-(hit-.52). This postponed the long approach until the final .63s and gave replan checks the wrong native phase. Both now use age-(hit-.52); first-counter .63s timing is unchanged. Original source backed up before edits. Native real-time v082 showed Landing counter start age-1.837s and steadily changing solved roots from4.67s, with zero landing contact gap. Other contacts:0,.041884,0,0,.564373,0m; reversal remains FAILED. No invented hit feedback. Feet1.334mm/slide1.410mm. Entry planning40.189s remains too slow in this dense Editor diagnostic.
+
+Read-only v082 observer found genuine nearby fragments and the first safe plan completed at5.36s, after4.55s takeoff. v083 advances first planning from1.5s to0 and second from8.5s to6.4s, preserving the actual mesh/velocity/height revalidation at takeoff and same-board fallback. No timber placement, teleport, surfing or looser tolerances. Latest compile/native multi-view review pending at this checkpoint.
+
+Original Editor stopped, clean, autotick true after v082. Diagnostic save preserved in backups/save-after-v082-diagnostic.json and newer AB575DF9…EC0F3 authoritative save restored only after actual Play=false. No new Editor, scene save, commit or push. Whole animation/contacts/framing/performance acceptance remains incomplete.

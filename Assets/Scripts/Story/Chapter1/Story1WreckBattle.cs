@@ -11,6 +11,9 @@ using UnityEngine.UI;
 public sealed class Story1WreckBattle : MonoBehaviour
 {
     public enum Phase { Waiting, Breaking, Fighting, Defeat, Finished, Finale }
+    public enum FinaleReason { None, SharkHealth, PlayerHealth, TimeLimit }
+    public FinaleReason RequestedFinaleReason { get; private set; }
+    public bool FinalePending => RequestedFinaleReason != FinaleReason.None;
     enum SharkPhase { Pursuit, Windup, Strike, Recovery, Recoil }
     float finaleRequestedAt=-1;
     float retryFinaleAfter;
@@ -18,8 +21,9 @@ public sealed class Story1WreckBattle : MonoBehaviour
     public Material woodMaterial;
     [Min(1)] public float minimumFightSeconds = 20;
     [Min(1)] public float maximumFightSeconds = 35;
-    [Range(.01f,.5f)] public float finalePlayerHealthRatio = .2f;
+    [Range(.01f,.5f)] public float finalePlayerHealthRatio = .3f;
     [Min(8)] public float sharkLength = 16;
+    [Range(1f, 3f)] public float shipBreakPower = 1.35f;
     [HideInInspector] public float finaleSharkHealthRatio = .3f;
     public Phase CurrentPhase { get; private set; }
     public int PlankCount => planks.Count;
@@ -44,7 +48,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     public bool BoardAttackActive=>CurrentPhase==Phase.Fighting && sharkPhase==SharkPhase.Strike && sharkAge>=.30f && sharkAge<.85f;
     public bool TailBoardAttack=>tailAttack;
     public int BoardAttackSerial=>SharkAttackCount;
-    public bool BoardCarriesPlayer(Story1WreckPlank board)=>rider!=null && (rider.DrivenBoard==board || rider.Support()==board);
+    public bool BoardCarriesPlayer(Story1WreckPlank board)=>rider!=null && rider.Support()==board;
 
     Story1SharkCollisionSequence sequence;
     ThirdPersonPlayerController player;
@@ -58,13 +62,15 @@ public sealed class Story1WreckBattle : MonoBehaviour
     readonly List<Story1WreckPlank> planks = new List<Story1WreckPlank>();
     GameObject debrisRoot, hud;
     Image blackout, healthFill;
-    Text warning, bossName, controls;
+    Text bossName, controls;
     Story1ShipWreckAsset shipWreck;
     Story1ShipWreckAsset.Fragment[] deckSources;
     Matrix4x4 shipModelToWorld;
     Vector3 shipModelScale;
     readonly List<Story1WreckDebris> detailPieces = new List<Story1WreckDebris>();
     readonly Dictionary<Story1ShipWreckAsset.Fragment,GameObject> preparedPieces = new Dictionary<Story1ShipWreckAsset.Fragment,GameObject>();
+    readonly Dictionary<Story1ShipWreckAsset.Fragment,GameObject[]> preparedShards = new Dictionary<Story1ShipWreckAsset.Fragment,GameObject[]>();
+    readonly Queue<(Story1ShipWreckAsset.Fragment source,int index)> shardPreparation = new Queue<(Story1ShipWreckAsset.Fragment,int)>();
     int warmIndex;
     CapsuleCollider headHitbox;
     int shownHealth=-1;
@@ -92,9 +98,14 @@ public sealed class Story1WreckBattle : MonoBehaviour
     const float BreakFlightSeconds = 2.4f;
     bool breakAirPose;
     Vector3 breakShipPosition, breakCameraPosition, breakCameraTarget, breakBodyStart, breakTailBody, breakTailWindupBody;
+    Vector3 wreckSourceCenter;
     Quaternion breakShipRotation, breakTailRotation;
     bool tailActionStarted, breachStarted;
     System.Random scatter;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+    // Opt-in diagnostic only. Ordinary play retains fresh random fracture.
+    public int? DiagnosticScatterSeed { private get; set; }
+#endif
     Story1WreckPlank landingBoard;
     public float ImpactNoseGap { get; private set; } = float.PositiveInfinity;
     public float ImpactTailGap { get; private set; } = float.PositiveInfinity;
@@ -104,6 +115,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     {
         if (CurrentPhase != Phase.Waiting) return;
         sequence = owner; player = owner.sahur; capsule = player.GetComponent<CharacterController>();
+        StartCoroutine(Story1EncounterClipCache.Preload());
         playerHealth = player.GetComponent<PlayerHealth>();
         ocean = FindFirstObjectByType<OceanWorld>(); shark = owner.swimmer;
         sharkAnimator = shark.GetComponent<TralaleroSwimAnimator>();
@@ -133,11 +145,19 @@ public sealed class Story1WreckBattle : MonoBehaviour
         player.GetComponent<SahurBoomerang>().enabled = false;
         if (player.GetComponent<GameSaveExcluded>() == null) player.gameObject.AddComponent<GameSaveExcluded>();
         playerHealth.NarrativeDefeatHandler = ProtectStoryFight;
+        // Runtime policy also covers older scenes with serialized 20% tuning.
+        finalePlayerHealthRatio=finaleSharkHealthRatio=.3f;
+        playerHealth.NarrativeHealthFloor=playerHealth.maxHealth*finalePlayerHealthRatio;
+        playerHealth.Damaged+=OnPlayerDamaged;
         if (owner.awakening.plank != null) owner.awakening.plank.gameObject.SetActive(false);
         CreateUI(); CurrentPhase = Phase.Breaking; phaseAge = 0;
-        sound = gameObject.AddComponent<AudioSource>(); sound.playOnAwake = false; sound.spatialBlend = 0;
-        shatterSound = Resources.Load<AudioClip>("StoryBattle/Audio/EncounterStart");
-        tidalSound = Resources.Load<AudioClip>("StoryBattle/Audio/TidalHit");
+        CinematicLetterbox.Set(this, true);
+        if(GameAudioPolicy.SoundEnabled)
+        {
+            sound = gameObject.AddComponent<AudioSource>(); sound.playOnAwake = false; sound.spatialBlend = 0;
+            shatterSound = Resources.Load<AudioClip>("StoryBattle/Audio/EncounterStart");
+            tidalSound = Resources.Load<AudioClip>("StoryBattle/Audio/TidalHit");
+        }
         breakCameraTarget = breakShipPosition + heading * 24 + Vector3.up * 22;
         breakCameraPosition = breakShipPosition + side * 140 + heading * 65 + Vector3.up * 48;
         owner.storyCamera.transform.SetPositionAndRotation(breakCameraPosition,
@@ -148,17 +168,29 @@ public sealed class Story1WreckBattle : MonoBehaviour
 
     void Update()
     {
-        if(CurrentPhase==Phase.Waiting){WarmWreckage(6);return;}
+        if(CurrentPhase==Phase.Waiting || CurrentPhase==Phase.Breaking && !shattered)WarmWreckage(6);
+        if(CurrentPhase==Phase.Waiting)return;
         Tick(Time.deltaTime);
     }
+    static readonly Unity.Profiling.ProfilerMarker WarmMarker=new Unity.Profiling.ProfilerMarker("Wreck.WarmGeometry");
     void WarmWreckage(int budget)
     {
+        using var measurement=WarmMarker.Auto();
+        double sliceStart=Time.realtimeSinceStartupAsDouble;
         if(shipWreck==null)shipWreck=Resources.Load<Story1ShipWreckAsset>("Story1Wreck/ShipWreckPieces");
         if(shipWreck==null)return;
         if(debrisRoot==null)
         {
             debrisRoot=new GameObject("Shattered Ship - Floating Hull Boards");
             SceneManager.MoveGameObjectToScene(debrisRoot,gameObject.scene);debrisRoot.SetActive(false);
+            // Native collision ignores survive release of the prepared cut
+            // meshes. Register them within this existing 2ms warm-up budget
+            // instead of registering every body/fragment pair at handoff.
+            var owner=sequence!=null ? sequence : GetComponent<Story1SharkCollisionSequence>();
+            rider=owner.sahur.GetComponent<Story1WreckRider>();
+            if(rider==null)rider=owner.sahur.gameObject.AddComponent<Story1WreckRider>();
+            owner.sahur.PrepareRuntime();
+            rider.enabled=false;rider.PrepareCollisionOwner(owner.sahur);
         }
         int boards=shipWreck.decks.Length;
         int hullEnd=boards+shipWreck.hulls.Length;
@@ -169,9 +201,44 @@ public sealed class Story1WreckBattle : MonoBehaviour
             var source=index<shipWreck.decks.Length ? shipWreck.decks[index] : index<hullEnd ? shipWreck.hulls[index-boards] : shipWreck.details[index-hullEnd];
             var go=new GameObject(source.name,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(debrisRoot.transform,false);
             go.GetComponent<MeshFilter>().sharedMesh=source.mesh;go.GetComponent<MeshRenderer>().sharedMaterial=source.material;
-            if(index<boards)go.AddComponent<Story1WreckPlank>();else go.AddComponent<Story1WreckDebris>();
+            Story1WreckFloatBody.PrepareVolume(source.mesh);
+            var owner=sequence!=null ? sequence : GetComponent<Story1SharkCollisionSequence>();
+            Vector3 dimensions=Vector3.Scale(source.sourceSize,owner.ship.transform.lossyScale*.01f);
+            go.transform.localScale=dimensions;
+            if(index<boards)go.AddComponent<Story1WreckPlank>().PrepareGeometry(source,dimensions);
+            else go.AddComponent<Story1WreckDebris>().PrepareGeometry(source);
+            rider.RegisterCollision(go.GetComponent<Story1WreckMeshCollision>());
+            go.GetComponent<Story1WreckFloatBody>().PreparePressureGeometry(source.mesh,dimensions);
             preparedPieces.Add(source,go);
+            if(source.splinters!=null && source.splinters.Length>1)
+            {
+                preparedShards.Add(source,new GameObject[source.splinters.Length]);
+                for(int shard=0;shard<source.splinters.Length;shard++)shardPreparation.Enqueue((source,shard));
+            }
+            if(CurrentPhase==Phase.Waiting && Time.realtimeSinceStartupAsDouble-sliceStart>=.002)break;
         }
+        while(warmIndex>=total && shardPreparation.Count>0 && (CurrentPhase!=Phase.Waiting || Time.realtimeSinceStartupAsDouble-sliceStart<.002))
+        {
+            var item=shardPreparation.Dequeue();
+            var owner=sequence!=null ? sequence : GetComponent<Story1SharkCollisionSequence>();
+            Vector3 size=Vector3.Scale(item.source.sourceSize,owner.ship.transform.lossyScale*.01f);
+            PrepareShard(item.source,item.index,Vector3.Scale(size,item.source.splinters[item.index].localSize));
+        }
+    }
+    GameObject PrepareShard(Story1ShipWreckAsset.Fragment source,int index,Vector3 size)
+    {
+        var shard=source.splinters[index];
+        var go=new GameObject(source.name+" splinter "+index,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(debrisRoot.transform,false);
+        go.SetActive(false);go.transform.localScale=size;
+        go.GetComponent<MeshFilter>().sharedMesh=shard.mesh;go.GetComponent<MeshRenderer>().sharedMaterial=source.material;
+        Story1WreckFloatBody.PrepareVolume(shard.mesh);
+        if(Story1WreckPlank.SurfboardShape(size) || Mathf.Min(size.x,size.z)>2 && Mathf.Max(size.x,size.z)>4 && size.y<2)
+            go.AddComponent<Story1WreckPlank>().PrepareShard(shard.mesh,size);
+        else go.AddComponent<Story1WreckDebris>().PrepareShard(shard.mesh);
+        go.GetComponent<Story1WreckFloatBody>().PreparePressureGeometry(shard.mesh,size);
+        rider?.RegisterCollision(go.GetComponent<Story1WreckMeshCollision>());
+        if(preparedShards.TryGetValue(source,out var collection))collection[index]=go;
+        return go;
     }
     void LateUpdate()
     {
@@ -182,7 +249,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     public void ApplySharkContactDamage()
     {
         if(headHitbox!=null)headHitbox.transform.SetPositionAndRotation(sharkAnimator.NoseWorldPoint,shark.rotation);
-        if(CurrentPhase==Phase.Fighting && sharkPhase==SharkPhase.Strike)
+        if(CurrentPhase==Phase.Fighting && !FinalePending && sharkPhase==SharkPhase.Strike)
         {
             Vector3 tip=tailAttack ? sharkAnimator.TailWorldPoint : sharkAnimator.NoseWorldPoint;
             float lo=tailAttack ? .52f : .36f,hi=tailAttack ? .78f : .58f;
@@ -211,16 +278,16 @@ public sealed class Story1WreckBattle : MonoBehaviour
         if (CurrentPhase == Phase.Defeat) { FinishDefeat(); return; }
         if (CurrentPhase == Phase.Finale) return;
         FightElapsed += deltaTime;
-        bool playerLowHealth = playerHealth.maxHealth > 0 &&
-            playerHealth.currentHealth <= playerHealth.maxHealth * finalePlayerHealthRatio;
-        if (Time.time>=retryFinaleAfter && (playerLowHealth || FightElapsed >= FinaleAfterSeconds))
+        if(AtFinaleThreshold(SharkHealth.currentHealth,SharkHealth.maxHealth,finaleSharkHealthRatio))RequestFinale(FinaleReason.SharkHealth);
+        if(AtFinaleThreshold(playerHealth.currentHealth,playerHealth.maxHealth,finalePlayerHealthRatio))RequestFinale(FinaleReason.PlayerHealth);
+        if(FightElapsed>=FinaleAfterSeconds)RequestFinale(FinaleReason.TimeLimit);
+        if (Time.time>=retryFinaleAfter && FinalePending)
         {
-            if(finaleRequestedAt<0)finaleRequestedAt=Time.time;
             var attack=player.GetComponent<SahurAttack>();
             // Deck proximity grants gameplay attack grace while descending.
             // A cinematic must wait for actual controller landing or a board
             // that already owns the rider; grace is not physical support.
-            bool supported=player.Swimming || (rider!=null && rider.IsSurfing) ||
+            bool supported=player.Swimming || (rider!=null && rider.HasStableSupport) ||
                 (capsule.enabled && capsule.isGrounded && player.VerticalSpeed<=0);
             // An airborne player keeps their physical trajectory until landing/splashing.
             if(supported && (rider==null || !rider.IsClimbing) &&
@@ -230,9 +297,6 @@ public sealed class Story1WreckBattle : MonoBehaviour
         healthFill.fillAmount = SharkHealth.Ratio;
         int hp=Mathf.CeilToInt(SharkHealth.currentHealth);
         if(hp!=shownHealth){shownHealth=hp;bossName.text="TRALALERO TRALALA  "+hp+" / "+Mathf.CeilToInt(SharkHealth.maxHealth);}
-        warning.text = sharkPhase == SharkPhase.Windup ? "鲨鱼正在蓄力，快闪开！" :
-            sharkPhase == SharkPhase.Recoil || sharkPhase == SharkPhase.Recovery ? "趁现在反击！" :
-            FightElapsed < 5 ? "在木板上迎战鲨鱼。使用平时的攻击和闪避。" : "";
         if (CurrentPhase == Phase.Fighting) controls.text = rider != null ? rider.Hint : "";
     }
 
@@ -322,6 +386,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         player.NotifyPlatformLanding();
         Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
         CurrentPhase = Phase.Fighting; phaseAge = 0; sharkPhase = SharkPhase.Pursuit; sharkAge = 0;
+        CinematicLetterbox.Set(this, false);
         FightElapsed = 0;
         float minimum = Mathf.Max(1, minimumFightSeconds);
         FinaleAfterSeconds = ScatterRange(minimum, Mathf.Max(minimum, maximumFightSeconds));
@@ -366,26 +431,41 @@ public sealed class Story1WreckBattle : MonoBehaviour
             throw new System.InvalidOperationException("The Blender-cut ship wreck asset is missing or incomplete.");
         shipModelToWorld = Story1ShipWreckAsset.ModelToWorld(sequence.ship.transform);
         shipModelScale = sequence.ship.transform.lossyScale * .01f;
+        var deckBounds = new Bounds(shipModelToWorld.MultiplyPoint3x4(shipWreck.decks[0].sourceCenter), Vector3.zero);
+        foreach (var deck in shipWreck.decks) deckBounds.Encapsulate(shipModelToWorld.MultiplyPoint3x4(deck.sourceCenter));
+        wreckSourceCenter = deckBounds.center;
         deckSources = shipWreck.decks.OrderBy(p => (shipModelToWorld.MultiplyPoint3x4(p.sourceCenter) - passengerStart).sqrMagnitude).ToArray();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        scatter = new System.Random(DiagnosticScatterSeed ?? System.Guid.NewGuid().GetHashCode());
+#else
         scatter = new System.Random(System.Guid.NewGuid().GetHashCode());
+#endif
         ExpectedInitialFragments=shipWreck.decks.Length+shipWreck.hulls.Length+shipWreck.details.Length;
-        foreach(var source in deckSources)if(!ReleaseSmallBoardSource(source))AddPlank(source);
-        foreach(var source in shipWreck.hulls)if(!ReleaseSmallBoardSource(source))AddShipDetail(source);
-        foreach(var source in shipWreck.details)if(!ReleaseSmallBoardSource(source))AddShipDetail(source);
+        foreach(var source in deckSources)if(!ReleaseImpactFragments(source,true))AddPlank(source);
+        foreach(var source in shipWreck.hulls)if(!ReleaseImpactFragments(source,false))AddShipDetail(source);
+        foreach(var source in shipWreck.details)if(!ReleaseImpactFragments(source,false))AddShipDetail(source);
         InitialFragmentCount=ShipFragmentCount;
         debrisRoot.SetActive(true);
     }
-    bool ReleaseSmallBoardSource(Story1ShipWreckAsset.Fragment source)
+    bool ReleaseImpactFragments(Story1ShipWreckAsset.Fragment source,bool deck)
     {
         Vector3 size=Vector3.Scale(source.sourceSize,shipModelScale);
         if(source.splinters==null || !source.splinters.Any(s=>Story1WreckPlank.SurfboardShape(Vector3.Scale(size,s.localSize))))return false;
+        Vector3 from=shipModelToWorld.MultiplyPoint3x4(source.sourceCenter);
+        // The retired surfing mode shattered every usable deck into narrow
+        // strips merely because a strip had vehicle-like proportions.
+        // Tail damage is local: farther flat, already-cut ORIGINAL deck
+        // sections separate from the hull whole and fall under gravity.
+        // Their real meshes can still fracture under later shark strikes.
+        if(deck && size.y<=1.2f && Vector3.ProjectOnPlane(from-sequence.HullImpactPoint,Vector3.up).sqrMagnitude>18*18)return false;
         // The destructive hull tail strike propagates through these deck
         // joints. Release their already-cut ORIGINAL timber immediately,
         // at its ship-space location, never place a gameplay board in water.
-        var original=preparedPieces[source];Vector3 from=shipModelToWorld.MultiplyPoint3x4(source.sourceCenter);
+        var original=preparedPieces[source];
         original.transform.SetPositionAndRotation(from,Story1ShipWreckAsset.SourceRotation(sequence.ship.transform,source));original.transform.localScale=size;
         Vector3 launch=FragmentVelocity(from),spin=FragmentSpin()*Mathf.Deg2Rad;
-        SpawnBrokenFragments(source,original.transform,point=>launch+Vector3.Cross(spin,point-from),sequence.HullImpactPoint,Vector3.zero);
+        float power=Mathf.Clamp(shipBreakPower,1,3);
+        SpawnBrokenFragments(source,original.transform,point=>launch+Vector3.Cross(spin,point-from),power>1 ? from : sequence.HullImpactPoint,Vector3.zero,1+2*(power-1));
         original.SetActive(false);InitiallyFracturedSources.Add(source.name);
         ExpectedInitialFragments+=source.splinters.Length-1;return true;
     }
@@ -434,7 +514,13 @@ public sealed class Story1WreckBattle : MonoBehaviour
         float sign=Mathf.Abs(lateral)>.2f ? Mathf.Sign(lateral) : (ScatterRange(0,1)>.5f ? 1 : -1);
         Vector3 launch=-side*(ScatterRange(7,15)+near*12)+heading*(sign*(ScatterRange(3,9)+near*6)+ScatterRange(-3,3));
         launch=Quaternion.AngleAxis(ScatterRange(-32,32),Vector3.up)*launch*ScatterRange(.72f,1.25f);
-        return launch+Vector3.up*(ScatterRange(4,12)+near*4);
+        float power=Mathf.Clamp(shipBreakPower,1,3);
+        // The tail carries the hull away, while its failed joints let timber
+        // fan out from the original deck. A shared translation alone keeps
+        // adjacent fragments travelling together and leaves a dense pile.
+        Vector3 outward=Vector3.ProjectOnPlane(from-wreckSourceCenter,Vector3.up).normalized;
+        if(power>1)launch=launch*power+outward*(ScatterRange(12,22)*(power-1));
+        return launch+Vector3.up*((ScatterRange(4,12)+near*4)*(1+.25f*(power-1)));
     }
     Vector3 FragmentSpin() => side*ScatterRange(-75,75)+heading*ScatterRange(-65,65)+Vector3.up*ScatterRange(-45,45);
     void AddShipDetail(Story1ShipWreckAsset.Fragment source)
@@ -445,15 +531,15 @@ public sealed class Story1WreckBattle : MonoBehaviour
         go.transform.localScale=size;
         go.transform.SetPositionAndRotation(from,Story1ShipWreckAsset.SourceRotation(sequence.ship.transform,source));
         bool floats=source.material.name=="acmat_1" || source.material.name=="acmat_5" || source.material.name=="acmat_7" || source.material.name=="acmat_9";
-        var body=go.GetComponent<Story1WreckDebris>();body.Initialize(ocean,size,floats,FragmentVelocity(from),FragmentSpin());
-        body.ConfigureObstacle(source);
+        var body=go.GetComponent<Story1WreckDebris>();body.ConfigureObstacle(source);
+        body.Initialize(ocean,size,floats,FragmentVelocity(from),FragmentSpin());
         detailPieces.Add(body);
     }
     void MovePlanks(float deltaTime)
     {
         Vector3 feet=player.transform.position+Vector3.up*player.LowestFootWorldOffset;
         // Footing belongs to the last rendered deck pose, before this frame's wave movement.
-        if(CurrentPhase==Phase.Fighting && !player.Swimming && capsule.enabled && (rider==null || (!rider.IsSurfing && !rider.IsClimbing)))
+        if(CurrentPhase==Phase.Fighting && !player.Swimming && capsule.enabled && (rider==null || !rider.IsClimbing))
             foreach(var piece in planks)if(piece.SupportedPreviousPose(feet)){capsule.Move(piece.CarryDisplacement(feet));break;}
         if(CurrentPhase==Phase.Fighting && rider!=null)rider.BeforePlanks(deltaTime);
         foreach(var piece in planks)piece.CommitPose();
@@ -462,6 +548,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
 
     void PrepareShark()
     {
+        using var measurement=new Unity.Profiling.ProfilerMarker("Wreck.PreparePlayableShark").Auto();
         var mesh = shark.GetComponentInChildren<MeshFilter>();
         Bounds b = mesh.sharedMesh.bounds; sharkLocalBounds = new Bounds(); bool first = true;
         for (int x = -1; x <= 1; x += 2) for (int y = -1; y <= 1; y += 2) for (int z = -1; z <= 1; z += 2)
@@ -471,7 +558,8 @@ public sealed class Story1WreckBattle : MonoBehaviour
         }
         shark.localScale *= sharkLength / Mathf.Max(.01f, sharkLocalBounds.size.z * Mathf.Abs(shark.lossyScale.z));
         shark.gameObject.tag = "Enemy";
-        SharkHealth = shark.gameObject.AddComponent<Story1SharkHealth>(); SharkHealth.maxHealth = SharkHealth.currentHealth = 360;
+        SharkHealth = shark.gameObject.AddComponent<Story1SharkHealth>(); SharkHealth.maxHealth = SharkHealth.currentHealth = 1000;
+        SharkHealth.NarrativeHealthFloor=SharkHealth.maxHealth*finaleSharkHealthRatio;
         SharkHealth.OnDamaged = new UnityEvent<float>(); SharkHealth.OnDamaged.AddListener(OnSharkHit);
         sharkHitbox = shark.gameObject.AddComponent<BoxCollider>(); sharkHitbox.isTrigger = true;
         sharkHitbox.center = sharkLocalBounds.center; sharkHitbox.size = sharkLocalBounds.size * .96f;
@@ -481,11 +569,11 @@ public sealed class Story1WreckBattle : MonoBehaviour
         headHitbox=head.GetComponent<CapsuleCollider>();headHitbox.isTrigger=true;headHitbox.direction=2;
         headHitbox.radius=1.1f;headHitbox.height=3.2f;headHitbox.center=Vector3.back*.65f;
         head.transform.SetPositionAndRotation(sharkAnimator.NoseWorldPoint,shark.rotation);SharkHealth.ConfigureHead(headHitbox);
-        Vector3 landing=landingBoard!=null ? landingBoard.BoardingPoint(landingBoard.transform.position) : player.transform.position;
-        Quaternion facing=Quaternion.LookRotation(-heading);
-        float water=ocean!=null ? ocean.SampleSurfaceHeight(landing,Time.time) : center.y;
-        surfacedHeight=sharkAnimator.SurfaceRootY(water,facing)+(facing*Vector3.Scale(sharkLocalBounds.center,shark.lossyScale)).y;
-        PlaceShark(BodyForNose(landing+heading*9,facing),facing);
+        // Keep the actual tail follow-through/dive placement. Repositioning
+        // nine metres in front of a random landing board could start the
+        // complete animal inside freshly released hull pieces. Pursuit and
+        // the solid movement owner now bring it back from the real dive.
+        surfacedHeight=shark.TransformPoint(sharkLocalBounds.center).y;
         WreckContact=gameObject.AddComponent<Story1SharkWreckContact>();WreckContact.Initialize(this,sharkAnimator);
         ShowFightHUD();
     }
@@ -607,6 +695,8 @@ public sealed class Story1WreckBattle : MonoBehaviour
 
     void OnSharkHit(float damage)
     {
+        if(CurrentPhase==Phase.Fighting && AtFinaleThreshold(SharkHealth.currentHealth,SharkHealth.maxHealth,finaleSharkHealthRatio))
+            RequestFinale(FinaleReason.SharkHealth);
         if (CurrentPhase == Phase.Fighting && Time.time-lastRecoilTime>1.8f)
         {
             sharkAnimator.PlayRecoil();
@@ -640,7 +730,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         SpawnBrokenFragments(piece.FractureSource,piece.transform,piece.PointVelocity,point,impulse);
         piece.MarkBroken();BrokenBoardCount++;return true;
     }
-    void SpawnBrokenFragments(Story1ShipWreckAsset.Fragment source,Transform original,System.Func<Vector3,Vector3> pointVelocity,Vector3 point,Vector3 impulse)
+    void SpawnBrokenFragments(Story1ShipWreckAsset.Fragment source,Transform original,System.Func<Vector3,Vector3> pointVelocity,Vector3 point,Vector3 impulse,float initialSeparation=1)
     {
         var shards=source.splinters;Vector3 scale=original.lossyScale;
         Quaternion rotation=original.rotation;
@@ -648,22 +738,23 @@ public sealed class Story1WreckBattle : MonoBehaviour
         {
             var shard=shards[i];Vector3 at=original.TransformPoint(shard.localCenter);
             Vector3 size=Vector3.Scale(scale,shard.localSize);
-            var go=new GameObject(original.name+" splinter "+i,typeof(MeshFilter),typeof(MeshRenderer));go.transform.SetParent(debrisRoot.transform,false);
-            go.GetComponent<MeshFilter>().sharedMesh=shard.mesh;go.GetComponent<MeshRenderer>().sharedMaterial=source.material;
+            GameObject go=preparedShards.TryGetValue(source,out var collection) ? collection[i] : null;
+            if(go==null)go=PrepareShard(source,i,size);
             Vector3 away=(at-point).normalized;
-            Vector3 velocity=pointVelocity(at)+impulse*.45f+away*ScatterRange(2,5)+Vector3.up*ScatterRange(.5f,2.5f);
+            Vector3 velocity=pointVelocity(at)+impulse*.45f+away*(ScatterRange(2,5)*initialSeparation)+Vector3.up*ScatterRange(.5f,2.5f);
             if(Story1WreckPlank.SurfboardShape(size) || Mathf.Min(size.x,size.z)>2 && Mathf.Max(size.x,size.z)>4 && size.y<2)
             {
-                var piece=go.AddComponent<Story1WreckPlank>();piece.Initialize(at,rotation,size,ocean,velocity,FragmentSpin()*.3f);
+                var piece=go.GetComponent<Story1WreckPlank>();piece.Initialize(at,rotation,size,ocean,velocity,FragmentSpin()*.3f);
                 piece.SharkContactAfter=Time.time+.3f;planks.Add(piece);
                 if(rider!=null)rider.RegisterBoard(piece);
             }
             else
             {
                 go.transform.SetPositionAndRotation(at,rotation);go.transform.localScale=size;
-                var detail=go.AddComponent<Story1WreckDebris>();detail.Initialize(ocean,size,true,velocity,FragmentSpin()*.3f);detailPieces.Add(detail);
+                var detail=go.GetComponent<Story1WreckDebris>();detail.Initialize(ocean,size,true,velocity,FragmentSpin()*.3f);detailPieces.Add(detail);
                 if(rider!=null)rider.RegisterCollision(detail.Collision);
             }
+            go.SetActive(true);
         }
     }
     public void PoseCinematicShark(Vector3 body, Quaternion rotation, float lift = 0, bool absoluteHeight = false)
@@ -685,15 +776,36 @@ public sealed class Story1WreckBattle : MonoBehaviour
         if(tidalSound!=null)sound.PlayOneShot(tidalSound,heavy ? .85f : .35f);
         sequence.storyCamera.GetComponent<CombatCameraShake>()?.PulseStoryImpact(heavy ? .3f : .09f,heavy ? .4f : .16f);
     }
+    void OnPlayerDamaged(float damage)
+    {
+        if(AtFinaleThreshold(playerHealth.currentHealth,playerHealth.maxHealth,finalePlayerHealthRatio))
+            RequestFinale(FinaleReason.PlayerHealth);
+    }
+    // Mono can retain excess precision in max*ratio while the health floor
+    // has been rounded to a stored float. Include that exact 30% boundary.
+    static bool AtFinaleThreshold(float current,float maximum,float ratio)=>current<=maximum*ratio+.0001f;
+    public bool RequestFinale(FinaleReason reason)
+    {
+        if(CurrentPhase!=Phase.Fighting || reason==FinaleReason.None || FinalePending)return false;
+        RequestedFinaleReason=reason;finaleRequestedAt=Time.time;
+        playerHealth.GrantProtection(120);
+        if(SharkHealth!=null)SharkHealth.IsProtected=true;
+        // Finish the current action while preventing repeated new attacks from
+        // postponing the handoff. Locomotion and physical landing stay live.
+        player.GetComponent<SahurAttack>().CinematicHandoffPending=true;
+        return true;
+    }
     void ProtectStoryFight()
     {
         if(CurrentPhase!=Phase.Fighting && CurrentPhase!=Phase.Breaking)return;
-        playerHealth.currentHealth=1; playerHealth.GrantProtection(2);
+        playerHealth.currentHealth=playerHealth.maxHealth*finalePlayerHealthRatio;
+        RequestFinale(FinaleReason.PlayerHealth);
         sharkPhase=SharkPhase.Recovery;sharkAge=0;
     }
     void BeginFinale()
     {
         if (CurrentPhase != Phase.Fighting) return;
+        SharkHealth.IsProtected=true;
         Handoff=player.Motion.Capture(player);
         var board = rider != null ? rider.Support() : null;
         if (board == null)
@@ -712,8 +824,9 @@ public sealed class Story1WreckBattle : MonoBehaviour
         var knockback = player.GetComponent<CombatKnockback>(); if (knockback != null) knockback.enabled = false;
         player.enabled = false; player.ExternalControlLock = true; capsule.enabled = false;
         playerHealth.GrantProtection(100);
-        warning.text = controls.text = ""; bossName.enabled = false; healthFill.transform.parent.gameObject.SetActive(false);
+        controls.text = ""; bossName.enabled = false; healthFill.transform.parent.gameObject.SetActive(false);
         CurrentPhase = Phase.Finale; phaseAge = 0;
+        CinematicLetterbox.Set(this, true);
         Finale = gameObject.AddComponent<Story1WreckFinale>();
         player.Motion.Claim(Finale,SahurControlState.Cinematic);
         Finale.Initialize(this, player, sharkAnimator, sequence.storyCamera, board, ocean, fromWater);
@@ -721,28 +834,15 @@ public sealed class Story1WreckBattle : MonoBehaviour
     public void CompleteFinale()
     {
         if(CurrentPhase!=Phase.Finale)return;
+        playerHealth.NarrativeHealthFloor=0;
         playerHealth.NarrativeDefeatHandler=BeginDefeat;playerHealth.GrantProtection(0);
         playerHealth.ApplyDamage(playerHealth.maxHealth+playerHealth.currentHealth,player.transform.position);
     }
     public void ResumeAfterMissedFinale(Story1WreckFinale film)
     {
         if(CurrentPhase!=Phase.Finale || Finale!=film)return;
-        // Dense, moving wreck can invalidate an approach. Return control at
-        // the current supported pose instead of inventing a lethal contact.
-        film.ReleaseActors();player.Motion.Release(film);Destroy(film);Finale=null;
-        player.ExternalControlLock=player.ExternalMovementLock=false;
-        player.ExternalMovementAnimation=null;player.OnFloatingWreckDeck=false;
-        player.RestoreSavedPose(player.transform.position,player.transform.rotation);
-        player.enabled=true;capsule.enabled=true;
-        player.GetComponent<SahurAttack>().enabled=true;player.GetComponent<SahurBoomerang>().enabled=true;
-        var knockback=player.GetComponent<CombatKnockback>();if(knockback!=null)knockback.enabled=true;
-        if(rider!=null)rider.enabled=true;
-        playerHealth.NarrativeDefeatHandler=ProtectStoryFight;playerHealth.GrantProtection(2);
-        sharkPhase=SharkPhase.Recovery;sharkAge=0;
-        CurrentPhase=Phase.Fighting;phaseAge=0;finaleRequestedAt=-1;retryFinaleAfter=Time.time+3;
-        ShowFightHUD();
+        film.BeginUnconsciousExit("No physical final contact through the moving wreck");
     }
-
     void BeginDefeat()
     {
         if (CurrentPhase != Phase.Finale) return;
@@ -757,7 +857,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         player.GetComponent<EnemyLockOn>().Clear(); capsule.enabled = false;
         player.GetComponent<SahurLoadoutUI>()?.SetOpen(false); player.GetComponent<IslandMapUI>()?.SetOpen(false);
         if (tidalSound != null) sound.PlayOneShot(tidalSound,.9f);
-         warning.text = ""; healthFill.transform.parent.gameObject.SetActive(false); bossName.enabled = false;
+        healthFill.transform.parent.gameObject.SetActive(false); bossName.enabled = false;
         sequence.storyCamera.GetComponent<CombatCameraShake>()?.Pulse(.2f, .3f);
     }
 
@@ -770,6 +870,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         if (phaseAge < 1.5f) return;
         CurrentPhase = Phase.Finished;
         sequence.awakening.BeginBlackout(blackout, center, heading);
+        CinematicLetterbox.Set(this, false);
     }
 
     void CreateUI()
@@ -787,7 +888,6 @@ public sealed class Story1WreckBattle : MonoBehaviour
             go.GetComponent<Outline>().effectColor = Color.black; LocalizedGameText.Bind(text); return text;
         }
         bossName = Label("Shark", new Vector2(.5f,1), new Vector2(0,-65), 27);
-        warning = Label("Warning", new Vector2(.5f,.13f), Vector2.zero, 26);
         controls = Label("Board controls", new Vector2(.5f,.065f), Vector2.zero, 22);
         var bar = new GameObject("Shark health", typeof(RectTransform), typeof(Image)); bar.transform.SetParent(hud.transform, false);
         var br = (RectTransform)bar.transform; br.anchorMin = br.anchorMax = new Vector2(.5f,1); br.anchoredPosition = new Vector2(0,-105); br.sizeDelta = new Vector2(600,10); bar.GetComponent<Image>().color = Color.black;
@@ -806,8 +906,12 @@ public sealed class Story1WreckBattle : MonoBehaviour
         bossName.enabled = true; healthFill.transform.parent.gameObject.SetActive(true);
     }
 
+    void OnDisable() { CinematicLetterbox.Set(this, false); }
+
     void OnDestroy()
     {
+        if(player!=null)player.GetComponent<SahurAttack>().CinematicHandoffPending=false;
+        if(playerHealth!=null){playerHealth.Damaged-=OnPlayerDamaged;playerHealth.NarrativeHealthFloor=0;}
         if (rider != null) rider.enabled = false;
         if (playerHealth != null && (playerHealth.NarrativeDefeatHandler == BeginDefeat || playerHealth.NarrativeDefeatHandler == ProtectStoryFight)) playerHealth.NarrativeDefeatHandler = null;
         if (hud != null) Destroy(hud); if (debrisRoot != null) Destroy(debrisRoot);

@@ -1,0 +1,17 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_staging": [
+    "CH1_SharkTail_v048",
+    "CH1_SharkShipSmash_v048",
+    "CH1_SharkBite_v048",
+    "CH1_SharkBreach_v048"
+  ],
+  "observations": [
+    "Three-quarter caudal silhouette no longer folds as far across the rear trunk.",
+    "Rear joint bend remains sequential with tail tip arriving after body; contact .65 retained.",
+    "Same original16bind bones and corrected retained caudal skin."
+  ],
+  "limits": [
+    "Native skin comparison at peak and real submerged contact still required."
+  ]
+}

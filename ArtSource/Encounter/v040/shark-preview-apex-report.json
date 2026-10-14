@@ -1,0 +1,40 @@
+[
+  {
+    "action": "CH1_SharkBreach_v040",
+    "fps": 60.0,
+    "frames": [
+      1,
+      31,
+      65,
+      94,
+      118,
+      145,
+      193
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\front-0031.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\front-0065.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\front-0094.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\front-0118.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\front-0145.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\front-0193.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\side-0031.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\side-0065.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\side-0094.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\side-0118.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\side-0145.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\side-0193.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\three-quarter-0031.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\three-quarter-0065.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\three-quarter-0094.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\three-quarter-0118.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\three-quarter-0145.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-apex-preview\\CH1_SharkBreach_v040\\three-quarter-0193.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  }
+]

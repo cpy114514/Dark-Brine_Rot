@@ -1,0 +1,39 @@
+{
+  "native": true,
+  "originalAvatarAndSkin": true,
+  "stage": "FIRST PASS",
+  "runtimeActivated": true,
+  "images": 402,
+  "sampleTime": 0.483333319,
+  "contactRightHandDelta": [
+    -0.05148435799999995,
+    0.2993774411,
+    -0.09616755599999999
+  ],
+  "contactHandChange": 0.3186309623769624,
+  "contactLeftFootDifference": 0.009057644511603975,
+  "contactRightFootDifference": 0.009057647305423236,
+  "clips": {
+    "CH1_SahurParry_v090": {
+      "samples": 67,
+      "lowerArmLengthRange": 1.423846835008069e-05,
+      "largestHandFrameStep": 0.023667477184737395,
+      "footRange": {
+        "leftFoot": 0.040605020213191505,
+        "rightFoot": 0.040588400979539786
+      }
+    },
+    "CH1_SahurParry_v171": {
+      "samples": 67,
+      "lowerArmLengthRange": 2.5525984151619774e-05,
+      "largestHandFrameStep": 0.03604498634529476,
+      "footRange": {
+        "leftFoot": 0.04261889497639232,
+        "rightFoot": 0.04260004383189444
+      }
+    }
+  },
+  "normalSpeedArtisticApproval": "not observed",
+  "movingWreckContactAcceptance": "FIRST PASS174all6within45.331mm; other layouts still incomplete",
+  "integrationReview": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/implementation-review-v171.md"
+}

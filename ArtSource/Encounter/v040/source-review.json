@@ -1,0 +1,22 @@
+{
+  "stage": "BLOCKING",
+  "reviewedUtc": "2026-10-12T20:42:49.0097241Z",
+  "accepted_for_staging": [
+    "CH1_SahurGuard_v040",
+    "CH1_SahurParry_v040",
+    "CH1_SahurSlash_v040",
+    "CH1_SahurBrace_v040",
+    "CH1_SahurMiss_v040"
+  ],
+  "evidence": "source-arc-audit.json",
+  "findings": [
+    "Retained original 65-bone rest rig and historical Actions",
+    "Parry wrist peak reduced from 58.95 to 20.57 degrees per 60 FPS sample",
+    "Original source-foot targets replanted to <0.00004 cm",
+    "Slash uses sequential hips/torso/shoulder loading; Miss has separate overextension"
+  ],
+  "limitations": [
+    "Source curve/rig acceptance only",
+    "Actual Sahur skin, moving support and paired native contacts still require review"
+  ]
+}

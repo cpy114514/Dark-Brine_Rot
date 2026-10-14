@@ -1,0 +1,8 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_staging": ["CH1_SahurGuard_v050"],
+  "reviewer": "Codex, isolated source first-pass review; no human final approval claimed",
+  "evidence": ["source-audit.json", "preview-report.json"],
+  "observed": "Inspected actual retained skinned rig at frames 25/49/73 from front, side and three-quarter. The asymmetric compressed stance and forward one-hand hold remain readable. Small chest/neck/forearm overlap prevents the preceding static hold without adding root displacement. Source feet and loop endpoints remain identical; all 28 bind matrices preserved.",
+  "limitations": "Unarmed source preview cannot establish native held-stick placement, retargeted supporting-sole accuracy or transitions. Native continuous review and paired-film contact acceptance remain required. This is an import staging acceptance only."
+}

@@ -1,0 +1,19 @@
+{
+  "source": "CH1_SahurSlash_v051",
+  "action": "CH1_SahurSlash_v128",
+  "bones": 65,
+  "original_rest_preserved": true,
+  "parents_preserved": true,
+  "original_mesh_preserved": true,
+  "contact": 0.63,
+  "untouched_impact_band": [
+    0.6,
+    0.67
+  ],
+  "original_support_path_error_cm": 3.099074708799729e-05,
+  "impact_position_error_cm": 0,
+  "maximum_world_rotation_change_degrees": 359.9440571082319,
+  "source_fps": 60,
+  "duration": 1.4,
+  "runtime_activated": false
+}

@@ -232,6 +232,22 @@ public static class UnityAnimationImport
 
 public static class StageV006
 {
+    public static object StageRevision(string revision)
+    {
+        if(!Regex.IsMatch(revision,@"^v[0-9]{3}$"))throw new ArgumentException("Version identifier required");
+        var reports=new System.Collections.Generic.List<object>();string root="ArtSource/Encounter/"+revision;
+        foreach(string path in Directory.GetFiles(root,"*-index.json"))
+        foreach(var m in Newtonsoft.Json.JsonConvert.DeserializeObject<IndexEntry[]>(File.ReadAllText(path)))
+        {
+            if(!File.Exists(root+"/"+m.action+".animation.json"))continue;
+            string folder="Assets/AnimationStaging/"+m.action;
+            if(AssetDatabase.IsValidFolder(folder))continue;
+            reports.Add(UnityAnimationImport.Stage(root+"/"+m.action+".fbx",root+"/"+m.action+".animation.json",folder,m.avatar));
+        }
+        Directory.CreateDirectory(".codex/encounter-"+revision);
+        File.WriteAllText(".codex/encounter-"+revision+"/import-report.json",Newtonsoft.Json.JsonConvert.SerializeObject(reports,Newtonsoft.Json.Formatting.Indented));
+        return new{staged=reports.Count,isolated=true,revision};
+    }
     [Serializable] public class IndexEntry {public string action,avatar;}
     public static object StageAll()
     {

@@ -1,0 +1,23 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v050\\sahur-guard-breath-v050.blend",
+    "rig": "Armature",
+    "action": "CH1_SahurGuard_v050",
+    "unity_clip": "CH1_SahurGuard_v050",
+    "revision": "v050",
+    "frame_start": 1,
+    "frame_end": 97,
+    "fps": 60,
+    "loop": true,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "FIRST PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v039.md",
+    "approval_reference": "2026-10-12 user \u5f00\u59cb\u5b9e\u65bd\u8ba1\u5212",
+    "review_status": "pending",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "contact_seconds": 0
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_staging": [
+    "CH1_SharkBite_v078"
+  ],
+  "runtime_activated": true,
+  "reviewer": "agent",
+  "observed_previews": [
+    "side-0032.20.png",
+    "three-quarter-0032.20.png",
+    "side-0055.00.png"
+  ],
+  "finding": "Body-led four-degree lift with smaller four-degree neck bend gives higher relative nose reach than v069; delayed rear-spine counterbend retains recovery. Original sixteen bones and jaw local channels preserved. Isolated staging only; full runtime contact, submergence and art unaccepted."
+}

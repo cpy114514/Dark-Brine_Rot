@@ -1,0 +1,78 @@
+[
+  {
+    "action": "PLAYER_BoardPaddle_v054",
+    "fps": 60.0,
+    "frames": [
+      1,
+      13,
+      24,
+      39,
+      53,
+      64,
+      73
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\front-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\front-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\front-0039.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\front-0053.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\front-0064.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\front-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\side-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\side-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\side-0039.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\side-0053.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\side-0064.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\side-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\three-quarter-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\three-quarter-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\three-quarter-0039.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\three-quarter-0053.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\three-quarter-0064.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddle_v054\\three-quarter-0073.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "PLAYER_BoardPaddleReverse_v054",
+    "fps": 60.0,
+    "frames": [
+      1,
+      13,
+      24,
+      39,
+      53,
+      64,
+      73
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\front-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\front-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\front-0039.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\front-0053.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\front-0064.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\front-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\side-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\side-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\side-0039.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\side-0053.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\side-0064.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\side-0073.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\three-quarter-0013.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\three-quarter-0024.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\three-quarter-0039.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\three-quarter-0053.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\three-quarter-0064.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\paddle-source-v054\\PLAYER_BoardPaddleReverse_v054\\three-quarter-0073.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  }
+]

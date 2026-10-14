@@ -34,6 +34,7 @@ public sealed class ShipSailingMotion : MonoBehaviour
     float waterlineOffset;
     float currentSpeed;
     float steering;
+    float heaveVelocity,pitchVelocity,rollVelocity,filteredPitch,filteredRoll;
 
     public float CurrentSpeed => currentSpeed;
 
@@ -46,6 +47,7 @@ public sealed class ShipSailingMotion : MonoBehaviour
         waterlineOffset = transform.position.y - (ocean != null ? ocean.oceanHeight : 0f);
         currentSpeed = autoSail ? Mathf.Max(.1f, forwardSpeed) : forwardSpeed;
         if (GetComponent<ShipWakeEffects>() == null) gameObject.AddComponent<ShipWakeEffects>();
+        if (GetComponent<ShipSailWind>() == null) gameObject.AddComponent<ShipSailWind>();
     }
 
     void Update()
@@ -60,6 +62,7 @@ public sealed class ShipSailingMotion : MonoBehaviour
     {
         if (PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput) return;
         deltaTime = Mathf.Max(0f, deltaTime);
+        if(deltaTime<=0)return;
         steering = Mathf.MoveTowards(steering, helm, steeringResponse * deltaTime);
         float targetSpeed = autoSail ? Mathf.Max(.1f, forwardSpeed) :
             forward && reverse ? 0f : reverse ? -reverseSpeed :
@@ -93,13 +96,14 @@ public sealed class ShipSailingMotion : MonoBehaviour
             -maxRollDegrees, maxRollDegrees);
         // ship_g's imported root is flipped 180 degrees around X. Apply tilt
         // about world hull axes so a rising bow really lifts the bow.
-        Quaternion targetRotation = Quaternion.AngleAxis(roll, heading) *
-            Quaternion.AngleAxis(pitch, Vector3.Cross(heading, Vector3.up)) * baseRotation;
-
-        float blend = 1f - Mathf.Exp(-responseSpeed * deltaTime);
-        position.y = Mathf.Lerp(position.y,
-            ocean.oceanHeight + waterlineOffset + center * heaveStrength, blend);
-        transform.SetPositionAndRotation(position, Quaternion.Slerp(transform.rotation, targetRotation, blend));
+        float inertia=Mathf.Clamp(4.5f/responseSpeed,.5f,2f);
+        filteredPitch=Mathf.SmoothDamp(filteredPitch,pitch,ref pitchVelocity,inertia,2.5f,deltaTime);
+        filteredRoll=Mathf.SmoothDamp(filteredRoll,roll,ref rollVelocity,inertia*1.25f,2.5f,deltaTime);
+        Quaternion targetRotation = Quaternion.AngleAxis(filteredRoll, heading) *
+            Quaternion.AngleAxis(filteredPitch, Vector3.Cross(heading, Vector3.up)) * baseRotation;
+        position.y = Mathf.SmoothDamp(position.y,ocean.oceanHeight + waterlineOffset + center * heaveStrength,
+            ref heaveVelocity,inertia,3f,deltaTime);
+        transform.SetPositionAndRotation(position,targetRotation);
     }
 
 }

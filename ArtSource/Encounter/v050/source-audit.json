@@ -1,0 +1,15 @@
+{
+  "rest_retained": true,
+  "bones": 28,
+  "source_foot_error_cm": 0,
+  "loop_seam_radians": 0.0,
+  "changed_bones": [
+    "Spine",
+    "Spine2",
+    "Head",
+    "RightForeArm",
+    "RightHand",
+    "LeftArm"
+  ],
+  "root_and_legs_retained": true
+}

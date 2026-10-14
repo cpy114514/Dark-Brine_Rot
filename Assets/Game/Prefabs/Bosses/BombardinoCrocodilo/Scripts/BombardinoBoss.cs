@@ -46,8 +46,11 @@ namespace Mavis
         bool initialized,crashed;
         readonly List<BombardinoOrdnance> ordnance=new List<BombardinoOrdnance>();
         readonly List<GameObject> effects=new List<GameObject>();
+
         readonly List<LineRenderer> markers=new List<LineRenderer>();
         Material warningMaterial;
+        const int MarkerSegments=32;
+        readonly Vector3[] markerPoints=new Vector3[MarkerSegments+1];
         readonly HashSet<PlayerHealth> rushVictims=new HashSet<PlayerHealth>();
         readonly RaycastHit[] casts=new RaycastHit[96];
         Renderer[] bodyRenderers;
@@ -55,8 +58,6 @@ namespace Mavis
         CharacterController[] playerBodies=new CharacterController[0];
         readonly List<(Collider body, Collider player)> ignoredPlayerPairs=new List<(Collider, Collider)>();
         AudioSource audioSource;
-        const int MarkerSegments=32;
-        readonly Vector3[] markerPoints=new Vector3[MarkerSegments+1];
         float protectPlayersAt;
         Bounds launchBounds;
         readonly List<(Vector3 point,float at,float damage)> fireImpacts=new List<(Vector3,float,float)>();
@@ -88,16 +89,18 @@ namespace Mavis
             if(GameAudioPolicy.SoundEnabled){audioSource=gameObject.AddComponent<AudioSource>();audioSource.playOnAwake=false;audioSource.spatialBlend=.75f;audioSource.minDistance=8;audioSource.maxDistance=100;}
             transform.position=ClearGround(OrbitPoint(orbitAngle)+Vector3.up*cruiseAltitude);
             transform.rotation=Quaternion.LookRotation(OrbitTangent(orbitAngle));
-            // Allocate warning renderers at encounter loading, not on a weapon hit.
-            warningMaterial=new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-            warningMaterial.SetColor("_BaseColor",new Color(1,.24f,.05f));
-            for(int i=0;i<6;i++)
+            if(!BossAttackWarning.HiddenOnIsland(gameObject))
             {
-                var go=new GameObject("Bombardino attack warning");go.transform.SetParent(transform,false);
-                var line=go.AddComponent<LineRenderer>();line.sharedMaterial=warningMaterial;line.positionCount=MarkerSegments+1;
-                line.startWidth=line.endWidth=.13f;line.startColor=line.endColor=Color.white;
-                line.useWorldSpace=true;line.enabled=false;line.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
-                line.receiveShadows=false;markers.Add(line);
+                warningMaterial=new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                warningMaterial.SetColor("_BaseColor",new Color(1,.24f,.05f));
+                for(int i=0;i<6;i++)
+                {
+                    var go=new GameObject("Bombardino attack warning");go.transform.SetParent(transform,false);
+                    var line=go.AddComponent<LineRenderer>();line.sharedMaterial=warningMaterial;line.positionCount=MarkerSegments+1;
+                    line.startWidth=line.endWidth=.13f;line.startColor=line.endColor=Color.white;
+                    line.useWorldSpace=true;line.enabled=false;line.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;
+                    line.receiveShadows=false;markers.Add(line);
+                }
             }
             if(health.IsDead)OnDeath();
         }
@@ -356,10 +359,11 @@ namespace Mavis
         }
         void BuildMarkers(AttackKind kind)
         {
-            ClearMarkers();int count=kind==AttackKind.HighBombing?6:1;
+            ClearMarkers();
+            if(BossAttackWarning.HiddenOnIsland(gameObject))return;
+            int count=kind==AttackKind.HighBombing?6:1;
             if(kind==AttackKind.SpeedRun || kind==AttackKind.FlameRun)
             {
-                // Telegraph the curved ground track that the circling aircraft will cross.
                 float start=orbitAngle+cruiseSpeed/Mathf.Max(10f,patrolRadius)*Mathf.Max(0,attackAt-clock);
                 float sweep=AttackSpeed/Mathf.Max(10f,patrolRadius)*AttackDuration;
                 float width=kind==AttackKind.SpeedRun?2.6f:2.8f;

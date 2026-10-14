@@ -1,0 +1,45 @@
+{
+  "rest_preserved": true,
+  "bones": 16,
+  "hierarchy": {
+    "Body": null,
+    "Spine_Mid": "Body",
+    "Spine_Rear": "Spine_Mid",
+    "Tail_Base": "Spine_Rear",
+    "Tail_Mid": "Tail_Base",
+    "Tail_Tip": "Tail_Mid",
+    "Tail_Marker": "Tail_Tip",
+    "Dorsal": "Spine_Mid",
+    "Foot_Rear": "Spine_Mid",
+    "Head": "Body",
+    "Jaw": "Head",
+    "Nose_Marker": "Head",
+    "Fin_Left": "Body",
+    "Fin_Right": "Body",
+    "Foot_Left": "Body",
+    "Foot_Right": "Body"
+  },
+  "contact_seconds": 0.52,
+  "unchanged_other_channels_degrees": 0.0,
+  "source_nose_minus_body": [
+    0.306079626083374,
+    -10.728273391723633,
+    4.9888505935668945
+  ],
+  "revised_nose_minus_body": [
+    0.3058256506919861,
+    -10.698705673217773,
+    4.746657371520996
+  ],
+  "changed_channels": [
+    "Body",
+    "Head",
+    "Spine_Mid"
+  ],
+  "runtime_activated": false,
+  "peak_degrees_per_frame": {
+    "Spine_Mid": 1.9920586089366574,
+    "Head": 4.407251705823835,
+    "Body": 1.4309167337114435
+  }
+}

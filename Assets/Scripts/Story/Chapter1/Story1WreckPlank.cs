@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-/// <summary>A real hull fragment, driven by rigidbody physics and surf controls.</summary>
+/// <summary>A real hull fragment and walking platform, moved only by water and physical contact.</summary>
 [RequireComponent(typeof(Story1WreckMeshCollision),typeof(Story1WreckFloatBody))]
 public sealed class Story1WreckPlank : MonoBehaviour
 {
@@ -18,15 +18,8 @@ public sealed class Story1WreckPlank : MonoBehaviour
     public Vector3 ShipSourcePosition { get; private set; }
     public float TopLocalY => transform.up.y>=0 ? .5f : -.5f;
     public bool IsBoardable => !IsBroken && gameObject.activeInHierarchy && Deck!=null && Deck.enabled && Mathf.Abs(transform.up.y)>.65f;
-    // Large hull sections are standing platforms. Only a thin, narrow piece
-    // of the real released timber can be paddled like a surfboard.
-    public bool IsSurfboard
-    {
-        get
-        {
-            return IsBoardable && SurfboardShape(size);
-        }
-    }
+    // Retained for older integrations. Wreckage is no longer a controllable vehicle.
+    public bool IsSurfboard=>false;
     public static bool SurfboardShape(Vector3 dimensions)
     {
         float width=Mathf.Min(dimensions.x,dimensions.z),length=Mathf.Max(dimensions.x,dimensions.z);
@@ -35,12 +28,24 @@ public sealed class Story1WreckPlank : MonoBehaviour
     }
     Story1WreckFloatBody floating;
     Vector3 size;
-    float throttle,steer;
-    float paddlePower=1;
-    float surfDirection=1;
-    Transform rider;
     Matrix4x4 previousPose;
     Vector2[] footprint;
+    Mesh footprintMesh;
+    Vector3 footprintSize;
+
+    public void PrepareGeometry(Story1ShipWreckAsset.Fragment source,Vector3 dimensions)
+    {
+        FractureSource=source;size=dimensions;
+        Collision=GetComponent<Story1WreckMeshCollision>();Collision.Initialize(source.mesh,source.splinters);
+        BuildFootprint(source.mesh);
+        GetComponent<Rigidbody>().isKinematic=true;
+    }
+    public void PrepareShard(Mesh mesh,Vector3 dimensions)
+    {
+        size=dimensions;
+        Collision=GetComponent<Story1WreckMeshCollision>();Collision.Initialize(mesh);
+        BuildFootprint(mesh);GetComponent<Rigidbody>().isKinematic=true;
+    }
 
     public void Initialize(Vector3 from,Quaternion rotation,Vector3 dimensions,OceanWorld ocean,Vector3 velocity,Vector3 spin)
     {
@@ -67,8 +72,11 @@ public sealed class Story1WreckPlank : MonoBehaviour
         IsBroken=true;Drive(0,0,null);Collision.SetEnabled(false);floating.enabled=false;
         floating.Body.isKinematic=true;gameObject.SetActive(false);
     }
+    public void PrepareFootprint(Mesh mesh,Vector3 dimensions){size=dimensions;BuildFootprint(mesh);}
     void BuildFootprint(Mesh mesh)
     {
+        if(footprint!=null && footprintMesh==mesh && footprintSize==size)return;
+        footprintMesh=mesh;footprintSize=size;
         var points=new List<Vector2>();foreach(var vertex in mesh.vertices)points.Add(new Vector2(vertex.x*size.x,vertex.z*size.z));
         points.Sort((a,b)=>a.x!=b.x ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
         var unique=new List<Vector2>();foreach(var point in points)if(unique.Count==0 || (point-unique[unique.Count-1]).sqrMagnitude>.000001f)unique.Add(point);
@@ -119,25 +127,8 @@ public sealed class Story1WreckPlank : MonoBehaviour
     }
     public void Drive(float forward,float turn,Transform occupant,float strokePower=1,float direction=1)
     {
-        throttle=IsSurfboard ? Mathf.Clamp(forward,-1,1) : 0;
-        steer=IsSurfboard ? Mathf.Clamp(turn,-1,1) : 0;rider=IsSurfboard ? occupant : null;
-        paddlePower=Mathf.Clamp01(strokePower);
-        surfDirection=direction<0 ? -1 : 1;
-    }
-    void FixedUpdate()
-    {
-        if(rider==null || floating==null || !floating.InWater)return;
-        var body=floating.Body;
-        Vector3 forward=Vector3.ProjectOnPlane(body.rotation*(size.x>size.z ? Vector3.right : Vector3.forward),Vector3.up).normalized*surfDirection;
-        float wanted=throttle>=0 ? throttle*10 : throttle*4.5f;
-        float current=Vector3.Dot(body.linearVelocity,forward);
-        float drive=Mathf.Clamp((wanted-current)*3,-7,7);
-        // Power is transferred only during the authored leg's water stroke.
-        // Recovery coasts; releasing input uses the normal physical brake.
-        if(Mathf.Abs(throttle)>.05f && Mathf.Sign(drive)==Mathf.Sign(throttle))drive*=paddlePower;
-        body.AddForce(forward*drive,ForceMode.Acceleration);
-        float turn=steer*90*Mathf.Deg2Rad;
-        body.AddTorque(Vector3.up*((turn-body.angularVelocity.y)*4),ForceMode.Acceleration);
+        // Compatibility for historical cutscenes/tools. Input and cinematic
+        // calls cannot propel or steer the real freely floating fragments.
     }
     public Vector3 BoardingPoint(Vector3 from)
     {
@@ -194,7 +185,7 @@ public sealed class Story1WreckPlank : MonoBehaviour
     }
     public bool Supports(Vector3 feet)
     {
-        if(!IsBoardable)return false;
+        if(!IsBoardable || Collision.WorldBounds.SqrDistance(feet)>1.21f)return false;
         Vector3 local=transform.InverseTransformPoint(feet);
         float top=transform.InverseTransformPoint(BoardingPoint(feet)).y;
         return ContainsFootprint(feet) && Mathf.Abs((local.y-top)*size.y)<.65f;
@@ -203,6 +194,10 @@ public sealed class Story1WreckPlank : MonoBehaviour
     {
         float up=previousPose.GetColumn(1).y/size.y;
         if(IsBroken || Deck==null || !Deck.enabled || Mathf.Abs(up)<.65f)return false;
+        // Reject remote platforms before footprint projection and mesh raycasts.
+        Vector3 previousLocal=previousPose.inverse.MultiplyPoint3x4(feet);
+        Vector3 previousWorld=transform.TransformPoint(previousLocal);
+        if(Collision.WorldBounds.SqrDistance(previousWorld)>1.21f)return false;
         Vector3 local=previousPose.inverse.MultiplyPoint3x4(feet);
         float top=transform.InverseTransformPoint(BoardingPoint(transform.TransformPoint(local))).y;
         return ContainsFootprint(transform.TransformPoint(local)) && Mathf.Abs((local.y-top)*size.y)<.55f;

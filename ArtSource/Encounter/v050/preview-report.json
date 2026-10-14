@@ -1,0 +1,30 @@
+{
+  "action": "CH1_SahurGuard_v050",
+  "fps": 60.0,
+  "frames": [
+    1,
+    25,
+    49,
+    73,
+    97
+  ],
+  "previews": [
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\front-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\front-0025.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\front-0049.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\front-0073.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\front-0097.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\side-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\side-0025.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\side-0049.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\side-0073.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\side-0097.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\three-quarter-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\three-quarter-0025.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\three-quarter-0049.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\three-quarter-0073.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\guard-v050\\three-quarter-0097.00.png"
+  ],
+  "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+  "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+}

@@ -79,7 +79,7 @@ namespace Mavis
             if (GetComponent<SahurWeaponLoadout>()?.UsesTwinBlades ?? false) return false;
             if (!enabled || IsBusy || stick == null || mesh == null || mesh.sharedMesh == null ||
                 PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || Time.time < nextThrow || attack == null || !attack.enabled ||
-                attack.IsCombatMotionActive || movement == null || !movement.enabled || movement.Swimming)
+                attack.CinematicHandoffPending || attack.IsCombatMotionActive || movement == null || !movement.enabled || movement.Swimming)
                 return false;
             var health = GetComponent<PlayerHealth>();
             if (health != null && health.currentHealth <= 0f) return false;

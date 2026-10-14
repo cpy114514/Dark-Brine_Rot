@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cb99cc04fa941a44b434991cd9929dd, type: 3}
+  m_Name: ShipSails
+  m_EditorClassIdentifier: Assembly-CSharp::ShipSailSet
+  panels:
+  - node: Object_2
+    mesh: {fileID: 4300000, guid: 31c09c5ae1706834a811ef4e1aa8f017, type: 2}
+    material: {fileID: 2100000, guid: 2ff50155b6c5d6746ab6eaf2d4f52403, type: 2}
+    flag: 0
+  - node: Object_3
+    mesh: {fileID: 4300000, guid: c4d55d4980f49184a8724f983f51bdea, type: 2}
+    material: {fileID: 2100000, guid: dade63976ad885d4e8c2f4f79376a46f, type: 2}
+    flag: 0
+  - node: Object_4
+    mesh: {fileID: 4300000, guid: 1bb53a3787cfeac468df316b2e985361, type: 2}
+    material: {fileID: 2100000, guid: 52d7c1cf9bea57a47a5832ff07cae32c, type: 2}
+    flag: 0
+  - node: Object_7
+    mesh: {fileID: 4300000, guid: 6f7365a7a19e7a2488c2b7b918ada822, type: 2}
+    material: {fileID: 2100000, guid: cd56b7d362d92934a9ea7428ab4b244e, type: 2}
+    flag: 1

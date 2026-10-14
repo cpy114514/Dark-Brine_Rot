@@ -1,0 +1,10 @@
+{
+  "stage": "FIRST PASS",
+  "status": "revision_required",
+  "accepted_for_staging": [],
+  "observed": ["side-0032.20.png", "three-quarter-0032.20.png", "side-0055.00.png"],
+  "defects": [
+    {"severity":"high","frame":32.2,"bone":"Head","finding":"Additional twelve-degree lift produces a sharp folded neck/gill silhouette in the actual retained mesh.","revision":"Retain this source version, reduce additional reach to six degrees and re-review before export."}
+  ],
+  "runtime_activated": false
+}

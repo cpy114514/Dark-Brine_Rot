@@ -15,6 +15,9 @@ namespace Mavis
         public UnityEvent OnDeath = new UnityEvent();
         // Story encounters can hand a lethal hit to the next scene instead of respawning.
         public System.Action NarrativeDefeatHandler { get; set; }
+        // Only an active narrative encounter opts in. Ordinary combat still reaches zero.
+        public float NarrativeHealthFloor { get; set; }
+        public event System.Action<float> Damaged;
         float protectedUntil;
         public bool IsProtected => Time.time < protectedUntil;
         public void GrantProtection(float seconds) => protectedUntil = Time.time + Mathf.Max(0f, seconds);
@@ -27,7 +30,9 @@ namespace Mavis
         public void ApplyDamage(float amount, Vector3 hitPoint)
         {
             if (currentHealth <= 0f || amount <= 0f || IsProtected) return;
-            currentHealth -= amount;
+            float before = currentHealth;
+            currentHealth = Mathf.Max(Mathf.Clamp(NarrativeHealthFloor, 0f, maxHealth), currentHealth - amount);
+            Damaged?.Invoke(before - currentHealth);
             if (currentHealth <= 0f)
             {
                 currentHealth = 0f;

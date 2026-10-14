@@ -1,0 +1,38 @@
+{
+  "action": "CH1_SharkBite_v078",
+  "fps": 60.0,
+  "frames": [
+    1,
+    13,
+    22,
+    32.2,
+    40,
+    55,
+    79
+  ],
+  "previews": [
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\front-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\front-0013.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\front-0022.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\front-0032.20.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\front-0040.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\front-0055.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\front-0079.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\side-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\side-0013.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\side-0022.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\side-0032.20.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\side-0040.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\side-0055.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\side-0079.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\three-quarter-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\three-quarter-0013.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\three-quarter-0022.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\three-quarter-0032.20.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\three-quarter-0040.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\three-quarter-0055.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\shark-source-v078\\three-quarter-0079.00.png"
+  ],
+  "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+  "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+}

@@ -1,0 +1,79 @@
+{
+  "original_rest_retained": true,
+  "bones": [
+    "Body",
+    "Spine_Mid",
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Mid",
+    "Tail_Tip",
+    "Tail_Marker",
+    "Dorsal",
+    "Foot_Rear",
+    "Head",
+    "Jaw",
+    "Nose_Marker",
+    "Fin_Left",
+    "Fin_Right",
+    "Foot_Left",
+    "Foot_Right"
+  ],
+  "actions": [
+    {
+      "action": "CH1_SharkTail_v040",
+      "source": "CH1_SharkTail_v037",
+      "peak_degrees_per_frame": {
+        "Body": 2.9986602991882254,
+        "Spine_Mid": 5.324244729259421,
+        "Spine_Rear": 8.114867498169401,
+        "Tail_Base": 12.719665777149755,
+        "Tail_Mid": 10.87241721045771,
+        "Tail_Tip": 8.600581033069226,
+        "Head": 1.639443796454108
+      },
+      "contact_seconds": 0.65
+    },
+    {
+      "action": "CH1_SharkShipSmash_v040",
+      "source": "CH1_SharkShipSmash_v037",
+      "peak_degrees_per_frame": {
+        "Body": 3.5304976746663224,
+        "Spine_Mid": 6.242970486310075,
+        "Spine_Rear": 9.484372506949379,
+        "Tail_Base": 14.77554844845536,
+        "Tail_Mid": 12.647194908734981,
+        "Tail_Tip": 10.040405400675423,
+        "Head": 1.639443796454108
+      },
+      "contact_seconds": 0.65
+    },
+    {
+      "action": "CH1_SharkBite_v040",
+      "source": "CH1_SharkBite_v023",
+      "peak_degrees_per_frame": {
+        "Body": 1.147380533503699,
+        "Spine_Mid": 1.9837902380595338,
+        "Spine_Rear": 6.207119677130324,
+        "Tail_Base": 11.623803759729874,
+        "Tail_Mid": 14.303801796634566,
+        "Tail_Tip": 13.2707331233492,
+        "Head": 4.132223893609518
+      },
+      "contact_seconds": 0.52
+    },
+    {
+      "action": "CH1_SharkBreach_v040",
+      "source": "CH1_SharkBreach_v003",
+      "peak_degrees_per_frame": {
+        "Body": 0.397620342986365,
+        "Spine_Mid": 0.20935665058234332,
+        "Spine_Rear": 0.2907399153479923,
+        "Tail_Base": 0.3753437076887948,
+        "Tail_Mid": 0.45799459953550264,
+        "Tail_Tip": 0.5410394011982498,
+        "Head": 0.0
+      },
+      "contact_seconds": 1.55
+    }
+  ]
+}

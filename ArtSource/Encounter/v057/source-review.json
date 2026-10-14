@@ -1,0 +1,9 @@
+{
+  "stage": "FIRST PASS",
+  "reviewer": "Codex animation review; not final human approval",
+  "accepted_for_staging": ["CH1_SharkBite_v057"],
+  "evidence": ".codex/opening-optimization-20261012/shark-source-v057/sheet.jpg; source-audit.json",
+  "observed": "Seven source samples at front, side and three-quarter. The trunk stays horizontal while the head leads the bite; caudal chain no longer curls as far around the rear body. Head, jaw, nose marker and trunk channels are exactly retained; .52 second contact unchanged. Four revised tail joints peak at 4.35-7.16 degrees/frame, reduced from 6.21-14.31.",
+  "not_observed": "Unity gameplay water/wood clearance, continuous native playback and full paired contact; no final acceptance.",
+  "next": "Isolated native import and original-rig continuous preview, then versioned integration trial. Preserve historical controller and rig. Ordinary whole-body bite pitch remains a separate runtime issue."
+}

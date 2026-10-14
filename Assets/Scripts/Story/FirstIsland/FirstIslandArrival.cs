@@ -52,6 +52,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         capsule = player.GetComponent<CharacterController>();
         continuing = GameSaveManager.IsContinuePending;
         if (continuing) { HasLanded = IsAwake = true; return; }
+        CinematicLetterbox.Set(this, true);
         var motion=player.GetComponent<SahurMotionContext>() ?? player.gameObject.AddComponent<SahurMotionContext>();
         motion.Claim(this,SahurControlState.Unconscious);
         SetStick(false);
@@ -218,6 +219,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
 
     void ReleaseCinematic()
     {
+        CinematicLetterbox.Set(this, false);
         if (animator != null) animator.speed = previousAnimatorSpeed;
         if (capsule != null) capsule.enabled = previousCapsuleEnabled;
         player.ExternalControlLock = false; player.enabled = previousMovementEnabled;
@@ -298,5 +300,6 @@ public sealed class FirstIslandArrival : MonoBehaviour
         LocalizedGameText.Bind(hint);
     }
 
+    void OnDisable() { CinematicLetterbox.Set(this, false); }
     void OnDestroy() { if (looseStick != null) Destroy(looseStick); if (ui != null) Destroy(ui); }
 }

@@ -1,0 +1,12 @@
+{
+  "rest_preserved": true,
+  "bones": 16,
+  "contact_seconds": 0.52,
+  "head_jaw_trunk_max_difference_degrees": 0.0,
+  "peak_degrees_per_frame": {
+    "Spine_Rear": 4.344995812199639,
+    "Tail_Base": 6.974344581314101,
+    "Tail_Mid": 7.1518680280319025,
+    "Tail_Tip": 6.6351821465670096
+  }
+}

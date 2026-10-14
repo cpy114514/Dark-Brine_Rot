@@ -11,6 +11,7 @@ namespace Mavis
         public float currentHealth = 300f;
         public UnityEvent OnDeath = new UnityEvent();
 
+        bool deathNotified;
         public event Action<float> Damaged;
         public bool IsDead => currentHealth <= 0f;
         public float HealthFraction => maxHealth > 0f ? Mathf.Clamp01(currentHealth / maxHealth) : 0f;
@@ -31,6 +32,7 @@ namespace Mavis
         public void ApplyCombatDamage(float amount, Vector3 hitPoint, CombatHitKind kind)
         {
             if (IsDead || amount <= 0f) return;
+            deathNotified=false;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             Damaged?.Invoke(amount);
             if (!IsDead)
@@ -39,8 +41,9 @@ namespace Mavis
                 if (kind == CombatHitKind.ChargedHeavy || kind == CombatHitKind.JumpSlash)
                     GetComponent<NailongAI>()?.Interrupt(0.6f);
             }
-            if (IsDead)
+            if (IsDead && !deathNotified)
             {
+                deathNotified=true;
                 GetComponent<NailongLoot>()?.Drop();
                 OnDeath.Invoke();
             }

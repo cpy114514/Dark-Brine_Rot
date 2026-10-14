@@ -1,0 +1,29 @@
+{
+  "stage": "SECOND PASS integration trial",
+  "accepted_for_trial": [
+    "PLAYER_BoardPaddle_v054",
+    "PLAYER_BoardPaddleReverse_v054"
+  ],
+  "native_avatar": "PbrSahurAvatar original",
+  "fps": 60,
+  "seconds": 1.2,
+  "sampled_frames": 73,
+  "views": [
+    "front",
+    "side",
+    "three-quarter"
+  ],
+  "rendered_images": 438,
+  "left_ankle_uncorrected_drift_m": [
+    0.01611921835,
+    0.01061190492
+  ],
+  "loop_right_ankle_error_m": [
+    7.9751e-06,
+    3.8469e-06
+  ],
+  "finding": "Actual original Sahur skin retains the support leg and smooth outward downward power-foot arc without a loop snap. Foot scale audit matches native CPU skinning within 2 micrometres. Trial accepted; contact with moving ocean and propulsion not yet accepted.",
+  "preview": ".codex/opening-optimization-20261012/native-continuous-paddle-v054/contact-sheet.jpg",
+  "performance_acceptance": false,
+  "final_acceptance": false
+}

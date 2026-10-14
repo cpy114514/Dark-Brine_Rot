@@ -1,0 +1,7 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": ["CH1_SahurGuard_v041", "CH1_SahurBrace_v041"],
+  "evidence": ["defense-audit.json", ".codex/opening-optimization-20261012/source-poses-v040.json"],
+  "review": "The retained 65-bone rig and bind transforms are unchanged. Both feet replant below 0.00004 cm source error; arm targets reach below 0.00003 cm. Right elbow drops and hand moves ahead of the chest; left hand remains free. Accepted only for isolated Humanoid retarget review at BLOCKING stage.",
+  "limitations": "Source is an animation-only rig. No source skin preview exists. Native actual-character continuous preview, actual weapon trajectory and moving-board contact review are required before activation; no production acceptance is claimed."
+}

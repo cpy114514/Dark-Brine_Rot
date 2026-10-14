@@ -101,9 +101,15 @@ namespace Mavis
         {
             yield return null;
             while(AdditiveSceneBootstrap.IsLoading)yield return null;
-            // Wind profiles update before batching reads their per-renderer properties.
-            yield return null;
-            CacheWorldRenderers(); cacheRoutine = null;
+            // Batching must read completed per-renderer wind profiles.
+            var windDrivers=FindObjectsByType<FoliageWindDriver>(FindObjectsSortMode.None);
+            bool windReady;
+            do
+            {
+                yield return null;windReady=true;
+                foreach(var driver in windDrivers)if(driver!=null && driver.isActiveAndEnabled && !driver.ProfilesReady){windReady=false;break;}
+            }while(!windReady);
+            yield return CacheWorldRenderers(); cacheRoutine = null;
         }
         void LateUpdate()
         {
@@ -213,12 +219,20 @@ namespace Mavis
             }
             else if (!item.staticTransform) batch.matrices[index] = item.renderer.localToWorldMatrix;
         }
-        void CacheWorldRenderers()
+        IEnumerator CacheWorldRenderers()
         {
             RestoreManagedRenderers();
             var grassCells = new Dictionary<Vector2Int, FoliageCell>();
+            var block=new MaterialPropertyBlock();
+            double deadline=Time.realtimeSinceStartupAsDouble+.002;
+            int visited=0;
             foreach (var renderer in FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
+                // Bound initialization work so entering the island does not
+                // process every plant and material in one rendered frame.
+                if(++visited%32==0 && Time.realtimeSinceStartupAsDouble>=deadline)
+                {yield return null;deadline=Time.realtimeSinceStartupAsDouble+.002;}
+                if(renderer==null)continue;
                 var filter = renderer.GetComponent<MeshFilter>();
                 var mesh = filter != null ? filter.sharedMesh : null;
                 if (mesh == null || renderer.GetComponentInParent<ProceduralIsland>() != null ||
@@ -280,7 +294,7 @@ namespace Mavis
                 if (item.batchable)
                 {
                     item.drawMaterial=materials[0];
-                    var block=new MaterialPropertyBlock(); renderer.GetPropertyBlock(block);
+                    block.Clear(); renderer.GetPropertyBlock(block);
                     item.anchor=block.GetFloat("_MavisWindAnchorY");item.inverseHeight=block.GetFloat("_MavisWindInvHeight");
                     item.response=block.GetFloat("_MavisWindResponse");item.stiffness=block.GetFloat("_WindTrunkStiffness");
                 }

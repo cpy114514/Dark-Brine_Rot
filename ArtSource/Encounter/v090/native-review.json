@@ -1,0 +1,27 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_integration_trial": [
+    "CH1_SahurParry_v090"
+  ],
+  "frames": 67,
+  "native_images": 201,
+  "views": [
+    "front",
+    "side",
+    "three-quarter"
+  ],
+  "evidence": ".codex\\opening-optimization-20261012\\native-framed-parry-v090",
+  "max_shaft_degrees_per_source_frame": 1.0874511187843463,
+  "observations": [
+    "Native original Avatar,60FPS/1.1s/130Humanoid curves.",
+    "Inspected native side contact29,front recovery48,three-quarter preparation13: loaded knees, right-hand stick rises to intercept with free left arm balancing.",
+    "Uncorrected native ankle drift from initial stance4.061cm before live support IK; root planar travel remains controller-owned.",
+    "Original rig, Avatar, mesh and locomotion/light controller untouched."
+  ],
+  "limitations": [
+    "FIRST PASS integration trial only; live planted-slide/contact and continuous game review remain required.",
+    "Normal-speed playback not directly observed by agent."
+  ],
+  "runtime_activated": true,
+  "integration_status": "Native full paired v090: six real contacts <=3.121cm, foot1.395mm/slide1.393mm, screen bounds and held ending/pause/unarmed shore PASS in this layout; no true-hop variant in this take. Independent performance and other layout reliability unaccepted."
+}

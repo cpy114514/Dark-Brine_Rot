@@ -20,6 +20,7 @@ namespace Mavis
         [Tooltip("(current, max) — useful for health bars.")]
         public UnityEvent<float, float> OnHealthChanged;
 
+        bool deathNotified;
         public bool IsDead => currentHealth <= 0f;
         public float Ratio => maxHealth > 0f ? Mathf.Clamp01(currentHealth / maxHealth) : 0f;
 
@@ -32,10 +33,12 @@ namespace Mavis
         public virtual void ApplyDamage(float amount, Vector3 hitPoint)
         {
             if (IsDead || amount <= 0f) return;
+            deathNotified=false;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             OnDamaged?.Invoke(amount);
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
-            if (currentHealth <= 0f) OnDeath?.Invoke();
+            if (currentHealth <= 0f && !deathNotified)
+            {deathNotified=true;OnDeath?.Invoke();}
         }
 
         public void Heal(float amount)

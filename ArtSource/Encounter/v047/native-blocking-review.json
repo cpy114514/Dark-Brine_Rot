@@ -1,0 +1,90 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_integration_trial": [
+    "CH1_SahurGuard_v047",
+    "CH1_SahurBrace_v047",
+    "CH1_SahurBoardHop_v047"
+  ],
+  "native_continuous_frames": 864,
+  "views": [
+    "front",
+    "side",
+    "three-quarter"
+  ],
+  "observations": [
+    "Guard keeps the actual single right-hand stick in front at chest/head height; retained free left arm balances.",
+    "Brace compresses knees and recoils the actual torso without a wrist snap.",
+    "Hop includes compression, leg tuck and loaded landing; world trajectory still belongs to the live supported hop."
+  ],
+  "limits": [
+    "Full paired contact, live moving support and native gameplay camera acceptance remain required."
+  ],
+  "native_bone_ranges_m": {
+    "CH1_SahurBoardHop_v047": {
+      "leftFoot": [
+        0.006104200000000004,
+        0.6782836900000002,
+        0.116899404
+      ],
+      "rightFoot": [
+        0.0061051250000000445,
+        0.4625854500000002,
+        0.11689830000000001
+      ],
+      "hips": [
+        0.0061044066899999996,
+        0.4885559100000001,
+        0.11689977399999996
+      ],
+      "rightHand": [
+        0.006097599999999925,
+        0.509582521,
+        0.09416234200000001
+      ]
+    },
+    "CH1_SahurBrace_v047": {
+      "leftFoot": [
+        0.003920169000000029,
+        0.0283813799999999,
+        0.0841051266
+      ],
+      "rightFoot": [
+        0.003917500000000018,
+        0.028350829999999938,
+        0.0841035
+      ],
+      "hips": [
+        0.00391978235,
+        0.17813107000000006,
+        0.08410477700000002
+      ],
+      "rightHand": [
+        0.00392344,
+        0.11984252900000003,
+        0.274333847
+      ]
+    },
+    "CH1_SahurGuard_v047": {
+      "leftFoot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rightFoot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "hips": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rightHand": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "rest_retained": true,
+  "bones": 28,
+  "actions": [
+    {
+      "action": "CH1_SahurGuard_v044",
+      "source": "PbrSahur original 28-bone rig and mesh",
+      "supported_ankle_error_cm": 3.0715038473110456
+    },
+    {
+      "action": "CH1_SahurBrace_v044",
+      "source": "PbrSahur original 28-bone rig and mesh",
+      "supported_ankle_error_cm": 3.0715038473110456
+    },
+    {
+      "action": "CH1_SahurBoardHop_v044",
+      "source": "PbrSahur original 28-bone rig and mesh",
+      "supported_ankle_error_cm": 3.0715038473110456
+    }
+  ]
+}

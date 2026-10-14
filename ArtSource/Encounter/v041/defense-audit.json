@@ -1,0 +1,17 @@
+{
+  "rest_retained": true,
+  "actions": [
+    {
+      "action": "CH1_SahurGuard_v041",
+      "source": "CH1_SahurGuard_v040",
+      "foot_replant_error_cm": 3.191604715477278e-05,
+      "arm_target_error_cm": 1.7481138973067626e-05
+    },
+    {
+      "action": "CH1_SahurBrace_v041",
+      "source": "CH1_SahurBrace_v040",
+      "foot_replant_error_cm": 3.395937693551036e-05,
+      "arm_target_error_cm": 2.232494337219167e-05
+    }
+  ]
+}

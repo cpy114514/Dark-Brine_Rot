@@ -194,6 +194,62 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     bool cinematicAnimation;
     public string CinematicAction { get; private set; }
     public float CinematicActionSeconds { get; private set; }
+    Transform[] cinematicBones;
+    Vector3[] committedPositions,transitionPositions;
+    Quaternion[] committedRotations,transitionRotations;
+    string committedAction;
+    float transitionClock;
+    bool hasCommittedPose;
+    /// <summary>
+    /// Commit only the actual rendered timeline pose, after hypothetical route
+    /// samples. Those samples must remain exact and never start visual blends.
+    /// The solid solver and contact checks consume this final blended anatomy.
+    /// </summary>
+    public void CommitCinematicPose(float clock)
+    {
+        if(rigAnimator==null || !cinematicAnimation)return;
+        if(cinematicBones==null)
+        {
+            cinematicBones=rigAnimator.GetComponentsInChildren<Transform>(true);
+            committedPositions=new Vector3[cinematicBones.Length];transitionPositions=new Vector3[cinematicBones.Length];
+            committedRotations=new Quaternion[cinematicBones.Length];transitionRotations=new Quaternion[cinematicBones.Length];
+        }
+        string action=CinematicAction=="Swim" || CinematicActionSeconds>ActionDuration(CinematicAction)+.12f ? "Swim" : CinematicAction;
+        if(hasCommittedPose && action!=committedAction)
+        {
+            System.Array.Copy(committedPositions,transitionPositions,cinematicBones.Length);
+            System.Array.Copy(committedRotations,transitionRotations,cinematicBones.Length);
+            transitionClock=clock;
+        }
+        float weight=hasCommittedPose ? Mathf.SmoothStep(0,1,Mathf.Clamp01((clock-transitionClock)/.18f)) : 1;
+        for(int i=0;i<cinematicBones.Length;i++)
+        {
+            var bone=cinematicBones[i];
+            if(weight<1)
+            {
+                bone.localPosition=Vector3.Lerp(transitionPositions[i],bone.localPosition,weight);
+                bone.localRotation=Quaternion.Slerp(transitionRotations[i],bone.localRotation,weight);
+            }
+            committedPositions[i]=bone.localPosition;committedRotations[i]=bone.localRotation;
+        }
+        if(!hasCommittedPose)transitionClock=clock-.18f;
+        committedAction=action;hasCommittedPose=true;
+    }
+    /// <summary>
+    /// Refresh after solid solving. A blocked stroke can retain an earlier
+    /// clear bone pose; that is what was actually rendered and must supply
+    /// the next action's blend, rather than its rejected raw target pose.
+    /// Does not sample a clip or start/restart a transition.
+    /// </summary>
+    public void RecordResolvedCinematicPose()
+    {
+        if(!cinematicAnimation || !hasCommittedPose || cinematicBones==null)return;
+        for(int i=0;i<cinematicBones.Length;i++)
+        {
+            committedPositions[i]=cinematicBones[i].localPosition;
+            committedRotations[i]=cinematicBones[i].localRotation;
+        }
+    }
     public void SampleCinematicAction(string state,float seconds)
     {
         if(rigAnimator==null)return;
@@ -213,12 +269,27 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         }
         else{rigAnimator.Play("Swim",0,(seconds-duration)/1.6f);rigAnimator.Update(0);}
     }
-    public void ReleaseCinematicAnimation(){cinematicAnimation=false;if(rigAnimator!=null)rigAnimator.speed=1;}
+    public void ReleaseCinematicAnimation(){cinematicAnimation=false;hasCommittedPose=false;committedAction=null;if(rigAnimator!=null)rigAnimator.speed=1;}
+    RuntimeAnimatorController durationController;
+    readonly System.Collections.Generic.Dictionary<string,float> actionDurations=new System.Collections.Generic.Dictionary<string,float>();
     float ActionDuration(string state)
     {
-        string suffix=state=="Tail_Strike" ? "Tail" : state=="Ship_Smash" ? "ShipSmash" : state=="Bite_Lunge" ? "Bite" : state=="Hit_Recoil" ? "Recoil" : state;
-        foreach(var clip in rigAnimator.runtimeAnimatorController.animationClips)
-            if(clip.name.StartsWith("CH1_Shark"+suffix+"_v",System.StringComparison.Ordinal) || clip.name==state)return clip.length;
+        var controller=rigAnimator.runtimeAnimatorController;
+        if(durationController!=controller)
+        {
+            durationController=controller;actionDurations.Clear();
+            // animationClips marshals a fresh native array. Do this once per
+            // controller, not for every temporary anatomy pose in route search.
+            var clips=controller.animationClips;
+            foreach(string action in new[]{"Tail_Strike","Ship_Smash","Bite_Lunge","Hit_Recoil","Breach","Threat","Swim"})
+            {
+                string suffix=action=="Tail_Strike" ? "Tail" : action=="Ship_Smash" ? "ShipSmash" : action=="Bite_Lunge" ? "Bite" : action=="Hit_Recoil" ? "Recoil" : action;
+                string prefix="CH1_Shark"+suffix+"_v";
+                foreach(var clip in clips)
+                    if(clip.name.StartsWith(prefix,System.StringComparison.Ordinal) || clip.name==action){actionDurations[action]=clip.length;break;}
+            }
+        }
+        if(actionDurations.TryGetValue(state,out float length))return length;
         return state=="Breach" ? 3.2f : state=="Threat" ? 1.8f : state=="Hit_Recoil" ? .8f : state=="Bite_Lunge" ? 1.1f : 1.15f;
     }
 

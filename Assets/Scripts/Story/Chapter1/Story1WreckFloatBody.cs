@@ -17,7 +17,9 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         }
     }
     OceanWorld ocean;
-    Story1WreckPlank surfboard;
+    static Transform samplingFocus;
+    Mesh pressureMesh;
+    Vector3 pressureSize;
     Vector3 dimensions;
     float stiffness,verticalDamping,draft;
     Vector3 broadFaceNormal;
@@ -36,16 +38,25 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
     Vector3 centreSamplePoint;
     float centreSurface,centreSurfaceVelocity;
     bool sampled;
+    Vector3 pendingVelocity, pendingSpin;
+    bool launchPending;
     static readonly Unity.Profiling.ProfilerMarker BuoyancyMarker=new Unity.Profiling.ProfilerMarker("Story.WreckBuoyancy");
     static readonly Dictionary<Mesh,float> meshVolumes=new Dictionary<Mesh,float>();
+    static readonly Dictionary<Mesh,Vector3[]> meshVertices=new Dictionary<Mesh,Vector3[]>();
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-    static void ClearVolumes()=>meshVolumes.Clear();
+    static void ClearVolumes(){meshVolumes.Clear();meshVertices.Clear();samplingFocus=null;}
+    static Vector3[] Vertices(Mesh mesh)
+    {
+        if(!meshVertices.TryGetValue(mesh,out var vertices))meshVertices.Add(mesh,vertices=mesh.vertices);
+        return vertices;
+    }
+    public static void PrepareVolume(Mesh mesh){if(mesh!=null)MaterialVolume(mesh,Vector3.one);}
     static float MaterialVolume(Mesh mesh,Vector3 size)
     {
         if(mesh==null)return size.x*size.y*size.z;
         if(!meshVolumes.TryGetValue(mesh,out float volume))
         {
-            var vertices=mesh.vertices;var triangles=mesh.triangles;double signed=0;
+            var vertices=Vertices(mesh);var triangles=mesh.triangles;double signed=0;
             for(int i=0;i<triangles.Length;i+=3)signed+=Vector3.Dot(vertices[triangles[i]],Vector3.Cross(vertices[triangles[i+1]],vertices[triangles[i+2]]))/6.0;
             volume=(float)System.Math.Abs(signed);
             // Some original ropes/sails are open surfaces. Their collision
@@ -56,10 +67,33 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         }
         return volume*size.x*size.y*size.z;
     }
+    public static void PrewarmMaterialVolume(Mesh mesh)=>MaterialVolume(mesh,Vector3.one);
+    public void PreparePressureGeometry(Mesh source,Vector3 size)
+    {
+        if(pressureMesh==source && pressureSize==size)return;
+        pressureMesh=source;pressureSize=size;
+        float thin=Mathf.Min(size.x,Mathf.Min(size.y,size.z));
+        Vector3 normal=thin==size.x ? Vector3.right : thin==size.y ? Vector3.up : Vector3.forward;
+        Vector3 axisA=thin==size.x ? Vector3.up*(size.y*.35f) : Vector3.right*(size.x*.35f);
+        Vector3 axisB=thin==size.z ? Vector3.up*(size.y*.35f) : Vector3.forward*(size.z*.35f);
+        var points=source!=null ? Vertices(source) : null;
+        for(int i=0;i<4;i++)
+        {
+            Vector3 direction=axisA.normalized*(i%2==0 ? -1 : 1)+axisB.normalized*(i<2 ? 1 : -1);
+            Vector3 extreme=axisA*(i%2==0 ? -1 : 1)+axisB*(i<2 ? 1 : -1);
+            float best=float.NegativeInfinity;
+            if(points!=null)foreach(var point in points)
+            {
+                float score=Vector3.Dot(point,direction);
+                if(score>best){best=score;extreme=Vector3.Scale(point,size)*.88f;}
+            }
+            pressureLocal[i]=Vector3.ProjectOnPlane(extreme,normal);
+        }
+    }
     public void Initialize(OceanWorld water,Vector3 size,bool floats,Vector3 velocity,Vector3 spin)
     {
         ocean=water;dimensions=size;Floats=floats;
-        surfboard=GetComponent<Story1WreckPlank>();
+        if(samplingFocus==null){var actor=Object.FindFirstObjectByType<ThirdPersonPlayerController>();samplingFocus=actor!=null ? actor.transform : null;}
         Body=GetComponent<Rigidbody>();Body.isKinematic=false;Body.useGravity=true;
         // Set the physics pose before enabling interpolation; newly added bodies start at the origin.
         Body.position=transform.position;Body.rotation=transform.rotation;
@@ -70,7 +104,10 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         Body.collisionDetectionMode=CollisionDetectionMode.ContinuousSpeculative;
         Body.solverIterations=10;Body.solverVelocityIterations=4;
         nextSample=Random.value*.08f;sampled=false;
-        Body.linearVelocity=velocity;Body.angularVelocity=spin*Mathf.Deg2Rad;
+        // Warmed fragments are still inactive. Unity discards velocity writes
+        // until the native body is enabled; retain the launch across release.
+        pendingVelocity=velocity;pendingSpin=spin*Mathf.Deg2Rad;launchPending=true;
+        if(gameObject.activeInHierarchy && enabled)ApplyPendingLaunch();
         // Use the thin axis of each real fragment, including rails/masts and curved hulls.
         thickness=Mathf.Min(size.x,Mathf.Min(size.y,size.z));
         broadFaceNormal=thickness==size.x ? Vector3.right : thickness==size.y ? Vector3.up : Vector3.forward;
@@ -80,19 +117,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         // Put the pressure probes near the real timber perimeter, retaining
         // the same four surface samples and the body's actual mass/inertia.
         var source=GetComponent<MeshFilter>()?.sharedMesh;
-        var points=source!=null ? source.vertices : null;
-        for(int i=0;i<4;i++)
-        {
-            Vector3 direction=broadAxisA.normalized*(i%2==0 ? -1 : 1)+broadAxisB.normalized*(i<2 ? 1 : -1);
-            Vector3 extreme=broadAxisA*(i%2==0 ? -1 : 1)+broadAxisB*(i<2 ? 1 : -1);
-            float best=float.NegativeInfinity;
-            if(points!=null)foreach(var point in points)
-            {
-                float score=Vector3.Dot(point,direction);
-                if(score>best){best=score;extreme=Vector3.Scale(point,size)*.88f;}
-            }
-            pressureLocal[i]=Vector3.ProjectOnPlane(extreme,broadFaceNormal);
-        }
+        PreparePressureGeometry(source,size);
         for(int i=0;i<4;i++)pressureWeights[i]=.25f;
         massSettlingSteps=0;weightedCentre=Vector3.positiveInfinity;
         float broadArea=size.x*size.y*size.z/Mathf.Max(.001f,thickness);
@@ -101,6 +126,12 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         stiffness=Physics.gravity.magnitude/Mathf.Max(.25f,thickness*.4f);
         verticalDamping=2*Mathf.Sqrt(stiffness)*1.05f;
         draft=thickness*.25f;
+    }
+    void OnEnable() { if(launchPending && Body!=null)ApplyPendingLaunch(); }
+    void ApplyPendingLaunch()
+    {
+        Body.linearVelocity=pendingVelocity;Body.angularVelocity=pendingSpin;
+        Body.WakeUp();launchPending=false;
     }
     void RebalancePressure(Vector3 centre)
     {
@@ -136,13 +167,21 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         Vector3 nativeMassCentre=Quaternion.Inverse(Body.rotation)*(Body.worldCenterOfMass-Body.position);
         if((nativeMassCentre-weightedCentre).sqrMagnitude>.000001f)RebalancePressure(nativeMassCentre);
         Vector3 position=Body.position;Quaternion rotation=Body.rotation;
+        // Small distant debris needs fewer expensive ocean queries. Rigid-body
+        // contacts and buoyancy forces still run on every physics step.
+        float sampleInterval=samplingFocus!=null && (samplingFocus.position-position).sqrMagnitude>6400 &&
+            Mathf.Max(dimensions.x,dimensions.z)<10 ? .24f : .08f;
+        if(sampled)nextSample=sampleTime+sampleInterval;
         if(!sampled || Time.time>=nextSample)
         {
+            // All five pressure probes use the same ocean/camera/clock.
+            // Prepare waves once, retaining every inverse-displacement sample.
+            var water=OceanSurfaceSampler.Capture(ocean,Camera.main,Time.time);
             var points=samplePoints;for(int i=0;i<4;i++)points[i]=position+rotation*pressureLocal[i];
-            float nw=ocean.SampleSurfaceHeight(points[0],Time.time),ne=ocean.SampleSurfaceHeight(points[1],Time.time);
-            float sw=ocean.SampleSurfaceHeight(points[2],Time.time),se=ocean.SampleSurfaceHeight(points[3],Time.time);
+            float nw=water.Height(points[0]),ne=water.Height(points[1]);
+            float sw=water.Height(points[2]),se=water.Height(points[3]);
             Vector3 massPoint=Body.worldCenterOfMass;
-            float centreHeight=ocean.SampleSurfaceHeight(massPoint,Time.time);
+            float centreHeight=water.Height(massPoint);
             float height=centreHeight*.5f+(nw+ne+sw+se)*.125f;
             Vector3 centre=(points[0]+points[1]+points[2]+points[3])*.25f;float mean=(nw+ne+sw+se)*.25f;
             float xx=0,zz=0,xz=0,xh=0,zh=0;
@@ -174,7 +213,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
                 slopeX=Mathf.Lerp(slopeX,newSlopeX,blend);slopeZ=Mathf.Lerp(slopeZ,newSlopeZ,blend);
             }
             else{surface=height;slopeX=newSlopeX;slopeZ=newSlopeZ;surfaceVelocity=0;}
-            sampledAt=position;sampleTime=Time.time;nextSample=Time.time+.08f;sampled=true;
+            sampledAt=position;sampleTime=Time.time;nextSample=Time.time+sampleInterval;sampled=true;
         }
         int wet=0;
         for(int x=-1;x<=1;x+=2)for(int y=-1;y<=1;y+=2)for(int z=-1;z<=1;z+=2)
@@ -194,14 +233,6 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         float submerged=wet*.125f;
         Vector3 planar=Vector3.ProjectOnPlane(Body.linearVelocity,Vector3.up);
         Vector3 resistance=-planar*1.15f;
-        if(surfboard!=null && surfboard.IsSurfboard)
-        {
-            // Narrow timber coasts along its length between actual leg strokes;
-            // sideways slip retains the broader water resistance. Releasing
-            // input still applies the rider's explicit physical brake.
-            Vector3 along=Vector3.Project(planar,surfboard.SurfForward);
-            resistance=-(planar-along)*1.15f-along*.28f;
-        }
         Body.AddForce(resistance*submerged,ForceMode.Acceleration);
         if(Floats)
         {

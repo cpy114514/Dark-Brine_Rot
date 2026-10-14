@@ -10,8 +10,6 @@ namespace Mavis
         public enum CueKind { Intro, Windup, Swing, Hit, Stagger, Surge, Defeated }
         public Material effectsTemplate;
         CappuccinoAI ai;
-        CappuccinoEnemy enemy;
-        CappuccinoUltimate ultimate;
         Health health;
         AudioSource audioSource;
         AudioClip[] clips;
@@ -22,8 +20,7 @@ namespace Mavis
         void Initialize()
         {
             if (ai != null) return;
-            ai = GetComponent<CappuccinoAI>(); enemy = GetComponent<CappuccinoEnemy>();
-            ultimate = GetComponent<CappuccinoUltimate>(); health = GetComponent<Health>();
+            ai = GetComponent<CappuccinoAI>(); health = GetComponent<Health>();
             if (!Application.isPlaying) return;
             if(GetComponent<BossWeaponTrails>()==null)gameObject.AddComponent<BossWeaponTrails>();
             BuildHUD(); CreateAudio();
@@ -68,19 +65,8 @@ namespace Mavis
             var camera=Camera.main;
             bool victory=health.IsDead && Time.time-victoryAt<3f;
             bool visible=camera && (ai.FightActive || victory);
-            string advice;
-            if(health.IsDead)advice="The island is quiet again.";
-            else if(ultimate && ultimate.CurrentPhase==CappuccinoUltimate.Phase.Immobilized)advice="EXHAUSTED  /  Cannot move or attack. Counterattack now.";
-            else if(ultimate && ultimate.CurrentPhase==CappuccinoUltimate.Phase.Charging)advice="CAFFEINE SURGE  /  Create space before the blades power up";
-            else if(ai.CurrentState==CappuccinoAI.State.Windup)advice=ai.AttackName+"  /  "+
-                (ai.CurrentAttack==CappuccinoAI.AttackKind.Whirlwind?"Step back":ai.CurrentAttack==CappuccinoAI.AttackKind.DashThrust?"Dodge sideways":"Watch the follow-up");
-            else if(ai.CurrentState==CappuccinoAI.State.Attack)advice=ai.AttackName+"  /  CUT "+(ai.SwingIndex+1);
-            else if(ai.CurrentState==CappuccinoAI.State.Staggered)advice="POSTURE BROKEN  /  Strike now";
-            else if(ai.CurrentState==CappuccinoAI.State.Recover)advice="OPENING  /  Counterattack";
-            else advice=ai.FightPhase==2?"Three cuts. Wait for the final swing.":"Two blades. Keep stamina for a dodge.";
             hud.Refresh(visible,camera?(transform.position-camera.transform.position).sqrMagnitude:float.PositiveInfinity,
-                health.Ratio,health.currentHealth,health.maxHealth,health.IsDead?"BOSS DEFEATED":"CAPPUCCINO ASSASSINO",
-                ai.FightPhase==2?"DUAL BLADE  /  PHASE II":"DUAL BLADE  /  PHASE I",advice,Time.deltaTime,ai.PoiseRatio);
+                health.Ratio,health.currentHealth,health.maxHealth,"CAPPUCCINO ASSASSINO",Time.deltaTime);
         }
 
         void CreateAudio()

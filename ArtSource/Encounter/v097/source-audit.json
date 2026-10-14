@@ -1,0 +1,61 @@
+{
+  "original_rig": true,
+  "rest_preserved": true,
+  "bones": 16,
+  "actions": [
+    {
+      "action": "CH1_SharkTail_v097",
+      "contact_seconds": 0.65,
+      "contact_pose_error_degrees": 0.0,
+      "peak_degrees_per_source_frame": {
+        "Body": 2.5485218045804126,
+        "Spine_Mid": 3.9024776742714447,
+        "Spine_Rear": 5.833301289421411,
+        "Tail_Base": 8.557296416751562,
+        "Tail_Mid": 7.038394253369073,
+        "Tail_Tip": 6.020507809948175,
+        "Head": 1.5394793889176228,
+        "Fin_Left": 0.7391305218585166,
+        "Fin_Right": 0.7241537846385298
+      },
+      "maximum_revision_difference_degrees": {
+        "Body": 0.0,
+        "Spine_Mid": 0.8632014951011799,
+        "Spine_Rear": 1.6823284198185025,
+        "Tail_Base": 3.806001252245015,
+        "Tail_Mid": 4.07095666986768,
+        "Tail_Tip": 4.652493489954551,
+        "Head": 0.7903054474105726,
+        "Fin_Left": 0.9151361724766942,
+        "Fin_Right": 1.4914468306314486
+      }
+    },
+    {
+      "action": "CH1_SharkShipSmash_v097",
+      "contact_seconds": 0.65,
+      "contact_pose_error_degrees": 0.0,
+      "peak_degrees_per_source_frame": {
+        "Body": 3.000747989196722,
+        "Spine_Mid": 4.573748239013475,
+        "Spine_Rear": 6.818311471046099,
+        "Tail_Base": 9.941809912458998,
+        "Tail_Mid": 8.187042107128926,
+        "Tail_Tip": 7.028706910691879,
+        "Head": 1.5394793889176228,
+        "Fin_Left": 0.7391305218585166,
+        "Fin_Right": 0.7241537846385298
+      },
+      "maximum_revision_difference_degrees": {
+        "Body": 0.0,
+        "Spine_Mid": 1.0118076817812929,
+        "Spine_Rear": 1.965954906589338,
+        "Tail_Base": 4.3430133497930425,
+        "Tail_Mid": 4.673815632996039,
+        "Tail_Tip": 5.361905111682402,
+        "Head": 0.7903054474105726,
+        "Fin_Left": 0.9151361724766942,
+        "Fin_Right": 1.4914468306314486
+      }
+    }
+  ]
+}

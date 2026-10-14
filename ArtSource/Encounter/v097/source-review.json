@@ -1,0 +1,11 @@
+{
+  "stage": "FIRST PASS STAGING REVIEW",
+  "reviewer": "Codex animation review",
+  "accepted_for_staging": ["CH1_SharkTail_v097", "CH1_SharkShipSmash_v097"],
+  "observed": "Source front, side and three-quarter key poses at anticipation, contact and recovery. Original silhouette retained; rear spine/caudal lag and recovery overlap visibly revised. Source 60 FPS audit confirms original .65 second contact pose unchanged and maximum local angular step below 10 degrees per frame.",
+  "not_observed": "Continuous normal-speed native Unity playback with new clips; final gameplay contact and ship-break acceptance.",
+  "original_rig_and_rest_preserved": true,
+  "final_approval": false,
+  "design": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v039.md",
+  "previews": ".codex/opening-optimization-20261012/shark-source-v097"
+}

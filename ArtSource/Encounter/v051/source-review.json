@@ -1,0 +1,7 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_staging": ["CH1_SahurSlash_v051"],
+  "evidence": ["source-audit.json", ".codex/opening-optimization-20261012/native-continuous-v040/native-samples.json", ".codex/opening-optimization-20261012/native-continuous-v040/CH1_SahurSlash_v040-side-036.png"],
+  "review": "The retained 65-bone animation source contains no skin. Its attempted Blender mesh preview correctly refused to create an empty image. Inspected the real original-avatar Unity baseline at 0.600 seconds: the one-hand descending stick is about 1 metre higher than the prior 0.630-second sample, with hips/chest loading and an independent free arm retained. A smooth 30 millisecond Gaussian source-time offset places that same source pose at the unchanged 0.630-second contact. Positive time derivative prevents a stop or reversal; startup and recovery converge to the original source.",
+  "limitations": "Technical source acceptance for isolated native staging only. The actual exported retargeted clip and continuous trajectory still require native review; no final paired-contact or artistic approval is claimed."
+}

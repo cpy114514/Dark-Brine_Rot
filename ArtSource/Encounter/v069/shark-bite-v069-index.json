@@ -1,0 +1,23 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v069\\shark-bite-v069.blend",
+    "rig": "Tralalero_Rig",
+    "action": "CH1_SharkBite_v069",
+    "unity_clip": "CH1_SharkBite_v069",
+    "revision": "v069",
+    "frame_start": 1,
+    "frame_end": 79,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "Body",
+    "rig_type": "Generic",
+    "stage": "FIRST PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/design-v039.md",
+    "approval_reference": "2026-10-12 user \u628a\u52a8\u753b\u7ee7\u7eed\u505a\u5b8c",
+    "review_status": "pending",
+    "avatar": "",
+    "contact_seconds": 0.52
+  }
+]

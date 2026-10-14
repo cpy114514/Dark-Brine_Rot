@@ -6,6 +6,7 @@ namespace Mavis
     public sealed class WeaknessGlasses : MonoBehaviour
     {
         public const string ItemPath="Equipment/Nailong/WeaknessGlasses";
+        public const string DisplayName="Weakness Glasses";
         public const float Duration=30f, Cooldown=900f;
         public bool Equipped {get;private set;}
         float activeUntil,readyAt; EquipmentInventory inventory; EquipmentItem item; GameObject worn; GUIStyle hudStyle;
@@ -15,23 +16,28 @@ namespace Mavis
         static readonly System.Collections.Generic.HashSet<WeaknessGlasses> wearers=new System.Collections.Generic.HashSet<WeaknessGlasses>();
         public static bool AnyActive {get{foreach(var wearer in wearers)if(wearer && wearer.isActiveAndEnabled && wearer.IsActive)return true;return false;}}
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] static void ResetState()=>wearers.Clear();
-        void OnEnable()=>wearers.Add(this);
+        void OnEnable(){wearers.Add(this);if(Equipped)FitWornModel();}
         public bool Owned {get{Initialize();return item && inventory && inventory.Count(item)>0;}}
         void Initialize(){if(!inventory)inventory=GetComponent<EquipmentInventory>();if(!item)item=Resources.Load<EquipmentItem>(ItemPath);}
         public bool Equip()
         {
-            if(!Owned)return false;Equipped=true;if(worn)worn.SetActive(true);
-            var animator=GetComponent<SahurAttack>()?.animator;
-            if(!worn && item.worldModel && animator && animator.isHuman)
-            {
-                var head=animator.GetBoneTransform(HumanBodyBones.Head);
-                if(head)
-                {
-                    worn=Instantiate(item.worldModel,head.position+transform.forward*.32f,transform.rotation);
-                    worn.name="Equipped weakness glasses";worn.transform.SetParent(head,true);
-                }
-            }
+            if(!Owned)return false;Equipped=true;FitWornModel();
             return true;
+        }
+        void FitWornModel()
+        {
+            Initialize();
+            var animator=GetComponent<SahurAttack>()?.animator;
+            if(!item || !item.worldModel || !animator || !animator.isHuman)return;
+            var head=animator.GetBoneTransform(HumanBodyBones.Head);if(!head)return;
+            if(!worn){var existing=head.Find("Equipped weakness glasses");if(existing)worn=existing.gameObject;}
+            if(!worn){worn=Instantiate(item.worldModel,head,false);worn.name="Equipped weakness glasses";}
+            else worn.transform.SetParent(head,false);
+            // Sahur's retained head rig faces local +X. Mount at eye height
+            // in that bind space, so scale and animated head turns stay aligned.
+            worn.transform.SetLocalPositionAndRotation(new Vector3(.21f,.155f,0),Quaternion.Euler(0,90,0));
+            worn.transform.localScale=new Vector3(.34f,.37f,.65f);
+            worn.SetActive(Equipped);
         }
         public void Unequip(){Equipped=false;if(worn)worn.SetActive(false);}
         public void Restore(bool owned,bool equipped,float active,float cooldown)
@@ -46,15 +52,16 @@ namespace Mavis
         }
         void Update()
         {
+            if(Equipped && !worn)FitWornModel();
             if(Keyboard.current!=null && Keyboard.current.gKey.wasPressedThisFrame && Cursor.lockState==CursorLockMode.Locked)Activate();
         }
         void OnDisable()=>wearers.Remove(this);
         void OnGUI()
         {
             if(!Equipped || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)return;
-            string status=IsActive?"弱点显示 "+Mathf.CeilToInt(ActiveRemaining)+" 秒":CooldownRemaining>0?"弱点眼镜 冷却 "+System.TimeSpan.FromSeconds(CooldownRemaining).ToString(@"mm\:ss"):"弱点眼镜 [G] 开启 30 秒";
+            string status=IsActive?"WEAK POINTS  "+Mathf.CeilToInt(ActiveRemaining)+"s":CooldownRemaining>0?"WEAKNESS GLASSES  "+System.TimeSpan.FromSeconds(CooldownRemaining).ToString(@"mm\:ss"):"WEAKNESS GLASSES  [G] Reveal for 30s";
             if(hudStyle==null)hudStyle=new GUIStyle(GUI.skin.box){font=GameLocalization.Font?GameLocalization.Font:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"),fontSize=16};
-            GUI.Box(new Rect(Screen.width*.5f-145,Screen.height-110,290,30),status,hudStyle);
+            GUI.Box(new Rect(Screen.width*.5f-180,Screen.height-110,360,30),status,hudStyle);
         }
     }
 }

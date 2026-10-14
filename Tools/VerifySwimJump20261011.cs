@@ -95,6 +95,17 @@ public static class VerifySwimJump20261011
             }
             Require(stoppedByCeiling,"Ceiling collision retained upward momentum: "+Newtonsoft.Json.JsonConvert.SerializeObject(ceilingTrace));UnityEngine.Object.DestroyImmediate(ceiling);
             var animator=player.CharacterAnimator;
+            Reset();animator.Play("Locomotion",0,0);animator.Update(0);
+            Vector3 leftSole=default,rightSole=default;SahurSupportPose.MeasureSoles(animator,ref leftSole,ref rightSole);
+            var leftFoot=animator.GetBoneTransform(HumanBodyBones.LeftFoot);var rightFoot=animator.GetBoneTransform(HumanBodyBones.RightFoot);
+            float restingSole=Mathf.Min(leftFoot.TransformPoint(leftSole).y,rightFoot.TransformPoint(rightSole).y);
+            var landingSupport=new System.Collections.Generic.List<object>();
+            for(int frame=0;frame<=25;frame++)
+            {
+                animator.Play("Land",0,frame/25f);animator.Update(0);
+                float gap=Mathf.Min(leftFoot.TransformPoint(leftSole).y,rightFoot.TransformPoint(rightSole).y)-restingSole;
+                landingSupport.Add(new{frame,gap});
+            }
             var hips=animator.GetBoneTransform(HumanBodyBones.Hips);var head=animator.GetBoneTransform(HumanBodyBones.Head);
             var left=animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);var right=animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
             var facing=new System.Collections.Generic.List<object>();
@@ -123,7 +134,7 @@ public static class VerifySwimJump20261011
                 Require(player.FastSwimming==fast,"Fast swimming did not select requested stroke");
                 swimming.Add(new{fast,direction=direction.ToString(),distance=travelled.magnitude,movementDot,faceDot});
             }
-            var result=new{jumpSamples=samples,coyoteVelocity,bufferedJump=buffered,inheritedSpeed,ceilingStopsAscent=stoppedByCeiling,swimFacing=facing,swimming};
+            var result=new{jumpSamples=samples,coyoteVelocity,bufferedJump=buffered,inheritedSpeed,ceilingStopsAscent=stoppedByCeiling,landingSupport,swimFacing=facing,swimming};
             Directory.CreateDirectory(".codex/swim-jump-fix-20261011");File.WriteAllText(".codex/swim-jump-fix-20261011/runtime-verification.json",Newtonsoft.Json.JsonConvert.SerializeObject(result,Newtonsoft.Json.Formatting.Indented));
             return result;
         }

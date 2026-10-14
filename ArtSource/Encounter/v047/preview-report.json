@@ -1,0 +1,96 @@
+[
+  {
+    "action": "CH1_SahurGuard_v047",
+    "fps": 60.0,
+    "frames": [
+      1,
+      18,
+      35,
+      48,
+      97
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\front-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\front-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\front-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\front-0097.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\side-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\side-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\side-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\side-0097.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\three-quarter-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\three-quarter-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\three-quarter-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurGuard_v047\\three-quarter-0097.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "CH1_SahurBrace_v047",
+    "fps": 60.0,
+    "frames": [
+      1,
+      18,
+      35,
+      48,
+      79
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\front-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\front-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\front-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\front-0079.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\side-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\side-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\side-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\side-0079.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\three-quarter-0018.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\three-quarter-0035.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\three-quarter-0048.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBrace_v047\\three-quarter-0079.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  },
+  {
+    "action": "CH1_SahurBoardHop_v047",
+    "fps": 60.0,
+    "frames": [
+      1,
+      16,
+      31,
+      52,
+      76,
+      112
+    ],
+    "previews": [
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\front-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\front-0016.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\front-0031.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\front-0052.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\front-0076.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\front-0112.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\side-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\side-0016.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\side-0031.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\side-0052.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\side-0076.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\side-0112.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\three-quarter-0001.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\three-quarter-0016.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\three-quarter-0031.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\three-quarter-0052.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\three-quarter-0076.00.png",
+      "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\opening-optimization-20261012\\actual-rig-v047\\CH1_SahurBoardHop_v047\\three-quarter-0112.00.png"
+    ],
+    "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+    "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+  }
+]

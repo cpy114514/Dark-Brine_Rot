@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bd0a35de9194d94a962599ee1f5e098, type: 3}
+  m_Name: PreviousAnimationSet
+  m_EditorClassIdentifier: Assembly-CSharp::TralaleroAnimationSet
+  rigPrefab: {fileID: 3215423325675427737, guid: d2bc9d58590993148bbcad2ad8f32bf5, type: 3}
+  tailStrikeContact: {x: 0.03423493, y: 0.13070089, z: -0.02267662}
+  shipSmashContact: {x: 0.028402178, y: 0.12664427, z: -0.011589474}
+  cruiseSeconds: 1.6

@@ -17,9 +17,32 @@ namespace Mavis
         {
             Item = item;
             anchor = transform.position;
-            visual = Instantiate(item.worldModel, transform);
-            visual.transform.localPosition = Vector3.zero;
-            visual.transform.localRotation = Quaternion.identity;
+            // Imported gear pivots need not be at the mesh centre. Capri's blade
+            // meshes extend below their root, which previously buried most of
+            // the dropped swords. Fit only this display instance above its anchor;
+            // a separate pivot keeps the centred pair stable while it spins.
+            visual = new GameObject("Loot visual");
+            visual.transform.SetParent(transform, false);
+            var model = Instantiate(item.worldModel, visual.transform, false);
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localRotation = Quaternion.identity;
+            bool hasBounds = false;
+            Bounds displayBounds = default;
+            foreach (var renderer in model.GetComponentsInChildren<Renderer>(true))
+            {
+                Bounds bounds = renderer.bounds;
+                for (int x = -1; x <= 1; x += 2)
+                for (int y = -1; y <= 1; y += 2)
+                for (int z = -1; z <= 1; z += 2)
+                {
+                    Vector3 corner = visual.transform.InverseTransformPoint(bounds.center +
+                        Vector3.Scale(bounds.extents, new Vector3(x, y, z)));
+                    if (!hasBounds) { displayBounds = new Bounds(corner, Vector3.zero); hasBounds = true; }
+                    else displayBounds.Encapsulate(corner);
+                }
+            }
+            if (hasBounds)
+                model.transform.localPosition -= new Vector3(displayBounds.center.x, displayBounds.min.y, displayBounds.center.z);
             foreach (var collider in visual.GetComponentsInChildren<Collider>()) collider.enabled = false;
             foreach (var behaviour in visual.GetComponentsInChildren<MonoBehaviour>()) behaviour.enabled = false;
             // A simple gold marker remains legible on grass and sand without extra lights.

@@ -29,6 +29,7 @@ public sealed class Story1OceanAwakening : MonoBehaviour
             return;
         }
         HasBegun = true;
+        CinematicLetterbox.Set(this, true);
         StartCoroutine(Recover(blackout, impactPosition, heading));
     }
 
@@ -55,6 +56,7 @@ public sealed class Story1OceanAwakening : MonoBehaviour
                 yield break;
             }
             Debug.LogError("First Island/Main is missing from Build Settings.", this);
+            CinematicLetterbox.Set(this, false);
             yield break;
         }
 
@@ -94,7 +96,10 @@ public sealed class Story1OceanAwakening : MonoBehaviour
         if (capsule != null) capsule.enabled = true;
         player.enabled = true;
         HasRecovered = true;
+        CinematicLetterbox.Set(this, false);
     }
+
+    void OnDisable() { CinematicLetterbox.Set(this, false); }
 
     Vector3 DeckPosition(float footOffset)
     {

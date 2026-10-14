@@ -2,6 +2,7 @@
 // Per-frame pushes global wind state to Mavis/FoliageWind shader.
 // Designed to be added once to the scene; reads WindZone (if any) for direction/strength.
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -37,6 +38,8 @@ namespace Mavis
         readonly List<FoliageRenderer> foliage = new List<FoliageRenderer>();
         MaterialPropertyBlock propertyBlock;
         bool profilesDirty;
+        Coroutine profileRoutine;
+        public bool ProfilesReady => !profilesDirty && profileRoutine==null;
 
         void OnEnable()
         {
@@ -53,6 +56,8 @@ namespace Mavis
         void OnDisable()
         {
             SceneManager.sceneLoaded -= SceneLoaded;
+            if(profileRoutine!=null)StopCoroutine(profileRoutine);
+            profileRoutine=null;
             Shader.SetGlobalVector("_MavisWindParams", Vector4.zero);
         }
 
@@ -62,14 +67,14 @@ namespace Mavis
             {
                 if (propertyBlock == null)
                     propertyBlock = new MaterialPropertyBlock();
-                CacheRendererProfiles();
+                if(Application.isPlaying)profilesDirty=true;else CacheRendererProfiles();
             }
         }
 
         void Update()
         {
-            if(profilesDirty && !AdditiveSceneBootstrap.IsLoading)
-            {CacheRendererProfiles();profilesDirty=false;}
+            if(profilesDirty && profileRoutine==null && !AdditiveSceneBootstrap.IsLoading)
+            {profilesDirty=false;profileRoutine=StartCoroutine(RefreshProfiles());}
             Vector3 dir = baseDirection;
             float strength = 1f;
             float main = 1.0f;
@@ -95,12 +100,28 @@ namespace Mavis
 
         void CacheRendererProfiles()
         {
+            var work=CacheRendererProfilesWork();
+            while(work.MoveNext()){}
+        }
+        IEnumerator RefreshProfiles()
+        {
+            yield return null;
+            yield return CacheRendererProfilesWork();
+            profileRoutine=null;
+        }
+        IEnumerator CacheRendererProfilesWork()
+        {
             foliage.Clear();
             var lodBounds = new Dictionary<LODGroup, Bounds>();
+            double deadline=Time.realtimeSinceStartupAsDouble+.002;
+            int visited=0;
             // Include inactive LOD renderers so they already have their wind profile
             // when a LODGroup activates them later.
             foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
+                if(Application.isPlaying && ++visited%32==0 && Time.realtimeSinceStartupAsDouble>=deadline)
+                {yield return null;deadline=Time.realtimeSinceStartupAsDouble+.002;}
+                if(renderer==null)continue;
                 if (!UsesFoliageShader(renderer))
                     continue;
 

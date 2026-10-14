@@ -1,0 +1,22 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": [
+    "CH1_SharkTail_v045",
+    "CH1_SharkShipSmash_v045",
+    "CH1_SharkBite_v045",
+    "CH1_SharkBreach_v045"
+  ],
+  "reviewed_views": [
+    "front",
+    "side",
+    "three-quarter"
+  ],
+  "observations": [
+    "Rear spine counterbend travels to tail tip; fins lag and settle.",
+    "Bite jaw opens before forward extension and closes at retained contact.",
+    "Breach pitches and curls through ascent/apex/descent; original sixteen bind bones retained."
+  ],
+  "limits": [
+    "Source preview accepted for isolated native import only. Live waterline, tail contact and solid timber clearance are not yet accepted."
+  ]
+}

@@ -33,10 +33,16 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     [Min(0f)] public float huntingDiveDepth = 4f;
     [Range(0f, 15f)] public float turnBankDegrees = 7f;
 
+    [Header("Voyage patrol")]
+    [Min(10f)] public float minimumPatrolSeconds = 30f;
+    [Min(1f)] public float patrolSwimSpeed = 22f;
+    [Min(5f)] public float patrolHullClearance = 12f;
+
     Transform shipTransform;
     TralaleroSwimAnimator swimAnimator;
     OceanWorld ocean;
     Collider[] shipColliders;
+    Renderer[] voyageOccluders;
     Vector3 heading, side, swimPosition, swimDirection, swimVelocity;
     Vector3 previousContactDestination, contactDestinationVelocity, impactSharkCenter, bowContactPoint;
     Quaternion swimRotation;
@@ -47,6 +53,17 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     public Vector3 HullImpactPoint => bowContactPoint;
     public float VoyageTime => voyageTime;
     public float CurrentSwimSpeed { get; private set; }
+    public bool IsPatrolling => !impacted && (voyageTime < patrolEndsAt || voyageBreaching);
+    public bool IsVoyageBreaching => voyageBreaching;
+    public int VoyageBreachCount { get; private set; }
+    public float PatrolDuration => patrolEndsAt;
+    public float PatrolRadius => patrolRadius;
+    System.Random voyageRandom;
+    float patrolRadius, patrolAngle, patrolDirection, patrolEndsAt, nextVoyageBreach, voyageSwimClock;
+    Vector3 patrolBody, previousShipPosition;
+    bool voyageBreaching, breachLaunched, voyageOwnsAnimation;
+    float voyageBreachAt, flightDuration, launchY, launchSpeed, recoveryAt, recoveryVelocity, breachVisibilityAt;
+    float ApproachDeadline => Mathf.Max(battleAfterSeconds,patrolEndsAt+pursuitBoostSeconds);
 
     void Start()
     {
@@ -56,6 +73,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
             enabled = false; return;
         }
         shipTransform = ship.transform;
+        SahurSupportPose.Prepare(sahur.CharacterAnimator);
         if (sahur.GetComponent<Mavis.GameSaveExcluded>() == null) sahur.gameObject.AddComponent<Mavis.GameSaveExcluded>();
         swimAnimator = swimmer.GetComponent<TralaleroSwimAnimator>();
         if (swimAnimator == null) swimAnimator = swimmer.gameObject.AddComponent<TralaleroSwimAnimator>();
@@ -64,6 +82,10 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         ocean = FindFirstObjectByType<OceanWorld>();
         oceanHeight = ocean != null ? ocean.oceanHeight : 0;
         shipColliders = shipTransform.GetComponentsInChildren<Collider>();
+        var sailSet=Resources.Load<ShipSailSet>("Sailing/v039/ShipSails");
+        voyageOccluders=System.Array.FindAll(shipTransform.GetComponentsInChildren<Renderer>(),r=>
+            (r is MeshRenderer || r is SkinnedMeshRenderer) &&
+            (sailSet==null || sailSet.panels==null || System.Array.Exists(sailSet.panels,p=>p.node==r.name)));
         swimPosition = swimmer.position; swimRotation = swimmer.rotation;
         float water=ocean!=null ? ocean.SampleSurfaceHeight(swimPosition,Time.time) : oceanHeight;
         swimPosition.y=swimAnimator.SurfaceRootY(water,swimRotation);
@@ -72,6 +94,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         float noseReach = Vector3.ProjectOnPlane(swimAnimator.NoseWorldPoint - swimmer.position, Vector3.up).magnitude;
         if (noseReach > 1) sharkNoseDistance = noseReach;
         baseTailBeatFrequency = swimAnimator.tailBeatFrequency;
+        InitializeVoyagePatrol();
         wreckBattle = GetComponent<Story1WreckBattle>();
         if (wreckBattle == null) wreckBattle = gameObject.AddComponent<Story1WreckBattle>();
     }
@@ -81,9 +104,19 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     {
         if (impacted || PauseSettingsMenu.IsOpen || deltaTime <= 0) return;
         voyageTime += deltaTime;
-        UpdateSwimmer(voyageTime, deltaTime);
+        if(IsPatrolling)UpdateVoyagePatrol(deltaTime);
+        else
+        {
+            if(voyageOwnsAnimation)
+            {
+                swimDirection=Vector3.ProjectOnPlane(swimmer.forward,Vector3.up).normalized;
+                swimPosition=swimmer.position;hasPreviousContactDestination=false;
+                swimAnimator.ReleaseCinematicAnimation();voyageOwnsAnimation=false;
+            }
+            UpdateSwimmer(voyageTime, deltaTime);
+        }
         float gap = Vector3.ProjectOnPlane(swimAnimator.NoseWorldPoint - bowContactPoint, Vector3.up).magnitude;
-        if (voyageTime >= impactAfterSeconds && gap <= tailSetupDistance + contactTolerance &&
+        if (!IsPatrolling && voyageTime >= Mathf.Max(impactAfterSeconds,ApproachDeadline) && gap <= tailSetupDistance + contactTolerance &&
             Vector3.Angle(Vector3.ProjectOnPlane(swimmer.forward, Vector3.up), -heading) < 15)
             BeginImpact();
     }
@@ -93,6 +126,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     {
         if (impacted || !Application.isPlaying || wreckBattle == null) return;
         impacted = true;
+        voyageBreaching=false;voyageOwnsAnimation=false;swimAnimator.ReleaseCinematicAnimation();
         float water=ocean!=null ? ocean.SampleSurfaceHeight(shipTransform.position,Time.time) : oceanHeight;
         // Attack the camera-facing hull flank so the coiling tail and contact are visible.
         Vector3 rayStart=shipTransform.position+heading*25+side*100;
@@ -113,7 +147,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         if (deltaTime <= 0f) return;
         heading = Vector3.ProjectOnPlane(shipTransform.right, Vector3.up).normalized;
         side = Vector3.Cross(Vector3.up, heading).normalized;
-        float approachDeadline = Mathf.Max(1f, battleAfterSeconds);
+        float approachDeadline = Mathf.Max(1f, ApproachDeadline);
         float progress = Mathf.Clamp01(time / approachDeadline);
         bowContactPoint = FindBowContactPoint();
         float finalApproach = Mathf.SmoothStep(0f, 1f,
@@ -181,6 +215,186 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
             maximumSwimSpeed * deltaTime);
         swimmer.position = swimPosition + Vector3.up * (Mathf.Sin(time * 3.4f) * swimBobHeight);
 
+    }
+
+    void InitializeVoyagePatrol()
+    {
+        voyageRandom=new System.Random();
+        float hullRadius=Mathf.Sqrt(ship.hullLength*ship.hullLength+ship.hullBeam*ship.hullBeam)*.5f;
+        float hullHeight=0;
+        foreach(var collider in shipColliders)
+        {
+            if(collider==null || !collider.enabled || collider.isTrigger)continue;
+            Bounds bounds=collider.bounds;
+            for(int i=0;i<8;i++)
+            {
+                Vector3 corner=bounds.center+Vector3.Scale(bounds.extents,new Vector3((i&1)==0?-1:1,(i&2)==0?-1:1,(i&4)==0?-1:1));
+                Vector3 delta=corner-shipTransform.position;
+                hullRadius=Mathf.Max(hullRadius,Vector3.ProjectOnPlane(delta,Vector3.up).magnitude);
+                hullHeight=Mathf.Max(hullHeight,Mathf.Abs(delta.y));
+            }
+        }
+        Vector3 half=Vector3.Scale(swimAnimator.RootMeshBounds.extents,swimmer.lossyScale);
+        float animalRadius=new Vector2(half.x,half.z).magnitude;
+        float sway=hullHeight*Mathf.Sin(Mathf.Min(20,ship.maxPitchDegrees+ship.maxRollDegrees)*Mathf.Deg2Rad);
+        patrolRadius=hullRadius+animalRadius+Mathf.Max(5,patrolHullClearance)+sway;
+        patrolEndsAt=Mathf.Max(minimumPatrolSeconds,2*Mathf.PI*patrolRadius/Mathf.Max(1,patrolSwimSpeed));
+        // Initial staging happens before the first voyage frame. Keep the
+        // animal on the camera-facing quarter, outside the entire real hull.
+        patrolDirection=Vector3.Dot(storyCamera.transform.position-shipTransform.position,side)>=0 ? 1 : -1;
+        Vector3 viewOffset=storyCamera.transform.position-shipTransform.position;
+        float viewAngle=Mathf.Atan2(Vector3.Dot(viewOffset,side),Vector3.Dot(viewOffset,heading));
+        patrolAngle=viewAngle+patrolDirection*1.8f;
+        Vector3 radial=heading*Mathf.Cos(patrolAngle)+side*Mathf.Sin(patrolAngle);
+        Vector3 tangent=(-heading*Mathf.Sin(patrolAngle)+side*Mathf.Cos(patrolAngle))*patrolDirection;
+        swimRotation=Quaternion.LookRotation(tangent,Vector3.up);
+        patrolBody=shipTransform.position+radial*patrolRadius;
+        float water=WaterAt(patrolBody);
+        patrolBody.y=SurfaceBodyY(water,swimRotation);
+        PlaceVoyageBody(patrolBody,swimRotation);
+        swimVelocity=heading*ship.CurrentSpeed+tangent*patrolSwimSpeed;
+        previousShipPosition=shipTransform.position;
+        nextVoyageBreach=2+(float)voyageRandom.NextDouble()*1.5f;
+    }
+    float WaterAt(Vector3 point)=>ocean!=null ? ocean.SampleSurfaceHeight(point,Time.time) : oceanHeight;
+    float SurfaceBodyY(float water,Quaternion rotation)=>swimAnimator.SurfaceRootY(water,rotation)+
+        (rotation*Vector3.Scale(swimAnimator.RootMeshBounds.center,swimmer.lossyScale)).y;
+    void PlaceVoyageBody(Vector3 body,Quaternion rotation)
+    {
+        swimRotation=rotation;swimmer.SetPositionAndRotation(body-rotation*Vector3.Scale(swimAnimator.RootMeshBounds.center,swimmer.lossyScale),rotation);
+        swimPosition=swimmer.position;
+    }
+    void UpdateVoyagePatrol(float deltaTime)
+    {
+        voyageOwnsAnimation=true;
+        heading=Vector3.ProjectOnPlane(shipTransform.right,Vector3.up).normalized;
+        side=Vector3.Cross(Vector3.up,heading).normalized;
+        Vector3 shipStep=Vector3.ProjectOnPlane(shipTransform.position-previousShipPosition,Vector3.up);
+        Vector3 shipVelocity=Vector3.ClampMagnitude(shipStep/deltaTime,escapePursuitSpeed);
+        patrolAngle+=patrolDirection*patrolSwimSpeed/Mathf.Max(1,patrolRadius)*deltaTime;
+        Vector3 radial=heading*Mathf.Cos(patrolAngle)+side*Mathf.Sin(patrolAngle);
+        Vector3 tangent=(-heading*Mathf.Sin(patrolAngle)+side*Mathf.Cos(patrolAngle))*patrolDirection;
+        Vector3 target=shipTransform.position+radial*patrolRadius;
+        Vector3 correction=Vector3.ClampMagnitude(Vector3.ProjectOnPlane(target-patrolBody,Vector3.up)*1.5f,8);
+        Vector3 desired=shipVelocity+tangent*patrolSwimSpeed+correction;
+        float limit=Mathf.Max(maximumSwimSpeed,patrolSwimSpeed+shipVelocity.magnitude);
+        swimVelocity=Vector3.MoveTowards(swimVelocity,Vector3.ClampMagnitude(desired,limit),swimAcceleration*2*deltaTime);
+        Vector3 step=Vector3.ProjectOnPlane(swimVelocity,Vector3.up)*deltaTime;
+        Vector3 candidate=patrolBody+step;
+        float guardRadius=patrolRadius-Mathf.Max(5,patrolHullClearance)*.5f;
+        if(Vector3.ProjectOnPlane(candidate-shipTransform.position,Vector3.up).sqrMagnitude<guardRadius*guardRadius)
+        {
+            // A sharp helm change must not cut the circular path through the
+            // ship. Carry the previous safe offset with the actual boat step;
+            // never project the shark outwards with a visible position jump.
+            step=shipStep;candidate=patrolBody+step;swimVelocity=shipVelocity;
+        }
+        patrolBody=candidate;previousShipPosition=shipTransform.position;
+        CurrentSwimSpeed=step.magnitude/deltaTime;
+        Vector3 facing=Vector3.ProjectOnPlane(swimVelocity-shipVelocity*.35f,Vector3.up);
+        Quaternion flat=facing.sqrMagnitude>.001f ? Quaternion.LookRotation(facing,Vector3.up) : swimRotation;
+        Quaternion headingRotation=Quaternion.RotateTowards(Quaternion.LookRotation(Vector3.ProjectOnPlane(swimRotation*Vector3.forward,Vector3.up),Vector3.up),flat,swimTurnDegreesPerSecond*deltaTime);
+        float water=WaterAt(patrolBody);
+        float normalY=SurfaceBodyY(water,headingRotation)-.35f;
+        Quaternion rotation=headingRotation;
+        voyageSwimClock+=deltaTime*Mathf.Clamp(CurrentSwimSpeed/Mathf.Max(1,patrolSwimSpeed),.7f,1.5f);
+
+        if(!voyageBreaching && voyageTime>=nextVoyageBreach && voyageTime>=breachVisibilityAt && patrolEndsAt-voyageTime>6)
+        {
+            breachVisibilityAt=voyageTime+.25f;
+            if(VoyageBreachVisible(water))
+            {voyageBreaching=true;breachLaunched=false;voyageBreachAt=voyageTime;recoveryAt=-1;VoyageBreachCount++;}
+        }
+        if(voyageBreaching)
+        {
+            float age=voyageTime-voyageBreachAt;
+            if(age<.45f)
+            {
+                rotation=headingRotation*Quaternion.Euler(-8*Mathf.SmoothStep(0,1,age/.45f),0,0);
+                patrolBody.y=Mathf.MoveTowards(patrolBody.y,normalY-Mathf.Sin(age/.45f*Mathf.PI)*1.5f,maximumSwimSpeed*deltaTime);
+                swimAnimator.SampleCinematicAction("Breach",age*(.5f/.45f));
+            }
+            else
+            {
+                if(!breachLaunched)
+                {
+                    breachLaunched=true;launchY=patrolBody.y;
+                    Vector3 half=Vector3.Scale(swimAnimator.RootMeshBounds.extents,swimmer.lossyScale);
+                    float apex=water+Mathf.Clamp(Mathf.Abs(half.y)*.35f,2,6);
+                    float lift=Mathf.Clamp(apex-launchY,5,18);
+                    launchSpeed=Mathf.Sqrt(2*Physics.gravity.magnitude*lift);
+                    flightDuration=2*launchSpeed/Mathf.Max(.1f,Physics.gravity.magnitude);
+                }
+                float flying=age-.45f,u=Mathf.Clamp01(flying/flightDuration);
+                if(recoveryAt<0 && flying<flightDuration)
+                {
+                    patrolBody.y=launchY+launchSpeed*flying-.5f*Physics.gravity.magnitude*flying*flying;
+                    float vertical=launchSpeed-Physics.gravity.magnitude*flying;
+                    float pitch=Mathf.Clamp(-Mathf.Atan2(vertical,Mathf.Max(1,patrolSwimSpeed))*Mathf.Rad2Deg,-35,32);
+                    rotation=headingRotation*Quaternion.Euler(pitch,0,-6*patrolDirection*Mathf.Sin(Mathf.PI*u));
+                    swimAnimator.SampleCinematicAction("Breach",.5f+2.2f*u);
+                }
+                else
+                {
+                    if(recoveryAt<0){recoveryAt=voyageTime;recoveryVelocity=-launchSpeed;}
+                    float recovery=voyageTime-recoveryAt;
+                    rotation=headingRotation*Quaternion.Euler(Mathf.Lerp(32,0,Mathf.SmoothStep(0,1,recovery/.65f)),0,0);
+                    patrolBody.y=Mathf.SmoothDamp(patrolBody.y,normalY,ref recoveryVelocity,.3f,maximumSwimSpeed,deltaTime);
+                    swimAnimator.SampleCinematicAction(recovery<.5f ? "Breach" : "Swim",recovery<.5f ? 2.7f+recovery : voyageSwimClock);
+                    if(recovery>=1.4f || recovery>=.8f && Mathf.Abs(patrolBody.y-normalY)<.25f)
+                    {
+                        voyageBreaching=false;nextVoyageBreach=voyageTime+4+(float)voyageRandom.NextDouble()*3;
+                    }
+                }
+            }
+        }
+        else
+        {
+            patrolBody.y=Mathf.MoveTowards(patrolBody.y,normalY,maximumSwimSpeed*deltaTime);
+            swimAnimator.SampleCinematicAction("Swim",voyageSwimClock);
+        }
+        swimAnimator.CommitCinematicPose(voyageTime);
+        PlaceVoyageBody(patrolBody,rotation);
+    }
+    bool VoyageBreachVisible(float water)
+    {
+        // Prefer a real visible opening, without steering the player's camera
+        // or jumping the animal to a convenient staging point.
+        bool previous=Physics.queriesHitBackfaces;
+        try
+        {
+            Physics.queriesHitBackfaces=true;
+            for(int sample=0;sample<2;sample++)
+            {
+                float angle=patrolAngle+(sample==0?0:2*patrolDirection*patrolSwimSpeed/Mathf.Max(1,patrolRadius));
+                // Forecast relative to the moving boat/camera for the apex,
+                // rather than only seeing an opening at the start of a leap.
+                Vector3 aim=sample==0 ? patrolBody : shipTransform.position+
+                    (heading*Mathf.Cos(angle)+side*Mathf.Sin(angle))*patrolRadius;
+                aim.y=water+3;
+                Vector3 screen=storyCamera.WorldToViewportPoint(aim);
+                if(screen.z<=0 || screen.x<.08f || screen.x>.92f || screen.y<.04f || screen.y>.92f)return false;
+                Vector3 from=storyCamera.transform.position,delta=aim-from;
+                var ray=new Ray(from,delta.normalized);
+                foreach(var collider in shipColliders)
+                    if(collider!=null && collider.enabled && !collider.isTrigger && collider.Raycast(ray,out _,delta.magnitude))return false;
+                // Sails and flags need no physical collider, but their visible
+                // meshes still hide a shark. The real hull already used its
+                // exact raycast above, rather than a filled whole-ship box.
+                // Cloth bounds are rejection-only here;
+                // an occluded chance simply waits for the next real opening.
+                foreach(var renderer in voyageOccluders)
+                    if(renderer!=null && renderer.enabled && renderer.gameObject.activeInHierarchy &&
+                        renderer.bounds.IntersectRay(ray,out float at) && at<delta.magnitude)return false;
+            }
+        }
+        finally{Physics.queriesHitBackfaces=previous;}
+        return true;
+    }
+    void OnDisable()
+    {
+        if(swimAnimator!=null && !impacted)swimAnimator.ReleaseCinematicAnimation();
+        voyageOwnsAnimation=false;
     }
 
     Vector3 FindBowContactPoint(float contactHeight = float.NaN)

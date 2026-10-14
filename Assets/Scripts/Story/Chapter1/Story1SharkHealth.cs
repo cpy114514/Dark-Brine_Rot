@@ -5,6 +5,8 @@ using UnityEngine;
 public sealed class Story1SharkHealth : Health
 {
     public int ReceivedHits { get; private set; }
+    public float NarrativeHealthFloor { get; set; } = 1f;
+    public bool IsProtected { get; set; }
     Collider head;
     public void ConfigureHead(Collider collider) => head=collider;
     public Vector3 LockPoint
@@ -18,9 +20,9 @@ public sealed class Story1SharkHealth : Health
     }
     public override void ApplyDamage(float amount, Vector3 hitPoint)
     {
-        if (amount <= 0 || IsDead) return;
+        if (amount <= 0 || IsDead || IsProtected) return;
         ReceivedHits++;
-        float damage = Mathf.Min(amount, Mathf.Max(0, currentHealth - 1));
+        float damage = Mathf.Min(amount, Mathf.Max(0, currentHealth - NarrativeHealthFloor));
         if (damage > 0) base.ApplyDamage(damage, hitPoint);
         else OnDamaged?.Invoke(amount);
     }

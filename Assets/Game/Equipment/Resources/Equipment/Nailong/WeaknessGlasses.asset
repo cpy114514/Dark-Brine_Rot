@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WeaknessGlasses
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
   id: nailong_weakness_glasses
-  displayName: "\u5F31\u70B9\u773C\u955C"
+  displayName: Weakness Glasses
   slot: 0
   worldModel: {fileID: 23126860613380479, guid: 1467195d2a6046e4a9886f141cd48081, type: 3}
   icon: {fileID: 0}

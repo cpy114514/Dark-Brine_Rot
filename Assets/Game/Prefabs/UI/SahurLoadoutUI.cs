@@ -168,10 +168,11 @@ namespace Mavis
                     {
                         var item=pair.Key;if(first==null)first=item;if(item==selectedItem)retainsSelection=true;
                         var glasses=GetComponent<WeaknessGlasses>();
-                        AddItemRow(item.LocalizedName,item.id=="nailong_weakness_glasses"&&glasses&&glasses.Equipped?"已装备":"已收集 × "+pair.Value,count++,()=>InspectItem(item));
+                        bool isGlasses=item.id=="nailong_weakness_glasses";
+                        AddItemRow(item.LocalizedName,isGlasses?(glasses&&glasses.Equipped?"Equipped":"Collected x "+pair.Value):"已收集 × "+pair.Value,count++,()=>InspectItem(item));
                     }
                 if(slot==EquipmentSlot.Head && first==null)
-                    AddItemRow("弱点眼镜","未解锁 · 击败奶龙",count++,()=>InspectItem(Resources.Load<EquipmentItem>(WeaknessGlasses.ItemPath)));
+                    AddItemRow(WeaknessGlasses.DisplayName,"Locked - Defeat Nailong",count++,()=>InspectItem(Resources.Load<EquipmentItem>(WeaknessGlasses.ItemPath)));
                 InspectItem(retainsSelection?selectedItem:first);
                 if(count==0)itemRows.Add(Label(itemContent,"这里还没有装备\n探索岛屿，收集 Boss 掉落",new Vector2(0,-80),new Vector2(290,110),18,GameUITheme.Secondary,new Vector2(.5f,1)).gameObject);
             }
@@ -202,9 +203,10 @@ namespace Mavis
             var glasses=GetComponent<WeaknessGlasses>();bool isGlasses=item&&item.id=="nailong_weakness_glasses";
             bool owned=item&&inventory!=null&&inventory.Count(item)>0;
             itemTitle.text=item?item.LocalizedName:"暂无装备";
-            selectionStatus.text=isGlasses&&glasses&&glasses.Equipped?"当前已装备":owned?"已收集":item?"尚未解锁":"收集装备后会显示在这里";
-            details.text=isGlasses?"奶龙掉落的弱点眼镜。\n\n装备后，关闭装备栏按 G 开启弱点显示。\n持续 30 秒，冷却 15 分钟。\n\n弱点以青绿色标记显示；命中该部位造成 1.5 倍伤害。":item?"已收集的岛屿掉落物。\n\n这件收藏道具目前没有可装备的能力。":"选择左侧分类，查看已收集的物品。";
-            actionText.text=isGlasses?(owned?(glasses&&glasses.Equipped?"已装备":"装备弱点眼镜"):"击败奶龙后解锁"):"收藏道具";
+            selectionStatus.text=isGlasses?(glasses&&glasses.Equipped?"Equipped":owned?"Collected":"Locked"):owned?"已收集":item?"尚未解锁":"收集装备后会显示在这里";
+            details.text=isGlasses?"Dropped by Nailong.\n\nEquip, close Gear, then press G to reveal boss weak points.\nDuration: 30 seconds\nCooldown: 15 minutes\n\nTeal markers show weak points. Hit them to deal 1.5x damage.":item?"已收集的岛屿掉落物。\n\n这件收藏道具目前没有可装备的能力。":"选择左侧分类，查看已收集的物品。";
+            actionText.text=isGlasses?(owned?(glasses&&glasses.Equipped?"Equipped":"Equip Weakness Glasses"):"Defeat Nailong to unlock"):"收藏道具";
+            if(isGlasses)unequipText.text="Unequip Glasses";
             equipButton.interactable=isGlasses&&owned&&glasses&&!glasses.Equipped;
             unequipButton.gameObject.SetActive(isGlasses&&glasses&&glasses.Equipped);
             HighlightSelection();
@@ -259,7 +261,7 @@ namespace Mavis
             }
             if(weapons!=null)equipmentLabels[(int)EquipmentSlot.Weapon].text=GameLocalization.Text("武器")+"\n"+(weapons.UsesTwinBlades?"卡布奇诺双刀":"萨胡尔木棍");
             var glasses=GetComponent<WeaknessGlasses>();
-            if(glasses && glasses.Equipped)equipmentLabels[(int)EquipmentSlot.Head].text=GameLocalization.Text("头部")+"\n弱点眼镜 · 已装备";
+            if(glasses && glasses.Equipped)equipmentLabels[(int)EquipmentSlot.Head].text=GameLocalization.Text("头部")+"\n"+WeaknessGlasses.DisplayName+" - Equipped";
             if (editingEquipment >= 0) SelectEquipment((EquipmentSlot)editingEquipment);
             else SelectSkillForAssignment(EditingSkill);
         }
@@ -361,7 +363,7 @@ namespace Mavis
             details = Label(info, "", Vector2.zero, new Vector2(370, 310), 21, Color.white);
             details.alignment = TextAnchor.UpperLeft;
             actionText=Button(window,"装备",new Vector2(330,-261),new Vector2(410,52),EquipSelection);equipButton=actionText.transform.parent.GetComponent<Button>();
-            unequipText=Button(window,"卸下眼镜",new Vector2(330,-319),new Vector2(410,40),UnequipSelection);unequipButton=unequipText.transform.parent.GetComponent<Button>();
+            unequipText=Button(window,"Unequip Glasses",new Vector2(330,-319),new Vector2(410,40),UnequipSelection);unequipButton=unequipText.transform.parent.GetComponent<Button>();
             Label(window, "鼠标选择分类与物品  ·  点击按钮装备  ·  I / Esc 关闭", new Vector2(-155, -342), new Vector2(760, 32), 15, GameUITheme.Secondary);
         }
 

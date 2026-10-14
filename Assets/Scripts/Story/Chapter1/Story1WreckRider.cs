@@ -3,13 +3,13 @@ using Mavis;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>Boarding and surfing leave the existing jump, swimming and combat controls intact.</summary>
+/// <summary>Walking, jumping and climbing on freely floating wreckage.</summary>
 [DisallowMultipleComponent,DefaultExecutionOrder(-100)]
 public sealed class Story1WreckRider : MonoBehaviour
 {
-    public bool IsSurfing => DrivenBoard != null;
+    public bool IsSurfing => false; // Compatibility; vehicle control has been retired.
     public bool IsClimbing { get; private set; }
-    public Story1WreckPlank DrivenBoard { get; private set; }
+    public Story1WreckPlank DrivenBoard => null;
     public Story1WreckPlank NearbyBoard { get; private set; }
     public string Hint { get; private set; } = "";
 
@@ -18,41 +18,48 @@ public sealed class Story1WreckRider : MonoBehaviour
     SahurAttack attack;
     SahurBoomerang boomerang;
     SahurSwimmingWeapon weapon;
-    SahurMovementPose movementPose;
     IReadOnlyList<Story1WreckPlank> boards;
     Collider[] bodyHitboxes;
+    readonly Collider[] climbOverlaps=new Collider[64];
+    readonly Dictionary<Story1WreckMeshCollision,MeshCollider[]> registeredContacts=new Dictionary<Story1WreckMeshCollision,MeshCollider[]>();
+    public int RegisteredContactShapeCount=>registeredContacts.Count;
     Story1WreckPlank climbBoard,combatBoard,standingBoard,blockedBoard;
     Story1WreckPlank intentBoard;
     OceanWorld ocean;
-    Vector3 anchor, climbStart, climbEnd,leftGrip,rightGrip;
-    float riderYaw, climbAge, wakeTimer;
+    Vector3 climbStart, climbEnd,leftGrip,rightGrip;
+    float riderYaw, climbAge;
     bool attackWasEnabled, boomerangWasEnabled;
     float autoClimbIntent,blockedBoardUntil;
-    float paddleClock;
-    float surfForwardSign=1,surfYawTarget;
-    const float PaddleSeconds=1.2f;
-    public float PaddlePhase=>Mathf.Repeat(paddleClock/PaddleSeconds,1);
-    public bool IsPaddling=>IsSurfing && Mathf.Abs(player.CharacterAnimator.GetFloat("BoardThrottle"))>.1f;
+    public float PaddlePhase=>0;
+    public bool IsPaddling=>false;
     public float PaddleWaterHeight(Vector3 point)=>ocean!=null ? ocean.SampleSurfaceHeight(point,Time.time) : player.seaLevel;
     readonly Vector4[] trail = new Vector4[16];
-    int trailCount;
     const float ClimbSeconds = 1.15f;
 
     public void Initialize(ThirdPersonPlayerController actor, IReadOnlyList<Story1WreckPlank> fragments, OceanWorld water,Story1WreckPlank initialSupport=null,IReadOnlyList<Story1WreckDebris> debris=null)
     {
+        using var measurement=new Unity.Profiling.ProfilerMarker("Wreck.RegisterRiderContacts").Auto();
         player = actor; boards = fragments; ocean = water;
-        capsule = GetComponent<CharacterController>(); attack = GetComponent<SahurAttack>();
+        if(ocean!=null)ocean.SetShipWake(Vector4.zero,Vector4.zero,trail,0);
+        PrepareCollisionOwner(actor); attack = GetComponent<SahurAttack>();
         boomerang = GetComponent<SahurBoomerang>(); weapon = GetComponent<SahurSwimmingWeapon>();
-        movementPose=GetComponent<SahurMovementPose>();
-        var all=GetComponentsInChildren<Collider>(true);
-        bodyHitboxes=System.Array.FindAll(all,c=>c!=capsule && !c.isTrigger);
         // Detailed animated hurtboxes still receive weapon queries, but their
         // kinematic feet must not pin floating wood. The controller owns locomotion.
-        foreach(var board in boards)foreach(var hitbox in bodyHitboxes)
-            if(board!=null && hitbox!=null)board.Collision.Ignore(hitbox,true);
+        foreach(var board in boards)if(board!=null)RegisterCollision(board.Collision);
         if(debris!=null)foreach(var piece in debris)RegisterCollision(piece.Collision);
         enabled = true;
         if(initialSupport!=null){SetStandingBoard(initialSupport);player.OnFloatingWreckDeck=true;}
+    }
+    // Geometry warming can prepare only physical ownership. It must not
+    // claim movement, support or input before the real playable handoff.
+    public void PrepareCollisionOwner(ThirdPersonPlayerController actor)
+    {
+        capsule=actor.GetComponent<CharacterController>();
+        var current=System.Array.FindAll(actor.GetComponentsInChildren<Collider>(true),c=>c!=capsule && !c.isTrigger);
+        bool same=bodyHitboxes!=null && bodyHitboxes.Length==current.Length;
+        if(same)for(int i=0;i<current.Length;i++)if(bodyHitboxes[i]!=current[i]){same=false;break;}
+        if(same)return;
+        bodyHitboxes=current;registeredContacts.Clear();
     }
     public void RegisterBoard(Story1WreckPlank board)
     {
@@ -60,8 +67,30 @@ public sealed class Story1WreckRider : MonoBehaviour
     }
     public void RegisterCollision(Story1WreckMeshCollision shape)
     {
-        if(bodyHitboxes==null)return;
+        if(bodyHitboxes==null || shape==null || shape.Parts==null)return;
+        if(registeredContacts.TryGetValue(shape,out var previous) && ReferenceEquals(previous,shape.Parts))return;
         foreach(var hitbox in bodyHitboxes)if(hitbox!=null)shape.Ignore(hitbox,true);
+        registeredContacts[shape]=shape.Parts;
+    }
+
+    public bool HasStableSupport
+    {
+        get
+        {
+            // The controller deliberately ignores its supporting floating
+            // mesh, so isGrounded alone cannot describe a settled passenger.
+            // Actual deck contact, not the wider landing/grab grace, admits
+            // a cinematic. Ascending and descending airborne actors stay live.
+            if(player==null || IsClimbing || player.Swimming || capsule==null || !capsule.enabled ||
+                player.VerticalSpeed>0 || !player.OnFloatingWreckDeck || standingBoard==null || !standingBoard.IsBoardable)return false;
+            Vector3 feet=transform.position+Vector3.up*player.LowestFootWorldOffset;
+            if(!standingBoard.ContainsFootprint(feet) || !DryEnough(standingBoard,feet))return false;
+            Vector3 normal=standingBoard.transform.up;if(normal.y<0)normal=-normal;
+            float reach=Mathf.Max(2,standingBoard.Dimensions.y+1);
+            if(!standingBoard.Collision.Raycast(new Ray(feet+normal*reach,-normal),out var hit,reach*2) || Vector3.Dot(hit.normal,Vector3.up)<=.5f)return false;
+            float gap=feet.y-hit.point.y;
+            return gap>=-.03f && gap<=.06f;
+        }
     }
 
     public Story1WreckPlank Support()
@@ -83,18 +112,8 @@ public sealed class Story1WreckRider : MonoBehaviour
     {
         if (player == null || !enabled) return;
         Vector3 feet=transform.position+Vector3.up*player.LowestFootWorldOffset;
-        // An awash deck can still support a standing rider. A short crest
-        // reaching the shins must not throw him into swimming and cancel
-        // control; release when the actual torso is submerged or support fails.
-        var chest=DrivenBoard!=null ? player.CharacterAnimator.GetBoneTransform(HumanBodyBones.Chest) : null;
-        bool torsoUnderwater=chest!=null && ocean!=null && ocean.SampleSurfaceHeight(chest.position,Time.time)>chest.position.y+.15f;
-        if(DrivenBoard!=null && (!DrivenBoard.IsSurfboard || torsoUnderwater))
-        {
-            var velocity=DrivenBoard.Velocity;blockedBoard=DrivenBoard;blockedBoardUntil=Time.time+.35f;
-            Release();player.OnFloatingWreckDeck=false;player.LeaveMovingPlatform(velocity);return;
-        }
-        player.OnFloatingWreckDeck=DrivenBoard!=null || (standingBoard!=null && DryEnough(standingBoard,feet) && standingBoard.IsBoardable &&
-            standingBoard.ContainsFootprint(feet) && Mathf.Abs(standingBoard.BoardingPoint(feet).y-feet.y)<1.1f && player.VerticalSpeed<=1.5f);
+        player.OnFloatingWreckDeck=standingBoard!=null && DryEnough(standingBoard,feet) && standingBoard.IsBoardable &&
+            standingBoard.ContainsFootprint(feet) && Mathf.Abs(standingBoard.BoardingPoint(feet).y-feet.y)<1.1f && player.VerticalSpeed<=1.5f;
         bool ascending=player.VerticalSpeed>1.5f;
         if(!ascending)foreach(var board in boards)if(board!=null && board.Supports(feet) && DryEnough(board,feet)){player.OnFloatingWreckDeck=true;break;}
         bool accept = Keyboard.current != null && Cursor.lockState == CursorLockMode.Locked &&
@@ -103,30 +122,13 @@ public sealed class Story1WreckRider : MonoBehaviour
         var support = ascending ? null : Support();
         SetStandingBoard(support);
         if(support!=null)combatBoard=support;else if(!attack.IsCombatMotionActive)combatBoard=null;
-        if (DrivenBoard != null)
+        if (support!=null && accept && GameInputSettings.PressedThisFrame(GameInputSettings.Action.Jump) && !attack.IsCombatMotionActive)
         {
-            // Its pose can move between physics ticks; the deck-local anchor owns mounted footing.
-            if (!DrivenBoard.IsSurfboard) { Release(); return; }
-            bool jump = accept && GameInputSettings.PressedThisFrame(GameInputSettings.Action.Jump) && !attack.IsCombatMotionActive;
-            if (jump)
-            {
-                Vector3 velocity = DrivenBoard.Velocity;blockedBoard=DrivenBoard;
-                Release();
-                blockedBoardUntil=Time.time+.35f;player.OnFloatingWreckDeck=false;player.LeaveMovingPlatform(velocity,true);
-                return;
-            }
-            float throttle = accept ? Axis(GameInputSettings.Action.Forward, GameInputSettings.Action.Back) : 0;
-            float steer = accept ? Axis(GameInputSettings.Action.Right, GameInputSettings.Action.Left) : 0;
-            paddleClock+=deltaTime;
-            float stroke=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.22f,.34f,PaddlePhase))*
-                (1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.61f,.72f,PaddlePhase)));
-            DrivenBoard.Drive(throttle, steer, transform,stroke*(movementPose!=null ? movementPose.PaddleWaterEngagement : 0),surfForwardSign);
-            player.CharacterAnimator.SetFloat("BoardThrottle",throttle,.18f,deltaTime);
-            player.CharacterAnimator.SetFloat("BoardSteer",steer,.18f,deltaTime);
-            player.CharacterAnimator.SetFloat("BoardStrokePhase",PaddlePhase);
-            Hint = GameLocalization.Format("{0}/{1}: forward/back  {2}/{3}: steer  {4}: jump off",
-                KeyName(GameInputSettings.Action.Forward), KeyName(GameInputSettings.Action.Back),
-                KeyName(GameInputSettings.Action.Left), KeyName(GameInputSettings.Action.Right), KeyName(GameInputSettings.Action.Jump));
+            // Normal controller jump, carrying the real support's momentum.
+            // Keep the short water/grab grace period without claiming movement.
+            blockedBoard=support;blockedBoardUntil=Time.time+.35f;
+            SetStandingBoard(null);player.OnFloatingWreckDeck=false;
+            player.LeaveMovingPlatform(support.Velocity,true);
             return;
         }
         NearbyBoard = null;
@@ -136,8 +138,13 @@ public sealed class Story1WreckRider : MonoBehaviour
             foreach (var board in boards)
             {
                 if (board == null || !board.IsBoardable) continue;
+                // Swimming feet are below the water; only horizontal proximity
+                // determines whether the swimmer can reach this timber edge.
+                var bounds=board.Collision.WorldBounds;
+                Vector3 probe=transform.position;probe.y=bounds.center.y;
+                if(bounds.SqrDistance(probe)>4)continue;
                 float gap = board.EdgeDistance(transform.position);
-                if (gap >= best || !DryEnough(board,feet,.6f)) continue;
+                if (gap >= best || !DryEnough(board,feet,1.1f) || !ClimbClear(board,feet)) continue;
                 best = gap; NearbyBoard = board;
             }
             Hint=NearbyBoard!=null ? GameLocalization.Text("Swim towards the board to climb") : "";
@@ -150,23 +157,7 @@ public sealed class Story1WreckRider : MonoBehaviour
             // a passing crest must not repeatedly erase a held intention.
             if(autoClimbIntent>=.2f && ClimbClear(NearbyBoard,feet)){autoClimbIntent=0;BeginClimb(NearbyBoard);}
         }
-        else if (support != null && support.IsSurfboard && player.CanUseGroundAttack && (support!=blockedBoard || Time.time>=blockedBoardUntil))
-        {
-            Mount(support);
-        }
         else Hint="";
-    }
-    void Mount(Story1WreckPlank support)
-    {
-        if(!support.IsSurfboard || !player.Motion.Claim(this,SahurControlState.BoardRiding))return;
-        paddleClock=0;
-        DrivenBoard=support;
-        anchor=support.transform.InverseTransformPoint(support.BoardingPoint(transform.position+Vector3.up*player.LowestFootWorldOffset));
-        riderYaw=Mathf.DeltaAngle(support.transform.eulerAngles.y,transform.eulerAngles.y);
-        surfForwardSign=Vector3.Dot(transform.forward,support.SurfForward)<0 ? -1 : 1;
-        surfYawTarget=Mathf.DeltaAngle(support.transform.eulerAngles.y,Quaternion.LookRotation(support.SurfForward*surfForwardSign).eulerAngles.y);
-        player.ExternalMovementLock=true;player.ExternalMovementAnimation="Wreck Surf";
-        player.OnFloatingWreckDeck=true;support.Drive(0,0,transform);
     }
     bool ClimbClear(Story1WreckPlank target,Vector3 feet)
     {
@@ -186,14 +177,16 @@ public sealed class Story1WreckRider : MonoBehaviour
         float half=Mathf.Max(0,capsule.height*Mathf.Abs(scale.y)*.5f-radius);
         Vector3 landingRoot=end-Vector3.up*player.LowestFootWorldOffset;
         Vector3 centre=landingRoot+transform.rotation*Vector3.Scale(capsule.center,scale);
-        var overlaps=Physics.OverlapCapsule(centre-Vector3.up*half,centre+Vector3.up*half,radius*.95f,~0,QueryTriggerInteraction.Ignore);
-        foreach(var overlap in overlaps)
+        int count=Physics.OverlapCapsuleNonAlloc(centre-Vector3.up*half,centre+Vector3.up*half,radius*.95f,climbOverlaps,~0,QueryTriggerInteraction.Ignore);
+        // A full buffer cannot prove clearance.
+        if(count==climbOverlaps.Length)return false;
+        for(int i=0;i<count;i++)
+        {
+            var overlap=climbOverlaps[i];
             if(!overlap.transform.IsChildOf(transform) && !overlap.transform.IsChildOf(target.transform))return false;
+        }
         return true;
     }
-    static float Axis(GameInputSettings.Action positive, GameInputSettings.Action negative) =>
-        (GameInputSettings.Pressed(positive) ? 1 : 0) - (GameInputSettings.Pressed(negative) ? 1 : 0);
-    static string KeyName(GameInputSettings.Action action) => GameInputSettings.Get(action).ToString().ToUpperInvariant();
 
     void BeginClimb(Story1WreckPlank board)
     {
@@ -236,19 +229,13 @@ public sealed class Story1WreckRider : MonoBehaviour
             SetFeet(feet, climbBoard.transform.eulerAngles.y + riderYaw, false);
             if (t >= 1)
             {
+                var landed=climbBoard;
                 Release(); player.LeaveMovingPlatform(Vector3.zero);
+                SetStandingBoard(landed);player.OnFloatingWreckDeck=true;
                 Physics.SyncTransforms(); capsule.Move(Vector3.down * .12f);
                 player.NotifyPlatformLanding();
             }
         }
-        else if (DrivenBoard != null)
-        {
-            riderYaw=Mathf.MoveTowardsAngle(riderYaw,surfYawTarget,540*deltaTime);
-            // Preserve the same deck-space anchor through both yaw and wave motion.
-            SetFeet(DrivenBoard.transform.TransformPoint(anchor) + Vector3.up * .04f,
-                DrivenBoard.transform.eulerAngles.y + riderYaw, true);
-        }
-        UpdateWake(deltaTime);
     }
 
     void SetStandingBoard(Story1WreckPlank next)
@@ -264,7 +251,7 @@ public sealed class Story1WreckRider : MonoBehaviour
     }
     void LateUpdate()
     {
-        if(player==null || !player.enabled || IsSurfing || IsClimbing || !capsule.enabled ||
+        if(player==null || !player.enabled || IsClimbing || !capsule.enabled ||
             player.ExternalControlLock || PauseSettingsMenu.IsOpen || Time.deltaTime<=0)return;
         if(standingBoard!=null && player.VerticalSpeed>1.5f)
         {
@@ -299,37 +286,15 @@ public sealed class Story1WreckRider : MonoBehaviour
         if (active)
         {
             capsule.enabled = true;
-            if(DrivenBoard!=null)DrivenBoard.Collision.Ignore(capsule,true);
             if (ground) capsule.Move(Vector3.down * .1f);
         }
-    }
-
-    void UpdateWake(float deltaTime)
-    {
-        if (ocean == null) return;
-        float speed = DrivenBoard != null ? Mathf.Abs(DrivenBoard.Speed) : 0;
-        wakeTimer += deltaTime;
-        if (speed > .4f && wakeTimer >= .16f)
-        {
-            wakeTimer = 0; trailCount = Mathf.Min(trailCount + 1, trail.Length);
-            for (int i = trailCount - 1; i > 0; i--) trail[i] = trail[i - 1];
-            Vector3 stern = DrivenBoard.transform.position - DrivenBoard.Velocity.normalized * (Mathf.Max(DrivenBoard.Dimensions.x,DrivenBoard.Dimensions.z) * .5f);
-            trail[0] = new Vector4(stern.x, stern.z, Time.time, Mathf.Min(DrivenBoard.Dimensions.x,DrivenBoard.Dimensions.z) * .22f);
-        }
-        while (trailCount > 0 && Time.time - trail[trailCount - 1].z > 3.2f) trailCount--;
-        Vector3 at = DrivenBoard != null ? DrivenBoard.transform.position : transform.position;
-        Vector3 direction = DrivenBoard != null ? DrivenBoard.Velocity.normalized : Vector3.zero;
-        Vector3 dimensions = DrivenBoard != null ? DrivenBoard.Dimensions : Vector3.zero;
-        ocean.SetShipWake(new Vector4(at.x, at.z, Mathf.Max(dimensions.x,dimensions.z) * .5f, Mathf.Min(dimensions.x,dimensions.z) * .5f),
-            new Vector4(direction.x, direction.z, Mathf.Clamp01(speed / 10f), 3.2f), trail, trailCount);
     }
 
     public void Release()
     {
         player?.Motion?.Release(this);
         SetStandingBoard(null);
-        if (DrivenBoard != null) DrivenBoard.Drive(0, 0, null);
-        DrivenBoard = null; NearbyBoard = null; combatBoard=null; Hint = "";
+        NearbyBoard = null; combatBoard=null; Hint = "";
         if (player != null)
         {
             player.ExternalMovementLock = false; player.ExternalMovementAnimation = null;
@@ -354,10 +319,10 @@ public sealed class Story1WreckRider : MonoBehaviour
     }
     public void OnBoardBroken(Story1WreckPlank board)
     {
-        if(standingBoard!=board && combatBoard!=board && DrivenBoard!=board && climbBoard!=board)return;
+        if(standingBoard!=board && combatBoard!=board && climbBoard!=board)return;
         if(standingBoard==board)SetStandingBoard(null);
         if(combatBoard==board)combatBoard=null;
-        if(DrivenBoard==board || climbBoard==board)Release();
+        if(climbBoard==board)Release();
         player.OnFloatingWreckDeck=false;
         player.LeaveMovingPlatform(board.Velocity);
     }
@@ -371,7 +336,7 @@ public sealed class Story1WreckRider : MonoBehaviour
     void OnDisable()
     {
         if(player!=null)player.OnFloatingWreckDeck=false;
-        Release(); trailCount = 0;
+        Release();
         if (ocean != null) ocean.SetShipWake(Vector4.zero, Vector4.zero, trail, 0);
     }
 }

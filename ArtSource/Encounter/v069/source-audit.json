@@ -1,0 +1,18 @@
+{
+  "rest_preserved": true,
+  "bones": 16,
+  "contact_seconds": 0.52,
+  "unchanged_other_channels_degrees": 0.0,
+  "source_nose_minus_body": [
+    0.306079626083374,
+    -10.728273391723633,
+    4.9888505935668945
+  ],
+  "revised_nose_minus_body": [
+    0.28663721680641174,
+    -10.136902809143066,
+    5.71604061126709
+  ],
+  "nose_rise_source_units": 0.7271900177001953,
+  "head_peak_degrees_per_frame": 4.551613730347579
+}

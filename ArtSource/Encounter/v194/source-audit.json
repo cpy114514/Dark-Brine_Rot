@@ -1,0 +1,26 @@
+{
+  "original_rest_preserved": true,
+  "bones": 28,
+  "original_skin_preserved": true,
+  "source": "CH1_SahurParry_v171",
+  "action": "CH1_SahurParry_v194",
+  "changed_channels": [
+    "RightForeArm",
+    "RightHand"
+  ],
+  "unchanged_rotation_error_degrees": 0.0,
+  "hand_position_error_source_cm": 1.9073486328125e-05,
+  "foot_position_error_source_cm": 0,
+  "peak_degrees_per_frame": {
+    "RightHand": 5.430247130743903,
+    "RightForeArm": 10.744854036197614
+  },
+  "original_peak_degrees_per_frame": {
+    "RightHand": 5.524308654011911,
+    "RightForeArm": 10.747626239226992
+  },
+  "contact_seconds": 0.484,
+  "duration": 1.1,
+  "fps": 60,
+  "runtime_activated": false
+}

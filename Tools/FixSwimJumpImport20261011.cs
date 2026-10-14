@@ -63,4 +63,17 @@ public static class FixSwimJumpImport20261011
         }
         return "Jump root height extracted relative to feet; clip timing and controller references retained.";
     }
+    public static object RemoveTemporaryStages()
+    {
+        const string relative="Assets/AnimationStaging/SwimJumpFix20261011";
+        string path=Path.GetFullPath(relative),root=Path.GetFullPath(Application.dataPath+"/AnimationStaging/");
+        if(!path.StartsWith(root,StringComparison.OrdinalIgnoreCase))throw new Exception("Unexpected staging path");
+        var expected=new System.Collections.Generic.HashSet<string>();
+        foreach(string name in new[]{"PLAYER_JumpStart_v006","PLAYER_JumpAir_v006","PLAYER_JumpLand_v006"})
+        foreach(string variant in new[]{"Body","Feet"})
+        {expected.Add(name+"_"+variant+".fbx");expected.Add(name+"_"+variant+".fbx.meta");}
+        if(Directory.GetDirectories(path).Length!=0 || Directory.GetFiles(path).Any(f=>!expected.Contains(Path.GetFileName(f))))throw new Exception("Staging contains other files");
+        if(!AssetDatabase.DeleteAsset(relative))throw new Exception("Could not remove temporary staging copies");
+        return "Removed only the six temporary jump import comparisons; active source FBXs preserved.";
+    }
 }

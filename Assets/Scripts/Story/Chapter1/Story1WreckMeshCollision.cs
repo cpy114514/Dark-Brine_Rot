@@ -9,12 +9,15 @@ public sealed class Story1WreckMeshCollision : MonoBehaviour
     public bool Active => Primary!=null && Primary.enabled && gameObject.activeInHierarchy;
     int boundsFrame=-1;
     Bounds worldBounds;
-    Vector3 boundsPosition,boundsScale;
-    Quaternion boundsRotation;
+    Matrix4x4 boundsMatrix;
+    Transform[] partTransforms;
+    Bounds[] localPartBounds;
     Bounds[] partBounds;
     Vector3[] partPositions;
     Quaternion[] partRotations;
     Rigidbody body;
+    Mesh preparedMesh;
+    Story1ShipWreckAsset.Shard[] preparedShards;
     void QueryMatrices(out Matrix4x4 visualToPhysics,out Matrix4x4 physicsToVisual)
     {
         if(body==null || body.interpolation==RigidbodyInterpolation.None)
@@ -28,17 +31,27 @@ public sealed class Story1WreckMeshCollision : MonoBehaviour
     public Bounds PartBounds(int index){CacheWorldGeometry();return partBounds[index];}
     public Vector3 PartPosition(int index){CacheWorldGeometry();return partPositions[index];}
     public Quaternion PartRotation(int index){CacheWorldGeometry();return partRotations[index];}
+    // Query consumers copy this frame's immutable values immediately. Refresh
+    // once for the whole compound, rather than crossing the native Transform
+    // boundary three times per part just to re-check the same root pose.
+    internal void ReadWorldGeometry(out Bounds aggregate,out Bounds[] bounds,out Vector3[] positions,out Quaternion[] rotations)
+    {
+        CacheWorldGeometry();aggregate=worldBounds;bounds=partBounds;positions=partPositions;rotations=partRotations;
+    }
     void CacheWorldGeometry()
     {
-        Vector3 position=transform.position,scale=transform.lossyScale;Quaternion rotation=transform.rotation;
+        Matrix4x4 rootMatrix=transform.localToWorldMatrix;
         // Interpolation can update a body between Update and LateUpdate in
         // the same rendered frame. Its geometry cache must follow that pose.
-        if(boundsFrame==Time.frameCount && boundsPosition==position && boundsRotation==rotation && boundsScale==scale)return;
+        // Quaternion == deliberately treats small rotations as equal. On a
+        // long fragment, 0.1 degrees can move the real boundary centimetres;
+        // contact queries must not retain the old pose within this frame.
+        if(boundsFrame==Time.frameCount && boundsMatrix.Equals(rootMatrix))return;
         boundsFrame=Time.frameCount;
-        boundsPosition=position;boundsRotation=rotation;boundsScale=scale;
+        boundsMatrix=rootMatrix;
         for(int i=0;i<Parts.Length;i++)
         {
-            var at=Parts[i].transform;var local=Parts[i].sharedMesh.bounds;
+            var at=partTransforms[i];var local=localPartBounds[i];
             Vector3 x=at.TransformVector(Vector3.right*local.extents.x),y=at.TransformVector(Vector3.up*local.extents.y),z=at.TransformVector(Vector3.forward*local.extents.z);
             Vector3 extents=new Vector3(Mathf.Abs(x.x)+Mathf.Abs(y.x)+Mathf.Abs(z.x),Mathf.Abs(x.y)+Mathf.Abs(y.y)+Mathf.Abs(z.y),Mathf.Abs(x.z)+Mathf.Abs(y.z)+Mathf.Abs(z.z));
             partBounds[i]=new Bounds(at.TransformPoint(local.center),extents*2);
@@ -49,6 +62,10 @@ public sealed class Story1WreckMeshCollision : MonoBehaviour
 
     public void Initialize(Mesh mesh,Story1ShipWreckAsset.Shard[] shards=null)
     {
+        if(shards!=null && shards.Length<2)shards=null;
+        if(Parts!=null && preparedMesh==mesh && preparedShards==shards && System.Array.TrueForAll(Parts,p=>p!=null))
+        {body=GetComponent<Rigidbody>();boundsFrame=-1;SetEnabled(true);return;}
+        preparedMesh=mesh;preparedShards=shards;
         if(Parts!=null)
             foreach(var part in Parts)
             {
@@ -79,6 +96,8 @@ public sealed class Story1WreckMeshCollision : MonoBehaviour
             }
         }
         Parts=parts.ToArray();
+        partTransforms=new Transform[Parts.Length];localPartBounds=new Bounds[Parts.Length];
+        for(int i=0;i<Parts.Length;i++){partTransforms[i]=Parts[i].transform;localPartBounds[i]=Parts[i].sharedMesh.bounds;}
         body=GetComponent<Rigidbody>();
         partBounds=new Bounds[Parts.Length];partPositions=new Vector3[Parts.Length];partRotations=new Quaternion[Parts.Length];boundsFrame=-1;
     }
@@ -86,7 +105,7 @@ public sealed class Story1WreckMeshCollision : MonoBehaviour
     public void Ignore(Collider other,bool value)
     {
         if(other==null || Parts==null)return;
-        foreach(var part in Parts)if(part!=null)Physics.IgnoreCollision(other,part,value);
+        foreach(var part in Parts)if(part!=null && Physics.GetIgnoreCollision(other,part)!=value)Physics.IgnoreCollision(other,part,value);
     }
     public bool Raycast(Ray ray,out RaycastHit nearest,float reach)
     {

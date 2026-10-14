@@ -16,7 +16,19 @@ public sealed class Story1WreckDebris : MonoBehaviour
     public void ConfigureObstacle(Story1ShipWreckAsset.Fragment source)
     {
         if(source.splinters==null || source.splinters.Length<2)return;
-        FractureSource=source;Collision.Initialize(source.mesh,source.splinters);
+        FractureSource=source;if(Collision!=null)Collision.Initialize(source.mesh,source.splinters);
+    }
+    public void PrepareGeometry(Story1ShipWreckAsset.Fragment source)
+    {
+        FractureSource=source;
+        Collision=GetComponent<Story1WreckMeshCollision>();
+        Collision.Initialize(source.mesh,source.splinters!=null && source.splinters.Length>1 ? source.splinters : null);
+        GetComponent<Rigidbody>().isKinematic=true;
+    }
+    public void PrepareShard(Mesh mesh)
+    {
+        Collision=GetComponent<Story1WreckMeshCollision>();Collision.Initialize(mesh);
+        GetComponent<Rigidbody>().isKinematic=true;
     }
     public bool Damage(float amount)
     {
@@ -31,7 +43,7 @@ public sealed class Story1WreckDebris : MonoBehaviour
     public void Initialize(OceanWorld water,Vector3 size,bool buoyant,Vector3 launch,Vector3 angularDegrees)
     {
         ocean=water;floats=buoyant;
-        Collision=GetComponent<Story1WreckMeshCollision>();Collision.Initialize(GetComponent<MeshFilter>().sharedMesh);
+        Collision=GetComponent<Story1WreckMeshCollision>();Collision.Initialize(GetComponent<MeshFilter>().sharedMesh,FractureSource?.splinters);
         floating=GetComponent<Story1WreckFloatBody>();floating.Initialize(water,size,buoyant,launch,angularDegrees);
     }
     void Update()

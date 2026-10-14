@@ -1,0 +1,12 @@
+{
+  "shortest_quaternion_angle": true,
+  "max_pose_difference_degrees": 11.525179330830015,
+  "contact_rotation_difference_degrees": 0.03956468205889273,
+  "foot_path_error_cm": 3.303624739778285e-05,
+  "max_60fps_step_degrees": {
+    "CH1_SahurSlash_v051": 23.700444396754246,
+    "CH1_SahurSlash_v128": 22.95320404360749
+  },
+  "visual_source_is_skeleton_only": true,
+  "runtime_activated": false
+}

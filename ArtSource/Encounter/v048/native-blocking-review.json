@@ -1,0 +1,14 @@
+{
+  "stage": "FIRST PASS",
+  "accepted_for_integration_trial": true,
+  "frames": 1362,
+  "native_preview": ".codex/opening-optimization-20261012/native-shark-framed-v048",
+  "observations": [
+    "Reduced chain twist improves caudal peak relative to rejected v045.",
+    "Trunk remains level during tail preparation; head and fins lag, breach launch/apex/descent retained."
+  ],
+  "limitations": [
+    "Retained native caudal mesh is angular at peak; final close camera polish pending.",
+    "Actual tail collision, submerged bulk and ship contact must be validated in scene."
+  ]
+}

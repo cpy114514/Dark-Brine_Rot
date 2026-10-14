@@ -3,6 +3,7 @@
 // during the Animator's Attack state window and applies damage to
 // anything tagged "Player" carrying IDamageable.
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Mavis
 {
@@ -22,6 +23,9 @@ namespace Mavis
         public string attackStateName = "Attack";
         [Range(0f, 1f)] public float windowStart = 0.10f;
         [Range(0f, 1f)] public float windowEnd = 0.55f;
+
+        readonly HashSet<IDamageable> victims=new HashSet<IDamageable>();
+        bool windowActive;
 
         void Reset()
         {
@@ -46,17 +50,24 @@ namespace Mavis
                             t <= windowEnd &&
                             !animator.IsInTransition(0);
 
+            if(inWindow && !windowActive)victims.Clear();
+            windowActive=inWindow;
             attackHitbox.enabled = inWindow;
         }
 
-        void OnTriggerEnter(Collider other)
+        void OnTriggerEnter(Collider other)=>TryHit(other);
+        void OnTriggerStay(Collider other)=>TryHit(other);
+        void OnDisable(){windowActive=false;victims.Clear();if(attackHitbox!=null)attackHitbox.enabled=false;}
+        void TryHit(Collider other)
         {
-            if (attackHitbox == null || !attackHitbox.enabled) return;
+            if (Time.timeScale<=0 || !isActiveAndEnabled || attackHitbox == null || !attackHitbox.enabled) return;
             if (((1 << other.gameObject.layer) & hitMask) == 0) return;
-            if (!string.IsNullOrEmpty(playerTag) && !other.CompareTag(playerTag)) return;
+            var player=other.GetComponentInParent<PlayerHealth>();
+            if (!string.IsNullOrEmpty(playerTag) && !other.CompareTag(playerTag) &&
+                (player==null || !player.CompareTag(playerTag))) return;
 
             var dmg = other.GetComponentInParent<IDamageable>();
-            if (dmg != null) dmg.ApplyDamage(damage, transform.position);
+            if (dmg != null && victims.Add(dmg)) dmg.ApplyDamage(damage, transform.position);
         }
     }
 }

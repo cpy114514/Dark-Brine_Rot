@@ -1,0 +1,10 @@
+{
+  "stage":"FIRST PASS STAGING REVIEW",
+  "reviewer":"Codex animation review",
+  "accepted_for_staging":["CH1_SahurParry_v198"],
+  "observed":"27 source front/side/three-quarter poses. Existing loaded knees, torso retreat, left arm and original hand positions remain. Forearm roll, forward shaft yaw and wrist pitch develop before .484s and settle through recovery. Source right-hand angular peak 5.964 vs 5.524 degrees/frame; forearm 10.745 vs original 10.748; no new high-frequency step. Original rig/rest/skin retained.",
+  "not_observed":"Actual Unity weapon attachment and outward shaft direction, native Humanoid retargeting, contact clearance or full gameplay acceptance.",
+  "original_rig_and_rest_preserved":true,
+  "final_approval":false,
+  "previews":".codex/animation-continuation-20261014/parry-source-v198"
+}

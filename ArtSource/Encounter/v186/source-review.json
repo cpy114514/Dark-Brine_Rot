@@ -1,0 +1,10 @@
+{
+  "stage":"FIRST PASS STAGING REVIEW",
+  "reviewer":"Codex animation review",
+  "accepted_for_staging":["CH1_SharkTail_v186"],
+  "observed":"27 original-mesh front, side and three-quarter key images at 0, .25, .4, .55, .65, .8, 1.05, 1.3 and 1.5 seconds. The rear arch raises the tail while the trunk stays level. Source audit reports +.512m local-up tip reach at the unchanged .65s cue and original Body/Head/Jaw/fin rotations retained. Spine_Rear/Tail_Base/Tail_Mid angular peaks below 9 degrees per 60FPS frame. Source first and last pose retained.",
+  "not_observed":"Continuous native gameplay with this new Action, robust timber clearance, final contact or artistic approval.",
+  "original_rig_and_rest_preserved":true,
+  "final_approval":false,
+  "previews":".codex/animation-continuation-20261014/tail-source-v186"
+}

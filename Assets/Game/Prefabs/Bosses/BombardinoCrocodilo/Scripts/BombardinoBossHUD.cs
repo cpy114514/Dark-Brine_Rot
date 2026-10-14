@@ -21,8 +21,7 @@ namespace Mavis
             var viewer=Camera.main;
             bool visible=viewer&&(boss.FightActive||health.IsDead&&deadAge<2.5f);
             hud.Refresh(visible,viewer?(transform.position-viewer.transform.position).sqrMagnitude:float.PositiveInfinity,
-                health.Ratio,health.currentHealth,health.maxHealth,health.IsDead?"BOSS DEFEATED":"BOMBARDINO CROCODILO",
-                boss.Enraged?"AERIAL HUNTER  /  OVERDRIVE":"AERIAL HUNTER  /  PHASE I",boss.Hint,dt);
+                health.Ratio,health.currentHealth,health.maxHealth,"BOMBARDINO CROCODILO",dt);
         }
         void OnDisable()=>hud?.Hide();
         void OnDestroy()=>hud?.Dispose();

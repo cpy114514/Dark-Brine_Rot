@@ -220,6 +220,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void Awake()
     {
+        // Shared enemy attacks and targeting identify the player root.
+        if(CompareTag("Untagged"))gameObject.tag="Player";
         if(GetComponent<Mavis.WeaknessGlasses>()==null)gameObject.AddComponent<Mavis.WeaknessGlasses>();
         Motion=GetComponent<SahurMotionContext>();if(Motion==null)Motion=gameObject.AddComponent<SahurMotionContext>();
         characterController = GetComponent<CharacterController>();
@@ -284,8 +286,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             gameObject.AddComponent<Mavis.SahurLoadoutUI>();
     }
 
-    void Start()
+    bool runtimePrepared;
+    void Start()=>PrepareRuntime();
+    public void PrepareRuntime()
     {
+        if(runtimePrepared)return;
+        runtimePrepared=true;
         playerCamera = Camera.main;
         if (animator != null) { animator.applyRootMotion = true; animator.Play("Locomotion", 0, 0f); animator.Update(0f); }
         ConfigureColliderToModel();
@@ -926,6 +932,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void ConfigureColliderToModel()
     {
+        using var measurement=new Unity.Profiling.ProfilerMarker("Sahur.ConfigureCollider").Auto();
         characterController = GetComponent<CharacterController>();
         SkinnedMeshRenderer[] renderers = GetComponentsInChildren<SkinnedMeshRenderer>();
         if (renderers.Length == 0)
@@ -939,6 +946,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // BakeMesh's default already includes the renderer scale. Asking
             // for unscaled vertices prevents TransformPoint from applying it twice.
             renderer.BakeMesh(mesh, true);
+            if(TryAlignedSkinBounds(transform,renderer,mesh,out var sampledBounds))
+            {
+                if(!initialized){localBounds=sampledBounds;initialized=true;}else localBounds.Encapsulate(sampledBounds);
+                continue;
+            }
             foreach(var vertex in mesh.vertices)
             {
                 var point = transform.InverseTransformPoint(renderer.transform.TransformPoint(vertex));
@@ -958,6 +970,32 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         characterController.skinWidth = 0.015f;
         characterController.stepOffset = 0.22f;
         characterController.minMoveDistance = 0f;
+    }
+
+    static bool TryAlignedSkinBounds(Transform owner,SkinnedMeshRenderer skin,Mesh baked,out Bounds bounds)
+    {
+        bounds=default;
+        var matrix=owner.worldToLocalMatrix*skin.transform.localToWorldMatrix;
+        // Transforming an AABB is exact for an axis-aligned skin frame.
+        // A rotated/sheared skin retains the original per-vertex calculation.
+        for(int row=0;row<3;row++)
+        {
+            int dominant=0;for(int column=1;column<3;column++)
+                if(Mathf.Abs(matrix[row,column])>Mathf.Abs(matrix[row,dominant]))dominant=column;
+            float scale=Mathf.Abs(matrix[row,dominant]);if(scale<1e-8f)return false;
+            for(int column=0;column<3;column++)
+                if(column!=dominant && Mathf.Abs(matrix[row,column])>scale*1e-6f)return false;
+        }
+        // BakeMesh does not refresh its bounds to the sampled animation.
+        // Recalculate on the actual baked vertices before using the corners.
+        baked.RecalculateBounds();var sample=baked.bounds;bool first=true;
+        for(int x=-1;x<=1;x+=2)for(int y=-1;y<=1;y+=2)for(int z=-1;z<=1;z+=2)
+        {
+            var point=owner.InverseTransformPoint(skin.transform.TransformPoint(sample.center+
+                Vector3.Scale(sample.extents,new Vector3(x,y,z))));
+            if(first){bounds=new Bounds(point,Vector3.zero);first=false;}else bounds.Encapsulate(point);
+        }
+        return true;
     }
 
     void SetMotion(int state, string name, float blend)

@@ -9,8 +9,10 @@ namespace Mavis
         readonly Vector3[] circlePoints = new Vector3[65], lanePoints = new Vector3[5];
         RaycastHit[] groundHits = new RaycastHit[16];
         public static BossAttackWarning For(GameObject owner) => owner.GetComponent<BossAttackWarning>() ?? owner.AddComponent<BossAttackWarning>();
+        public static bool HiddenOnIsland(GameObject owner) => owner.scene.path.StartsWith("Assets/Scenes/First Island/",System.StringComparison.Ordinal);
         void Awake()
         {
+            if(HiddenOnIsland(gameObject)){enabled=false;return;}
             var child = new GameObject("Attack danger footprint"); child.transform.SetParent(transform, false);
             line = child.AddComponent<LineRenderer>();
             material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
@@ -37,6 +39,7 @@ namespace Mavis
         public void Circle(Vector3 center,float radius,float seconds) => Sector(center,Vector3.forward,radius,360,seconds);
         public void Sector(Vector3 center,Vector3 direction,float radius,float angle,float seconds)
         {
+            if(HiddenOnIsland(gameObject) || line==null){Clear();return;}
             if(Time.time<nextGeometry){Show(seconds);return;}nextGeometry=Time.time+.08f;
             float yaw=Mathf.Atan2(direction.x,direction.z)*Mathf.Rad2Deg; int count=65;
             for(int i=0;i<count;i++){float a=(yaw-angle*.5f+angle*i/64)*Mathf.Deg2Rad;points[i]=Ground(center+new Vector3(Mathf.Sin(a),0,Mathf.Cos(a))*radius);}
@@ -48,12 +51,13 @@ namespace Mavis
         }
         public void Lane(Vector3 start,Vector3 end,float halfWidth,float seconds)
         {
+            if(HiddenOnIsland(gameObject) || line==null){Clear();return;}
             if(Time.time<nextGeometry){Show(seconds);return;}nextGeometry=Time.time+.08f;
             var side=Vector3.Cross(Vector3.up,(end-start).normalized)*halfWidth;
             lanePoints[0]=Ground(start-side);lanePoints[1]=Ground(end-side);lanePoints[2]=Ground(end+side);lanePoints[3]=Ground(start+side);lanePoints[4]=lanePoints[0];
             line.positionCount=5;line.SetPositions(lanePoints);Show(seconds);
         }
-        void Show(float seconds){until=Time.time+Mathf.Max(.05f,seconds);line.enabled=true;}
+        void Show(float seconds){if(line==null)return;until=Time.time+Mathf.Max(.05f,seconds);line.enabled=true;}
         public void Clear(){if(line)line.enabled=false;}
         void Update(){if(Time.time>=until)Clear();}
         void OnDisable()=>Clear();
