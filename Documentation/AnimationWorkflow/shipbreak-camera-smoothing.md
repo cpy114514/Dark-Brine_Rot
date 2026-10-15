@@ -1,0 +1,21 @@
+# Shipbreak camera continuity — Oct 14
+
+Scope: the user's targeted request to soften the camera during the existing shark tail strike/ship fracture. Accepted for this camera polish stage based on actual Editor simulation, frame sequence, keyframe review and the measured boundaries below. This does not approve the unfinished whole20.8-second paired choreography or claim independent FPS.
+
+The hard cut came from `Story1WreckBattle.Begin` assigning a new position and LookRotation instantly. It now captures the actual sailing camera and its forward focus, then eases around the hull toward the existing tail-strike composition. Orbital angle remains on a consistent branch across180degrees. A quintic envelope and critically damped position/focus preserve continuity into the fracture reveal; camera rotation is bounded at70degrees/s, with the existing additive impact shake retained. Camera rendering runs after actor placement, rather than looking at the prior-frame passenger location.
+
+The old player-camera initialization also snapped at the end of the flight. `ContinueCameraFromCurrentView` inherits the visible orientation and cinematic velocity, smoothly restores normal camera response, and sweeps actual camera travel during the handoff. A distant occluded view approaches its contracted target rather than instantly teleporting to it. Normal follow/collision behavior resumes after the handoff; it was verified inactive at the end of both final tests. Existing controller input, movement, attack, jump and swimming logic is unchanged.
+
+## Evidence
+
+Native artifacts: `.codex/shipbreak-camera-20261014/`. `ReviewShipbreakCamera20261014` starts the actual encounter using a clearly diagnostic early BeginImpact, without moving actors, placing wood or changing production trigger conditions. The opposite-view fixture changes only its initial camera orbit. Fixed timesteps are functional evidence, not real-world FPS.
+
+- Default final:235consecutive native30Hz frames from sailing through impact, fracture and restored control; starting transition changes position0m/rotation0degrees. Maximum Breaking rotation2.334degrees/frame including shake. Handoff rotation0degrees; first follow step3.495m follows the preceding cinematic movement rather than the first-pass26.123m jump. The camera handoff state finishes. Real tail-to-hull gap.002861mm.
+- Exact opposite quarter final:99native10Hz samples,20paused frames with0measured motion. Starting position/rotation deltas0; maximum Breaking rotation7.461degrees/frame including shake. Handoff rotation0degrees; first step11.957m rather than the rejected95m occlusion contraction. Handoff state finishes. Real tail contact.173mm.
+- First-pass and polish artifacts are retained separately; they are not the accepted source. Native full235-image final sequence and an encoded30FPS preview are in `default-30-final/`. `camera-review.mp4` is an actual camera render; screen-space HUD/letterbox overlays are excluded from this review artifact, and remain enabled in the real game. Keyframes were inspected; no claim of a separate full character-animation artistic approval.
+
+Camera continuity, ship/tail framing, contact timing and handoff were observed. Character weight, new poses, individual bones/rig changes, whole paired-fight contact reliability and standalone GPU performance are outside this change. The existing randomly moving wreck can still briefly obscure the actor; this camera request does not solve the broader wreck/choreography issues recorded in v208.
+
+Preserved:140sailing camera distance/angle from the preceding request;2.39game letterbox;1.35physical ship launch, original release meshes, gravity and buoyancy; tail contact/fracture/flight timing; existing animations and Avatar; no sound, minimal UI,1000HP/30percent/random safe triggers. No scene/asset serialization changed in this request, no new Editor or standalone Player, no checkin/push.
+
+Both source originals, scoped patches, diagnostic saves and `verification.json` are retained. SaveDA0 was restored after every confirmed stop, including the final native review. Editor16920 is stopped in clean MainMenu; no review worker remains. Compilation and whitespace checks pass. Broader animation work remains incomplete; do not restore the older battle/controller files over these camera changes.

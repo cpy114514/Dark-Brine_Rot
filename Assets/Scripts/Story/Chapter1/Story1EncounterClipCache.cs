@@ -26,7 +26,7 @@ public static class Story1EncounterClipCache
         var definition=definitionRequest.asset as Story1EncounterDefinition;
         var beats=definition!=null ? definition.beats : Story1EncounterDefinition.ApprovedBeats();
         var names=beats.Where(b=>b.action!=Story1EncounterAction.Surf).Select(b=>b.clip).Concat(new[]{
-            "PLAYER_SwimFast_v007","PLAYER_Throw_v064","PLAYER_Stagger_v006","PLAYER_Fall_v006",
+            "PLAYER_SwimFast_v007","PLAYER_PursuitSwim_v210","CH1_SharkPursuit_v210","PLAYER_Throw_v064","PLAYER_Stagger_v006","PLAYER_Fall_v006",
             "PLAYER_Climb_v010","PLAYER_Climb_v009","PLAYER_Climb_v006","PLAYER_Walk_v006",
             "PLAYER_JumpStart_v006","PLAYER_JumpAir_v006","PLAYER_JumpLand_v006","CH1_SahurBoardHop_v086","CH1_SahurBoardHop_v047"}).Distinct();
         foreach(string name in names)

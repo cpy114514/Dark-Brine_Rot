@@ -75,6 +75,10 @@ public sealed class Story1WreckBattle : MonoBehaviour
     CapsuleCollider headHitbox;
     int shownHealth=-1;
     float surfacedHeight;
+    float swimTravelSpeed;
+    float swimDiveDepth;
+    Vector3 previousSwimBody;
+    bool hasSwimBody;
     Story1WreckPlank strikeBoard;
     Vector3 strikeDeckPoint, strikeStartBody;
     Quaternion strikeStartRotation;
@@ -98,13 +102,23 @@ public sealed class Story1WreckBattle : MonoBehaviour
     const float BreakFlightSeconds = 2.4f;
     bool breakAirPose;
     Vector3 breakShipPosition, breakCameraPosition, breakCameraTarget, breakBodyStart, breakTailBody, breakTailWindupBody;
+    Vector3 breakCameraStartPosition, breakCameraStartFocus, breakCameraFocus, breakCameraBasePosition;
+    Vector3 breakCameraVelocity, breakCameraFocusVelocity, breakRevealPosition, breakRevealFocus;
+    Vector3 breakDesiredCameraPosition, breakDesiredCameraFocus;
+    float breakCameraBlendSeconds;
+    float breakCameraOrbitAngle;
     Vector3 wreckSourceCenter;
     Quaternion breakShipRotation, breakTailRotation;
     bool tailActionStarted, breachStarted;
     System.Random scatter;
+    const int OpeningScatterSeed=20261013;
+    Story1WreckScatterPlayback scatterPlayback;
+    public bool ScatterPlaybackActive=>scatterPlayback!=null && scatterPlayback.IsPlaying;
+    public Story1WreckPlank EntryDeck { get; private set; }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    // Opt-in diagnostic only. Ordinary play retains fresh random fracture.
+    // Explicit layout bake override. Ordinary play uses the approved fixed release.
     public int? DiagnosticScatterSeed { private get; set; }
+    public bool DiagnosticBakeScatter { private get; set; }
 #endif
     Story1WreckPlank landingBoard;
     public float ImpactNoseGap { get; private set; } = float.PositiveInfinity;
@@ -160,8 +174,16 @@ public sealed class Story1WreckBattle : MonoBehaviour
         }
         breakCameraTarget = breakShipPosition + heading * 24 + Vector3.up * 22;
         breakCameraPosition = breakShipPosition + side * 140 + heading * 65 + Vector3.up * 48;
-        owner.storyCamera.transform.SetPositionAndRotation(breakCameraPosition,
-            Quaternion.LookRotation(breakCameraTarget - breakCameraPosition));
+        // Take over the player's actual view without moving or turning it.
+        breakCameraStartPosition = breakCameraBasePosition = owner.storyCamera.transform.position;
+        float focusDistance = Mathf.Max(1,Vector3.Distance(breakCameraStartPosition,breakCameraTarget));
+        breakCameraStartFocus = breakCameraFocus = breakCameraStartPosition + owner.storyCamera.transform.forward * focusDistance;
+        breakDesiredCameraPosition = breakCameraStartPosition;breakDesiredCameraFocus = breakCameraStartFocus;
+        breakCameraVelocity = breakCameraFocusVelocity = Vector3.zero;
+        Vector3 startOffset = Vector3.ProjectOnPlane(breakCameraStartPosition-breakShipPosition,Vector3.up);
+        Vector3 endOffset = Vector3.ProjectOnPlane(breakCameraPosition-breakShipPosition,Vector3.up);
+        breakCameraOrbitAngle=Vector3.SignedAngle(startOffset,endOffset,Vector3.up);
+        breakCameraBlendSeconds = Mathf.Max(1.35f,Vector3.Angle(startOffset,endOffset)/80f+.2f);
         var asset = Resources.Load<Story1ShipWreckAsset>("Story1Wreck/ShipWreckPieces");
         Effects = gameObject.AddComponent<Story1WreckEffects>();Effects.Initialize(asset.hulls[0].material,asset.hulls[0].mesh);
     }
@@ -243,6 +265,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     void LateUpdate()
     {
         if(CurrentPhase==Phase.Breaking && !sharkPrepared)PoseBreakShark(phaseAge);
+        if(CurrentPhase==Phase.Breaking && !PauseSettingsMenu.IsOpen && Time.deltaTime>0)MoveBreakCamera(Time.deltaTime);
         if(headHitbox!=null && sharkAnimator!=null)
             headHitbox.transform.SetPositionAndRotation(sharkAnimator.NoseWorldPoint,shark.rotation);
     }
@@ -300,6 +323,40 @@ public sealed class Story1WreckBattle : MonoBehaviour
         if (CurrentPhase == Phase.Fighting) controls.text = rider != null ? rider.Hint : "";
     }
 
+    static float CameraEase(float value)
+    {
+        float t=Mathf.Clamp01(value);
+        return t*t*t*(t*(t*6-15)+10);
+    }
+    Vector3 BreakCameraOrbit(Vector3 destination,float blend)
+    {
+        // Travel around the hull rather than cutting across it, including
+        // when the player was looking from the opposite quarter of the ship.
+        Vector3 from=breakCameraStartPosition-breakShipPosition,to=destination-breakShipPosition;
+        Vector3 horizontal=Vector3.ProjectOnPlane(from,Vector3.up);
+        Vector3 targetHorizontal=Vector3.ProjectOnPlane(to,Vector3.up);
+        if(horizontal.sqrMagnitude<.01f || targetHorizontal.sqrMagnitude<.01f)
+            return Vector3.Lerp(breakCameraStartPosition,destination,blend);
+        float angle=breakCameraOrbitAngle+Mathf.DeltaAngle(breakCameraOrbitAngle,
+            Vector3.SignedAngle(horizontal,targetHorizontal,Vector3.up));
+        Vector3 direction=Quaternion.AngleAxis(angle*blend,Vector3.up)*horizontal.normalized;
+        return breakShipPosition+direction*Mathf.Lerp(horizontal.magnitude,targetHorizontal.magnitude,blend)+
+            Vector3.up*Mathf.Lerp(from.y,to.y,blend);
+    }
+    void MoveBreakCamera(float deltaTime)
+    {
+        // Preserve damping velocities across the tail contact and fracture;
+        // the impact shake remains a separate additive layer in LateUpdate.
+        breakCameraBasePosition=Vector3.SmoothDamp(breakCameraBasePosition,breakDesiredCameraPosition,
+            ref breakCameraVelocity,.4f,Mathf.Infinity,deltaTime);
+        breakCameraFocus=Vector3.SmoothDamp(breakCameraFocus,breakDesiredCameraFocus,
+            ref breakCameraFocusVelocity,.4f,Mathf.Infinity,deltaTime);
+        var camera=sequence.storyCamera.transform;
+        Vector3 look=breakCameraFocus-breakCameraBasePosition;
+        Quaternion desired=look.sqrMagnitude>.001f ? Quaternion.LookRotation(look,Vector3.up) : camera.rotation;
+        Quaternion rotation=Quaternion.Slerp(camera.rotation,desired,1-Mathf.Exp(-6*deltaTime));
+        camera.SetPositionAndRotation(breakCameraBasePosition,Quaternion.RotateTowards(camera.rotation,rotation,70*deltaTime));
+    }
     void BreakShip(float deltaTime)
     {
         if(!sharkPrepared)PoseBreakShark(phaseAge);
@@ -312,12 +369,12 @@ public sealed class Story1WreckBattle : MonoBehaviour
         }
         if(!shattered)
         {
-            float close=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.75f,1.65f,phaseAge));
+            float close=CameraEase(Mathf.InverseLerp(.75f,1.65f,phaseAge));
             Vector3 focus=Vector3.Lerp(breakCameraTarget,sequence.HullImpactPoint+Vector3.up*5,close*.7f);
             Vector3 shot=Vector3.Lerp(breakCameraPosition,sequence.HullImpactPoint+side*85+heading*35+Vector3.up*30,close);
-            float blend=1-Mathf.Exp(-5*deltaTime);
-            sequence.storyCamera.transform.position=Vector3.Lerp(sequence.storyCamera.transform.position,shot,blend);
-            sequence.storyCamera.transform.rotation=Quaternion.Slerp(sequence.storyCamera.transform.rotation,Quaternion.LookRotation(focus-sequence.storyCamera.transform.position),blend);
+            float enter=CameraEase(phaseAge/breakCameraBlendSeconds);
+            breakDesiredCameraPosition=BreakCameraOrbit(shot,enter);
+            breakDesiredCameraFocus=Vector3.Lerp(breakCameraStartFocus,focus,enter);
         }
         if (phaseAge < ShipTailContactTime)
             return;
@@ -349,6 +406,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         if (!shattered)
         {
             shattered = true;
+            breakRevealPosition=breakCameraBasePosition;breakRevealFocus=breakCameraFocus;
             CreateWreckage();
             sequence.ship.gameObject.SetActive(false);
             if (sequence.awakening.looseShipDecoration != null) sequence.awakening.looseShipDecoration.SetActive(false);
@@ -359,37 +417,38 @@ public sealed class Story1WreckBattle : MonoBehaviour
         // The full-size shark follows through with its tail and dives before taking its combat position.
         if(!sharkPrepared && progress>=1){sharkPrepared=true;sharkAnimator.ReleaseCinematicAnimation();PrepareShark();}
         foreach(var piece in planks)piece.CommitPose();
-        Vector3 wreckCenter=Vector3.zero;
-        foreach(var piece in planks)wreckCenter+=piece.transform.position;
-        wreckCenter/=planks.Count;
-        float cameraBlend=1-Mathf.Exp(-2.5f*deltaTime);
-        float handoff=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.4f,1,progress));
-        Vector3 wreckFocus=Vector3.Lerp(wreckCenter+heading*24+Vector3.up*22,player.transform.position+Vector3.up*3,handoff);
-        Vector3 wreckShot=Vector3.Lerp(wreckCenter+side*120+heading*55+Vector3.up*44,player.transform.position+side*22-heading*12+Vector3.up*12,handoff);
-        sequence.storyCamera.transform.position=Vector3.Lerp(sequence.storyCamera.transform.position,wreckShot,cameraBlend);
-        sequence.storyCamera.transform.rotation=Quaternion.Slerp(sequence.storyCamera.transform.rotation,
-            Quaternion.LookRotation(wreckFocus-sequence.storyCamera.transform.position),cameraBlend);
         if(progress>.7f && (landingBoard==null || !landingBoard.IsBoardable))
             landingBoard=FindLandingBoard(passengerStart);
         var landing=landingBoard!=null ? landingBoard : planks[0];
         Vector3 destination = landing.BoardingPoint(landing.transform.position) + Vector3.up * (.15f - player.LowestFootWorldOffset);
         player.transform.position = Vector3.Lerp(passengerStart - side*3.5f + Vector3.up*3.5f, destination,
             progress) + Vector3.up * (.5f*9.8f*BreakFlightSeconds*BreakFlightSeconds*progress*(1-progress));
+        Vector3 wreckCenter=Vector3.zero;
+        foreach(var piece in planks)wreckCenter+=piece.transform.position;
+        wreckCenter/=planks.Count;
+        float handoff=CameraEase(Mathf.InverseLerp(.4f,1,progress));
+        Vector3 wreckFocus=Vector3.Lerp(wreckCenter+heading*24+Vector3.up*22,player.transform.position+Vector3.up*3,handoff);
+        Vector3 wreckShot=Vector3.Lerp(wreckCenter+side*120+heading*55+Vector3.up*44,player.transform.position+side*22-heading*12+Vector3.up*12,handoff);
+        float reveal=CameraEase(progress/.4f);
+        breakDesiredCameraPosition=Vector3.Lerp(breakRevealPosition,wreckShot,reveal);
+        breakDesiredCameraFocus=Vector3.Lerp(breakRevealFocus,wreckFocus,reveal);
         if (progress < 1) return;
         Physics.SyncTransforms();
         capsule.enabled = true;
         player.RestoreSavedPose(destination, Quaternion.LookRotation(heading));
+        player.ContinueCameraFromCurrentView(sequence.storyCamera,breakCameraVelocity);
         player.ExternalControlLock = player.ExternalMovementLock = false;
         player.Motion.Release(this);
         player.enabled = true; player.GetComponent<SahurAttack>().enabled = true; player.GetComponent<SahurBoomerang>().enabled = true;
         playerHealth.GrantProtection(1.25f);
         player.NotifyPlatformLanding();
         Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
+        sharkAnimator.ReleaseCinematicAnimation();
         CurrentPhase = Phase.Fighting; phaseAge = 0; sharkPhase = SharkPhase.Pursuit; sharkAge = 0;
         CinematicLetterbox.Set(this, false);
         FightElapsed = 0;
         float minimum = Mathf.Max(1, minimumFightSeconds);
-        FinaleAfterSeconds = ScatterRange(minimum, Mathf.Max(minimum, maximumFightSeconds));
+        FinaleAfterSeconds = Random.Range(minimum, Mathf.Max(minimum, maximumFightSeconds));
         rider = player.GetComponent<Story1WreckRider>();
         if (rider == null) rider = player.gameObject.AddComponent<Story1WreckRider>();
         rider.Initialize(player, planks, ocean,landing,detailPieces);
@@ -434,11 +493,11 @@ public sealed class Story1WreckBattle : MonoBehaviour
         var deckBounds = new Bounds(shipModelToWorld.MultiplyPoint3x4(shipWreck.decks[0].sourceCenter), Vector3.zero);
         foreach (var deck in shipWreck.decks) deckBounds.Encapsulate(shipModelToWorld.MultiplyPoint3x4(deck.sourceCenter));
         wreckSourceCenter = deckBounds.center;
-        deckSources = shipWreck.decks.OrderBy(p => (shipModelToWorld.MultiplyPoint3x4(p.sourceCenter) - passengerStart).sqrMagnitude).ToArray();
+        deckSources = shipWreck.decks.OrderBy(p => p.name,System.StringComparer.Ordinal).ToArray();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        scatter = new System.Random(DiagnosticScatterSeed ?? System.Guid.NewGuid().GetHashCode());
+        scatter = new System.Random(DiagnosticScatterSeed ?? OpeningScatterSeed);
 #else
-        scatter = new System.Random(System.Guid.NewGuid().GetHashCode());
+        scatter = new System.Random(OpeningScatterSeed);
 #endif
         ExpectedInitialFragments=shipWreck.decks.Length+shipWreck.hulls.Length+shipWreck.details.Length;
         foreach(var source in deckSources)if(!ReleaseImpactFragments(source,true))AddPlank(source);
@@ -446,6 +505,25 @@ public sealed class Story1WreckBattle : MonoBehaviour
         foreach(var source in shipWreck.details)if(!ReleaseImpactFragments(source,false))AddShipDetail(source);
         InitialFragmentCount=ShipFragmentCount;
         debrisRoot.SetActive(true);
+        var layout=Resources.Load<TextAsset>("Story1Wreck/OpeningScatter_v211");
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if(DiagnosticBakeScatter)layout=null;
+#endif
+        if(layout!=null)
+        {
+            scatterPlayback=debrisRoot.AddComponent<Story1WreckScatterPlayback>();
+            scatterPlayback.Initialize(layout,debrisRoot.GetComponentsInChildren<Story1WreckFloatBody>(),sequence.ship.transform);
+            EntryDeck=planks.FirstOrDefault(p=>p.name==scatterPlayback.EntryDeckName);
+        }
+        if(EntryDeck==null)EntryDeck=planks.Where(p=>p.Dimensions.y<1.2f && !p.IsBroken)
+            .OrderByDescending(p=>p.Dimensions.x*p.Dimensions.z).FirstOrDefault();
+        // A long thin deck averages several different crests; its low open
+        // edge can remain awash even while its centre is buoyant. Prefer an
+        // existing compact, thicker cut for the climb/fight, without moving
+        // any fragment or changing the replayed fracture layout.
+        EntryDeck=planks.Where(p=>!p.IsBroken && p.Dimensions.y<1.2f &&
+            Mathf.Min(p.Dimensions.x,p.Dimensions.z)>=3f && Mathf.Max(p.Dimensions.x,p.Dimensions.z)<=6)
+            .OrderByDescending(p=>p.Dimensions.y*Mathf.Min(p.Dimensions.x,p.Dimensions.z)).FirstOrDefault() ?? EntryDeck;
     }
     bool ReleaseImpactFragments(Story1ShipWreckAsset.Fragment source,bool deck)
     {
@@ -589,7 +667,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         Vector3 noseOffset=rotation*Vector3.Scale(shark.InverseTransformPoint(sharkAnimator.NoseWorldPoint)-sharkLocalBounds.center,shark.lossyScale);
         float strikeHeight=capsule!=null ? Mathf.Clamp(capsule.bounds.size.y*.4f,1.35f,2.4f) : 1.8f;
         float rise=Mathf.Max(0,feetY+strikeHeight-(body.y+noseOffset.y));
-        float desired=body.y+rise*exposure;
+        float desired=body.y+rise*exposure-((sharkPhase==SharkPhase.Pursuit || sharkPhase==SharkPhase.Recovery) ? swimDiveDepth : 0);
         surfacedHeight=Mathf.Lerp(surfacedHeight,desired,1-Mathf.Exp(-8*Time.deltaTime));body.y=surfacedHeight;
         shark.rotation=rotation;shark.position=body-shark.TransformVector(sharkLocalBounds.center);
     }
@@ -602,6 +680,25 @@ public sealed class Story1WreckBattle : MonoBehaviour
     {
         Vector3 nose=sharkAnimator.NoseWorldPoint;target.y=nose.y;
         PlaceShark(BodyForNose(Vector3.MoveTowards(nose,target,distance),rotation),rotation);
+    }
+    void SteerSwimmingShark(Vector3 target,float maximumSpeed,float deltaTime)
+    {
+        Vector3 travel=Vector3.ProjectOnPlane(target-SharkBody,Vector3.up);
+        if(travel.sqrMagnitude<.001f)return;
+        // A surface route can be blocked by the underside of a real hull.
+        // Descend under it instead of repeatedly pushing/turning in place.
+        if(hasSwimBody && swimTravelSpeed>2 && travel.magnitude>10 &&
+            Vector3.ProjectOnPlane(SharkBody-previousSwimBody,Vector3.up).magnitude<swimTravelSpeed*deltaTime*.25f)
+            swimDiveDepth=Mathf.Min(8,swimDiveDepth+2*deltaTime);
+        previousSwimBody=SharkBody;hasSwimBody=true;
+        Quaternion heading=Quaternion.RotateTowards(shark.rotation,Quaternion.LookRotation(travel),60*deltaTime);
+        Vector3 forward=Vector3.ProjectOnPlane(heading*Vector3.forward,Vector3.up).normalized;
+        float alignment=Mathf.Clamp01(Vector3.Dot(forward,travel.normalized));
+        float remaining=Vector3.ProjectOnPlane(target-sharkAnimator.NoseWorldPoint,Vector3.up).magnitude;
+        float speed=Mathf.Min(maximumSpeed,Mathf.Max(2,remaining*1.5f))*Mathf.Lerp(.25f,1,alignment);
+        swimTravelSpeed=Mathf.MoveTowards(swimTravelSpeed,speed,6*deltaTime);
+        sharkAnimator.tailBeatFrequency=Mathf.Lerp(7,12,Mathf.Clamp01(swimTravelSpeed/15));
+        PlaceShark(SharkBody+forward*(swimTravelSpeed*deltaTime),heading);
     }
     public void PoseSharkNoseAt(Vector3 nose,Quaternion rotation)
     {
@@ -619,8 +716,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
             strikePoint=strikeBoard.transform.TransformPoint(strikeDeckPoint);
         if (sharkPhase == SharkPhase.Pursuit)
         {
-            Quaternion facing = Quaternion.RotateTowards(shark.rotation, Quaternion.LookRotation(toward), 130 * deltaTime);
-            MoveSharkNose(feet-toward*2.2f,facing,15*deltaTime);
+            SteerSwimmingShark(feet-toward*2.2f,15,deltaTime);
             if (sharkAge > 1.3f && Vector3.ProjectOnPlane(sharkAnimator.NoseWorldPoint - feet, Vector3.up).magnitude < 7)
             {
                 sharkPhase=SharkPhase.Windup;sharkAge=0;strikePoint=feet;hitApplied=false;damageApplied=false;
@@ -663,8 +759,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         }
         else if (sharkPhase == SharkPhase.Recovery)
         {
-            Quaternion facing=Quaternion.RotateTowards(shark.rotation,Quaternion.LookRotation(toward),170*deltaTime);
-            MoveSharkNose(feet-toward*1.8f,facing,18*deltaTime);
+            SteerSwimmingShark(feet-toward*1.8f,12,deltaTime);
             if (sharkAge > 2.4f) { sharkPhase = SharkPhase.Pursuit; sharkAge = 0; }
         }
         else
@@ -711,6 +806,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     public bool DamageBoard(Story1WreckPlank board,float damage,Vector3 point,Vector3 impulse)
     {
         if(board==null || board.IsBroken || !board.gameObject.activeInHierarchy)return false;
+        if(ScatterPlaybackActive || CurrentPhase==Phase.Fighting && board==EntryDeck)return false;
         var body=board.GetComponent<Rigidbody>();
         body.AddForceAtPosition(impulse,point,ForceMode.VelocityChange);
         BoardDamageCount++;
@@ -724,6 +820,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     public bool DamageWreckDetail(Story1WreckDebris piece,float damage,Vector3 point,Vector3 impulse)
     {
         if(piece==null || piece.IsBroken || piece.Obstacle==null || !piece.gameObject.activeInHierarchy)return false;
+        if(ScatterPlaybackActive)return false;
         BoardDamageCount++;bool breaks=piece.Damage(damage);
         Effects.Impact(point,impulse.normalized,breaks ? 1.1f : .45f,splinters:true);
         if(!breaks)return false;

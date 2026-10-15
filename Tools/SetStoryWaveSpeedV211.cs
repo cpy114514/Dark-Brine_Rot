@@ -1,0 +1,6 @@
+using System;using System.IO;using System.Linq;using UnityEditor;using UnityEditor.SceneManagement;using UnityEngine;
+public static class SetStoryWaveSpeedV211{
+public static object Start(){if(EditorApplication.isPlaying)throw new Exception("Ready Edit Mode required");const string path="Assets/Scenes/First story/Story1.unity";if(!File.ReadAllBytes(path).SequenceEqual(File.ReadAllBytes(".codex/float-swim-20261014/Story1-before-wave.unity")))throw new Exception("Protect newer scene");var active=UnityEngine.SceneManagement.SceneManager.GetActiveScene();var scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Additive);
+try{var water=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<OceanWorld>(true)).Single();if(Mathf.Abs(water.waveMotionSpeed-1.8f)>.001f)throw new Exception("Unexpected water revision");var serialized=new SerializedObject(water);serialized.FindProperty("waveMotionSpeed").floatValue=1;serialized.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(water);EditorSceneManager.MarkSceneDirty(scene);if(!EditorSceneManager.SaveScene(scene))throw new Exception("Native save failed");return new{water.waveMotionSpeed,onlyRequestedField="waveMotionSpeed",nativeSave=true};}
+finally{UnityEngine.SceneManagement.SceneManager.SetActiveScene(active);EditorSceneManager.CloseScene(scene,true);}}
+}

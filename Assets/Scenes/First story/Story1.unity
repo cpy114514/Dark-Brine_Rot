@@ -634,9 +634,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShipFollowCamera
   target: {fileID: 340888524}
-  followDistance: 110
-  height: 45
-  sideOffset: 35
+  followDistance: 140
+  height: 51.272728
+  sideOffset: 44.545452
   lookHeight: 22
   positionSharpness: 3
   rotationSharpness: 5
@@ -5918,7 +5918,7 @@ MonoBehaviour:
   depthFadeDistance: 5.5
   waterOpacity: 0.94
   absorptionStrength: 3.7
-  waveMotionSpeed: 1.8
+  waveMotionSpeed: 1
   wave1:
     direction: {x: 0.82, y: 0.57}
     amplitude: 1.9

@@ -1,0 +1,8 @@
+{
+  "stage": "FIRST PASS",
+  "reviewer": "Codex animation-review",
+  "accepted_for_staging": ["PLAYER_PursuitSwim_v210"],
+  "preview": ".codex/chase-entry-20261014/blender-pursuit-contact-sheet.jpg",
+  "observed": "Three views across frames1/13/25/37/49/61/73: horizontal swimming, alternating reach and recovery, asymmetric shoulder/hip roll, bent recovery elbow, staggered kick; no visible joint pop at sampled seam. Source53-bone rig, binding and skin preserved; measured quaternion seam0deg.",
+  "limitations": "Mannequin source preview only; retained Sahur Avatar, waterline, orientation and actual chase/climb transitions require native Unity review. No FINAL or full encounter contact approval."
+}

@@ -1,0 +1,38 @@
+{
+  "action": "CH1_SharkPursuit_v210",
+  "fps": 60.0,
+  "frames": [
+    1,
+    13,
+    25,
+    37,
+    49,
+    61,
+    85
+  ],
+  "previews": [
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\front-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\front-0013.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\front-0025.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\front-0037.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\front-0049.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\front-0061.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\front-0085.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\side-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\side-0013.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\side-0025.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\side-0037.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\side-0049.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\side-0061.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\side-0085.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\three-quarter-0001.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\three-quarter-0013.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\three-quarter-0025.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\three-quarter-0037.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\three-quarter-0049.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\three-quarter-0061.00.png",
+    "D:\\indiegameDev\\unity\\Dark Brine_Rot\\.codex\\chase-entry-20261014\\shark-pursuit-v210\\three-quarter-0085.00.png"
+  ],
+  "gameplay_camera": "undefined: no camera supplied; add a Unity gameplay capture before final review",
+  "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
+}

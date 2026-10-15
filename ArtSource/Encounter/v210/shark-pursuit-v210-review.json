@@ -1,0 +1,8 @@
+{
+  "stage": "FIRST PASS",
+  "reviewer": "Codex animation-review",
+  "accepted_for_staging": ["CH1_SharkPursuit_v210"],
+  "preview": ".codex/chase-entry-20261014/blender-pursuit-contact-sheet.jpg",
+  "observed": "Three views across frames1/13/25/37/49/61/85: restrained head, progressive rear-body bend and lagging tail sweep, small paired fin response. Source16-bone rig and native shark skin preserved; measured quaternion seam0deg and maximum.748deg/frame.",
+  "limitations": "Dry source preview; pursuit distance, submerged bulk and original tail/bite controller restoration need native Unity review. FIRST PASS only."
+}

@@ -20,6 +20,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
     static Transform samplingFocus;
     Mesh pressureMesh;
     Vector3 pressureSize;
+    Vector3 pressureCentre;
     Vector3 dimensions;
     float stiffness,verticalDamping,draft;
     Vector3 broadFaceNormal;
@@ -72,6 +73,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
     {
         if(pressureMesh==source && pressureSize==size)return;
         pressureMesh=source;pressureSize=size;
+        pressureCentre=source!=null ? Vector3.Scale(source.bounds.center,size) : Vector3.zero;
         float thin=Mathf.Min(size.x,Mathf.Min(size.y,size.z));
         Vector3 normal=thin==size.x ? Vector3.right : thin==size.y ? Vector3.up : Vector3.forward;
         Vector3 axisA=thin==size.x ? Vector3.up*(size.y*.35f) : Vector3.right*(size.x*.35f);
@@ -87,7 +89,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
                 float score=Vector3.Dot(point,direction);
                 if(score>best){best=score;extreme=Vector3.Scale(point,size)*.88f;}
             }
-            pressureLocal[i]=Vector3.ProjectOnPlane(extreme,normal);
+            pressureLocal[i]=pressureCentre+Vector3.ProjectOnPlane(extreme-pressureCentre,normal);
         }
     }
     public void Initialize(OceanWorld water,Vector3 size,bool floats,Vector3 velocity,Vector3 spin)
@@ -98,7 +100,11 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         // Set the physics pose before enabling interpolation; newly added bodies start at the origin.
         Body.position=transform.position;Body.rotation=transform.rotation;
         float volume=MaterialVolume(GetComponent<MeshFilter>()?.sharedMesh,size);
-        Body.mass=Mathf.Clamp(volume*(floats ? 8 : 12),1,2000);
+        // Volume is in world cubic metres. Eight kg/m3 made a deck lighter
+        // than foam while the shark's contact solver transfers 1500 kg of
+        // momentum: it repeatedly lifted the passenger's platform from below.
+        // Use timber density and retain the heavier non-floating proportion.
+        Body.mass=Mathf.Clamp(volume*(floats ? 450 : 675),1,50000);
         Body.linearDamping=.03f;Body.angularDamping=.06f;Body.maxAngularVelocity=5;
         Body.maxDepenetrationVelocity=3;Body.interpolation=RigidbodyInterpolation.Interpolate;
         Body.collisionDetectionMode=CollisionDetectionMode.ContinuousSpeculative;
@@ -123,9 +129,11 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         float broadArea=size.x*size.y*size.z/Mathf.Max(.001f,thickness);
         thickness=Mathf.Clamp(volume/Mathf.Max(.001f,broadArea),.04f,thickness);
         // Broad timber follows swell with inertia rather than springing out of it.
-        stiffness=Physics.gravity.magnitude/Mathf.Max(.25f,thickness*.4f);
-        verticalDamping=2*Mathf.Sqrt(stiffness)*1.05f;
-        draft=thickness*.25f;
+        stiffness=Physics.gravity.magnitude/Mathf.Max(.2f,thickness*.4f);
+        verticalDamping=2*Mathf.Sqrt(stiffness)*.95f;
+        // Light timber displaces less than half its thickness. A positive
+        // centre-plane draft submerged most of a thin deck before any swell.
+        draft=-thickness*.15f;
     }
     void OnEnable() { if(launchPending && Body!=null)ApplyPendingLaunch(); }
     void ApplyPendingLaunch()
@@ -195,21 +203,25 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
             float newSlopeZ=Mathf.Abs(det)>.01f ? (zh*xx-xh*xz)/det : slopeZ;
             float pointDelta=Mathf.Max(Time.fixedDeltaTime,Time.time-sampleTime);
             float predictedCentre=centreSurface+slopeX*(massPoint.x-centreSamplePoint.x)+slopeZ*(massPoint.z-centreSamplePoint.z);
-            centreSurface=sampled ? Mathf.SmoothDamp(predictedCentre,centreHeight,ref centreSurfaceVelocity,.18f,Mathf.Infinity,pointDelta) : centreHeight;
+            float velocityBlend=1-Mathf.Exp(-pointDelta/.07f);
+            centreSurfaceVelocity=sampled ? Mathf.Lerp(centreSurfaceVelocity,Mathf.Clamp((centreHeight-predictedCentre)/pointDelta,-12,12),velocityBlend) : 0;
+            centreSurface=centreHeight;
             centreSamplePoint=massPoint;
             for(int i=0;i<4;i++)
             {
                 float predicted=pointSurface[i]+slopeX*(points[i].x-waterPoints[i].x)+slopeZ*(points[i].z-waterPoints[i].z);
                 float pointHeight=i==0 ? nw : i==1 ? ne : i==2 ? sw : se;
-                pointSurface[i]=sampled ? Mathf.SmoothDamp(predicted,pointHeight,ref pointSurfaceVelocity[i],.18f,Mathf.Infinity,pointDelta) : pointHeight;
+                pointSurfaceVelocity[i]=sampled ? Mathf.Lerp(pointSurfaceVelocity[i],Mathf.Clamp((pointHeight-predicted)/pointDelta,-12,12),velocityBlend) : 0;
+                pointSurface[i]=pointHeight;
                 waterPoints[i]=points[i];
             }
             if(sampled)
             {
                 float predicted=surface+slopeX*(position.x-sampledAt.x)+slopeZ*(position.z-sampledAt.z);
                 float delta=Mathf.Max(Time.fixedDeltaTime,Time.time-sampleTime);
-                surface=Mathf.SmoothDamp(predicted,height,ref surfaceVelocity,.18f,Mathf.Infinity,delta);
-                float blend=1-Mathf.Exp(-3*delta);
+                surfaceVelocity=Mathf.Lerp(surfaceVelocity,Mathf.Clamp((height-predicted)/delta,-12,12),velocityBlend);
+                surface=height;
+                float blend=1-Mathf.Exp(-12*delta);
                 slopeX=Mathf.Lerp(slopeX,newSlopeX,blend);slopeZ=Mathf.Lerp(slopeZ,newSlopeZ,blend);
             }
             else{surface=height;slopeX=newSlopeX;slopeZ=newSlopeZ;surfaceVelocity=0;}
@@ -219,7 +231,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         for(int x=-1;x<=1;x+=2)for(int y=-1;y<=1;y+=2)for(int z=-1;z<=1;z+=2)
         {
             // Both faces contribute to immersion, including a board entering edge first.
-            Vector3 point=position+rotation*Vector3.Scale(new Vector3(x*.4f,y*.4f,z*.4f),dimensions);
+            Vector3 point=position+rotation*(pressureCentre+Vector3.Scale(new Vector3(x*.4f,y*.4f,z*.4f),dimensions));
             float depth=surface+slopeX*(point.x-sampledAt.x)+slopeZ*(point.z-sampledAt.z)+
                 surfaceVelocity*Mathf.Min(.08f,Time.time-sampleTime)-point.y;
             if(depth<=0)continue;
@@ -236,56 +248,29 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         Body.AddForce(resistance*submerged,ForceMode.Acceleration);
         if(Floats)
         {
-            float positivePressure=0;
+            // Integrate vertical displacement over the same real-mesh probes.
+            // Clipping each corner's spring separately made a passing crest
+            // inject net upward energy and launch the whole thin fragment.
+            // Heave belongs to its displaced volume; roll/pitch belongs to
+            // the water-plane moment, with the native inertia left intact.
+            Vector3 centrePoint=position+rotation*(pressureCentre+Vector3.ProjectOnPlane(nativeMassCentre-pressureCentre,broadFaceNormal));
+            float extrapolation=Mathf.Min(.08f,Time.time-sampleTime);
+            float centreWater=centreSurface+slopeX*(centrePoint.x-centreSamplePoint.x)+slopeZ*(centrePoint.z-centreSamplePoint.z)+centreSurfaceVelocity*extrapolation;
+            float immersion=(centreWater-centrePoint.y)*.5f;
+            float waterVelocity=centreSurfaceVelocity*.5f;
             for(int i=0;i<4;i++)
             {
-                pressures[i]=0;Vector3 point=position+rotation*pressureLocal[i];
-                float height=pointSurface[i]+slopeX*(point.x-waterPoints[i].x)+slopeZ*(point.z-waterPoints[i].z)+pointSurfaceVelocity[i]*Mathf.Min(.08f,Time.time-sampleTime);
-                float immersion=height-point.y;
-                if(immersion<-thickness*.5f)continue;
-                float lift=Mathf.Clamp(Physics.gravity.magnitude+(immersion-draft)*stiffness,0,Physics.gravity.magnitude*8);
-                float relativeHeave=Body.GetPointVelocity(point).y-pointSurfaceVelocity[i];
-                float drag=verticalDamping*Mathf.Clamp01((immersion+thickness*.5f)/Mathf.Max(.1f,thickness)*2);
-                // Four broad-face pressure points follow the actual crest at
-                // each end. Real mass/inertia converts their lever arms into
-                // torque; applying acceleration directly at distant corners
-                // used to over-excite pitch, while centre-only lift submerged
-                // long deck edges even when the centre floated correctly.
-                pressures[i]=Mathf.Clamp(lift-relativeHeave*drag,-Physics.gravity.magnitude*1.5f,Physics.gravity.magnitude*8);
-                positivePressure+=Mathf.Max(0,pressures[i])*pressureWeights[i]*.5f;
+                Vector3 point=position+rotation*pressureLocal[i];
+                float height=pointSurface[i]+slopeX*(point.x-waterPoints[i].x)+slopeZ*(point.z-waterPoints[i].z)+pointSurfaceVelocity[i]*extrapolation;
+                immersion+=(height-point.y)*pressureWeights[i]*.5f;
+                waterVelocity+=pointSurfaceVelocity[i]*pressureWeights[i]*.5f;
             }
-            // The interior displaces water too. A corner-only quadrature
-            // ignored crests underneath a broad deck and could submerge its
-            // entire fighting surface while all four corners looked buoyant.
-            // Reuse the fifth existing surface sample at the native COM;
-            // half the pressure represents the interior, half the perimeter.
-            Vector3 centrePoint=Body.worldCenterOfMass;
-            float centreWater=centreSurface+slopeX*(centrePoint.x-centreSamplePoint.x)+slopeZ*(centrePoint.z-centreSamplePoint.z)+centreSurfaceVelocity*Mathf.Min(.08f,Time.time-sampleTime);
-            float centreImmersion=centreWater-centrePoint.y;
-            float centrePressure=0;
-            if(centreImmersion>=-thickness*.5f)
-            {
-                float lift=Mathf.Clamp(Physics.gravity.magnitude+(centreImmersion-draft)*stiffness,0,Physics.gravity.magnitude*8);
-                float drag=verticalDamping*Mathf.Clamp01((centreImmersion+thickness*.5f)/Mathf.Max(.1f,thickness)*2);
-                centrePressure=Mathf.Clamp(lift-(Body.linearVelocity.y-centreSurfaceVelocity)*drag,-Physics.gravity.magnitude*1.5f,Physics.gravity.magnitude*8);
-                positivePressure+=Mathf.Max(0,centrePressure)*.5f;
-            }
-            // A single wet corner may support light timber; capping each
-            // corner at a quarter of the available lift sank the ends of
-            // broad decks. Keep the total upward acceleration bounded so
-            // the stronger local response cannot launch the whole fragment.
-            float pressureScale=Mathf.Min(1,Physics.gravity.magnitude*2.4f/Mathf.Max(.001f,positivePressure));
-            for(int i=0;i<4;i++)
-            {
-                float pressure=pressures[i]>0 ? pressures[i]*pressureScale : pressures[i];
-                Body.AddForceAtPosition(Vector3.up*(pressure*Body.mass*pressureWeights[i]*.5f),position+rotation*pressureLocal[i],ForceMode.Force);
-            }
-            Body.AddForce(Vector3.up*((centrePressure>0 ? centrePressure*pressureScale : centrePressure)*Body.mass*.5f),ForceMode.Force);
-            Vector3 normal=Body.rotation*broadFaceNormal;
-            Vector3 waterNormal=SurfaceNormal;
-            Vector3 upright=normal.y>=0 ? waterNormal : -waterNormal;
+            float acceleration=Physics.gravity.magnitude+(immersion-draft)*stiffness-(Body.linearVelocity.y-waterVelocity)*verticalDamping;
+            Body.AddForce(Vector3.up*Mathf.Clamp(acceleration,-Physics.gravity.magnitude*1.5f,Physics.gravity.magnitude*2.4f),ForceMode.Acceleration);
+            Vector3 normal=rotation*broadFaceNormal;
+            Vector3 upright=normal.y>=0 ? SurfaceNormal : -SurfaceNormal;
             Vector3 tiltSpin=Vector3.ProjectOnPlane(Body.angularVelocity,Vector3.up);
-            Body.AddTorque((Vector3.Cross(normal,upright)*2f-tiltSpin*1.5f)*submerged,ForceMode.Acceleration);
+            Body.AddTorque((Vector3.Cross(normal,upright)*36f-tiltSpin*12f)*submerged,ForceMode.Acceleration);
         }
         Body.AddTorque(-Body.angularVelocity*(.65f*submerged),ForceMode.Acceleration);
         if(!Floats)Body.AddForce(-Vector3.up*Body.linearVelocity.y*(.65f*submerged),ForceMode.Acceleration);

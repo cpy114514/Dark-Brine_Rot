@@ -254,6 +254,7 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
     bool attackWasActive;
     readonly Vector3[] previousAnatomy=new Vector3[5],anatomyVelocity=new Vector3[5];
     readonly HashSet<Rigidbody> pushedBodies=new HashSet<Rigidbody>();
+    readonly Dictionary<Rigidbody,float> woodContactTimes=new Dictionary<Rigidbody,float>();
     float impulseTick=-1;
     int movementBudgetFrame=-1;
     float frameTravelled,frameTurned;
@@ -692,7 +693,13 @@ public sealed class Story1SharkWreckContact : MonoBehaviour
         float limit=timber.mass>=30 ? 2.5f : 6;
         float separating=Mathf.Max(0,Vector3.Dot(timber.GetPointVelocity(point),-normal));
         float impulseSpeed=Mathf.Max(0,Mathf.Min(limit,closing+correction)-separating);
-        timber.AddForceAtPosition(-normal*(impulseSpeed*reducedMass),point,ForceMode.Impulse);
+        bool entering=!woodContactTimes.TryGetValue(timber,out float lastContact) || Time.time-lastContact>.25f;
+        woodContactTimes[timber]=Time.time;
+        // A held contact is pressure over time, not a fresh collision every
+        // physics step. Repeating the full onset impulse drove occupied decks
+        // metres underwater, then launched them when the shark moved away.
+        float duration=entering ? 1 : Mathf.Clamp(Time.time-lastContact,0,.1f);
+        timber.AddForceAtPosition(-normal*(impulseSpeed*reducedMass*duration),point,ForceMode.Impulse);
     }
     public void ResolvePose()
     {

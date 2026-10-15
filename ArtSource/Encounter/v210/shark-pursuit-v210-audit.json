@@ -1,0 +1,13 @@
+{
+  "source": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v097\\shark-tail-inertia-v097.blend",
+  "source_action": "Swim_Fast",
+  "action": "CH1_SharkPursuit_v210",
+  "rig": "Tralalero_Rig",
+  "bones": 16,
+  "rest_preserved": true,
+  "original_mesh_skin_preserved": true,
+  "duration": 1.4,
+  "fps": 60,
+  "maximum_frame_rotation_degrees": 0.7475539593741406,
+  "loop_seam_degrees": 0.0
+}

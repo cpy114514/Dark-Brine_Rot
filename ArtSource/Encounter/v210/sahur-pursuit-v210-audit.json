@@ -1,0 +1,13 @@
+{
+  "source": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v007\\sahur-swim-v007.blend",
+  "source_action": "PLAYER_SwimFast_v007",
+  "action": "PLAYER_PursuitSwim_v210",
+  "rig": "Rig",
+  "bones": 53,
+  "rest_preserved": true,
+  "original_mesh_skin_preserved": true,
+  "duration": 1.2,
+  "fps": 60,
+  "maximum_frame_rotation_degrees": 10.754114918938505,
+  "loop_seam_degrees": 0.0
+}

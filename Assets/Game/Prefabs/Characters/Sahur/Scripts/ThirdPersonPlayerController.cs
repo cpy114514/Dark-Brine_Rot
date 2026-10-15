@@ -118,6 +118,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Vector3 platformCarryVelocity;
     Vector3 rollDirection;
     bool cameraInitialized;
+    bool continuingCinematicCamera;
+    float cinematicCameraBlendAge;
+    Vector3 cinematicCameraVelocity;
     int motionState;
     float airborneTime;
     float landingTimer;
@@ -213,6 +216,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         rollCooldownTimer = 0f;
         airFlipTimer = 0f;
         cameraInitialized = false;
+        continuingCinematicCamera=false;cinematicCameraVelocity=Vector3.zero;
         wasSwimming = FastSwimming = wasAtSeaSurface = false;
         swimExitJumpTimer = swimRippleTimer = 0f;
         playerStamina?.StopSprinting();
@@ -302,6 +306,17 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         CreateWaterSplashEffect();
         CreateUnderwaterPresentation();
+    }
+
+    public void ContinueCameraFromCurrentView(Camera view,Vector3 velocity=default)
+    {
+        if(view==null)return;
+        playerCamera=view;
+        Vector3 angles=view.transform.rotation.eulerAngles;
+        yaw=angles.y;
+        pitch=Mathf.Clamp(Mathf.DeltaAngle(0,angles.x),minPitch,maxPitch);
+        cameraInitialized=true;
+        continuingCinematicCamera=true;cinematicCameraBlendAge=0;cinematicCameraVelocity=velocity;
     }
 
     void Update()
@@ -847,6 +862,19 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     void LateUpdate()
     {
         UpdateAirFlipVisual();
+        if(Swimming && !ExternalControlLock && !ExternalMovementLock && characterController.enabled &&
+            animator!=null && animator.isHuman && Time.deltaTime>0 && !PauseSettingsMenu.IsOpen)
+        {
+            // Swimming Update uses the preceding animation pose. Check the
+            // actual breathing point after this frame's stroke/body roll too;
+            // a rising crest must not cover his face during that pose change.
+            var breathing=animator.GetBoneTransform(HumanBodyBones.Head);
+            if(breathing!=null)
+            {
+                float clearance=OceanSurfaceSampler.Height(swimmingOcean,breathing.position,playerCamera)+swimHeadFreeboard-.05f-breathing.position.y;
+                if(clearance>0)characterController.Move(Vector3.up*Mathf.Min(clearance,8*Time.deltaTime));
+            }
+        }
         if (playerCamera == null)
             playerCamera = Camera.main;
         if (playerCamera == null)
@@ -911,15 +939,53 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         float smoothFactor = 1f - Mathf.Exp(-cameraFollowSharpness * Time.deltaTime);
         // Obstruction contraction is immediate; easing only on release avoids
         // spending several frames inside the wall while the camera catches up.
+        bool cinematicHandoff=continuingCinematicCamera;
         Vector3 followPosition=Vector3.Lerp(playerCamera.transform.position,desiredPosition,smoothFactor);
+        if(continuingCinematicCamera)
+        {
+            // Carry the cinematic's velocity into normal follow, then restore
+            // its response gradually. The ordinary high sharpness otherwise
+            // pulled a distant story camera tens of metres on its first frame.
+            cinematicCameraBlendAge+=Time.deltaTime;
+            float t=Mathf.Clamp01(cinematicCameraBlendAge/.9f);
+            t=t*t*t*(t*(t*6-15)+10);
+            float smoothTime=Mathf.Lerp(.4f,2/Mathf.Max(.1f,cameraFollowSharpness),t);
+            followPosition=Vector3.SmoothDamp(playerCamera.transform.position,desiredPosition,
+                ref cinematicCameraVelocity,smoothTime,Mathf.Infinity,Time.deltaTime);
+        }
         Vector3 fromFocus=followPosition-focus;
-        if(cameraCollision && closest<followDistance && fromFocus.magnitude>closest)
+        if(cameraCollision && !cinematicHandoff && closest<followDistance && fromFocus.magnitude>closest)
             followPosition=focus+fromFocus.normalized*closest;
+        if(cameraCollision && cinematicHandoff)
+            followPosition=ClampCinematicCameraTravel(playerCamera.transform.position,followPosition);
+        if(cinematicHandoff && (cinematicCameraBlendAge>=1.5f && Vector3.Distance(followPosition,desiredPosition)<1.25f ||
+            cinematicCameraBlendAge>=.9f && Vector3.Distance(followPosition,desiredPosition)<.05f))
+            continuingCinematicCamera=false;
         playerCamera.transform.SetPositionAndRotation(
             followPosition,
             Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
         UpdateUnderwaterPresentation(IsCameraUnderwater());
         enemyLock?.RefreshMarker();
+    }
+
+    Vector3 ClampCinematicCameraTravel(Vector3 from,Vector3 destination)
+    {
+        // A distant cinematic camera must approach an occlusion-contracted
+        // follow target instead of teleporting to it. Sweep the actual camera
+        // travel so that smoothing never carries it through floating wood.
+        Vector3 delta=destination-from;float length=delta.magnitude;
+        if(length<.0001f)return destination;
+        int count=Physics.SphereCastNonAlloc(from,.12f,delta/length,cameraObstacles,length,~0,QueryTriggerInteraction.Ignore);
+        var hits=count==cameraObstacles.Length ? Physics.SphereCastAll(from,.12f,delta/length,length,~0,QueryTriggerInteraction.Ignore) : cameraObstacles;
+        if(hits!=cameraObstacles)count=hits.Length;
+        float distance=length;
+        for(int i=0;i<count;i++)
+        {
+            var hit=hits[i];
+            if(hit.collider.transform.IsChildOf(transform))continue;
+            distance=Mathf.Min(distance,Mathf.Max(0,hit.distance-.08f));
+        }
+        return from+delta/length*distance;
     }
 
     bool IsCameraUnderwater()
