@@ -732,8 +732,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc5144fb204e504fb1f75660ae7e741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.Health
-  maxHealth: 300
-  currentHealth: 300
+  maxHealth: 900
+  currentHealth: 900
   OnDamaged:
     m_PersistentCalls:
       m_Calls: []

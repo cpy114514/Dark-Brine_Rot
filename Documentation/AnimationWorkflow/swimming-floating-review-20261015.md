@@ -1,0 +1,33 @@
+# Swimming and floating review — 2026-10-15, v211
+
+Targeted swimming/buoyancy repairs implemented and recorded in the original running Editor. This does not sign off the entire opening animation, alternate-board choreography or wall-clock performance. No new Blender/FBX/rig/Avatar modifications in this runtime repair.
+
+## Changes that address the observed faults
+
+- Release cinematic sampling after shipbreak so normal shark AI resumes its tail loop instead of moving with Animator speed0. Both cruise/fast pursuit clips are overridden during chase and restored afterwards. Shared forward steering turns around the actual torso with bounded acceleration/heading; main-film neutral swims use that owner too. Real wood obstruction can make the animal descend underneath instead of continually pushing the same fragment.
+- Timber mass uses actual world volume at450kg/m3 (675 for the heavier non-floating group). Buoyancy uses five mesh-based pressure samples, net COM displacement, filtered water velocity and damped roll/pitch. Held shark contact integrates pressure over time instead of applying a fresh impact impulse every physics step. Gravity, real mesh collision, inertia and free drift remain.
+- Story1 native wave timing1.8→1.0 removes unrealistically accelerated swell while retaining amplitudes, wavelengths, materials and colours. Newly baked actual214-piece six-second physical replay211 replaces the old timing bake. At release bodies resume their full dynamic velocities; no permanent XZ locks or surf controls.
+- Moving support admission uses a real compact/wider existing fragment; validated landing facing stays in its support frame instead of being re-picked from a jagged edge. Prediction uses the combat frame rather than the shark's temporary swimming heading. This removed unsupported soles and reversed approach targets.
+- Ordinary swimmers preserve actual animated breathing clearance. Fallen Sahur retains the face-up pose, follows filtered waves about the chest and separates from actual convex timber at a bounded speed. No root pop back to locomotion.
+- Reviewing the footage exposed hull occlusion and extreme camera contraction. Subject-outward sight queries detect a camera inside a hull; the orbit can look above intervening wood with gradual height release before retracting. A small residual slash reach now allows up to3deg real chest/shoulder follow-through with unchanged arm lengths, feet/root, weapon/target colliders and5cm contact threshold. Native timber clearance can reject that pose.
+
+## Actual consecutive Unity recordings
+
+All artifacts: `.codex/chase-entry-20261014/<take>/`. Each has the full game-camera MP4, original consecutive frames/clock mapping, result/hydro/heading JSON and source hashes. The low-rate take also has front, side and three-quarter movies plus a five-second isolated unconscious-float fixture. That fixture suppresses the automatic shore fade; it is not evidence of a five-second visible pause in the normal story. The30Hz run uses natural water admission and the random combat deadline; the10Hz run explicitly places the actor on an existing dry mesh before normal admission. No boards are fabricated/repositioned for a shot.
+
+| Take | Full20.8s | All6 real contacts | Max gap mm | Foot mm | Slide mm | Standing chest min above water m |
+| --- | --- | --- | --- | --- | --- | --- |
+| shoulder211-playable-pause-30 | True | True | 3.57 | 1.22 | 1.27 | 2.37 |
+| shoulder211-multi-playable-ground-hold-10 | True | False | 903.76 | 1.42 | 1.54 | 2.39 |
+
+Visual review used the recorded continuous frame sequences, including dense0.1s support/attack/landing/fall strips and multi-angle footage. It did not rely only on compiler success or isolated attractive poses. Do not describe opening a video tab as proof of normal-speed human playback. Normal swimming trace distinguishes real unblocked forward travel from collision correction; verify zero frozen normal-tail frames in the JSON. Passing waves may wash the feet; the standing chest/head remain above water in these takes. Normal story blackout/shore handoff is retained. Pause trials report actual actor/camera/clock motion separately.
+
+## Revision history and limits
+
+Earlier takes are retained, including failures. `swim-owner211-multi-playable-ground-10` had unsupported feet and missed landings; frozen validated facing fixed it. `overlook211-playable-pause-30` reached the ending with stable buoyancy but one genuine78.92mm slash miss; no fake hit was emitted. The later shoulder revision above must be judged by its own recordings, not an older lucky all-contact take. Current30Hz has all6contacts(max3.575mm), but current10Hz reversal tail misses903.76mm and correctly plays its missed-tail guard variant without fake feedback; final defeat still genuinely contacts. That low-rate tail approach remains unfinished broader choreography. Route-transition penalty counts enumerate rejected candidate routes, not observed root teleports. One30Hz recovery frame travels backwards3.2cm; LastCorrection can be overwritten by another same-frame native solve, so its zero value does not establish that no collision correction occurred. Zero frozen-tail frames does not mean all motion/art is perfect. Current10Hz timber tilt reaches30.89deg during physical disturbance versus12.37deg in30Hz; standing torso/head still remain clear and mesh footing stays within1.43mm in both. Do not claim every impact/wave is fully polished.
+
+Whole-film artistic polish, real alternative-board jumps (these takes chose same-board fallback), anatomy and full performance acceptance remain unfinished in the broader project. These fixed-clock native captures are functional evidence, not a realtime FPS benchmark. Keep ordinary062 attack/walk/run/roll/mobile charge, shark1000HP and both30%/random20–35s safe takeover, no surfing/paddling/audio, minimal BW UI and coloured images.
+
+## Protection/checkpoint
+
+Original Editor16920 stopped after verification; no second Editor/Player or commit/push. Diagnostic saves retained separately; fresh human save restored after Stop and SHA256 checked: `5A296481F7414AF9DCE308C6F62B990A89CE67F92A1E9268D46136D87C4BF803`. Protect newer human progress on continuation. Current intentionally scoped Story1 scene SHA256 `0D7A15BBC4A446F0BDEC25A0001E21436036BD8576926336D0991B7DF85B9269` includes the previous140 sailing camera and only the additional native ocean timing change. Never restore old UVCS scene/camera/save snapshots wholesale. Current resource211 and source hashes are in each final take's manifest. See `record-review-loop.md` for the permanent record→inspect→repair requirement.

@@ -100,7 +100,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
             animator.SetFloat("ArrivalGetUpPhase", 0); animator.Play("Shore Get Up", 0, 0); animator.Update(0);
         }
         player.GetComponent<PlayerHealth>()?.GrantProtection(driftSeconds + unconsciousSeconds + getUpSeconds + fadeSeconds * 4 + 10);
-        hint.text = "你失去了意识。";
+        hint.text = "";
         yield return new WaitForSeconds(1f);
         hint.text = "";
         Vector3 heading = Vector3.ProjectOnPlane(shore.position - driftStart.position, Vector3.up).normalized;
@@ -146,7 +146,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         player.transform.SetPositionAndRotation(landing, upright);
         PlaceAnimationOnSurface(landingBottom, 0); FocusCamera(heading);
         yield return new WaitForSeconds(unconsciousSeconds);
-        blackout.color = Color.clear; hint.text = "海浪把你推上了岸。";
+        blackout.color = Color.clear; hint.text = "";
         IsGettingUp = true;
         player.Motion.Claim(this,SahurControlState.Cinematic);
         for (float elapsed = 0; elapsed < getUpSeconds; elapsed += Time.deltaTime)

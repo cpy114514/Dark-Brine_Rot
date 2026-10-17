@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da3134650691fc34ab4988386fe8d636, type: 3}
+  m_Name: M4A1
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
+  id: weapon_m4a1
+  displayName: "M4A1 \u7A81\u51FB\u6B65\u67AA"
+  slot: 4
+  worldModel: {fileID: 4230994119813112960, guid: 4929d7dfd1dea504fb554a6bfa6dbe4f, type: 3}
+  icon: {fileID: 0}

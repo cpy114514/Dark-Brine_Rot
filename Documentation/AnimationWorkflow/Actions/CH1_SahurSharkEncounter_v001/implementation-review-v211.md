@@ -1,3 +1,9 @@
+# Current v211 checkpoint — Oct15
+
+See ../../swimming-floating-review-20261015.md (from AnimationWorkflow root) for the current source, final recordings, measured acceptance and limits. No active run remains. The detailed Oct14 development notes below are historical, including superseded ACTIVE recording labels.
+
+---
+
 # v211 implementation review — RECORDING IN PROGRESS
 
 Date: Oct14 Vancouver. Targeted swimming/buoyancy integration; broader animation work remains incomplete. Latest direction: design-v211.md and Documentation/AnimationWorkflow/record-review-loop.md.

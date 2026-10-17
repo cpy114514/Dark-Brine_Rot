@@ -78,7 +78,7 @@ namespace Mavis
             var camera = Camera.main;
             float distance=camera ? (camera.transform.position-transform.position).sqrMagnitude : float.PositiveInfinity;
             encounter.Refresh(enabled && ai && ai.FightActive && !health.IsDead && camera,
-                distance,health.HealthFraction,health.currentHealth,health.maxHealth,GameLocalization.Text("enemy.name"),deltaTime);
+                distance,health.HealthFraction,health.currentHealth,health.maxHealth,GameLocalization.Text("enemy.name")+"  /  PHASE "+ai.FightPhase,deltaTime);
             bool visible = enabled && !health.IsDead && camera != null && !GameUITheme.ModalOpen &&
                 distance < 70f*70f && (ai==null || !ai.FightActive) &&
                 camera.WorldToViewportPoint(transform.position).z>0;

@@ -56,6 +56,7 @@ namespace Mavis
         void Update()
         {
             if (!IsDead && health.currentHealth <= 0f) Die();
+            if (IsDead && overlay && !overlay.activeSelf && !(GetComponent<SahurRifleAnimation>()?.DeathAnimationPlaying ?? false)) overlay.SetActive(true);
             if (IsDead && Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) Respawn();
         }
         void Disable(Behaviour component)
@@ -85,12 +86,13 @@ namespace Mavis
                 var animator = movement.CharacterAnimator;
                 animatorSpeed = animator.speed;
                 animator.speed = 0f;
+                GetComponent<SahurRifleAnimation>()?.TryBeginDeath();
             }
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             if (overlay == null) BuildUI();
-            overlay.SetActive(true);
+            overlay.SetActive(!(GetComponent<SahurRifleAnimation>()?.DeathAnimationPlaying ?? false));
         }
         public bool Respawn()
         {
@@ -123,6 +125,7 @@ namespace Mavis
             if (movement != null && movement.CharacterAnimator != null)
             {
                 var animator = movement.CharacterAnimator;
+                GetComponent<SahurRifleAnimation>()?.ResetDeath();
                 animator.speed = animatorSpeed;
                 animator.Rebind();
                 animator.Play("Locomotion", 0, 0f);

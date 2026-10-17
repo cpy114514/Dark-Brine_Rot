@@ -90,6 +90,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Mavis.PlayerStamina playerStamina;
     Camera playerCamera;
     Mavis.EnemyLockOn enemyLock;
+    Mavis.SahurWeaponLoadout rifleLoadout;
+    float rifleCameraShoulder;
     float yaw;
     float pitch = 10f;
     float verticalSpeed;
@@ -137,6 +139,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public float VerticalSpeed => verticalSpeed;
     public Animator CharacterAnimator => animator;
     public SahurMotionContext Motion { get; private set; }
+    public bool RifleLocomotionAllowed => enabled && characterController && characterController.enabled && motionState == 0 && rollTimer <= 0 && airFlipTimer <= 0 && IsGroundedOrOnSea() && !Swimming && !ExternalControlLock && !ExternalMovementLock;
     public Vector3 WorldVelocity => planarVelocity+platformCarryVelocity+Vector3.up*verticalSpeed;
     public Vector3 RequestedMoveDirection
     {
@@ -219,6 +222,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         continuingCinematicCamera=false;cinematicCameraVelocity=Vector3.zero;
         wasSwimming = FastSwimming = wasAtSeaSurface = false;
         swimExitJumpTimer = swimRippleTimer = 0f;
+        airborneTime = landingTimer = 0f;
+        // Loading or respawning on land must not retain a previous swimming state.
+        motionState = 0;
+        if (animator != null) animator.CrossFadeInFixedTime("Locomotion", .10f, 0, 0f);
         playerStamina?.StopSprinting();
     }
 
@@ -378,12 +385,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         // Running is direction-agnostic: any held WASD direction can sprint.
         bool wantsSprint = input.sqrMagnitude > 0.01f &&
                            GameInputSettings.Pressed(GameInputSettings.Action.Sprint);
+        if (!rifleLoadout) rifleLoadout = GetComponent<Mavis.SahurWeaponLoadout>();
+        float groundMoveSpeed = moveSpeed * (rifleLoadout && rifleLoadout.UsesRifle ? .5f : 1f);
         Quaternion heading = Quaternion.Euler(0f, yaw, 0f);
         Vector3 cameraForward = heading * Vector3.forward;
         Vector3 cameraRight = heading * Vector3.right;
         Vector3 moveDirection = cameraForward * input.z + cameraRight * input.x;
         UpdateComboFacing(moveDirection, look.x, Time.deltaTime);
-        Vector3 desiredVelocity = moveDirection * moveSpeed * (wantsSprint ? sprintMultiplier : 1f);
+        Vector3 desiredVelocity = moveDirection * groundMoveSpeed * (wantsSprint ? sprintMultiplier : 1f);
         Motion.Locomotion(IsSwimming(),IsGroundedOrOnSea());
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
         bool armCombatMovementAllowed = combat != null && combat.CanMoveDuringCombat;
@@ -416,7 +425,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (!sprinting)
         {
             if (!canSprint) playerStamina?.StopSprinting();
-            desiredVelocity = movementLocked ? Vector3.zero : moveDirection * moveSpeed;
+            desiredVelocity = movementLocked ? Vector3.zero : moveDirection * groundMoveSpeed;
         }
         bool exitedSwimming = wasSwimming;
         wasSwimming = false;
@@ -425,7 +434,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // Water movement uses its own state and velocity.  As soon as an
             // island collider takes over, return to the ground blend tree at
             // walking speed before sprint input can accelerate it again.
-            Vector3 walkVelocity = (cameraForward * input.z + cameraRight * input.x) * moveSpeed;
+            Vector3 walkVelocity = (cameraForward * input.z + cameraRight * input.x) * groundMoveSpeed;
             planarVelocity = walkVelocity;
             playerStamina?.StopSprinting();
             if (swimExitJumpTimer <= 0f) verticalSpeed = -groundStickSpeed;
@@ -614,7 +623,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             animator.SetFloat(SpeedId, rollTimer > 0f ? 0f : planarVelocity.magnitude, 0.12f, Time.deltaTime);
         }
 
-        if (!movementLocked && !recoveringAttackFacing && planarVelocity.sqrMagnitude > 0.01f)
+        if (!rifleLoadout) rifleLoadout = GetComponent<Mavis.SahurWeaponLoadout>();
+        bool rifleFacing = rifleLoadout && rifleLoadout.UsesRifle && RifleLocomotionAllowed;
+        if (!movementLocked && !recoveringAttackFacing && rifleFacing)
+        {
+            Quaternion aim = enemyLock && enemyLock.IsLocked ? enemyLock.FacingRotation() : Quaternion.Euler(0, yaw, 0);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, aim, turnSpeedDegrees * Time.deltaTime);
+        }
+        else if (!movementLocked && !recoveringAttackFacing && planarVelocity.sqrMagnitude > 0.01f)
         {
             Quaternion desired = Quaternion.LookRotation(new Vector3(planarVelocity.x, 0f, planarVelocity.z), Vector3.up);
             float turnRate = isRolling ? turnSpeedDegrees * 1.8f : turnSpeedDegrees;
@@ -770,7 +786,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var hit = attackGroundHits[i];
-            if (hit.collider.transform.IsChildOf(transform)) continue;
+            if (hit.collider.transform.IsChildOf(transform) || Mavis.CombatBodyCollision.IsActor(hit.collider)) continue;
             if (Vector3.Angle(hit.normal, Vector3.up) > characterController.slopeLimit) continue;
             supportY = Mathf.Max(supportY, hit.point.y);
         }
@@ -904,6 +920,24 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
                 followDistance = Mathf.Clamp(Mathf.Max(cameraDistance, toward.magnitude * .45f + 2f), cameraDistance, 12f);
             }
         }
+        bool shoulderView = rifleLoadout && rifleLoadout.UsesRifle && !Swimming && !ExternalControlLock && !ExternalCameraFocus;
+        float shoulderTarget = shoulderView ? 1.6f * Mathf.Abs(transform.lossyScale.y) / 3f : 0;
+        rifleCameraShoulder = Mathf.Lerp(rifleCameraShoulder, shoulderTarget, 1f - Mathf.Exp(-12f * Time.deltaTime));
+        if (rifleCameraShoulder > .001f)
+        {
+            Vector3 side = cameraRotation * Vector3.right;
+            float shoulder = rifleCameraShoulder;
+            if (cameraCollision)
+            {
+                int count = Physics.SphereCastNonAlloc(focus, .12f, side, cameraObstacles, shoulder, ~0, QueryTriggerInteraction.Ignore);
+                var lateralHits = count == cameraObstacles.Length ? Physics.SphereCastAll(focus, .12f, side, shoulder, ~0, QueryTriggerInteraction.Ignore) : cameraObstacles;
+                if (lateralHits != cameraObstacles) count = lateralHits.Length;
+                for (int i = 0; i < count; i++)
+                    if (!lateralHits[i].collider.transform.IsChildOf(transform) && !Mavis.CombatBodyCollision.IsActor(lateralHits[i].collider))
+                        shoulder = Mathf.Min(shoulder, Mathf.Max(0, lateralHits[i].distance - .08f));
+            }
+            focus += side * shoulder;
+        }
         Vector3 desiredPosition = focus - cameraRotation * Vector3.forward * followDistance;
 
         // Pull the camera forward if a solid island/prop stands between it and the player.
@@ -919,7 +953,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             for(int i=0;i<count;i++)
             {
                 var hit=hits[i];
-                if (hit.collider.transform.IsChildOf(transform)) continue;
+                if (hit.collider.transform.IsChildOf(transform) || Mavis.CombatBodyCollision.IsActor(hit.collider)) continue;
                 closest = Mathf.Min(closest, Mathf.Max(0.4f, hit.distance - 0.08f));
             }
         }
@@ -982,7 +1016,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         for(int i=0;i<count;i++)
         {
             var hit=hits[i];
-            if(hit.collider.transform.IsChildOf(transform))continue;
+            if(hit.collider.transform.IsChildOf(transform) || Mavis.CombatBodyCollision.IsActor(hit.collider))continue;
             distance=Mathf.Min(distance,Mathf.Max(0,hit.distance-.08f));
         }
         return from+delta/length*distance;
@@ -1036,6 +1070,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         characterController.skinWidth = 0.015f;
         characterController.stepOffset = 0.22f;
         characterController.minMoveDistance = 0f;
+        Mavis.CombatBodyCollision.Ensure(gameObject);
     }
 
     static bool TryAlignedSkinBounds(Transform owner,SkinnedMeshRenderer skin,Mesh baked,out Bounds bounds)
@@ -1163,7 +1198,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var hit = waterGroundHits[i];
-            if (hit.collider.transform.IsChildOf(transform) ||
+            if (hit.collider.transform.IsChildOf(transform) || Mavis.CombatBodyCollision.IsActor(hit.collider) ||
                 Vector3.Angle(hit.normal, Vector3.up) > characterController.slopeLimit) continue;
             floor = Mathf.Max(floor, hit.point.y);
         }

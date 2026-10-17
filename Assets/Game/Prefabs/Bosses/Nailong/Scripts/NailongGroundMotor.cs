@@ -30,6 +30,8 @@ namespace Mavis
             if (Ground(transform.position, out var ground))
                 transform.position = new Vector3(transform.position.x, ground.point.y + .04f - Sole, transform.position.z);
             motor.enabled = true;
+            motor.minMoveDistance = 0f;
+            CombatBodyCollision.Ensure(gameObject);
         }
 
         bool Ground(Vector3 at, out RaycastHit ground)
@@ -68,7 +70,7 @@ namespace Mavis
                     radius*.92f,move.normalized,hits,Mathf.Max(move.magnitude,.4f),~0,QueryTriggerInteraction.Ignore);
                 bool blocked=false;
                 for(int i=0;i<count;i++)
-                    if(!hits[i].transform.IsChildOf(transform)&&Vector3.Angle(hits[i].normal,Vector3.up)>motor.slopeLimit){blocked=true;break;}
+                    if(!hits[i].transform.IsChildOf(transform)&&!CombatBodyCollision.IsAnatomy(hits[i].collider)&&Vector3.Angle(hits[i].normal,Vector3.up)>motor.slopeLimit){blocked=true;break;}
                 if(blocked)continue;
                 motor.Move(move+Vector3.up*(ground.point.y+.04f-Sole-transform.position.y));
                 if(angle<0)side=-side;

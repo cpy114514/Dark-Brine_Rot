@@ -77,11 +77,14 @@ namespace Mavis
         public void Stop()
         {
             active = false;
+            GetComponent<NailongPhaseAnimation>()?.Stop();
             foreach (var pair in fingerRest) if (pair.Key != null) pair.Key.localRotation = pair.Value;
         }
 
         void LateUpdate()
         {
+            var imported=GetComponent<NailongPhaseAnimation>();
+            if(imported!=null && imported.IsPlaying)return;
             if (!active || PauseSettingsMenu.IsOpen) return;
             float elapsed = Time.time - startedAt;
             float phase = Mathf.Clamp01(elapsed / duration);

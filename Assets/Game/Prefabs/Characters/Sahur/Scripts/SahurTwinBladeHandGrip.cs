@@ -58,7 +58,7 @@ namespace Mavis
         public void Apply(float deltaTime)
         {
             if (!visual || !rig || fingers.Count != rig.fingers.Length) return;
-            bool holding = weapons && weapons.UsesTwinBlades && movement && movement.enabled &&
+            bool holding = weapons && (weapons.UsesTwinBlades || weapons.UsesRifle) && movement && movement.enabled &&
                 !movement.Swimming && !(swimming && swimming.Climbing);
             weight = Mathf.MoveTowards(weight, holding ? 1 : 0, Mathf.Max(0, deltaTime) / .12f);
             for (int i = 0; i < fingers.Count; i++)

@@ -8,7 +8,7 @@ namespace Mavis
     public sealed class BombardinoBoss : MonoBehaviour
     {
         public enum State { Patrol, Telegraph, Attack, Exposed, Returning, Dead, Circling }
-        public enum AttackKind { HighBombing, SpeedRun, Missiles, FlameRun }
+        public enum AttackKind { HighBombing, SpeedRun, Missiles, FlameRun, MissileSalvo, CrossBombing }
         public Transform visual;
         public Transform target;
         public Material effectMaterial;
@@ -26,15 +26,24 @@ namespace Mavis
         public AttackKind CurrentAttack { get; private set; }
         public bool FightActive { get; private set; }
         public bool IsDead=>health!=null&&health.IsDead;
-        public bool Enraged=>health!=null&&health.Ratio<=.5f;
+        public static int PhaseForHealth(float ratio)=>ratio<=.5f?2:1;
+        public int FightPhase=>health!=null?PhaseForHealth(health.Ratio):1;
+        public bool Enraged=>FightPhase==2;
+        int announcedPhase=1;
+        float AttackInterval=>Enraged?Mathf.Max(4.6f,attackInterval*.9f):Mathf.Max(1f,attackInterval);
+        public static AttackKind AttackForPhase(int phase,int serial)
+        {
+            if(phase<2)return (AttackKind)(serial%4);
+            switch(serial%4){case 0:return AttackKind.MissileSalvo;case 1:return AttackKind.CrossBombing;case 2:return AttackKind.FlameRun;default:return AttackKind.SpeedRun;}
+        }
         public bool IsExposed=>false;
         public int BombsReleased { get; private set; }
         public int MissilesLaunched { get; private set; }
         public int FlameZonesCreated { get; private set; }
         public int RushHits { get; private set; }
-        public string AttackName=>CurrentAttack==AttackKind.HighBombing?"HIGH-ALTITUDE BOMBING":CurrentAttack==AttackKind.SpeedRun?"SUPERSONIC STRAFE":CurrentAttack==AttackKind.Missiles?"MISSILE LOCK":"NAPALM RUN";
+        public string AttackName=>CurrentAttack==AttackKind.MissileSalvo?"TWIN MISSILE SALVO":CurrentAttack==AttackKind.CrossBombing?"CROSS CARPET BOMBING":CurrentAttack==AttackKind.HighBombing?"HIGH-ALTITUDE BOMBING":CurrentAttack==AttackKind.SpeedRun?"SUPERSONIC STRAFE":CurrentAttack==AttackKind.Missiles?"MISSILE LOCK":"NAPALM RUN";
         public string Hint=>IsDead?"BOMBARDINO DOWN":CurrentState==State.Circling?"CIRCLING — WATCH FOR THE NEXT ATTACK!":CurrentState==State.Telegraph?
-            CurrentAttack==AttackKind.HighBombing?"BOMBING INCOMING — MOVE OUT OF THE TARGET AREA!":CurrentAttack==AttackKind.SpeedRun?"LOW PASS — DODGE SIDEWAYS!":CurrentAttack==AttackKind.Missiles?"MISSILE LOCK — KEEP MOVING!":"NAPALM INCOMING — LEAVE THE MARKED STRIP!":AttackName;
+            CurrentAttack==AttackKind.HighBombing?"BOMBING INCOMING — MOVE OUT OF THE TARGET AREA!":CurrentAttack==AttackKind.SpeedRun?"LOW PASS — DODGE SIDEWAYS!":CurrentAttack==AttackKind.Missiles||CurrentAttack==AttackKind.MissileSalvo?"MISSILE SALVO — KEEP MOVING!":CurrentAttack==AttackKind.CrossBombing?"CROSS BOMBING — MOVE BETWEEN THE PASSES!":"NAPALM INCOMING — KEEP MOVING!":AttackName;
         Health health;
         PlayerHealth targetHealth;
         Vector3 home, committed, heading, previousTarget, targetVelocity;
@@ -122,6 +131,8 @@ namespace Mavis
                     if(transform.position.y<=deathGround+1){transform.position=new Vector3(transform.position.x,deathGround+1,transform.position.z);Explosion(transform.position,5);crashed=true;age=0;}}
                 if(crashed&&age>3&&Application.isPlaying)Destroy(gameObject);return;
             }
+            if(FightActive && FightPhase>announcedPhase && CurrentState!=State.Attack)
+            {announcedPhase=FightPhase;BossPhaseVfx.For(gameObject).Burst(WeaponOrigin(true),true);}
             if(clock>=protectPlayersAt){protectPlayersAt=clock+2f;ProtectPlayersFromBodyCollision();}
             if(clock>=acquireAt){acquireAt=clock+.5f;Acquire();}
             if(FightActive&&(targetHealth==null||targetHealth.currentHealth<=0||Vector3.Distance(Ground(target.position),home)>leashRadius))
@@ -131,12 +142,13 @@ namespace Mavis
             // burst length and the enraged phase never add an extra cooling delay.
             if(FightActive&&CurrentState!=State.Telegraph&&clock>=nextAttackAt-Windup)
             {
-                attackCounter++;StartAttack((AttackKind)(attackCounter%4));
+                attackCounter++;StartAttack(AttackForPhase(FightPhase,attackCounter));
             }
             // Ground clearance must use this frame's banking pose, including scaled wings.
             if(visual!=null)
             {
-                float bank=turnBank+Mathf.Sin(clock*1.9f)*1.8f;
+                float roll=CurrentState==State.Attack && CurrentAttack==AttackKind.CrossBombing?360*Mathf.SmoothStep(0,1,Mathf.Clamp01(age/AttackDuration)):0;
+                float bank=turnBank+Mathf.Sin(clock*1.9f)*1.8f+roll;
                 visual.localRotation=Quaternion.Euler(Mathf.Sin(clock*2.4f)*1.8f,0,bank)*visualRest;
             }
             switch(CurrentState)
@@ -147,14 +159,14 @@ namespace Mavis
                     FlyOrbit(cruiseAltitude,cruiseSpeed,dt);break;
                 case State.Returning:
                     FlyOrbit(cruiseAltitude,cruiseSpeed,dt);
-                    if(age>=1f){health.currentHealth=health.maxHealth;attackCounter=0;nextAttackAt=0;SetState(State.Patrol);}break;
+                    if(age>=1f){health.currentHealth=health.maxHealth;attackCounter=0;announcedPhase=1;nextAttackAt=0;SetState(State.Patrol);}break;
                 case State.Telegraph:
                     var from=transform.position;
                     FlyOrbit(AttackAltitude,cruiseSpeed,dt);UpdateMarkers();
                     if(clock>=attackAt)
                     {
                         SetState(State.Attack);shotAt=0;shots=0;
-                        nextAttackAt=attackAt+Mathf.Max(1f,attackInterval);
+                        nextAttackAt=attackAt+AttackInterval;
                         RunAttack(dt,from);
                     }
                     break;
@@ -170,7 +182,7 @@ namespace Mavis
                 foreach(var player in FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None))if(player.currentHealth>0&&player.isActiveAndEnabled){float d=(Ground(player.transform.position)-home).sqrMagnitude;if(d<best){best=d;target=player.transform;targetHealth=player;}}
                 if(target!=null)previousTarget=target.position;
             }
-            if(!FightActive&&targetHealth!=null&&(Ground(target.position)-home).sqrMagnitude<engageDistance*engageDistance){FightActive=true;StartAttack(AttackKind.HighBombing);}
+            if(!FightActive&&targetHealth!=null&&(Ground(target.position)-home).sqrMagnitude<engageDistance*engageDistance){FightActive=true;StartAttack(FightPhase==2?AttackKind.MissileSalvo:AttackKind.HighBombing);}
         }
         void StartAttack(AttackKind kind)
         {
@@ -179,11 +191,11 @@ namespace Mavis
             attackAt=FightActive&&nextAttackAt>clock?nextAttackAt:clock+Windup;
             rushVictims.Clear();SetState(State.Telegraph);BuildMarkers(kind);
         }
-        float Windup=>Mathf.Min(Mathf.Max(.1f,telegraphSeconds),Mathf.Max(1f,attackInterval)*.5f);
-        float AttackAltitude=>CurrentAttack==AttackKind.HighBombing?cruiseAltitude+8:
+        float Windup=>Mathf.Min(Mathf.Max(.1f,telegraphSeconds),AttackInterval*.5f);
+        float AttackAltitude=>CurrentAttack==AttackKind.MissileSalvo?cruiseAltitude*.65f:CurrentAttack==AttackKind.CrossBombing?cruiseAltitude*.8f:CurrentAttack==AttackKind.HighBombing?cruiseAltitude+8:
             CurrentAttack==AttackKind.Missiles?cruiseAltitude*.6f:CurrentAttack==AttackKind.SpeedRun?5:12;
         float AttackSpeed=>CurrentAttack==AttackKind.SpeedRun?rushSpeed*(Enraged?1.2f:1):cruiseSpeed;
-        float AttackDuration=>CurrentAttack==AttackKind.SpeedRun?1.6f:CurrentAttack==AttackKind.FlameRun?2.4f:
+        float AttackDuration=>CurrentAttack==AttackKind.MissileSalvo?2.4f:CurrentAttack==AttackKind.CrossBombing?2.5f:CurrentAttack==AttackKind.SpeedRun?1.6f:CurrentAttack==AttackKind.FlameRun?2.4f:
             CurrentAttack==AttackKind.Missiles?1.8f:1.5f;
         void SetState(State state)
         {
@@ -198,7 +210,32 @@ namespace Mavis
         void RunAttack(float dt,Vector3 from)
         {
             float power=Enraged?1.15f:1;
-            if(CurrentAttack==AttackKind.HighBombing)
+            if(CurrentAttack==AttackKind.MissileSalvo)
+            {
+                if(age>=shotAt && shots<4)
+                {
+                    for(int side=-1;side<=1;side+=2)
+                    {
+                        Vector3 mount=WeaponOrigin(false,side);
+                        Vector3 aim=committed+Vector3.up*2+Vector3.Cross(Vector3.up,heading)*(side*(2+shots));
+                        Spawn(BombardinoOrdnance.Kind.Missile,mount,(aim-mount).normalized,aim,missileDamage*power,3f);
+                        MissilesLaunched++;BossPhaseVfx.For(gameObject).Burst(mount,true);
+                    }
+                    shots++;shotAt+=.4f;
+                }
+            }
+            else if(CurrentAttack==AttackKind.CrossBombing)
+            {
+                if(age>=shotAt && shots<8)
+                {
+                    Vector3 side=Vector3.Cross(Vector3.up,heading);
+                    Vector3 point=committed+heading*((shots%4-1.5f)*4)+side*(shots<4?-5:5);
+                    point=Ground(point);
+                    Spawn(BombardinoOrdnance.Kind.Bomb,WeaponOrigin(false,shots%2==0?-1:1),Vector3.down,point,bombDamage*power,3.2f);
+                    BombsReleased++;shots++;shotAt+=.23f;
+                }
+            }
+            else if(CurrentAttack==AttackKind.HighBombing)
             {
                 if(age>=shotAt&&shots<6){var ground=Ground(committed+heading*((shots-2.5f)*3));Spawn(BombardinoOrdnance.Kind.Bomb,WeaponOrigin(false,shots%2==0?-1:1),Vector3.down,ground,bombDamage*power,4.3f);BombsReleased++;shots++;shotAt+=.22f;}
             }
@@ -298,9 +335,9 @@ namespace Mavis
                 foreach(var collider in player.GetComponentsInChildren<Collider>(true))
                     foreach(var body in bodyColliders)
                     {
-                        // The live character has solid collision; only inactive ragdoll
-                        // parts are excluded, so they cannot snag the flying body.
-                        if(collider is CharacterController)continue;
+                        // Keep the movement capsule solid and weapon triggers hittable.
+                        // Animated anatomical hurtboxes must not snag the flying body.
+                        if(!CombatBodyCollision.IsAnatomy(collider))continue;
                         if(body==null||!body.enabled||collider==null||body==collider||Physics.GetIgnoreCollision(body,collider))continue;
                         Physics.IgnoreCollision(body,collider,true);
                         ignoredPlayerPairs.Add((body,collider));
@@ -360,7 +397,7 @@ namespace Mavis
         void BuildMarkers(AttackKind kind)
         {
             ClearMarkers();
-            if(BossAttackWarning.HiddenOnIsland(gameObject))return;
+            if(BossAttackWarning.HiddenOnIsland(gameObject) || kind==AttackKind.MissileSalvo || kind==AttackKind.CrossBombing)return;
             int count=kind==AttackKind.HighBombing?6:1;
             if(kind==AttackKind.SpeedRun || kind==AttackKind.FlameRun)
             {

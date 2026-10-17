@@ -27,7 +27,7 @@ public sealed class FloatSwimReviewV211:MonoBehaviour
     float warm,next; bool ready,begun,finished; double started;
     RenderTexture target;Texture2D pixels;int filmFrames;float firstFilm=-999,lastFilm=-999;
     readonly List<object> hydro=new List<object>(); bool fixture;int mainFrames;float firstMain=-999,lastMain=-999;bool layoutCaptured;
-    int pauseStage;bool paused;double pauseStart;Vector3 pauseHero,pauseShark,pauseCamera;float pauseClock,maxPausedMotion,maxPausedClock;int pauseSamples;
+    int pauseStage;bool paused;double pauseStart;Vector3 pauseHero,pauseShark,pauseCamera;float pauseClock,maxPausedMotion,maxPausedClock,defeatHold;int pauseSamples;
     static readonly BindingFlags Private=BindingFlags.Instance|BindingFlags.NonPublic;
     IEnumerator Start()
     {
@@ -149,7 +149,11 @@ public sealed class FloatSwimReviewV211:MonoBehaviour
                 progress=film!=null?film.EntryPlanningProgress:null});
             File.WriteAllText(folder+"/progress.json",Newtonsoft.Json.JsonConvert.SerializeObject(rows,Newtonsoft.Json.Formatting.Indented));
         }
-        if(battle.CurrentPhase==Story1WreckBattle.Phase.Defeat || Time.realtimeSinceStartupAsDouble-started>240)
+        // Isolated post-film float fixture: retain the real final pose and
+        // water simulation for five seconds without the automatic shore fade.
+        if(battle.CurrentPhase==Story1WreckBattle.Phase.Defeat)
+        {if(label.Contains("hold"))battle.enabled=false;defeatHold+=Time.deltaTime;}
+        if(battle.CurrentPhase==Story1WreckBattle.Phase.Defeat && (!label.Contains("hold") || defeatHold>=5) || Time.realtimeSinceStartupAsDouble-started>240)
         {
             finished=true;
             File.WriteAllText(folder+"/result.json",Newtonsoft.Json.JsonConvert.SerializeObject(new{phase=battle.CurrentPhase.ToString(),battle.FightElapsed,battle.FinaleAfterSeconds,filmFrames,firstFilm,lastFilm,mainFrames,firstMain,lastMain,groundFixture=fixture,pauseStage,pauseSamples,maxPausedMotion,maxPausedClock,

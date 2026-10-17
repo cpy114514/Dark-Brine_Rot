@@ -85,7 +85,7 @@ namespace Mavis
             sonars.RemoveAll(s=>s==null);sonars.Add(sonar);
         }
 
-        public NailongSpitProjectile Spit(Transform target, float speed, float damage)
+        public NailongSpitProjectile Spit(Transform target, float speed, float damage,float yawOffset=0)
         {
             if (target == null || salivaMaterial == null) return null;
             Vector3 mouth = motion != null ? motion.MouthPosition : transform.TransformPoint(Vector3.up * 1.8f);
@@ -93,6 +93,7 @@ namespace Mavis
             Vector3 aim = collider != null ? collider.bounds.center : target.position + Vector3.up;
             float flight=Vector3.Distance(aim,mouth)/speed;
             Vector3 velocity = (aim-mouth)/Mathf.Max(.05f,flight)+Vector3.up*(3.5f*flight*.5f);
+            velocity=Quaternion.AngleAxis(yawOffset,Vector3.up)*velocity;
             var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             obj.name = "Nailong Spit Projectile";
             obj.transform.position = mouth;

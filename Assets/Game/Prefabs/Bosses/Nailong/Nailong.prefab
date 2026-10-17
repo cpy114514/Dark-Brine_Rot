@@ -1219,8 +1219,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30bc85cc405a65d45b6d26fc01d3b2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongHealth
-  maxHealth: 300
-  currentHealth: 300
+  maxHealth: 900
+  currentHealth: 900
   OnDeath:
     m_PersistentCalls:
       m_Calls: []

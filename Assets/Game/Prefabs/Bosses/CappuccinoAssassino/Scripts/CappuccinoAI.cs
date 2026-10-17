@@ -84,6 +84,7 @@ namespace Mavis
             health = GetComponent<Health>();
             presentation = GetComponent<CappuccinoEnemy>();
             motor = GetComponent<CharacterController>();
+            CombatBodyCollision.Ensure(gameObject);
             animator = presentation.animator;
             ultimate = GetComponent<CappuccinoUltimate>();
             bossPresentation = GetComponent<CappuccinoBossPresentation>();
@@ -463,7 +464,7 @@ namespace Mavis
                 center + Vector3.up * half, radius, direction, castHits, distance, collisionMask, QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++)
             {
-                if (castHits[i].transform.IsChildOf(transform)) continue;
+                if (castHits[i].transform.IsChildOf(transform) || CombatBodyCollision.IsAnatomy(castHits[i].collider)) continue;
                 if (Vector3.Angle(castHits[i].normal, Vector3.up) <= motor.slopeLimit) continue;
                 return true;
             }

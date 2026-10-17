@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
@@ -37,7 +37,7 @@ namespace Mavis
             public string healingCampaign;
             public bool ownsWeaknessGlasses, weaknessGlassesEquipped;
             public float weaknessActiveRemaining, weaknessCooldownRemaining;
-            public bool hasWeaponState, ownsTwinBlades;
+            public bool hasWeaponState, ownsTwinBlades, ownsM4A1;
             public int selectedWeapon;
         }
 
@@ -180,6 +180,7 @@ namespace Mavis
                     weapons.Initialize();
                     data.hasWeaponState = true;
                     data.ownsTwinBlades = weapons.HasTwinBlades;
+                    data.ownsM4A1 = weapons.HasM4A1;
                     data.selectedWeapon = (int)weapons.CurrentWeapon;
                 }
 
@@ -255,7 +256,7 @@ namespace Mavis
                     stamina.currentStamina = Mathf.Clamp(data.stamina, 0f, stamina.maxStamina);
 
                 if (data.hasWeaponState)
-                    player.GetComponent<SahurWeaponLoadout>()?.Restore(data.ownsTwinBlades, (SahurWeaponLoadout.Weapon)data.selectedWeapon);
+                    player.GetComponent<SahurWeaponLoadout>()?.Restore(data.ownsTwinBlades, (SahurWeaponLoadout.Weapon)data.selectedWeapon,data.ownsM4A1);
 
                 Debug.Log("[Save] Saved game progress restored.");
             }
@@ -286,7 +287,7 @@ namespace Mavis
                     (data.hasHealth && !IsFinite(data.health)) ||
                     (data.hasStamina && !IsFinite(data.stamina)) ||
                     !IsFinite(data.weaknessActiveRemaining) || !IsFinite(data.weaknessCooldownRemaining) ||
-                    (data.hasWeaponState && (data.selectedWeapon < 0 || data.selectedWeapon > 1)))
+                    (data.hasWeaponState && (data.selectedWeapon < 0 || data.selectedWeapon > 2)))
                 {
                     data = null;
                     return false;

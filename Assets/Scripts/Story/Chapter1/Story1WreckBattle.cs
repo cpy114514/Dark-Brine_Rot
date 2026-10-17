@@ -636,7 +636,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         }
         shark.localScale *= sharkLength / Mathf.Max(.01f, sharkLocalBounds.size.z * Mathf.Abs(shark.lossyScale.z));
         shark.gameObject.tag = "Enemy";
-        SharkHealth = shark.gameObject.AddComponent<Story1SharkHealth>(); SharkHealth.maxHealth = SharkHealth.currentHealth = 1000;
+        SharkHealth = shark.gameObject.AddComponent<Story1SharkHealth>(); SharkHealth.maxHealth = SharkHealth.currentHealth = 3000;
         SharkHealth.NarrativeHealthFloor=SharkHealth.maxHealth*finaleSharkHealthRatio;
         SharkHealth.OnDamaged = new UnityEvent<float>(); SharkHealth.OnDamaged.AddListener(OnSharkHit);
         sharkHitbox = shark.gameObject.AddComponent<BoxCollider>(); sharkHitbox.isTrigger = true;

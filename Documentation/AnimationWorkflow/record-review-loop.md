@@ -13,3 +13,7 @@ For every completed change affecting animation, swimming, wreck buoyancy or thei
 Current reusable tools: `Tools/ReviewFloatSwimV211.cs`, `Tools/TraceSharkSwimV211.cs`, `Tools/AnimationPipeline/encode_float_swim_v211.py`. Tool C# runs ephemerally via the live Editor's `run_script`; it is outside Assets. Outputs are in `.codex/chase-entry-20261014/<take>/`. The JSON records actual frame clocks, including admission and exits; use these clocks for review sheets rather than assuming every last frame belongs to the main fight.
 
 This applies to future continuations as well. The human explicitly requested independent record → inspect → repair, without further questions.
+
+## Oct15 human camera direction — supersedes prior occlusion fixes
+
+During the Sahur/shark cinematic the camera-to-character distance must stay fixed, even when foreground wreckage blocks the view. This is an explicit creative choice. Current implementation uses an18m radius about Sahur's animated chest and a fixed48degree lens throughout pursuit, climbing and the main film, with smooth authored orbit changes and the fallen-body reveal. Do not reintroduce obstacle-driven retraction, elevation, side switching, waterline camera pushing or automatic FOV fitting. Accepted foreground occlusion is not a defect to "repair" during the review loop. Keep physical actor/wood collision and support checks; this exception concerns only the cinematic camera. Ordinary player/sailing cameras remain separate.

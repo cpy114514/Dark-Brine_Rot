@@ -14,7 +14,7 @@ public sealed class Story1WreckChaseEntry:MonoBehaviour
     Story1WreckBattle battle;ThirdPersonPlayerController hero;TralaleroSwimAnimator shark;OceanWorld ocean;Camera camera;
     PlayableGraph graph;AnimationClipPlayable swimPose,jumpPose;AnimationMixerPlayable mixer;
     RuntimeAnimatorController sharkController;AnimatorOverrideController chaseController;
-    AnimationClip chaseClip;Vector3 startRoot,startDirection,velocity,cameraVelocity;Quaternion startRotation;
+    AnimationClip chaseClip;Vector3 startRoot,startDirection,velocity;Quaternion startRotation;
     float jumpLength,swimLength;bool startsOnDeck,heroReleased,finished;int lastFrame=-1;
     Vector3 renderedRoot;Quaternion renderedHeading;Story1WreckPlank support;
     int lastSharkFrame=-1;
@@ -99,10 +99,8 @@ public sealed class Story1WreckChaseEntry:MonoBehaviour
         if(advance)
         {
             Vector3 focus=hero.CharacterAnimator.GetBoneTransform(HumanBodyBones.Chest).position;
-            Vector3 desired=focus-Direction*13+Vector3.Cross(Vector3.up,Direction)*7+Vector3.up*6;
-            desired.y=Mathf.Max(desired.y,Water(desired)+3);
-            camera.transform.position=Vector3.SmoothDamp(camera.transform.position,desired,ref cameraVelocity,.65f);
-            camera.transform.rotation=Quaternion.Slerp(camera.transform.rotation,Quaternion.LookRotation(focus-camera.transform.position),1-Mathf.Exp(-4*Time.deltaTime));
+            Vector3 orbit=-Direction*13+Vector3.Cross(Vector3.up,Direction)*7+Vector3.up*6;
+            Story1WreckFinale.PlaceCinematicCamera(camera,focus,orbit,focus);
         }
     }
     public void SetSupport(Story1WreckPlank target){support=target;}
