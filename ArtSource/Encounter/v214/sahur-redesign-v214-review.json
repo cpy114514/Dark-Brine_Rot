@@ -1,0 +1,15 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": [
+    "CH1_SahurOverhead_v214",
+    "CH1_SahurProneDodge_v214",
+    "CH1_SahurGetUp_v214",
+    "CH1_SahurStow_v214",
+    "CH1_SahurRetrieve_v214",
+    "CH1_SahurAirHit_v214"
+  ],
+  "method": "Inspected sampled 0.2-second pose sequence contact sheets; not normal-speed playback",
+  "evidence": ".codex/encounter-redesign-20261017/hero-grid.png",
+  "limitations": "Blocking pose sequences inspected via three-quarter contact sheets; no final acceptance. Hands need weapon-aware alignment; prone and get-up require mesh support review in Unity. AirHit readable silhouette. Stow path needs visible weapon interpolation.",
+  "final_accepted": false
+}

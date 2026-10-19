@@ -1,0 +1,12 @@
+{
+  "stage": "BLOCKING",
+  "accepted_for_staging": [
+    "CH1_SharkLeapCrush_v214",
+    "CH1_SharkHeadShake_v214",
+    "CH1_SharkFeintTail_v214"
+  ],
+  "method": "Inspected sampled 0.2-second pose sequence contact sheets; not normal-speed playback",
+  "evidence": ".codex/encounter-redesign-20261017/shark-grid.png",
+  "limitations": "Blocking shark previews inspected via three-quarter sequences. Head shake and delayed tail sweep readable. World leap/impact not observable in in-place previews; must validate actual ship contact in Unity.",
+  "final_accepted": false
+}

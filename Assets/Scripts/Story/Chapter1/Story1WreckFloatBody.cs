@@ -164,6 +164,10 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         }
         for(int i=0;i<4;i++)pressureWeights[i]/=totalWeight;
     }
+    // Large cinematic landing decks need water-entry drag independently of
+    // the capped hydrostatic restoring force; otherwise a falling deck can
+    // retain enough speed to dive tens of metres before its spring recovers.
+    public bool SeparateWaterEntryDrag { get; set; }
     void FixedUpdate()
     {
         if(Body==null || Body.isKinematic || ocean==null)return;
@@ -265,8 +269,19 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
                 immersion+=(height-point.y)*pressureWeights[i]*.5f;
                 waterVelocity+=pointSurfaceVelocity[i]*pressureWeights[i]*.5f;
             }
-            float acceleration=Physics.gravity.magnitude+(immersion-draft)*stiffness-(Body.linearVelocity.y-waterVelocity)*verticalDamping;
-            Body.AddForce(Vector3.up*Mathf.Clamp(acceleration,-Physics.gravity.magnitude*1.5f,Physics.gravity.magnitude*2.4f),ForceMode.Acceleration);
+            float restoring=Physics.gravity.magnitude+(immersion-draft)*stiffness;
+            float relativeSpeed=Body.linearVelocity.y-waterVelocity;
+            float drag=-relativeSpeed*verticalDamping;
+            // Broad decks entering quickly also displace water through their
+            // face. Quadratic entry drag arrests the fall over roughly one
+            // thickness; linear swell damping alone allows metres of overshoot.
+            if(SeparateWaterEntryDrag&&relativeSpeed<0)
+                drag=Mathf.Max(drag,relativeSpeed*relativeSpeed/(2*Mathf.Max(.25f,thickness)));
+            float acceleration=SeparateWaterEntryDrag?
+                Mathf.Clamp(restoring,-Physics.gravity.magnitude*1.5f,Physics.gravity.magnitude*2.4f)+
+                Mathf.Clamp(drag,-Mathf.Abs(relativeSpeed)/Time.fixedDeltaTime,Mathf.Abs(relativeSpeed)/Time.fixedDeltaTime)*submerged:
+                Mathf.Clamp(restoring+drag,-Physics.gravity.magnitude*1.5f,Physics.gravity.magnitude*2.4f);
+            Body.AddForce(Vector3.up*acceleration,ForceMode.Acceleration);
             Vector3 normal=rotation*broadFaceNormal;
             Vector3 upright=normal.y>=0 ? SurfaceNormal : -SurfaceNormal;
             Vector3 tiltSpin=Vector3.ProjectOnPlane(Body.angularVelocity,Vector3.up);

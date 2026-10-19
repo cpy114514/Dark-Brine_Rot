@@ -1,0 +1,27 @@
+{
+  "clips": [
+    {
+      "action": "CH1_SahurOverhead_v215",
+      "units": "world metres at model scale 1; rig matrix uses .01 to convert authoring centimetres",
+      "min_mesh_z_m": -0.008152398280799389,
+      "max_mesh_z_m": 1.709391474723816,
+      "max_left_palm_to_shaft_m_held": 0.0232977000282271
+    },
+    {
+      "action": "CH1_SahurProneDodge_v215",
+      "units": "world metres at model scale 1; rig matrix uses .01 to convert authoring centimetres",
+      "min_mesh_z_m": -0.008151670917868614,
+      "max_mesh_z_m": 1.7079179286956787,
+      "max_left_palm_to_shaft_m_held": 0
+    },
+    {
+      "action": "CH1_SahurGetUp_v215",
+      "units": "world metres at model scale 1; rig matrix uses .01 to convert authoring centimetres",
+      "min_mesh_z_m": -0.008151670917868614,
+      "max_mesh_z_m": 1.7079179286956787,
+      "max_left_palm_to_shaft_m_held": 0
+    }
+  ],
+  "prone_to_getup_max_channel_translation_m": 0.0,
+  "final_source": "pass05 / finalized contacts"
+}

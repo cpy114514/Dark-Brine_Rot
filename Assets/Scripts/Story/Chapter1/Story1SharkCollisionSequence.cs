@@ -12,6 +12,8 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     public Camera storyCamera;
 
     [Header("Encounter")]
+    [Tooltip("Opening voyage duration relative to the original timing. Ship speed and attack animations are unchanged.")]
+    [Range(.1f,1f)] public float voyageDurationScale = .25f;
     [Min(1f)] public float battleAfterSeconds = 20f;
     [Min(1f)] public float impactAfterSeconds = 30f;
     [Min(0f)] public float bowDistance = 50f;
@@ -59,11 +61,12 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     public float PatrolDuration => patrolEndsAt;
     public float PatrolRadius => patrolRadius;
     System.Random voyageRandom;
-    float patrolRadius, patrolAngle, patrolDirection, patrolEndsAt, nextVoyageBreach, voyageSwimClock;
+    float patrolRadius, patrolAngle, patrolDirection, patrolEndsAt, nextVoyageBreach, voyageSwimClock,approachLeadSeconds,patrolTrim;
     Vector3 patrolBody, previousShipPosition;
     bool voyageBreaching, breachLaunched, voyageOwnsAnimation;
     float voyageBreachAt, flightDuration, launchY, launchSpeed, recoveryAt, recoveryVelocity, breachVisibilityAt;
-    float ApproachDeadline => Mathf.Max(battleAfterSeconds,patrolEndsAt+pursuitBoostSeconds);
+    float VoyageScale => Mathf.Clamp(voyageDurationScale,.1f,1f);
+    float ApproachDeadline => Mathf.Max(battleAfterSeconds*VoyageScale,patrolEndsAt+approachLeadSeconds);
 
     void Start()
     {
@@ -116,7 +119,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
             UpdateSwimmer(voyageTime, deltaTime);
         }
         float gap = Vector3.ProjectOnPlane(swimAnimator.NoseWorldPoint - bowContactPoint, Vector3.up).magnitude;
-        if (!IsPatrolling && voyageTime >= Mathf.Max(impactAfterSeconds,ApproachDeadline) && gap <= tailSetupDistance + contactTolerance &&
+        if (!IsPatrolling && voyageTime >= Mathf.Max(impactAfterSeconds*VoyageScale,ApproachDeadline) && gap <= tailSetupDistance + contactTolerance &&
             Vector3.Angle(Vector3.ProjectOnPlane(swimmer.forward, Vector3.up), -heading) < 15)
             BeginImpact();
     }
@@ -148,10 +151,10 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         heading = Vector3.ProjectOnPlane(shipTransform.right, Vector3.up).normalized;
         side = Vector3.Cross(Vector3.up, heading).normalized;
         float approachDeadline = Mathf.Max(1f, ApproachDeadline);
-        float progress = Mathf.Clamp01(time / approachDeadline);
+        float progress = Mathf.Clamp01((time+patrolTrim) / (approachDeadline+patrolTrim));
         bowContactPoint = FindBowContactPoint();
         float finalApproach = Mathf.SmoothStep(0f, 1f,
-            Mathf.InverseLerp(approachDeadline - pursuitBoostSeconds, approachDeadline, time));
+            Mathf.InverseLerp(approachDeadline - approachLeadSeconds, approachDeadline, time));
         float standOff = Mathf.Lerp(huntingStandOffDistance,tailSetupDistance,finalApproach);
         float hunting = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.45f, .82f, progress));
         Vector3 huntingOffset = side * (huntingSweepWidth * hunting *
@@ -238,13 +241,28 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         float animalRadius=new Vector2(half.x,half.z).magnitude;
         float sway=hullHeight*Mathf.Sin(Mathf.Min(20,ship.maxPitchDegrees+ship.maxRollDegrees)*Mathf.Deg2Rad);
         patrolRadius=hullRadius+animalRadius+Mathf.Max(5,patrolHullClearance)+sway;
-        patrolEndsAt=Mathf.Max(minimumPatrolSeconds,2*Mathf.PI*patrolRadius/Mathf.Max(1,patrolSwimSpeed));
+        float originalPatrol=Mathf.Max(minimumPatrolSeconds,2*Mathf.PI*patrolRadius/Mathf.Max(1,patrolSwimSpeed));
+        approachLeadSeconds=pursuitBoostSeconds;
+        if(VoyageScale>=.999f)patrolEndsAt=originalPatrol;
+        else
+        {
+            // Shorten the opening wait, not the physical approach or attack.
+            // A full-circuit lower bound previously defeated shorter timers.
+            float target=Mathf.Max(impactAfterSeconds,Mathf.Max(battleAfterSeconds,originalPatrol+pursuitBoostSeconds))*VoyageScale;
+            approachLeadSeconds=Mathf.Min(pursuitBoostSeconds,Mathf.Max(.5f,target-.5f));
+            float arrivalMargin=Mathf.Min(2f,target*.15f);
+            patrolEndsAt=Mathf.Max(.5f,target-approachLeadSeconds-arrivalMargin);
+        }
+        patrolTrim=originalPatrol-patrolEndsAt;
         // Initial staging happens before the first voyage frame. Keep the
         // animal on the camera-facing quarter, outside the entire real hull.
         patrolDirection=Vector3.Dot(storyCamera.transform.position-shipTransform.position,side)>=0 ? 1 : -1;
         Vector3 viewOffset=storyCamera.transform.position-shipTransform.position;
         float viewAngle=Mathf.Atan2(Vector3.Dot(viewOffset,side),Vector3.Dot(viewOffset,heading));
-        patrolAngle=viewAngle+patrolDirection*1.8f;
+        // Start farther around the original orbit before its first visible
+        // frame, so the shorter patrol ends on the same approach quarter.
+        // The shark keeps its normal speed and never skips position in view.
+        patrolAngle=viewAngle+patrolDirection*(1.8f+patrolTrim*patrolSwimSpeed/Mathf.Max(1,patrolRadius));
         Vector3 radial=heading*Mathf.Cos(patrolAngle)+side*Mathf.Sin(patrolAngle);
         Vector3 tangent=(-heading*Mathf.Sin(patrolAngle)+side*Mathf.Cos(patrolAngle))*patrolDirection;
         swimRotation=Quaternion.LookRotation(tangent,Vector3.up);

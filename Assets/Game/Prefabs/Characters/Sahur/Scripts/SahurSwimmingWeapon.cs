@@ -25,6 +25,9 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     public bool IsStowed => stowed;
     public bool Climbing { get; set; }
     public bool CinematicTraversal { get; set; }
+    // Negative uses normal swimming ownership. A cinematic may blend between
+    // the existing hand grip and back pose without reparenting the weapon.
+    public float CinematicStowWeight { get; set; } = -1;
 
     void Awake()
     {
@@ -62,7 +65,8 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     public void RefreshPose()
     {
         if (controller == null || stick == null || mesh == null) return;
-        bool swimming = CinematicTraversal || controller.enabled && (controller.Swimming || Climbing);
+        float blend=CinematicStowWeight>=0?Mathf.Clamp01(CinematicStowWeight):1;
+        bool swimming = CinematicStowWeight>=0?blend>0:CinematicTraversal || controller.enabled && (controller.Swimming || Climbing);
         if (!swimming) { RestoreGrip(); return; }
         animator = attack != null ? attack.animator : GetComponentInChildren<Animator>();
         if (animator == null || !animator.isHuman) return;
@@ -93,6 +97,12 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
             Quaternion.Inverse(Quaternion.LookRotation(shaftFront, shaftAxis));
         Vector3 centre = chest.position - front * backOffset + up * heightOffset;
         stick.position = centre - stick.TransformVector(mesh.bounds.center);
+        if(blend<1)
+        {
+            Vector3 hand=stick.parent.TransformPoint(gripPosition);
+            Quaternion rotation=stick.parent.rotation*gripRotation;
+            stick.SetPositionAndRotation(Vector3.Lerp(hand,stick.position,blend),Quaternion.Slerp(rotation,stick.rotation,blend));
+        }
     }
 
     void RestoreGrip()
@@ -107,5 +117,5 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
         stowed = false;
     }
 
-    void OnDisable() => RestoreGrip();
+    void OnDisable() { CinematicStowWeight=-1;RestoreGrip(); }
 }

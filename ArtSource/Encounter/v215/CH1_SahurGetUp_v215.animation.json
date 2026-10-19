@@ -1,0 +1,105 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\sahur-pose-v215.blend",
+  "rig": "Armature",
+  "action": "CH1_SahurGetUp_v215",
+  "unity_clip": "CH1_SahurGetUp_v215",
+  "revision": "v215",
+  "frame_start": 1,
+  "frame_end": 151,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/redesign-20261017.md",
+  "approval_reference": "2026-10-17 user: \u53ef\u4ee5\uff0c\u90a3\u5f00\u59cb\u505a\u5427",
+  "review_status": "accepted_for_stage",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "contact_seconds": 0,
+  "contacts": [
+    {
+      "bone": "LeftHand",
+      "start": 1,
+      "end": 45,
+      "max_drift_m": 0.002
+    }
+  ],
+  "review_reference": "ArtSource/Encounter/v215/blocking-review-v215.md",
+  "in_place_axes": [
+    "X",
+    "Y"
+  ],
+  "format_version": 1,
+  "duration_seconds": 2.5,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\sahur-pose-v215.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBArmature",
+  "animated_bones": [
+    "Head",
+    "Head_end",
+    "Hips",
+    "LeftArm",
+    "LeftFoot",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHand_end",
+    "LeftLeg",
+    "LeftShoulder",
+    "LeftToeBase",
+    "LeftToeBase_end",
+    "LeftUpLeg",
+    "Neck",
+    "RightArm",
+    "RightFoot",
+    "RightForeArm",
+    "RightHand",
+    "RightHand_end",
+    "RightLeg",
+    "RightShoulder",
+    "RightToeBase",
+    "RightToeBase_end",
+    "RightUpLeg",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "root"
+  ],
+  "selected_meshes": [
+    "Mesh_0.001"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        -1.3415046851150692e-11,
+        2.176966518163681e-08,
+        0.41961437463760376
+      ],
+      "in_place_max_excursion_m": 2.3981568868812617e-08,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": [
+        {
+          "bone": "LeftHand",
+          "frames": [
+            1,
+            45
+          ],
+          "max_drift_m": 2.2463222491266332e-07
+        }
+      ]
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {},
+  "fbx": "CH1_SahurGetUp_v215.fbx"
+}

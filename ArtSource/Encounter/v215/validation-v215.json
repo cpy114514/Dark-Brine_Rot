@@ -1,0 +1,97 @@
+[
+  {
+    "action": "CH1_SahurOverhead_v215",
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": [
+        {
+          "bone": "LeftFoot",
+          "frames": [
+            1,
+            169
+          ],
+          "max_drift_m": 0.0
+        },
+        {
+          "bone": "RightFoot",
+          "frames": [
+            1,
+            169
+          ],
+          "max_drift_m": 0.0
+        }
+      ]
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  {
+    "action": "CH1_SahurProneDodge_v215",
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        1.3415046851150692e-11,
+        -2.176966518163681e-08,
+        -0.41961437463760376
+      ],
+      "in_place_max_excursion_m": 2.2235327380373696e-08,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": [
+        {
+          "bone": "LeftHand",
+          "frames": [
+            31,
+            145
+          ],
+          "max_drift_m": 0.0
+        }
+      ]
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  {
+    "action": "CH1_SahurGetUp_v215",
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        -1.3415046851150692e-11,
+        2.176966518163681e-08,
+        0.41961437463760376
+      ],
+      "in_place_max_excursion_m": 2.3981568868812617e-08,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": [
+        {
+          "bone": "LeftHand",
+          "frames": [
+            1,
+            45
+          ],
+          "max_drift_m": 2.2463222491266332e-07
+        }
+      ]
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  }
+]

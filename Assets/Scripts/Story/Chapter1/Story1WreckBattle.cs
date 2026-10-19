@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 /// <summary>Normal Sahur combat on floating hull fragments, ending in narrative defeat.</summary>
 [DefaultExecutionOrder(-150), DisallowMultipleComponent]
-public sealed class Story1WreckBattle : MonoBehaviour
+public sealed partial class Story1WreckBattle : MonoBehaviour
 {
     public enum Phase { Waiting, Breaking, Fighting, Defeat, Finished, Finale }
     public enum FinaleReason { None, SharkHealth, PlayerHealth, TimeLimit }
@@ -131,6 +131,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
         sequence = owner; player = owner.sahur; capsule = player.GetComponent<CharacterController>();
         StartCoroutine(Story1EncounterClipCache.Preload());
         playerHealth = player.GetComponent<PlayerHealth>();
+        CaptureRedesignOwnership();
         ocean = FindFirstObjectByType<OceanWorld>(); shark = owner.swimmer;
         sharkAnimator = shark.GetComponent<TralaleroSwimAnimator>();
         heading = travelHeading; side = Vector3.Cross(Vector3.up, heading);
@@ -186,12 +187,21 @@ public sealed class Story1WreckBattle : MonoBehaviour
         breakCameraBlendSeconds = Mathf.Max(1.35f,Vector3.Angle(startOffset,endOffset)/80f+.2f);
         var asset = Resources.Load<Story1ShipWreckAsset>("Story1Wreck/ShipWreckPieces");
         Effects = gameObject.AddComponent<Story1WreckEffects>();Effects.Initialize(asset.hulls[0].material,asset.hulls[0].mesh);
+        BeginRedesign();
     }
 
     void Update()
     {
         if(CurrentPhase==Phase.Waiting || CurrentPhase==Phase.Breaking && !shattered)WarmWreckage(6);
-        if(CurrentPhase==Phase.Waiting)return;
+        if(CurrentPhase==Phase.Waiting){RedWarmSharkTree();return;}
+        if (RedesignActive)
+        {
+            // Real controller lessons still need the platform's early carry,
+            // dry-footing admission and collision bookkeeping.
+            if(RedesignStage==OpeningStage.Tutorial&&!redesignManual&&!TutorialWaiting&&!RedInputBlocked)
+                MovePlanks(Time.deltaTime);
+            return;
+        }
         Tick(Time.deltaTime);
     }
     static readonly Unity.Profiling.ProfilerMarker WarmMarker=new Unity.Profiling.ProfilerMarker("Wreck.WarmGeometry");
@@ -199,6 +209,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     {
         using var measurement=WarmMarker.Auto();
         double sliceStart=Time.realtimeSinceStartupAsDouble;
+        bool drain=budget==int.MaxValue;
         if(shipWreck==null)shipWreck=Resources.Load<Story1ShipWreckAsset>("Story1Wreck/ShipWreckPieces");
         if(shipWreck==null)return;
         if(debrisRoot==null)
@@ -237,9 +248,9 @@ public sealed class Story1WreckBattle : MonoBehaviour
                 preparedShards.Add(source,new GameObject[source.splinters.Length]);
                 for(int shard=0;shard<source.splinters.Length;shard++)shardPreparation.Enqueue((source,shard));
             }
-            if(CurrentPhase==Phase.Waiting && Time.realtimeSinceStartupAsDouble-sliceStart>=.002)break;
+            if(!drain && Time.realtimeSinceStartupAsDouble-sliceStart>=.002)break;
         }
-        while(warmIndex>=total && shardPreparation.Count>0 && (CurrentPhase!=Phase.Waiting || Time.realtimeSinceStartupAsDouble-sliceStart<.002))
+        while(warmIndex>=total && shardPreparation.Count>0 && (drain || Time.realtimeSinceStartupAsDouble-sliceStart<.002))
         {
             var item=shardPreparation.Dequeue();
             var owner=sequence!=null ? sequence : GetComponent<Story1SharkCollisionSequence>();
@@ -264,6 +275,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     }
     void LateUpdate()
     {
+        if (RedesignActive) return;
         if(CurrentPhase==Phase.Breaking && !sharkPrepared)PoseBreakShark(phaseAge);
         if(CurrentPhase==Phase.Breaking && !PauseSettingsMenu.IsOpen && Time.deltaTime>0)MoveBreakCamera(Time.deltaTime);
         if(headHitbox!=null && sharkAnimator!=null)
@@ -271,6 +283,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     }
     public void ApplySharkContactDamage()
     {
+        if (RedesignActive) return;
         if(headHitbox!=null)headHitbox.transform.SetPositionAndRotation(sharkAnimator.NoseWorldPoint,shark.rotation);
         if(CurrentPhase==Phase.Fighting && !FinalePending && sharkPhase==SharkPhase.Strike)
         {
@@ -294,6 +307,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     }
     internal void Tick(float deltaTime)
     {
+        if (RedesignActive) return;
         if (CurrentPhase == Phase.Waiting || CurrentPhase == Phase.Finished || PauseSettingsMenu.IsOpen || deltaTime <= 0) return;
         phaseAge += deltaTime;
         if (CurrentPhase == Phase.Breaking) { BreakShip(deltaTime); return; }
@@ -484,7 +498,8 @@ public sealed class Story1WreckBattle : MonoBehaviour
 
     void CreateWreckage()
     {
-        WarmWreckage(int.MaxValue);
+        using var creationMeasurement=new Unity.Profiling.ProfilerMarker("Wreck.CrushCreate").Auto();
+        using(new Unity.Profiling.ProfilerMarker("Wreck.CrushWarmFlush").Auto())WarmWreckage(int.MaxValue);
         shipWreck = Resources.Load<Story1ShipWreckAsset>("Story1Wreck/ShipWreckPieces");
         if (shipWreck == null || shipWreck.decks.Length != 20 || shipWreck.hulls.Length != 24)
             throw new System.InvalidOperationException("The Blender-cut ship wreck asset is missing or incomplete.");
@@ -500,12 +515,16 @@ public sealed class Story1WreckBattle : MonoBehaviour
         scatter = new System.Random(OpeningScatterSeed);
 #endif
         ExpectedInitialFragments=shipWreck.decks.Length+shipWreck.hulls.Length+shipWreck.details.Length;
-        foreach(var source in deckSources)if(!ReleaseImpactFragments(source,true))AddPlank(source);
-        foreach(var source in shipWreck.hulls)if(!ReleaseImpactFragments(source,false))AddShipDetail(source);
-        foreach(var source in shipWreck.details)if(!ReleaseImpactFragments(source,false))AddShipDetail(source);
+        using(new Unity.Profiling.ProfilerMarker("Wreck.CrushBodies").Auto())
+        {
+            foreach(var source in deckSources)if(!ReleaseImpactFragments(source,true))AddPlank(source);
+            foreach(var source in shipWreck.hulls)if(!ReleaseImpactFragments(source,false))AddShipDetail(source);
+            foreach(var source in shipWreck.details)if(!(RedesignActive&&RedRiggingPrepareHullPiece(source))&&!ReleaseImpactFragments(source,false))AddShipDetail(source);
+        }
         InitialFragmentCount=ShipFragmentCount;
-        debrisRoot.SetActive(true);
-        var layout=Resources.Load<TextAsset>("Story1Wreck/OpeningScatter_v211");
+        using(new Unity.Profiling.ProfilerMarker("Wreck.CrushActivate").Auto())debrisRoot.SetActive(true);
+        if(RedesignActive)RedRiggingJoinWreck();
+        var layout=RedesignActive ? null : Resources.Load<TextAsset>("Story1Wreck/OpeningScatter_v211");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         if(DiagnosticBakeScatter)layout=null;
 #endif
@@ -583,10 +602,19 @@ public sealed class Story1WreckBattle : MonoBehaviour
         var piece=go.GetComponent<Story1WreckPlank>();
         piece.SetFractureSource(source);
         piece.Initialize(from,Story1ShipWreckAsset.SourceRotation(sequence.ship.transform,source),size,ocean,FragmentVelocity(from),FragmentSpin());
+        piece.GetComponent<Story1WreckFloatBody>().SeparateWaterEntryDrag=RedesignActive&&size.y<1.2f&&Mathf.Min(size.x,size.z)>7;
         planks.Add(piece);
     }
     Vector3 FragmentVelocity(Vector3 from)
     {
+        if(RedesignActive)
+        {
+            // A downward body slam opens the hull radially, rather than carrying
+            // every fragment sideways with the retired tail strike.
+            Vector3 radial=Vector3.ProjectOnPlane(from-wreckSourceCenter,Vector3.up).normalized;
+            radial=Quaternion.AngleAxis(ScatterRange(-24,24),Vector3.up)*radial;
+            return radial*ScatterRange(13,24)+heading*ScatterRange(-4,4)+side*ScatterRange(-4,4)+Vector3.up*ScatterRange(1,4);
+        }
         float near=1-Mathf.Clamp01(Vector3.Distance(from,sequence.HullImpactPoint)/145);
         float lateral=Vector3.Dot(from-breakShipPosition,heading);
         float sign=Mathf.Abs(lateral)>.2f ? Mathf.Sign(lateral) : (ScatterRange(0,1)>.5f ? 1 : -1);
@@ -600,7 +628,9 @@ public sealed class Story1WreckBattle : MonoBehaviour
         if(power>1)launch=launch*power+outward*(ScatterRange(12,22)*(power-1));
         return launch+Vector3.up*((ScatterRange(4,12)+near*4)*(1+.25f*(power-1)));
     }
-    Vector3 FragmentSpin() => side*ScatterRange(-75,75)+heading*ScatterRange(-65,65)+Vector3.up*ScatterRange(-45,45);
+    Vector3 FragmentSpin() => RedesignActive
+        ? side*ScatterRange(-12,12)+heading*ScatterRange(-12,12)+Vector3.up*ScatterRange(-20,20)
+        : side*ScatterRange(-75,75)+heading*ScatterRange(-65,65)+Vector3.up*ScatterRange(-45,45);
     void AddShipDetail(Story1ShipWreckAsset.Fragment source)
     {
         var go=preparedPieces[source];
@@ -634,7 +664,9 @@ public sealed class Story1WreckBattle : MonoBehaviour
             Vector3 at = shark.InverseTransformPoint(mesh.transform.TransformPoint(b.center + Vector3.Scale(b.extents, new Vector3(x,y,z))));
             if (first) { sharkLocalBounds = new Bounds(at, Vector3.zero); first = false; } else sharkLocalBounds.Encapsulate(at);
         }
-        shark.localScale *= sharkLength / Mathf.Max(.01f, sharkLocalBounds.size.z * Mathf.Abs(shark.lossyScale.z));
+        // The cinematic and tutorial share one animal. Keep its established
+        // voyage size rather than shrinking it at the tutorial handoff.
+        if(!RedesignActive)shark.localScale *= sharkLength / Mathf.Max(.01f, sharkLocalBounds.size.z * Mathf.Abs(shark.lossyScale.z));
         shark.gameObject.tag = "Enemy";
         SharkHealth = shark.gameObject.AddComponent<Story1SharkHealth>(); SharkHealth.maxHealth = SharkHealth.currentHealth = 3000;
         SharkHealth.NarrativeHealthFloor=SharkHealth.maxHealth*finaleSharkHealthRatio;
@@ -875,6 +907,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     }
     void OnPlayerDamaged(float damage)
     {
+        if (RedesignActive) return;
         if(AtFinaleThreshold(playerHealth.currentHealth,playerHealth.maxHealth,finalePlayerHealthRatio))
             RequestFinale(FinaleReason.PlayerHealth);
     }
@@ -883,6 +916,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     static bool AtFinaleThreshold(float current,float maximum,float ratio)=>current<=maximum*ratio+.0001f;
     public bool RequestFinale(FinaleReason reason)
     {
+        if (RedesignActive) return false;
         if(CurrentPhase!=Phase.Fighting || reason==FinaleReason.None || FinalePending)return false;
         RequestedFinaleReason=reason;finaleRequestedAt=Time.time;
         playerHealth.GrantProtection(120);
@@ -894,6 +928,7 @@ public sealed class Story1WreckBattle : MonoBehaviour
     }
     void ProtectStoryFight()
     {
+        if (RedesignActive) return;
         if(CurrentPhase!=Phase.Fighting && CurrentPhase!=Phase.Breaking)return;
         playerHealth.currentHealth=playerHealth.maxHealth*finalePlayerHealthRatio;
         RequestFinale(FinaleReason.PlayerHealth);
@@ -1003,12 +1038,13 @@ public sealed class Story1WreckBattle : MonoBehaviour
         bossName.enabled = true; healthFill.transform.parent.gameObject.SetActive(true);
     }
 
-    void OnDisable() { CinematicLetterbox.Set(this, false); }
+    void OnDisable() { if(RedesignActive)DisposeRedesign();else ReleaseRedesignPause();CinematicLetterbox.Set(this, false); }
 
     void OnDestroy()
     {
+        DisposeRedesign();
         if(player!=null)player.GetComponent<SahurAttack>().CinematicHandoffPending=false;
-        if(playerHealth!=null){playerHealth.Damaged-=OnPlayerDamaged;playerHealth.NarrativeHealthFloor=0;}
+        if(playerHealth!=null)playerHealth.Damaged-=OnPlayerDamaged;
         if (rider != null) rider.enabled = false;
         if (playerHealth != null && (playerHealth.NarrativeDefeatHandler == BeginDefeat || playerHealth.NarrativeDefeatHandler == ProtectStoryFight)) playerHealth.NarrativeDefeatHandler = null;
         if (hud != null) Destroy(hud); if (debrisRoot != null) Destroy(debrisRoot);

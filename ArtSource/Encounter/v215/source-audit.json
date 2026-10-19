@@ -1,0 +1,693 @@
+{
+  "rig": {
+    "rig": "Armature",
+    "scale": [
+      0.009999990463256836,
+      0.009999990463256836,
+      0.009999990463256836
+    ],
+    "dimensions": [
+      0.80466628074646,
+      0.5894169211387634,
+      2.212217092514038
+    ],
+    "animation": "CH1_SahurGuard_v047",
+    "bones": [
+      {
+        "name": "root",
+        "parent": null,
+        "deform": true,
+        "head": [
+          0.0003432855010032654,
+          -0.11543332040309906,
+          -0.803754985332489
+        ],
+        "tail": [
+          -0.04295650124549866,
+          11.474367141723633,
+          79.46147155761719
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "Hips",
+        "parent": "root",
+        "deform": true,
+        "head": [
+          -0.04295650124549866,
+          11.474367141723633,
+          79.46147155761719
+        ],
+        "tail": [
+          0.045605409890413284,
+          12.077923774719238,
+          88.82931518554688
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "Spine",
+        "parent": "Hips",
+        "deform": true,
+        "head": [
+          0.02355288155376911,
+          12.17675495147705,
+          88.98893737792969
+        ],
+        "tail": [
+          0.038746077567338943,
+          12.676942825317383,
+          100.0272216796875
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "Spine1",
+        "parent": "Spine",
+        "deform": true,
+        "head": [
+          0.020732268691062927,
+          12.6428861618042,
+          100.02872467041016
+        ],
+        "tail": [
+          0.01947767101228237,
+          12.891218185424805,
+          112.72201538085938
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "Spine2",
+        "parent": "Spine1",
+        "deform": true,
+        "head": [
+          -0.011191990226507187,
+          12.859761238098145,
+          112.7225570678711
+        ],
+        "tail": [
+          -0.13970179855823517,
+          12.933658599853516,
+          127.59705352783203
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "Neck",
+        "parent": "Spine2",
+        "deform": true,
+        "head": [
+          -0.052145376801490784,
+          13.1640043258667,
+          127.33748626708984
+        ],
+        "tail": [
+          -0.1354886293411255,
+          12.612979888916016,
+          139.53396606445312
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "Head",
+        "parent": "Neck",
+        "deform": true,
+        "head": [
+          -0.35099390149116516,
+          11.577486991882324,
+          139.43948364257812
+        ],
+        "tail": [
+          -0.19384649395942688,
+          11.865019798278809,
+          180.4276580810547
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "Head_end",
+        "parent": "Head",
+        "deform": true,
+        "head": [
+          -0.19384649395942688,
+          11.865019798278809,
+          180.4276580810547
+        ],
+        "tail": [
+          -0.0366990864276886,
+          12.152552604675293,
+          221.41583251953125
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftShoulder",
+        "parent": "Spine2",
+        "deform": true,
+        "head": [
+          5.936372756958008,
+          12.479763984680176,
+          126.45571899414062
+        ],
+        "tail": [
+          17.40559196472168,
+          11.19798469543457,
+          123.1720199584961
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftArm",
+        "parent": "LeftShoulder",
+        "deform": true,
+        "head": [
+          17.345252990722656,
+          11.132003784179688,
+          122.99311828613281
+        ],
+        "tail": [
+          36.987510681152344,
+          11.657525062561035,
+          121.8426513671875
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftForeArm",
+        "parent": "LeftArm",
+        "deform": true,
+        "head": [
+          36.976810455322266,
+          11.77405834197998,
+          121.72515106201172
+        ],
+        "tail": [
+          49.37010192871094,
+          11.384313583374023,
+          122.19145965576172
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftHand",
+        "parent": "LeftForeArm",
+        "deform": true,
+        "head": [
+          49.369850158691406,
+          11.48514175415039,
+          122.26560974121094
+        ],
+        "tail": [
+          61.99516677856445,
+          10.918259620666504,
+          122.94244384765625
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftHand_end",
+        "parent": "LeftHand",
+        "deform": true,
+        "head": [
+          61.99516677856445,
+          10.918259620666504,
+          122.94244384765625
+        ],
+        "tail": [
+          74.6204833984375,
+          10.351377487182617,
+          123.61927795410156
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightShoulder",
+        "parent": "Spine2",
+        "deform": true,
+        "head": [
+          -6.1691575050354,
+          12.725078582763672,
+          126.44014739990234
+        ],
+        "tail": [
+          -17.670698165893555,
+          11.141619682312012,
+          123.54918670654297
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightArm",
+        "parent": "RightShoulder",
+        "deform": true,
+        "head": [
+          -17.613080978393555,
+          11.068658828735352,
+          123.36714935302734
+        ],
+        "tail": [
+          -36.07477951049805,
+          11.270112991333008,
+          122.14686584472656
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightForeArm",
+        "parent": "RightArm",
+        "deform": true,
+        "head": [
+          -36.05887985229492,
+          11.388509750366211,
+          121.94790649414062
+        ],
+        "tail": [
+          -48.76942443847656,
+          11.310450553894043,
+          122.213134765625
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightHand",
+        "parent": "RightForeArm",
+        "deform": true,
+        "head": [
+          -48.768070220947266,
+          11.380415916442871,
+          122.28083801269531
+        ],
+        "tail": [
+          -61.92937088012695,
+          11.20667839050293,
+          122.40557098388672
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightHand_end",
+        "parent": "RightHand",
+        "deform": true,
+        "head": [
+          -61.92937088012695,
+          11.20667839050293,
+          122.40557098388672
+        ],
+        "tail": [
+          -75.0906753540039,
+          11.032940864562988,
+          122.53030395507812
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftUpLeg",
+        "parent": "Hips",
+        "deform": true,
+        "head": [
+          7.783023357391357,
+          11.472405433654785,
+          74.25045776367188
+        ],
+        "tail": [
+          7.821737766265869,
+          9.22846794128418,
+          42.6197509765625
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftLeg",
+        "parent": "LeftUpLeg",
+        "deform": true,
+        "head": [
+          7.789400100708008,
+          9.222454071044922,
+          42.620155334472656
+        ],
+        "tail": [
+          7.920266151428223,
+          9.901369094848633,
+          12.963138580322266
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftFoot",
+        "parent": "LeftLeg",
+        "deform": true,
+        "head": [
+          7.9887375831604,
+          9.904121398925781,
+          12.963582038879395
+        ],
+        "tail": [
+          10.605575561523438,
+          -7.731897354125977,
+          0.001560211181640625
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftToeBase",
+        "parent": "LeftFoot",
+        "deform": true,
+        "head": [
+          10.402701377868652,
+          -7.707101345062256,
+          -0.07131858915090561
+        ],
+        "tail": [
+          11.17182731628418,
+          -16.3439884185791,
+          0.25387123227119446
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "LeftToeBase_end",
+        "parent": "LeftToeBase",
+        "deform": true,
+        "head": [
+          11.17182731628418,
+          -16.3439884185791,
+          0.25387123227119446
+        ],
+        "tail": [
+          11.940953254699707,
+          -24.980876922607422,
+          0.5790610313415527
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightUpLeg",
+        "parent": "Hips",
+        "deform": true,
+        "head": [
+          -7.659283638000488,
+          11.477543830871582,
+          74.2878189086914
+        ],
+        "tail": [
+          -8.311097145080566,
+          8.961867332458496,
+          42.92799758911133
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightLeg",
+        "parent": "RightUpLeg",
+        "deform": true,
+        "head": [
+          -8.280279159545898,
+          8.966885566711426,
+          42.926971435546875
+        ],
+        "tail": [
+          -8.019569396972656,
+          9.918201446533203,
+          12.890848159790039
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightFoot",
+        "parent": "RightLeg",
+        "deform": true,
+        "head": [
+          -8.092965126037598,
+          9.886786460876465,
+          12.889323234558105
+        ],
+        "tail": [
+          -11.604029655456543,
+          -7.247611045837402,
+          -0.08865737915039062
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightToeBase",
+        "parent": "RightFoot",
+        "deform": true,
+        "head": [
+          -11.457191467285156,
+          -7.270046710968018,
+          -0.09790744632482529
+        ],
+        "tail": [
+          -13.28815746307373,
+          -15.720422744750977,
+          0.3951175808906555
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      },
+      {
+        "name": "RightToeBase_end",
+        "parent": "RightToeBase",
+        "deform": true,
+        "head": [
+          -13.28815746307373,
+          -15.720422744750977,
+          0.3951175808906555
+        ],
+        "tail": [
+          -15.119123458862305,
+          -24.170799255371094,
+          0.8881425857543945
+        ],
+        "rotation_mode": "QUATERNION",
+        "constraints": []
+      }
+    ],
+    "bound_meshes": [
+      "Mesh_0.001"
+    ],
+    "fps": 60.0,
+    "frame_range": [
+      1,
+      250
+    ]
+  },
+  "actions": [
+    {
+      "name": "CH1_SahurAirHit_v214",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        133.0
+      ],
+      "key_range": [
+        1.0,
+        133.0
+      ],
+      "curves": 280,
+      "keys": 37240,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurBoardHop_v047",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        112.0
+      ],
+      "key_range": [
+        1.0,
+        112.0
+      ],
+      "curves": 280,
+      "keys": 31360,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurBrace_v047",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        79.0
+      ],
+      "key_range": [
+        1.0,
+        79.0
+      ],
+      "curves": 280,
+      "keys": 22120,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurGetUp_v214",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        151.0
+      ],
+      "key_range": [
+        1.0,
+        151.0
+      ],
+      "curves": 280,
+      "keys": 42280,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurGuard_v047",
+      "users": 2,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        97.0
+      ],
+      "key_range": [
+        1.0,
+        97.0
+      ],
+      "curves": 280,
+      "keys": 27160,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurOverhead_v214",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        169.0
+      ],
+      "key_range": [
+        1.0,
+        169.0
+      ],
+      "curves": 280,
+      "keys": 47320,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurProneDodge_v214",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        145.0
+      ],
+      "key_range": [
+        1.0,
+        145.0
+      ],
+      "curves": 280,
+      "keys": 40600,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurRetrieve_v214",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        73.0
+      ],
+      "key_range": [
+        1.0,
+        73.0
+      ],
+      "curves": 280,
+      "keys": 20440,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    },
+    {
+      "name": "CH1_SahurStow_v214",
+      "users": 1,
+      "fake_user": true,
+      "frame_range": [
+        1.0,
+        73.0
+      ],
+      "key_range": [
+        1.0,
+        73.0
+      ],
+      "curves": 280,
+      "keys": 20440,
+      "slots": [
+        {
+          "identifier": "OBArmature",
+          "target": "OBJECT"
+        }
+      ]
+    }
+  ]
+}

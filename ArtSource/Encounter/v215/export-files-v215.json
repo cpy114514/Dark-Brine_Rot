@@ -1,0 +1,42 @@
+[
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\sahur-pose-v215.blend",
+    "bytes": 44662436,
+    "sha256": "3a07564bb04ccb1501fec28078e4f614b4e6f96a587d8b29497e731dabb73fbc"
+  },
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\blocking-review-v215.md",
+    "bytes": 4787,
+    "sha256": "6f2750668e2bccdb429813adcf7f97dbb61463cdf4e47d4fb2a7549fb78b7aee"
+  },
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurGetUp_v215.fbx",
+    "bytes": 20407484,
+    "sha256": "42f0b4f559f737177b83838ddd2477b6129e1948ac6e76b224736390d3925b82"
+  },
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurOverhead_v215.fbx",
+    "bytes": 20416700,
+    "sha256": "66df8c2cf88bda2fb53567e752998599d9d14ffaac57211f85c730bb25ddffd8"
+  },
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurProneDodge_v215.fbx",
+    "bytes": 20355532,
+    "sha256": "86f4b9899dd9bbaea10157a8ed2146cade5296665dd1ceac0c24b8033b70e9fc"
+  },
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurGetUp_v215.animation.json",
+    "bytes": 2665,
+    "sha256": "f3c829001d1e108021970e52187984d0e82ac3d5610df88d8c1b4797638dda29"
+  },
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurOverhead_v215.animation.json",
+    "bytes": 3760,
+    "sha256": "57d3a8a13ab4ea925e65cbab4a7a02da41a7ca0343fe0bd6c07c6a5e287bd31a"
+  },
+  {
+    "path": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurProneDodge_v215.animation.json",
+    "bytes": 2666,
+    "sha256": "86be7cef5fb637f2b93876dcb17c846bcaa2f0ab8cb1415130357fc105873822"
+  }
+]

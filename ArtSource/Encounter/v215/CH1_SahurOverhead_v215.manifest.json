@@ -1,0 +1,54 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\sahur-pose-v215.blend",
+  "rig": "Armature",
+  "action": "CH1_SahurOverhead_v215",
+  "unity_clip": "CH1_SahurOverhead_v215",
+  "revision": "v215",
+  "frame_start": 1,
+  "frame_end": 169,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/redesign-20261017.md",
+  "approval_reference": "2026-10-17 user: 可以，那开始做吧",
+  "review_status": "accepted_for_stage",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "contact_seconds": 1.3,
+  "contacts": [
+    {
+      "bone": "LeftFoot",
+      "start": 1,
+      "end": 169,
+      "max_drift_m": 0.002
+    },
+    {
+      "bone": "RightFoot",
+      "start": 1,
+      "end": 169,
+      "max_drift_m": 0.002
+    }
+  ],
+  "gameplay": {
+    "startup": [
+      1,
+      79
+    ],
+    "active": [
+      79,
+      85
+    ],
+    "recovery": [
+      85,
+      169
+    ]
+  },
+  "review_reference": "ArtSource/Encounter/v215/blocking-review-v215.md",
+  "in_place_axes": [
+    "X",
+    "Y"
+  ]
+}

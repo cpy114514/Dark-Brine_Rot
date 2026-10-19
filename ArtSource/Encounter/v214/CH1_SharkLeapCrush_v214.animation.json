@@ -1,0 +1,72 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v214\\shark-redesign-v214.blend",
+  "rig": "Tralalero_Rig",
+  "action": "CH1_SharkLeapCrush_v214",
+  "unity_clip": "CH1_SharkLeapCrush_v214",
+  "revision": "v214",
+  "frame_start": 1,
+  "frame_end": 217,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "Body",
+  "rig_type": "Generic",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/redesign-20261017.md",
+  "approval_reference": "2026-10-17 user: \u53ef\u4ee5\uff0c\u90a3\u5f00\u59cb\u505a\u5427",
+  "review_status": "accepted_for_stage",
+  "avatar": "",
+  "contact_seconds": 2.52,
+  "review_reference": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v214\\shark-redesign-v214-review.json",
+  "format_version": 1,
+  "duration_seconds": 3.6,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v214\\shark-redesign-v214.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBTralalero_Rig",
+  "animated_bones": [
+    "Body",
+    "Dorsal",
+    "Fin_Left",
+    "Fin_Right",
+    "Foot_Left",
+    "Foot_Rear",
+    "Foot_Right",
+    "Head",
+    "Jaw",
+    "Nose_Marker",
+    "Spine_Mid",
+    "Spine_Rear",
+    "Tail_Base",
+    "Tail_Marker",
+    "Tail_Mid",
+    "Tail_Tip"
+  ],
+  "selected_meshes": [
+    "Tralalero_Skin"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {},
+  "fbx": "CH1_SharkLeapCrush_v214.fbx"
+}

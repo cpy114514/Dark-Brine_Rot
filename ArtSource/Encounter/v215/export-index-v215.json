@@ -1,0 +1,41 @@
+[
+  {
+    "action": "CH1_SahurOverhead_v215",
+    "duration_seconds": 2.8,
+    "rig": "Armature",
+    "slot": "OBArmature",
+    "bone_count": 28,
+    "meshes": [
+      "Mesh_0.001"
+    ],
+    "fbx": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurOverhead_v215.fbx",
+    "metadata": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurOverhead_v215.animation.json",
+    "validation_passed": true
+  },
+  {
+    "action": "CH1_SahurProneDodge_v215",
+    "duration_seconds": 2.4,
+    "rig": "Armature",
+    "slot": "OBArmature",
+    "bone_count": 28,
+    "meshes": [
+      "Mesh_0.001"
+    ],
+    "fbx": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurProneDodge_v215.fbx",
+    "metadata": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurProneDodge_v215.animation.json",
+    "validation_passed": true
+  },
+  {
+    "action": "CH1_SahurGetUp_v215",
+    "duration_seconds": 2.5,
+    "rig": "Armature",
+    "slot": "OBArmature",
+    "bone_count": 28,
+    "meshes": [
+      "Mesh_0.001"
+    ],
+    "fbx": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurGetUp_v215.fbx",
+    "metadata": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v215\\CH1_SahurGetUp_v215.animation.json",
+    "validation_passed": true
+  }
+]
