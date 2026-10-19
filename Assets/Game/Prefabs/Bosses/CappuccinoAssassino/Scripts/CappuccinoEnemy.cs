@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 
 namespace Mavis
@@ -68,9 +68,11 @@ namespace Mavis
                 Bounds local=new Bounds(matrix.MultiplyPoint3x4(source.center),Vector3.zero);
                 for(int x=-1;x<=1;x+=2)for(int y=-1;y<=1;y+=2)for(int z=-1;z<=1;z+=2)
                     local.Encapsulate(matrix.MultiplyPoint3x4(source.center+Vector3.Scale(source.extents,new Vector3(x,y,z))));
-                motor.radius=Mathf.Max(local.extents.x,local.extents.z)+.06f;
+                // Rotation must not orbit an offset capsule through a nearby player.
+                // Enclose the cup about the actor pivot at every facing angle.
+                motor.radius=Mathf.Max(local.extents.x,local.extents.z)+new Vector2(local.center.x,local.center.z).magnitude+.06f;
                 motor.height=Mathf.Max(local.size.y,motor.radius*2);
-                motor.center=local.center;
+                motor.center=new Vector3(0,local.center.y,0);
                 motor.detectCollisions=true;
                 bodyCollider=motor;
                 break;
@@ -123,7 +125,7 @@ namespace Mavis
             GetComponent<CappuccinoWeaponLoot>()?.Drop();
             if (bodyRenderers != null) foreach (var renderer in bodyRenderers)
                 if (renderer && renderer.name == "Katana") renderer.enabled = false;
-            if (bodyCollider != null) bodyCollider.enabled = false;
+            foreach (var collider in GetComponentsInChildren<Collider>(true)) collider.enabled = false;
             if (animator != null && deathClip != null)
             {
                 animator.speed = 1f;

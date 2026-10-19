@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mavis
@@ -93,7 +93,7 @@ namespace Mavis
             else
             {
                 // Only steer during the first second, giving a committed dodge window.
-                if(age<.85f&&target!=null){var body=target.GetComponent<Collider>();aim=body!=null?body.bounds.center:target.position;}
+                if(age<.85f&&target!=null)aim=owner.PredictMissilePoint(transform.position,36);
                 BossAttackWarning.For(gameObject).Circle(aim,radius,.2f);
                 Vector3 wanted=aim-transform.position;
                 float speed=Mathf.Lerp(12,36,Mathf.Clamp01((age-.12f)/.65f));

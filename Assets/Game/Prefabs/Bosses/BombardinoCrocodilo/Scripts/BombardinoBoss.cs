@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -46,7 +46,8 @@ namespace Mavis
             CurrentAttack==AttackKind.HighBombing?"BOMBING INCOMING — MOVE OUT OF THE TARGET AREA!":CurrentAttack==AttackKind.SpeedRun?"LOW PASS — DODGE SIDEWAYS!":CurrentAttack==AttackKind.Missiles||CurrentAttack==AttackKind.MissileSalvo?"MISSILE SALVO — KEEP MOVING!":CurrentAttack==AttackKind.CrossBombing?"CROSS BOMBING — MOVE BETWEEN THE PASSES!":"NAPALM INCOMING — KEEP MOVING!":AttackName;
         Health health;
         PlayerHealth targetHealth;
-        Vector3 home, committed, heading, previousTarget, targetVelocity;
+        Vector3 home, committed, heading;
+        readonly BossTargetPrediction prediction = new BossTargetPrediction();
         Quaternion visualRest;
         float clock, age, acquireAt, shotAt, deathGround;
         float turnBank;
@@ -92,6 +93,7 @@ namespace Mavis
             if(GetComponent<BombardinoFlameJet>()==null)gameObject.AddComponent<BombardinoFlameJet>();
             ConfigureBodyCollision(false);
             bodyColliders=GetComponentsInChildren<Collider>(true);
+            CombatBodyCollision.Ensure(gameObject);
             ProtectPlayersFromBodyCollision();
             protectPlayersAt=clock+2f;
             if(effectMaterial==null)effectMaterial=Resources.Load<Material>("StoryBattle/Sea");
@@ -137,7 +139,7 @@ namespace Mavis
             if(clock>=acquireAt){acquireAt=clock+.5f;Acquire();}
             if(FightActive&&(targetHealth==null||targetHealth.currentHealth<=0||Vector3.Distance(Ground(target.position),home)>leashRadius))
             {FightActive=false;SetState(State.Returning);ClearHazards();}
-            if(target!=null){targetVelocity=Vector3.ClampMagnitude((target.position-previousTarget)/Mathf.Max(.001f,dt),12);previousTarget=target.position;}
+            prediction.Observe(target);
             // Schedule warning + attack against the previous attack's start, so travel,
             // burst length and the enraged phase never add an extra cooling delay.
             if(FightActive&&CurrentState!=State.Telegraph&&clock>=nextAttackAt-Windup)
@@ -162,7 +164,9 @@ namespace Mavis
                     if(age>=1f){health.currentHealth=health.maxHealth;attackCounter=0;announcedPhase=1;nextAttackAt=0;SetState(State.Patrol);}break;
                 case State.Telegraph:
                     var from=transform.position;
-                    FlyOrbit(AttackAltitude,cruiseSpeed,dt);UpdateMarkers();
+                    FlyOrbit(AttackAltitude,cruiseSpeed,dt);
+                    if (target && attackAt - clock > Windup * .4f) committed = PredictedGround(attackAt - clock);
+                    UpdateMarkers();
                     if(clock>=attackAt)
                     {
                         SetState(State.Attack);shotAt=0;shots=0;
@@ -180,16 +184,27 @@ namespace Mavis
             {
                 target=null;targetHealth=null;float best=engageDistance*engageDistance;
                 foreach(var player in FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None))if(player.currentHealth>0&&player.isActiveAndEnabled){float d=(Ground(player.transform.position)-home).sqrMagnitude;if(d<best){best=d;target=player.transform;targetHealth=player;}}
-                if(target!=null)previousTarget=target.position;
+                prediction.Observe(target);
             }
             if(!FightActive&&targetHealth!=null&&(Ground(target.position)-home).sqrMagnitude<engageDistance*engageDistance){FightActive=true;StartAttack(FightPhase==2?AttackKind.MissileSalvo:AttackKind.HighBombing);}
         }
         void StartAttack(AttackKind kind)
         {
-            if(target==null||IsDead)return;CurrentAttack=kind;committed=Ground(target.position+targetVelocity*.3f);
+            if(target==null||IsDead)return;CurrentAttack=kind;
+            prediction.Observe(target); committed=PredictedGround(Windup);
             heading=OrbitTangent(orbitAngle);
             attackAt=FightActive&&nextAttackAt>clock?nextAttackAt:clock+Windup;
             rushVictims.Clear();SetState(State.Telegraph);BuildMarkers(kind);
+        }
+        Vector3 PredictedGround(float remainingWindup)
+        {
+            float flight = Mathf.Sqrt(Mathf.Max(.5f, AttackAltitude) * 2 / 25f);
+            return Ground(prediction.PointAfter(Mathf.Min(.85f, remainingWindup + flight * .5f), transform));
+        }
+        internal Vector3 PredictMissilePoint(Vector3 origin, float speed)
+        {
+            prediction.Observe(target);
+            return prediction.BodyIntercept(origin, speed, transform);
         }
         float Windup=>Mathf.Min(Mathf.Max(.1f,telegraphSeconds),AttackInterval*.5f);
         float AttackAltitude=>CurrentAttack==AttackKind.MissileSalvo?cruiseAltitude*.65f:CurrentAttack==AttackKind.CrossBombing?cruiseAltitude*.8f:CurrentAttack==AttackKind.HighBombing?cruiseAltitude+8:
@@ -241,7 +256,7 @@ namespace Mavis
             }
             else if(CurrentAttack==AttackKind.Missiles)
             {
-                if(age>=shotAt&&shots<3){var body=target!=null?target.GetComponent<Collider>():null;Vector3 aim=body!=null?body.bounds.center:committed;Vector3 mount=WeaponOrigin(false,shots%2==0?-1:1);Spawn(BombardinoOrdnance.Kind.Missile,mount,(aim-mount).normalized,aim,missileDamage*power,3.5f);MissilesLaunched++;shots++;shotAt+=.6f;}
+                if(age>=shotAt&&shots<3){Vector3 mount=WeaponOrigin(false,shots%2==0?-1:1);Vector3 aim=target!=null?PredictMissilePoint(mount,36):committed;Spawn(BombardinoOrdnance.Kind.Missile,mount,(aim-mount).normalized,aim,missileDamage*power,3.5f);MissilesLaunched++;shots++;shotAt+=.6f;}
             }
             else
             {

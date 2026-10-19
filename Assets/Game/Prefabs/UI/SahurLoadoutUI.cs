@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -204,7 +204,7 @@ namespace Mavis
             itemTitle.text=SahurWeaponLoadout.DisplayName((SahurWeaponLoadout.Weapon)index);
             selectionStatus.text=equipped?"当前已装备":owned?"已解锁 · 可装备":"尚未解锁";
             details.text=index==0?"熟悉的三连击木棍。\n\n左键：三连击\n按住右键：蓄力攻击\n\n命中 Boss 的弱点部位造成 1.5 倍伤害。":"击败卡布奇诺并拾取双刀后解锁。\n\n左键：双刀连击\n按住右键：蓄力攻击\n\n点击下方按钮切换武器。";
-            if(index==2)details.text="M4A1 突击步枪\n\n左键：全自动射击\n每发 50 伤害 · 弹夹 30 发\nR：换弹 · 无限备用弹药\n\n空弹夹换弹 5 秒；剩余子弹越多，换弹越快。";
+            if(index==2)details.text="M4A1 突击步枪\n\n左键：全自动射击\n每发 20 伤害 · 弹夹 30 发\nR：换弹 · 备用弹药上限 210 发\n\n空弹夹换弹 7 秒；剩余子弹越多，换弹越快。";
             actionText.text=equipped?"已装备":owned?"装备这件武器":index==2?"在岛上拾取后解锁":"击败卡布奇诺后解锁";
             equipButton.interactable=owned&&!equipped;unequipButton.gameObject.SetActive(false);
             HighlightSelection();

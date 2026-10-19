@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mavis
@@ -8,6 +8,8 @@ namespace Mavis
         readonly List<NailongSpitProjectile> projectiles = new List<NailongSpitProjectile>();
         readonly List<NailongGroundSlam> sonars = new List<NailongGroundSlam>();
         NailongAttackMotion motion;
+        NailongAI ai;
+        readonly BossTargetPrediction standalonePrediction = new BossTargetPrediction();
         Material salivaMaterial;
         AudioSource voice;
         AudioClip roarClip;
@@ -22,6 +24,7 @@ namespace Mavis
         void Awake()
         {
             motion = GetComponent<NailongAttackMotion>();
+            ai = GetComponent<NailongAI>();
             if(GetComponent<BossWeaponTrails>()==null)gameObject.AddComponent<BossWeaponTrails>();
             salivaMaterial = MakeMaterial("Nailong Saliva", new Color(0.46f, 0.52f, 0.39f));
             salivaMaterial.SetFloat("_Smoothness",.85f);
@@ -89,9 +92,10 @@ namespace Mavis
         {
             if (target == null || salivaMaterial == null) return null;
             Vector3 mouth = motion != null ? motion.MouthPosition : transform.TransformPoint(Vector3.up * 1.8f);
-            var collider = target.GetComponentInParent<CharacterController>();
-            Vector3 aim = collider != null ? collider.bounds.center : target.position + Vector3.up;
-            float flight=Vector3.Distance(aim,mouth)/speed;
+            var prediction = ai ? ai.TargetPrediction : standalonePrediction;
+            prediction.Observe(target);
+            Vector3 aim = prediction.BodyIntercept(mouth, speed, transform);
+            float flight=Vector3.Distance(aim,mouth)/Mathf.Max(1, speed);
             Vector3 velocity = (aim-mouth)/Mathf.Max(.05f,flight)+Vector3.up*(3.5f*flight*.5f);
             velocity=Quaternion.AngleAxis(yawOffset,Vector3.up)*velocity;
             var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);

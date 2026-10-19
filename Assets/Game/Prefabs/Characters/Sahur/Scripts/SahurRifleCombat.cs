@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -8,12 +8,13 @@ namespace Mavis
     [DisallowMultipleComponent, DefaultExecutionOrder(1300)]
     public sealed class SahurRifleCombat : MonoBehaviour
     {
-        public const int MagazineCapacity = 30;
-        public const float BulletDamage = 50f, EmptyReloadSeconds = 5f;
+        public const int MagazineCapacity = 30, ReserveCapacity = 210;
+        public const float BulletDamage = 20f, EmptyReloadSeconds = 7f;
         [Min(1)] public float roundsPerSecond = 10f;
         [Min(20)] public float bulletSpeed = 240f;
         [Min(10)] public float range = 260f;
         public int Rounds { get; private set; } = MagazineCapacity;
+        public int ReserveRounds { get; private set; } = ReserveCapacity;
         public int ShotsFired { get; private set; }
         public int Hits { get; private set; }
         public bool IsReloading { get; private set; }
@@ -53,7 +54,7 @@ namespace Mavis
         RectTransform reticle;
         readonly Image[] reticleArms = new Image[4];
         float nextShot, firePoseUntil, flashUntil, hitUntil, nextHud;
-        int bulletCursor, impactCursor, shownAmmo = -1;
+        int bulletCursor, impactCursor, shownAmmo = -1, shownReserve = -1;
         bool pendingShot, wasDead, shownReload, shownBlocked;
         bool CanOperate => enabled && loadout && loadout.UsesRifle && loadout.HeldRifle && health && health.currentHealth > 0 && movement && movement.RifleLocomotionAllowed && !(death && death.IsDead);
 
@@ -66,17 +67,25 @@ namespace Mavis
         {
             bool dead = !health || health.currentHealth <= 0 || (death && death.IsDead);
             if (dead) wasDead = true;
-            else if (wasDead) { wasDead = false; Rounds = MagazineCapacity; CancelReload(); firePoseUntil = 0; }
-            if (!CanOperate) { CancelReload(); firePoseUntil = 0; pendingShot = false; }
+            else if (wasDead) { wasDead = false; CancelReload(); firePoseUntil = 0; }
+            bool paused = Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput;
+            // A zero-delta controller move can temporarily clear grounding during pause.
+            // Preserve the reload until locomotion resumes; death and unequipping still cancel it.
+            if (!CanOperate && (!paused || dead || !loadout || !loadout.UsesRifle))
+            { CancelReload(); firePoseUntil = 0; pendingShot = false; }
             if (!visuals && loadout && loadout.UsesRifle) BuildVisuals();
             RefreshHud();
             // Pausing freezes both the reload and bullets, including the frame a menu closes.
-            if (Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput) return;
+            if (paused) return;
             if (!CanOperate) return;
             if (IsReloading)
             {
                 ReloadRemaining = Mathf.Max(0, ReloadRemaining - Time.deltaTime);
-                if (ReloadRemaining <= 0) { Rounds = MagazineCapacity; IsReloading = false; }
+                if (ReloadRemaining <= 0)
+                {
+                    int loaded = Mathf.Min(MagazineCapacity - Rounds, ReserveRounds);
+                    Rounds += loaded; ReserveRounds -= loaded; IsReloading = false;
+                }
                 return;
             }
             if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && TryReload()) return;
@@ -86,9 +95,20 @@ namespace Mavis
         }
         public bool TryReload()
         {
-            if (!CanOperate || IsReloading || Rounds >= MagazineCapacity || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || Time.timeScale <= 0) return false;
+            if (!CanOperate || IsReloading || Rounds >= MagazineCapacity || ReserveRounds <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || Time.timeScale <= 0) return false;
             ReloadDuration = ReloadSecondsFor(Rounds); ReloadRemaining = ReloadDuration;
             IsReloading = true; firePoseUntil = 0; return true;
+        }
+        public int AddReserveAmmo(int amount)
+        {
+            int added = Mathf.Min(Mathf.Max(0, amount), ReserveCapacity - ReserveRounds);
+            ReserveRounds += added; return added;
+        }
+        public void RestoreAmmo(int magazine, int reserve)
+        {
+            CancelReload(); pendingShot = false;
+            Rounds = Mathf.Clamp(magazine, 0, MagazineCapacity);
+            ReserveRounds = Mathf.Clamp(reserve, 0, ReserveCapacity);
         }
         public void CancelReload() { IsReloading = false; ReloadRemaining = 0; }
         public bool TryFire()
@@ -186,7 +206,7 @@ namespace Mavis
             bool damaged = Valid(collider, out var target) && target != null;
             if (damaged)
             {
-                // Rifle rounds always deal exactly 50; the melee weak-point multiplier is not applied.
+                // Rifle rounds use BulletDamage directly; the melee weak-point multiplier is not applied.
                 target.ApplyDamage(BulletDamage, point); Hits++; hitUntil = Time.time + .16f;
             }
             int index = impactCursor++ % impacts.Length;
@@ -246,10 +266,10 @@ namespace Mavis
             reticle.localScale = Vector3.one * (hit ? 1.15f : 1);
             reloadFill.fillAmount = ReloadProgress;
             bool blocked = !CanOperate;
-            if (Rounds == shownAmmo && IsReloading == shownReload && blocked == shownBlocked && Time.unscaledTime < nextHud) return;
-            shownAmmo = Rounds; shownReload = IsReloading; shownBlocked = blocked; nextHud = Time.unscaledTime + .1f;
+            if (ReserveRounds == shownReserve && Rounds == shownAmmo && IsReloading == shownReload && blocked == shownBlocked && Time.unscaledTime < nextHud) return;
+            shownReserve = ReserveRounds; shownAmmo = Rounds; shownReload = IsReloading; shownBlocked = blocked; nextHud = Time.unscaledTime + .1f;
             ammo.text = "M4A1    " + Rounds.ToString("00") + " / 30";
-            status.text = IsReloading ? GameLocalization.Text("换弹中 ") + ReloadRemaining.ToString("0.0") + "s" : GameLocalization.Text("R 换弹 · 备用弹药 ∞");
+            status.text = IsReloading ? GameLocalization.Text("换弹中 ") + ReloadRemaining.ToString("0.0") + "s" : ReserveRounds > 0 ? GameLocalization.Format("rifle.reserve", ReserveRounds) : GameLocalization.Text("rifle.emptyReserve");
         }
         void OnDisable()
         {

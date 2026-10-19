@@ -39,6 +39,8 @@ namespace Mavis
             public float weaknessActiveRemaining, weaknessCooldownRemaining;
             public bool hasWeaponState, ownsTwinBlades, ownsM4A1;
             public int selectedWeapon;
+            public bool hasRifleAmmo;
+            public int rifleMagazine, rifleReserve;
         }
 
         static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
@@ -184,6 +186,13 @@ namespace Mavis
                     data.selectedWeapon = (int)weapons.CurrentWeapon;
                 }
 
+                var rifle = player.GetComponent<SahurRifleCombat>();
+                if (rifle != null)
+                {
+                    data.hasRifleAmmo = true;
+                    data.rifleMagazine = rifle.Rounds; data.rifleReserve = rifle.ReserveRounds;
+                }
+
                 string directory = Path.GetDirectoryName(SavePath);
                 if (!string.IsNullOrEmpty(directory))
                     Directory.CreateDirectory(directory);
@@ -257,6 +266,9 @@ namespace Mavis
 
                 if (data.hasWeaponState)
                     player.GetComponent<SahurWeaponLoadout>()?.Restore(data.ownsTwinBlades, (SahurWeaponLoadout.Weapon)data.selectedWeapon,data.ownsM4A1);
+
+                if (data.hasRifleAmmo)
+                    player.GetComponent<SahurRifleCombat>()?.RestoreAmmo(data.rifleMagazine, data.rifleReserve);
 
                 Debug.Log("[Save] Saved game progress restored.");
             }

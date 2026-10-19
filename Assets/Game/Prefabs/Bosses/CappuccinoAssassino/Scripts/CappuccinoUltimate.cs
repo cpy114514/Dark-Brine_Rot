@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Mavis
 {
@@ -64,9 +64,9 @@ namespace Mavis
             if (CurrentPhase == Phase.Charging && now >= phaseEndsAt) BeginEmpowerment();
             if (CurrentPhase == Phase.Empowered && now >= phaseEndsAt)
             {
-                RestoreAttributes(false);
-                health.currentHealth = health.maxHealth;
-                health.OnHealthChanged?.Invoke(health.currentHealth, health.maxHealth);
+                // Remove the temporary health multiplier without converting it into a second heal.
+                RestoreAttributes(true);
+                health.Heal(200f);
                 CurrentPhase = Phase.Immobilized;
                 phaseEndsAt += immobilizedSeconds;
             }

@@ -5,10 +5,10 @@
 ## 目前功能
 
 - 使用现有 `Mavis.Health : IDamageable` 和 Enemy 标签，接收 Sahur 的挥棒、连击与落地攻击。
-- 默认血量 300，头顶血条显示剩余数值，面对主摄像机；超过 65 米隐藏。
+- 默认血量 600，头顶血条显示剩余数值，面对主摄像机；超过 65 米隐藏。
 - 主动发现和追击 Sahur，挥刀造成伤害；受伤、被贴身或低血量时短暂后退再重新进攻。前进和后退均使用行走动画，沿地形移动并避开障碍。
 - 受击短暂闪色和后仰；血量耗尽时播放死亡动画，关闭碰撞及血条，完整播放后移除。
-- 大招 **Caffeine Surge**：血量降到 50% 时，每次战斗自动触发一次。当前血量、最大血量和伤害翻倍，持续 5 秒；结束后恢复原最大血量与伤害、回满血，并禁止移动 3 秒。这 3 秒内仍可以原地攻击。屏幕上显示英文警告和倒计时，强化期间模型呈橙色。
+- 大招 **Caffeine Surge**：血量降到 50% 时，每次战斗自动触发一次。当前血量、最大血量和伤害翻倍，持续 5 秒；结束后按剩余血量比例移除临时生命加成，再恢复 200 点血量（不超过最大值），恢复原伤害，并停止移动与攻击 3 秒；这 3 秒内仍可受伤，脱战不会提前打断停顿。小岛场景不显示地面红褐色预警。
 
 ## 可调整与扩展
 
@@ -18,9 +18,9 @@
 - `CappuccinoEnemy.removeAfterDeath`：设为 0 保留尸体；正数为移除延迟。
 - `CappuccinoEnemy.attackOnHit`：独立受击反击开关；AI 开启时由 AI 控制攻击时机，关闭此直接反击。
 - `CappuccinoAI`：追击速度、发现范围、攻击范围、每刀伤害和后退行为。
-- `CappuccinoUltimate`：大招触发血量比例、倍率、5 秒强化时间、3 秒移动锁定时间和英文提示开关。强化期间被击杀不会复活，倍率不会叠加；禁用组件会清除临时强化。
+- `CappuccinoUltimate`：大招触发血量比例、倍率、5 秒强化时间、3 秒行动锁定时间。强化期间被击杀不会复活，倍率不会叠加；禁用组件会清除临时强化。
 - `CappuccinoEnemy.PlayAttack()`：供后续敌人 AI 调用；Play Mode 中也可从组件菜单选择 `Play Attack`。
-- `Animations/CapriCombat.controller`：Idle、Walk、Retreat、Attack、Death 状态。Attack 使用 `Sword And Shield Slash.fbx`（1.5 秒），Death 使用 `Sword And Shield Death.fbx`（3.9 秒）；死亡不会返回 Idle。
+- `Animations/CapriCombat.controller`：Idle、Walk、Retreat、Attack、AttackMirrored、Death 状态。Attack 使用 `Sword And Shield Slash.fbx`（1.5 秒），Death 使用 `Sword And Shield Death.fbx`（3.9 秒）；死亡不会返回 Idle。
 - `CappuccinoMotionRig`：14 个按杯身与四肢位置拟合的骨骼。杯身及刀刃保持刚性，原贴图和两把刀保留；人体动作通过隐藏的骨骼源转移到 Capri，并校正脚底与刀刃的地面穿透。
 - `CappuccinoCombatDemo.unity`：含当前 Sahur 的独立试打场景；其中的玩家带 `GameSaveExcluded`，不会写入正常游戏存档。
 

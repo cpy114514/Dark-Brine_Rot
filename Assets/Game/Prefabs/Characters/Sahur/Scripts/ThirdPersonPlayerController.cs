@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>Third-person controller for a model placed on the procedural ocean.</summary>
@@ -331,7 +331,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (characterController == null || Keyboard.current == null || Mouse.current == null)
             return;
 
-        if (PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput)
+        if (Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput)
             return;
         if (swimmingOcean == null) swimmingOcean = FindFirstObjectByType<OceanWorld>();
         if (swimmingOcean != null) seaLevel = swimmingOcean.oceanHeight;

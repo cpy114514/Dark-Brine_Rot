@@ -23,8 +23,10 @@ namespace Mavis
         Vector3 frozenGunPosition;
         Quaternion frozenGunRotation;
         static readonly Vector3 RightPalm = new Vector3(-.015f, .075f, -.01f), LeftPalm = new Vector3(.015f, .075f, -.01f);
-        static readonly Vector3 PistolGrip = new Vector3(.17f, -.085f, 0), Foregrip = new Vector3(.055f, -.04f, 0);
-        Vector3 gripOffset = new Vector3(.64f, -.28f, .42f);
+        static readonly Vector3 PistolGrip = new Vector3(.17f, -.085f, 0);
+        [SerializeField] Vector3 foregrip = new Vector3(-.08f, -.035f, 0);
+        [SerializeField] float stanceAngle = 55, carrySide = .55f, carryForward = .04f;
+        [SerializeField] Vector3 gripOffset = new Vector3(.57f, -.24f, .24f);
         int holding = -1;
         int locomotion = -1, fire = -1;
         float deathTime, deathLength, nearAimBlend;
@@ -167,21 +169,25 @@ namespace Mavis
             Vector3 forward = Vector3.ProjectOnPlane(cameraDirection, up).normalized;
             if (forward.sqrMagnitude < .01f) forward = transform.forward;
             Vector3 side = Vector3.Cross(up, forward).normalized;
-            // A consistent bladed stance gives the support arm room to cross the broad wooden torso.
+            // Turn the shoulder line so the support hand can reach the handguard around the broad torso.
             // Only rotate bones: never stretch the arm segments or teleport either wrist.
             if (spine && headBone)
             {
                 Vector3 axis = headBone.position - spine.position;
-                if (axis.sqrMagnitude > .001f) spine.rotation = Quaternion.FromToRotation(axis, up) * spine.rotation;
+                // Retain a small forward lean instead of straightening the torso like a rigid pole.
+                Vector3 postureUp = (up + forward * .055f).normalized;
+                if (axis.sqrMagnitude > .001f) spine.rotation = Quaternion.FromToRotation(axis, postureUp) * spine.rotation;
                 Vector3 bodyRight = Vector3.ProjectOnPlane(rightUpperArm.position - leftUpperArm.position, up).normalized;
                 Vector3 bodyForward = Vector3.Cross(bodyRight, up);
-                Vector3 stanceForward = Quaternion.AngleAxis(40, up) * forward;
+                Vector3 stanceForward = Quaternion.AngleAxis(stanceAngle, up) * forward;
                 spine.rotation = Quaternion.AngleAxis(Vector3.SignedAngle(bodyForward, stanceForward, up), up) * spine.rotation;
                 Vector3 look = Vector3.RotateTowards(forward, direction, 30 * Mathf.Deg2Rad, 0);
                 headBone.rotation = Quaternion.FromToRotation(headBone.right, look) * headBone.rotation;
             }
             center = (rightUpperArm.position + leftUpperArm.position) * .5f;
-            Vector3 preferred = new Vector3(gripOffset.x, gripOffset.y, gripOffset.z) * bodyScale;
+            // Lowering the muzzle raises the stock toward the face. Ease it outboard before contact.
+            float lowerClearance = .14f * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.72f, .94f, Vector3.Dot(cameraDirection, -up)));
+            Vector3 preferred = new Vector3(gripOffset.x + lowerClearance, gripOffset.y, gripOffset.z) * bodyScale;
             if (!gripReady || Time.deltaTime <= 0) lastGripOffset = preferred;
             else lastGripOffset = Vector3.Lerp(lastGripOffset, preferred, 1 - Mathf.Exp(-14 * Time.deltaTime));
             Vector3 grip = center + side * lastGripOffset.x + up * lastGripOffset.y + forward * lastGripOffset.z;
@@ -193,19 +199,20 @@ namespace Mavis
             for (int pass = 0; pass < 24; pass++)
             {
                 rightRotation = Quaternion.LookRotation(-(rotation * Vector3.up), rotation * Vector3.left);
-                leftRotation = Quaternion.LookRotation(-(rotation * Vector3.up), rotation * (Vector3.left * .6f + Vector3.forward * .8f));
+                // Support palm faces up; the knuckle row follows the barrel, rather than an imaginary vertical grip.
+                leftRotation = Quaternion.LookRotation(rotation * Vector3.right, rotation * Vector3.forward);
                 rightOffset = -(rightRotation * Vector3.Scale(RightPalm, rightHand.lossyScale));
-                leftOffset = rotation * ((Foregrip - PistolGrip) * scale) - leftRotation * Vector3.Scale(LeftPalm, leftHand.lossyScale);
+                leftOffset = rotation * ((foregrip - PistolGrip) * scale) - leftRotation * Vector3.Scale(LeftPalm, leftHand.lossyScale);
                 // Intersect two reach spheres with a fixed outboard carry plane. These convex
                 // constraints cannot jump between opposite sides of the body like surface pushes.
                 for (int fit = 0; fit < 5; fit++)
                 {
                     Vector3 anchor = rightUpperArm.position - rightOffset;
-                    grip = anchor + Vector3.ClampMagnitude(grip - anchor, rightReach * .985f);
+                    grip = anchor + Vector3.ClampMagnitude(grip - anchor, rightReach * .97f);
                     anchor = leftUpperArm.position - leftOffset;
-                    grip = anchor + Vector3.ClampMagnitude(grip - anchor, leftReach * .985f);
-                    grip += side * Mathf.Max(0, .59f * bodyScale - Vector3.Dot(grip - center, side));
-                    grip += forward * Mathf.Max(0, .24f * bodyScale - Vector3.Dot(grip - center, forward));
+                    grip = anchor + Vector3.ClampMagnitude(grip - anchor, leftReach * .97f);
+                    grip += side * Mathf.Max(0, (carrySide + lowerClearance) * bodyScale - Vector3.Dot(grip - center, side));
+                    grip += forward * Mathf.Max(0, carryForward * bodyScale - Vector3.Dot(grip - center, forward));
                 }
                 if (pass < 23) rotation = GunRotation((target - (grip + rotation * muzzleOffset)).normalized);
             }

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Mavis
 {
@@ -62,6 +62,7 @@ namespace Mavis
         CappuccinoUltimate ultimate;
         OceanWorld ocean;
         PlayerHealth targetHealth;
+        readonly BossTargetPrediction prediction = new BossTargetPrediction();
         bool engaged, hitResolved, pendingRetreat;
         float acquireAt, actionAt, retreatAt, attackStartedAt, previousAttackTime;
         float verticalSpeed, locomotion, avoidanceSide = 1f;
@@ -122,6 +123,10 @@ namespace Mavis
             if (ultimate != null && ultimate.isActiveAndEnabled) ultimate.Simulate(now);
             ApplyGravity(deltaTime);
             if (now - poiseHitAt > 2.5f) poise = Mathf.MoveTowards(poise, 0f, deltaTime * 20f);
+            // The full recovery window survives a dead/missing target or an arena exit.
+            // Decide whether to return home only after the three-second action lock ends.
+            if (ultimate != null && ultimate.CurrentPhase == CappuccinoUltimate.Phase.Immobilized)
+            { HoldUltimatePose(deltaTime, Vector3.zero); return; }
             if (CurrentState == State.Returning) { TickReturn(deltaTime); return; }
             if ((target == null || !target.gameObject.activeInHierarchy) && now >= acquireAt)
             {
@@ -131,6 +136,7 @@ namespace Mavis
             if (target == null || (targetHealth != null && targetHealth.currentHealth <= 0f))
             { if (FightActive) BeginReturn(); else CancelCombat(); SetMovement(0f, deltaTime); return; }
             if (targetHealth == null || targetHealth.transform != target) BindTarget(target);
+            prediction.Observe(target);
             Vector3 toTarget = Vector3.ProjectOnPlane(target.position - transform.position, Vector3.up);
             float distance = toTarget.magnitude;
             if (FightActive && (distance > giveUpRange ||
@@ -149,19 +155,7 @@ namespace Mavis
                 bossPresentation?.Cue(CappuccinoBossPresentation.CueKind.Surge);
             }
             if (ultimate != null && ultimate.AttackLocked)
-            {
-                bool resumePose = CurrentState != State.Idle || animator.speed == 0f;
-                DamageWindowActive = false;
-                hitResolved = true;
-                CurrentState = State.Idle; SetMovement(0f, deltaTime);
-                if (ultimate.CurrentPhase == CappuccinoUltimate.Phase.Charging)
-                {
-                    presentation.SetBossPose(.14f);
-                    Face(toTarget, deltaTime * .25f);
-                }
-                else if (resumePose) presentation.ResumeLocomotion();
-                return;
-            }
+            { HoldUltimatePose(deltaTime, toTarget); return; }
             bool movementLocked = ultimate != null && ultimate.MovementLocked;
             if (movementLocked && CurrentAttack == AttackKind.DashThrust &&
                 (CurrentState == State.Windup || CurrentState == State.Attack))
@@ -228,6 +222,21 @@ namespace Mavis
             Move(toTarget.normalized, speed, deltaTime, 1f);
         }
 
+        void HoldUltimatePose(float deltaTime, Vector3 toTarget)
+        {
+            bool resumePose = CurrentState != State.Idle || (animator != null && animator.speed == 0f);
+            DamageWindowActive = false;
+            hitResolved = true;
+            CurrentState = State.Idle;
+            SetMovement(0f, deltaTime);
+            if (ultimate.CurrentPhase == CappuccinoUltimate.Phase.Charging)
+            {
+                presentation.SetBossPose(.14f);
+                Face(toTarget, deltaTime * .25f);
+            }
+            else if (resumePose) presentation.ResumeLocomotion();
+        }
+
         void BeginEncounter(float now)
         {
             FightActive = true; engaged = true; actionAt = now + openingSeconds;
@@ -250,7 +259,13 @@ namespace Mavis
         {
             SetMovement(0f, dt);
             ActionProgress = Mathf.Clamp01((now - stateStartedAt) / windupDuration);
-            if (ActionProgress < .62f) Face(toTarget, dt * .6f);
+            if (ActionProgress < .62f)
+            {
+                float lead = Mathf.Clamp(windupDuration - (now - stateStartedAt) +
+                    (CurrentAttack == AttackKind.DashThrust ? toTarget.magnitude / Mathf.Max(1, dashSpeed) * .5f : .12f), .12f, .7f);
+                Vector3 predicted = prediction.PointAfter(lead, transform, CurrentAttack == AttackKind.DashThrust ? 6 : 3.5f);
+                Face(Vector3.ProjectOnPlane(predicted - transform.position, Vector3.up), dt * .6f);
+            }
             committedDirection = transform.forward; committedRotation = transform.rotation;
             presentation.SetBossPose(Mathf.Lerp(.10f, .22f, Mathf.SmoothStep(0f,1f,ActionProgress)));
             var warning=BossAttackWarning.For(gameObject);
@@ -284,6 +299,12 @@ namespace Mavis
                 bossPresentation?.Cue(CappuccinoBossPresentation.CueKind.Swing);
             }
             float stageElapsed = elapsed - index * cycle;
+            if (CurrentAttack == AttackKind.TwinSlash && stageElapsed < .11f && target)
+            {
+                Vector3 predicted = prediction.PointAfter(.2f, transform, 3.5f);
+                Face(Vector3.ProjectOnPlane(predicted - transform.position, Vector3.up), dt * .45f);
+                committedDirection = transform.forward; committedRotation = transform.rotation;
+            }
             ActionProgress = Mathf.Clamp01(stageElapsed / swingSeconds);
             if (index < swingCount - 1 && stageElapsed >= swingSeconds)
             {
@@ -547,8 +568,8 @@ namespace Mavis
             pendingRetreat = false;
             hitResolved = true;
             DamageWindowActive = false;
-            if (CurrentState == State.Attack && animator != null)
-            { animator.ResetTrigger(AttackTrigger); animator.CrossFadeInFixedTime("Idle", 0.12f); }
+            if (CurrentState == State.Attack || CurrentState == State.Windup)
+                presentation.ResumeLocomotion();
             CurrentState = State.Idle;
         }
 

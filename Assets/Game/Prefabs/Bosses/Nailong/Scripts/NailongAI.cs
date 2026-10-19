@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 namespace Mavis
@@ -160,6 +160,8 @@ namespace Mavis
         NavMeshAgent agent;
         ProceduralIsland island;
         Transform target;
+        internal readonly BossTargetPrediction TargetPrediction = new BossTargetPrediction();
+        float AttackAimLead => Mathf.Clamp((activeAttack == AttackPattern.ClawFlurry ? flurryWindup : attackWindup) - (Time.time - attackStartedAt), .12f, .45f);
         Transform visualArmature;
         float surfaceOffset;
         float attackStartedAt;
@@ -262,6 +264,7 @@ namespace Mavis
                 return;
             }
 
+            TargetPrediction.Observe(target);
             float distance = FlatDistance(target.position, transform.position);
             if (engaged && (distance > EffectiveGiveUpRange || FlatDistance(target.position, home) > EffectiveArenaRadius || FlatDistance(transform.position, home) > EffectiveArenaRadius + 2f))
             {
@@ -426,7 +429,7 @@ namespace Mavis
             else if (pattern == AttackPattern.ShamelessCharge)
             {
                 nextChargeTime = Time.time + shamelessChargeCooldown;
-                chargeDirection = FlatDirection(target.position - transform.position);
+                chargeDirection = FlatDirection(TargetPrediction.PointAfter(.7f, transform) - transform.position);
             }
             else if (pattern == AttackPattern.UnreasonableTantrum)
                 nextTantrumTime = Time.time + tantrumCooldown;
@@ -552,7 +555,13 @@ namespace Mavis
             const float windup = 0.55f;
             if (elapsed < windup)
             {
-                if (target != null) ShowWarning(target.position, 1.8f, WarningColor(1f, 0.76f, 0.22f, 0.95f));
+                if (target != null && elapsed < windup * .6f)
+                {
+                    float travel = FlatDistance(target.position, transform.position) / Mathf.Max(1, shamelessChargeSpeed);
+                    chargeDirection = FlatDirection(TargetPrediction.PointAfter(windup - elapsed + Mathf.Min(.3f, travel), transform) - transform.position);
+                    transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(chargeDirection), turnSpeed * Time.deltaTime);
+                }
+                if (target != null) ShowWarning(transform.position + chargeDirection * skillRange * SizeFactor, 1.8f, WarningColor(1f, 0.76f, 0.22f, 0.95f));
                 return;
             }
 
@@ -717,7 +726,8 @@ namespace Mavis
 
         void FaceTarget()
         {
-            Vector3 direction = target.position - transform.position;
+            Vector3 aim = state == State.Attack ? TargetPrediction.PointAfter(AttackAimLead, transform, EffectiveAttackReach * .65f) : target.position;
+            Vector3 direction = aim - transform.position;
             direction.y = 0f;
             if (direction.sqrMagnitude < 0.001f) return;
             transform.rotation = Quaternion.RotateTowards(transform.rotation,
