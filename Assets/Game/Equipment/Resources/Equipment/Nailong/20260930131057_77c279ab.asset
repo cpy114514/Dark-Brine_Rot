@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 20260930131057_77c279ab
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
   id: nailong-20260930131057_77c279ab
-  displayName: "\u5976\u9F99\u5706\u6846\u773C\u955C"
+  displayName: "Karen Fairy Round Glasses"
   slot: 0
   worldModel: {fileID: 8849315036932149022, guid: c20d7abdb41d41e4abf12bd1dc81ff74, type: 3}
   icon: {fileID: 0}

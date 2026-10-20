@@ -1,0 +1,120 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v221\\sahur-stick-idle-v221.blend",
+  "rig": "Armature",
+  "action": "CH1_SahurStickIdle_v221",
+  "unity_clip": "CH1_SahurStickIdle_v221",
+  "revision": "v221",
+  "frame_start": 1,
+  "frame_end": 193,
+  "fps": 60,
+  "loop": true,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/revision-v221-20261018.md",
+  "approval_reference": "2026-10-18 user: change the opening to Sahur playing with his stick; lower shark jump slightly",
+  "review_status": "accepted_for_stage",
+  "review_reference": "ArtSource/Encounter/v221/blocking-review.md",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "contact_seconds": 0,
+  "contacts": [
+    {
+      "bone": "LeftFoot",
+      "start": 1,
+      "end": 193,
+      "max_drift_m": 0.002
+    },
+    {
+      "bone": "RightFoot",
+      "start": 1,
+      "end": 193,
+      "max_drift_m": 0.002
+    }
+  ],
+  "format_version": 1,
+  "duration_seconds": 3.2,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v221\\sahur-stick-idle-v221.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBArmature",
+  "animated_bones": [
+    "Head",
+    "Head_end",
+    "Hips",
+    "LeftArm",
+    "LeftFoot",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHand_end",
+    "LeftLeg",
+    "LeftShoulder",
+    "LeftToeBase",
+    "LeftToeBase_end",
+    "LeftUpLeg",
+    "Neck",
+    "RightArm",
+    "RightFoot",
+    "RightForeArm",
+    "RightHand",
+    "RightHand_end",
+    "RightLeg",
+    "RightShoulder",
+    "RightToeBase",
+    "RightToeBase_end",
+    "RightUpLeg",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "root"
+  ],
+  "selected_meshes": [
+    "Mesh_0.001"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "loop_seam": {
+        "position_m": 0,
+        "rotation_deg": 0,
+        "scale_delta": 0
+      },
+      "contacts": [
+        {
+          "bone": "LeftFoot",
+          "frames": [
+            1,
+            193
+          ],
+          "max_drift_m": 0.0
+        },
+        {
+          "bone": "RightFoot",
+          "frames": [
+            1,
+            193
+          ],
+          "max_drift_m": 0.0
+        }
+      ]
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {},
+  "fbx": "CH1_SahurStickIdle_v221.fbx"
+}

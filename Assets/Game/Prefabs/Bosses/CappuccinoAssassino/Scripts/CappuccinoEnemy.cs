@@ -17,6 +17,7 @@ namespace Mavis
         public AnimationClip deathClip;
         public bool attackOnHit = true;
         [Min(0f)] public float hitReactionDuration = 0.22f;
+        [Range(0,25)] public float combatRecoilDegrees = 18f;
         [Min(0.1f)] public float deathDuration = 0.9f;
         [Min(0f)] public float removeAfterDeath = 4f;
         public Color hitColor = new Color(1f, 0.32f, 0.18f, 1f);
@@ -26,10 +27,18 @@ namespace Mavis
         CappuccinoUltimate ultimate;
         Vector3 restPosition;
         Quaternion restRotation;
-        float hitTime = -100f;
         float deathTime = -1f;
         float modelHeight;
         float nextAttackTime;
+        Vector3 combatHitDirection=Vector3.back;
+        float combatHitWeight=1;
+        float combatReactionElapsed=100;
+        public void ApplyCombatImpact(Vector3 direction,float weight)
+        {
+            combatHitDirection=visual && visual.parent ? visual.parent.InverseTransformDirection(direction) : transform.InverseTransformDirection(direction);
+            combatHitDirection.y=0;combatHitDirection=Vector3.ClampMagnitude(combatHitDirection,1);
+            combatHitWeight=Mathf.Clamp(weight,0,2);
+        }
         static readonly int AttackTrigger = Animator.StringToHash("Attack");
         static readonly int DeathTrigger = Animator.StringToHash("Die");
 
@@ -81,7 +90,7 @@ namespace Mavis
 
         void OnHit(float amount)
         {
-            hitTime = Time.time;
+            combatReactionElapsed=0;
             if (attackOnHit && health != null && !health.IsDead) PlayAttack();
         }
 
@@ -140,7 +149,8 @@ namespace Mavis
 
         void Update()
         {
-            float hit = Mathf.Clamp01(1f - (Time.time - hitTime) / Mathf.Max(0.01f, hitReactionDuration));
+            if(Time.timeScale>0 && !CombatLocalHitStop.Active(gameObject))combatReactionElapsed+=Time.deltaTime;
+            float impactPhase=Mathf.Clamp01(combatReactionElapsed/Mathf.Max(.28f,hitReactionDuration));
             if (visual == null) return;
             if (deathTime >= 0f)
             {
@@ -157,9 +167,12 @@ namespace Mavis
             }
             else
             {
-                float kick = Mathf.Sin(hit * Mathf.PI) * hit;
-                visual.localPosition = restPosition + Vector3.back * (0.10f * kick);
-                visual.localRotation = restRotation * Quaternion.Euler(-6f * kick, 0f, 0f);
+                float kick=Mathf.Sin(Mathf.PI*Mathf.Clamp01(impactPhase/.18f)*.5f)*Mathf.Pow(1-impactPhase,1.5f);
+                float degrees=Mathf.Min(25,combatRecoilDegrees*combatHitWeight)*kick;
+                visual.localPosition = restPosition + combatHitDirection * (0.14f * kick * combatHitWeight);
+                // Offset in the parent's force frame; the imported visual's
+                // rest axes may be rotated ninety degrees relative to it.
+                visual.localRotation = Quaternion.AngleAxis(degrees,Vector3.Cross(Vector3.up,combatHitDirection))*restRotation;
             }
         }
 

@@ -13,6 +13,7 @@ public sealed class MinimalButtonMotion : MonoBehaviour, IPointerEnterHandler, I
     void Awake()
     {
         button = GetComponent<Button>();
+        if (button) button.onClick.AddListener(PlayClick);
         var rect = GameUITheme.Rect(transform, "Focus underline", new Vector2(0, 0), new Vector2(0, 1));
         rect.pivot = Vector2.zero; rect.anchoredPosition = new Vector2(0, 0);
         line = GameUITheme.Image(rect, GameUITheme.Foreground);
@@ -25,6 +26,8 @@ public sealed class MinimalButtonMotion : MonoBehaviour, IPointerEnterHandler, I
         line.rectTransform.sizeDelta = new Vector2(((RectTransform)transform).rect.width * amount, 1f);
     }
     public void OnPointerEnter(PointerEventData e) => hovered = true;
+    void PlayClick() => Mavis.GameplayAudio.Play(Mavis.GameplayAudio.Cue.Click, transform.position, true);
+    void OnDestroy() { if (button) button.onClick.RemoveListener(PlayClick); }
     public void OnPointerExit(PointerEventData e) => hovered = false;
     public void OnSelect(BaseEventData e) => selected = true;
     public void OnDeselect(BaseEventData e) => selected = false;

@@ -4,8 +4,12 @@ using UnityEngine;
 public sealed partial class Story1WreckBattle
 {
     Mesh redContactMesh;
+    int redContactPoseVersion,redContactBakedVersion=-1,redContactBakedFrame=-1;
     int[] redHeadVertices;
     int[] redBellyVertices;
+    int[] redTailTriangles;
+    RedRiggingTree redTailSkinTree;
+    Vector3[] redTailSkinPoints;
     readonly List<Vector3> redPosedVertices=new List<Vector3>();
     Vector3 redProjectileA,redProjectileB;
     float redProjectileRadius;
@@ -56,10 +60,14 @@ public sealed partial class Story1WreckBattle
     {
         var skin=sharkAnimator.VisualRenderer as SkinnedMeshRenderer;
         if(skin==null)return null;
+        // Root fitting changes only the world transform, not local skinning.
+        // Reuse a tutorial pose within this frame; RedShark invalidates every
+        // new bone sample. Crush/cloth projection retains its uncached path.
+        if(RedesignStage!=OpeningStage.Crush&&redContactMesh!=null&&redContactBakedFrame==Time.frameCount&&redContactBakedVersion==redContactPoseVersion)return skin;
         if(redContactMesh==null)
         {
             redContactMesh=new Mesh{name="Opening contact pose"};
-            var indices=new List<int>();var belly=new List<int>();var weights=skin.sharedMesh.boneWeights;
+            var indices=new List<int>();var belly=new List<int>();var weights=skin.sharedMesh.boneWeights;var tail=new bool[weights.Length];
             // Unity returns a copied array for bones. Read it once, not for
             // each weight of every vertex on the first cinematic frame.
             var bones=skin.bones;
@@ -73,21 +81,29 @@ public sealed partial class Story1WreckBattle
                 void Trunk(int bone,float amount){if(bone<bones.Length&&(bones[bone].name=="Body"||bones[bone].name=="Spine_Mid"))trunk+=amount;}
                 Trunk(w.boneIndex0,w.weight0);Trunk(w.boneIndex1,w.weight1);Trunk(w.boneIndex2,w.weight2);Trunk(w.boneIndex3,w.weight3);
                 if(trunk>.85f)belly.Add(i);
+                float rear=0;
+                void Rear(int bone,float amount){if(bone<bones.Length&&bones[bone].name.StartsWith("Tail_"))rear+=amount;}
+                Rear(w.boneIndex0,w.weight0);Rear(w.boneIndex1,w.weight1);Rear(w.boneIndex2,w.weight2);Rear(w.boneIndex3,w.weight3);tail[i]=rear>.35f;
             }
             redHeadVertices=indices.ToArray();redBellyVertices=belly.ToArray();
+            var tailTriangles=new List<int>();var triangles=skin.sharedMesh.triangles;
+            for(int i=0;i<triangles.Length;i+=3)if(tail[triangles[i]]&&tail[triangles[i+1]]&&tail[triangles[i+2]])
+            {tailTriangles.Add(triangles[i]);tailTriangles.Add(triangles[i+1]);tailTriangles.Add(triangles[i+2]);}
+            redTailTriangles=tailTriangles.ToArray();
         }
         // BakeMesh(true) compensates inherited scale in Unity 6.3; the
         // subsequent TransformPoint applies that scale exactly once.
         skin.BakeMesh(redContactMesh,true);redContactMesh.GetVertices(redPosedVertices);
+        redContactBakedFrame=Time.frameCount;redContactBakedVersion=redContactPoseVersion;
         return skin;
     }
     Vector3 RedHeadSurface(Vector3 query)
     {
         var skin=RedContactSkin();if(skin==null)return sharkAnimator.NoseWorldPoint;
-        float best=float.PositiveInfinity;Vector3 result=sharkAnimator.NoseWorldPoint;
+        float best=float.PositiveInfinity;Vector3 result=sharkAnimator.NoseWorldPoint;var matrix=skin.transform.localToWorldMatrix;
         foreach(int i in redHeadVertices)
         {
-            Vector3 point=skin.transform.TransformPoint(redPosedVertices[i]);float distance=(query-point).sqrMagnitude;
+            Vector3 point=matrix.MultiplyPoint3x4(redPosedVertices[i]);float distance=(query-point).sqrMagnitude;
             if(distance<best){best=distance;result=point;}
         }
         return result;
@@ -95,10 +111,10 @@ public sealed partial class Story1WreckBattle
     Vector3 RedBellySurface()
     {
         var skin=RedContactSkin();if(skin==null)throw new System.InvalidOperationException("Body crush requires the posed shark mesh");
-        float low=float.PositiveInfinity;Vector3 point=shark.position;
+        float low=float.PositiveInfinity;Vector3 point=shark.position;var matrix=skin.transform.localToWorldMatrix;
         foreach(int i in redBellyVertices)
         {
-            Vector3 p=skin.transform.TransformPoint(redPosedVertices[i]);if(p.y<low){low=p.y;point=p;}
+            Vector3 p=matrix.MultiplyPoint3x4(redPosedVertices[i]);if(p.y<low){low=p.y;point=p;}
         }
         return point;
     }
@@ -124,7 +140,7 @@ public sealed partial class Story1WreckBattle
         // A fixed additive arc loses its apex when the original large shark
         // starts deep underwater. Author the visible crest independently of
         // the submerged starting height, then accelerate into the hull.
-        float crest=redCrushContact.y+65;
+        float crest=redCrushContact.y+55;
         const float apex=4.48f;
         float rise=R01(t,3,apex),fall=R01(t,apex,6);
         target.y=t<apex?crest-(crest-redBreachBellyY)*(1-rise)*(1-rise):Mathf.Lerp(crest,redCrushContact.y,fall*fall);
@@ -248,5 +264,41 @@ public sealed partial class Story1WreckBattle
         contact=RedClosestSegment(tail,hips,RedChest);
         RedesignSignedContactGap=Vector3.Distance(tail,contact)-.55f;
         return Mathf.Max(0,RedesignSignedContactGap);
+    }
+    static readonly Unity.Profiling.ProfilerMarker RedTailSkinMarker=new Unity.Profiling.ProfilerMarker("Opening.TailSkin");
+    static readonly Unity.Profiling.ProfilerMarker RedContactWarmMarker=new Unity.Profiling.ProfilerMarker("Opening.ContactWarmup");
+    void RedWarmContactQueries()
+    {
+        if(RedesignStage==OpeningStage.Crush||RedesignStage==OpeningStage.Drift||RedesignStage==OpeningStage.Finished)return;
+        using var measured=RedContactWarmMarker.Auto();
+        if(redTailTriangles!=null&&redPosedVertices.Count>0)
+        {
+            if(redTailSkinTree==null)
+            {
+                redTailSkinPoints=redPosedVertices.ToArray();
+                redTailSkinTree=new RedRiggingTree(redTailSkinPoints,redTailTriangles,true);
+            }
+            redTailSkinTree.BuildSlice(1.2);
+        }
+        RedWarmWaterPreview();
+    }
+    float RedTailSkinBodyGap(out Vector3 contact)
+    {
+        using var measured=RedTailSkinMarker.Auto();
+        var skin=RedContactSkin();RedTutorialBody();
+        if(redTailSkinPoints==null)redTailSkinPoints=new Vector3[redPosedVertices.Count];
+        redPosedVertices.CopyTo(redTailSkinPoints);
+        if(redTailSkinTree==null)redTailSkinTree=new RedRiggingTree(redTailSkinPoints,redTailTriangles);
+        else {redTailSkinTree.BuildSlice(double.PositiveInfinity);redTailSkinTree.RefitArticulated(redTailSkinPoints,1);}
+        var inverse=skin.transform.worldToLocalMatrix;float scale=skin.transform.TransformVector(Vector3.right).magnitude;
+        float gap=.1f/scale;contact=sharkAnimator.TailWorldPoint;
+        foreach(var capsule in redWaterCapsules)
+        {
+            Vector3 a=inverse.MultiplyPoint3x4(capsule.a),b=inverse.MultiplyPoint3x4(capsule.b);
+            float value=redTailSkinTree.CapsuleSurfaceGapUpTo(a,b,capsule.radius/scale,gap);
+            if(value>=gap)continue;gap=value;
+            redTailSkinTree.Closest((a+b)*.5f,out _,out _,out var surface);contact=skin.transform.TransformPoint(surface);
+        }
+        RedesignSignedContactGap=gap*scale;return Mathf.Max(0,RedesignSignedContactGap);
     }
 }

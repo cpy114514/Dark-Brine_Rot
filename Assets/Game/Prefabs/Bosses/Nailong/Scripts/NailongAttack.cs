@@ -7,7 +7,7 @@ namespace Mavis
     // a child collider while OnTriggerEnter lived on the root, so hits were lost.
     public sealed class NailongAttack : MonoBehaviour
     {
-        [Min(0f)] public float damage = 20f;
+        [Min(0f)] public float damage = 6f;
         [Range(20f, 180f)] public float attackArc = 130f;
         [Min(0f)] public float verticalTolerance = 2.5f;
         public string targetTag = "Player";
@@ -78,7 +78,15 @@ namespace Mavis
 
             IDamageable victim = target.GetComponentInParent<IDamageable>();
             if (victim == null) return false;
-            victim.ApplyDamage(damage * damageMultiplier, transform.position + transform.forward * reach);
+            Vector3 hitPoint=transform.position+transform.forward*reach;
+            if(playerHealth != null)
+            {
+                var body=playerHealth.GetComponent<CharacterController>();
+                if(body && body.enabled)
+                    hitPoint=body.ClosestPoint(motion ? motion.MouthPosition : transform.TransformPoint(Vector3.up*1.8f));
+                if(!playerHealth.ApplyMeleeDamage(damage*damageMultiplier,hitPoint,transform.position))return true;
+            }
+            else victim.ApplyDamage(damage*damageMultiplier,hitPoint);
             if (playerHealth != null && playerHealth.currentHealth <= 0f) return true;
             if (pushDistance > 0f)
             {

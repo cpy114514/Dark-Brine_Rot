@@ -22,7 +22,7 @@ namespace Mavis
                 if(chest && body)
                 {
                     var weak=BossWeakPoint.Create(chest,Vector3.zero,.45f);
-                    weak.LocationLabel="背部弱点";
+                    weak.LocationLabel="Back weak point";
                     weak.transform.position=body.bounds.center+Vector3.up*body.bounds.size.y*.15f-transform.forward*body.bounds.extents.z*.7f;
                     return;
                 }
@@ -36,7 +36,7 @@ namespace Mavis
                 {
                     // The head is Nailong's weak point; Capri's upper back rewards flanking.
                     var weak=BossWeakPoint.Create(anchor,Vector3.zero,nailong?.5f:.45f);
-                    weak.LocationLabel=nailong?"头部弱点":"背部弱点";
+                    weak.LocationLabel=nailong?"Head weak point":"Back weak point";
                     if(!nailong)weak.transform.position=anchor.position-transform.forward*.45f;
                     return;
                 }
@@ -51,7 +51,7 @@ namespace Mavis
                 foreach(var t in GetComponentsInChildren<Transform>())
                     if(t.name.ToLowerInvariant().Contains(nailong?"head":"spine2")){anchor=t;break;}
                 var weak=BossWeakPoint.Create(anchor,Vector3.zero,nailong?.55f:.45f);
-                weak.LocationLabel=nailong?"头部弱点":"背部弱点";
+                weak.LocationLabel=nailong?"Head weak point":"Back weak point";
                 weak.transform.position=nailong?new Vector3(bounds.center.x,bounds.max.y-bounds.size.y*.22f,bounds.center.z)+transform.forward*bounds.extents.z*.65f:
                     bounds.center+Vector3.up*bounds.size.y*.15f-transform.forward*bounds.extents.z*.85f;
                 return;
@@ -61,7 +61,7 @@ namespace Mavis
             foreach(float side in new[]{-1f,1f})
             {
                 var weak=BossWeakPoint.Create(transform,Vector3.zero,Mathf.Max(.65f,bounds.size.y*.15f));
-                weak.LocationLabel=side<0?"左引擎弱点":"右引擎弱点";
+                weak.LocationLabel=side<0?"Left engine weak point":"Right engine weak point";
                 weak.transform.position=bounds.center+transform.right*(bounds.extents.x*.45f*side)-Vector3.up*(bounds.extents.y*.6f);
             }
         }
@@ -81,7 +81,7 @@ namespace Mavis
                     weak.transform.localPosition=underside;
                     weak.transform.localRotation=Quaternion.identity;
                     weak.transform.localScale=Vector3.one*(radius*2/scale);
-                    weak.LocationLabel=c.name=="Left engine"?"左引擎弱点":"右引擎弱点";
+                    weak.LocationLabel=c.name=="Left engine"?"Left engine weak point":"Right engine weak point";
                     engines++;
                 }
             return engines>0;

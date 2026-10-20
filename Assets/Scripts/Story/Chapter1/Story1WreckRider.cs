@@ -93,6 +93,17 @@ public sealed class Story1WreckRider : MonoBehaviour
         }
     }
 
+    public bool ResumeCinematicSupport(Story1WreckPlank board)
+    {
+        if(board==null||!board.IsBoardable||player==null||capsule==null)return false;
+        // OnDisable releases the cinematic's old passenger registration.
+        // Restore the controller's real feet on the actual mesh, rather than
+        // relying on the just-finished get-up animation's root height.
+        Vector3 feet=board.BoardingPoint(transform.position+Vector3.up*player.LowestFootWorldOffset);
+        SetStandingBoard(board);SetFeet(feet+Vector3.up*.04f,transform.eulerAngles.y,false);
+        player.LeaveMovingPlatform(Vector3.zero);player.OnFloatingWreckDeck=true;return true;
+    }
+
     public Story1WreckPlank Support()
     {
         if (player == null || boards == null || IsClimbing || player.Swimming) return null;

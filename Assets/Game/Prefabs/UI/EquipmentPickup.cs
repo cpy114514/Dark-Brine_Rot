@@ -52,7 +52,9 @@ namespace Mavis
             beacon.transform.localPosition = new Vector3(0, -.42f, 0);
             beacon.transform.localScale = new Vector3(.48f, .015f, .48f);
             var colliderToRemove = beacon.GetComponent<Collider>();
-            colliderToRemove.enabled = false; Destroy(colliderToRemove);
+            colliderToRemove.enabled = false;
+            if (Application.isPlaying) Destroy(colliderToRemove);
+            else DestroyImmediate(colliderToRemove);
             beaconMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color"));
             beaconMaterial.color = new Color(1f, .73f, .2f);
             beacon.GetComponent<Renderer>().sharedMaterial = beaconMaterial;

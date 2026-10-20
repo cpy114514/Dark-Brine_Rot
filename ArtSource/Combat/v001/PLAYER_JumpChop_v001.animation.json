@@ -1,0 +1,170 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+  "rig": "Armature",
+  "action": "PLAYER_JumpChop_v001",
+  "unity_clip": "PLAYER_JumpChop_v001",
+  "revision": "combat-v001",
+  "frame_start": 1,
+  "frame_end": 52,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/CombatCombinations-20261019.md",
+  "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+  "review_status": "accepted_for_stage",
+  "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "format_version": 1,
+  "duration_seconds": 0.85,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBArmature",
+  "animated_bones": [
+    "Head",
+    "Head_end",
+    "Hips",
+    "LeftArm",
+    "LeftFoot",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHand_end",
+    "LeftLeg",
+    "LeftShoulder",
+    "LeftToeBase",
+    "LeftToeBase_end",
+    "LeftUpLeg",
+    "Neck",
+    "RightArm",
+    "RightFoot",
+    "RightForeArm",
+    "RightHand",
+    "RightHand_end",
+    "RightLeg",
+    "RightShoulder",
+    "RightToeBase",
+    "RightToeBase_end",
+    "RightUpLeg",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "root"
+  ],
+  "selected_meshes": [
+    "Mesh_0.001"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {
+    "startup": [
+      {
+        "frames": [
+          1,
+          18.34
+        ],
+        "seconds": [
+          0.0,
+          0.289
+        ],
+        "normalized": [
+          0.0,
+          0.34
+        ]
+      }
+    ],
+    "active": [
+      {
+        "frames": [
+          18.34,
+          35.17
+        ],
+        "seconds": [
+          0.289,
+          0.5695
+        ],
+        "normalized": [
+          0.34,
+          0.67
+        ]
+      }
+    ],
+    "hitbox": [
+      {
+        "frames": [
+          18.34,
+          35.17
+        ],
+        "seconds": [
+          0.289,
+          0.5695
+        ],
+        "normalized": [
+          0.34,
+          0.67
+        ]
+      }
+    ],
+    "recovery": [
+      {
+        "frames": [
+          35.17,
+          52
+        ],
+        "seconds": [
+          0.5695,
+          0.85
+        ],
+        "normalized": [
+          0.67,
+          1.0
+        ]
+      }
+    ]
+  },
+  "fbx": "PLAYER_JumpChop_v001.fbx",
+  "gameplay": {
+    "startup": [
+      1,
+      18.34
+    ],
+    "active": [
+      18.34,
+      35.17
+    ],
+    "hitbox": [
+      18.34,
+      35.17
+    ],
+    "recovery": [
+      35.17,
+      52
+    ]
+  },
+  "runtime_contract": {
+    "movement_owner": "existing jump physics; no attack root travel",
+    "hit_policy": "once per jump; actual swept weapon contact; no added landing-radius damage"
+  }
+}

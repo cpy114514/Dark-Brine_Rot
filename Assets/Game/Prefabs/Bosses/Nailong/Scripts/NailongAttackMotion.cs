@@ -18,6 +18,7 @@ namespace Mavis
         Transform rightHand;
         Transform spine;
         Transform head;
+        NailongPhaseAnimation imported;
         Style style;
         float startedAt;
         float duration;
@@ -31,8 +32,11 @@ namespace Mavis
         float spitInterval=.28f;
         int spitCount=3;
         public void ConfigureSpit(float interval,int count){spitInterval=Mathf.Max(.05f,interval);spitCount=count;}
+        [Header("Mouth emission socket")]
+        [Tooltip("Face-validated offset from the animated Head position, expressed in actor space. This rig's head axes twist between retargeted actions.")]
+        [SerializeField] Vector3 mouthSocket=new Vector3(-.07f,.08f,.35f);
         public Vector3 MouthPosition => head != null
-            ? head.position + transform.TransformVector(new Vector3(0f, .05f, .23f))
+            ? head.position+transform.TransformVector(mouthSocket)
             : transform.TransformPoint(new Vector3(0f, 1.9f, .6f));
         public void ConfigureCue(float seconds) => cueTime = seconds;
         public void ConfigureFlurry(float windup, float interval, int count)
@@ -66,6 +70,8 @@ namespace Mavis
                     if (finger != rightHand) fingerRest[finger] = finger.localRotation;
         }
 
+        void Start() => imported = GetComponent<NailongPhaseAnimation>();
+
         public void Begin(Style nextStyle, float seconds)
         {
             style = nextStyle;
@@ -77,13 +83,12 @@ namespace Mavis
         public void Stop()
         {
             active = false;
-            GetComponent<NailongPhaseAnimation>()?.Stop();
+            if(imported!=null)imported.Stop();else GetComponent<NailongPhaseAnimation>()?.Stop();
             foreach (var pair in fingerRest) if (pair.Key != null) pair.Key.localRotation = pair.Value;
         }
 
         void LateUpdate()
         {
-            var imported=GetComponent<NailongPhaseAnimation>();
             if(imported!=null && imported.IsPlaying)return;
             if (!active || PauseSettingsMenu.IsOpen) return;
             float elapsed = Time.time - startedAt;

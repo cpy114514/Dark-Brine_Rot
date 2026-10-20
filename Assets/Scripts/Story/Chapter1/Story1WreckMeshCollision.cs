@@ -63,7 +63,12 @@ public sealed class Story1WreckMeshCollision : MonoBehaviour
     public void Initialize(Mesh mesh,Story1ShipWreckAsset.Shard[] shards=null)
     {
         if(shards!=null && shards.Length<2)shards=null;
-        if(Parts!=null && preparedMesh==mesh && preparedShards==shards && System.Array.TrueForAll(Parts,p=>p!=null))
+        // Compound shapes are built exclusively from the authored shards.
+        // A new render mesh (e.g. current wind/parity pose) does not change
+        // those inputs. Reuse the identical native shapes instead of destroying
+        // and recreating every child collider when only the render mesh changed.
+        bool sameGeometry=preparedShards==shards && (shards!=null || preparedMesh==mesh);
+        if(Parts!=null && sameGeometry && System.Array.TrueForAll(Parts,p=>p!=null))
         {body=GetComponent<Rigidbody>();boundsFrame=-1;SetEnabled(true);return;}
         preparedMesh=mesh;preparedShards=shards;
         if(Parts!=null)
@@ -107,27 +112,41 @@ public sealed class Story1WreckMeshCollision : MonoBehaviour
         if(other==null || Parts==null)return;
         foreach(var part in Parts)if(part!=null && Physics.GetIgnoreCollision(other,part)!=value)Physics.IgnoreCollision(other,part,value);
     }
-    public bool Raycast(Ray ray,out RaycastHit nearest,float reach)
+    // Valid for one synchronous query batch; never retain across physics/render updates.
+    internal readonly struct RaycastSnapshot
     {
-        // Native scene queries see the authoritative fixed-step body pose.
-        // Feet and cinematic markers follow its interpolated render pose.
-        // Query the same mesh in physics space and return the rendered point,
-        // avoiding centimetres of false support error on a moving board.
-        QueryMatrices(out var toPhysics,out var toVisual);
-        var query=new Ray(toPhysics.MultiplyPoint3x4(ray.origin),toPhysics.MultiplyVector(ray.direction));
-        nearest=default;bool found=false;
-        for(int i=0;i<Parts.Length;i++)
+        readonly Matrix4x4 toPhysics,toVisual;
+        readonly MeshCollider[] parts;
+        readonly Bounds[] bounds;
+        readonly Bounds aggregate;
+        public Bounds Bounds=>aggregate;
+        internal RaycastSnapshot(Matrix4x4 physics,Matrix4x4 visual,MeshCollider[] shapes,Bounds[] boxes,Bounds all)
+        {toPhysics=physics;toVisual=visual;parts=shapes;bounds=boxes;aggregate=all;}
+        public bool Raycast(Ray ray,out RaycastHit nearest,float reach)
         {
-            var part=Parts[i];var bounds=PartBounds(i);bounds.Expand(.04f);
-            if(!bounds.IntersectRay(ray,out var entry) || entry>reach)continue;
-            if(part.enabled && part.Raycast(query,out var hit,reach))
+            nearest=default;var enclosing=aggregate;enclosing.Expand(.04f);
+            if(!enclosing.IntersectRay(ray,out float entry)||entry>reach)return false;
+            var query=new Ray(toPhysics.MultiplyPoint3x4(ray.origin),toPhysics.MultiplyVector(ray.direction));
+            bool found=false;
+            for(int i=0;i<parts.Length;i++)
             {
-                hit.point=toVisual.MultiplyPoint3x4(hit.point);hit.normal=toVisual.MultiplyVector(hit.normal).normalized;
-                nearest=hit;reach=hit.distance;found=true;
+                var part=parts[i];var box=bounds[i];box.Expand(.04f);
+                if(!box.IntersectRay(ray,out entry)||entry>reach)continue;
+                if(part.enabled&&part.Raycast(query,out var hit,reach))
+                {
+                    hit.point=toVisual.MultiplyPoint3x4(hit.point);hit.normal=toVisual.MultiplyVector(hit.normal).normalized;
+                    nearest=hit;reach=hit.distance;found=true;
+                }
             }
+            return found;
         }
-        return found;
     }
+    internal RaycastSnapshot ReadRaycastSnapshot()
+    {
+        QueryMatrices(out var physics,out var visual);CacheWorldGeometry();
+        return new RaycastSnapshot(physics,visual,Parts,partBounds,worldBounds);
+    }
+    public bool Raycast(Ray ray,out RaycastHit nearest,float reach)=>ReadRaycastSnapshot().Raycast(ray,out nearest,reach);
     public Vector3 ClosestPoint(Vector3 world)
     {
         Vector3 result=world;float best=float.PositiveInfinity;

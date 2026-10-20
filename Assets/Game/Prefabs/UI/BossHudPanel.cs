@@ -7,6 +7,9 @@ public sealed class BossHudPanel
 {
     static readonly List<BossHudPanel> panels = new List<BossHudPanel>();
     readonly GameObject root;
+    readonly Transform owner;
+    static ThirdPersonPlayerController player;
+    static float nextPlayerLookup;
     readonly CanvasGroup group;
     readonly Text title, numbers;
     readonly Image health, trail;
@@ -17,11 +20,18 @@ public sealed class BossHudPanel
     string previousTitle, previousNumbers;
     int previousHp=int.MinValue, previousMaxHp=int.MinValue;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetSession()
+    {
+        panels.Clear(); player = null; nextPlayerLookup = 0;
+    }
+
     public float DisplayedFraction => health.fillAmount;
     public bool IsVisible => group.alpha > .01f;
 
     public BossHudPanel(Transform owner, string name)
     {
+        this.owner = owner;
         root = new GameObject(name, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(CanvasGroup));
         root.transform.SetParent(owner, false);
         var canvas = root.GetComponent<Canvas>();
@@ -46,9 +56,22 @@ public sealed class BossHudPanel
     {
         requested = visible && !GameUITheme.ModalOpen;
         distance = cameraDistance;
+        if (!player && Time.unscaledTime >= nextPlayerLookup)
+        {
+            nextPlayerLookup = Time.unscaledTime + 1f;
+            player = Object.FindFirstObjectByType<ThirdPersonPlayerController>();
+        }
+        // Select by the player's ground distance, independent of camera offset or aircraft altitude.
+        if (player)
+            foreach (var panel in panels)
+                if (panel.owner)
+                {
+                    Vector3 offset = panel.owner.position - player.transform.position;
+                    panel.distance = offset.x * offset.x + offset.z * offset.z;
+                }
         BossHudPanel closest = null;
         foreach (var panel in panels)
-            if (panel.root && panel.requested && (closest == null || panel.distance < closest.distance)) closest = panel;
+            if (panel.root && panel.root.activeInHierarchy && panel.requested && (closest == null || panel.distance < closest.distance)) closest = panel;
         foreach (var panel in panels)
             if (panel != closest && panel.group) panel.group.alpha = 0;
         group.alpha = requested && closest == this ? Mathf.MoveTowards(group.alpha, 1, Time.unscaledDeltaTime * 6f) : 0;

@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 /// <summary>Keeps the current island character on deck until the story releases control.</summary>
 [DefaultExecutionOrder(14000), DisallowMultipleComponent]
@@ -11,6 +13,9 @@ public sealed class Story1SahurPassenger : MonoBehaviour
     Collider[] deckColliders;
     Vector3 leftSole,rightSole;
     bool solesReady;
+    PlayableGraph idleGraph;
+    AnimationClipPlayable idlePose;
+    public float StickIdleTime { get; private set; }
     void Awake()
     {
         if (ship == null) return;
@@ -31,6 +36,14 @@ public sealed class Story1SahurPassenger : MonoBehaviour
             visual.Play("Locomotion", 0, 0f);
             visual.SetFloat("Speed", 0f);
             visual.applyRootMotion=false;
+            var clip=Story1EncounterClipCache.Find("CH1_SahurStickIdle_v221");
+            if(clip!=null)
+            {
+                idleGraph=PlayableGraph.Create("Sahur ship stick fidget v221");
+                idleGraph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+                idlePose=AnimationClipPlayable.Create(idleGraph,clip);idlePose.SetSpeed(0);
+                AnimationPlayableOutput.Create(idleGraph,"Passenger idle",visual).SetSourcePlayable(idlePose);idleGraph.Play();
+            }
         }
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -41,11 +54,17 @@ public sealed class Story1SahurPassenger : MonoBehaviour
         transform.SetPositionAndRotation(ship.TransformPoint(deckPosition), ship.rotation * deckRotation);
         if (visual != null)
         {
+            if(idleGraph.IsValid())
+            {
+                StickIdleTime+=Time.deltaTime;
+                idlePose.SetTime(Mathf.Repeat(StickIdleTime,idlePose.GetAnimationClip().length));idleGraph.Evaluate(0);
+            }
             visual.SetFloat("Speed", 0f);
             if(!solesReady){SahurSupportPose.MeasureSoles(visual,ref leftSole,ref rightSole);solesReady=true;}
             AlignToDeck(transform,visual,deckColliders,leftSole,rightSole);
         }
     }
+    void OnDisable(){if(idleGraph.IsValid())idleGraph.Destroy();}
 
     // Query the native hull mesh near the actual soles, excluding sails and
     // the lower hull. Shared by the passenger and the cinematic takeover.

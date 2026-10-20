@@ -1,0 +1,3 @@
+# v002 source FIRST PASS review
+
+User-directed targeted revision. Inspected native source front/three-quarter finisher full extension and side/front outward-cut follow-through. Both arms extend sideways at shoulder height, blade axes remain horizontal through the active turn, and the rush tips finish down/back. Retained28-bone hierarchy/rest transforms; zero collision-root travel; source validation passes for both clips. Existing independent runtime finger grip owns closure. Proxy blades are thin/edge-on in some views; native blade geometry, Avatar retargeting, incoming/outgoing blends and collision tests remain required. Accepted for FIRST PASS staging only, not final art approval.

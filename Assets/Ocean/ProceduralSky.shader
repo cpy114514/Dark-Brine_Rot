@@ -115,13 +115,20 @@ Shader "DarkBrine/Procedural Sky"
 
                 float heightFraction = (position.y - localBase) / localThickness;
                 float verticalProfile = smoothstep(0.02, 0.16, heightFraction) * (1.0 - smoothstep(0.64, 1.0, heightFraction));
-                if (verticalProfile <= 0.0)
+                [branch] if (verticalProfile <= 0.0)
                     return 0.0;
 
                 float macro = Fbm(samplePosition * lerp(0.00165, 0.00018, distanceLod), 4);
-                float erosion = Fbm(samplePosition * lerp(0.0052, 0.00038, distanceLod) + float3(31.0, 7.0, -12.0), 3);
-                float wisps = Fbm(samplePosition * lerp(0.012, 0.0007, distanceLod) + float3(-13.0, 41.0, 9.0), 2);
+                // Each normalized noise term lies in [0,1]. Even its largest possible
+                // erosion/wisp contribution cannot make these empty samples visible.
+                // Retain every octave for samples which can contribute to the image.
                 float threshold = lerp(0.74, 0.31, _CloudCoverage);
+                [branch] if (macro - threshold < -0.20001)
+                    return 0.0;
+                float erosion = Fbm(samplePosition * lerp(0.0052, 0.00038, distanceLod) + float3(31.0, 7.0, -12.0), 3);
+                [branch] if (macro - threshold + (erosion - 0.50) * 0.30 < -0.05001)
+                    return 0.0;
+                float wisps = Fbm(samplePosition * lerp(0.012, 0.0007, distanceLod) + float3(-13.0, 41.0, 9.0), 2);
                 float shape = macro - threshold + (erosion - 0.50) * 0.30 + (wisps - 0.50) * 0.10;
                 return saturate(shape * 3.25) * verticalProfile;
             }
@@ -140,6 +147,8 @@ Shader "DarkBrine/Procedural Sky"
                 float heightFraction = (position.y - localBase) / localThickness;
                 float verticalProfile = smoothstep(0.02, 0.16, heightFraction)
                     * (1.0 - smoothstep(0.64, 1.0, heightFraction));
+                [branch] if (verticalProfile <= 0.0)
+                    return 0.0;
                 // Lighting only needs the broad cloud silhouette. The view march retains
                 // all fine erosion and wisps, avoiding three full density evaluations here.
                 float macro = Fbm(position * lerp(0.00165, 0.00018, distanceLod), 2) * 1.29545;

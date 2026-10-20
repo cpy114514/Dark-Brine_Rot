@@ -7,7 +7,7 @@ namespace Mavis
         public const float DamageMultiplier=1.5f;
         Renderer marker; Material material; NailongHealth nailong; Health health;
         Texture2D reticle; GUIStyle labelStyle;
-        public string LocationLabel { get; set; } = "弱点";
+        public string LocationLabel { get; set; } = "Weak point";
         public SphereCollider Volume { get; private set; }
         public static BossWeakPoint Create(Transform anchor, Vector3 offset, float radius)
         {

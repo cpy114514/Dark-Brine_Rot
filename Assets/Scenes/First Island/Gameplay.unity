@@ -686,6 +686,42 @@ PrefabInstance:
       propertyPath: swimSubmergeDepth
       value: 1.2
       objectReference: {fileID: 0}
+    - target: {fileID: 4747575031338363534, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: jumpCost
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747575031338363534, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: rollCost
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747575031338363534, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: airFlipCost
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747575031338363534, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: jumpSlashCost
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747575031338363534, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: lightAttackCost
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747575031338363534, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: chargedAttackCost
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747575031338363534, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: sprintRestartThreshold
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5546824900898346270, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: fullChargeTime
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5546824900898346270, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
+      propertyPath: maxChargeDamageMultiplier
+      value: 2.6
+      objectReference: {fileID: 0}
     - target: {fileID: 6548037495126515326, guid: 950d931fc330dd14c9bc747dc176ec77, type: 3}
       propertyPath: m_Name
       value: Sahur Player

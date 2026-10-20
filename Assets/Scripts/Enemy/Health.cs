@@ -38,7 +38,7 @@ namespace Mavis
             OnDamaged?.Invoke(amount);
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
             if (currentHealth <= 0f && !deathNotified)
-            {deathNotified=true;OnDeath?.Invoke();}
+            {deathNotified=true;GameWorldProgress.Record(this, 0);OnDeath?.Invoke();}
         }
 
         public void Heal(float amount)

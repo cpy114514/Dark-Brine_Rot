@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -23,7 +23,7 @@ namespace Mavis
         [Tooltip("Keep disabled while there are no usable skills; the four assignment slots remain in the I menu.")]
         public bool showEmptySkillHotbar;
 
-        readonly string[] equipmentNames = { "头部", "身体", "腿部", "脚部", "武器" };
+        readonly string[] equipmentNames = { "Head", "Body", "Legs", "Feet", "Weapon" };
         readonly Image[] hotbarFrames = new Image[4];
         readonly Image[] skillFrames = new Image[4];
         readonly Text[] equipmentLabels = new Text[5];
@@ -139,12 +139,12 @@ namespace Mavis
             editingEquipment = -1;
             if(itemBrowser)itemBrowser.SetActive(false);
             if(skillChoices)skillChoices.SetActive(true);
-            if(categoryTitle)categoryTitle.text="技能槽位";
+            if(categoryTitle)categoryTitle.text="Skill slots";
             if(specimen)specimen.SetDrawing(EquipmentJournalInk.Drawing.Skill);
-            if(itemTitle)itemTitle.text="技能 " + (index+1);
-            if(actionText){actionText.text="暂无可配置技能";equipButton.interactable=false;}
+            if(itemTitle)itemTitle.text="Skill " + (index+1);
+            if(actionText){actionText.text="No skills available";equipButton.interactable=false;}
             if(unequipButton)unequipButton.gameObject.SetActive(false);
-            if(selectionStatus)selectionStatus.text="选择槽位查看说明";
+            if(selectionStatus)selectionStatus.text="Select a slot for details";
             for(int i=0;i<5;i++)if(categoryFrames[i])SetSelected(categoryFrames[i].GetComponent<Button>(),false);
             for (int i = 0; i < 4; i++) SetSelected(skillFrames[i].GetComponent<Button>(), i == index);
             details.text = GameLocalization.Format("skill.details", index + 1);
@@ -157,15 +157,15 @@ namespace Mavis
             editingEquipment = index;
             itemContent.anchoredPosition=Vector2.zero;
             if(itemBrowser)itemBrowser.SetActive(true);if(skillChoices)skillChoices.SetActive(false);
-            if(categoryTitle)categoryTitle.text=equipmentNames[index]+"装备";
+            if(categoryTitle)categoryTitle.text=equipmentNames[index]+"Gear";
             for(int i=0;i<5;i++)SetSelected(categoryFrames[i].GetComponent<Button>(),i==index);
             foreach(var row in itemRows){row.SetActive(false);Destroy(row);}itemRows.Clear();
             int count=0;
             if(slot==EquipmentSlot.Weapon)
             {
-                AddItemRow("萨胡尔木棍",weapons!=null&&weapons.CurrentWeapon==SahurWeaponLoadout.Weapon.Stick?"已装备":"可装备",count++,()=>InspectWeapon(0));
-                AddItemRow("卡布奇诺双刀",weapons!=null&&weapons.HasTwinBlades?(weapons.UsesTwinBlades?"已装备":"可装备"):"未解锁 · 击败卡布奇诺",count++,()=>InspectWeapon(1));
-                AddItemRow("M4A1 突击步枪",weapons!=null&&weapons.HasM4A1?(weapons.UsesRifle?"已装备":"可装备"):"未拾取 · 在岛上寻找",count++,()=>InspectWeapon(2));
+                AddItemRow("Sahur stick",weapons!=null&&weapons.CurrentWeapon==SahurWeaponLoadout.Weapon.Stick?"Equipped":"Ready to equip",count++,()=>InspectWeapon(0));
+                AddItemRow("Capri twin blades",weapons!=null&&weapons.HasTwinBlades?(weapons.UsesTwinBlades?"Equipped":"Ready to equip"):"Locked · Defeat Capri",count++,()=>InspectWeapon(1));
+                AddItemRow("M4A1 assault rifle",weapons!=null&&weapons.HasM4A1?(weapons.UsesRifle?"Equipped":"Ready to equip"):"Not collected · Find it on the island",count++,()=>InspectWeapon(2));
                 InspectWeapon(selectedWeapon>=0?selectedWeapon:weapons!=null?(int)weapons.CurrentWeapon:0);
             }
             else
@@ -177,12 +177,12 @@ namespace Mavis
                         var item=pair.Key;if(first==null)first=item;if(item==selectedItem)retainsSelection=true;
                         var glasses=GetComponent<WeaknessGlasses>();
                         bool isGlasses=item.id=="nailong_weakness_glasses";
-                        AddItemRow(item.LocalizedName,isGlasses?(glasses&&glasses.Equipped?"Equipped":"Collected x "+pair.Value):"已收集 × "+pair.Value,count++,()=>InspectItem(item));
+                        AddItemRow(item.LocalizedName,isGlasses?(glasses&&glasses.Equipped?"Equipped":"Collected x "+pair.Value):"Collected x "+pair.Value,count++,()=>InspectItem(item));
                     }
                 if(slot==EquipmentSlot.Head && first==null)
                     AddItemRow(WeaknessGlasses.DisplayName,"Locked - Defeat Nailong",count++,()=>InspectItem(Resources.Load<EquipmentItem>(WeaknessGlasses.ItemPath)));
                 InspectItem(retainsSelection?selectedItem:first);
-                if(count==0)itemRows.Add(Label(itemContent,"这里还没有装备\n探索岛屿，收集 Boss 掉落",new Vector2(0,-80),new Vector2(290,110),18,Pencil,new Vector2(.5f,1)).gameObject);
+                if(count==0)itemRows.Add(Label(itemContent,"No gear collected yet\nExplore the island and collect boss drops",new Vector2(0,-80),new Vector2(290,110),18,Pencil,new Vector2(.5f,1)).gameObject);
             }
             itemContent.sizeDelta=new Vector2(0,Mathf.Max(430,count*104));
         }
@@ -202,10 +202,10 @@ namespace Mavis
             bool owned=index==0 || weapons!=null&&weapons.Owns((SahurWeaponLoadout.Weapon)index);
             bool equipped=weapons!=null && index==(int)weapons.CurrentWeapon;
             itemTitle.text=SahurWeaponLoadout.DisplayName((SahurWeaponLoadout.Weapon)index);
-            selectionStatus.text=equipped?"当前已装备":owned?"已解锁 · 可装备":"尚未解锁";
-            details.text=index==0?"熟悉的三连击木棍。\n\n左键：三连击\n按住右键：蓄力攻击\n\n命中 Boss 的弱点部位造成 1.5 倍伤害。":"击败卡布奇诺并拾取双刀后解锁。\n\n左键：双刀连击\n按住右键：蓄力攻击\n\n点击下方按钮切换武器。";
-            if(index==2)details.text="M4A1 突击步枪\n\n左键：全自动射击\n每发 20 伤害 · 弹夹 30 发\nR：换弹 · 备用弹药上限 210 发\n\n空弹夹换弹 7 秒；剩余子弹越多，换弹越快。";
-            actionText.text=equipped?"已装备":owned?"装备这件武器":index==2?"在岛上拾取后解锁":"击败卡布奇诺后解锁";
+            selectionStatus.text=equipped?"Currently equipped":owned?"Unlocked · Ready to equip":"Locked";
+            details.text=index==0?"Wooden club\n\nLMB: three-hit combo\nHold RMB: charged strike\nHold LMB + RMB: two-handed spin\nJump + LMB: overhead chop\nE: throw and recall\n\nWeak points take 1.5x damage.":"Capri twin blades\n\nLMB: twin-blade combo\nHold RMB: X charge (1.2s minimum / 2.6s full), release to rush 16m and cut outward\nHold LMB + RMB: spin attack\n"+GameInputSettings.Get(GameInputSettings.Action.Guard).ToString()+": hold to block all frontal attacks\n\nInvulnerable during rush travel. Walls stop the rush.\nGuarding and spinning consume stamina.";
+            if(index==2)details.text="M4A1: ranged and anti-air support.\n\n30-round magazine - R: reload\nGround damage falls with distance.\nAttack the aircraft's engines during its counter window.\nSupply camps: up to 45 rounds, 45s restock.";
+            actionText.text=equipped?"Equipped":owned?"Equip this weapon":index==2?"Collect on the island to unlock":"Defeat Capri to unlock";
             equipButton.interactable=owned&&!equipped;unequipButton.gameObject.SetActive(false);
             HighlightSelection();
         }
@@ -215,10 +215,10 @@ namespace Mavis
             var glasses=GetComponent<WeaknessGlasses>();bool isGlasses=item&&item.id=="nailong_weakness_glasses";
             if(specimen)specimen.SetDrawing(isGlasses?EquipmentJournalInk.Drawing.Glasses:SlotDrawing(Mathf.Max(0,editingEquipment)));
             bool owned=item&&inventory!=null&&inventory.Count(item)>0;
-            itemTitle.text=item?item.LocalizedName:"暂无装备";
-            selectionStatus.text=isGlasses?(glasses&&glasses.Equipped?"Equipped":owned?"Collected":"Locked"):owned?"已收集":item?"尚未解锁":"收集装备后会显示在这里";
-            details.text=isGlasses?"Dropped by Nailong.\n\nEquip, close Gear, then press G to reveal boss weak points.\nDuration: 30 seconds\nCooldown: 15 minutes\n\nTeal markers show weak points. Hit them to deal 1.5x damage.":item?"已收集的岛屿掉落物。\n\n这件收藏道具目前没有可装备的能力。":"选择左侧分类，查看已收集的物品。";
-            actionText.text=isGlasses?(owned?(glasses&&glasses.Equipped?"Equipped":"Equip Weakness Glasses"):"Defeat Nailong to unlock"):"收藏道具";
+            itemTitle.text=item?item.LocalizedName:"No gear";
+            selectionStatus.text=isGlasses?(glasses&&glasses.Equipped?"Equipped":owned?"Collected":"Locked"):owned?"Collected":item?"Locked":"Collected gear will appear here";
+            details.text=isGlasses?"Dropped by Nailong.\n\nEquip, close Gear, then press G to reveal boss weak points.\nDuration: 30 seconds\nCooldown: 15 minutes\n\nTeal markers show weak points. Hit them to deal 1.5x damage.":item?"An island collectible.\n\nThis collectible has no equippable ability yet.":"Select a category on the left to inspect collected items.";
+            actionText.text=isGlasses?(owned?(glasses&&glasses.Equipped?"Equipped":"Equip Weakness Glasses"):"Defeat Nailong to unlock"):"Collectible";
             if(isGlasses)unequipText.text="Unequip Glasses";
             equipButton.interactable=isGlasses&&owned&&glasses&&!glasses.Equipped;
             unequipButton.gameObject.SetActive(isGlasses&&glasses&&glasses.Equipped);
@@ -272,7 +272,7 @@ namespace Mavis
             if (pickupNotice != null)
             {
                 var names = recentPickups.ConvertAll(item => item ? item.LocalizedName : "");
-                pickupNotice.text = GameLocalization.Format("gear.pickup", string.Join(GameLocalization.Language == GameLanguage.English ? ", " : "、", names));
+                pickupNotice.text = GameLocalization.Format("gear.pickup", string.Join(GameLocalization.Language == GameLanguage.English ? ", " : ", ", names));
             }
             for (int i = 0; i < 5; i++)
             {
@@ -281,13 +281,13 @@ namespace Mavis
                 equipmentLabels[i].text = count > 0 ? GameLocalization.Format("gear.count", GameLocalization.Text(equipmentNames[i]), count) :
                     GameLocalization.Format("gear.empty", GameLocalization.Text(equipmentNames[i]));
             }
-            if(weapons!=null)equipmentLabels[(int)EquipmentSlot.Weapon].text=GameLocalization.Text("武器")+"\n"+weapons.ShortName;
+            if(weapons!=null)equipmentLabels[(int)EquipmentSlot.Weapon].text=GameLocalization.Text("Weapon")+"\n"+weapons.ShortName;
             var glasses=GetComponent<WeaknessGlasses>();
-            if(glasses && glasses.Equipped)equipmentLabels[(int)EquipmentSlot.Head].text=GameLocalization.Text("头部")+"\n"+GameLocalization.Text("已装备");
+            if(glasses && glasses.Equipped)equipmentLabels[(int)EquipmentSlot.Head].text=GameLocalization.Text("Head")+"\n"+GameLocalization.Text("Equipped");
             if(weaponHint && weapons!=null)
             {
-                string locked=GameLocalization.Text("未解锁"),missing=GameLocalization.Text("未拾取");
-                weaponHint.text=GameLocalization.Text("当前武器")+"  "+weapons.WeaponName+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+
+                string locked=GameLocalization.Text("Locked"),missing=GameLocalization.Text("Not collected");
+                weaponHint.text=GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+
                     "\n[2] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.CapriTwinBlades)+(weapons.HasTwinBlades?"":" · "+locked)+
                     "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(weapons.HasM4A1?"":" · "+missing);
             }
@@ -343,15 +343,15 @@ namespace Mavis
             var hotbar = Box(root.transform, "Skill hotbar", new Vector2(.5f, 0), new Vector2(0, 84), new Vector2(440, 106), new Color(0, 0, 0, .7f));
             hud = hotbar.gameObject.AddComponent<CanvasGroup>();
             hud.blocksRaycasts = false;
-            Label(hotbar, "技能  /  1–4 选择", new Vector2(0, 32), new Vector2(380, 26), 16, Color.white);
+            Label(hotbar, "Skills  /  1–4 to select", new Vector2(0, 32), new Vector2(380, 26), 16, Color.white);
             for (int i = 0; i < 4; i++)
             {
                 var frame = Box(hotbar, "Skill " + (i + 1), new Vector2(.5f, .5f), new Vector2((i - 1.5f) * 94, -7), new Vector2(80, 56), Color.gray);
                 hotbarFrames[i] = frame.GetComponent<Image>();
                 Box(frame, "Inner", new Vector2(.5f, .5f), Vector2.zero, new Vector2(76, 52), track);
-                Label(frame, (i + 1) + "   空", Vector2.zero, new Vector2(76, 50), 18, Color.white);
+                Label(frame, (i + 1) + "   Empty", Vector2.zero, new Vector2(76, 50), 18, Color.white);
             }
-            loadoutHint = Label(root.transform, "I  装备 / 技能", new Vector2(-120, 30), new Vector2(220, 30), 18, Color.white, new Vector2(1, 0));
+            loadoutHint = Label(root.transform, "I  Gear / Skills", new Vector2(-120, 30), new Vector2(220, 30), 18, Color.white, new Vector2(1, 0));
             weaponHint = Label(root.transform, "", new Vector2(278, 226), new Vector2(500, 128), 18, GameUITheme.Foreground, new Vector2(0,0));
             weaponHint.alignment = TextAnchor.MiddleLeft;
             pickupNotice = Label(root.transform, "", new Vector2(0, 164), new Vector2(1100, 36), 22, accent, new Vector2(.5f, 0));
@@ -361,26 +361,26 @@ namespace Mavis
             shade.GetComponent<Image>().raycastTarget = true;
             var window = Box(shade, "Equipment sketchbook", new Vector2(.5f,.5f),Vector2.zero,new Vector2(1380,920),Color.white);
             window.GetComponent<Image>().sprite=Resources.Load<Sprite>("EquipmentJournal/Sketchbook");
-            var heading=Label(window,"SAHUR / 装备手记",new Vector2(-352,355),new Vector2(510,55),34,Ink);
+            var heading=Label(window,"SAHUR / FIELD NOTES",new Vector2(-352,355),new Vector2(510,55),34,Ink);
             heading.alignment=TextAnchor.MiddleLeft;
             heading.rectTransform.localRotation=Quaternion.Euler(0,0,-1);
             Pen(window,EquipmentJournalInk.Drawing.Rule,new Vector2(-327,318),new Vector2(570,7),Ink);
-            var note=Label(window,"随身装备 · 岛屿拾遗",new Vector2(-355,285),new Vector2(510,28),16,Pencil);
+            var note=Label(window,"Equipment & island finds",new Vector2(-355,285),new Vector2(510,28),16,Pencil);
             note.alignment=TextAnchor.MiddleLeft;
-            Button(window,"合上 ×",new Vector2(458,-391),new Vector2(150,42),()=>SetOpen(false));
-            Label(window,"装备部位",new Vector2(-516,229),new Vector2(210,30),17,Pencil);
+            Button(window,"Close ×",new Vector2(458,-391),new Vector2(150,42),()=>SetOpen(false));
+            Label(window,"Gear slots",new Vector2(-516,229),new Vector2(210,30),17,Pencil);
             for(int i=0;i<5;i++)
             {
                 int index=i;
-                equipmentLabels[i]=Button(window,equipmentNames[i]+"     空",new Vector2(-516,164-i*76),new Vector2(214,64),()=>SelectEquipment((EquipmentSlot)index));
+                equipmentLabels[i]=Button(window,equipmentNames[i]+"     Empty",new Vector2(-516,164-i*76),new Vector2(214,64),()=>SelectEquipment((EquipmentSlot)index));
                 var label=equipmentLabels[i];
                 label.rectTransform.anchoredPosition=new Vector2(23,0);label.rectTransform.sizeDelta=new Vector2(157,58);
                 label.fontSize=18;label.resizeTextMaxSize=18;
                 categoryFrames[i]=label.transform.parent.GetComponent<Image>();
                 Pen(label.transform.parent,SlotDrawing(i),new Vector2(-81,0),new Vector2(34,40),Ink);
             }
-            Button(window,"技能槽位 ›",new Vector2(-216,-295),new Vector2(304,46),()=>SelectSkillForAssignment(EditingSkill));
-            categoryTitle=Label(window,"武器装备",new Vector2(-216,229),new Vector2(320,30),19,Ink);
+            Button(window,"Skill slots >",new Vector2(-216,-295),new Vector2(304,46),()=>SelectSkillForAssignment(EditingSkill));
+            categoryTitle=Label(window,"Weapons",new Vector2(-216,229),new Vector2(320,30),19,Ink);
             Pen(window,EquipmentJournalInk.Drawing.Rule,new Vector2(-216,205),new Vector2(290,4),Pencil);
             itemBrowser=new GameObject("Equipment browser",typeof(RectTransform));itemBrowser.transform.SetParent(window,false);
             var viewport=Box(itemBrowser.transform,"Scrollable item list",new Vector2(.5f,.5f),new Vector2(-216,-37),new Vector2(330,470),Color.clear);
@@ -392,7 +392,7 @@ namespace Mavis
             for(int i=0;i<4;i++)
             {
                 int index=i;
-                var label=Button(skillChoices.transform,"技能 "+(i+1)+" / 未配置",new Vector2(-216,145-i*105),new Vector2(304,88),()=>SelectSkillForAssignment(index));
+                var label=Button(skillChoices.transform,"Skill "+(i+1)+" / Unassigned",new Vector2(-216,145-i*105),new Vector2(304,88),()=>SelectSkillForAssignment(index));
                 skillFrames[i]=label.transform.parent.GetComponent<Image>();
             }
             itemTitle=Label(window,"",new Vector2(333,288),new Vector2(470,50),29,Ink);
@@ -401,9 +401,9 @@ namespace Mavis
             Pen(window,EquipmentJournalInk.Drawing.Rule,new Vector2(333,26),new Vector2(450,6),Pencil);
             details=Label(window,"",new Vector2(333,-124),new Vector2(450,267),20,Ink);
             details.alignment=TextAnchor.UpperLeft;
-            actionText=Button(window,"装备",new Vector2(333,-290),new Vector2(450,50),EquipSelection);equipButton=actionText.transform.parent.GetComponent<Button>();
+            actionText=Button(window,"Gear",new Vector2(333,-290),new Vector2(450,50),EquipSelection);equipButton=actionText.transform.parent.GetComponent<Button>();
             unequipText=Button(window,"Unequip Glasses",new Vector2(333,-345),new Vector2(450,40),UnequipSelection);unequipButton=unequipText.transform.parent.GetComponent<Button>();
-            Label(window,"I / Esc 合上",new Vector2(-126,-387),new Vector2(220,30),15,Pencil);
+            Label(window,"I / Esc to close",new Vector2(-126,-387),new Vector2(220,30),15,Pencil);
         }
 
         static EquipmentJournalInk.Drawing SlotDrawing(int slot)

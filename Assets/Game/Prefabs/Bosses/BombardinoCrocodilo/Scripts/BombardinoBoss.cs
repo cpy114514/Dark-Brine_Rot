@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,6 +18,7 @@ namespace Mavis
         public float cruiseSpeed=20f, rushSpeed=72f;
         public float telegraphSeconds=1.5f;
         [Min(1f)] public float attackInterval=5f;
+        [Min(.5f)] public float counterWindowSeconds=2.2f;
         // Retain old serialized fields for existing scenes; landing/cooling is no longer used.
         [HideInInspector] public float lowAltitude=3.6f, exposedSeconds;
         public float bombDamage=28f, missileDamage=23f, rushDamage=30f, fireDamage=8f;
@@ -36,20 +37,20 @@ namespace Mavis
             if(phase<2)return (AttackKind)(serial%4);
             switch(serial%4){case 0:return AttackKind.MissileSalvo;case 1:return AttackKind.CrossBombing;case 2:return AttackKind.FlameRun;default:return AttackKind.SpeedRun;}
         }
-        public bool IsExposed=>false;
+        public bool IsExposed=>CurrentState==State.Exposed;
         public int BombsReleased { get; private set; }
         public int MissilesLaunched { get; private set; }
         public int FlameZonesCreated { get; private set; }
         public int RushHits { get; private set; }
         public string AttackName=>CurrentAttack==AttackKind.MissileSalvo?"TWIN MISSILE SALVO":CurrentAttack==AttackKind.CrossBombing?"CROSS CARPET BOMBING":CurrentAttack==AttackKind.HighBombing?"HIGH-ALTITUDE BOMBING":CurrentAttack==AttackKind.SpeedRun?"SUPERSONIC STRAFE":CurrentAttack==AttackKind.Missiles?"MISSILE LOCK":"NAPALM RUN";
-        public string Hint=>IsDead?"BOMBARDINO DOWN":CurrentState==State.Circling?"CIRCLING — WATCH FOR THE NEXT ATTACK!":CurrentState==State.Telegraph?
+        public string Hint=>IsDead?"BOMBARDINO DOWN":IsExposed?"COUNTER WINDOW — AIM FOR THE ENGINES!":CurrentState==State.Circling?"CIRCLING — WATCH FOR THE NEXT ATTACK!":CurrentState==State.Telegraph?
             CurrentAttack==AttackKind.HighBombing?"BOMBING INCOMING — MOVE OUT OF THE TARGET AREA!":CurrentAttack==AttackKind.SpeedRun?"LOW PASS — DODGE SIDEWAYS!":CurrentAttack==AttackKind.Missiles||CurrentAttack==AttackKind.MissileSalvo?"MISSILE SALVO — KEEP MOVING!":CurrentAttack==AttackKind.CrossBombing?"CROSS BOMBING — MOVE BETWEEN THE PASSES!":"NAPALM INCOMING — KEEP MOVING!":AttackName;
         Health health;
         PlayerHealth targetHealth;
         Vector3 home, committed, heading;
         readonly BossTargetPrediction prediction = new BossTargetPrediction();
         Quaternion visualRest;
-        float clock, age, acquireAt, shotAt, deathGround;
+        float clock, age, acquireAt, shotAt, deathGround, nextMarkerAt;
         float turnBank;
         float orbitAngle, attackAt, nextAttackAt;
         int attackCounter, shots;
@@ -104,7 +105,7 @@ namespace Mavis
             {
                 warningMaterial=new Material(Shader.Find("Universal Render Pipeline/Unlit"));
                 warningMaterial.SetColor("_BaseColor",new Color(1,.24f,.05f));
-                for(int i=0;i<6;i++)
+                for(int i=0;i<8;i++)
                 {
                     var go=new GameObject("Bombardino attack warning");go.transform.SetParent(transform,false);
                     var line=go.AddComponent<LineRenderer>();line.sharedMaterial=warningMaterial;line.positionCount=MarkerSegments+1;
@@ -142,7 +143,8 @@ namespace Mavis
             prediction.Observe(target);
             // Schedule warning + attack against the previous attack's start, so travel,
             // burst length and the enraged phase never add an extra cooling delay.
-            if(FightActive&&CurrentState!=State.Telegraph&&clock>=nextAttackAt-Windup)
+            if(FightActive&&CurrentState!=State.Telegraph&&CurrentState!=State.Attack&&
+                (!IsExposed || age>=counterWindowSeconds)&&clock>=nextAttackAt-Windup)
             {
                 attackCounter++;StartAttack(AttackForPhase(FightPhase,attackCounter));
             }
@@ -157,8 +159,9 @@ namespace Mavis
             {
                 case State.Patrol:
                 case State.Circling:
-                case State.Exposed:
                     FlyOrbit(cruiseAltitude,cruiseSpeed,dt);break;
+                case State.Exposed:
+                    FlyOrbit(Mathf.Min(cruiseAltitude,18f),cruiseSpeed*.45f,dt);break;
                 case State.Returning:
                     FlyOrbit(cruiseAltitude,cruiseSpeed,dt);
                     if(age>=1f){health.currentHealth=health.maxHealth;attackCounter=0;announcedPhase=1;nextAttackAt=0;SetState(State.Patrol);}break;
@@ -195,6 +198,7 @@ namespace Mavis
             heading=OrbitTangent(orbitAngle);
             attackAt=FightActive&&nextAttackAt>clock?nextAttackAt:clock+Windup;
             rushVictims.Clear();SetState(State.Telegraph);BuildMarkers(kind);
+            GameplayAudio.Play(GameplayAudio.Cue.Warning,target.position);
         }
         Vector3 PredictedGround(float remainingWindup)
         {
@@ -214,8 +218,8 @@ namespace Mavis
             CurrentAttack==AttackKind.Missiles?1.8f:1.5f;
         void SetState(State state)
         {
-            CurrentState=state==State.Exposed?State.Circling:state;age=0;
-            if(CurrentState==State.Circling)ClearMarkers();
+            CurrentState=state;age=0;
+            if(CurrentState==State.Circling || CurrentState==State.Exposed)ClearMarkers();
         }
         void RunAttack(float dt)=>RunAttack(dt,FlyAttack(dt));
         Vector3 FlyAttack(float dt)
@@ -267,7 +271,7 @@ namespace Mavis
                     var strikeFrom=Ground(from)+Vector3.up*2.6f;
                     var strikeTo=Ground(transform.position)+Vector3.up*2.6f;
                     var step=strikeTo-strikeFrom;int count=Physics.SphereCastNonAlloc(strikeFrom,2.6f,step.normalized,casts,step.magnitude,~0,QueryTriggerInteraction.Ignore);
-                    for(int i=0;i<count;i++){var hp=casts[i].collider.GetComponentInParent<PlayerHealth>();if(hp!=null&&rushVictims.Add(hp)){hp.ApplyDamage(rushDamage*power,transform.position);RushHits++;}}
+                    for(int i=0;i<count;i++){var hp=casts[i].collider.GetComponentInParent<PlayerHealth>();if(hp!=null&&rushVictims.Add(hp)){if(hp.ApplyAttackDamage(rushDamage*power,casts[i].point,strikeFrom))RushHits++;}}
                 }
                 else if(age>=shotAt&&shots<7)
                 {
@@ -276,7 +280,11 @@ namespace Mavis
                     fireImpacts.Add((point,clock+flight,fireDamage*power));shots++;shotAt=age+.23f;
                 }
             }
-            if(age>=AttackDuration)SetState(State.Circling);
+            if(age>=AttackDuration)
+            {
+                SetState(State.Exposed);
+                nextAttackAt=Mathf.Max(nextAttackAt,clock+counterWindowSeconds+Windup);
+            }
         }
         void Spawn(BombardinoOrdnance.Kind kind,Vector3 point,Vector3 direction,Vector3 aim,float damage,float radius)
         {
@@ -412,8 +420,8 @@ namespace Mavis
         void BuildMarkers(AttackKind kind)
         {
             ClearMarkers();
-            if(BossAttackWarning.HiddenOnIsland(gameObject) || kind==AttackKind.MissileSalvo || kind==AttackKind.CrossBombing)return;
-            int count=kind==AttackKind.HighBombing?6:1;
+            if(markers.Count==0)return;
+            int count=kind==AttackKind.CrossBombing || kind==AttackKind.MissileSalvo?8:kind==AttackKind.HighBombing?6:1;
             if(kind==AttackKind.SpeedRun || kind==AttackKind.FlameRun)
             {
                 float start=orbitAngle+cruiseSpeed/Mathf.Max(10f,patrolRadius)*Mathf.Max(0,attackAt-clock);
@@ -428,13 +436,20 @@ namespace Mavis
             for(int n=0;n<count;n++)
             {
                 var line=markers[n];
-                var point=Ground(committed+heading*((n-(count-1)*.5f)*(kind==AttackKind.HighBombing?3:3.8f)))+Vector3.up*.15f;
-                float radius=kind==AttackKind.HighBombing?4.3f:kind==AttackKind.SpeedRun?7:2.8f;
+                Vector3 offset=kind==AttackKind.CrossBombing?heading*((n%4-1.5f)*4)+Vector3.Cross(Vector3.up,heading)*(n<4?-5:5):
+                    kind==AttackKind.MissileSalvo?Vector3.Cross(Vector3.up,heading)*((n%2==0?-1:1)*(2+n/2)):
+                    heading*((n-(count-1)*.5f)*(kind==AttackKind.HighBombing?3:3.8f));
+                var point=Ground(committed+offset)+Vector3.up*.15f;
+                float radius=kind==AttackKind.HighBombing?4.3f:kind==AttackKind.CrossBombing?3.2f:kind==AttackKind.MissileSalvo?3f:3.5f;
                 for(int i=0;i<=MarkerSegments;i++){float a=i/(float)MarkerSegments*Mathf.PI*2;markerPoints[i]=Ground(point+new Vector3(Mathf.Cos(a)*radius,0,Mathf.Sin(a)*radius))+Vector3.up*.15f;}
                 line.SetPositions(markerPoints);line.enabled=true;
             }
         }
-        void UpdateMarkers(){ }
+        void UpdateMarkers()
+        {
+            if(CurrentState!=State.Telegraph || clock<nextMarkerAt)return;
+            nextMarkerAt=clock+.1f;BuildMarkers(CurrentAttack);
+        }
         void ClearMarkers(){foreach(var line in markers)if(line!=null)line.enabled=false;GetComponent<BossAttackWarning>()?.Clear();}
         public void Explosion(Vector3 p,float radius)
         {

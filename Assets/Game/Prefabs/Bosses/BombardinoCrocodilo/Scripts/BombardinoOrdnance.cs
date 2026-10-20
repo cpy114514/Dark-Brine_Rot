@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Mavis
@@ -142,7 +142,7 @@ namespace Mavis
                 int rays=Physics.RaycastNonAlloc(origin,delta.normalized,hits,delta.magnitude,~0,QueryTriggerInteraction.Ignore);
                 for(int i=0;i<rays;i++){var hit=hits[i].collider;if(!hit.transform.IsChildOf(owner.transform)&&hit.GetComponentInParent<PlayerHealth>()!=player.Key && hit.GetComponentInParent<BombardinoOrdnance>()==null){blocked=true;break;}}
                 if(blocked)continue;
-                float falloff=Payload==Kind.Fire?1:Mathf.Lerp(1,.45f,Mathf.Clamp01(player.Value/radius));player.Key.ApplyDamage(amount*falloff,transform.position);
+                float falloff=Payload==Kind.Fire?1:Mathf.Lerp(1,.45f,Mathf.Clamp01(player.Value/radius));player.Key.ApplyAttackDamage(amount*falloff,body!=null?body.ClosestPoint(transform.position):center,transform.position);
             }
         }
         void Expire(){if(resolved)return;resolved=true;Release();}

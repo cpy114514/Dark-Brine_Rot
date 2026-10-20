@@ -1,0 +1,255 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+    "rig": "Armature",
+    "action": "PLAYER_ClubSpin_v001",
+    "unity_clip": "PLAYER_ClubSpin_v001",
+    "revision": "combat-v001",
+    "frame_start": 1,
+    "frame_end": 55,
+    "fps": 60,
+    "loop": true,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/CombatCombinations-20261019.md",
+    "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        11.8
+      ],
+      "active": [
+        11.8,
+        55
+      ],
+      "hitbox": [
+        11.8,
+        55
+      ]
+    },
+    "runtime_contract": {
+      "subsequent_loop_active_frames": [
+        1,
+        55
+      ],
+      "hit_policy": "once per victim per authored revolution; continuous swept weapon volume",
+      "entry_blend_seconds": 0.16,
+      "stamina_per_second": 9
+    }
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeSpin_v001",
+    "unity_clip": "PLAYER_BladeSpin_v001",
+    "revision": "combat-v001",
+    "frame_start": 1,
+    "frame_end": 55,
+    "fps": 60,
+    "loop": true,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/CombatCombinations-20261019.md",
+    "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        11.8
+      ],
+      "active": [
+        11.8,
+        55
+      ],
+      "hitbox": [
+        11.8,
+        55
+      ]
+    },
+    "runtime_contract": {
+      "subsequent_loop_active_frames": [
+        1,
+        55
+      ],
+      "hit_policy": "once per victim per authored revolution; continuous swept weapon volume",
+      "entry_blend_seconds": 0.16,
+      "stamina_per_second": 9
+    }
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeCharge_v001",
+    "unity_clip": "PLAYER_BladeCharge_v001",
+    "revision": "combat-v001",
+    "frame_start": 1,
+    "frame_end": 31,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/CombatCombinations-20261019.md",
+    "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        31
+      ]
+    },
+    "runtime_contract": {
+      "held_pose_frame": 31,
+      "damage_charge_seconds": 1.8,
+      "pose_raise_seconds": 0.5,
+      "animation_layer": "Twin Blade Charge (torso and both arms; locomotion owns legs)"
+    }
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeRush_v001",
+    "unity_clip": "PLAYER_BladeRush_v001",
+    "revision": "combat-v001",
+    "frame_start": 1,
+    "frame_end": 46,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/CombatCombinations-20261019.md",
+    "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        10
+      ],
+      "active": [
+        10,
+        26.2
+      ],
+      "hitbox": [
+        10,
+        26.2
+      ],
+      "recovery": [
+        26.2,
+        46
+      ]
+    },
+    "runtime_contract": {
+      "physical_movement_normalized": [
+        0.2,
+        0.56
+      ],
+      "physical_maximum_distance_m": 3,
+      "movement_owner": "CharacterController; forward committed on release; animation root travel disabled"
+    }
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeGuard_v001",
+    "unity_clip": "PLAYER_BladeGuard_v001",
+    "revision": "combat-v001",
+    "frame_start": 1,
+    "frame_end": 37,
+    "fps": 60,
+    "loop": true,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/CombatCombinations-20261019.md",
+    "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        10.6
+      ],
+      "active": [
+        10.6,
+        37
+      ]
+    },
+    "runtime_contract": {
+      "subsequent_loop_active_frames": [
+        1,
+        37
+      ],
+      "guard_arc_degrees": 130,
+      "entry_blend_seconds": 0.16,
+      "base_hit_stamina_cost": 12,
+      "stamina_per_second": 2,
+      "guard_policy": "held E with dual blades; frontal confirmed melee only, rear/hazards remain damaging"
+    }
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+    "rig": "Armature",
+    "action": "PLAYER_JumpChop_v001",
+    "unity_clip": "PLAYER_JumpChop_v001",
+    "revision": "combat-v001",
+    "frame_start": 1,
+    "frame_end": 52,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "BLOCKING",
+    "design_status": "approved",
+    "design_reference": "Documentation/CombatCombinations-20261019.md",
+    "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        18.34
+      ],
+      "active": [
+        18.34,
+        35.17
+      ],
+      "hitbox": [
+        18.34,
+        35.17
+      ],
+      "recovery": [
+        35.17,
+        52
+      ]
+    },
+    "runtime_contract": {
+      "movement_owner": "existing jump physics; no attack root travel",
+      "hit_policy": "once per jump; actual swept weapon contact; no added landing-radius damage"
+    }
+  }
+]

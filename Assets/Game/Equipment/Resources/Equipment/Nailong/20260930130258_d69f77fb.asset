@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 20260930130258_d69f77fb
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
   id: nailong-20260930130258_d69f77fb
-  displayName: "\u5976\u9F99\u4E0B\u88C5"
+  displayName: "Karen Fairy Trousers"
   slot: 2
   worldModel: {fileID: 1744473058778269675, guid: 0ce444845d928a54eb23f5942b866b5b, type: 3}
   icon: {fileID: 0}

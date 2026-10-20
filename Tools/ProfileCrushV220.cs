@@ -38,7 +38,7 @@ public sealed class CrushProfileV220:MonoBehaviour
     {
         if(done||battle==null)return;
         double now=Time.realtimeSinceStartupAsDouble;
-        if(battle.RedesignActive)rows.Add(new{clock=battle.RedesignClock,previousClock,stage=battle.RedesignStage.ToString(),frameMs=(now-previous)*1000,fixedSteps=steps,rate=Time.timeScale,
+        if(battle.RedesignActive)rows.Add(new{clock=battle.RedesignClock,previousClock,stage=battle.RedesignStage.ToString(),frameMs=(now-previous)*1000,fixedSteps=steps,rate=Time.timeScale,maximumDeltaTime=Time.maximumDeltaTime,
             completedFrameCounters=counters.Where(p=>p.Value.Valid).ToDictionary(p=>p.Key,p=>p.Value.LastValue),
             battle.RedesignRiggingMaximumTickMs,battle.RedesignRiggingMaximumQueryMs,battle.RedesignRiggingMaximumSkinTreeRefitMs});
         previous=now;previousClock=battle.RedesignClock;steps=0;

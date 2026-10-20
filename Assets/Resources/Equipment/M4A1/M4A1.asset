@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: M4A1
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
   id: weapon_m4a1
-  displayName: "M4A1 \u7A81\u51FB\u6B65\u67AA"
+  displayName: "M4A1 assault rifle"
   slot: 4
   worldModel: {fileID: 4230994119813112960, guid: 4929d7dfd1dea504fb554a6bfa6dbe4f, type: 3}
   icon: {fileID: 0}

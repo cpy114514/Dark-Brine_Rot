@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.IO;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>Repeat one recorded physical fracture; retain live buoyancy after release.</summary>
@@ -19,19 +21,43 @@ public sealed class Story1WreckScatterPlayback:MonoBehaviour
     Vector3 origin;Quaternion heading;
     Vector3[] initialPositions;Quaternion[] initialRotations;
     bool releasePending;
-    public void Initialize(TextAsset asset,Story1WreckFloatBody[] released,Transform ship)
+    static readonly Dictionary<TextAsset,Layout> prepared = new Dictionary<TextAsset,Layout>();
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    static void ResetPrepared() => prepared.Clear();
+    /// <summary>Parse the fixed replay during sailing, in bounded slices, before the hull fractures.</summary>
+    public static IEnumerator Preload(TextAsset asset)
     {
+        if (!asset || prepared.ContainsKey(asset)) yield break;
+        Layout parsed;
         using(var stream=new MemoryStream(asset.bytes,false))using(var reader=new BinaryReader(stream))
         {
             if(reader.ReadInt32()!=0x42525732)throw new InvalidDataException("Unknown wreck bake");
-            layout=new Layout{version=1,step=reader.ReadSingle()};int count=reader.ReadInt32(),frames=reader.ReadInt32();
-            if(count!=released.Length || frames<2 || frames>1000)throw new InvalidDataException("Wreck bake dimensions changed");
-            layout.entryDeck=reader.ReadString();layout.pieces=new Piece[count];
-            for(int i=0;i<count;i++)layout.pieces[i]=new Piece{name=reader.ReadString(),poses=new Pose[frames]};
-            for(int frame=0;frame<frames;frame++)for(int i=0;i<count;i++)
-                layout.pieces[i].poses[frame]=new Pose{position=new Vector3(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle()),rotation=new Quaternion(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle())};
-            foreach(var piece in layout.pieces)
+            parsed=new Layout{version=1,step=reader.ReadSingle()};int count=reader.ReadInt32(),frames=reader.ReadInt32();
+            if(count<1 || count>5000 || frames<2 || frames>1000)throw new InvalidDataException("Wreck bake dimensions changed");
+            parsed.entryDeck=reader.ReadString();parsed.pieces=new Piece[count];
+            for(int i=0;i<count;i++)parsed.pieces[i]=new Piece{name=reader.ReadString(),poses=new Pose[frames]};
+            yield return null;
+            double deadline=Time.realtimeSinceStartupAsDouble+.001;
+            for(int frame=0;frame<frames;frame++)
+            {
+                for(int i=0;i<count;i++)
+                    parsed.pieces[i].poses[frame]=new Pose{position=new Vector3(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle()),rotation=new Quaternion(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle())};
+                if(Time.realtimeSinceStartupAsDouble>=deadline)
+                { yield return null;deadline=Time.realtimeSinceStartupAsDouble+.001; }
+            }
+            foreach(var piece in parsed.pieces)
             {piece.velocity=new Vector3(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());piece.spin=new Vector3(reader.ReadSingle(),reader.ReadSingle(),reader.ReadSingle());}
+        }
+        prepared[asset]=parsed;
+    }
+    public void Initialize(TextAsset asset,Story1WreckFloatBody[] released,Transform ship)
+    {
+        if (!prepared.TryGetValue(asset, out layout))
+        {
+            var loader=Preload(asset);
+            try { while(loader.MoveNext()) {} }
+            finally { (loader as IDisposable)?.Dispose(); }
+            layout=prepared[asset];
         }
         if(layout==null || layout.version!=1 || layout.step<=0 || layout.pieces==null || layout.pieces.Length!=released.Length)
             throw new InvalidOperationException("Fixed wreck layout does not match original released fragments");

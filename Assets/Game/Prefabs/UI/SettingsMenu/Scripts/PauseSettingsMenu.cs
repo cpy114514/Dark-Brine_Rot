@@ -102,6 +102,10 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void Awake()
     {
+        // Legacy prefabs may still contain the former language selector.
+        foreach (var row in GetComponentsInChildren<Transform>(true))
+            if (row.name == "language row") row.gameObject.SetActive(false);
+        options.RemoveAll(option => option.key == "language");
         LocalizedGameText.BindTree(transform);
         player = FindFirstObjectByType<ThirdPersonPlayerController>();
         foreach (Resolution resolution in Screen.resolutions)
@@ -336,7 +340,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         switch (key)
         {
             case "language":
-                GameLocalization.SetLanguage(GameLocalization.Language == GameLanguage.English ? GameLanguage.SimplifiedChinese : GameLanguage.English);
+                GameLocalization.SetLanguage(GameLanguage.English);
                 break;
             case "difficulty": draft.difficulty = (draft.difficulty + 1) % 3; break;
             case "invertY": draft.invertY = !draft.invertY; break;
@@ -674,7 +678,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     string ValueText(string key)
     {
-        if (key == "language") return GameLocalization.Language == GameLanguage.English ? "English" : "简体中文";
+        if (key == "language") return GameLocalization.Language == GameLanguage.English ? "English" : "English";
         if (key.StartsWith("key.", StringComparison.Ordinal) &&
             Enum.TryParse(key.Substring(4), out GameInputSettings.Action action))
             return draftKeys[(int)action].ToString().ToUpperInvariant();

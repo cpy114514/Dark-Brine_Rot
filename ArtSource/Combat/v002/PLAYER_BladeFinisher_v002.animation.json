@@ -1,0 +1,82 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v002\\sahur-dual-blade-polish-v002.blend",
+  "rig": "Armature",
+  "action": "PLAYER_BladeFinisher_v002",
+  "unity_clip": "PLAYER_BladeFinisher_v002",
+  "revision": "combat-v002",
+  "frame_start": 1,
+  "frame_end": 91,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "FIRST PASS",
+  "design_status": "approved",
+  "design_reference": "Documentation/DualBladePolish-20261019.md",
+  "approval_reference": "2026-10-19 human: 1.2x blades, combo3 horizontal outstretched arms and one turn, longer rush, down/back blade follow-through, victim recoil",
+  "review_status": "accepted_for_stage",
+  "review_reference": "ArtSource/Combat/v002/source-review.md",
+  "format_version": 1,
+  "duration_seconds": 1.5,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v002\\sahur-dual-blade-polish-v002.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBArmature",
+  "animated_bones": [
+    "Head",
+    "Head_end",
+    "Hips",
+    "LeftArm",
+    "LeftFoot",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHand_end",
+    "LeftLeg",
+    "LeftShoulder",
+    "LeftToeBase",
+    "LeftToeBase_end",
+    "LeftUpLeg",
+    "Neck",
+    "RightArm",
+    "RightFoot",
+    "RightForeArm",
+    "RightHand",
+    "RightHand_end",
+    "RightLeg",
+    "RightShoulder",
+    "RightToeBase",
+    "RightToeBase_end",
+    "RightUpLeg",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "root"
+  ],
+  "selected_meshes": [
+    "Mesh_0.001"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {},
+  "fbx": "PLAYER_BladeFinisher_v002.fbx"
+}

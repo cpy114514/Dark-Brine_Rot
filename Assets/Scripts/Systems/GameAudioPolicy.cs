@@ -1,12 +1,16 @@
 using UnityEngine;
 
-/// <summary>Temporary silent gameplay; stored volume and sound assets remain available.</summary>
+/// <summary>Restores the saved master volume before the first scene starts.</summary>
 public static class GameAudioPolicy
 {
-    public static readonly bool SoundEnabled = false;
+    public static readonly bool SoundEnabled = true;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    static void Initialize() => ApplyMasterVolume(1);
+    static void Initialize()
+    {
+        ApplyMasterVolume(PlayerPrefs.GetFloat("DarkBrine.Settings.MasterVolume", 1f));
+        Mavis.GameplayAudio.Prewarm();
+    }
 
     public static void ApplyMasterVolume(float volume)
     {

@@ -5,7 +5,7 @@ namespace Mavis
     [DisallowMultipleComponent]
     public sealed class IslandRespawnPoint : MonoBehaviour
     {
-        public string pointName = "小岛复活点";
+        public string pointName = "Island checkpoint";
         public bool isDefault = true;
         public float activationRadius = 3f;
         PlayerDeathRespawn player;

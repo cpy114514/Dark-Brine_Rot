@@ -158,13 +158,20 @@ Shader "Mavis/FoliageWind"
                 float rootMask = saturate((originalWS.y - _MavisWindAnchorY) * _MavisWindInvHeight);
                 rootMask = rootMask * rootMask;
                 // Distant foliage still moves in the wind, without paying for close-up interaction.
-                if (distance(originalWS, _WorldSpaceCameraPos) < 65.0)
+                float3 cameraDelta = originalWS - _WorldSpaceCameraPos;
+                if (dot(cameraDelta, cameraDelta) < 65.0 * 65.0)
                 {
                     [loop] for (int i = 0; i < _MavisFoliageBodyCount; i++)
                     {
                         float2 delta = originalWS.xz - _MavisFoliageBodies[i].xz;
+                        float bodyRadius = max(_MavisFoliageBodies[i].w, 0.001);
+                        // Almost all vertices are outside a body's footprint. Avoid
+                        // its length, division and direction work when influence is zero.
+                        [branch] if (dot(delta, delta) >= bodyRadius * bodyRadius ||
+                            abs(originalWS.y - _MavisFoliageBodies[i].y - 0.65) >= 2.5)
+                            continue;
                         float dist = length(delta);
-                        float influence = saturate(1.0 - dist / max(_MavisFoliageBodies[i].w, 0.001));
+                        float influence = saturate(1.0 - dist / bodyRadius);
                         influence *= influence * saturate(1.0 - abs(originalWS.y - _MavisFoliageBodies[i].y - 0.65) / 2.5);
                         influence *= _MavisFoliageMotion[i].z;
                         float2 direction = delta / max(dist, 0.05) + _MavisFoliageMotion[i].xy * 0.35;

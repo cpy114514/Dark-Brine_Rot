@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 20260930130250_547090e7
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.EquipmentItem
   id: nailong-20260930130250_547090e7
-  displayName: "\u5976\u9F99\u6D1E\u6D1E\u978B"
+  displayName: "Karen Fairy Clogs"
   slot: 3
   worldModel: {fileID: 4042310816283752818, guid: 382da13a9add2b74dbfa08e14bab0947, type: 3}
   icon: {fileID: 0}

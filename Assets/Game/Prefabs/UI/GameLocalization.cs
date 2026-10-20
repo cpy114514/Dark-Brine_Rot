@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using TMPro;
@@ -47,7 +47,13 @@ namespace Mavis
         static void EnsureLoaded()
         {
             if (loaded) return;
-            language = PlayerPrefs.GetInt(PreferenceKey, 0) == 1 ? GameLanguage.SimplifiedChinese : GameLanguage.English;
+            language = GameLanguage.English;
+            // Migrate previous bilingual installations without touching other settings.
+            if (PlayerPrefs.GetInt(PreferenceKey, 0) != 0)
+            {
+                PlayerPrefs.SetInt(PreferenceKey, 0);
+                PlayerPrefs.Save();
+            }
             loaded = true;
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -59,7 +65,7 @@ namespace Mavis
         public static void SetLanguage(GameLanguage value)
         {
             EnsureLoaded();
-            value = value == GameLanguage.SimplifiedChinese ? value : GameLanguage.English;
+            value = GameLanguage.English;
             PlayerPrefs.SetInt(PreferenceKey, (int)value); PlayerPrefs.Save();
             if (language == value) return;
             language = value; Changed?.Invoke();
@@ -78,6 +84,7 @@ namespace Mavis
             Add("01  /  FIRST ISLAND","01  /  第一座岛");
             Add("I / Esc to close","I / Esc 关闭");
             Add("CLICK TO SWITCH TERRAIN", "点击切换地形");
+            Add("▣ Supply camps", "▣  补给营地");
             Add("Fight the shark on the wreckage. Use your usual attacks and dodge.", "在木板上迎战鲨鱼。使用平时的攻击和闪避。");
             Add("The shark is winding up. Dodge away!", "鲨鱼正在蓄力，快闪开！");
             Add("Counterattack now!", "趁现在反击！");
@@ -131,6 +138,11 @@ namespace Mavis
             Add("Reloading ","换弹中 ");
             Add("R Reload · Reserve {0}", "R 换弹 · 备用 {0} 发", "rifle.reserve");
             Add("No reserve · Find ammo", "备用耗尽 · 寻找弹药", "rifle.emptyReserve");
+            Add("Pick up the M4A1 to fight Bombardino. Walk up to collect it.", "迎战鳄鱼：先拾取 M4A1，靠近枪支即可自动拾取。", "supply.pickupGun");
+            Add("LOW AMMO: {0} left. Follow the yellow square to resupply.", "弹药不足：剩余 {0} 发。跟随黄色方框前往补给。", "supply.lowAmmo");
+            Add("LOW AMMO: {0} left. No ammo pickups remaining.", "弹药不足：剩余 {0} 发。岛上弹药补给已耗尽。", "supply.noAmmo");
+            Add("M4A1 · {0} m", "M4A1 · {0} 米", "supply.gunDistance");
+            Add("AMMO +{0} · {1} m", "弹药 +{0} · {1} 米", "supply.ammoDistance");
             Add("M4A1 ammunition ×{0}\nWalk up to collect", "M4A1 弹药 ×{0}\n靠近拾取", "rifle.ammoPickup");
             Add("M4A1 assault rifle\n\nLeft mouse: automatic fire\n20 damage per round · 30-round magazine\nR: reload · 210-round reserve capacity\n\nAn empty reload takes 7 seconds; remaining rounds shorten the reload.","M4A1 突击步枪\n\n左键：全自动射击\n每发 20 伤害 · 弹夹 30 发\nR：换弹 · 备用弹药上限 210 发\n\n空弹夹换弹 7 秒；剩余子弹越多，换弹越快。");
             Add("Loot · Walk up to collect","掉落物 · 靠近拾取"); Add("Current weapon","当前武器"); Add("Locked","未解锁"); Add("Not collected","未拾取");
@@ -162,7 +174,7 @@ namespace Mavis
         public static string Text(string key)
         {
             if (string.IsNullOrEmpty(key)) return key ?? "";
-            return table.TryGetValue(key, out var pair) ? pair[(int)Language] : key;
+            return table.TryGetValue(key, out var pair) ? pair[0] : key;
         }
         public static string Format(string key, params object[] args) => string.Format(CultureInfo.InvariantCulture, Text(key), args);
     }

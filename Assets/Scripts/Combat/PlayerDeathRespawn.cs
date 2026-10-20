@@ -155,15 +155,15 @@ namespace Mavis
             backdrop.transform.SetParent(overlay.transform, false);
             var rect = (RectTransform)backdrop.transform; rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero;
             backdrop.GetComponent<Image>().color = GameUITheme.Backdrop;
-            Label("你倒下了", 64, 125, GameUITheme.Foreground);
-            Label("在岛上的复活点重新出发", 26, 32, Color.white);
-            Label("生命与体力恢复 · 已拾取装备保留", 22, -25, GameUITheme.Secondary);
+            Label("YOU DIED", 64, 125, GameUITheme.Foreground);
+            Label("Respawn at the island checkpoint", 26, 32, Color.white);
+            Label("Health and stamina restored · Collected gear kept", 22, -25, GameUITheme.Secondary);
             var button = new GameObject("Respawn button", typeof(RectTransform), typeof(Image), typeof(Button));
             button.transform.SetParent(overlay.transform, false);
             var buttonRect = (RectTransform)button.transform; buttonRect.sizeDelta = new Vector2(380, 78); buttonRect.anchoredPosition = new Vector2(0, -130);
             GameUITheme.StyleButton(button.GetComponent<Button>());
             button.GetComponent<Button>().onClick.AddListener(() => Respawn());
-            var text = Label("复活  /  Enter", 28, 0, Color.white);
+            var text = Label("RESPAWN  /  Enter", 28, 0, Color.white);
             text.transform.SetParent(button.transform, false);
             if (EventSystem.current == null)
                 new GameObject("Death UI EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));

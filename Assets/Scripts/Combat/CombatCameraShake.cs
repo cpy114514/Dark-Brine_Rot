@@ -10,6 +10,8 @@ namespace Mavis
         Vector3 offset;
         Quaternion rotation = Quaternion.identity;
         bool applied;
+        Vector3 impactDirection;
+        float directionalStrength;
         public bool IsShaking => remaining > 0f;
         public void Pulse(float strength, float seconds)
         {
@@ -20,6 +22,13 @@ namespace Mavis
         {
             amplitude = Mathf.Max(amplitude, Mathf.Clamp(strength * .65f, 0, .25f));
             remaining = duration = Mathf.Max(remaining, Mathf.Clamp(seconds, .01f, .8f));
+        }
+        public void PulseDirectional(Vector3 direction, float strength, float seconds)
+        {
+            float next=Mathf.Clamp(strength,0,.1f);
+            if(next>=directionalStrength)impactDirection=direction.normalized;
+            directionalStrength=Mathf.Max(directionalStrength,next);
+            remaining=duration=Mathf.Max(remaining,Mathf.Clamp(seconds,.03f,.22f));
         }
         void RemoveOffset()
         {
@@ -33,7 +42,7 @@ namespace Mavis
             RemoveOffset();
             if (Time.timeScale <= 0f) return;
             remaining = Mathf.Max(0f, remaining - Time.deltaTime);
-            if (remaining == 0f) amplitude = 0f;
+            if (remaining == 0f) amplitude = directionalStrength = 0f;
         }
         void LateUpdate()
         {
@@ -41,11 +50,13 @@ namespace Mavis
             float a = amplitude * Mathf.Pow(remaining / duration, 2f);
             float phase = (duration - remaining) * 48f;
             offset = transform.right * (Mathf.Sin(phase) * a) + transform.up * (Mathf.Sin(phase * 1.37f) * a * 0.65f);
+            float impact=directionalStrength*Mathf.Pow(remaining/duration,2f);
+            offset += Vector3.ProjectOnPlane(impactDirection,transform.forward)*(-impact*Mathf.Cos(phase*.6f));
             rotation = Quaternion.Euler(Mathf.Sin(phase * 0.8f) * a * 7f, 0f, Mathf.Sin(phase) * a * 5f);
             transform.position += offset;
             transform.rotation *= rotation;
             applied = true;
         }
-        void OnDisable() { RemoveOffset(); remaining = amplitude = 0f; }
+        void OnDisable() { RemoveOffset(); remaining = amplitude = directionalStrength = 0f; }
     }
 }

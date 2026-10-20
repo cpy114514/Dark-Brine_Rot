@@ -17,6 +17,13 @@ namespace Mavis
         readonly RaycastHit[] hits = new RaycastHit[32];
 
         void Start() { GameLocalization.Changed += RefreshCaption; RefreshCaption(); }
+        public void RestoreRemaining(int remaining)
+        {
+            amount = Mathf.Max(0, remaining);
+            IsCollected = amount == 0;
+            if (IsCollected) gameObject.SetActive(false);
+            else RefreshCaption();
+        }
         void RefreshCaption()
         {
             if (caption)
@@ -68,7 +75,9 @@ namespace Mavis
             }
             int added = rifle.AddReserveAmmo(amount);
             if (added == 0) return false;
+            GameplayAudio.Play(GameplayAudio.Cue.Pickup, transform.position, true);
             amount -= added;
+            GameWorldProgress.Record(this, amount);
             if (amount > 0) RefreshCaption();
             else { IsCollected = true; gameObject.SetActive(false); Destroy(gameObject); }
             return true;

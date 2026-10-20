@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
@@ -9,7 +9,7 @@ namespace Mavis
     /// <summary>Stores the current first-island player state between game sessions.</summary>
     public sealed class GameSaveManager : MonoBehaviour
     {
-        const int SaveVersion = 1;
+        const int SaveVersion = 2;
         const string SaveFileName = "dark-brine-rot-save.json";
         const string GameplaySceneName = "Gameplay";
 
@@ -41,6 +41,7 @@ namespace Mavis
             public int selectedWeapon;
             public bool hasRifleAmmo;
             public int rifleMagazine, rifleReserve;
+            public GameWorldProgress.Snapshot world;
         }
 
         static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
@@ -53,6 +54,9 @@ namespace Mavis
         {
             if (player == null || player.gameObject.scene.name != GameplaySceneName ||
                 player.GetComponent<GameSaveExcluded>() != null) return false;
+            var health = player.GetComponent<PlayerHealth>();
+            if (IsContinuePending || AdditiveSceneBootstrap.IsLoading || !player.enabled || player.ExternalControlLock || player.ExternalMovementLock ||
+                (health != null && health.currentHealth <= 0f) || PlayerDeathRespawn.IsOpen) return false;
             var arrival = player.GetComponent<FirstIslandArrival>();
             return arrival == null || arrival.IsAwake;
         }
@@ -114,6 +118,7 @@ namespace Mavis
             if (!TryReadSave(out SaveData data))
                 return false;
 
+            GameWorldProgress.Reset();
             GameSaveManager manager = EnsureManager();
             manager.pendingSave = data;
             manager.restorePending = true;
@@ -129,6 +134,7 @@ namespace Mavis
 
             instance.pendingSave = null;
             instance.restorePending = false;
+            instance.restoreRoutineRunning = false;
         }
 
         public static bool SaveCurrentGame()
@@ -193,6 +199,7 @@ namespace Mavis
                     data.rifleMagazine = rifle.Rounds; data.rifleReserve = rifle.ReserveRounds;
                 }
 
+                data.world = GameWorldProgress.Capture(player);
                 string directory = Path.GetDirectoryName(SavePath);
                 if (!string.IsNullOrEmpty(directory))
                     Directory.CreateDirectory(directory);
@@ -200,7 +207,7 @@ namespace Mavis
                 // if writing is interrupted or the replacement cannot be completed.
                 string temporary = SavePath + ".tmp";
                 File.WriteAllText(temporary, JsonUtility.ToJson(data, true));
-                if (File.Exists(SavePath)) File.Replace(temporary, SavePath, null);
+                if (File.Exists(SavePath)) File.Replace(temporary, SavePath, SavePath + ".bak");
                 else File.Move(temporary, SavePath);
                 PlayerPrefs.Save();
                 Debug.Log("[Save] Game progress saved.");
@@ -235,8 +242,16 @@ namespace Mavis
         {
             restoreRoutineRunning = true;
 
-            // Let the additive world and the player's Start methods finish first.
+            // Wait for every additive scene, not an arbitrary number of frames.
             yield return null;
+            float deadline = Time.realtimeSinceStartup + 60f;
+            while (AdditiveSceneBootstrap.IsLoading && Time.realtimeSinceStartup < deadline) yield return null;
+            if (AdditiveSceneBootstrap.IsLoading)
+            {
+                restoreRoutineRunning = false;
+                Debug.LogError("[Save] World loading timed out; continue data retained.");
+                yield break;
+            }
             yield return null;
 
             ThirdPersonPlayerController player = null;
@@ -247,9 +262,12 @@ namespace Mavis
                     yield return null;
             }
 
+            try
+            {
             if (restorePending && player != null && pendingSave != null)
             {
                 SaveData data = pendingSave;
+                GameWorldProgress.Restore(data.world, player);
                 player.RestoreSavedPose(data.playerPosition, data.playerRotation);
                 player.GetComponent<WeaknessGlasses>()?.Restore(data.ownsWeaknessGlasses,data.weaknessGlassesEquipped,data.weaknessActiveRemaining,data.weaknessCooldownRemaining);
                 var arrival = player.GetComponent<FirstIslandArrival>();
@@ -258,7 +276,8 @@ namespace Mavis
 
                 PlayerHealth health = player.GetComponent<PlayerHealth>();
                 if (data.hasHealth && health != null)
-                    health.currentHealth = Mathf.Clamp(data.health, 0f, health.maxHealth);
+                    health.currentHealth = Mathf.Clamp(data.health, 1f, health.maxHealth);
+                if (health != null) health.GrantProtection(2f);
 
                 PlayerStamina stamina = player.GetComponent<PlayerStamina>();
                 if (data.hasStamina && stamina != null)
@@ -275,23 +294,30 @@ namespace Mavis
             else if (restorePending)
             {
                 Debug.LogError("[Save] Continue was selected, but the player could not be found in the Gameplay scene.");
+                yield break;
             }
 
             pendingSave = null;
             restorePending = false;
-            restoreRoutineRunning = false;
+            }
+            finally { restoreRoutineRunning = false; }
         }
 
         static bool TryReadSave(out SaveData data)
         {
+            return TryReadSaveFile(SavePath, out data) || TryReadSaveFile(SavePath + ".bak", out data);
+        }
+
+        static bool TryReadSaveFile(string path, out SaveData data)
+        {
             data = null;
-            if (!File.Exists(SavePath))
+            if (!File.Exists(path))
                 return false;
 
             try
             {
-                data = JsonUtility.FromJson<SaveData>(File.ReadAllText(SavePath));
-                if (data == null || data.version != SaveVersion ||
+                data = JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
+                if (data == null || data.version < 1 || data.version > SaveVersion ||
                     !IsFinite(data.playerPosition.x) || !IsFinite(data.playerPosition.y) ||
                     !IsFinite(data.playerPosition.z) ||
                     !IsFinite(data.playerRotation.x) || !IsFinite(data.playerRotation.y) ||

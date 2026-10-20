@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Mavis
@@ -15,9 +15,9 @@ namespace Mavis
         public bool HasM4A1 => inventory && rifleItem && inventory.Count(rifleItem)>0;
         public bool UsesTwinBlades => CurrentWeapon == Weapon.CapriTwinBlades;
         public bool HasTwinBlades => inventory && twinBlades && inventory.Count(twinBlades) > 0;
-        public static string DisplayName(Weapon weapon) => GameLocalization.Text(weapon==Weapon.M4A1?"M4A1 突击步枪":weapon==Weapon.CapriTwinBlades?"卡布奇诺双刀":"萨胡尔木棍");
+        public static string DisplayName(Weapon weapon) => GameLocalization.Text(weapon==Weapon.M4A1?"M4A1 assault rifle":weapon==Weapon.CapriTwinBlades?"Capri twin blades":"Sahur stick");
         public string WeaponName => DisplayName(CurrentWeapon);
-        public string ShortName => GameLocalization.Text(UsesRifle?"M4A1":UsesTwinBlades?"双刀":"木棍");
+        public string ShortName => GameLocalization.Text(UsesRifle?"M4A1":UsesTwinBlades?"Twin blades":"Stick");
         public bool Owns(Weapon weapon) => weapon==Weapon.Stick || weapon==Weapon.CapriTwinBlades&&HasTwinBlades || weapon==Weapon.M4A1&&HasM4A1;
         public event System.Action Changed;
         EquipmentInventory inventory;
@@ -30,6 +30,7 @@ namespace Mavis
         CapsuleCollider leftHitbox, rightHitbox;
         bool initialized;
         Weapon? restoredWeapon;
+        [Min(.1f)] public float twinBladeSizeMultiplier = 1.2f;
         public static Vector3 GripShaft(float side) => new Vector3(side * .18f, .41f, -.89f).normalized;
 
         void Start() => Initialize();
@@ -53,6 +54,7 @@ namespace Mavis
             rifleAnimation = GetComponent<SahurRifleAnimation>();
             if (!rifleAnimation) rifleAnimation = gameObject.AddComponent<SahurRifleAnimation>();
             if (!GetComponent<SahurRifleCombat>()) gameObject.AddComponent<SahurRifleCombat>();
+            if (!GetComponent<SahurSupplyGuidance>()) gameObject.AddComponent<SahurSupplyGuidance>();
             initialized = true;
         }
         void OnCollected(EquipmentItem item) { if (item == twinBlades || item == rifleItem) Changed?.Invoke(); }
@@ -146,7 +148,7 @@ namespace Mavis
             float length = Mathf.Max(mesh.bounds.size.x, Mathf.Max(mesh.bounds.size.y, mesh.bounds.size.z));
             float playerScale = Mathf.Max(.01f, Mathf.Abs(transform.lossyScale.y) / 3f);
             float handScale = Mathf.Max(.001f, Mathf.Abs(hand.lossyScale.y));
-            float bladeScale = 2.1f * playerScale / Mathf.Max(.01f, length * handScale);
+            float bladeScale = 2.1f * twinBladeSizeMultiplier * playerScale / Mathf.Max(.01f, length * handScale);
             obj.transform.localScale = Vector3.one * bladeScale;
             int axis = mesh.bounds.size.x > mesh.bounds.size.y && mesh.bounds.size.x > mesh.bounds.size.z ? 0 : mesh.bounds.size.y > mesh.bounds.size.z ? 1 : 2;
             float sign = Mathf.Sign(mesh.bounds.center[axis]);

@@ -186,8 +186,29 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8740227178540518113, guid: d63a1d5a99318b247a00ff2dcd29ce53, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 57646306}
   m_SourcePrefab: {fileID: 100100000, guid: d63a1d5a99318b247a00ff2dcd29ce53, type: 3}
+--- !u!1 &57646305 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8740227178540518113, guid: d63a1d5a99318b247a00ff2dcd29ce53, type: 3}
+  m_PrefabInstance: {fileID: 57646304}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &57646306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 57646305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d36e3b2567ce644a266eb3d719ac90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.WorldSaveIdentity
+  id: ab3f6fe8a4e2452181436b44d583c00c
 --- !u!1 &77698230
 GameObject:
   m_ObjectHideFlags: 0
@@ -286,8 +307,29 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3960477964465410676, guid: f2726302fdae7234f9faab22b0831731, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 121329540}
   m_SourcePrefab: {fileID: 100100000, guid: f2726302fdae7234f9faab22b0831731, type: 3}
+--- !u!1 &121329539 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3960477964465410676, guid: f2726302fdae7234f9faab22b0831731, type: 3}
+  m_PrefabInstance: {fileID: 121329538}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &121329540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121329539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d36e3b2567ce644a266eb3d719ac90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.WorldSaveIdentity
+  id: 5eb24e3476de4bcebd6d4560ef4f69c5
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

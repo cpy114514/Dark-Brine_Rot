@@ -1,0 +1,142 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+  "rig": "Armature",
+  "action": "PLAYER_BladeGuard_v001",
+  "unity_clip": "PLAYER_BladeGuard_v001",
+  "revision": "combat-v001",
+  "frame_start": 1,
+  "frame_end": 37,
+  "fps": 60,
+  "loop": true,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/CombatCombinations-20261019.md",
+  "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+  "review_status": "accepted_for_stage",
+  "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "format_version": 1,
+  "duration_seconds": 0.6,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBArmature",
+  "animated_bones": [
+    "Head",
+    "Head_end",
+    "Hips",
+    "LeftArm",
+    "LeftFoot",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHand_end",
+    "LeftLeg",
+    "LeftShoulder",
+    "LeftToeBase",
+    "LeftToeBase_end",
+    "LeftUpLeg",
+    "Neck",
+    "RightArm",
+    "RightFoot",
+    "RightForeArm",
+    "RightHand",
+    "RightHand_end",
+    "RightLeg",
+    "RightShoulder",
+    "RightToeBase",
+    "RightToeBase_end",
+    "RightUpLeg",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "root"
+  ],
+  "selected_meshes": [
+    "Mesh_0.001"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "loop_seam": {
+        "position_m": 0,
+        "rotation_deg": 0,
+        "scale_delta": 0
+      },
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {
+    "startup": [
+      {
+        "frames": [
+          1,
+          10.6
+        ],
+        "seconds": [
+          0.0,
+          0.16
+        ],
+        "normalized": [
+          0.0,
+          0.26666666666666666
+        ]
+      }
+    ],
+    "active": [
+      {
+        "frames": [
+          10.6,
+          37
+        ],
+        "seconds": [
+          0.16,
+          0.6
+        ],
+        "normalized": [
+          0.26666666666666666,
+          1.0
+        ]
+      }
+    ]
+  },
+  "fbx": "PLAYER_BladeGuard_v001.fbx",
+  "gameplay": {
+    "startup": [
+      1,
+      10.6
+    ],
+    "active": [
+      10.6,
+      37
+    ]
+  },
+  "runtime_contract": {
+    "subsequent_loop_active_frames": [
+      1,
+      37
+    ],
+    "guard_arc_degrees": 130,
+    "entry_blend_seconds": 0.16,
+    "base_hit_stamina_cost": 12,
+    "stamina_per_second": 2,
+    "guard_policy": "held E with dual blades; frontal confirmed melee only, rear/hazards remain damaging"
+  }
+}

@@ -612,7 +612,7 @@ public sealed partial class Story1WreckBattle
     // giant box or guessed mast/cloth Collider decides the break.
     sealed class RedRiggingTree
     {
-        sealed class Node { public Bounds bounds;public int start,count,left=-1,right=-1,sweepStamp; }
+        sealed class Node { public Bounds bounds;public int start,count,left=-1,right=-1,sweepStamp,articulatedStamp; public Bounds articulatedQueryBounds; }
         readonly List<Node> nodes=new List<Node>();
         Bounds[] sweepTriangleStart,sweepTriangleEnd,sweepNodeStart,sweepNodeEnd;
         readonly int[] order;
@@ -623,7 +623,16 @@ public sealed partial class Story1WreckBattle
         int[] sweepTriangleStamp;
         float sweepFraction;
         bool queryingSweep;
+        Vector3[] conservativeReference;
+        float conservativePadding;
+        bool articulatedBounds,articulatedReferenceValid;
+        int articulatedStamp;
+        Bounds[] articulatedQueryTriangles;
+        int[] articulatedQueryStamps;
+        Vector3[] articulatedReference;
+        float[] articulatedPointMotion,articulatedTriangleMotion,articulatedNodeMotion;
         IEnumerator<object> buildSteps;
+        public bool BuildComplete=>buildSteps==null;
         public int[] Triangles { get; }
         public long TrianglePairTests { get; private set; }
         public void ResetQueryCounters(){TrianglePairTests=0;}
@@ -693,7 +702,76 @@ public sealed partial class Story1WreckBattle
             node.left=Build(start,half);node.right=Build(start+half,count-half);return index;
         }
         void CacheTriangleBounds(){for(int i=0;i<order.Length;i++){triangleBounds[i]=TriangleBounds(i);triangleCentres[i]=triangleBounds[i].center;}}
-        public void Refit(Vector3[] points){queryingSweep=false;vertices=points;CacheTriangleBounds();RefitNode(0);}
+        public void Refit(Vector3[] points)
+        {
+            queryingSweep=false;articulatedBounds=false;articulatedReferenceValid=false;vertices=points;conservativeReference=null;conservativePadding=0;
+            // Split centres are used only when building the topology.
+            // Update exact geometry bottom-up. Avoid constructing/encapsulating
+            // several Bounds values for every triangle and recursively copying them.
+            for(int i=0;i<order.Length;i++)
+            {
+                int k=i*3;Vector3 a=points[Triangles[k]],b=points[Triangles[k+1]],c=points[Triangles[k+2]];
+                Vector3 lo=Vector3.Min(a,Vector3.Min(b,c)),hi=Vector3.Max(a,Vector3.Max(b,c));
+                triangleBounds[i]=new Bounds((lo+hi)*.5f,hi-lo+Vector3.one*.002f);
+            }
+            for(int i=nodes.Count-1;i>=0;i--)
+            {
+                var node=nodes[i];Bounds first=node.left>=0?nodes[node.left].bounds:triangleBounds[order[node.start]];
+                Vector3 lo=first.min,hi=first.max;
+                if(node.left>=0){var right=nodes[node.right].bounds;lo=Vector3.Min(lo,right.min);hi=Vector3.Max(hi,right.max);}
+                else for(int j=node.start+1;j<node.start+node.count;j++)
+                {var box=triangleBounds[order[j]];lo=Vector3.Min(lo,box.min);hi=Vector3.Max(hi,box.max);}
+                node.bounds=new Bounds((lo+hi)*.5f,hi-lo);
+            }
+        }
+        public void RefitConservative(Vector3[] points,float maximumPadding)
+        {
+            float square=0;
+            if(conservativeReference!=null&&conservativeReference.Length==points.Length)
+                for(int i=0;i<points.Length;i++)square=Mathf.Max(square,(points[i]-conservativeReference[i]).sqrMagnitude);
+            if(conservativeReference==null||conservativeReference.Length!=points.Length||square>maximumPadding*maximumPadding)
+            {
+                Refit(points);conservativeReference=(Vector3[])points.Clone();return;
+            }
+            // Every vertex lies within this distance of its last exact bounds.
+            // Inflating those bounds is conservative; leaf tests still use the
+            // current vertices. No stale triangle can disappear from a query.
+            vertices=points;queryingSweep=false;articulatedBounds=false;articulatedReferenceValid=false;conservativePadding=Mathf.Sqrt(square)+.00001f;
+        }
+        public void RefitArticulated(Vector3[] points,float maximumPadding)
+        {
+            if(articulatedReference==null||articulatedReference.Length!=points.Length)
+            {
+                articulatedReference=new Vector3[points.Length];articulatedPointMotion=new float[points.Length];
+                articulatedTriangleMotion=new float[triangleBounds.Length];articulatedNodeMotion=new float[nodes.Count];
+                Refit(points);Array.Copy(points,articulatedReference,points.Length);articulatedReferenceValid=true;return;
+            }
+            if(!articulatedReferenceValid){Refit(points);Array.Copy(points,articulatedReference,points.Length);articulatedReferenceValid=true;return;}
+            float maximum=0;
+            for(int i=0;i<points.Length;i++)
+            {float square=(points[i]-articulatedReference[i]).sqrMagnitude;articulatedPointMotion[i]=square;maximum=Mathf.Max(maximum,square);}
+            if(maximum>maximumPadding*maximumPadding)
+            {Refit(points);Array.Copy(points,articulatedReference,points.Length);articulatedReferenceValid=true;return;}
+            // Each subtree is bounded by its greatest actual vertex motion.
+            // A moving tail cannot inflate every head triangle. Reference
+            // bounds stay fixed; leaf tests still use the current posed skin.
+            for(int i=0;i<triangleBounds.Length;i++)
+            {int k=i*3;articulatedTriangleMotion[i]=Mathf.Max(articulatedPointMotion[Triangles[k]],Mathf.Max(articulatedPointMotion[Triangles[k+1]],articulatedPointMotion[Triangles[k+2]]));}
+            // Both builders insert parents before children.
+            for(int i=nodes.Count-1;i>=0;i--)
+            {
+                var node=nodes[i];float square=0;
+                if(node.left>=0)square=Mathf.Max(articulatedNodeMotion[node.left],articulatedNodeMotion[node.right]);
+                else for(int j=node.start;j<node.start+node.count;j++)square=Mathf.Max(square,articulatedTriangleMotion[order[j]]);
+                articulatedNodeMotion[i]=square;
+            }
+            vertices=points;queryingSweep=false;conservativePadding=0;articulatedBounds=true;
+            if(unchecked(++articulatedStamp)==0)
+            {
+                articulatedStamp=1;foreach(var node in nodes)node.articulatedStamp=0;
+                if(articulatedQueryStamps!=null)Array.Clear(articulatedQueryStamps,0,articulatedQueryStamps.Length);
+            }
+        }
         public void PrepareSweep(Vector3[] start,Vector3[] end)
         {
             if(sweepTriangleStart==null)
@@ -711,7 +789,7 @@ public sealed partial class Story1WreckBattle
             =>new Bounds(Vector3.LerpUnclamped(a.center,b.center,u),Vector3.LerpUnclamped(a.size,b.size,u));
         public void RefitSweep(Vector3[] points,float u)
         {
-            vertices=points;sweepFraction=u;queryingSweep=true;sweepStamp++;
+            vertices=points;sweepFraction=u;queryingSweep=true;sweepStamp++;conservativePadding=0;articulatedBounds=false;articulatedReferenceValid=false;
             // Every tested vertex follows a linear segment during this sweep.
             // Interpolating endpoint minima/maxima encloses that segment at u,
             // even if a different vertex supplies the extrema at either end.
@@ -724,13 +802,46 @@ public sealed partial class Story1WreckBattle
             var node=nodes[index];
             if(queryingSweep&&node.sweepStamp!=sweepStamp)
             {node.bounds=SweepBounds(sweepNodeStart[index],sweepNodeEnd[index],sweepFraction);node.sweepStamp=sweepStamp;}
-            return node.bounds;
+            var bounds=node.bounds;if(conservativePadding>0)bounds.Expand(conservativePadding*2);
+            if(articulatedBounds)
+            {
+                if(node.articulatedStamp!=articulatedStamp)
+                {
+                    // Tighten visited small regions once per pose. Exact current
+                    // leaves prevent padded boxes from multiplying triangle pairs.
+                    if(node.count<=32)
+                    {
+                        int k=order[node.start]*3;Vector3 lo=vertices[Triangles[k]],hi=lo;
+                        for(int j=node.start;j<node.start+node.count;j++)for(int c=0;c<3;c++)
+                        {var p=vertices[Triangles[order[j]*3+c]];lo=Vector3.Min(lo,p);hi=Vector3.Max(hi,p);}
+                        bounds=new Bounds((lo+hi)*.5f,hi-lo+Vector3.one*.002f);
+                    }
+                    else bounds.Expand(2*Mathf.Sqrt(articulatedNodeMotion[index])+.00002f);
+                    node.articulatedQueryBounds=bounds;node.articulatedStamp=articulatedStamp;
+                }
+                return node.articulatedQueryBounds;
+            }
+            return bounds;
         }
         Bounds QueryTriangleBounds(int index)
         {
             if(queryingSweep&&sweepTriangleStamp[index]!=sweepStamp)
             {triangleBounds[index]=SweepBounds(sweepTriangleStart[index],sweepTriangleEnd[index],sweepFraction);sweepTriangleStamp[index]=sweepStamp;}
-            return triangleBounds[index];
+            var bounds=triangleBounds[index];if(conservativePadding>0)bounds.Expand(conservativePadding*2);
+            if(articulatedBounds)
+            {
+                if(articulatedQueryTriangles==null)
+                {articulatedQueryTriangles=new Bounds[triangleBounds.Length];articulatedQueryStamps=new int[triangleBounds.Length];}
+                if(articulatedQueryStamps[index]!=articulatedStamp)
+                {
+                    int k=index*3;var a=vertices[Triangles[k]];var b=vertices[Triangles[k+1]];var c=vertices[Triangles[k+2]];
+                    var lo=Vector3.Min(a,Vector3.Min(b,c));var hi=Vector3.Max(a,Vector3.Max(b,c));
+                    bounds=new Bounds((lo+hi)*.5f,hi-lo+Vector3.one*.002f);
+                    articulatedQueryTriangles[index]=bounds;articulatedQueryStamps[index]=articulatedStamp;
+                }
+                return articulatedQueryTriangles[index];
+            }
+            return bounds;
         }
         Bounds RefitNode(int index)
         {
@@ -823,6 +934,65 @@ public sealed partial class Story1WreckBattle
         {
             triangle=-1;bary=Vector3.zero;nearest=point;float distance=float.PositiveInfinity;
             ClosestNode(0,point,ref distance,ref triangle,ref bary,ref nearest);return triangle>=0;
+        }
+        public float CapsuleGap(Vector3 a,Vector3 b,float radius)
+            =>CapsuleGapUpTo(a,b,radius,float.PositiveInfinity);
+        public float CapsuleGapUpTo(Vector3 a,Vector3 b,float radius,float limit)
+            =>CapsuleGapQuery(a,b,radius,limit,true);
+        public float CapsuleSurfaceGapUpTo(Vector3 a,Vector3 b,float radius,float limit)
+            =>CapsuleGapQuery(a,b,radius,limit,false);
+        float CapsuleGapQuery(Vector3 a,Vector3 b,float radius,float limit,bool signedContainment)
+        {
+            float ceiling=float.IsPositiveInfinity(limit)?float.PositiveInfinity:(radius+limit)*(radius+limit);
+            float square=ceiling;
+            var axisBounds=new Bounds((a+b)*.5f,new Vector3(Mathf.Abs(a.x-b.x),Mathf.Abs(a.y-b.y),Mathf.Abs(a.z-b.z)));
+            bool point=a.Equals(b);
+            if(point)PointNearest(0,a,ref square);else CapsuleNearest(0,a,b,axisBounds,ref square);
+            float gap=Mathf.Sqrt(square)-radius;
+            var middle=(a+b)*.5f;
+            if(signedContainment&&gap>0&&Bounds.Contains(middle)&&(RayCount(0,new Ray(middle,new Vector3(.9817f,.1721f,.0837f).normalized))&1)!=0)
+            {
+                // A fully contained capsule needs the exact interior depth,
+                // even when no surface is within the exterior search limit.
+                if(square>=ceiling&&!float.IsPositiveInfinity(ceiling)){square=float.PositiveInfinity;if(point)PointNearest(0,a,ref square);else CapsuleNearest(0,a,b,axisBounds,ref square);gap=Mathf.Sqrt(square)-radius;}
+                return -gap-2*radius;
+            }
+            return square>=ceiling?limit:Mathf.Min(limit,gap);
+        }
+        void PointNearest(int index,Vector3 point,ref float square)
+        {
+            if(QueryNodeBounds(index).SqrDistance(point)>=square)return;
+            var node=nodes[index];
+            if(node.left>=0)
+            {
+                int a=node.left,b=node.right;
+                if(QueryNodeBounds(b).SqrDistance(point)<QueryNodeBounds(a).SqrDistance(point)){a=node.right;b=node.left;}
+                PointNearest(a,point,ref square);PointNearest(b,point,ref square);return;
+            }
+            for(int i=node.start;i<node.start+node.count;i++)
+            {
+                int k=order[i]*3;
+                var near=RedNearTrianglePoint(point,vertices[Triangles[k]],vertices[Triangles[k+1]],vertices[Triangles[k+2]]);
+                square=Mathf.Min(square,(near-point).sqrMagnitude);
+            }
+        }
+        void CapsuleNearest(int index,Vector3 a,Vector3 b,Bounds axisBounds,ref float square)
+        {
+            var bounds=QueryNodeBounds(index);
+            Vector3 lower=Vector3.Max(Vector3.zero,Vector3.Max(axisBounds.min-bounds.max,bounds.min-axisBounds.max));
+            if(lower.sqrMagnitude>=square)return;
+            var node=nodes[index];
+            if(node.left>=0)
+            {
+                float Lower(int child){var box=QueryNodeBounds(child);return Vector3.Max(Vector3.zero,Vector3.Max(axisBounds.min-box.max,box.min-axisBounds.max)).sqrMagnitude;}
+                int first=node.left,second=node.right;if(Lower(second)<Lower(first)){first=node.right;second=node.left;}
+                CapsuleNearest(first,a,b,axisBounds,ref square);CapsuleNearest(second,a,b,axisBounds,ref square);return;
+            }
+            for(int i=node.start;i<node.start+node.count;i++)
+            {
+                int k=order[i]*3;
+                square=Mathf.Min(square,RedNearSegmentTriangle(a,b,vertices[Triangles[k]],vertices[Triangles[k+1]],vertices[Triangles[k+2]],out _,out _));
+            }
         }
         void ClosestNode(int index,Vector3 p,ref float best,ref int triangle,ref Vector3 bary,ref Vector3 nearest)
         {

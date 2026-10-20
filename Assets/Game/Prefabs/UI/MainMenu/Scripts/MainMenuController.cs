@@ -54,6 +54,7 @@ public sealed class MainMenuController : MonoBehaviour
             Debug.LogError("[Main Menu] Story1 is missing from Build Settings.", this);
             return;
         }
+        GameWorldProgress.Reset();
         HealingPackSupply.StartNewGame();
         GameSaveManager.CancelPendingContinue();
         StartGame(StoryScenePath);

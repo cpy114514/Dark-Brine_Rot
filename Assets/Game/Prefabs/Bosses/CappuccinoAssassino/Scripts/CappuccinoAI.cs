@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Mavis
 {
@@ -246,6 +246,7 @@ namespace Mavis
 
         void BeginWindup(AttackKind kind, float now)
         {
+            GameplayAudio.Play(GameplayAudio.Cue.Warning, transform.position);
             CurrentAttack = kind; CurrentState = State.Windup;
             stateStartedAt = now; windupDuration = telegraphSeconds + (kind == AttackKind.TwinSlash ? 0f : .25f);
             if (FightPhase == 2) windupDuration *= .9f;
@@ -367,7 +368,7 @@ namespace Mavis
                 Vector3 direction = Vector3.ProjectOnPlane(collider.bounds.center - origin, Vector3.up);
                 if (Vector3.Angle(transform.forward, direction) > arc * 0.5f || IsBlocked(origin, point)) continue;
                 float multiplier = CurrentAttack == AttackKind.TwinSlash ? .75f : CurrentAttack == AttackKind.DashThrust ? 1.15f : 1.25f;
-                targetHealth.ApplyDamage(damage * multiplier, point);
+                if(!targetHealth.ApplyMeleeDamage(damage*multiplier,point,transform.position))return true;
                 // Collider count does not multiply damage. Both swords belong to this one attack.
                 target.GetComponent<CombatKnockback>()?.Push(direction.normalized * (CurrentAttack == AttackKind.TwinSlash ? .65f : 1.4f));
                 if (Camera.main != null) Camera.main.GetComponent<CombatCameraShake>()?.Pulse(0.025f, 0.12f);

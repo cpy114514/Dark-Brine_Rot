@@ -39,7 +39,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
     Image blackout;
     Text hint;
     float recoveredAt = -1f, previousAnimatorSpeed;
-    bool continuing, previousMovementEnabled, previousCapsuleEnabled;
+    bool continuing, previousMovementEnabled, previousCapsuleEnabled, ownsCinematic;
     Behaviour[] auxiliary;
     bool[] auxiliaryEnabled;
 
@@ -52,6 +52,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         capsule = player.GetComponent<CharacterController>();
         continuing = GameSaveManager.IsContinuePending;
         if (continuing) { HasLanded = IsAwake = true; return; }
+        ownsCinematic = true;
         CinematicLetterbox.Set(this, true);
         var motion=player.GetComponent<SahurMotionContext>() ?? player.gameObject.AddComponent<SahurMotionContext>();
         motion.Claim(this,SahurControlState.Unconscious);
@@ -188,7 +189,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         }
         player.RestoreSavedPose(standing, standingRotation);
         IsGettingUp = false; HasLanded = IsAwake = true; ReleaseCinematic();
-        hint.text = "棍子被冲走了。沿着沙滩找到棍子。";
+        hint.text = "Your stick washed away. Find it along the beach.";
         blackout.color = Color.clear;
     }
 
@@ -219,6 +220,8 @@ public sealed class FirstIslandArrival : MonoBehaviour
 
     void ReleaseCinematic()
     {
+        if (!ownsCinematic) return;
+        ownsCinematic = false;
         CinematicLetterbox.Set(this, false);
         if (animator != null) animator.speed = previousAnimatorSpeed;
         if (capsule != null) capsule.enabled = previousCapsuleEnabled;
@@ -232,8 +235,8 @@ public sealed class FirstIslandArrival : MonoBehaviour
     void Update()
     {
         if (!IsAwake || hint == null) return;
-        hint.text = HasStick ? (recoveredAt >= 0 && Time.time - recoveredAt < 3 ? "找回了棍子。" : "") :
-            CanPickUp ? "按 F 拾起棍子" : "棍子被冲走了。沿着沙滩找到棍子。";
+        hint.text = HasStick ? (recoveredAt >= 0 && Time.time - recoveredAt < 3 ? "You recovered your stick." : "") :
+            CanPickUp ? "F  Pick up the stick" : "Your stick washed away. Find it along the beach.";
         if (CanPickUp && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame && Cursor.lockState == CursorLockMode.Locked) TryPickUp();
     }
 
@@ -300,6 +303,16 @@ public sealed class FirstIslandArrival : MonoBehaviour
         LocalizedGameText.Bind(hint);
     }
 
-    void OnDisable() { CinematicLetterbox.Set(this, false); }
+    void OnDisable()
+    {
+        CinematicLetterbox.Set(this, false);
+        if (!ownsCinematic) return;
+        StopAllCoroutines();
+        IsGettingUp = false; HasLanded = IsAwake = true;
+        if (blackout != null) blackout.color = Color.clear;
+        // An interrupted arrival must not leave an unavailable weapon or disabled controller.
+        SetStick(true);
+        ReleaseCinematic();
+    }
     void OnDestroy() { if (looseStick != null) Destroy(looseStick); if (ui != null) Destroy(ui); }
 }

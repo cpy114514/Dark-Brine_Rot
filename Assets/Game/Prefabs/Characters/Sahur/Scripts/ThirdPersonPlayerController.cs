@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>Third-person controller for a model placed on the procedural ocean.</summary>
@@ -111,6 +111,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     float coyoteTimer;
     float jumpBufferTimer;
     float rollTimer;
+    float dodgeBufferUntil = -1;
+    public bool IsDodging => rollTimer > 0f;
+    // A bounded middle portion of the dodge is protected; startup and recovery remain vulnerable.
+    public bool DodgeInvulnerable => enabled && gameObject.activeInHierarchy && !ExternalControlLock &&
+        rollTimer > 0f && rollDuration > 0f &&
+        1f - rollTimer / rollDuration >= .10f && 1f - rollTimer / rollDuration <= .55f;
     float rollCooldownTimer;
     float rollInheritedSpeed;
     float airFlipTimer;
@@ -216,6 +222,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         planarVelocity = Vector3.zero;
         platformCarryVelocity = Vector3.zero;
         rollTimer = 0f;
+        dodgeBufferUntil = -1;
         rollCooldownTimer = 0f;
         airFlipTimer = 0f;
         cameraInitialized = false;
@@ -231,6 +238,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void Awake()
     {
+        if (Application.isPlaying && gameObject.scene.path == "Assets/Scenes/First Island/Gameplay.unity" &&
+            GetComponent<Mavis.FirstIslandObjectives>() == null) gameObject.AddComponent<Mavis.FirstIslandObjectives>();
         // Shared enemy attacks and targeting identify the player root.
         if(CompareTag("Untagged"))gameObject.tag="Player";
         if(GetComponent<Mavis.WeaknessGlasses>()==null)gameObject.AddComponent<Mavis.WeaknessGlasses>();
@@ -394,6 +403,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         UpdateComboFacing(moveDirection, look.x, Time.deltaTime);
         Vector3 desiredVelocity = moveDirection * groundMoveSpeed * (wantsSprint ? sprintMultiplier : 1f);
         Motion.Locomotion(IsSwimming(),IsGroundedOrOnSea());
+        if (!acceptInput) dodgeBufferUntil = -1;
+        else if (GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge)) dodgeBufferUntil = Time.time + .12f;
+        bool dodgeReady = verticalSpeed <= 0 && IsGroundedOrOnSea() && rollCooldownTimer <= 0 &&
+                          (playerStamina == null || playerStamina.CanSpend(playerStamina.rollCost));
+        bool combatDodge = acceptInput && dodgeReady && combat != null && combat.TryConsumeDodgeCancel(Time.time <= dodgeBufferUntil);
+        if (combatDodge) dodgeBufferUntil = -1;
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
         bool armCombatMovementAllowed = combat != null && combat.CanMoveDuringCombat;
         bool movementLocked = combatLocked && !armCombatMovementAllowed;
@@ -448,8 +463,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         bool grounded = verticalSpeed <= 0f && IsGroundedOrOnSea();
         if(grounded && coyoteTimer<=0)platformCarryVelocity=Vector3.zero;
         bool isRolling = rollTimer > 0f;
-        bool dodgePressed = acceptInput && !combatLocked &&
-                            GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge);
+        bool dodgePressed = acceptInput && !combatLocked && (combatDodge || Time.time <= dodgeBufferUntil);
         bool jumpPressed = acceptInput && !combatLocked &&
                            GameInputSettings.PressedThisFrame(GameInputSettings.Action.Jump);
         if (grounded) airFlipUsed = false;
@@ -467,6 +481,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // never turn leftover braking momentum into a stationary boost.
             rollInheritedSpeed = GetRollInheritedSpeed(planarVelocity, desiredVelocity);
             rollTimer = rollDuration;
+            dodgeBufferUntil = -1;
+            Mavis.GameplayAudio.Play(Mavis.GameplayAudio.Cue.Dodge, transform.position);
             recoveringAttackFacing = false;
             rollCooldownTimer = rollDuration + rollCooldown;
             planarVelocity = rollDirection * (rollSpeed + rollInheritedSpeed);

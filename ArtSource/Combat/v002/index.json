@@ -1,0 +1,42 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v002\\sahur-dual-blade-polish-v002.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeFinisher_v002",
+    "unity_clip": "PLAYER_BladeFinisher_v002",
+    "revision": "combat-v002",
+    "frame_start": 1,
+    "frame_end": 91,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "FIRST PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/DualBladePolish-20261019.md",
+    "approval_reference": "2026-10-19 human: 1.2x blades, combo3 horizontal outstretched arms and one turn, longer rush, down/back blade follow-through, victim recoil",
+    "review_status": "accepted_for_stage",
+    "review_reference": "ArtSource/Combat/v002/source-review.md"
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v002\\sahur-dual-blade-polish-v002.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeRush_v002",
+    "unity_clip": "PLAYER_BladeRush_v002",
+    "revision": "combat-v002",
+    "frame_start": 1,
+    "frame_end": 46,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "FIRST PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/DualBladePolish-20261019.md",
+    "approval_reference": "2026-10-19 human: 1.2x blades, combo3 horizontal outstretched arms and one turn, longer rush, down/back blade follow-through, victim recoil",
+    "review_status": "accepted_for_stage",
+    "review_reference": "ArtSource/Combat/v002/source-review.md"
+  }
+]

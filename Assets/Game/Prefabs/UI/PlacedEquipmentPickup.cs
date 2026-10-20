@@ -10,6 +10,7 @@ namespace Mavis
         public EquipmentItem item;
         public float pickupRadius = 2.5f;
         public bool IsCollected { get; private set; }
+        public Vector3 GuidancePosition => anchor + Vector3.up * 1.5f;
         EquipmentInventory player;
         Camera viewer;
         RectTransform caption;
@@ -51,7 +52,7 @@ namespace Mavis
             GameLocalization.Changed+=RefreshLabel;RefreshLabel();
         }
 
-        void RefreshLabel(){if(label)label.text="▼ "+item.LocalizedName+"\n"+GameLocalization.Text("掉落物 · 靠近拾取");}
+        void RefreshLabel(){if(label)label.text="▼ "+item.LocalizedName+"\n"+GameLocalization.Text("Loot · Walk up to collect");}
         void Update()
         {
             if(IsCollected || !item)return;
@@ -76,7 +77,7 @@ namespace Mavis
             Vector3 from=feet+Vector3.up*.8f,to=anchor+Vector3.up*.2f,ray=to-from;
             int count=Physics.RaycastNonAlloc(from,ray.normalized,hits,ray.magnitude,~0,QueryTriggerInteraction.Ignore);
             for(int i=0;i<count;i++)if(!hits[i].transform.IsChildOf(inventory.transform) && !hits[i].transform.IsChildOf(transform))return false;
-            IsCollected=true;inventory.Collect(item);gameObject.SetActive(false);Destroy(gameObject);return true;
+            IsCollected=true;GameWorldProgress.Record(this, 0);inventory.Collect(item);gameObject.SetActive(false);Destroy(gameObject);return true;
         }
         void OnDestroy(){GameLocalization.Changed-=RefreshLabel;if(markerMaterial)Destroy(markerMaterial);}
     }

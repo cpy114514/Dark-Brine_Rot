@@ -29,7 +29,7 @@ public static class Story1EncounterClipCache
         var definition=definitionRequest.asset as Story1EncounterDefinition;
         var beats=definition!=null ? definition.beats : Story1EncounterDefinition.ApprovedBeats();
         var names=beats.Where(b=>b.action!=Story1EncounterAction.Surf).Select(b=>b.clip).Concat(new[]{
-            "CH1_SahurOverhead_v215","CH1_SahurProneDodge_v215","CH1_SahurGetUp_v215","CH1_SahurStow_v214","CH1_SahurRetrieve_v214","CH1_SahurAirHit_v214",
+            "CH1_SahurStickIdle_v221","CH1_SahurOverhead_v215","CH1_SahurProneDodge_v215","CH1_SahurGetUp_v215","CH1_SahurStow_v214","CH1_SahurRetrieve_v214","CH1_SahurAirHit_v214",
             "CH1_SharkLeapCrush_v214","CH1_SharkHeadShake_v214","CH1_SharkFeintTail_v214",
             "PLAYER_SwimFast_v007","PLAYER_PursuitSwim_v210","CH1_SharkPursuit_v210","PLAYER_Throw_v064","PLAYER_Stagger_v006","PLAYER_Fall_v006",
             "PLAYER_Climb_v010","PLAYER_Climb_v009","PLAYER_Climb_v006","PLAYER_Walk_v006",

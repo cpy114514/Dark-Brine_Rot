@@ -1,0 +1,159 @@
+{
+  "rest_preserved": true,
+  "bones": 28,
+  "actions": [
+    {
+      "action": "PLAYER_ClubSpin_v001",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "loop_seam": {
+            "position_m": 9.541398640621973e-08,
+            "rotation_deg": 0,
+            "scale_delta": 2.08250058582033e-09
+          },
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      },
+      "max_grip_error_cm": 3.0413091123775434e-05
+    },
+    {
+      "action": "PLAYER_BladeSpin_v001",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "loop_seam": {
+            "position_m": 1.2665987014770508e-07,
+            "rotation_deg": 0,
+            "scale_delta": 2.08250058582033e-09
+          },
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      },
+      "max_grip_error_cm": 0
+    },
+    {
+      "action": "PLAYER_BladeCharge_v001",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      },
+      "max_grip_error_cm": 0
+    },
+    {
+      "action": "PLAYER_BladeRush_v001",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      },
+      "max_grip_error_cm": 0
+    },
+    {
+      "action": "PLAYER_BladeGuard_v001",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "loop_seam": {
+            "position_m": 0,
+            "rotation_deg": 0,
+            "scale_delta": 0
+          },
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      },
+      "max_grip_error_cm": 0
+    },
+    {
+      "action": "PLAYER_JumpChop_v001",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      },
+      "max_grip_error_cm": 2.8003782005359694e-05
+    }
+  ]
+}

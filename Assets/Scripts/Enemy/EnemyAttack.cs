@@ -67,7 +67,8 @@ namespace Mavis
                 (player==null || !player.CompareTag(playerTag))) return;
 
             var dmg = other.GetComponentInParent<IDamageable>();
-            if (dmg != null && victims.Add(dmg)) dmg.ApplyDamage(damage, transform.position);
+            if(dmg != null && victims.Add(dmg))
+            {if(player)player.ApplyMeleeDamage(damage,transform.position,transform.position);else dmg.ApplyDamage(damage,transform.position);}
         }
     }
 }

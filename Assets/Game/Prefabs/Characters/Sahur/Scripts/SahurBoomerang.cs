@@ -11,7 +11,7 @@ namespace Mavis
         [Min(1f)] public float outwardSpeed = 16f;
         [Min(1f)] public float returnSpeed = 23f;
         [Min(0f)] public float damage = 18f;
-        [Min(0f)] public float staminaCost = 6f;
+        [Min(0f)] public float staminaCost = 12f;
         [Min(0f)] public float cooldown = .65f;
         [Min(.05f)] public float hitRadius = .4f;
         public string throwState = "Boomerang Throw";
@@ -87,6 +87,7 @@ namespace Mavis
             if (swimmingWeapon != null && swimmingWeapon.IsStowed) return false;
             if (attack.animator == null || !attack.animator.HasState(0, throwHash)) return false;
             if (stamina != null && !stamina.TrySpend(staminaCost)) return false;
+            stamina?.NotifyCombat();
 
             movement.BeginAttackFacing();
             IsThrowing = true;

@@ -2,51 +2,52 @@ using UnityEngine;
 
 namespace Mavis
 {
-    // Capri's cyclone and forward rush are layered over his retargeted slash.
+    // The authored finisher owns its turn; only the controller owns rush travel.
     [DisallowMultipleComponent, DefaultExecutionOrder(-5)]
     public sealed class SahurTwinBladeMotion : MonoBehaviour
     {
+        [Min(0)] public float rushDistance=16f;
+        public Vector2 RushWindow => SahurAttack.TwinBladeRushWindow;
         SahurAttack attack;
         SahurWeaponLoadout weapons;
         ThirdPersonPlayerController movement;
         CharacterController body;
-        Quaternion spinStart, lastSpin;
-        bool spinning, rushing;
+        PlayerHealth health;
+        bool rushing;
+        bool movingRush;
+        bool RushAllowed => isActiveAndEnabled && weapons && weapons.UsesTwinBlades && attack && attack.isActiveAndEnabled &&
+            attack.IsHeavyAttackActive && (!health || health.currentHealth > 0) && !attack.CinematicHandoffPending && movement && movement.isActiveAndEnabled &&
+            !movement.Swimming && !movement.ExternalMovementLock && !movement.ExternalControlLock && body && body.enabled;
+        // Read the live attack clock, not a timed buff: cancel, unequip and disable end immunity immediately.
+        // The final low-rate movement segment remains protected until CharacterController.Move returns.
+        public bool IsDamageImmune => RushAllowed && (movingRush || attack.HeavyAttackPhase >= RushWindow.x &&
+            (attack.HeavyAttackPhase < RushWindow.y || rushing && lastRushProgress < 1f));
         float lastRushProgress;
+        Vector3 rushDirection;
         void Awake()
         {
             attack = GetComponent<SahurAttack>(); weapons = GetComponent<SahurWeaponLoadout>();
-            movement = GetComponent<ThirdPersonPlayerController>(); body = GetComponent<CharacterController>();
+            movement = GetComponent<ThirdPersonPlayerController>(); body = GetComponent<CharacterController>(); health = GetComponent<PlayerHealth>();
         }
         void LateUpdate()
         {
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || Time.deltaTime <= 0) return;
-            bool active = weapons && weapons.UsesTwinBlades && attack && attack.enabled && movement && movement.enabled && !movement.Swimming;
-            if (active && attack.CurrentComboStage == 2)
+            if (RushAllowed)
             {
-                if (!spinning) { spinStart = transform.rotation; spinning = true; }
-                float turn = Mathf.SmoothStep(0,1,Mathf.InverseLerp(.18f,.82f,attack.CurrentAttackPhase));
-                lastSpin = Quaternion.AngleAxis(turn * 360f,Vector3.up) * spinStart;
-                transform.rotation = lastSpin;
-            }
-            else RestoreSpin();
-            if (active && attack.IsHeavyAttackActive && body && body.enabled && !movement.ExternalMovementLock && !movement.ExternalControlLock)
-            {
-                if (!rushing) { rushing = true; lastRushProgress = 0; }
-                float progress = Mathf.SmoothStep(0,1,Mathf.InverseLerp(.22f,.58f,attack.CurrentAttackPhase));
-                float distance = Mathf.Max(0,progress-lastRushProgress) * 3f;
-                lastRushProgress = progress;
+                if (!rushing) { rushing = true; lastRushProgress = 0; rushDirection=transform.forward; }
+                float progress = Mathf.SmoothStep(0,1,Mathf.InverseLerp(RushWindow.x,RushWindow.y,attack.HeavyAttackPhase));
+                float distance = Mathf.Max(0,progress-lastRushProgress) * rushDistance;
                 // The physical controller limits the rush against walls and enemy bodies.
-                if (distance > 0 && movement.CanUseGroundAttack) body.Move(transform.forward * distance);
+                if (distance > 0 && movement.CanUseGroundAttack)
+                {
+                    movingRush = true;
+                    try { body.Move(rushDirection * distance); }
+                    finally { movingRush = false; }
+                }
+                lastRushProgress = progress;
             }
             else { rushing = false; lastRushProgress = 0; }
         }
-        void RestoreSpin()
-        {
-            if (!spinning) return;
-            if (Quaternion.Angle(transform.rotation,lastSpin)<.1f) transform.rotation=spinStart;
-            spinning=false;
-        }
-        void OnDisable() { RestoreSpin(); rushing=false; }
+        void OnDisable() { rushing=false; movingRush=false; lastRushProgress=0; }
     }
 }

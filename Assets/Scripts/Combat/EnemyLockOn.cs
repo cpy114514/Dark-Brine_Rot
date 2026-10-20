@@ -140,7 +140,7 @@ namespace Mavis
             var text = label.GetComponent<Text>();
             font = Font.CreateDynamicFontFromOSFont("Microsoft YaHei", 16);
             text.font = font; text.fontSize = 16; text.alignment = TextAnchor.MiddleCenter;
-            text.text = "锁定 · 中键解除"; text.color = GameUITheme.Foreground; text.raycastTarget = false;
+            text.text = "Locked on · Middle click to release"; text.color = GameUITheme.Foreground; text.raycastTarget = false;
             GameUITheme.OutlineSymbol(text);
             LocalizedGameText.Bind(text);
             text.rectTransform.sizeDelta = new Vector2(200, 30); text.rectTransform.anchoredPosition = new Vector2(0, -40);

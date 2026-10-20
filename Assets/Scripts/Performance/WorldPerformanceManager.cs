@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using Unity.Profiling;
 
 namespace Mavis
 {
@@ -31,6 +32,10 @@ namespace Mavis
             public bool staticTransform;
             public Mesh groupMesh;
             public GrassGroup group;
+            public Mesh alternateMesh;
+            public GrassGroup alternateGroup;
+            public object groupOwner;
+            public bool compactWind;
         }
         sealed class GrassBatch
         {
@@ -43,6 +48,8 @@ namespace Mavis
             public readonly MaterialPropertyBlock properties = new MaterialPropertyBlock();
             public readonly Foliage[] occupants = new Foliage[Capacity];
             public bool propertiesDirty;
+            public Bounds bounds;
+            public float maximumResponse;
         }
         sealed class GrassGroup
         {
@@ -55,16 +62,31 @@ namespace Mavis
             public Bounds bounds;
             public float cutoff;
             public bool culled;
+            public bool grass;
         }
         readonly List<Foliage> foliage = new List<Foliage>();
         readonly List<FoliageCell> foliageCells = new List<FoliageCell>();
-        readonly Dictionary<(Mesh, Material, Vector2Int), GrassGroup> grassBatches = new Dictionary<(Mesh, Material, Vector2Int), GrassGroup>();
+        Dictionary<(Mesh, Material, Vector2Int), GrassGroup> grassBatches = new Dictionary<(Mesh, Material, Vector2Int), GrassGroup>();
+        Dictionary<(Mesh, Material, Vector2Int), GrassGroup> renderedGrassGroups = new Dictionary<(Mesh, Material, Vector2Int), GrassGroup>();
         readonly Dictionary<Material, Material> instancedMaterials = new Dictionary<Material, Material>();
         readonly Dictionary<Mesh, FoliageMeshLibrary.Entry> details = new Dictionary<Mesh, FoliageMeshLibrary.Entry>();
-        readonly List<GrassBatch> activeGrassBatches = new List<GrassBatch>();
+        readonly Dictionary<Mesh, Mesh> renderMeshes = new Dictionary<Mesh, Mesh>();
+        List<GrassBatch> activeGrassBatches = new List<GrassBatch>();
+        List<GrassBatch> pendingGrassBatches = new List<GrassBatch>();
+        GrassBatch visibleGrass;
+        readonly Plane[] grassPlanes = new Plane[6];
+        readonly List<Vector4> bodyMotion = new List<Vector4>(12);
+        readonly Dictionary<Material, Vector2> grassPadding = new Dictionary<Material, Vector2>();
+        static readonly ProfilerMarker GrassVisibility = new ProfilerMarker("World.GrassVisibility");
+        static readonly ProfilerMarker GrassSubmit = new ProfilerMarker("World.GrassSubmit");
         Camera mainCamera;
         float nextUpdate;
         Coroutine cacheRoutine;
+        Coroutine foliageRoutine;
+        bool foliageRefreshing;
+        Camera[] grassCameras = new Camera[4];
+        int submittedGrassBatches;
+        public bool IsReady => cacheRoutine == null && !foliageRefreshing && foliage.Count > 0;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Install()
@@ -77,6 +99,8 @@ namespace Mavis
         }
         void Awake()
         {
+            visibleGrass = new GrassBatch();
+            gameObject.AddComponent<GrassRenderSubmission>().owner = this;
 #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
             int rate = Mathf.Clamp(PlayerPrefs.GetInt("Mavis.TargetFrameRate", 60), 30, 240);
             int sync = Mathf.Clamp(PlayerPrefs.GetInt("Mavis.VSync", 0), 0, 2);
@@ -87,7 +111,11 @@ namespace Mavis
             var library = Resources.Load<FoliageMeshLibrary>("FoliagePerformance/Library");
             if (library != null)
                 foreach (var entry in library.entries)
-                    if (entry.source != null) details[entry.source] = entry;
+                    if (entry.source != null)
+                    {
+                        details[entry.source] = entry;
+                        if (entry.renderSource != null) renderMeshes[entry.source] = entry.renderSource;
+                    }
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         void OnEnable() { if (Application.isPlaying) cacheRoutine = StartCoroutine(CacheAfterSceneLoad()); }
@@ -113,7 +141,7 @@ namespace Mavis
         }
         void LateUpdate()
         {
-            if(AdditiveSceneBootstrap.IsLoading || IslandMapUI.IsOpen)return;
+            if(AdditiveSceneBootstrap.IsLoading || IslandMapUI.IsOpen || cacheRoutine != null)return;
             if (mainCamera == null || !mainCamera.isActiveAndEnabled) mainCamera = Camera.main;
             if (mainCamera == null) return;
             if (Time.unscaledTime >= nextUpdate)
@@ -121,21 +149,122 @@ namespace Mavis
                 nextUpdate = Time.unscaledTime + .2f;
                 RefreshFoliage(mainCamera.transform.position);
             }
+        }
+        void RenderGrass(ScriptableRenderContext context, Camera camera)
+        {
+            if (!isActiveAndEnabled || AdditiveSceneBootstrap.IsLoading || IslandMapUI.IsOpen ||
+                activeGrassBatches.Count == 0 || camera == null || (camera.cullingMask & 1) == 0) return;
+            // The final camera pose is available here (after camera-follow LateUpdate).
+            // Submit only to this camera, so multiple cameras do not duplicate draws.
+            GeometryUtility.CalculateFrustumPlanes(camera.cullingMatrix, grassPlanes);
+            float wind = Mathf.Abs(Shader.GetGlobalVector("_MavisWindParams").x);
+            int count = Shader.GetGlobalInt("_MavisFoliageBodyCount");
+            float sumStrength = 0f;
+            if (count > 0)
+            {
+                Shader.GetGlobalVectorArray("_MavisFoliageMotion", bodyMotion);
+                for (int i = 0; i < Mathf.Min(count, bodyMotion.Count); i++) sumStrength += Mathf.Abs(bodyMotion[i].z);
+            }
+            // The shader caps horizontal push at one, while vertical push is
+            // bounded by .35 times the sum of active body/footprint strengths.
+            float push = count > 0 ? .65f * Mathf.Sqrt(1f + .1225f * sumStrength * sumStrength) : 0f;
+            grassPadding.Clear();
+            using (GrassVisibility.Auto())
             foreach (var batch in activeGrassBatches)
-                if (batch.count > 0)
-                    Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.matrices, batch.count, batch.properties,
-                        ShadowCastingMode.Off, true, 0, null, LightProbeUsage.Off);
+            {
+                if (batch.count == 0) continue;
+                if (!grassPadding.TryGetValue(batch.material, out var scale))
+                {
+                    bool deformed = batch.material.shader.name == "Mavis/FoliageWind";
+                    scale = deformed ? new Vector2(
+                        Mathf.Abs(batch.material.GetFloat("_WindBend") * batch.material.GetFloat("_LocalWindScale")) * wind * 1.6f,
+                        Mathf.Abs(batch.material.GetFloat("_PlayerPushStrength")) * push + .05f) : Vector2.zero;
+                    grassPadding.Add(batch.material, scale);
+                }
+                float padding = scale.x * batch.maximumResponse + scale.y;
+                int classification = GrassFrustum(batch.bounds, padding);
+                if (classification < 0) continue;
+                if (classification > 0) { SubmitGrass(batch, camera); continue; }
+                var visible = visibleGrass;
+                visible.mesh = batch.mesh; visible.material = batch.material; visible.count = 0;
+                for (int i = 0; i < batch.count; i++)
+                {
+                    if (GrassFrustum(batch.occupants[i].bounds, padding) < 0) continue;
+                    int index = visible.count++;
+                    visible.matrices[index] = batch.matrices[i]; visible.anchors[index] = batch.anchors[i];
+                    visible.heights[index] = batch.heights[i]; visible.responses[index] = batch.responses[i];
+                    visible.stiffness[index] = batch.stiffness[i];
+                }
+                if (visible.count == 0) continue;
+                SetGrassProperties(visible);
+                SubmitGrass(visible, camera);
+            }
+        }
+        internal void SubmitVisibleGrass()
+        {
+            submittedGrassBatches = 0;
+            int count = Camera.allCamerasCount;
+            if (grassCameras.Length < count) grassCameras = new Camera[Mathf.NextPowerOfTwo(count)];
+            count = Camera.GetAllCameras(grassCameras);
+            for (int i = 0; i < count; i++) RenderGrass(default, grassCameras[i]);
+        }
+        // -1 outside, 0 intersecting, 1 wholly inside. Include the maximum
+        // shader displacement so gusts and body interaction cannot pop at edges.
+        int GrassFrustum(Bounds bounds, float padding)
+        {
+            if (float.IsNaN(padding) || float.IsInfinity(padding)) return 1;
+            var center = bounds.center; var extent = bounds.extents + Vector3.one * padding;
+            bool inside = true;
+            for (int i = 0; i < grassPlanes.Length; i++)
+            {
+                var plane = grassPlanes[i]; var normal = plane.normal;
+                float distance = Vector3.Dot(normal, center) + plane.distance;
+                float radius = Mathf.Abs(normal.x) * extent.x + Mathf.Abs(normal.y) * extent.y + Mathf.Abs(normal.z) * extent.z;
+                if (distance + radius < 0f) return -1;
+                if (distance - radius < 0f) inside = false;
+            }
+            return inside ? 1 : 0;
+        }
+        void SubmitGrass(GrassBatch batch, Camera camera)
+        {
+            submittedGrassBatches++;
+            using (GrassSubmit.Auto())
+                Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.matrices, batch.count, batch.properties,
+                    ShadowCastingMode.Off, true, 0, camera, LightProbeUsage.Off);
+        }
+        static void SetGrassProperties(GrassBatch batch)
+        {
+            batch.properties.SetFloatArray("_MavisWindAnchorY", batch.anchors);
+            batch.properties.SetFloatArray("_MavisWindInvHeight", batch.heights);
+            batch.properties.SetFloatArray("_MavisWindResponse", batch.responses);
+            batch.properties.SetFloatArray("_WindTrunkStiffness", batch.stiffness);
         }
         void RefreshFoliage(Vector3 cameraPosition)
         {
-            foreach (var batch in activeGrassBatches) batch.count = 0;
+            if (foliageRefreshing) return;
+            foliageRefreshing = true;
+            foliageRoutine = StartCoroutine(RefreshFoliageWork(cameraPosition));
+        }
+        IEnumerator RefreshFoliageWork(Vector3 cameraPosition)
+        {
+            try
+            {
+            // Preserve the authored grass coverage, including the distant hillside.
+            // Distance-only grass cuts visibly thin that silhouette. Batch the
+            // original geometry instead; the camera's normal clip/frustum still
+            // rejects work outside the view, without a separate short grass range.
+            float grassDistance = float.PositiveInfinity;
+            foreach (var batch in pendingGrassBatches) batch.count = 0;
             foreach (var group in grassBatches.Values) group.cursor = 0;
-            activeGrassBatches.Clear();
+            pendingGrassBatches.Clear();
+            double deadline = Time.realtimeSinceStartupAsDouble + RefreshBudget();
+            int visited = 0;
             foreach (var cell in foliageCells)
             {
                 // Distant grass cells stay hidden until their nearest edge returns.
                 // Avoid visiting thousands of already culled renderers every refresh.
-                if (SquaredDistance(cameraPosition, cell.bounds) > cell.cutoff * cell.cutoff)
+                float cellCutoff = cell.grass ? grassDistance : cell.cutoff;
+                if (SquaredDistance(cameraPosition, cell.bounds) > cellCutoff * cellCutoff)
                 {
                     if (!cell.culled)
                         foreach (var item in cell.items)
@@ -147,9 +276,11 @@ namespace Mavis
                 cell.culled = false;
                 foreach (var item in cell.items)
                 {
+                if (++visited % 32 == 0 && Time.realtimeSinceStartupAsDouble >= deadline)
+                { yield return null; deadline = Time.realtimeSinceStartupAsDouble + RefreshBudget(); }
                 // Distance to bounds keeps large patches visible until their nearest edge is far away.
                 float squared = SquaredDistance(cameraPosition, item.bounds);
-                float cutoff = item.grass ? 110f : item.legacy ? 260f : 550f;
+                float cutoff = item.grass ? grassDistance : item.legacy ? 260f : 550f;
                 bool hidden = item.forced || item.duplicate || squared > cutoff * cutoff;
                 bool forced = hidden || item.batchable;
                 if (item.renderOff != forced && item.renderer != null)
@@ -157,7 +288,13 @@ namespace Mavis
                 if (hidden) continue;
                 if (item.renderer == null) continue;
                 if (item.filter == null) continue;
-                if (item.detail != null)
+                if (item.grass)
+                {
+                    Mesh desired = item.compactWind && renderMeshes.TryGetValue(item.original, out var compact) ? compact : item.original;
+                    if (item.currentMesh != desired)
+                    { item.filter.sharedMesh = desired; item.currentMesh = desired; }
+                }
+                else if (item.detail != null)
                 {
                     float transition = item.grass ? 28f : 65f;
                     Mesh mesh = item.detail.fullDetailDistance>0 && squared < item.detail.fullDetailDistance*item.detail.fullDetailDistance
@@ -176,15 +313,25 @@ namespace Mavis
                 }
                 }
             }
-            foreach (var batch in activeGrassBatches)
+            foreach (var batch in pendingGrassBatches)
             {
                 if (batch.count == 0 || !batch.propertiesDirty) continue;
-                batch.properties.SetFloatArray("_MavisWindAnchorY", batch.anchors);
-                batch.properties.SetFloatArray("_MavisWindInvHeight", batch.heights);
-                batch.properties.SetFloatArray("_MavisWindResponse", batch.responses);
-                batch.properties.SetFloatArray("_WindTrunkStiffness", batch.stiffness);
+                SetGrassProperties(batch);
                 batch.propertiesDirty = false;
             }
+            // Readers keep the complete previous snapshot throughout the bounded
+            // refresh; never render an empty or partially rebuilt grass field.
+            var previous = activeGrassBatches; activeGrassBatches = pendingGrassBatches; pendingGrassBatches = previous;
+            var previousGroups = renderedGrassGroups; renderedGrassGroups = grassBatches; grassBatches = previousGroups;
+            }
+            finally { foliageRefreshing = false; }
+        }
+        double RefreshBudget()
+        {
+            // Spend less background work when no camera can see this field (for
+            // example open ocean). Full snapshots remain available immediately
+            // when the camera turns; visible-field checks return to the fast budget.
+            return activeGrassBatches.Count == 0 || submittedGrassBatches > 0 ? .0015 : .00035;
         }
         static float SquaredDistance(Vector3 position, Bounds bounds)
         {
@@ -196,6 +343,13 @@ namespace Mavis
         }
         void AddToBatch(Foliage item)
         {
+            if (item.groupOwner != grassBatches)
+            {
+                var oldGroup = item.group; var oldMesh = item.groupMesh;
+                item.group = item.alternateGroup; item.groupMesh = item.alternateMesh;
+                item.alternateGroup = oldGroup; item.alternateMesh = oldMesh;
+                item.groupOwner = grassBatches;
+            }
             if (item.group == null || item.groupMesh != item.currentMesh)
             {
                 var key = (item.currentMesh, item.drawMaterial, item.batchCell);
@@ -207,8 +361,10 @@ namespace Mavis
             if (groups.cursor == groups.batches.Count)
                 groups.batches.Add(new GrassBatch { mesh=item.currentMesh,material=item.drawMaterial });
             var batch = groups.batches[groups.cursor];
-            if(batch.count==0)activeGrassBatches.Add(batch);
+            if(batch.count==0)pendingGrassBatches.Add(batch);
             int index = batch.count++;
+            if (index == 0) { batch.bounds = item.bounds; batch.maximumResponse = Mathf.Abs(item.response); }
+            else { batch.bounds.Encapsulate(item.bounds); batch.maximumResponse = Mathf.Max(batch.maximumResponse, Mathf.Abs(item.response)); }
             if (batch.occupants[index] != item)
             {
                 batch.occupants[index] = item;
@@ -261,7 +417,7 @@ namespace Mavis
                     var key = new Vector2Int(Mathf.FloorToInt(center.x / 32f), Mathf.FloorToInt(center.z / 32f));
                     if (!grassCells.TryGetValue(key, out cell))
                     {
-                        cell = new FoliageCell { bounds = item.bounds, cutoff = 110f };
+                        cell = new FoliageCell { bounds = item.bounds, grass = true };
                         grassCells.Add(key, cell); foliageCells.Add(cell);
                     }
                     else cell.bounds.Encapsulate(item.bounds);
@@ -289,6 +445,9 @@ namespace Mavis
                     materials[i]=instance;changed=true;
                 }
                 if(changed)renderer.sharedMaterials=materials;
+                item.compactWind = materials.Length > 0;
+                foreach (var material in materials)
+                    if (material == null || material.shader.name != "Mavis/FoliageWind") { item.compactWind = false; break; }
                 item.batchable = grass && SystemInfo.supportsInstancing && materials.Length == 1 && materials[0] != null && materials[0].enableInstancing &&
                     (materials[0].shader.name == "Mavis/FoliageWind" || materials[0].shader.name == "Universal Render Pipeline/Lit");
                 if (item.batchable)
@@ -298,11 +457,24 @@ namespace Mavis
                     item.anchor=block.GetFloat("_MavisWindAnchorY");item.inverseHeight=block.GetFloat("_MavisWindInvHeight");
                     item.response=block.GetFloat("_MavisWindResponse");item.stiffness=block.GetFloat("_WindTrunkStiffness");
                 }
+                // RefreshFoliage also runs while this coroutine builds the cache.
+                // A distant cell may already be culled before these items join it;
+                // subsequent refreshes intentionally skip that cell's contents.
+                // Register the new renderer in the current state immediately, or
+                // it remains individually visible indefinitely. Instanced items
+                // must never also render through their original MeshRenderer.
+                if (item.batchable || cell.culled)
+                {
+                    renderer.forceRenderingOff = true;
+                    item.renderOff = true;
+                }
             }
             nextUpdate=0;
         }
         void RestoreManagedRenderers()
         {
+            if (foliageRoutine != null) StopCoroutine(foliageRoutine);
+            foliageRoutine = null; foliageRefreshing = false;
             foreach(var item in foliage)
             {
                 if(item.renderer==null)continue;
@@ -315,7 +487,10 @@ namespace Mavis
             foliage.Clear();
             foliageCells.Clear();
             grassBatches.Clear();
+            renderedGrassGroups.Clear();
             activeGrassBatches.Clear();
+            pendingGrassBatches.Clear();
+            grassPadding.Clear();
             foreach(var material in instancedMaterials.Values)
                 if(material!=null){if(Application.isPlaying)Destroy(material);else DestroyImmediate(material);}
             instancedMaterials.Clear();

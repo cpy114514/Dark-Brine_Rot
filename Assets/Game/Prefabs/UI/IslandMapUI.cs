@@ -92,7 +92,15 @@ namespace Mavis
             foreach (var point in FindObjectsByType<IslandRespawnPoint>(FindObjectsSortMode.None))
                 AddMarker(point.transform, "◆", GameUITheme.Foreground);
             foreach (var enemy in FindObjectsByType<NailongHealth>(FindObjectsSortMode.None))
-                if (!enemy.IsDead) AddMarker(enemy.transform, "●", GameUITheme.Foreground);
+                if (!enemy.IsDead) AddMarker(enemy.transform, "N", GameUITheme.Foreground);
+            foreach (var enemy in FindObjectsByType<CappuccinoAI>(FindObjectsSortMode.None))
+                if (enemy.GetComponent<Health>() && !enemy.GetComponent<Health>().IsDead) AddMarker(enemy.transform, "C", GameUITheme.Foreground);
+            foreach (var enemy in FindObjectsByType<BombardinoBoss>(FindObjectsSortMode.None))
+                if (!enemy.IsDead) AddMarker(enemy.transform, "B", GameUITheme.Foreground);
+            foreach (var gun in FindObjectsByType<PlacedEquipmentPickup>(FindObjectsSortMode.None))
+                if (!gun.IsCollected) AddMarker(gun.transform, "+", new Color(1, .83f, .2f));
+            foreach (var cache in FindObjectsByType<IslandSupplyCache>(FindObjectsSortMode.None))
+                AddMarker(cache.transform, "▣", new Color(1, .83f, .2f));
             playerArrow.transform.SetAsLastSibling();
         }
         void AddMarker(Transform target, string symbol, Color color)
@@ -110,6 +118,9 @@ namespace Mavis
                 var target = targets[i];
                 bool visible = target != null && target.gameObject.activeInHierarchy;
                 if (visible && target.TryGetComponent<NailongHealth>(out var health)) visible = !health.IsDead;
+                if (visible && target.TryGetComponent<Health>(out var generic)) visible = !generic.IsDead;
+                if (visible && target.TryGetComponent<IslandSupplyCache>(out var cache))
+                    markers[i].GetComponent<Text>().color = cache.IsAvailable ? new Color(1, .83f, .2f) : GameUITheme.Muted;
                 markers[i].gameObject.SetActive(visible);
                 if (visible) markers[i].anchoredPosition = MapGraphic.WorldToMap(target.position);
             }
@@ -153,7 +164,7 @@ namespace Mavis
             scaler.referenceResolution = new Vector2(1920, 1080); scaler.matchWidthOrHeight = .5f;
             var background = Box(root.transform, "Map backdrop", Vector2.zero, Vector2.zero, GameUITheme.Gray(0,.98f));
             background.anchorMin = Vector2.zero; background.anchorMax = Vector2.one; background.offsetMin = background.offsetMax = Vector2.zero;
-            Label(root.transform, "岛屿地图", 40, new Vector2(-165, 470), new Vector2(800, 70), Color.white);
+            Label(root.transform, "ISLAND MAP", 40, new Vector2(-165, 470), new Vector2(800, 70), Color.white);
             GameUITheme.Rule(root.transform,new Vector2(-165,429),new Vector2(814,1),GameUITheme.Muted);
             Box(root.transform, "Map border", new Vector2(-165, 0), new Vector2(814, 814), GameUITheme.Muted);
             var mapArea = Box(root.transform, "Ocean", new Vector2(-165, 0), new Vector2(810, 810), GameUITheme.Gray(.12f));
@@ -169,19 +180,23 @@ namespace Mavis
             MapGraphic = terrain.GetComponent<IslandMapGraphic>(); MapGraphic.raycastTarget = false;
             playerArrow = Label(terrain.transform, "▲", 32, Vector2.zero, new Vector2(44, 44), GameUITheme.Foreground);
             GameUITheme.OutlineSymbol(playerArrow);
-            Label(mapArea, "北  N", 23, new Vector2(0, 380), new Vector2(110, 45), Color.white);
-            Label(root.transform, "地图图例", 21, new Vector2(480, 335), new Vector2(330, 60), Color.white);
+            Label(mapArea, "NORTH  N", 23, new Vector2(0, 380), new Vector2(110, 45), Color.white);
+            Label(root.transform, "LEGEND", 21, new Vector2(480, 335), new Vector2(330, 60), Color.white);
             GameUITheme.Rule(root.transform,new Vector2(480,292),new Vector2(290,1),GameUITheme.Muted);
-            Label(root.transform, "▲  玩家 / 朝向", 24, new Vector2(480, 245), new Vector2(330, 60), GameUITheme.Foreground);
-            Label(root.transform, "◆  岛上复活点", 24, new Vector2(480, 165), new Vector2(330, 60), GameUITheme.Foreground);
-            Label(root.transform, "●  Nailong", 24, new Vector2(480, 85), new Vector2(330, 60), GameUITheme.Foreground);
-            coordinates = Label(root.transform, "", 22, new Vector2(480, -125), new Vector2(360, 190), GameUITheme.Secondary);
-            Label(root.transform, "M / Esc 关闭地图 · 查看时游戏暂停", 17, new Vector2(-165, -465), new Vector2(1100, 55), GameUITheme.Secondary);
+            Label(root.transform, "▲  Player / Facing", 24, new Vector2(480, 245), new Vector2(330, 60), GameUITheme.Foreground);
+            Label(root.transform, "◆  Island checkpoint", 24, new Vector2(480, 165), new Vector2(330, 60), GameUITheme.Foreground);
+            Label(root.transform, "C  Capri", 22, new Vector2(480, 105), new Vector2(330, 48), GameUITheme.Foreground);
+            Label(root.transform, "N  Nailong", 22, new Vector2(480, 55), new Vector2(330, 48), GameUITheme.Foreground);
+            Label(root.transform, "B  Bombardino", 22, new Vector2(480, 5), new Vector2(330, 48), GameUITheme.Foreground);
+            Label(root.transform, "+  M4A1", 22, new Vector2(480, -45), new Vector2(330, 48), new Color(1, .83f, .2f));
+            Label(root.transform, "▣ Supply camps", 22, new Vector2(480, -95), new Vector2(330, 48), new Color(1, .83f, .2f));
+            coordinates = Label(root.transform, "", 18, new Vector2(480, -200), new Vector2(360, 120), GameUITheme.Secondary);
+            Label(root.transform, "M / Esc to close · Game paused while viewing", 17, new Vector2(-165, -465), new Vector2(1100, 55), GameUITheme.Secondary);
             var close = Box(root.transform, "Close map", new Vector2(480, -325), new Vector2(290, 64), GameUITheme.Track);
             var closeButton=close.gameObject.AddComponent<Button>();
             GameUITheme.StyleButton(closeButton);
             closeButton.onClick.AddListener(() => SetOpen(false));
-            Label(close, "返回游戏", 25, Vector2.zero, new Vector2(280, 60), Color.white);
+            Label(close, "BACK TO GAME", 25, Vector2.zero, new Vector2(280, 60), Color.white);
             root.SetActive(false);
         }
         RectTransform Box(Transform parent, string name, Vector2 position, Vector2 size, Color color)

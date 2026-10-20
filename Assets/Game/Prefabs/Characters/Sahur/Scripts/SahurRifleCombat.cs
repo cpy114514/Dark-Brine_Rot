@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -9,12 +9,13 @@ namespace Mavis
     public sealed class SahurRifleCombat : MonoBehaviour
     {
         public const int MagazineCapacity = 30, ReserveCapacity = 210;
+        public const int StartingReserveRounds = 90;
         public const float BulletDamage = 20f, EmptyReloadSeconds = 7f;
         [Min(1)] public float roundsPerSecond = 10f;
         [Min(20)] public float bulletSpeed = 240f;
-        [Min(10)] public float range = 260f;
+        [Min(10)] public float range = 180f;
         public int Rounds { get; private set; } = MagazineCapacity;
-        public int ReserveRounds { get; private set; } = ReserveCapacity;
+        public int ReserveRounds { get; private set; } = StartingReserveRounds;
         public int ShotsFired { get; private set; }
         public int Hits { get; private set; }
         public bool IsReloading { get; private set; }
@@ -97,7 +98,8 @@ namespace Mavis
         {
             if (!CanOperate || IsReloading || Rounds >= MagazineCapacity || ReserveRounds <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || Time.timeScale <= 0) return false;
             ReloadDuration = ReloadSecondsFor(Rounds); ReloadRemaining = ReloadDuration;
-            IsReloading = true; firePoseUntil = 0; return true;
+            IsReloading = true; firePoseUntil = 0;
+            GameplayAudio.Play(GameplayAudio.Cue.Reload, transform.position); return true;
         }
         public int AddReserveAmmo(int amount)
         {
@@ -116,6 +118,8 @@ namespace Mavis
             if (!CanOperate || IsReloading || Rounds <= 0 || pendingShot || Time.time < nextShot || Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput) return false;
             if (!visuals) BuildVisuals();
             Rounds--; ShotsFired++; pendingShot = true;
+            GetComponent<PlayerStamina>()?.NotifyCombat();
+            GameplayAudio.Play(GameplayAudio.Cue.Gunshot, transform.position);
             nextShot = Time.time + 1f / Mathf.Max(1, roundsPerSecond);
             firePoseUntil = Time.time + .16f;
             return true;
@@ -135,7 +139,7 @@ namespace Mavis
             if (!other || other.transform.IsChildOf(transform) || other.GetComponentInParent<PlayerHealth>()) return false;
             target = other.GetComponentInParent<IDamageable>();
             // Attack range sensors should not become a boss's bullet hitbox.
-            if (other.isTrigger && (target == null || (!CombatBodyCollision.IsAnatomy(other) && other.GetComponent<IDamageable>() == null))) return false;
+            if (other.isTrigger && (target == null || (!CombatBodyCollision.IsAnatomy(other) && !other.GetComponent<BossWeakPoint>() && other.GetComponent<IDamageable>() == null))) return false;
             return true;
         }
         bool Trace(Vector3 from, Vector3 direction, float distance, float radius, out Vector3 point, out Collider collider)
@@ -196,18 +200,26 @@ namespace Mavis
         {
             float distance = Mathf.Min(bulletSpeed * dt, range - bullet.traveled);
             if (Trace(bullet.position, bullet.direction, distance, .045f, out var point, out var collider))
-            { ImpactAt(collider, point); bullet.active = false; bullet.line.enabled = false; return; }
+            { ImpactAt(collider, point, bullet.traveled + Vector3.Distance(bullet.position, point)); bullet.active = false; bullet.line.enabled = false; return; }
             bullet.position += bullet.direction * distance; bullet.traveled += distance;
             bullet.active = bullet.traveled < range; bullet.line.enabled = bullet.active;
             bullet.line.SetPosition(0, bullet.position - bullet.direction * Mathf.Min(1.8f, bullet.traveled)); bullet.line.SetPosition(1, bullet.position);
         }
-        void ImpactAt(Collider collider, Vector3 point)
+        public static float DamageAtDistance(float distance, bool aircraft, bool counter, bool engine)
+        {
+            float falloff = aircraft ? Mathf.Lerp(1f, .7f, Mathf.InverseLerp(100f, 180f, distance)) :
+                Mathf.Lerp(1f, .4f, Mathf.InverseLerp(20f, 100f, distance));
+            return BulletDamage * falloff * (aircraft && counter ? 1.25f : 1f) * (aircraft && engine ? BossWeakPoint.DamageMultiplier : 1f);
+        }
+        void ImpactAt(Collider collider, Vector3 point, float distance = 0f)
         {
             bool damaged = Valid(collider, out var target) && target != null;
             if (damaged)
             {
-                // Rifle rounds use BulletDamage directly; the melee weak-point multiplier is not applied.
-                target.ApplyDamage(BulletDamage, point); Hits++; hitUntil = Time.time + .16f;
+                var aircraft = collider.GetComponentInParent<BombardinoBoss>();
+                bool engine = aircraft && (collider.GetComponent<BossWeakPoint>() || BossWeakPoint.Contains(target as Component, point));
+                target.ApplyDamage(DamageAtDistance(distance, aircraft, aircraft && aircraft.IsExposed, engine), point);
+                Hits++; hitUntil = Time.time + .16f;
             }
             int index = impactCursor++ % impacts.Length;
             var impact = impacts[index]; impact.until = Time.time + .11f; var line = impact.line;
@@ -269,7 +281,7 @@ namespace Mavis
             if (ReserveRounds == shownReserve && Rounds == shownAmmo && IsReloading == shownReload && blocked == shownBlocked && Time.unscaledTime < nextHud) return;
             shownReserve = ReserveRounds; shownAmmo = Rounds; shownReload = IsReloading; shownBlocked = blocked; nextHud = Time.unscaledTime + .1f;
             ammo.text = "M4A1    " + Rounds.ToString("00") + " / 30";
-            status.text = IsReloading ? GameLocalization.Text("换弹中 ") + ReloadRemaining.ToString("0.0") + "s" : ReserveRounds > 0 ? GameLocalization.Format("rifle.reserve", ReserveRounds) : GameLocalization.Text("rifle.emptyReserve");
+            status.text = IsReloading ? GameLocalization.Text("Reloading ") + ReloadRemaining.ToString("0.0") + "s" : ReserveRounds > 0 ? GameLocalization.Format("rifle.reserve", ReserveRounds) : GameLocalization.Text("rifle.emptyReserve");
         }
         void OnDisable()
         {

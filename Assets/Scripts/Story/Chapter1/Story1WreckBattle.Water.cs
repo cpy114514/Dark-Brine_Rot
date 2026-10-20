@@ -10,16 +10,123 @@ public sealed partial class Story1WreckBattle
         public float radius;
         public RedWaterCapsule(Vector3 a,Vector3 b,float radius){this.a=a;this.b=b;this.radius=radius;}
     }
-    sealed class RedWaterShape
+    struct RedWaterShape
     {
         public Story1WreckMeshCollision mesh;
         public Rigidbody body;
         public Bounds bounds;
         public Vector3 velocity,spin,centre;
+        public Bounds[] partBounds;
+        public Vector3[] partPositions;
+        public Quaternion[] partRotations;
+    }
+    sealed class RedWaterForecast
+    {
+        public int epoch=-1;
+        public float seconds;
+        public Bounds[] shapeBounds,partBounds;
+        public Vector3[] positions;
+        public Quaternion[] rotations;
+        public int[] starts;
+        public void Reserve(int shapes,int parts)
+        {
+            if(shapeBounds==null||shapeBounds.Length<shapes){int n=Mathf.NextPowerOfTwo(Mathf.Max(1,shapes));shapeBounds=new Bounds[n];starts=new int[n];}
+            if(partBounds==null||partBounds.Length<parts){int n=Mathf.NextPowerOfTwo(Mathf.Max(1,parts));partBounds=new Bounds[n];positions=new Vector3[n];rotations=new Quaternion[n];}
+        }
+    }
+    readonly List<RedWaterForecast> redWaterForecasts=new List<RedWaterForecast>(8);
+    int redWaterForecastEpoch;
+    RedWaterForecast RedWaterForecastAt(float seconds)
+    {
+        RedWaterForecast available=null;
+        foreach(var item in redWaterForecasts)
+        {
+            if(item.epoch==redWaterForecastEpoch&&item.seconds==seconds)return item;
+            if(item.epoch!=redWaterForecastEpoch&&available==null)available=item;
+        }
+        if(available==null){available=new RedWaterForecast();redWaterForecasts.Add(available);}
+        int count=0;foreach(var shape in redWaterShapes)count+=shape.mesh.Parts.Length;
+        available.Reserve(redWaterShapes.Count,count);count=0;
+        for(int index=0;index<redWaterShapes.Count;index++)
+        {
+            var shape=redWaterShapes[index];available.starts[index]=count;
+            Vector3 translation=RedWaterForecastTranslation(shape,seconds);
+            Quaternion rotation=shape.spin.sqrMagnitude>.0001f?Quaternion.AngleAxis(shape.spin.magnitude*Mathf.Rad2Deg*Mathf.Min(seconds,.7f),shape.spin.normalized):Quaternion.identity;
+            float reach=shape.bounds.extents.magnitude+Vector3.Distance(shape.bounds.center,shape.centre);
+            available.shapeBounds[index]=new Bounds(shape.centre+translation,Vector3.one*(reach*2));
+            for(int i=0;i<shape.mesh.Parts.Length;i++,count++)
+            {
+                available.positions[count]=shape.centre+translation+rotation*(shape.partPositions[i]-shape.centre);
+                available.rotations[count]=rotation*shape.partRotations[i];
+                Bounds present=shape.partBounds[i];Vector3 e=present.extents;
+                Vector3 x=rotation*(Vector3.right*e.x),y=rotation*(Vector3.up*e.y),z=rotation*(Vector3.forward*e.z);
+                Vector3 extents=new Vector3(Mathf.Abs(x.x)+Mathf.Abs(y.x)+Mathf.Abs(z.x),Mathf.Abs(x.y)+Mathf.Abs(y.y)+Mathf.Abs(z.y),Mathf.Abs(x.z)+Mathf.Abs(y.z)+Mathf.Abs(z.z));
+                available.partBounds[count]=new Bounds(shape.centre+translation+rotation*(present.center-shape.centre),extents*2);
+            }
+        }
+        available.epoch=redWaterForecastEpoch;available.seconds=seconds;return available;
     }
     readonly List<RedWaterShape> redWaterShapes=new List<RedWaterShape>();
     readonly List<RedWaterCapsule> redWaterCapsules=new List<RedWaterCapsule>();
     readonly List<RedWaterCapsule> redWaterPreview=new List<RedWaterCapsule>();
+    IEnumerator<object> redWaterFallPreparation;
+    float[] redWaterFallRadii;
+    public bool RedesignWaterPreviewPrepared=>redWaterFallRadii!=null;
+    void RedWarmWaterPreview()
+    {
+        if(redWaterFallRadii!=null||!redTutorialEnvelopeReady||!redesignManual||!redGraph.IsValid())return;
+        if(redWaterFallPreparation==null)redWaterFallPreparation=RedPrepareFallEnvelope().GetEnumerator();
+        long started=System.Diagnostics.Stopwatch.GetTimestamp();
+        do{if(!redWaterFallPreparation.MoveNext()){redWaterFallPreparation.Dispose();redWaterFallPreparation=null;break;}}
+        while(RedRiggingElapsed(started)<1.5);
+    }
+    IEnumerable<object> RedPrepareFallEnvelope()
+    {
+        // Sample the approved pose on this very rig, restoring the current graph
+        // before returning to the frame. Its 279k native vertices are then measured
+        // in bounded slices without retaining a second character or changing clips.
+        var samples=new List<(List<Vector3> vertices,Matrix4x4 matrix)>();
+        var root=player.transform;var rotation=root.rotation;var position=root.position;
+        var weights=new[]{redMixer.GetInputWeight(0),redMixer.GetInputWeight(1),redMixer.GetInputWeight(2)};
+        var pose=UnityEngine.Animations.AnimationClipPlayable.Create(redGraph,RedClip("PLAYER_Fall_v006"));
+        var mesh=new Mesh();RedWaterCapsule[] body;
+        try
+        {
+            redMixer.ConnectInput(1,pose,0);redMixer.SetInputWeight(0,0);redMixer.SetInputWeight(1,1);redMixer.SetInputWeight(2,0);
+            pose.SetSpeed(0);pose.SetTime(2.2);root.rotation=Quaternion.LookRotation(redForward);redGraph.Evaluate(0);
+            RedWaterReadBody();body=redWaterCapsules.ToArray();
+            foreach(var skin in player.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                skin.BakeMesh(mesh,true);var vertices=new List<Vector3>(mesh.vertexCount);mesh.GetVertices(vertices);
+                samples.Add((vertices,skin.transform.localToWorldMatrix));mesh.Clear();
+            }
+        }
+        finally
+        {
+            redMixer.DisconnectInput(1);redGraph.DestroyPlayable(pose);
+            for(int i=0;i<3;i++)redMixer.SetInputWeight(i,weights[i]);
+            root.SetPositionAndRotation(position,rotation);redGraph.Evaluate(0);RedWaterReadBody();Destroy(mesh);
+        }
+        yield return null;
+        var maxima=new float[body.Length];var lines=new Vector3[body.Length];var inverseLengths=new float[body.Length];var radii=new float[body.Length];
+        for(int j=0;j<body.Length;j++){lines[j]=body[j].b-body[j].a;inverseLengths[j]=1/Mathf.Max(.000001f,lines[j].sqrMagnitude);radii[j]=body[j].radius;}
+        foreach(var sample in samples)
+        {
+            for(int vertex=0;vertex<sample.vertices.Count;vertex++)
+            {
+                Vector3 point=sample.matrix.MultiplyPoint3x4(sample.vertices[vertex]);float best=float.PositiveInfinity;int nearest=-1;
+                for(int j=0;j<body.Length;j++)
+                {
+                    var closest=body[j].a+lines[j]*Mathf.Clamp01(Vector3.Dot(point-body[j].a,lines[j])*inverseLengths[j]);
+                    float square=(point-closest).sqrMagnitude;if(square<best){best=square;nearest=j;}
+                }
+                if(nearest>=0)maxima[nearest]=Mathf.Max(maxima[nearest],best);
+                if((vertex&255)==255)yield return null;
+            }
+        }
+        for(int j=0;j<radii.Length;j++)radii[j]=Mathf.Max(radii[j],Mathf.Sqrt(maxima[j])+.06f);
+        redWaterFallRadii=radii;
+    }
     CapsuleCollider redWaterQuery;
     Vector3 redWaterExitVelocity,redWaterDriftOffset,redWaterDriftVelocity,redWaterDriftTarget;
     float redWaterNextSearch,redWaterPreviewHeadY;
@@ -36,6 +143,7 @@ public sealed partial class Story1WreckBattle
     void RedWaterCollectShapes()
     {
         redWaterShapes.Clear();
+        if(unchecked(++redWaterForecastEpoch)==0){redWaterForecastEpoch=1;foreach(var cache in redWaterForecasts)cache.epoch=-1;}
         foreach(var board in planks)if(board!=null&&!board.IsBroken)RedWaterAddShape(board.Collision);
         foreach(var piece in detailPieces)if(piece!=null&&!piece.IsBroken)RedWaterAddShape(piece.Collision);
         if(redWaterQuery!=null)return;
@@ -47,7 +155,8 @@ public sealed partial class Story1WreckBattle
     {
         if(mesh==null||!mesh.Active||mesh.Parts==null)return;
         var body=mesh.Primary.attachedRigidbody;
-        redWaterShapes.Add(new RedWaterShape{mesh=mesh,body=body,bounds=mesh.WorldBounds,
+        mesh.ReadWorldGeometry(out var bounds,out var boxes,out var positions,out var rotations);
+        redWaterShapes.Add(new RedWaterShape{mesh=mesh,body=body,bounds=bounds,partBounds=boxes,partPositions=positions,partRotations=rotations,
             velocity=body!=null?body.linearVelocity:Vector3.zero,spin=body!=null?body.angularVelocity:Vector3.zero,
             centre=body!=null?body.worldCenterOfMass:mesh.transform.position});
     }
@@ -116,33 +225,29 @@ public sealed partial class Story1WreckBattle
         var capsuleBounds=new Bounds((a+b)*.5f,Vector3.zero);capsuleBounds.Encapsulate(a);capsuleBounds.Encapsulate(b);capsuleBounds.Expand(radius*2);
         redWaterQuery.radius=radius;redWaterQuery.height=(b-a).magnitude+radius*2;
         Quaternion capsuleRotation=(b-a).sqrMagnitude>.00001f?Quaternion.FromToRotation(Vector3.up,b-a):Quaternion.identity;
+        var forecast=RedWaterForecastAt(seconds);
         redWaterQuery.enabled=true;
         try
         {
-        foreach(var shape in redWaterShapes)
+        for(int shapeIndex=0;shapeIndex<redWaterShapes.Count;shapeIndex++)
         {
-            Vector3 translation=RedWaterForecastTranslation(shape,seconds);
-            Quaternion rotation=shape.spin.sqrMagnitude>.0001f?Quaternion.AngleAxis(shape.spin.magnitude*Mathf.Rad2Deg*Mathf.Min(seconds,.7f),shape.spin.normalized):Quaternion.identity;
-            // Rotation-aware broad phase; exact checks below use real cut parts.
-            float reach=shape.bounds.extents.magnitude+Vector3.Distance(shape.bounds.center,shape.centre);
-            Bounds future=new Bounds(shape.centre+translation,Vector3.one*(reach*2));
-            if(!future.Intersects(capsuleBounds))continue;
+            var shape=redWaterShapes[shapeIndex];
+            // The same seven forecast times are reused by every candidate and
+            // body capsule. Snapshot native geometry once; retain exact narrow phase.
+            if(!forecast.shapeBounds[shapeIndex].Intersects(capsuleBounds))continue;
             for(int i=0;i<shape.mesh.Parts.Length;i++)
             {
                 var part=shape.mesh.Parts[i];
                 if(part==null||!part.enabled||!part.gameObject.activeInHierarchy)continue;
-                Vector3 point=shape.centre+translation+rotation*(shape.mesh.PartPosition(i)-shape.centre);
-                Quaternion turn=rotation*shape.mesh.PartRotation(i);
-                Bounds present=shape.mesh.PartBounds(i);Vector3 e=present.extents;
-                Vector3 x=rotation*(Vector3.right*e.x),y=rotation*(Vector3.up*e.y),z=rotation*(Vector3.forward*e.z);
-                Vector3 extents=new Vector3(Mathf.Abs(x.x)+Mathf.Abs(y.x)+Mathf.Abs(z.x),Mathf.Abs(x.y)+Mathf.Abs(y.y)+Mathf.Abs(z.y),Mathf.Abs(x.z)+Mathf.Abs(y.z)+Mathf.Abs(z.z));
-                Bounds partBounds=new Bounds(shape.centre+translation+rotation*(present.center-shape.centre),extents*2);
+                int at=forecast.starts[shapeIndex]+i;
+                Vector3 point=forecast.positions[at];Quaternion turn=forecast.rotations[at];
+                Bounds partBounds=forecast.partBounds[at];
                 partBounds.Expand(radius*2);
                 if(!partBounds.Intersects(capsuleBounds))continue;
                 if(!Physics.ComputePenetration(redWaterQuery,(a+b)*.5f,capsuleRotation,part,point,turn,out var direction,out float depth))continue;
                 cost+=depth*depth+.01f;
                 Vector3 planar=Vector3.ProjectOnPlane(direction,Vector3.up);
-                if(planar.sqrMagnitude<.04f)planar=Vector3.ProjectOnPlane((a+b)*.5f-(shape.centre+translation),Vector3.up);
+                if(planar.sqrMagnitude<.04f)planar=Vector3.ProjectOnPlane((a+b)*.5f-forecast.shapeBounds[shapeIndex].center,Vector3.up);
                 if(planar.sqrMagnitude>.0001f)avoidance+=planar.normalized*depth;
             }
         }
@@ -158,8 +263,10 @@ public sealed partial class Story1WreckBattle
     }
 
     /// <summary>Call once when the tail contact is confirmed, after redFloatStart is captured.</summary>
+    static readonly Unity.Profiling.ProfilerMarker RedWaterPlanMarker=new Unity.Profiling.ProfilerMarker("Opening.WaterExitPlan");
     void RedPlanWaterExit()
     {
+        using var measured=RedWaterPlanMarker.Auto();
         RedWaterCollectShapes();redWaterExitPlanned=true;redWaterExitVelocity=redRight*12;
         redWaterDriftOffset=redWaterDriftVelocity=redWaterDriftTarget=Vector3.zero;redWaterNextSearch=0;
         // Preview the actual unconscious pose on the same rig, then restore the
@@ -167,29 +274,46 @@ public sealed partial class Story1WreckBattle
         string previous=redClip.name;float sample=(float)redPose.GetTime();
         Vector3 root=player.transform.position;Quaternion rotation=player.transform.rotation;
         RedPose("PLAYER_Fall_v006",2.2f,false);player.transform.rotation=Quaternion.LookRotation(redForward);redGraph.Evaluate(0);
-        redWaterPreviewHeadY=RedHead.y-player.transform.position.y;RedWaterReadBody();RedWaterMeasureNativeEnvelope();redWaterPreview.Clear();
+        redWaterPreviewHeadY=RedHead.y-player.transform.position.y;RedWaterReadBody();
+        if(redWaterFallRadii!=null&&redWaterFallRadii.Length==redWaterCapsules.Count)
+        {
+            if(redWaterBodyRadii==null||redWaterBodyRadii.Length!=redWaterFallRadii.Length)redWaterBodyRadii=new float[redWaterFallRadii.Length];
+            for(int i=0;i<redWaterFallRadii.Length;i++)redWaterBodyRadii[i]=Mathf.Max(redWaterCapsules[i].radius,redWaterFallRadii[i]);
+            RedWaterReadBody();
+        }
+        else RedWaterMeasureNativeEnvelope();
+        redWaterPreview.Clear();
         foreach(var capsule in redWaterCapsules)redWaterPreview.Add(new RedWaterCapsule(capsule.a-player.transform.position,capsule.b-player.transform.position,capsule.radius));
         player.transform.SetPositionAndRotation(root,rotation);RedPose(previous,sample,false);
         float best=float.PositiveInfinity;float bestContact=0;
         float[] bearings={0,15,-15,30,-30,45,-45,60,-60};float[] speeds={12,15,18,21};
-        foreach(float speed in speeds)foreach(float bearing in bearings)
+        bool optimal=false;
+        foreach(float speed in speeds)
         {
-            Vector3 velocity=Quaternion.AngleAxis(bearing,Vector3.up)*redRight*speed;
-            float contact=0;
-            // A range of possible splash times covers pose-dependent head and
-            // chest height. Follow the landing with the entire drift interval.
-            for(int sampleIndex=0;sampleIndex<7;sampleIndex++)
+            foreach(float bearing in bearings)
             {
-                float flight=sampleIndex<4?1.3f+sampleIndex*.35f:1.65f;
-                float drift=sampleIndex<4?0:(sampleIndex-3)*1.8f;
-                Vector3 at=redFloatStart+velocity*flight+redForward*(drift*.35f);
-                at.y=RedWater(at)+.32f-redWaterPreviewHeadY;
-                contact+=RedWaterBodyCost(redWaterPreview,at,flight+drift,.65f+Mathf.Min(drift,.6f)*.3f,out _);
+                Vector3 velocity=Quaternion.AngleAxis(bearing,Vector3.up)*redRight*speed;
+                float contact=0;float preference=Mathf.Abs(bearing)*.0015f+(speed-12)*.015f;
+                bool pruned=false;
+                for(int sampleIndex=0;sampleIndex<7;sampleIndex++)
+                {
+                    float flight=sampleIndex<4?1.3f+sampleIndex*.35f:1.65f;
+                    float drift=sampleIndex<4?0:(sampleIndex-3)*1.8f;
+                    Vector3 at=redFloatStart+velocity*flight+redForward*(drift*.35f);
+                    at.y=RedWater(at)+.32f-redWaterPreviewHeadY;
+                    contact+=RedWaterBodyCost(redWaterPreview,at,flight+drift,.65f+Mathf.Min(drift,.6f)*.3f,out _);
+                    // Every remaining cost is nonnegative; this candidate can
+                    // no longer beat the current choice, including tie order.
+                    if(contact*100+preference>=best){pruned=true;break;}
+                }
+                if(pruned)continue;
+                float score=contact*100+preference;
+                if(score<best){best=score;bestContact=contact;redWaterExitVelocity=velocity;}
+                // Zero is the global lower bound, not just a reason to stop
+                // the innermost bearing loop and evaluate 27 more candidates.
+                if(best==0){optimal=true;break;}
             }
-            float preference=Mathf.Abs(bearing)*.0015f+(speed-12)*.015f;
-            float score=contact*100+preference;
-            if(score<best){best=score;bestContact=contact;redWaterExitVelocity=velocity;}
-            if(contact==0&&preference==0)break;
+            if(optimal)break;
         }
         RedesignWaterPredictionCost=bestContact;
         RedEvent("Water exit planned; velocity="+redWaterExitVelocity.ToString("F2")+"; predicted mesh cost="+bestContact.ToString("F3"));
@@ -297,6 +421,7 @@ public sealed partial class Story1WreckBattle
     void RedWaterDispose()
     {
         if(redWaterQuery!=null)Destroy(redWaterQuery.gameObject);redWaterQuery=null;
-        redWaterShapes.Clear();redWaterCapsules.Clear();redWaterPreview.Clear();
+        redWaterFallPreparation?.Dispose();redWaterFallPreparation=null;redWaterFallRadii=null;
+        redWaterShapes.Clear();redWaterCapsules.Clear();redWaterPreview.Clear();redWaterForecasts.Clear();
     }
 }

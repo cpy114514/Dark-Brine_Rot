@@ -1,0 +1,174 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+  "rig": "Armature",
+  "action": "PLAYER_BladeRush_v001",
+  "unity_clip": "PLAYER_BladeRush_v001",
+  "revision": "combat-v001",
+  "frame_start": 1,
+  "frame_end": 46,
+  "fps": 60,
+  "loop": false,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "BLOCKING",
+  "design_status": "approved",
+  "design_reference": "Documentation/CombatCombinations-20261019.md",
+  "approval_reference": "2026-10-19 human: jump chop, two-handed horizontal club spin on both buttons, dual-blade X charge/rush outward cut, E block, dual-blade spin; continue making",
+  "review_status": "accepted_for_stage",
+  "review_reference": "Documentation/CombatCombinations-20261019.md#source-review",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "format_version": 1,
+  "duration_seconds": 0.75,
+  "source_blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v001\\sahur-combinations-v001.blend",
+  "blender_version": "5.2.2 LTS",
+  "slot": "OBArmature",
+  "animated_bones": [
+    "Head",
+    "Head_end",
+    "Hips",
+    "LeftArm",
+    "LeftFoot",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHand_end",
+    "LeftLeg",
+    "LeftShoulder",
+    "LeftToeBase",
+    "LeftToeBase_end",
+    "LeftUpLeg",
+    "Neck",
+    "RightArm",
+    "RightFoot",
+    "RightForeArm",
+    "RightHand",
+    "RightHand_end",
+    "RightLeg",
+    "RightShoulder",
+    "RightToeBase",
+    "RightToeBase_end",
+    "RightUpLeg",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "root"
+  ],
+  "selected_meshes": [
+    "Mesh_0.001"
+  ],
+  "axis_forward": "-Z",
+  "axis_up": "Y",
+  "unit_scale": 1.0,
+  "validation": {
+    "passed": true,
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "root_displacement_world_m": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "in_place_max_excursion_m": 0.0,
+      "in_place_axes": [
+        "X",
+        "Y"
+      ],
+      "contacts": "not observed: no contact intervals supplied"
+    },
+    "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+  },
+  "gameplay_timing": {
+    "startup": [
+      {
+        "frames": [
+          1,
+          10
+        ],
+        "seconds": [
+          0.0,
+          0.15
+        ],
+        "normalized": [
+          0.0,
+          0.2
+        ]
+      }
+    ],
+    "active": [
+      {
+        "frames": [
+          10,
+          26.2
+        ],
+        "seconds": [
+          0.15,
+          0.42
+        ],
+        "normalized": [
+          0.2,
+          0.5599999999999999
+        ]
+      }
+    ],
+    "hitbox": [
+      {
+        "frames": [
+          10,
+          26.2
+        ],
+        "seconds": [
+          0.15,
+          0.42
+        ],
+        "normalized": [
+          0.2,
+          0.5599999999999999
+        ]
+      }
+    ],
+    "recovery": [
+      {
+        "frames": [
+          26.2,
+          46
+        ],
+        "seconds": [
+          0.42,
+          0.75
+        ],
+        "normalized": [
+          0.5599999999999999,
+          1.0
+        ]
+      }
+    ]
+  },
+  "fbx": "PLAYER_BladeRush_v001.fbx",
+  "gameplay": {
+    "startup": [
+      1,
+      10
+    ],
+    "active": [
+      10,
+      26.2
+    ],
+    "hitbox": [
+      10,
+      26.2
+    ],
+    "recovery": [
+      26.2,
+      46
+    ]
+  },
+  "runtime_contract": {
+    "physical_movement_normalized": [
+      0.2,
+      0.56
+    ],
+    "physical_maximum_distance_m": 3,
+    "movement_owner": "CharacterController; forward committed on release; animation root travel disabled"
+  }
+}

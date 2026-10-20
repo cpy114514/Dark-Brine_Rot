@@ -9,7 +9,9 @@ namespace Mavis
         readonly Vector3[] circlePoints = new Vector3[65], lanePoints = new Vector3[5];
         RaycastHit[] groundHits = new RaycastHit[16];
         public static BossAttackWarning For(GameObject owner) => owner.GetComponent<BossAttackWarning>() ?? owner.AddComponent<BossAttackWarning>();
-        public static bool HiddenOnIsland(GameObject owner) => owner.scene.path.StartsWith("Assets/Scenes/First Island/",System.StringComparison.Ordinal);
+        // Keep this compatibility gate global: projectiles and demo encounters
+        // must follow the same no-telegraph policy as the island bosses.
+        public static bool HiddenOnIsland(GameObject owner) => true;
         void Awake()
         {
             if(HiddenOnIsland(gameObject)){enabled=false;return;}

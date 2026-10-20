@@ -1219,8 +1219,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30bc85cc405a65d45b6d26fc01d3b2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongHealth
-  maxHealth: 900
-  currentHealth: 900
+  maxHealth: 500
+  currentHealth: 500
   OnDeath:
     m_PersistentCalls:
       m_Calls: []
@@ -1241,6 +1241,7 @@ MonoBehaviour:
   slamDamageMultiplier: 1.65
   slamRecovery: 1.1
   slamCooldown: 7
+  sonarDamage: 4
   sonarPulseCount: 3
   sonarPulseInterval: 1
   sonarTravelSeconds: 2.4
@@ -1311,7 +1312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 655b7d27986ff154d84c48aaf72ea44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongAttack
-  damage: 20
+  damage: 6
   attackArc: 130
   verticalTolerance: 2.5
   targetTag: Player
@@ -1354,6 +1355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aebf511830045464d85395df642d0bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongAttackMotion
+  mouthSocket: {x: -0.058, y: 0.07, z: 0.35}
 --- !u!114 &5868874853257744513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1366,6 +1368,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a6b9d966669fd14b9b9eafbba7ebf60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongCombatEffects
+  spitGravity: 18
+  minimumArcRise: 0.65
+  spitFlightTimeScale: 1.4
+  spitRadius: 0.24
 --- !u!114 &2357366160247427764
 MonoBehaviour:
   m_ObjectHideFlags: 0
