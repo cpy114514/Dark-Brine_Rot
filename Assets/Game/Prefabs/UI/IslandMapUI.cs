@@ -100,7 +100,7 @@ namespace Mavis
             foreach (var gun in FindObjectsByType<PlacedEquipmentPickup>(FindObjectsSortMode.None))
                 if (!gun.IsCollected) AddMarker(gun.transform, "+", new Color(1, .83f, .2f));
             foreach (var cache in FindObjectsByType<IslandSupplyCache>(FindObjectsSortMode.None))
-                AddMarker(cache.transform, "▣", new Color(1, .83f, .2f));
+                AddMarker(cache.transform, cache.supportsMelee ? "R" : "▣", new Color(1, .83f, .2f));
             playerArrow.transform.SetAsLastSibling();
         }
         void AddMarker(Transform target, string symbol, Color color)
@@ -189,7 +189,8 @@ namespace Mavis
             Label(root.transform, "N  Nailong", 22, new Vector2(480, 55), new Vector2(330, 48), GameUITheme.Foreground);
             Label(root.transform, "B  Bombardino", 22, new Vector2(480, 5), new Vector2(330, 48), GameUITheme.Foreground);
             Label(root.transform, "+  M4A1", 22, new Vector2(480, -45), new Vector2(330, 48), new Color(1, .83f, .2f));
-            Label(root.transform, "▣ Supply camps", 22, new Vector2(480, -95), new Vector2(330, 48), new Color(1, .83f, .2f));
+            Label(root.transform, "R  Shore camp · HP / SP / ammo", 20, new Vector2(480, -95), new Vector2(330, 48), new Color(1, .83f, .2f));
+            Label(root.transform, "▣ Ammo supply points", 22, new Vector2(480, -145), new Vector2(330, 48), new Color(1, .83f, .2f));
             coordinates = Label(root.transform, "", 18, new Vector2(480, -200), new Vector2(360, 120), GameUITheme.Secondary);
             Label(root.transform, "M / Esc to close · Game paused while viewing", 17, new Vector2(-165, -465), new Vector2(1100, 55), GameUITheme.Secondary);
             var close = Box(root.transform, "Close map", new Vector2(480, -325), new Vector2(290, 64), GameUITheme.Track);

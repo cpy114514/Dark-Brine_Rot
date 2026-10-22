@@ -263,6 +263,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         if (attack != null) { attack.SuspendForSwimming(); attack.enabled = available; }
         if (boomerang != null) boomerang.enabled = available;
         if (swimmingWeapon != null && swimmingWeapon.stick != null) swimmingWeapon.stick.gameObject.SetActive(available);
+        GetComponent<SahurWeaponLoadout>()?.NotifyStickAvailabilityChanged();
     }
 
     void SpawnLooseStick()

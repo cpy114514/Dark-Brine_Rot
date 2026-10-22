@@ -21,6 +21,7 @@ namespace Mavis
         {
             // Retain the original fields so existing saves continue to load.
             public int stage, rewardBaseline;
+            public int combatLesson;
             public string bossId;
             public List<BossProgress> bosses = new List<BossProgress>();
         }
@@ -45,6 +46,8 @@ namespace Mavis
         EquipmentInventory inventory;
         SahurAttack attack;
         SahurRifleCombat rifle;
+        EnemyLockOn lockOn;
+        SahurHealingPacks healing;
         BossFlow nearest;
         Text label;
         GameObject panel;
@@ -67,7 +70,8 @@ namespace Mavis
         }
         static Progress Copy(Progress source)
         {
-            var copy = new Progress { stage = source.stage, rewardBaseline = source.rewardBaseline, bossId = source.bossId };
+            var copy = new Progress { stage = source.stage, rewardBaseline = source.rewardBaseline, bossId = source.bossId,
+                combatLesson = Mathf.Clamp(source.combatLesson, 0, 4) };
             if (source.bosses != null)
                 foreach (var entry in source.bosses)
                     if (entry != null && !string.IsNullOrEmpty(entry.bossId) && (int)entry.kind >= 0 && (int)entry.kind < 3 &&
@@ -90,6 +94,7 @@ namespace Mavis
             player = GetComponent<ThirdPersonPlayerController>(); arrival = GetComponent<FirstIslandArrival>();
             inventory = GetComponent<EquipmentInventory>(); attack = GetComponent<SahurAttack>();
             rifle = GetComponent<SahurRifleCombat>();
+            lockOn = GetComponent<EnemyLockOn>(); healing = GetComponent<SahurHealingPacks>();
             if (inventory) inventory.Collected += OnCollected;
             moveStart = transform.position;
             var canvas = new GameObject("Island objective", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
@@ -156,7 +161,8 @@ namespace Mavis
             if (!player || !label || Time.unscaledTime < nextRefresh) return;
             nextRefresh = Time.unscaledTime + .15f;
             bool modal = PauseSettingsMenu.IsOpen || SahurLoadoutUI.IsOpen || IslandMapUI.IsOpen || PlayerDeathRespawn.IsOpen;
-            panel.SetActive(!modal && (!arrival || arrival.IsAwake) && (progress.stage < 7 || Time.unscaledTime < doneUntil));
+            bool lessonVisible = progress.stage >= 4 && progress.stage < 7 && progress.combatLesson < 4;
+            panel.SetActive(!modal && (!BossHudPanel.HasActiveEncounter || lessonVisible) && (!arrival || arrival.IsAwake) && (progress.stage < 7 || Time.unscaledTime < doneUntil));
             if (modal || GameSaveManager.IsContinuePending || AdditiveSceneBootstrap.IsLoading || player.ExternalControlLock) return;
             RefreshBosses();
             if (progress.stage == 0 && (!arrival || arrival.IsAwake)) progress.stage = 1;
@@ -170,6 +176,15 @@ namespace Mavis
                     if (flow.Fighting || flow.progress.defeated) { progress.stage = 4; break; }
             if (progress.stage >= 4 && progress.stage < 7 && DefeatedBossCount == 3)
             { progress.stage = 6; if (!pendingSave) QueueSave(); }
+            if (progress.stage >= 4 && progress.stage < 7 && DefeatedBossCount < 3)
+            {
+                if (!healing) healing = GetComponent<SahurHealingPacks>();
+                bool practiced = progress.combatLesson == 0 ? lockOn && lockOn.LocksAcquired > 0 :
+                    progress.combatLesson == 1 ? player.DodgesPerformed > 0 :
+                    progress.combatLesson == 2 ? attack && attack.ChargedAttacksPerformed > 0 :
+                    progress.combatLesson == 3 && healing && healing.UseAttempts > 0;
+                if (practiced) { progress.combatLesson++; QueueSave(); }
+            }
             if (pendingSave && Time.unscaledTime >= nextSave)
             {
                 nextSave = Time.unscaledTime + 5f;
@@ -184,12 +199,11 @@ namespace Mavis
                 case 0: value = "Reach the shore"; break;
                 case 1: value = "Recover your stick\nFollow the beach; press F near the stick."; break;
                 case 2: value = "Explore the shore\nMove with your movement keys; look with the mouse."; break;
-                case 3: value = "Practice an attack\nLeft mouse: attack; hold right mouse: charge. Dodge: ";
-                    value += GameInputSettings.Get(GameInputSettings.Action.Dodge); break;
-                default: value = BossText(true); break;
+                case 3: value = "Practice an attack\nLeft mouse: attack. Try one swing on the shore."; break;
+                default: value = progress.stage < 7 && progress.combatLesson < 4 && DefeatedBossCount < 3 ? CombatLessonText() : BossText(true); break;
             }
-            bool bossesShown = progress.stage >= 4;
-            Vector2 size = new Vector2(480, bossesShown ? 220 : 104);
+            bool bossesShown = progress.stage >= 4 && (progress.combatLesson >= 4 || DefeatedBossCount == 3);
+            Vector2 size = new Vector2(480, bossesShown ? 220 : progress.stage >= 4 ? 160 : 104);
             if (card.sizeDelta != size)
             {
                 card.sizeDelta = size;
@@ -197,6 +211,16 @@ namespace Mavis
                 label.rectTransform.anchoredPosition = new Vector2(20, -size.y * .5f);
             }
             if (label.text != value) label.text = value;
+        }
+        string CombatLessonText()
+        {
+            switch (progress.combatLesson)
+            {
+                case 0: return "1 / 4 · Lock on\nFace a nearby enemy; middle-click to lock on.\nMiddle-click again to release. Approach when ready.";
+                case 1: return "2 / 4 · Dodge\nPress " + GameInputSettings.Get(GameInputSettings.Action.Dodge) + " with a direction to dodge.\nDodging costs stamina; let the SP bar recover.";
+                case 2: return "3 / 4 · Charged strike\nHold right mouse for 0.5s, then release.\nUse a melee weapon; save SP for dodging.";
+                default: return "4 / 4 · Healing\nPress " + GameInputSettings.Get(GameInputSettings.Action.Heal) + " to try a healing pack (2 per campaign).\nFull health uses none. Shore camp also restores HP/SP.";
+            }
         }
         static string BossName(BossKind kind, bool en) => kind == BossKind.Capri ? "Capri" :
             kind == BossKind.Nailong ? GameLocalization.Text("enemy.name") : ("Bombardino");
@@ -227,7 +251,7 @@ namespace Mavis
                 text.Append('\n');
             }
             text.Append(DefeatedBossCount == 3 ? (en ? (progress.stage == 7 ? "Progress saved" : "Saving progress...") :
-                (progress.stage == 7 ? "Progress saved" : "Saving progress...")) : ("M: map · Follow signs to supply camps"));
+                (progress.stage == 7 ? "Progress saved" : "Saving progress...")) : ("M: map · Follow signs to ammo supply points"));
             return text.ToString();
         }
         public static string Bearing(Vector3 direction, bool english)

@@ -321,11 +321,18 @@ public sealed partial class Story1WreckBattle : MonoBehaviour
     {
         if (RedesignActive) return;
         if (CurrentPhase == Phase.Waiting || CurrentPhase == Phase.Finished || PauseSettingsMenu.IsOpen || deltaTime <= 0) return;
+        if(FinaleRecoveryAvailable){TickFinaleRecovery(deltaTime);return;}
         phaseAge += deltaTime;
         if (CurrentPhase == Phase.Breaking) { BreakShip(deltaTime); return; }
         MovePlanks(deltaTime);
         if (CurrentPhase == Phase.Defeat) { FinishDefeat(); return; }
-        if (CurrentPhase == Phase.Finale) return;
+        if (CurrentPhase == Phase.Finale)
+        {
+            // Also recover if asynchronous entry preparation stops after Initialize.
+            if(Finale==null || phaseAge>120f)
+                RecoverFinale(new System.InvalidOperationException("Wreck ending did not complete within its preparation/playback budget."));
+            return;
+        }
         FightElapsed += deltaTime;
         if(AtFinaleThreshold(SharkHealth.currentHealth,SharkHealth.maxHealth,finaleSharkHealthRatio))RequestFinale(FinaleReason.SharkHealth);
         if(AtFinaleThreshold(playerHealth.currentHealth,playerHealth.maxHealth,finalePlayerHealthRatio))RequestFinale(FinaleReason.PlayerHealth);
@@ -970,8 +977,13 @@ public sealed partial class Story1WreckBattle : MonoBehaviour
     void BeginFinale()
     {
         if (CurrentPhase != Phase.Fighting) return;
-        SharkHealth.IsProtected=true;
         Handoff=player.Motion.Capture(player);
+        try
+        {
+        // Validate the complete actual timeline before relinquishing any gameplay controls.
+        var missing=Story1WreckFinale.MissingResources(player.CharacterAnimator);
+        if(missing.Length>0)throw new System.InvalidOperationException("Wreck ending resources missing: "+string.Join(", ",missing));
+        SharkHealth.IsProtected=true;
         var board = rider != null ? rider.Support() : null;
         if (board == null)
             board = FindLandingBoard(player.transform.position, 8, true) ?? FindLandingBoard(player.transform.position, 8) ?? FindLandingBoard(player.transform.position) ?? planks[0];
@@ -995,6 +1007,8 @@ public sealed partial class Story1WreckBattle : MonoBehaviour
         Finale = gameObject.AddComponent<Story1WreckFinale>();
         player.Motion.Claim(Finale,SahurControlState.Cinematic);
         Finale.Initialize(this, player, sharkAnimator, sequence.storyCamera, board, ocean, fromWater);
+        }
+        catch(System.Exception error){RecoverFinale(error);}
     }
     public void CompleteFinale()
     {

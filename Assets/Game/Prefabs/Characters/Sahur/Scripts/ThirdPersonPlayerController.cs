@@ -178,6 +178,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (jumping) swimExitJumpTimer = Mathf.Max(swimExitJumpTimer, .6f);
     }
     public float LowestFootWorldOffset => GetLowestFootOffset();
+    public int DodgesPerformed { get; private set; }
     public void NotifyPlatformLanding()
     {
         platformCarryVelocity=Vector3.zero;airborneTime=0;verticalSpeed=-groundStickSpeed;
@@ -481,6 +482,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // never turn leftover braking momentum into a stationary boost.
             rollInheritedSpeed = GetRollInheritedSpeed(planarVelocity, desiredVelocity);
             rollTimer = rollDuration;
+            DodgesPerformed++;
             dodgeBufferUntil = -1;
             Mavis.GameplayAudio.Play(Mavis.GameplayAudio.Cue.Dodge, transform.position);
             recoveringAttackFacing = false;

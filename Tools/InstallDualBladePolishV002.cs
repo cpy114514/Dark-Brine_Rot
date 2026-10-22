@@ -20,7 +20,7 @@ public static class InstallDualBladePolishV002
         if(EditorApplication.isPlaying||EditorApplication.isCompiling)throw new Exception("Use ready Edit Mode");
         var spin=Copy("BladeFinisher");var rush=Copy("BladeRush");
         var rows=new System.Collections.Generic.List<object>();
-        foreach(var path in new[]{"Assets/Resources/Encounter/v006/SahurGameplay.controller","Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller"})
+        foreach(var path in new[]{"Assets/Resources/Encounter/v006/SahurGameplay.controller","Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller","Assets/Resources/Equipment/M4A1/SahurRifle.controller"})
         {
             var controller=AssetDatabase.LoadAssetAtPath<AnimatorController>(path);
             foreach(var name in new[]{"Capri Combo 3","Capri Heavy"})

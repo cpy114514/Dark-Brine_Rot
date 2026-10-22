@@ -3,11 +3,11 @@ using UnityEngine.UI;
 
 namespace Mavis
 {
-    /// <summary>Non-interactive pickup guidance; points at existing, available world loot.</summary>
+    /// <summary>Contextual recovery, weapon and ammunition guidance using actual world supplies.</summary>
     [DisallowMultipleComponent]
     public sealed class SahurSupplyGuidance : MonoBehaviour
     {
-        public enum GuidanceKind { None, Gun, Ammo }
+        public enum GuidanceKind { None, Gun, Ammo, Recovery }
         public GuidanceKind CurrentGuidance { get; private set; }
         public Component Target { get; private set; }
         public bool IsVisible => group && group.alpha > 0;
@@ -17,6 +17,9 @@ namespace Mavis
         SahurRifleCombat rifle;
         ThirdPersonPlayerController movement;
         PlayerHealth health;
+        SahurHealingPacks healing;
+        FirstIslandArrival arrival;
+        bool recoveryRequested;
         EquipmentItem gunItem;
         BombardinoBoss[] bosses = new BombardinoBoss[0];
         PlacedEquipmentPickup[] placedGuns = new PlacedEquipmentPickup[0];
@@ -40,6 +43,7 @@ namespace Mavis
             rifle = GetComponent<SahurRifleCombat>();
             movement = GetComponent<ThirdPersonPlayerController>();
             health = GetComponent<PlayerHealth>();
+            healing = GetComponent<SahurHealingPacks>(); arrival = GetComponent<FirstIslandArrival>();
             gunItem = Resources.Load<EquipmentItem>(SahurWeaponLoadout.M4ItemPath);
             BuildUI();
         }
@@ -55,11 +59,11 @@ namespace Mavis
             group = root.GetComponent<CanvasGroup>();
             group.alpha = 0; group.interactable = false; group.blocksRaycasts = false;
 
-            var panel = GameUITheme.Rect(root.transform, "Supply reminder", new Vector2(.5f, 1), new Vector2(850, 72));
+            var panel = GameUITheme.Rect(root.transform, "Supply reminder", new Vector2(.5f, 1), new Vector2(850, 96));
             panel.anchoredPosition = new Vector2(0, -190);
             GameUITheme.Image(panel, GameUITheme.Surface);
-            GameUITheme.Rule(panel, new Vector2(0, 35), new Vector2(850, 2), Yellow);
-            message = GameUITheme.Label(panel, "Reminder", 22, new Vector2(0, -36), new Vector2(810, 62), TextAnchor.MiddleCenter);
+            GameUITheme.Rule(panel, new Vector2(0, 47), new Vector2(850, 2), Yellow);
+            message = GameUITheme.Label(panel, "Reminder", 22, new Vector2(0, -48), new Vector2(810, 86), TextAnchor.MiddleCenter);
             message.color = Yellow;
 
             marker = GameUITheme.Rect(root.transform, "Yellow pickup square", new Vector2(.5f, .5f), new Vector2(32, 32));
@@ -69,7 +73,7 @@ namespace Mavis
             Edge(new Vector2(-15, 0), new Vector2(3, 32));
             Edge(new Vector2(15, 0), new Vector2(3, 32));
             GameUITheme.Image(GameUITheme.Rect(marker, "Centre", new Vector2(.5f, .5f), new Vector2(5, 5)), Yellow);
-            destination = GameUITheme.Label(marker, "Pickup distance", 20, new Vector2(0, -48), new Vector2(300, 30), TextAnchor.MiddleCenter);
+            destination = GameUITheme.Label(marker, "Pickup distance", 20, new Vector2(0, -48), new Vector2(460, 60), TextAnchor.MiddleCenter);
             destination.color = Yellow; GameUITheme.OutlineSymbol(destination);
             var arrow = GameUITheme.Label(marker, "Off-screen direction", 25, new Vector2(0, 33), new Vector2(36, 36), TextAnchor.MiddleCenter);
             arrow.text = "▲"; arrow.color = Yellow; GameUITheme.OutlineSymbol(arrow);
@@ -100,6 +104,8 @@ namespace Mavis
         bool Available(Component candidate, GuidanceKind kind)
         {
             if (!candidate || !candidate.gameObject.activeInHierarchy) return false;
+            if (kind == GuidanceKind.Recovery)
+                return candidate is IslandSupplyCache recovery && recovery.isActiveAndEnabled && recovery.supportsMelee;
             if (kind == GuidanceKind.Ammo)
                 return candidate is RifleAmmoPickup ammo && ammo.isActiveAndEnabled && !ammo.IsCollected && ammo.amount > 0 ||
                     candidate is IslandSupplyCache cache && cache.IsAvailable;
@@ -118,15 +124,19 @@ namespace Mavis
         void SelectTarget(GuidanceKind kind)
         {
             selectAt = Time.unscaledTime + .25f;
-            Component best = null; float distance = float.PositiveInfinity;
+            Component best = null; float distance = float.PositiveInfinity; bool bestReady = false;
             void Consider(Component candidate)
             {
                 if (!Available(candidate, kind)) return;
                 var delta = Position(candidate) - transform.position;
                 float squared = delta.x * delta.x + delta.z * delta.z;
-                if (squared < distance) { best = candidate; distance = squared; }
+                bool ready = !(candidate is IslandSupplyCache cache) || cache.IsAvailable;
+                if (best == null || (ready && !bestReady) || (ready == bestReady && squared < distance))
+                { best = candidate; distance = squared; bestReady = ready; }
             }
-            if (kind == GuidanceKind.Ammo)
+            if (kind == GuidanceKind.Recovery)
+            { foreach (var cache in supplyCaches) Consider(cache); }
+            else if (kind == GuidanceKind.Ammo)
             { foreach (var pickup in ammoPickups) Consider(pickup); foreach (var cache in supplyCaches) Consider(cache); }
             else { foreach (var pickup in placedGuns) Consider(pickup); foreach (var pickup in droppedGuns) Consider(pickup); }
             Target = best;
@@ -135,19 +145,28 @@ namespace Mavis
         void LateUpdate() => Refresh();
         void Refresh()
         {
-            if (!loadout || !rifle || !movement || !health || health.currentHealth <= 0 ||
+            // Components added by loadout initialization may appear after this component's Awake.
+            if (!rifle) rifle = GetComponent<SahurRifleCombat>();
+            if (!healing) healing = GetComponent<SahurHealingPacks>();
+            if (!loadout || !movement || !health || health.currentHealth <= 0 ||
                 !movement.enabled || movement.ExternalControlLock || movement.Swimming ||
-                Time.timeScale <= 0 || GameUITheme.ModalOpen || SahurLoadoutUI.BlocksInput)
+                (arrival && !arrival.IsAwake) || Time.timeScale <= 0 || GameUITheme.ModalOpen || SahurLoadoutUI.BlocksInput)
             { Hide(); return; }
             if (Time.unscaledTime >= scanAt) ScanSources();
             GuidanceKind kind = GuidanceKind.None;
-            int total = rifle.Rounds + rifle.ReserveRounds;
-            if (loadout.HasM4A1)
+            int total = rifle ? rifle.Rounds + rifle.ReserveRounds : 0;
+            float fraction = health.currentHealth / Mathf.Max(1, health.maxHealth);
+            if (fraction <= .4f) recoveryRequested = true;
+            else if (fraction >= .75f) recoveryRequested = false;
+            if (recoveryRequested)
+                foreach (var cache in supplyCaches)
+                    if (Available(cache, GuidanceKind.Recovery)) { kind = GuidanceKind.Recovery; break; }
+            if (kind == GuidanceKind.None && loadout.HasM4A1 && rifle)
             {
                 // Include loaded rounds: reloading cannot create a false low-ammo reminder.
                 if (total < LowAmmoThreshold) kind = GuidanceKind.Ammo;
             }
-            else
+            else if (kind == GuidanceKind.None)
                 foreach (var boss in bosses)
                     if (boss && boss.isActiveAndEnabled && boss.FightActive && !boss.IsDead)
                     { kind = GuidanceKind.Gun; break; }
@@ -157,13 +176,25 @@ namespace Mavis
             if (!viewer) viewer = Camera.main;
             if (!viewer) { Hide(); return; }
             group.alpha = 1;
+            bool nearbyRecovery = false;
+            if (kind == GuidanceKind.Recovery && Target)
+            {
+                var body = movement.GetComponent<CharacterController>();
+                Vector3 feet = transform.position; if (body) feet.y = body.bounds.min.y;
+                nearbyRecovery = Vector3.Distance(feet, Target.transform.position) <= 5;
+            }
             // Project the square every frame; format captions at 5 Hz or when state changes.
             if (Time.unscaledTime >= textAt || total != shownTotal || Target != shownTarget ||
                 kind != shownKind || GameLocalization.Language != shownLanguage)
             {
                 textAt = Time.unscaledTime + .2f; shownTotal = total; shownTarget = Target;
                 shownKind = kind; shownLanguage = GameLocalization.Language;
-                string reminder = kind == GuidanceKind.Gun ? GameLocalization.Text("supply.pickupGun") :
+                string reminder = kind == GuidanceKind.Recovery ?
+                    (Target is IslandSupplyCache camp && !camp.IsAvailable ? GameLocalization.Format("supply.recoveryRestock", Mathf.CeilToInt(camp.Remaining)) :
+                        GameLocalization.Text(nearbyRecovery ? "supply.recoveryNearby" : "supply.recovery")) + "\n" +
+                    (healing && healing.Remaining > 0 ? GameLocalization.Format("supply.healOption", GameInputSettings.Get(GameInputSettings.Action.Heal), healing.Remaining) :
+                        GameLocalization.Text("supply.noPacks")) :
+                    kind == GuidanceKind.Gun ? GameLocalization.Text("supply.pickupGun") :
                     GameLocalization.Format(Target ? "supply.lowAmmo" : "supply.noAmmo", total);
                 SetText(message, reminder);
                 if (Target)
@@ -174,8 +205,8 @@ namespace Mavis
                         ((IslandSupplyCache)Target).DisplayName + " · " + metres + " m");
                 }
             }
-            marker.gameObject.SetActive(Target);
-            if (!Target) return;
+            marker.gameObject.SetActive(Target && !nearbyRecovery);
+            if (!Target || nearbyRecovery) return;
             PlaceMarker(Position(Target));
         }
 
@@ -183,7 +214,7 @@ namespace Mavis
         {
             Vector3 projected = viewer.WorldToScreenPoint(point);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, projected, null, out Vector2 local);
-            Vector2 limits = canvasRect.rect.size * .5f - new Vector2(175, 140);
+            Vector2 limits = canvasRect.rect.size * .5f - new Vector2(240, 155);
             limits.x = Mathf.Max(30, limits.x); limits.y = Mathf.Max(30, limits.y);
             // Leave room above for the boss health bar and the supply reminder.
             float upper = Mathf.Max(30, canvasRect.rect.height * .5f - 285);

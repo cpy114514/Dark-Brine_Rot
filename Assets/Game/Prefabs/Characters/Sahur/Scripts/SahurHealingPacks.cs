@@ -67,6 +67,7 @@ namespace Mavis
         GameLanguage feedbackLanguage;
         float feedbackUntil, restored;
         public int Remaining => HealingPackSupply.Remaining;
+        public int UseAttempts { get; private set; }
         public string Feedback
         {
             get
@@ -92,6 +93,7 @@ namespace Mavis
         public bool TryUse()
         {
             if (!CanAct) return false;
+            UseAttempts++;
             if (health.currentHealth >= health.maxHealth) { Notify("healing.full"); return false; }
             if (!HealingPackSupply.Consume()) { Notify("healing.empty"); return false; }
             restored = Mathf.Min(health.maxHealth * HealFraction, health.maxHealth - health.currentHealth);

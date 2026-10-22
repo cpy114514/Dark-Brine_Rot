@@ -68,7 +68,9 @@ public sealed partial class Story1WreckBattle
         }
         // Tight bounds cost less than repeatedly traversing a broadly padded skin.
         // Leaf tests retain the original current triangles and signed containment.
-        redSolidSharkTree.RefitArticulated(redSolidSkin,1f);
+        // Tutorial pose changes can stay within the exact articulated hierarchy longer.
+        // This changes conservative bounds only; leaf tests still use current triangles.
+        redSolidSharkTree.RefitArticulated(redSolidSkin,RedesignStage==OpeningStage.Tutorial?3f:1f);
         redSolidSkinFrame=redContactBakedFrame;redSolidSkinVersion=redContactBakedVersion;
         return redSolidSharkTree;
     }

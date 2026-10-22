@@ -16,10 +16,16 @@ namespace Mavis
         public bool UsesTwinBlades => CurrentWeapon == Weapon.CapriTwinBlades;
         public bool HasTwinBlades => inventory && twinBlades && inventory.Count(twinBlades) > 0;
         public static string DisplayName(Weapon weapon) => GameLocalization.Text(weapon==Weapon.M4A1?"M4A1 assault rifle":weapon==Weapon.CapriTwinBlades?"Capri twin blades":"Sahur stick");
-        public string WeaponName => DisplayName(CurrentWeapon);
-        public string ShortName => GameLocalization.Text(UsesRifle?"M4A1":UsesTwinBlades?"Twin blades":"Stick");
-        public bool Owns(Weapon weapon) => weapon==Weapon.Stick || weapon==Weapon.CapriTwinBlades&&HasTwinBlades || weapon==Weapon.M4A1&&HasM4A1;
+        public bool HasStick
+        {
+            get { var arrival = GetComponent<FirstIslandArrival>(); return !arrival || arrival.HasStick; }
+        }
+        public bool WeaponMissing => CurrentWeapon == Weapon.Stick && !HasStick;
+        public string WeaponName => WeaponMissing ? GameLocalization.Text("Weapon lost") : DisplayName(CurrentWeapon);
+        public string ShortName => GameLocalization.Text(WeaponMissing?"Weapon lost":UsesRifle?"M4A1":UsesTwinBlades?"Twin blades":"Stick");
+        public bool Owns(Weapon weapon) => weapon==Weapon.Stick&&HasStick || weapon==Weapon.CapriTwinBlades&&HasTwinBlades || weapon==Weapon.M4A1&&HasM4A1;
         public event System.Action Changed;
+        public void NotifyStickAvailabilityChanged() => Changed?.Invoke();
         EquipmentInventory inventory;
         EquipmentItem twinBlades, rifleItem;
         SahurAttack attack;

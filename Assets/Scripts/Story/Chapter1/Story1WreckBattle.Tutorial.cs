@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public sealed partial class Story1WreckBattle
 {
-    Vector3 redDodgeStartLocal,redDodgeEndLocal,redDodgeAttackLocal;
+    Vector3 redDodgeStartLocal,redDodgeEndLocal,redDodgeAttackLocal,redDodgeSharkStartLocal;
     Vector3 redDodgeDirection;
     float redSwimControlSeconds;
     bool redTutorialEnvelopeReady;
@@ -17,6 +18,157 @@ public sealed partial class Story1WreckBattle
     public double RedesignTutorialClearanceMs { get; private set; }
     public double RedesignDodgePlanMs { get; private set; }
     public double RedesignTutorialPreparationMs { get; private set; }
+
+    // Board-relative staging keeps the committed bite out over open water. Never chase
+    // every intermediate club pose; the authored contact pose defines one destination.
+    Vector3 redTutorialStepStart,redTutorialStepEnd,redTutorialStrikeNose,redTutorialAttackStart,redTutorialContactOffset;
+    bool redTutorialStaging,redTutorialStrikeReady,redTutorialBlendStarted;
+    float redTutorialHitTime=-1;
+    Quaternion redTutorialFacingStart;
+    Vector3 redTutorialLeftSole,redTutorialRightSole;
+    const float RedLightContact=.585f,RedHeavyContact=.16f;
+    public float RedesignTutorialRenderedHitGap { get; private set; }=-1;
+    public int RedesignTutorialConfirmedHits { get; private set; }
+    void RedTutorialShark(string clip,float seconds,Vector3 nose,Vector3 forward)
+    {
+        if(!redTutorialBlendStarted){sharkAnimator.ReleaseCinematicAnimation();redTutorialBlendStarted=true;}
+        RedShark(clip,seconds,nose,forward);
+        sharkAnimator.CommitCinematicPose(RedesignClock);
+        shark.position+=nose-sharkAnimator.NoseWorldPoint;
+    }
+    void RedStartTutorialStaging()
+    {
+        Vector3 feet=RedBoardPoint(redCombatBoard);
+        redTutorialStepStart=redCombatBoard.transform.InverseTransformPoint(feet);
+        redTutorialFacingStart=player.transform.rotation;
+        Vector3 edge=feet;
+        // Walk along the current facing to the actual cut surface boundary.
+        for(int i=1;i<=96;i++)
+        {
+            Vector3 probe=feet+redForward*(i*.25f);
+            if(!redCombatBoard.ContainsFootprint(probe))break;
+            edge=probe;
+        }
+        redForward=redCombatBoard.OpenWaterDirection(edge);redRight=Vector3.Cross(Vector3.up,redForward).normalized;
+        Vector3 stance=redCombatBoard.BoardingPoint(edge-redForward*.7f)+Vector3.up*.08f;
+        if(!redCombatBoard.ContainsFootprint(stance-redRight*.55f)||!redCombatBoard.ContainsFootprint(stance+redRight*.55f))stance=feet;
+        redTutorialStepEnd=redCombatBoard.transform.InverseTransformPoint(stance);
+        redTutorialStaging=true;redTutorialStrikeReady=false;redTutorialHitTime=-1;
+    }
+    void RedPrepareTutorialStrike(float seconds,bool heavy)
+    {
+        if(!redTutorialStaging)RedStartTutorialStaging();
+        Vector3 start=redCombatBoard.transform.TransformPoint(redTutorialStepStart),end=redCombatBoard.transform.TransformPoint(redTutorialStepEnd);
+        float distance=Vector3.ProjectOnPlane(end-start,Vector3.up).magnitude;
+        float walkSeconds=Mathf.Max(.35f,distance/3.5f);
+        float walk=REase(seconds,0,walkSeconds);
+        if(!redTutorialStrikeReady)
+        {
+            // Sample and restore the existing complete action, before anything renders.
+            // The original clips/rig are retained; no arbitrary bone rotation substitutes.
+            Vector3 savedStance=redStanceLocal;bool hadStance=redHasStance;RedStoreTutorialStance(end);
+            string strikeClip=heavy?"CH1_SahurOverhead_v215":"CH1_SahurSlash_v006";float strikeTime=heavy?1.05f+RedHeavyContact:RedLightContact;
+            RedPose(strikeClip,strikeTime,false);RedOnBoard(strikeClip,strikeTime);
+            // The imported strike changes toe articulation. Cache its actual skinned
+            // soles once, then reserve space for that pose at the real cut edge.
+            SahurSupportPose.MeasureSoles(redAnimator,ref redTutorialLeftSole,ref redTutorialRightSole);
+            for(int attempt=0;attempt<8;attempt++)
+            {
+                RedStoreTutorialStance(end);RedOnBoard(strikeClip,strikeTime);
+                bool supported=true;
+                foreach(var foot in new[]{(HumanBodyBones.LeftFoot,redTutorialLeftSole),(HumanBodyBones.RightFoot,redTutorialRightSole)})
+                {
+                    Vector3 sole=redAnimator.GetBoneTransform(foot.Item1).TransformPoint(foot.Item2);
+                    supported&=redCombatBoard.ContainsFootprint(sole)&&redCombatBoard.ContainsFootprint(sole+redForward*.2f)&&
+                        redCombatBoard.ContainsFootprint(sole+redRight*.2f)&&redCombatBoard.ContainsFootprint(sole-redRight*.2f);
+                }
+                if(supported)break;
+                end=redCombatBoard.BoardingPoint(end-redForward*.25f)+Vector3.up*.08f;
+            }
+            redTutorialStepEnd=redCombatBoard.transform.InverseTransformPoint(end);
+            SahurSupportPose.Plant(redAnimator,redCombatBoard,redTutorialLeftSole,redTutorialRightSole,.5f);
+            Vector3 nose=RedTutorialNose(end,6,3);
+            RedShark("Bite_Lunge",.5f,nose,-redForward);
+            RedFitTutorialFrontToWeapon(1);
+            redTutorialStrikeNose=redCombatBoard.transform.InverseTransformPoint(sharkAnimator.NoseWorldPoint);
+            redTutorialContactOffset=sharkAnimator.NoseWorldPoint-RedWeaponPoint;
+            redTutorialStrikeReady=true;redStanceLocal=savedStance;redHasStance=hadStance;
+            RedPose("CH1_SahurGuard_v050",0,false);RedOnBoard("CH1_SahurGuard_v050",0);
+        }
+        RedStoreTutorialStance(Vector3.Lerp(start,end,walk));
+        var facing=Quaternion.Slerp(redTutorialFacingStart,Quaternion.LookRotation(redForward),REase(seconds,0,.4f));
+        if(walk<1&&distance>.15f)RedOnBoard("PLAYER_Walk_v006",seconds,facing);
+        else RedOnBoard("CH1_SahurGuard_v050",Mathf.Max(0,seconds-walkSeconds),facing);
+        Vector3 feet=RedBoardPoint(redCombatBoard);
+        Vector3 target=redTutorialStrikeReady?redCombatBoard.transform.TransformPoint(redTutorialStrikeNose):RedTutorialNose(feet,7,3);
+        float approach=REase(seconds,walkSeconds,walkSeconds+1.4f);
+        Vector3 at=target+redForward*Mathf.Lerp(15,heavy?1.2f:2f,approach);
+        RedTutorialShark(approach>.8f?"Bite_Lunge":"Swim",approach>.8f?0:redesignTime,at,-redForward);
+        RedHeroShot(10,new Vector3(9,5,-13),55);
+        if(seconds>=walkSeconds+1.4f&&redTutorialStrikeReady)
+        {
+            redTutorialStaging=false;RedGate(heavy?Lesson.ChargeHold:Lesson.Attack);
+        }
+    }
+    Vector3 RedPredictTutorialWeapon(bool heavy,string clip,float actionTime)
+    {
+        // Preview the authored contact on the LIVE deck. Restore mixer weights, time,
+        // root and pose before collision/rendering; no temporary pose is committed.
+        double time=redPose.GetTime();float w0=redMixer.GetInputWeight(0),w1=redMixer.GetInputWeight(1),w2=redMixer.GetInputWeight(2);
+        Vector3 root=player.transform.position;Quaternion rotation=player.transform.rotation;
+        redPose.SetTime(heavy?1.05f+RedHeavyContact:RedLightContact);
+        redMixer.SetInputWeight(0,1);redMixer.SetInputWeight(1,0);redMixer.SetInputWeight(2,0);
+        RedFeet(RedBoardPoint(redCombatBoard),Quaternion.LookRotation(redForward));
+        SahurSupportPose.Plant(redAnimator,redCombatBoard,redTutorialLeftSole,redTutorialRightSole,.5f);
+        Vector3 result=RedWeaponPoint;
+        redPose.SetTime(time);redMixer.SetInputWeight(0,w0);redMixer.SetInputWeight(1,w1);redMixer.SetInputWeight(2,w2);
+        player.transform.SetPositionAndRotation(root,rotation);RedOnBoard(clip,actionTime);
+        return result;
+    }
+    void RedTutorialStrike(float seconds,bool heavy)
+    {
+        float contact=heavy?RedHeavyContact:RedLightContact;
+        float actionTime=lessonImpact?contact+Mathf.Max(0,seconds-redTutorialHitTime):Mathf.Min(seconds,contact);
+        string clip=heavy?"CH1_SahurOverhead_v215":"CH1_SahurSlash_v006";
+        float clipTime=(heavy?1.05f:0)+actionTime;RedOnBoard(clip,clipTime);
+        Vector3 start=redCombatBoard.transform.TransformPoint(redTutorialAttackStart);
+        Vector3 target=lessonImpact?redCombatBoard.transform.TransformPoint(redTutorialStrikeNose):RedPredictTutorialWeapon(heavy,clip,clipTime)+redTutorialContactOffset;
+        float age=lessonImpact?Mathf.Max(0,seconds-redTutorialHitTime):0;
+        float soleWeight=lessonImpact?1-REase(age,.05f,.25f):REase(seconds,Mathf.Max(0,contact-.2f),contact);
+        SahurSupportPose.Plant(redAnimator,redCombatBoard,Vector3.Lerp(redLeftSole,redTutorialLeftSole,soleWeight),Vector3.Lerp(redRightSole,redTutorialRightSole,soleWeight),.5f);
+        Vector3 nose=lessonImpact?target+redForward*(12*REase(age,.08f,1.4f)):
+            Vector3.Lerp(start,target,REase(seconds,0,contact));
+        RedTutorialShark(lessonImpact?"Hit_Recoil":"Bite_Lunge",lessonImpact?age:Mathf.Lerp(0,.5f,R01(seconds,0,contact)),nose,-redForward);
+        if(!lessonImpact&&seconds>=contact)
+        {
+            // Correct only the terminal contact for the live floating deck; the approach
+            // remains one committed path, independent of anticipation/follow-through arcs.
+            Vector3 before=shark.position;RedFitTutorialFrontToWeapon(1);
+            shark.position=before+Vector3.ClampMagnitude(shark.position-before,6*Time.deltaTime);
+        }
+        // Native solids run once after this pose. Confirmation happens after that pass.
+        if(lessonImpact&&age>=1.5f)
+        {
+            RedOnBoard("CH1_SahurGuard_v050",0);
+            if(heavy){lessonExecuting=false;lessonTime=0;stowReady=false;CurrentLesson=Lesson.Jump;}
+            else RedGate(Lesson.Dodge);
+        }
+    }
+    internal void RedConfirmTutorialStrike()
+    {
+        if(!RedesignActive||RedesignStage!=OpeningStage.Tutorial||TutorialWaiting||!lessonExecuting||lessonImpact)return;
+        bool heavy=CurrentLesson==Lesson.ChargeRelease;
+        if(!heavy&&CurrentLesson!=Lesson.Attack)return;
+        float cue=heavy?RedHeavyContact:RedLightContact;
+        if(lessonTime<cue-.001f)return;
+        float gap=RedHeldHeadGap(out var contact);
+        RedesignTutorialRenderedHitGap=gap;
+        if(gap>.055f)return;
+        lessonImpact=true;redTutorialHitTime=lessonTime;RedesignTutorialConfirmedHits++;
+        redTutorialStrikeNose=redCombatBoard.transform.InverseTransformPoint(sharkAnimator.NoseWorldPoint);
+        Effects.Impact(contact,heavy?Vector3.down:-redForward,heavy?1.5f:.8f);
+        RedEvent((heavy?"Charge success":"Attack success")+"; final rendered head/shaft gap="+gap.ToString("F3"));
+    }
 
     void RedPrepareTutorialBody()
     {
@@ -138,6 +290,7 @@ public sealed partial class Story1WreckBattle
         Vector3 feet=RedBoardPoint(redCombatBoard);RedTutorialBody();RedWaterCollectShapes();
         redWaterShapes.RemoveAll(s=>s.mesh==redCombatBoard.Collision);
         redDodgeStartLocal=redCombatBoard.transform.InverseTransformPoint(feet);
+        redDodgeSharkStartLocal=redCombatBoard.transform.InverseTransformPoint(sharkAnimator.NoseWorldPoint);
         redDodgeAttackLocal=redDodgeStartLocal;redDodgeEndLocal=redDodgeStartLocal;
         RedesignDodgeCandidates=0;RedesignDodgeTravel=0;
         var candidates=new List<(Vector3 point,float score)>();
@@ -190,10 +343,11 @@ public sealed partial class Story1WreckBattle
         Vector3 attack=redCombatBoard.transform.TransformPoint(redDodgeAttackLocal)+Vector3.up*(redHeroHeight*.45f);
         // The bite remains aimed at the position committed before the roll.
         float run=seconds<.9f?Mathf.Lerp(10,-1,REase(seconds,0,.9f)):Mathf.Lerp(-1,18,REase(seconds,.9f,2.2f));
-        RedShark(seconds<1.1f?"Bite_Lunge":"Swim",seconds<1.1f?seconds:seconds-1.1f,attack+redForward*run,-redForward);
+        Vector3 nose=seconds<.9f?Vector3.Lerp(redCombatBoard.transform.TransformPoint(redDodgeSharkStartLocal),attack-redForward,REase(seconds,0,.9f)):attack+redForward*run;
+        RedTutorialShark(seconds<1.1f?"Bite_Lunge":"Swim",seconds<1.1f?seconds:seconds-1.1f,nose,-redForward);
         RedKeepTutorialSharkClear(.4f);
         if(seconds>=2.3f&&RedesignTutorialHeroGap>=.39f)
-        {RedOnBoard("CH1_SahurGuard_v050",0);RedKeepTutorialSharkClear(.4f);RedGate(Lesson.ChargeHold);}
+        {RedOnBoard("CH1_SahurGuard_v050",0);lessonExecuting=false;lessonTime=0;CurrentLesson=Lesson.ChargeHold;RedStartTutorialStaging();}
     }
     Vector3 RedTutorialNose(Vector3 feet,float distance,float height=2.25f)
     {

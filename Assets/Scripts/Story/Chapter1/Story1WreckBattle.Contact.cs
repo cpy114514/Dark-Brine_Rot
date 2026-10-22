@@ -63,7 +63,8 @@ public sealed partial class Story1WreckBattle
         // Root fitting changes only the world transform, not local skinning.
         // Reuse a tutorial pose within this frame; RedShark invalidates every
         // new bone sample. Crush/cloth projection retains its uncached path.
-        if(RedesignStage!=OpeningStage.Crush&&redContactMesh!=null&&redContactBakedFrame==Time.frameCount&&redContactBakedVersion==redContactPoseVersion)return skin;
+        if(RedesignStage!=OpeningStage.Crush&&redContactMesh!=null&&redContactBakedVersion==redContactPoseVersion&&
+            (redContactBakedFrame==Time.frameCount||RedesignStage==OpeningStage.Tutorial&&TutorialWaiting))return skin;
         if(redContactMesh==null)
         {
             redContactMesh=new Mesh{name="Opening contact pose"};

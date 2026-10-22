@@ -93,6 +93,9 @@ namespace Mavis
         [Min(0.2f)] public float twinBladeMinimumCharge = 1.2f;
         [Min(0.2f)] public float twinBladeFullCharge = 2.6f;
         [Min(0.05f)] public float twinBladeRaiseTime = .9f;
+        [Tooltip("Fade the held X pose into the existing rush or locomotion before the damaging cut starts.")]
+        [Range(.04f,.14f)] public float twinBladePoseReleaseBlend = .12f;
+        bool fadingTwinBladeCharge;
         public static readonly Vector2 TwinBladeRushWindow = new Vector2(.20f, .56f);
         public float EffectiveFullChargeTime => UsesTwinBlades ? Mathf.Max(twinBladeMinimumCharge, twinBladeFullCharge) : Mathf.Max(.2f, fullChargeTime);
         public bool ChargeReady => charging && (!UsesTwinBlades || ChargeElapsed >= twinBladeMinimumCharge);
@@ -158,6 +161,7 @@ namespace Mavis
         float CurrentWindowEnd => CurrentDamageWindow.y;
         public int CurrentComboStage => IsGroundComboActive ? comboStep : -1;
         public bool IsCharging => charging;
+        public int ChargedAttacksPerformed { get; private set; }
         public bool UsesTwinBlades { get; private set; }
         Collider originalStickHitbox, twinRight, twinLeft, secondBlade;
         AnimationClip originalChargeClip, originalChargedStrikeClip;
@@ -536,6 +540,7 @@ namespace Mavis
             if (usesUpperBodyCharge) controller?.PrepareChargeLocomotion();
             controller?.BeginAttackFacing();
             charging = true;
+            fadingTwinBladeCharge = false;
             chargeStartedAt = Time.time;
             if (stickHitbox != null) stickHitbox.enabled = false;
             // The single-hand windup develops throughout the full charge.
@@ -559,6 +564,7 @@ namespace Mavis
             }
 
             float releasePhase = ChargePose01;
+            if (ChargeElapsed >= Mathf.Min(.5f, fullChargeTime)) ChargedAttacksPerformed++;
             float releaseTime = chargedStrikeClip != null ? 0f : releasePhase * (chargeClip != null ? chargeClip.length : 0f);
             charging = false;
             float multiplier = Mathf.Lerp(minChargeDamageMultiplier, maxChargeDamageMultiplier,
@@ -568,13 +574,17 @@ namespace Mavis
 
         void CancelCharge()
         {
+            // Keep the last evaluated X pose while its layer fades. Clearing its
+            // phase/weight immediately exposes the idle arms in a single frame.
+            fadingTwinBladeCharge = UsesTwinBlades && usesUpperBodyCharge && animator && chargeLayerIndex > 0 &&
+                animator.GetLayerWeight(chargeLayerIndex) > 0f;
             charging = false;
             controller?.EndAttackFacing();
-            if (animator != null) animator.SetFloat(chargeTimeHash, 0f);
+            if (animator != null && !fadingTwinBladeCharge) animator.SetFloat(chargeTimeHash, 0f);
             if (stickHitbox != null) stickHitbox.enabled = false;
-            if (usesUpperBodyCharge && animator != null && chargeLayerIndex >= 0)
+            if (usesUpperBodyCharge && animator != null && chargeLayerIndex >= 0 && !fadingTwinBladeCharge)
                 animator.SetLayerWeight(chargeLayerIndex, 0f);
-            else if (animator != null)
+            else if (!usesUpperBodyCharge && animator != null)
                 animator.CrossFadeInFixedTime("Locomotion", 0.14f, 0, 0f);
         }
 
@@ -624,6 +634,7 @@ namespace Mavis
 
         void CancelForMovement()
         {
+            fadingTwinBladeCharge = false;
             ResetCombinations();
             localStop?.Release();
             impactFeedback?.Visuals?.ClearTrail();
@@ -665,6 +676,13 @@ namespace Mavis
             if (stickHitbox != null) stickHitbox.enabled = false;
             if (animator != null)
             {
+                // Swimming/story ownership must never inherit an outgoing charge layer.
+                if (fadingTwinBladeCharge && chargeLayerIndex > 0)
+                {
+                    animator.SetLayerWeight(chargeLayerIndex, 0f);
+                    animator.SetFloat(chargeTimeHash, 0f);
+                    fadingTwinBladeCharge = false;
+                }
                 animator.ResetTrigger(attackTrigger);
                 int layer = animator.GetLayerIndex(ChargeUpperBodyLayer);
                 if (layer >= 0) animator.SetLayerWeight(layer, 0f);
@@ -687,19 +705,22 @@ namespace Mavis
             }
             // Both windup and release belong to the right-arm layer. The base
             // keeps the idle/walk/run pose instead of taking over the whole body.
-            if (IsHeavyAttackActive && !usesRightArmHeavy && animator.GetLayerWeight(chargeLayerIndex) > 0f)
+            if (IsHeavyAttackActive && !usesRightArmHeavy && !fadingTwinBladeCharge && animator.GetLayerWeight(chargeLayerIndex) > 0f)
                 animator.SetFloat(chargeTimeHash, HeavyAttackPhase);
             if (lightLayerIndex>0)
                 animator.SetLayerWeight(lightLayerIndex,Mathf.MoveTowards(animator.GetLayerWeight(lightLayerIndex),
                     usesUpperBodyLight ? 1f : 0f,Time.deltaTime/ChargeLayerFadeOut));
             bool ownsArm = charging || (IsHeavyAttackActive && usesRightArmHeavy);
             float target = ownsArm ? 1f : 0f;
-            float duration = ownsArm ? ChargeLayerFadeIn : ChargeLayerFadeOut;
+            float duration = ownsArm ? ChargeLayerFadeIn : fadingTwinBladeCharge ? twinBladePoseReleaseBlend : ChargeLayerFadeOut;
             float weight = Mathf.MoveTowards(animator.GetLayerWeight(chargeLayerIndex),
                 target, Time.deltaTime / duration);
             animator.SetLayerWeight(chargeLayerIndex, weight);
             if (!charging && weight <= 0f)
+            {
                 animator.SetFloat(chargeTimeHash, 0f);
+                fadingTwinBladeCharge = false;
+            }
         }
 
         void UpdateLightPlayback()
@@ -740,7 +761,7 @@ namespace Mavis
             comboStep = -1;
             comboContinueQueued = false;
             BeginAttack(stateHash, amount, heavy ? heavyStartPose : 0f,
-                heavy ? 0.18f : 0.11f);
+                heavy ? UsesTwinBlades ? .08f : .18f : .11f);
         }
 
         void BeginAttack(int stateHash, float amount, float offset, float blend)
@@ -751,7 +772,9 @@ namespace Mavis
             activeAttackHash = stateHash;
             usesRightArmHeavy = !UsesTwinBlades && stateHash == heavyStateHash && chargeClip != null && usesUpperBodyCharge &&
                 chargeLayerIndex > 0 && animator.HasState(chargeLayerIndex, rightArmHeavyStateHash);
-            if (!usesRightArmHeavy && chargeLayerIndex > 0)
+            fadingTwinBladeCharge = UsesTwinBlades && stateHash == heavyStateHash && usesUpperBodyCharge &&
+                chargeLayerIndex > 0 && animator.GetLayerWeight(chargeLayerIndex) > 0f;
+            if (!usesRightArmHeavy && !fadingTwinBladeCharge && chargeLayerIndex > 0)
                 animator.SetLayerWeight(chargeLayerIndex, 0f);
             if (!usesUpperBodyLight && lightLayerIndex > 0)
                 animator.SetLayerWeight(lightLayerIndex, 0f);
@@ -1143,6 +1166,7 @@ namespace Mavis
 
         void OnDisable()
         {
+            fadingTwinBladeCharge = false;
             ResetCombinations();chordLatched=false;
             dodgeBufferedUntil=-1;
             localStop?.Release();

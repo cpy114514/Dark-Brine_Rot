@@ -268,10 +268,58 @@ public sealed class Story1WreckFinale : MonoBehaviour
     static float Ease(float t)=>Mathf.SmoothStep(0,1,Mathf.Clamp01(t));
     public static float TimelineForBeat(float beat)=>beat;
     float Clock(float film)=>film+LeadInSeconds;
+    // Only these missing historical revisions have retained corresponding motions.
+    // Keep the requested beat/action/timing; never alias the redesigned shark film.
+    static AnimationClip ResolveFinaleClip(string name)
+    {
+        var clip=Story1EncounterClipCache.Find(name);
+        if(clip!=null)return clip;
+        if(name=="CH1_SahurBrace_v047")return Story1EncounterClipCache.Find("CH1_SahurBrace_v027");
+        if(name=="CH1_SahurMiss_v040")return Story1EncounterClipCache.Find("CH1_SahurSlash_v128");
+        return null;
+    }
+    static Story1EncounterBeat[] TimelineBeats()
+    {
+        var definition=Resources.Load<Story1EncounterDefinition>("Encounter/v006/EncounterDefinition");
+        var result=(Story1EncounterBeat[])(definition!=null && definition.beats!=null && definition.beats.Length>0
+            ? definition.beats : Story1EncounterDefinition.ApprovedBeats()).Clone();
+        string standingGuard=result.First(b=>b.action==Story1EncounterAction.Guard).clip;
+        for(int i=0;i<result.Length;i++)
+        {
+            if(result[i].action==Story1EncounterAction.Surf)
+                result[i]=new Story1EncounterBeat("Keep footing as the bite passes",result[i].start,result[i].end,Story1EncounterAction.Guard,standingGuard);
+            if(result[i].action==Story1EncounterAction.Throw && result[i].clip=="PLAYER_Throw_v006")
+                result[i].clip="PLAYER_Throw_v064";
+        }
+        return result;
+    }
+    public static string[] MissingResources(Animator actor)
+    {
+        if(actor==null || actor.runtimeAnimatorController==null)return new[]{"Player Animator/controller"};
+        var missing=new System.Collections.Generic.List<string>();
+        var timeline=TimelineBeats();
+        foreach(var action in new[]{Story1EncounterAction.Guard,Story1EncounterAction.Parry,Story1EncounterAction.Slash,Story1EncounterAction.Brace,Story1EncounterAction.Hop})
+            if(!timeline.Any(b=>b.action==action))missing.Add("Timeline action: "+action);
+        foreach(string name in timeline.Select(b=>b.clip).Concat(new[]{"PLAYER_Throw_v064","PLAYER_Stagger_v006","PLAYER_Fall_v006",
+            "PLAYER_JumpStart_v006","PLAYER_JumpAir_v006","PLAYER_JumpLand_v006"}).Distinct())
+            if(ResolveFinaleClip(name)==null)missing.Add(name??"Unnamed timeline clip");
+        if(!new[]{"PLAYER_Climb_v010","PLAYER_Climb_v009","PLAYER_Climb_v006"}.Any(n=>Story1EncounterClipCache.Find(n)!=null))missing.Add("PLAYER_Climb (v010/v009/v006)");
+        var library=actor.runtimeAnimatorController.animationClips;
+        if(!library.Any(c=>c.name.Contains("Walk_Loop")) && Story1EncounterClipCache.Find("PLAYER_Walk_v006")==null)missing.Add("PLAYER_Walk_v006");
+        if(!library.Any(c=>c.name=="SahurFastFreestyle") && Story1EncounterClipCache.Find("PLAYER_PursuitSwim_v210")==null && Story1EncounterClipCache.Find("PLAYER_SwimFast_v007")==null)missing.Add("Player swim animation");
+        return missing.ToArray();
+    }
+    float priorAnimatorSpeed;
+    AnimatorCullingMode priorAnimatorCulling;
+    float[] priorLayerWeights;
+    bool actorsReleased;
+
     public void Initialize(Story1WreckBattle encounter,ThirdPersonPlayerController player,TralaleroSwimAnimator enemy,
         Camera camera,Story1WreckPlank support,OceanWorld water,bool swimming)
     {
         using var measurement=new Unity.Profiling.ProfilerMarker("Wreck.InitializeFilm").Auto();
+        var missing=MissingResources(player!=null ? player.CharacterAnimator : null);
+        if(missing.Length>0)throw new System.InvalidOperationException("Wreck finale resources missing: "+string.Join(", ",missing));
         battle=encounter;hero=player;shark=enemy;shotCamera=camera;board=encounter.EntryDeck!=null && !encounter.EntryDeck.IsBroken ? encounter.EntryDeck : support;ocean=water;fromWater=true;
         swimmingWeapon=hero.GetComponent<SahurSwimmingWeapon>();
         if(shark.BoneAnimator!=null)contactTailBone=shark.BoneAnimator.GetComponentsInChildren<Transform>(true).FirstOrDefault(t=>t.name=="Tail_Tip");
@@ -279,6 +327,8 @@ public sealed class Story1WreckFinale : MonoBehaviour
         supportBody=board.GetComponent<Rigidbody>();originalDamping=supportBody.angularDamping;supportBody.angularDamping=6;
         board.Drive(0,0,null);
         animator=hero.CharacterAnimator;
+        priorAnimatorSpeed=animator.speed;priorAnimatorCulling=animator.cullingMode;
+        priorLayerWeights=Enumerable.Range(0,animator.layerCount).Select(animator.GetLayerWeight).ToArray();
         retainedHeroBones=animator.GetComponentsInChildren<Transform>(true);
         retainedHeroPositions=new Vector3[retainedHeroBones.Length];retainedHeroRotations=new Quaternion[retainedHeroBones.Length];
         entryHeroPositions=retainedHeroBones.Select(b=>b.localPosition).ToArray();
@@ -341,22 +391,16 @@ public sealed class Story1WreckFinale : MonoBehaviour
         else{walkSeconds=Vector3.ProjectOnPlane(startFeet-Deck(-.4f),Vector3.up).magnitude/3;LeadInSeconds=Mathf.Max(.6f,walkSeconds+.25f);}
         var definition=Resources.Load<Story1EncounterDefinition>("Encounter/v006/EncounterDefinition");
         shots=definition!=null && definition.shots!=null && definition.shots.Length>0 ? definition.shots : Story1EncounterDefinition.ApprovedShots();
-        beats=(Story1EncounterBeat[])(definition!=null ? definition.beats : Story1EncounterDefinition.ApprovedBeats()).Clone();
-        // Historical serialized timelines may still contain the retired
-        // driving pose. Keep the beat's timing as ordinary grounded defence,
-        // including when loading an older definition, without mutating it.
-        string standingGuard=beats.First(b=>b.action==Story1EncounterAction.Guard).clip;
-        for(int i=0;i<beats.Length;i++)if(beats[i].action==Story1EncounterAction.Surf)
-            beats[i]=new Story1EncounterBeat("Keep footing as the bite passes",beats[i].start,beats[i].end,Story1EncounterAction.Guard,standingGuard);
-        for(int i=0;i<beats.Length;i++)if(beats[i].action==Story1EncounterAction.Throw && beats[i].clip=="PLAYER_Throw_v006")
-            beats[i]=new Story1EncounterBeat(beats[i].label,beats[i].start,beats[i].end,beats[i].action,"PLAYER_Throw_v064");
+        beats=TimelineBeats();
         contacts=definition!=null && definition.contacts!=null && definition.contacts.Length==6 ? definition.contacts : Story1EncounterDefinition.ApprovedContacts();
         contactTimes=contacts.Select(c=>c.time).ToArray();
         // Contact windows are immutable for this encounter. Avoid rebuilding
         // a sorted LINQ/hash-set pipeline every rendered timeline frame.
         timelineCues=Cues.Concat(contactTimes).Distinct().OrderBy(c=>c).ToArray();
-        AnimationClip Revised(string name)=>Story1EncounterClipCache.Find(name) ?? throw new System.InvalidOperationException("Missing paired encounter clip: "+name);
+        AnimationClip Revised(string name)=>ResolveFinaleClip(name) ?? throw new System.InvalidOperationException("Missing paired encounter clip: "+name);
         foreach(var beat in beats)if(!revisedClips.ContainsKey(beat.clip))revisedClips.Add(beat.clip,Revised(beat.clip));
+        foreach(var pair in revisedClips)if(pair.Value.name!=pair.Key)
+            Debug.LogWarning("[Opening] Retained finale animation: "+pair.Key+" -> "+pair.Value.name,this);
         slash=Revised(beats.First(b=>b.action==Story1EncounterAction.Slash).clip);guard=Revised(beats.First(b=>b.action==Story1EncounterAction.Guard).clip);block=Revised(beats.First(b=>b.action==Story1EncounterAction.Brace).clip);
         throwClip=Revised("PLAYER_Throw_v064");stagger=Revised("PLAYER_Stagger_v006");knockdown=Revised("PLAYER_Fall_v006");
         // Older project copies may not contain the v010 export yet. Keep the
@@ -2717,10 +2761,19 @@ public sealed class Story1WreckFinale : MonoBehaviour
     }
     public void ReleaseActors()
     {
+        if(actorsReleased)return;
+        actorsReleased=true;initialized=false;preparingEntry=false;
         StopAllCoroutines();
+        if(entryChase!=null){entryChase.Finish();Destroy(entryChase);entryChase=null;}
+        foreach(var post in GetComponents<Story1FinalePostProcess>())if(post.film==this){post.enabled=false;Destroy(post);}
         if(floatingProbe!=null){Destroy(floatingProbe.gameObject);floatingProbe=null;}
         if(supportBody!=null)supportBody.angularDamping=originalDamping;
-        CatchStick();if(animator!=null)animator.speed=1;if(poseGraph.IsValid())poseGraph.Destroy();if(shark!=null)shark.ReleaseCinematicAnimation();
+        CatchStick();if(poseGraph.IsValid())poseGraph.Destroy();if(shark!=null)shark.ReleaseCinematicAnimation();
+        if(animator!=null && priorLayerWeights!=null)
+        {
+            animator.speed=priorAnimatorSpeed;animator.cullingMode=priorAnimatorCulling;
+            for(int i=0;i<priorLayerWeights.Length && i<animator.layerCount;i++)animator.SetLayerWeight(i,priorLayerWeights[i]);
+        }
         if(actorColliders!=null)for(int i=0;i<actorColliders.Length;i++)if(actorColliders[i]!=null)actorColliders[i].enabled=colliderEnabled[i];
         actorColliders=null;
         if(sampledSkins!=null)for(int i=0;i<sampledSkins.Length;i++)if(sampledSkins[i]!=null)

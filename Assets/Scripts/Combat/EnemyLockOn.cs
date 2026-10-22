@@ -12,6 +12,7 @@ namespace Mavis
         public float obstructionGrace = 0.8f;
         public Transform Target { get; private set; }
         public bool IsLocked => Target != null;
+        public int LocksAcquired { get; private set; }
         public Vector3 AimPoint => targetHealth is Story1SharkHealth shark ? shark.LockPoint : targetRenderer != null ? targetRenderer.bounds.center
             : targetCollider != null ? targetCollider.bounds.center : Target != null ? Target.position + Vector3.up : transform.position;
         Component targetHealth;
@@ -93,6 +94,7 @@ namespace Mavis
             foreach (var enemy in FindObjectsByType<Health>(FindObjectsSortMode.None)) Consider(enemy);
             if (best == null) return false;
             targetHealth = best; Target = best.transform;
+            LocksAcquired++;
             targetRenderer = best.GetComponentInChildren<SkinnedMeshRenderer>();
             targetCollider = best.GetComponentInChildren<Collider>();
             blockedTime = 0f;

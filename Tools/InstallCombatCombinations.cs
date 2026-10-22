@@ -266,7 +266,7 @@ public static class InstallCombatCombinations
     {
         if(Application.isPlaying)throw new Exception("Edit mode required");
         var report=new System.Collections.Generic.List<object>();
-        foreach(string path in new[]{"Assets/Resources/Encounter/v006/SahurGameplay.controller","Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller"})
+        foreach(string path in new[]{"Assets/Resources/Encounter/v006/SahurGameplay.controller","Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller","Assets/Resources/Equipment/M4A1/SahurRifle.controller"})
         {
             var controller=AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(path);
             var machine=controller.layers[0].stateMachine;

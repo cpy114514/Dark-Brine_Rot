@@ -205,7 +205,7 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     /// samples. Those samples must remain exact and never start visual blends.
     /// The solid solver and contact checks consume this final blended anatomy.
     /// </summary>
-    public void CommitCinematicPose(float clock)
+    public void CommitCinematicPose(float clock,string authoredAction=null)
     {
         if(rigAnimator==null || !cinematicAnimation)return;
         if(cinematicBones==null)
@@ -214,7 +214,7 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
             committedPositions=new Vector3[cinematicBones.Length];transitionPositions=new Vector3[cinematicBones.Length];
             committedRotations=new Quaternion[cinematicBones.Length];transitionRotations=new Quaternion[cinematicBones.Length];
         }
-        string action=CinematicAction=="Swim" || CinematicActionSeconds>ActionDuration(CinematicAction)+.12f ? "Swim" : CinematicAction;
+        string action=authoredAction??(CinematicAction=="Swim" || CinematicActionSeconds>ActionDuration(CinematicAction)+.12f ? "Swim" : CinematicAction);
         if(hasCommittedPose && action!=committedAction)
         {
             System.Array.Copy(committedPositions,transitionPositions,cinematicBones.Length);

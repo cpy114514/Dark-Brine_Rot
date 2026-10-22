@@ -29,6 +29,19 @@ public sealed class BossHudPanel
     public float DisplayedFraction => health.fillAmount;
     public bool IsVisible => group.alpha > .01f;
 
+    // Use the same encounter requests that select the current enemy's health bar.
+    // Hidden, disabled and destroyed owners must not leave the exploration HUD folded.
+    public static bool HasActiveEncounter
+    {
+        get
+        {
+            foreach (var panel in panels)
+                if (panel.requested && panel.root && panel.root.activeInHierarchy)
+                    return true;
+            return false;
+        }
+    }
+
     public BossHudPanel(Transform owner, string name)
     {
         this.owner = owner;

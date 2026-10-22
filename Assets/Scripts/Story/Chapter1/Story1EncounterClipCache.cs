@@ -13,6 +13,7 @@ public static class Story1EncounterClipCache
     static string Path(string name)=>"Encounter/"+name.Substring(name.LastIndexOf('_')+1)+"/"+name+"/"+name;
     public static AnimationClip Find(string name)
     {
+        if(string.IsNullOrEmpty(name))return null;
         if(clips.TryGetValue(name,out var existing) && existing!=null)return existing;
         using var measurement=ResolveMarker.Auto();
         var clip=Resources.LoadAll<AnimationClip>(Path(name)).FirstOrDefault(c=>!c.name.StartsWith("__preview__"));
@@ -33,7 +34,8 @@ public static class Story1EncounterClipCache
             "CH1_SharkLeapCrush_v214","CH1_SharkHeadShake_v214","CH1_SharkFeintTail_v214",
             "PLAYER_SwimFast_v007","PLAYER_PursuitSwim_v210","CH1_SharkPursuit_v210","PLAYER_Throw_v064","PLAYER_Stagger_v006","PLAYER_Fall_v006",
             "PLAYER_Climb_v010","PLAYER_Climb_v009","PLAYER_Climb_v006","PLAYER_Walk_v006",
-            "PLAYER_JumpStart_v006","PLAYER_JumpAir_v006","PLAYER_JumpLand_v006","CH1_SahurBoardHop_v086","CH1_SahurBoardHop_v047"}).Distinct();
+            "PLAYER_JumpStart_v006","PLAYER_JumpAir_v006","PLAYER_JumpLand_v006","CH1_SahurBoardHop_v086","CH1_SahurBoardHop_v047",
+            "CH1_SahurBrace_v027","CH1_SahurSlash_v128"}).Distinct();
         foreach(string name in names)
         {
             if(clips.TryGetValue(name,out var existing) && existing!=null)continue;

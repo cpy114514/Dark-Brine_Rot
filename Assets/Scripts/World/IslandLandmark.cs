@@ -14,7 +14,8 @@ namespace Mavis
             if (!caption) return;
             caption.font = GameLocalization.Font ? GameLocalization.Font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             caption.GetComponent<MeshRenderer>().sharedMaterial = caption.font.material;
-            caption.text = englishName;
+            caption.text = destination && destination.TryGetComponent<IslandSupplyCache>(out var cache) ?
+                (cache.supportsMelee ? "Recovery / ammo" : cache.DisplayName) : englishName;
             if (destination) caption.text += "\n" + Mathf.RoundToInt(Vector3.ProjectOnPlane(destination.position - transform.position, Vector3.up).magnitude) + " m";
         }
         void OnDestroy() => GameLocalization.Changed -= Refresh;

@@ -119,7 +119,7 @@ namespace Mavis
             if (pickupNotice != null) pickupNotice.gameObject.SetActive(gameplay && Time.unscaledTime < noticeUntil);
             if (weaponHint != null)
             {
-                weaponHint.gameObject.SetActive(gameplay);
+                weaponHint.gameObject.SetActive(gameplay && !BossHudPanel.HasActiveEncounter);
 
             }
         }
@@ -163,7 +163,7 @@ namespace Mavis
             int count=0;
             if(slot==EquipmentSlot.Weapon)
             {
-                AddItemRow("Sahur stick",weapons!=null&&weapons.CurrentWeapon==SahurWeaponLoadout.Weapon.Stick?"Equipped":"Ready to equip",count++,()=>InspectWeapon(0));
+                AddItemRow("Sahur stick",weapons!=null&&!weapons.HasStick?"Weapon lost":weapons!=null&&weapons.CurrentWeapon==SahurWeaponLoadout.Weapon.Stick?"Equipped":"Ready to equip",count++,()=>InspectWeapon(0));
                 AddItemRow("Capri twin blades",weapons!=null&&weapons.HasTwinBlades?(weapons.UsesTwinBlades?"Equipped":"Ready to equip"):"Locked · Defeat Capri",count++,()=>InspectWeapon(1));
                 AddItemRow("M4A1 assault rifle",weapons!=null&&weapons.HasM4A1?(weapons.UsesRifle?"Equipped":"Ready to equip"):"Not collected · Find it on the island",count++,()=>InspectWeapon(2));
                 InspectWeapon(selectedWeapon>=0?selectedWeapon:weapons!=null?(int)weapons.CurrentWeapon:0);
@@ -199,8 +199,9 @@ namespace Mavis
         {
             selectedWeapon=index;selectedItem=null;
             if(specimen)specimen.SetDrawing(index==2?EquipmentJournalInk.Drawing.Rifle:index==0?EquipmentJournalInk.Drawing.Stick:EquipmentJournalInk.Drawing.Blades);
-            bool owned=index==0 || weapons!=null&&weapons.Owns((SahurWeaponLoadout.Weapon)index);
-            bool equipped=weapons!=null && index==(int)weapons.CurrentWeapon;
+            bool owned=weapons!=null&&weapons.Owns((SahurWeaponLoadout.Weapon)index);
+            bool lostStick=index==0 && weapons!=null && !weapons.HasStick;
+            bool equipped=owned && weapons!=null && index==(int)weapons.CurrentWeapon;
             itemTitle.text=SahurWeaponLoadout.DisplayName((SahurWeaponLoadout.Weapon)index);
             selectionStatus.text=equipped?"Currently equipped":owned?"Unlocked · Ready to equip":"Locked";
             details.text=index==0?"Wooden club\n\nLMB: three-hit combo\nHold RMB: charged strike\nHold LMB + RMB: two-handed spin\nJump + LMB: overhead chop\nE: throw and recall\n\nWeak points take 1.5x damage.":"Capri twin blades\n\nLMB: twin-blade combo\nHold RMB: X charge (1.2s minimum / 2.6s full), release to rush 16m and cut outward\nHold LMB + RMB: spin attack\n"+GameInputSettings.Get(GameInputSettings.Action.Guard).ToString()+": hold to block all frontal attacks\n\nInvulnerable during rush travel. Walls stop the rush.\nGuarding and spinning consume stamina.";
@@ -287,7 +288,7 @@ namespace Mavis
             if(weaponHint && weapons!=null)
             {
                 string locked=GameLocalization.Text("Locked"),missing=GameLocalization.Text("Not collected");
-                weaponHint.text=GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+
+                weaponHint.text=(weapons.WeaponMissing?GameLocalization.Text("Weapon lost"):GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName)+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+(weapons.HasStick?"":" · "+GameLocalization.Text("Weapon lost"))+
                     "\n[2] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.CapriTwinBlades)+(weapons.HasTwinBlades?"":" · "+locked)+
                     "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(weapons.HasM4A1?"":" · "+missing);
             }

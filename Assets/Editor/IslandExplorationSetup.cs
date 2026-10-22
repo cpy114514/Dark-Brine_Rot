@@ -92,6 +92,7 @@ public static class IslandExplorationSetup
             var wood = Material("Trail timber", new Color(.23f, .12f, .055f));
             var trim = Material("Supply brass", new Color(.95f, .62f, .12f));
             var south = Cache(group.transform, new Vector3(269, 0, 405), "Shore Camp", "海岸营地", wood, trim);
+            south.supportsMelee = true;
             var ridge = Cache(group.transform, new Vector3(215, 0, 545), "Ridge Cache", "山脊补给点", wood, trim);
             var north = Cache(group.transform, new Vector3(50, 0, 765), "North Lookout", "北岸瞭望点", wood, trim);
             Sign(group.transform, new Vector3(307, 0, 319), south.transform, "Shore Camp", "海岸营地", wood, trim);

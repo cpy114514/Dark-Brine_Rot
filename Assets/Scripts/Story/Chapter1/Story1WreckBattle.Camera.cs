@@ -19,6 +19,7 @@ public sealed partial class Story1WreckBattle
     static readonly float[] RedClearClimbLifts = { 0 };
     static readonly float[] RedClearRanges = { 1, .86f, 1.12f };
     static readonly float[] RedClearClimbRanges = { 1 };
+    static readonly float[] RedClearProneRanges = { 1, .85f, 1.2f };
 
     /// <summary>Weighted real-wood obstruction of the returned camera; zero is clear.</summary>
     public float RedesignCameraWoodObstruction { get; private set; }
@@ -158,7 +159,9 @@ public sealed partial class Story1WreckBattle
         // particular, the climb stays frontal and at board height.
         float bearing = climb ? 15 : shot == 20 || shot == 21 || shot == 33 || shot == 39 ? 7.5f : 32;
         var lifts = climb ? RedClearClimbLifts : RedesignStage == OpeningStage.Pursuit ? RedClearPursuitLifts : RedClearDuelLifts;
-        var ranges = climb ? RedClearClimbRanges : RedClearRanges;
+        // The prone subject is much lower than the standing focus. A closer
+        // clear view can look past foreground wreckage without hiding it.
+        var ranges = climb ? RedClearClimbRanges : shot == 34 ? RedClearProneRanges : RedClearRanges;
         Vector3 best = new Vector3(0, 0, 1);
         float bestCost = float.PositiveInfinity;
         foreach (float range in ranges)
@@ -184,7 +187,7 @@ public sealed partial class Story1WreckBattle
         Vector3 delta = wanted - focus;
         Vector3 planar = Quaternion.AngleAxis(offset.x, Vector3.up) * Vector3.ProjectOnPlane(delta, Vector3.up) * offset.z;
         Vector3 at = focus + planar + Vector3.up * (delta.y + offset.y);
-        if (RedesignStage == OpeningStage.Pursuit)
+        if (RedesignStage == OpeningStage.Pursuit || RedesignStage == OpeningStage.Duel && redClearShot == 34)
         {
             // Sample the current displaced ocean at the actual lens and its
             // near surroundings, not at Sahur or at the board's centre.
