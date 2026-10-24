@@ -197,7 +197,7 @@ namespace Mavis
             comboOneHitWindow = useBlades ? new Vector2(.28f,.62f) : originalWindowOne;
             comboTwoHitWindow = useBlades ? new Vector2(.28f,.62f) : originalWindowTwo;
             comboThreeHitWindow = useBlades ? new Vector2(.28f,.74f) : originalWindowThree;
-            jumpSlashHitWindow = useBlades ? new Vector2(.28f,.62f) : originalJumpWindow;
+            jumpSlashHitWindow = useBlades ? new Vector2(.34f,.67f) : originalJumpWindow;
             comboReach = useBlades ? 5.4f : originalReach;
             comboArc = useBlades ? 150f : originalArc;
             maxChargePosePhase = useBlades ? 1f : originalChargePhase;
@@ -238,6 +238,7 @@ namespace Mavis
         bool attacking;
         bool activeAttackEntered;
         bool airAttackUsed;
+        float jumpAttackBufferedUntil = -1f;
         bool airImpactArmed;
         int comboStep = -1;
         int lastAttackInputFrame = -1;
@@ -334,6 +335,7 @@ namespace Mavis
             }
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)
             {
+                jumpAttackBufferedUntil = -1f;
                 attackQueued = false;
                 comboContinueQueued = false;
                 if (charging) CancelCharge();
@@ -341,6 +343,14 @@ namespace Mavis
                 return;
             }
 
+            if (jumpAttackBufferedUntil >= 0f && Time.time > jumpAttackBufferedUntil)
+                jumpAttackBufferedUntil = -1f;
+            if (jumpAttackBufferedUntil >= 0f && controller != null && controller.CanUseAirAttack &&
+                !attacking && !charging && !airAttackUsed && !CinematicHandoffPending)
+            {
+                jumpAttackBufferedUntil = -1f;
+                StartJumpSlash();
+            }
             if (airImpactArmed && controller != null && controller.CanUseGroundAttack)
             {
                 airImpactArmed = false;
@@ -436,6 +446,14 @@ namespace Mavis
                 {
                     attackQueued=true;queueExpiresAt=Time.time+Feel.inputBuffer;
                 }
+                return;
+            }
+            // Input callbacks can precede the movement update that launches the
+            // jump. Reserve that press for the aerial move rather than combo 1.
+            if (controller != null && controller.CanUseGroundAttack &&
+                GameInputSettings.PressedThisFrame(GameInputSettings.Action.Jump))
+            {
+                jumpAttackBufferedUntil = Time.time + .15f;
                 return;
             }
             if (controller != null && controller.CanUseAirAttack)
@@ -642,6 +660,7 @@ namespace Mavis
             boomerang?.CancelThrowForMovement();
             charging = attacking = usesRightArmHeavy = usesUpperBodyLight = activeAttackEntered = false;
             attackQueued = comboContinueQueued = airImpactArmed = false;
+            jumpAttackBufferedUntil = -1f;
             comboStep = -1;
             activeAttackHash = 0;
             swingDamage = 0f;
@@ -671,6 +690,7 @@ namespace Mavis
             if (charging) CancelCharge();
             if (attacking) FinishAttack();
             attackQueued = comboContinueQueued = airImpactArmed = false;
+            jumpAttackBufferedUntil = -1f;
             airAttackUsed = false;
             hitThisSwing.Clear();
             if (stickHitbox != null) stickHitbox.enabled = false;
@@ -1181,6 +1201,7 @@ namespace Mavis
             attackQueued = false;
             comboContinueQueued = false;
             airImpactArmed = false;
+            jumpAttackBufferedUntil = -1f;
             airAttackUsed = false;
             comboStep = -1;
             hasWeaponSample = false;

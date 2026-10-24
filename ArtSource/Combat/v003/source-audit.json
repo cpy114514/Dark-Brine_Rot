@@ -1,0 +1,76 @@
+{
+  "rest_preserved": true,
+  "actions": [
+    {
+      "action": "PLAYER_ClubSpinOneHand_v003",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "loop_seam": {
+            "position_m": 4.7403495671113926e-07,
+            "rotation_deg": 0,
+            "scale_delta": 4.2678561945965885e-09
+          },
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      }
+    },
+    {
+      "action": "PLAYER_ClubJumpChop_v003",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      }
+    },
+    {
+      "action": "PLAYER_BladeJumpChop_v003",
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "warnings": [],
+        "checks": {
+          "root_displacement_world_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "in_place_max_excursion_m": 0.0,
+          "in_place_axes": [
+            "X",
+            "Y"
+          ],
+          "contacts": "not observed: no contact intervals supplied"
+        },
+        "artistic_review": "required; numeric validation does not establish silhouette, weight or clipping quality"
+      }
+    }
+  ]
+}

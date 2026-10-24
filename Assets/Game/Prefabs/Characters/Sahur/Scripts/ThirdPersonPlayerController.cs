@@ -197,10 +197,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     static readonly int SpeedId = Animator.StringToHash("Speed");
     static readonly int LocomotionId = Animator.StringToHash("Base Layer.Locomotion");
 
-    public bool CanUseGroundAttack => characterController != null && rollTimer <= 0f &&
+    public bool CanUseGroundAttack => characterController != null && verticalSpeed <= 0f && rollTimer <= 0f &&
                                       IsGroundedOrOnSea() && !IsSwimming();
     public bool CanUseAirAttack => characterController != null && rollTimer <= 0f && airFlipTimer <= 0f &&
-                                   !IsGroundedOrOnSea() && !IsSwimming();
+                                   (verticalSpeed > 0f || !IsGroundedOrOnSea()) && !IsSwimming();
 
     public void RestoreSavedPose(Vector3 position, Quaternion rotation)
     {

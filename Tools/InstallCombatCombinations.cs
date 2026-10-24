@@ -233,7 +233,13 @@ public static class UnityAnimationImport
 public static class InstallCombatCombinations
 {
     static readonly string[] Names={"ClubSpin","BladeSpin","BladeCharge","BladeRush","BladeGuard","JumpChop"};
-    static UnityEngine.AnimationClip Clip(string name)=>UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.AnimationClip>("Assets/Resources/Combat/Combinations/"+name+".anim");
+    static UnityEngine.AnimationClip Clip(string name)
+    {
+        // Keep the user's newer single-hand club and weapon-specific aerial moves.
+        string revised = name=="ClubSpin" ? "ClubSpinOneHandV003" : name=="JumpChop" ? "ClubJumpChopV003" : name=="BladeJumpChop" ? "BladeJumpChopV003" : null;
+        var current = revised!=null ? AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Combat/Combinations/"+revised+".anim") : null;
+        return current ? current : AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Combat/Combinations/"+name+".anim");
+    }
     public static object Stage()
     {
         var report=new System.Collections.Generic.List<object>();
@@ -270,7 +276,7 @@ public static class InstallCombatCombinations
         {
             var controller=AssetDatabase.LoadAssetAtPath<UnityEditor.Animations.AnimatorController>(path);
             var machine=controller.layers[0].stateMachine;
-            foreach(var pair in new[]{("Club Spin","ClubSpin"),("Blade Spin","BladeSpin"),("Blade Guard","BladeGuard"),("Capri Charge","BladeCharge"),("Capri Heavy","BladeRush"),("Jump Slash","JumpChop")})
+            foreach(var pair in new[]{("Club Spin","ClubSpin"),("Blade Spin","BladeSpin"),("Blade Guard","BladeGuard"),("Capri Charge","BladeCharge"),("Capri Heavy","BladeRush"),("Jump Slash","JumpChop"),("Capri Jump Slash","BladeJumpChop")})
             {
                 var clip=Clip(pair.Item2);if(!clip)throw new Exception("Missing clip "+pair.Item2);
                 var state=machine.states.Select(x=>x.state).FirstOrDefault(x=>x.name==pair.Item1) ?? machine.AddState(pair.Item1);

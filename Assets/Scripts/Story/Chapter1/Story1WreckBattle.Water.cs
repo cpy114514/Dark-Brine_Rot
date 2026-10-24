@@ -130,7 +130,7 @@ public sealed partial class Story1WreckBattle
     CapsuleCollider redWaterQuery;
     Vector3 redWaterExitVelocity,redWaterDriftOffset,redWaterDriftVelocity,redWaterDriftTarget;
     float redWaterNextSearch,redWaterPreviewHeadY;
-    float[] redWaterBodyRadii;
+    float[] redWaterBodyRadii,redWaterExitRadii;
     bool redWaterExitPlanned,redLostStickStarted,redLostStickFloating;
     float redLostStickStartTime,redLostStickPreviousAge,redLostStickVerticalVelocity;
     Vector3 redLostStickFloatPosition,redLostStickFloatVelocity;
@@ -272,7 +272,14 @@ public sealed partial class Story1WreckBattle
         // Preview the actual unconscious pose on the same rig, then restore the
         // current sample. No proxy character, re-scaling or renderer changes.
         string previous=redClip.name;float sample=(float)redPose.GetTime();
+        double chargeSample=redGameplayChargePose.GetTime();float chargeWeight=redGameplayChargeLayers.GetInputWeight(1);
         Vector3 root=player.transform.position;Quaternion rotation=player.transform.rotation;
+        var currentRadii=redWaterBodyRadii;
+        // The hypothetical fall owns a separate envelope. Enlarging the live
+        // charged-pose radii here invalidated the tail contact just confirmed.
+        redWaterBodyRadii=currentRadii==null?null:(float[])currentRadii.Clone();
+        try
+        {
         RedPose("PLAYER_Fall_v006",2.2f,false);player.transform.rotation=Quaternion.LookRotation(redForward);redGraph.Evaluate(0);
         redWaterPreviewHeadY=RedHead.y-player.transform.position.y;RedWaterReadBody();
         if(redWaterFallRadii!=null&&redWaterFallRadii.Length==redWaterCapsules.Count)
@@ -284,7 +291,17 @@ public sealed partial class Story1WreckBattle
         else RedWaterMeasureNativeEnvelope();
         redWaterPreview.Clear();
         foreach(var capsule in redWaterCapsules)redWaterPreview.Add(new RedWaterCapsule(capsule.a-player.transform.position,capsule.b-player.transform.position,capsule.radius));
-        player.transform.SetPositionAndRotation(root,rotation);RedPose(previous,sample,false);
+        redWaterExitRadii=redWaterBodyRadii;
+        }
+        finally
+        {
+        redWaterBodyRadii=currentRadii;
+        player.transform.SetPositionAndRotation(root,rotation);
+        // Restore the composite gameplay charge too. Restoring only Guard
+        // dropped the right-arm layer after the real tail clearance check.
+        RedRestoreGameplayChargeAfterPreview(previous,sample,chargeSample,chargeWeight);
+        RedWaterReadBody();
+        }
         float best=float.PositiveInfinity;float bestContact=0;
         float[] bearings={0,15,-15,30,-30,45,-45,60,-60};float[] speeds={12,15,18,21};
         bool optimal=false;
@@ -319,6 +336,13 @@ public sealed partial class Story1WreckBattle
         RedEvent("Water exit planned; velocity="+redWaterExitVelocity.ToString("F2")+"; predicted mesh cost="+bestContact.ToString("F3"));
     }
     Vector3 RedFlightPosition(float age)=>redFloatStart+(redWaterExitPlanned?redWaterExitVelocity:redRight*12)*age+Vector3.up*(9*age-4.9f*age*age);
+
+    void RedUseWaterExitEnvelope()
+    {
+        // Adopt the prepared conservative envelope only once the actual actor
+        // leaves the charged stance for flight/drift, never during its preview.
+        if(redWaterExitRadii!=null)redWaterBodyRadii=redWaterExitRadii;
+    }
 
     /// <summary>Call after placing and vertically floating the real unconscious pose, before its shot.</summary>
     void RedAvoidDrift(float dt)

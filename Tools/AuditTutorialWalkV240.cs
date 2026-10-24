@@ -1,0 +1,51 @@
+using System;
+using System.IO;
+using System.Reflection;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
+
+public static class AuditTutorialWalkV240
+{
+    public static object Start(string label)
+    {
+        var observer=new GameObject("Temporary board-relative walk audit").AddComponent<TutorialWalkAuditV240>();
+        observer.folder=".codex/tutorial-facing-20261023/"+label;
+        return new { started=true };
+    }
+}
+[DefaultExecutionOrder(31520)] public sealed class TutorialWalkAuditV240 : MonoBehaviour
+{
+    public string folder;
+    Story1WreckBattle battle; ThirdPersonPlayerController hero;
+    Story1WreckPlank previousBoard; Vector3 previousLocal; bool previousWalk;
+    readonly List<object> rows=new List<object>();
+    const BindingFlags Flags=BindingFlags.Instance|BindingFlags.NonPublic;
+    object Get(string name)=>typeof(Story1WreckBattle).GetField(name,Flags).GetValue(battle);
+    void LateUpdate()
+    {
+        try
+        {
+            if(!battle)battle=UnityEngine.Object.FindFirstObjectByType<Story1WreckBattle>();
+            if(!battle||battle.RedesignStage!=Story1WreckBattle.OpeningStage.Tutorial)return;
+            if(!hero)hero=(ThirdPersonPlayerController)Get("player");
+            var board=(Story1WreckPlank)Get("redCombatBoard"); if(!board)return;
+            var pose=(AnimationClipPlayable)Get("redPose");
+            bool walk=(bool)Get("redTutorialStaging")&&pose.IsValid()&&pose.GetAnimationClip().name=="PLAYER_Walk_v006";
+            Vector3 local=board.transform.InverseTransformPoint(hero.transform.position);
+            if(walk&&previousWalk&&previousBoard==board)
+            {
+                Vector3 delta=Vector3.ProjectOnPlane(board.transform.TransformVector(local-previousLocal),Vector3.up);
+                if(delta.magnitude>.015f)
+                {
+                    float alignment=Vector3.Dot(delta.normalized,Vector3.ProjectOnPlane(hero.transform.forward,Vector3.up).normalized);
+                    rows.Add(new{frame=Time.frameCount,lesson=battle.CurrentLesson.ToString(),seconds=(float)Get("lessonTime"),distance=delta.magnitude,alignment});
+                    File.WriteAllText(folder+"/walk-audit.json",Newtonsoft.Json.JsonConvert.SerializeObject(rows,Newtonsoft.Json.Formatting.Indented));
+                }
+            }
+            previousBoard=board;previousLocal=local;previousWalk=walk;
+        }
+        catch(Exception e){File.WriteAllText(folder+"/walk-audit-error.txt",e.ToString());enabled=false;}
+    }
+}

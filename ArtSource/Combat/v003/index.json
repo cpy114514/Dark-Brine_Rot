@@ -1,0 +1,101 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v003\\sahur-melee-completion-v003.blend",
+    "rig": "Armature",
+    "action": "PLAYER_ClubSpinOneHand_v003",
+    "unity_clip": "PLAYER_ClubSpinOneHand_v003",
+    "revision": "combat-v003",
+    "frame_start": 1,
+    "frame_end": 55,
+    "fps": 60,
+    "loop": true,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "SECOND PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/MeleeCompletion-20261022.md",
+    "approval_reference": "2026-10-22 human: jump chop must support both melee weapons; club only needs one hand",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/MeleeCompletion-20261022.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx"
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v003\\sahur-melee-completion-v003.blend",
+    "rig": "Armature",
+    "action": "PLAYER_ClubJumpChop_v003",
+    "unity_clip": "PLAYER_ClubJumpChop_v003",
+    "revision": "combat-v003",
+    "frame_start": 1,
+    "frame_end": 52,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "SECOND PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/MeleeCompletion-20261022.md",
+    "approval_reference": "2026-10-22 human: jump chop must support both melee weapons; club only needs one hand",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/MeleeCompletion-20261022.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        18
+      ],
+      "active": [
+        18,
+        35
+      ],
+      "recovery": [
+        35,
+        52
+      ],
+      "hitbox": [
+        18,
+        35
+      ]
+    }
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v003\\sahur-melee-completion-v003.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeJumpChop_v003",
+    "unity_clip": "PLAYER_BladeJumpChop_v003",
+    "revision": "combat-v003",
+    "frame_start": 1,
+    "frame_end": 52,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "SECOND PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/MeleeCompletion-20261022.md",
+    "approval_reference": "2026-10-22 human: jump chop must support both melee weapons; club only needs one hand",
+    "review_status": "accepted_for_stage",
+    "review_reference": "Documentation/MeleeCompletion-20261022.md#source-review",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "startup": [
+        1,
+        18
+      ],
+      "active": [
+        18,
+        35
+      ],
+      "recovery": [
+        35,
+        52
+      ],
+      "hitbox": [
+        18,
+        35
+      ]
+    }
+  }
+]

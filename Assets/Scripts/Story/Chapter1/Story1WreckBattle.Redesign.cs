@@ -72,7 +72,8 @@ public sealed partial class Story1WreckBattle
     Vector3 redMovementLocal;
     Quaternion redPursuitEntryRotation,redFilmEntryRotation;
     Vector3 redFilmEntryOffset;
-    int redFilmSegment=-1;
+    int redFilmSegment=-1,redFilmPoseSegment=-1;
+    string redFilmClipIdentity,redFilmPoseIdentity;
     float redFilmTransitionStarted,redFilmTransitionDuration;
     bool redFilmHasResolvedPose;
     Vector3 redFilmResolvedNose;
@@ -88,9 +89,10 @@ public sealed partial class Story1WreckBattle
     {
         return new[] { "CH1_SahurStickIdle_v221", "CH1_SahurGuard_v050", "CH1_SahurSlash_v006", "CH1_SahurOverhead_v215", "CH1_SahurProneDodge_v215",
             "CH1_SahurGetUp_v215", "CH1_SahurStow_v214", "CH1_SahurRetrieve_v214", "CH1_SahurAirHit_v214",
-            "PLAYER_Climb_v010", "PLAYER_Fall_v006", "PLAYER_JumpAir_v006", "PLAYER_PursuitSwim_v210", "PLAYER_Throw_v064",
+            "PLAYER_Climb_v241", "PLAYER_Walk_v241", "PLAYER_Fall_v006", "PLAYER_JumpAir_v006", "PLAYER_PursuitSwim_v210", "PLAYER_Throw_v064",
             "CH1_SharkLeapCrush_v214", "CH1_SharkHeadShake_v214", "CH1_SharkFeintTail_v214" }
-            .Where(name => Story1EncounterClipCache.Find(name) == null).ToArray();
+            .Where(name => Story1EncounterClipCache.Find(name) == null)
+            .Concat(Resources.Load<AvatarMask>("Encounter/v242/SahurGameplayChargeRightArm")!=null?Array.Empty<string>():new[]{"Gameplay club charge mask"}).ToArray();
     }
 
     void BeginRedesign()
@@ -195,7 +197,8 @@ public sealed partial class Story1WreckBattle
             redGraph=PlayableGraph.Create("Opening redesign v214");redGraph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
             redPose=AnimationClipPlayable.Create(redGraph,entryClip!=null?entryClip:RedClip("CH1_SahurGuard_v050"));redPose.SetSpeed(0);redPose.SetTime(entryTime);
             redMixer=AnimationMixerPlayable.Create(redGraph,3);redMixer.ConnectInput(0,redPose,0);redMixer.SetInputWeight(0,1);
-            AnimationPlayableOutput.Create(redGraph,"Sahur",redAnimator).SetSourcePlayable(redMixer);redGraph.Play();
+            RedCreateGameplayChargeLayer();
+            AnimationPlayableOutput.Create(redGraph,"Sahur",redAnimator).SetSourcePlayable(redGameplayChargeLayers);redGraph.Play();
             redClip=entryClip;
         }
         else
@@ -224,6 +227,7 @@ public sealed partial class Story1WreckBattle
     void RedPose(string name,float seconds,bool blend=true)
     {
         if(!redesignManual)RedManual(true);
+        if(!redSamplingGameplayCharge&&redGameplayChargeLayers.IsValid())redGameplayChargeLayers.SetInputWeight(1,0);
         var clip=RedClip(name);
         if(redClip!=clip)
         {
@@ -235,11 +239,12 @@ public sealed partial class Story1WreckBattle
                 name=="CH1_SahurRetrieve_v214"?.18f:
                 name=="CH1_SahurOverhead_v215"?.12f:
                 name=="CH1_SahurSlash_v006"?.10f:
-                name=="PLAYER_Walk_v006"?.12f:
+                name=="PLAYER_Walk_v241"?.12f:
+                name=="Rig|Roll"?.12f:
                 name=="CH1_SahurGetUp_v215"?.10f:
                 name=="PLAYER_Throw_v064"?.12f:
                 name=="PLAYER_PursuitSwim_v210"?.28f:
-                name=="PLAYER_Climb_v010"?.12f:0;
+                name=="PLAYER_Climb_v241"?.18f:0;
             var old=redPose;redMixer.DisconnectInput(0);
             redPose=AnimationClipPlayable.Create(redGraph,clip);redPose.SetSpeed(0);
             redMixer.ConnectInput(0,redPose,0);redMixer.SetInputWeight(0,1);
@@ -352,6 +357,13 @@ public sealed partial class Story1WreckBattle
             redFilmAvoidanceOffset=Vector3.zero;
         }
         float weight=REase(redesignTime,redFilmTransitionStarted,redFilmTransitionStarted+redFilmTransitionDuration);
+        // Two consecutive bites use the same clip but start separate strokes.
+        // Blend a phase rewind too; matching clip names do not make its last
+        // recovery pose continuous with the next bite's anticipation.
+        if(redFilmClipIdentity!=clip || redFilmPoseSegment!=segment)
+        {
+            redFilmClipIdentity=clip;redFilmPoseSegment=segment;redFilmPoseIdentity=clip+"#"+segment;
+        }
         var facing=Quaternion.LookRotation(forward.sqrMagnitude>.01f?forward:redForward);
         // Start the dive before yawing the long body through the wreck field.
         facing=Quaternion.Slerp(redFilmEntryRotation,facing,REase(weight,.2f,1));
@@ -364,7 +376,7 @@ public sealed partial class Story1WreckBattle
         redFilmAvoidanceOffset*=Mathf.Exp(-Mathf.Max(0,Time.deltaTime)/.25f);
         nose+=redFilmAvoidanceOffset;
         RedShark(clip,seconds,nose,facing*Vector3.forward);
-        sharkAnimator.CommitCinematicPose(RedesignClock,clip);
+        sharkAnimator.CommitCinematicPose(RedesignClock,redFilmPoseIdentity);
         shark.position+=nose-sharkAnimator.NoseWorldPoint;
     }
     internal void RedRecordResolvedFilmPose()
@@ -536,10 +548,10 @@ public sealed partial class Story1WreckBattle
         if(CurrentLesson==Lesson.ChargeHold)
         {
             holdTime=accepted?holdTime+Time.unscaledDeltaTime:0;
-            RedOnBoard("CH1_SahurOverhead_v215",Mathf.Lerp(0,1.05f,Mathf.Clamp01(holdTime/1.2f)));
+            RedGameplayChargeOnBoard(Mathf.SmoothStep(0,1,Mathf.Clamp01(holdTime/redGameplayFullCharge))*redGameplayHoldPhase,redesignTime,holdTime/.1f);
             RedKeepTutorialSharkClear();
-            controls.text="Hold Right Mouse  Charge  "+Mathf.RoundToInt(Mathf.Clamp01(holdTime/1.2f)*100)+"%";
-            if(holdTime>=1.2f){CurrentLesson=Lesson.ChargeRelease;controls.text="Release Right Mouse  Heavy attack";RedEvent("Charge ready");}
+            controls.text="Hold Right Mouse  Charge  "+Mathf.RoundToInt(Mathf.Clamp01(holdTime/redGameplayFullCharge)*100)+"%";
+            if(holdTime>=redGameplayFullCharge){CurrentLesson=Lesson.ChargeRelease;controls.text="Release Right Mouse  Heavy attack";RedEvent("Charge ready");}
             return;
         }
         if(accepted)RedAcceptLesson();
@@ -573,7 +585,7 @@ public sealed partial class Story1WreckBattle
     public void DiagnosticAcceptLesson()
     {
         if(!TutorialWaiting)throw new InvalidOperationException("No tutorial input gate");
-        if(CurrentLesson==Lesson.ChargeHold){holdTime=1.2f;CurrentLesson=Lesson.ChargeRelease;}
+        if(CurrentLesson==Lesson.ChargeHold){holdTime=redGameplayFullCharge;CurrentLesson=Lesson.ChargeRelease;}
         RedAcceptLesson();
     }
     public void DiagnosticCompleteMovement()
@@ -688,7 +700,9 @@ public sealed partial class Story1WreckBattle
         if(t<4)at-=redRight*(3.2f*Mathf.Sin(Mathf.PI*R01(t,1.7f,3.5f)));
         else if(t<7.5f)at+=redForward*(3*Mathf.Sin(Mathf.PI*R01(t,4.7f,6.5f)));
         float dip=t<4?Mathf.Sin(Mathf.PI*R01(t,2,3.5f))*1.7f:t<7?Mathf.Sin(Mathf.PI*R01(t,5.1f,6.7f))*1.4f:0;
-        RedSwim(at,t,dip);
+        // One complete action owns each frame. Sampling Swim before Climb on
+        // every climbing frame restarted its crossfade forever at zero weight.
+        if(t<9)RedSwim(at,t,dip);
         if(t>=1.6f&&t<3.6f)
         {
             var head=redAnimator.GetBoneTransform(HumanBodyBones.Head);
@@ -719,12 +733,12 @@ public sealed partial class Story1WreckBattle
             float climb=R01(t,9,12);
             if(t>=9)
             {
-                RedPose("PLAYER_Climb_v010",climb*RedClip("PLAYER_Climb_v010").length);
+                RedPose("PLAYER_Climb_v241",climb*RedClip("PLAYER_Climb_v241").length);
                 Vector3 support=Vector3.Lerp(approach,redEnd,REase(climb,.42f,1));
                 support.y=Mathf.Lerp(RedWater(approach)-redHeroHeight*.65f,redEnd.y,REase(climb,0,.65f));
-                // This older imported clip faces opposite to the native
-                // guard rig; compensate here so the face looks onto the deck.
-                RedFeet(support,Quaternion.LookRotation(-redForward));
+                // The retained v241 import shares the guard/swim forward axis;
+                // keep the root continuous across both ends of the climb.
+                RedFeet(support,Quaternion.LookRotation(redForward));
                 float grip=REase(climb,0,.12f)*(1-REase(climb,.62f,.84f));
                 SahurSupportPose.Hand(redAnimator,true,edge-redRight*.45f,grip);
                 SahurSupportPose.Hand(redAnimator,false,edge+redRight*.45f,grip);
@@ -766,7 +780,7 @@ public sealed partial class Story1WreckBattle
         }
         else if(t<6.8f)
         {
-            RedesignBeat="Two-handed overhead counter";RedOnBoard("CH1_SahurOverhead_v215",Mathf.Max(0,t-4));
+            RedesignBeat="Charged club counter";RedGameplayFilmCounter(t,5.3f);
             float u=R01(t,3.4f,5.3f);Vector3 target=RedWeaponPoint;
             face=Vector3.Slerp((-redForward+Vector3.up*.55f).normalized,-redForward,REase(t,5.4f,6.8f));
             nose=Vector3.Lerp(feet+redForward*17-Vector3.up*3,target,u*u);sharkPose="Bite_Lunge";sharkTime=u*.52f;
@@ -853,7 +867,7 @@ public sealed partial class Story1WreckBattle
         }
         else if(!redTailHit)
         {
-            RedesignBeat="A false bite. Sahur readies a counter.";RedOnBoard("CH1_SahurOverhead_v215",Mathf.Min(1.05f,(t-19.5f)*.7f));
+            RedesignBeat="A false bite. Sahur readies a counter.";RedGameplayChargeOnBoard(Mathf.SmoothStep(0,1,Mathf.Clamp01((t-19.5f)/redGameplayFullCharge))*redGameplayHoldPhase,t,(t-19.5f)/.1f);
             nose=feet+redForward*Mathf.Lerp(14,4,REase(t,19.5f,21.2f))+Vector3.up*3;
             sharkPose="CH1_SharkFeintTail_v214";sharkTime=t<21.2f?Mathf.Lerp(0,1.25f,R01(t,19.5f,21.2f)):Mathf.Lerp(1.25f,1.58f,R01(t,21.2f,21.65f));
             if(t<20.65f)RedShot(39,nose-redForward*6+Vector3.up*2,nose+redForward*2,43);else RedHeroShot(40,new Vector3(6,2,6),48);
@@ -862,6 +876,7 @@ public sealed partial class Story1WreckBattle
         {
             float flight=t-redTailHitTime;
             RedesignBeat=flight<.68f?"Tail strike: airborne in slow motion":"An uncontrolled fall";
+            RedUseWaterExitEnvelope();
             RedPose("CH1_SahurAirHit_v214",flight);
             player.transform.SetPositionAndRotation(RedFlightPosition(flight),Quaternion.LookRotation(redForward)*Quaternion.Euler(0,0,-flight*35));
             RedContinueLostStick(dt);
@@ -929,6 +944,7 @@ public sealed partial class Story1WreckBattle
     void RedDrift(float dt)
     {
         RedesignBeat="Unconscious, drifting face up";RedSetRate(1);
+        RedUseWaterExitEnvelope();
         float t=redesignTime;RedPose("PLAYER_Fall_v006",2.2f,false);
         if(!redSplashPose.IsValid())
         {
