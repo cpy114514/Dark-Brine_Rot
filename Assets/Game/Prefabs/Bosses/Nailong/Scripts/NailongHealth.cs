@@ -22,6 +22,7 @@ namespace Mavis
             if (GetComponent<NailongHealthBar>() == null) gameObject.AddComponent<NailongHealthBar>();
             if (GetComponent<NailongLoot>() == null) gameObject.AddComponent<NailongLoot>();
             if (GetComponent<NailongHitReaction>() == null) gameObject.AddComponent<NailongHitReaction>();
+            if (Application.isPlaying && !GetComponent<CombatDamageFlash>())gameObject.AddComponent<CombatDamageFlash>();
         }
 
         public void ApplyDamage(float amount, Vector3 hitPoint)

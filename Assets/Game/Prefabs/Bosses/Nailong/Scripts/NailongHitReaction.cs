@@ -7,7 +7,7 @@ namespace Mavis
     {
         Transform spine, head;
         NailongHealth health;
-        [Range(0,20)] public float lightRecoilDegrees=9;
+        [Range(0,20)] public float lightRecoilDegrees=12;
         [Range(0,35)] public float heavyRecoilDegrees=22;
         float elapsed, duration, strength;
         Vector3 impactDirection=Vector3.back;

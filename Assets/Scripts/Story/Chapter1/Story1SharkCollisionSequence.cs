@@ -107,6 +107,15 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     {
         if (impacted || PauseSettingsMenu.IsOpen || deltaTime <= 0) return;
         voyageTime += deltaTime;
+        // The authored body-crush sequence already supplies the approaching
+        // shadow and warning. Do not loop the passenger's fidget throughout
+        // the old patrol before showing those same opening beats again.
+        if(sahur.TryGetComponent<Story1SahurPassenger>(out var passenger)&&passenger.enabled&&
+            voyageTime>=Story1SahurPassenger.OpeningLeadInSeconds)
+        {
+            BeginImpact();
+            return;
+        }
         if(IsPatrolling)UpdateVoyagePatrol(deltaTime);
         else
         {

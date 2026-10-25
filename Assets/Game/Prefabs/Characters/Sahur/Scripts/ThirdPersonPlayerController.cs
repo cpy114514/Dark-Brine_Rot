@@ -116,7 +116,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     // A bounded middle portion of the dodge is protected; startup and recovery remain vulnerable.
     public bool DodgeInvulnerable => enabled && gameObject.activeInHierarchy && !ExternalControlLock &&
         rollTimer > 0f && rollDuration > 0f &&
-        1f - rollTimer / rollDuration >= .10f && 1f - rollTimer / rollDuration <= .55f;
+        1f - rollTimer / rollDuration >= Mavis.CombatFeelProfile.Default.dodgeProtectionStart &&
+        1f - rollTimer / rollDuration <= Mavis.CombatFeelProfile.Default.dodgeProtectionEnd;
     float rollCooldownTimer;
     float rollInheritedSpeed;
     float airFlipTimer;
@@ -405,10 +406,15 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Vector3 desiredVelocity = moveDirection * groundMoveSpeed * (wantsSprint ? sprintMultiplier : 1f);
         Motion.Locomotion(IsSwimming(),IsGroundedOrOnSea());
         if (!acceptInput) dodgeBufferUntil = -1;
-        else if (GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge)) dodgeBufferUntil = Time.time + .12f;
+        else if (GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge)) dodgeBufferUntil = Time.time + Mavis.CombatFeelProfile.Default.inputBuffer;
         bool dodgeReady = verticalSpeed <= 0 && IsGroundedOrOnSea() && rollCooldownTimer <= 0 &&
                           (playerStamina == null || playerStamina.CanSpend(playerStamina.rollCost));
-        bool combatDodge = acceptInput && dodgeReady && combat != null && combat.TryConsumeDodgeCancel(Time.time <= dodgeBufferUntil);
+        // Authored attack steps can briefly lift both feet. Retain the press
+        // through recovery and allow the existing once-per-jump flip, instead
+        // of silently discarding Ctrl until the character lands.
+        bool airDodgeReady = !(verticalSpeed<=0 && IsGroundedOrOnSea()) && !airFlipUsed && airFlipTimer<=0 && rollCooldownTimer<=0 &&
+                            (playerStamina==null || playerStamina.CanSpend(playerStamina.airFlipCost));
+        bool combatDodge = acceptInput && (dodgeReady || airDodgeReady) && combat != null && combat.TryConsumeDodgeCancel(Time.time <= dodgeBufferUntil);
         if (combatDodge) dodgeBufferUntil = -1;
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
         bool armCombatMovementAllowed = combat != null && combat.CanMoveDuringCombat;

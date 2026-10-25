@@ -1,0 +1,3 @@
+# Wrist-safe first pass, 2026-10-24
+
+Reviewed front, side and three-quarter ordered source frames. Native v246 showed 179-degree retargeted wrist flips twice each loop, despite continuous source rotations. Reject that implementation. This revision retains the anatomical forearm-hand reference and small local wrist angles rather than forcing a world-space basis. Retains original supporting legs and rig/bind pose; exact source loop endpoints and support/root validation pass. The resulting low, relaxed inspection is suitable for isolated native import; actual retargeting, shaft/body separation and alert transition must still be measured. Agent stage acceptance is FIRST PASS, not human FINAL.

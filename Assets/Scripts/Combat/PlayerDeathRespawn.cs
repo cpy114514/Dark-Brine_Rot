@@ -79,6 +79,9 @@ namespace Mavis
             Disable(GetComponent<SahurAttack>());
             Disable(GetComponent<SahurBoomerang>()); // OnDisable returns the weapon to its hand.
             Disable(GetComponent<CombatKnockback>());
+            GetComponent<CombatLocalHitStop>()?.Release();
+            Disable(GetComponent<CombatReceivedReaction>());
+            Disable(GetComponent<CombatDamageFlash>());
             Disable(movement);
             GetComponent<PlayerStamina>()?.StopSprinting();
             if (movement != null && movement.CharacterAnimator != null)

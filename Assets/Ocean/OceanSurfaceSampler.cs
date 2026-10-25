@@ -46,23 +46,23 @@ public static class OceanSurfaceSampler
         }
         void Displacement(float x, float z, bool needHeight, out float dx, out float height, out float dz)
         {
-            float broad = Noise(x * .011f + 17.3f + time * .0017f, z * .011f - 8.1f - time * .0011f);
-            float small = Noise(x * .023f - 12.7f - time * .0013f, z * .023f + 21.4f + time * .0019f);
-            float regional = Noise(x * .0058f + 38.4f + time * .0008f, z * .0058f + 5.7f - time * .0005f);
-            float cross = Noise(x * .039f - 29.6f - time * .0021f, z * .039f - 17.2f + time * .0014f);
+            float broad = Noise(x * .011f + 17.3f - time * .041f, z * .011f - 8.1f - time * .027f);
+            float small = Noise(x * .023f - 12.7f + time * .024f, z * .023f + 21.4f - time * .043f);
+            float regional = Noise(x * .0058f + 38.4f - time * .018f, z * .0058f + 5.7f - time * .012f);
+            float cross = Noise(x * .039f - 29.6f - time * .049f, z * .039f - 17.2f + time * .031f);
             float sx = x + (broad - .5f) * (19f * irregularity);
             float sz = z + (small - .5f) * (19f * irregularity);
-            float swell = 1f + irregularity * ((broad - .5f) * .85f + (regional - .5f) * .48f + (small - .5f) * .25f);
-            float chop = 1f + irregularity * ((small - .5f) * .70f - (broad - .5f) * .20f + (cross - .5f) * .42f);
+            float swell = 1f + irregularity * ((broad - .5f) + (regional - .5f) * .45f + (small - .5f) * .25f);
+            float chop = 1f + irregularity * ((small - .5f) * .85f - (broad - .5f) * .25f + (cross - .5f) * .60f);
             float distance = hasCamera ? Mathf.Sqrt((x - cameraX) * (x - cameraX) + (z - cameraZ) * (z - cameraZ)) : 0;
             float detailNear = 1f - Smooth(near * .65f, near, distance);
             float detailMid = 1f - Smooth(mid * .75f, mid, distance);
-            wave1.Sample(sx, sz, time, swell, irregularity * (4f * (regional - .5f) + 1.7f * (small - .5f)), needHeight, out dx, out height, out dz);
-            wave2.Sample(sx, sz, time + 1.9f, chop, irregularity * (2.9f * (broad - .5f) - 2.2f * (cross - .5f)), needHeight, out float bx, out float by, out float bz);
+            wave1.Sample(sx, sz, time, swell, irregularity * (6f * (regional - .5f) + 2.5f * (small - .5f)), needHeight, out dx, out height, out dz);
+            wave2.Sample(sx, sz, time + 1.9f, chop, irregularity * (4.7f * (broad - .5f) - 3.3f * (cross - .5f)), needHeight, out float bx, out float by, out float bz);
             dx += bx; height += by; dz += bz;
-            wave3.Sample(sx, sz, time + 4.2f, chop * detailMid, irregularity * (1.6f * (cross - .5f) + .8f * (regional - .5f)), needHeight, out bx, out by, out bz);
+            wave3.Sample(sx, sz, time + 4.2f, chop * detailMid, irregularity * (2.6f * (cross - .5f) + 1.2f * (regional - .5f)), needHeight, out bx, out by, out bz);
             dx += bx; height += by; dz += bz;
-            wave4.Sample(sx, sz, time + 2.7f, swell * detailNear, irregularity * (1.45f * (small - .5f) - 1.2f * (regional - .5f)), needHeight, out bx, out by, out bz);
+            wave4.Sample(sx, sz, time + 2.7f, swell * detailNear, irregularity * (2.4f * (small - .5f) - 1.7f * (regional - .5f)), needHeight, out bx, out by, out bz);
             dx += bx; height += by; dz += bz;
         }
     }

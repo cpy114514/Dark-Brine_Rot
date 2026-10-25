@@ -1,7 +1,6 @@
 // PlayerHealth.cs
-// Sahur needs an IDamageable surface for Nailong attacks to register. Kept small:
-// holds HP, fires OnDeath once. Drop the script onto Sahur Player; defaults give
-// 100 HP, which is generous compared to Nailong's 6-damage swings.
+// Hostile attacks share balance, recovery protection and confirmed received-hit
+// feedback. Raw narrative/hazard damage retains the original authored values.
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -19,6 +18,7 @@ namespace Mavis
         public float NarrativeHealthFloor { get; set; }
         public event System.Action<float> Damaged;
         float protectedUntil;
+        float recoveryUntil;
         ThirdPersonPlayerController movement;
         SahurAttack combat;
         SahurTwinBladeMotion rush;
@@ -28,10 +28,13 @@ namespace Mavis
             {
                 // Loadout adds rush motion after Awake; resolve it once when it becomes available.
                 if (!rush) TryGetComponent(out rush);
-                return Time.time < protectedUntil || rush && rush.IsDamageImmune;
+                return Time.time < protectedUntil || !NarrativeDamageOwner && Time.time < recoveryUntil || rush && rush.IsDamageImmune;
             }
         }
-        public void GrantProtection(float seconds) => protectedUntil = Time.time + Mathf.Max(0f, seconds);
+        public void GrantProtection(float seconds) => protectedUntil = Mathf.Max(protectedUntil, Time.time + Mathf.Max(0f, seconds));
+        public bool NarrativeDamageOwner => NarrativeHealthFloor>0 || NarrativeDefeatHandler!=null || movement && movement.ExternalControlLock;
+        public bool CanReceiveCombatDamage => currentHealth>0 && !IsProtected && !(movement && movement.DodgeInvulnerable);
+        public float RecoveryRemaining => Mathf.Max(0,recoveryUntil-Time.time);
 
         void Awake()
         {
@@ -39,6 +42,8 @@ namespace Mavis
             if (currentHealth <= 0f) currentHealth = maxHealth;
             combat = GetComponent<SahurAttack>();
             rush = GetComponent<SahurTwinBladeMotion>();
+            if(Application.isPlaying && !GetComponent<CombatReceivedReaction>())gameObject.AddComponent<CombatReceivedReaction>();
+            if(Application.isPlaying && !GetComponent<CombatDamageFlash>())gameObject.AddComponent<CombatDamageFlash>();
         }
 
         public bool ApplyMeleeDamage(float amount,Vector3 hitPoint,Vector3 attackerPosition) =>
@@ -48,19 +53,34 @@ namespace Mavis
         // retain ApplyDamage so their contact point cannot accidentally become an attack direction.
         public bool ApplyAttackDamage(float amount,Vector3 hitPoint,Vector3 incomingOrigin)
         {
-            if(currentHealth<=0 || amount<=0 || IsProtected)return false;
-            if(combat && combat.TryBlockIncoming(amount,hitPoint,incomingOrigin))return false;
+            return ReceiveAttack(amount,hitPoint,incomingOrigin,true,true);
+        }
+
+        bool ReceiveAttack(float amount,Vector3 hitPoint,Vector3 incomingOrigin,bool emitFeedback,bool block)
+        {
+            if(!CanReceiveCombatDamage || amount<=0 || float.IsNaN(amount) || float.IsInfinity(amount))return false;
+            if(!combat)TryGetComponent(out combat);
+            if(block && combat && combat.TryBlockIncoming(amount,hitPoint,incomingOrigin))return false;
+            bool ordinary=!NarrativeDamageOwner;
+            var profile=CombatFeelProfile.Default;
+            if(ordinary)amount=Mathf.Min(amount*profile.incomingDamageMultiplier,maxHealth*profile.maximumHitHealthFraction);
             float before=currentHealth;
             ApplyDamage(amount,hitPoint);
+            if(currentHealth<before && ordinary)
+            {
+                recoveryUntil=Mathf.Max(recoveryUntil,Time.time+profile.damageRecoverySeconds);
+                if(emitFeedback && Application.isPlaying)CombatHitFeedback.Received(this,before-currentHealth,hitPoint,incomingOrigin);
+            }
             return currentHealth<before;
         }
 
         public CombatHitResult ResolveCombatHit(GameObject attacker,float amount,Vector3 point,CombatHitKind kind)
         {
+            if(!combat)TryGetComponent(out combat);
             // CombatHitFeedback owns this path's single feedback event; avoid a second block event.
             if(combat && attacker && combat.TryBlockIncoming(amount,point,attacker.transform.position,false))
                 return CombatHitResult.Blocked;
-            ApplyDamage(amount,point);
+            ReceiveAttack(amount,point,attacker ? attacker.transform.position : point,false,false);
             return kind==CombatHitKind.ChargedHeavy || kind==CombatHitKind.ComboFinisher || kind==CombatHitKind.JumpSlash
                 ? CombatHitResult.HeavyHit : CombatHitResult.Hit;
         }

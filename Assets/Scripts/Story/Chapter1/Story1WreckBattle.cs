@@ -123,6 +123,7 @@ public sealed partial class Story1WreckBattle : MonoBehaviour
     public bool DiagnosticBakeScatter { private get; set; }
 #endif
     Story1WreckPlank landingBoard;
+    Story1WreckDeckClearance deckClearance;
     public float ImpactNoseGap { get; private set; } = float.PositiveInfinity;
     public float ImpactTailGap { get; private set; } = float.PositiveInfinity;
     public float MaximumHullKickDegrees { get; private set; }
@@ -562,6 +563,12 @@ public sealed partial class Story1WreckBattle : MonoBehaviour
         EntryDeck=planks.Where(p=>!p.IsBroken && p.Dimensions.y<1.2f &&
             Mathf.Min(p.Dimensions.x,p.Dimensions.z)>=3f && Mathf.Max(p.Dimensions.x,p.Dimensions.z)<=6)
             .OrderByDescending(p=>p.Dimensions.y*Mathf.Min(p.Dimensions.x,p.Dimensions.z)).FirstOrDefault() ?? EntryDeck;
+        if(RedesignActive)
+        {
+            deckClearance=debrisRoot.AddComponent<Story1WreckDeckClearance>();
+            deckClearance.SetActors(player.GetComponentInChildren<SkinnedMeshRenderer>(),sharkAnimator.VisualRenderer);
+            deckClearance.Track(planks,detailPieces);
+        }
     }
     bool ReleaseImpactFragments(Story1ShipWreckAsset.Fragment source,bool deck)
     {

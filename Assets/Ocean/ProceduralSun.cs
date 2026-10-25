@@ -59,7 +59,8 @@ public sealed class ProceduralSun : MonoBehaviour
                     break;
                 }
         }
-        DayNightCycle cycle = cachedLight != null ? cachedLight.GetComponent<DayNightCycle>() : null;
+        DayNightCycle cycle = null;
+        if (cachedLight != null) cachedLight.TryGetComponent(out cycle);
         // The runtime-only day/night component has no SunDirection before Play.
         // In Edit Mode use the authored light, not its uninitialized zero vector.
         Vector3 directionToSun = Application.isPlaying && cycle != null &&

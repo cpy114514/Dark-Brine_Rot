@@ -484,22 +484,24 @@ Shader "DarkBrine/Procedural Ocean"
                 half foamLace = 1.0h - smoothstep(0.07h, 0.25h, abs(foamDetail - 0.48h));
                 crestFoam *= lerp(1.0h, 0.30h + foamLace * 0.70h, _FoamIrregularity);
                 // Opaque depth measures water above submerged terrain. A narrow
-                // bright contact line plus irregular advancing bands follows the
+                // Dense contact line with a restrained outer lace follows the
                 // real coastline, while deep water receives no shore foam.
-                half shoreMask = 1.0h - smoothstep(0.0h, _FoamWidth, waterThickness);
-                half contactPatch = lerp(1.0h, smoothstep(0.25h, 0.70h,
-                    foamRegion * 0.65h + foamDetail * 0.35h), _FoamIrregularity * 0.55h);
-                half contactWidth = lerp(0.28h, 0.15h + foamRegion * 0.26h, _FoamIrregularity);
-                half contactFoam = (1.0h - smoothstep(0.0h, contactWidth, waterThickness)) *
-                    0.72h * contactPatch;
-                half localSpacing = 2.5h + _FoamIrregularity * (foamDetail - 0.5h) * 1.1h;
-                half shorePulse = sin(waterThickness * localSpacing - oceanTime * 1.8h
-                    + foamNoise * 3.0h + (foamRegion - 0.5h) * _FoamIrregularity * 5.0h) * 0.5h + 0.5h;
-                half patchMask = lerp(1.0h, smoothstep(0.29h, 0.67h,
-                    foamRegion * 0.7h + foamDetail * 0.3h), _FoamIrregularity * 0.8h);
-                half breakerFoam = smoothstep(0.57h, 0.87h, shorePulse) *
-                    (0.34h + foamNoise * 0.58h + foamDetail * 0.24h) * patchMask;
-                breakerFoam *= (0.60h + waveCrest * 0.40h) * (0.65h + foamLace * 0.35h);
+                // Convert view-depth separation to horizontal contact distance.
+                // This keeps a dense narrow edge even on a shallow beach and at
+                // different camera angles; distant/deep water remains excluded.
+                float2 shoreDx = ddx(input.positionWS.xz), shoreDy = ddy(input.positionWS.xz);
+                float2 shoreGradient = float2(ddx(waterThickness) * shoreDy.y - ddy(waterThickness) * shoreDx.y,
+                    ddy(waterThickness) * shoreDx.x - ddx(waterThickness) * shoreDy.x);
+                float shoreDeterminant = abs(shoreDx.x * shoreDy.y - shoreDx.y * shoreDy.x);
+                float shoreDistance = waterThickness * shoreDeterminant / max(length(shoreGradient), 0.00001);
+                shoreDistance = max(shoreDistance, waterThickness * 0.35);
+                float shoreWidth = clamp(_FoamWidth * 0.55, 0.15, 1.65);
+                float shoreAA = min(fwidth(shoreDistance), 0.35);
+                half shoreMask = 1.0h - smoothstep(0.45h, 1.8h, waterThickness);
+                half contactFoam = (1.0 - smoothstep(shoreWidth * 0.45,
+                    shoreWidth + shoreAA, shoreDistance)) * (0.86h + foamDetail * 0.14h);
+                half breakerFoam = (1.0 - smoothstep(shoreWidth, shoreWidth + 0.7 + shoreAA,
+                    shoreDistance)) * waveCrest * foamLace * 0.24h;
                 half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
                 foam = max(foam, SailingFoam(p, input.positionWS, foamDetail, foamNoise));
                 // Lace stays white in daylight, but is no longer self-lit at night

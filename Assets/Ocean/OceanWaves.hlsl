@@ -66,16 +66,19 @@ float3 OceanGerstner(float4 wave, float4 motion, float weight, float2 weightGrad
 }
 
 void OceanEvaluateWaves(float2 baseXZ, float time, float2 detailWeights,
-    out float3 displacement, out float3 normal, out float crest)
+    out float3 displacement, out float3 normal, out float crest, out float primaryPhase)
 {
+    // Wave groups travel more slowly than their crests. Advect the existing
+    // independent fields at group speed so sets build, cross and disperse in
+    // seconds rather than remaining a nearly stationary sinusoidal grid.
     float3 broad = OceanNoiseGradient(baseXZ * 0.011 + float2(17.3, -8.1)
-        + time * float2(0.0017, -0.0011));
+        + time * float2(-0.041, -0.027));
     float3 small = OceanNoiseGradient(baseXZ * 0.023 + float2(-12.7, 21.4)
-        + time * float2(-0.0013, 0.0019));
+        + time * float2(0.024, -0.043));
     float3 regional = OceanNoiseGradient(baseXZ * 0.0058 + float2(38.4, 5.7)
-        + time * float2(0.0008, -0.0005));
+        + time * float2(-0.018, -0.012));
     float3 crossSea = OceanNoiseGradient(baseXZ * 0.039 + float2(-29.6, -17.2)
-        + time * float2(-0.0021, 0.0014));
+        + time * float2(-0.049, 0.031));
     float2 broadGradient = broad.yz * 0.011;
     float2 smallGradient = small.yz * 0.023;
     float2 regionalGradient = regional.yz * 0.0058;
@@ -84,24 +87,26 @@ void OceanEvaluateWaves(float2 baseXZ, float time, float2 detailWeights,
     float2 sampleXZ = baseXZ + (float2(broad.x, small.x) - 0.5) * warp;
     float2 sampleDx = float2(1.0 + broadGradient.x * warp, smallGradient.x * warp);
     float2 sampleDz = float2(broadGradient.y * warp, 1.0 + smallGradient.y * warp);
-    float swell = 1.0 + _WaveIrregularity * ((broad.x - 0.5) * 0.85
-        + (regional.x - 0.5) * 0.48 + (small.x - 0.5) * 0.25);
-    float chop = 1.0 + _WaveIrregularity * ((small.x - 0.5) * 0.70
-        - (broad.x - 0.5) * 0.20 + (crossSea.x - 0.5) * 0.42);
-    float2 swellGradient = _WaveIrregularity * (broadGradient * 0.85
-        + regionalGradient * 0.48 + smallGradient * 0.25);
-    float2 chopGradient = _WaveIrregularity * (smallGradient * 0.70
-        - broadGradient * 0.20 + crossGradient * 0.42);
+    float swell = 1.0 + _WaveIrregularity * ((broad.x - 0.5)
+        + (regional.x - 0.5) * 0.45 + (small.x - 0.5) * 0.25);
+    float chop = 1.0 + _WaveIrregularity * ((small.x - 0.5) * 0.85
+        - (broad.x - 0.5) * 0.25 + (crossSea.x - 0.5) * 0.60);
+    float2 swellGradient = _WaveIrregularity * (broadGradient
+        + regionalGradient * 0.45 + smallGradient * 0.25);
+    float2 chopGradient = _WaveIrregularity * (smallGradient * 0.85
+        - broadGradient * 0.25 + crossGradient * 0.60);
     // Independent, slowly drifting phase fields break the straight, equally
     // spaced Gerstner crests without making the water and shore foam disagree.
-    float phaseA = _WaveIrregularity * (4.0 * (regional.x - 0.5) + 1.7 * (small.x - 0.5));
-    float2 phaseAGradient = _WaveIrregularity * (4.0 * regionalGradient + 1.7 * smallGradient);
-    float phaseB = _WaveIrregularity * (2.9 * (broad.x - 0.5) - 2.2 * (crossSea.x - 0.5));
-    float2 phaseBGradient = _WaveIrregularity * (2.9 * broadGradient - 2.2 * crossGradient);
-    float phaseC = _WaveIrregularity * (1.6 * (crossSea.x - 0.5) + 0.8 * (regional.x - 0.5));
-    float2 phaseCGradient = _WaveIrregularity * (1.6 * crossGradient + 0.8 * regionalGradient);
-    float phaseD = _WaveIrregularity * (1.45 * (small.x - 0.5) - 1.2 * (regional.x - 0.5));
-    float2 phaseDGradient = _WaveIrregularity * (1.45 * smallGradient - 1.2 * regionalGradient);
+    float phaseA = _WaveIrregularity * (6.0 * (regional.x - 0.5) + 2.5 * (small.x - 0.5));
+    float2 phaseAGradient = _WaveIrregularity * (6.0 * regionalGradient + 2.5 * smallGradient);
+    float phaseB = _WaveIrregularity * (4.7 * (broad.x - 0.5) - 3.3 * (crossSea.x - 0.5));
+    float2 phaseBGradient = _WaveIrregularity * (4.7 * broadGradient - 3.3 * crossGradient);
+    float phaseC = _WaveIrregularity * (2.6 * (crossSea.x - 0.5) + 1.2 * (regional.x - 0.5));
+    float2 phaseCGradient = _WaveIrregularity * (2.6 * crossGradient + 1.2 * regionalGradient);
+    float phaseD = _WaveIrregularity * (2.4 * (small.x - 0.5) - 1.7 * (regional.x - 0.5));
+    float2 phaseDGradient = _WaveIrregularity * (2.4 * smallGradient - 1.7 * regionalGradient);
+    primaryPhase = TWO_PI / max(_Wave1.w, 0.001) *
+        (dot(normalize(_Wave1.xy), sampleXZ) - _Wave1Motion.x * time) + phaseA;
     float3 tangent = float3(1, 0, 0);
     float3 binormal = float3(0, 0, 1);
     float3 a = OceanGerstner(_Wave1, _Wave1Motion, swell, swellGradient, phaseA, phaseAGradient,
@@ -122,6 +127,13 @@ void OceanEvaluateWaves(float2 baseXZ, float time, float2 detailWeights,
     float compression = 1.0 - (tangent.x * binormal.z - tangent.z * binormal.x);
     crest = smoothstep(0.36, 0.72, a.y * 0.34 + b.y * 0.40 + c.y * 0.50 + d.y * 0.65)
         * lerp(0.30, 1.0, smoothstep(0.015, 0.13, compression));
+}
+
+void OceanEvaluateWaves(float2 baseXZ, float time, float2 detailWeights,
+    out float3 displacement, out float3 normal, out float crest)
+{
+    float primaryPhase;
+    OceanEvaluateWaves(baseXZ, time, detailWeights, displacement, normal, crest, primaryPhase);
 }
 
 #endif

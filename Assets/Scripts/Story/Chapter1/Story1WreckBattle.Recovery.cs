@@ -80,8 +80,7 @@ public sealed partial class Story1WreckBattle
             return false;
         }
         GameSaveManager.CancelPendingContinue();
-        var loading=SceneManager.LoadSceneAsync(island,LoadSceneMode.Single);
-        if(loading==null)return false;
+        if(!SceneLoadingScreen.Load(island))return false;
         FinaleRecoveryAvailable=false;
         CurrentPhase=Phase.Finished;
         return true;

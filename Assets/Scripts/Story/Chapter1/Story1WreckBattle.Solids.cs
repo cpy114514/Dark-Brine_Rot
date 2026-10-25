@@ -84,7 +84,9 @@ public sealed partial class Story1WreckBattle
         if(!redSolidSharkTree.Bounds.Intersects(localBounds))return false;
         var data=RedSolidGeometry(shape);if(data==null)return false;
         Matrix4x4 matrix=inverse*shape.transform.localToWorldMatrix;Vector3 delta=inverse.MultiplyVector(woodOffset);
-        bool same=data.queryFrame==Time.frameCount&&data.poseFrame==redSolidSkinFrame&&data.poseVersion==redSolidSkinVersion&&
+        // A held tutorial can render many frames without advancing physics or
+        // either pose. Retain its exact query, with the same geometry/matrix keys.
+        bool same=(data.queryFrame==Time.frameCount||RedesignStage==OpeningStage.Tutorial&&TutorialWaiting)&&data.poseFrame==redSolidSkinFrame&&data.poseVersion==redSolidSkinVersion&&
             ReferenceEquals(data.lastSharkTree,redSolidSharkTree)&&data.queryMatrix.Equals(matrix)&&data.queryOffset.Equals(delta);
         if(same){contact=skin.transform.TransformPoint(data.contact);return data.touched;}
         data.queryFrame=Time.frameCount;data.poseFrame=redSolidSkinFrame;data.poseVersion=redSolidSkinVersion;

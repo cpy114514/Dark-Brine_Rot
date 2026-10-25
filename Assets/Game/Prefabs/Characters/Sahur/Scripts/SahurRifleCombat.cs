@@ -218,8 +218,8 @@ namespace Mavis
             {
                 var aircraft = collider.GetComponentInParent<BombardinoBoss>();
                 bool engine = aircraft && (collider.GetComponent<BossWeakPoint>() || BossWeakPoint.Contains(target as Component, point));
-                target.ApplyDamage(DamageAtDistance(distance, aircraft, aircraft && aircraft.IsExposed, engine), point);
-                Hits++; hitUntil = Time.time + .16f;
+                damaged=CombatHitFeedback.Apply(gameObject,target,DamageAtDistance(distance, aircraft, aircraft && aircraft.IsExposed, engine),point,CombatHitKind.Rifle,bulletDirection(point));
+                if(damaged){Hits++; hitUntil = Time.time + .16f;}
             }
             int index = impactCursor++ % impacts.Length;
             var impact = impacts[index]; impact.until = Time.time + .11f; var line = impact.line;
@@ -229,6 +229,7 @@ namespace Mavis
             line.startColor = line.endColor = damaged ? new Color(1, .55f, .2f) : new Color(1, .9f, .6f);
             impacts[index] = impact;
         }
+        Vector3 bulletDirection(Vector3 point)=>(point-transform.position).normalized;
         LineRenderer Line(string name, int points, float width)
         {
             var go = new GameObject(name); go.transform.SetParent(visuals.transform, false);

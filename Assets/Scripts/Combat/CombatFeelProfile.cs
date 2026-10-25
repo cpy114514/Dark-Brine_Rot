@@ -22,6 +22,20 @@ namespace Mavis
         public Impact second = new Impact(.038f,.03f,.095f,.7f,.9f,.1f);
         public Impact finisher = new Impact(.105f,.075f,.16f,1.1f,1.5f,.4f);
         public Impact heavy = new Impact(.09f,.09f,.17f,1.25f,1.8f,.65f);
+        [Header("Received damage and rifle feedback")]
+        public Impact received = new Impact(.055f,.075f,.15f,.95f,1,0);
+        public Impact receivedHeavy = new Impact(.085f,.10f,.19f,1.2f,1.25f,0);
+        public Impact rifle = new Impact(.028f,.025f,.075f,.7f,.65f,0);
+        [Header("Combat forgiveness (hostile attacks only)")]
+        [Range(.25f,1f)] public float incomingDamageMultiplier = .7f;
+        [Range(.1f,.5f)] public float maximumHitHealthFraction = .18f;
+        [Range(.15f,1f)] public float damageRecoverySeconds = .6f;
+        [Range(0,.2f)] public float dodgeProtectionStart = .04f;
+        [Range(.4f,.9f)] public float dodgeProtectionEnd = .72f;
+        [Header("Authored received-hit overlay")]
+        public AnimationClip receivedHitClip;
+        [Range(.2f,.6f)] public float receivedReactionSeconds = .36f;
+        [Range(.2f,1f)] public float receivedReactionWeight = .85f;
         [Header("Response and motion (multipliers on authored clips)")]
         [Range(.08f,.4f)] public float inputBuffer = .22f;
         [Range(.03f,.15f)] public float comboTransition = .07f;
@@ -42,7 +56,7 @@ namespace Mavis
         public AudioClip[] lowImpact;
         public AudioClip[] enemyReaction;
         [Range(0,1)] public float soundVolume = .7f;
-        public Impact For(CombatHitKind kind) => kind==CombatHitKind.ChargedHeavy || kind==CombatHitKind.JumpSlash ? heavy : kind==CombatHitKind.ComboFinisher ? finisher : kind==CombatHitKind.ComboTwo ? second : normal;
+        public Impact For(CombatHitKind kind) => kind==CombatHitKind.Rifle ? rifle : kind==CombatHitKind.ChargedHeavy || kind==CombatHitKind.JumpSlash ? heavy : kind==CombatHitKind.ComboFinisher ? finisher : kind==CombatHitKind.ComboTwo ? second : normal;
         static CombatFeelProfile cached;
         public static CombatFeelProfile Default
         {

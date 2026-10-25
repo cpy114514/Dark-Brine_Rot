@@ -27,6 +27,7 @@ namespace Mavis
         void Awake()
         {
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+            if(Application.isPlaying && !(this is Story1SharkHealth) && !GetComponent<CombatDamageFlash>())gameObject.AddComponent<CombatDamageFlash>();
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
         }
 

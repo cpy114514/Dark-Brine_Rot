@@ -8,11 +8,13 @@ namespace Mavis
     public sealed class AdditiveSceneBootstrap : MonoBehaviour
     {
         static int activeLoads;
+        static float progress;
         bool loading;
         public static bool IsLoading => activeLoads > 0;
+        public static float Progress => IsLoading?progress:1f;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetLoading() => activeLoads = 0;
-        void OnEnable() { if(Application.isPlaying && !loading) {loading=true;activeLoads++;} }
+        static void ResetLoading() {activeLoads=0;progress=0;}
+        void OnEnable() { if(Application.isPlaying && !loading) {if(activeLoads==0)progress=0;loading=true;activeLoads++;SceneLoadingScreen.ShowWorldLoading();} }
         void OnDisable() => FinishLoading();
         void FinishLoading() { if(!loading)return;loading=false;activeLoads=Mathf.Max(0,activeLoads-1); }
         [SerializeField]
@@ -29,20 +31,27 @@ namespace Mavis
 
         IEnumerator Start()
         {
+            int completed=0,total=Mathf.Max(1,requiredScenes.Length);
             foreach (string sceneName in requiredScenes)
             {
                 if (string.IsNullOrWhiteSpace(sceneName) || IsLoaded(sceneName))
-                    continue;
+                {progress=(float)++completed/total;continue;}
 
                 if (!Application.CanStreamedLevelBeLoaded(sceneName))
                 {
                     Debug.LogError($"[Scenes] Required scene '{sceneName}' is not in Build Settings.", this);
+                    progress=(float)++completed/total;
                     continue;
                 }
 
                 AsyncOperation load = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
                 if (load != null)
-                    yield return load;
+                    while(!load.isDone)
+                    {
+                        progress=(completed+Mathf.Clamp01(load.progress/.9f)*.95f)/total;
+                        yield return null;
+                    }
+                progress=(float)++completed/total;
             }
 
             Scene activeScene = SceneManager.GetSceneByName(activeSceneAfterLoad);

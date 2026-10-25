@@ -352,6 +352,8 @@ public class ProceduralIsland : MonoBehaviour
         }
         var vertices = new Vector3[(rows + 1) * columns];
         var uv = new Vector2[vertices.Length];
+        var shoreData = new List<Vector4>(vertices.Length);
+        var ground = GetComponent<MeshCollider>();
         float surfWidth = ocean != null
             ? Mathf.Clamp(6f + (ocean.wave1.amplitude + ocean.wave2.amplitude) * 3f, 9f, 20f)
             : 11f;
@@ -360,7 +362,7 @@ public class ProceduralIsland : MonoBehaviour
             float across = row / (float)rows;
             // A surf zone should grow with the incoming swell, while its inner
             // edge still follows the actual waterline rather than the island rim.
-            float shoreOffset = Mathf.Lerp(surfWidth, -2.5f, across);
+            float shoreOffset = Mathf.Lerp(surfWidth, -8f, across);
             for (int column = 0; column <= shoreSegments; column++)
             {
                 Vector2 direction = shorelineDirections[column];
@@ -368,6 +370,14 @@ public class ProceduralIsland : MonoBehaviour
                 int index = row * columns + column;
                 vertices[index] = new Vector3(direction.x * radius, localSeaLevel + 0.055f, direction.y * radius);
                 uv[index] = new Vector2(column / (float)shoreSegments * 7f, across);
+                // Bake the actual rendered triangle height once. The analytic
+                // island function differs from its coarse triangle mesh, and
+                // previously left the foam floating above or hidden below sand.
+                Vector3 world = transform.TransformPoint(vertices[index]);
+                float height = GetWorldSurfaceHeight(world);
+                if (ground != null && ground.Raycast(new Ray(world + Vector3.up * 10000f,
+                    Vector3.down), out var hit, 20000f)) height = hit.point.y;
+                shoreData.Add(new Vector4(height, shoreOffset, direction.x, direction.y));
             }
         }
         var triangles = new int[rows * shoreSegments * 6];
@@ -385,14 +395,15 @@ public class ProceduralIsland : MonoBehaviour
         shoreFoamMesh.Clear();
         shoreFoamMesh.vertices = vertices;
         shoreFoamMesh.uv = uv;
+        shoreFoamMesh.SetUVs(1, shoreData);
         shoreFoamMesh.triangles = triangles;
         shoreFoamMesh.RecalculateNormals();
         shoreFoamMesh.RecalculateBounds();
         if (ocean != null)
         {
-            float lift = (ocean.wave1.amplitude + ocean.wave2.amplitude + ocean.wave3.amplitude + ocean.wave4.amplitude) * 1.6f + 0.25f;
+            float lift = (ocean.wave1.amplitude + ocean.wave2.amplitude + ocean.wave3.amplitude + ocean.wave4.amplitude) * 2.05f + 0.25f;
             float shift = (ocean.wave1.amplitude * ocean.wave1.steepness + ocean.wave2.amplitude * ocean.wave2.steepness +
-                ocean.wave3.amplitude * ocean.wave3.steepness + ocean.wave4.amplitude * ocean.wave4.steepness) * 1.6f;
+                ocean.wave3.amplitude * ocean.wave3.steepness + ocean.wave4.amplitude * ocean.wave4.steepness) * 2.05f;
             Bounds bounds = shoreFoamMesh.bounds;
             Vector3 scale = transform.lossyScale;
             bounds.Expand(new Vector3(shift * 2f / Mathf.Max(Mathf.Abs(scale.x), 0.001f),

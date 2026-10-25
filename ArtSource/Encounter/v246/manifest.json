@@ -1,0 +1,36 @@
+{
+  "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Encounter\\v246\\sahur-stick-idle-v246.blend",
+  "rig": "Armature",
+  "action": "CH1_SahurStickIdle_v246",
+  "unity_clip": "CH1_SahurStickIdle_v246",
+  "revision": "v246",
+  "frame_start": 1,
+  "frame_end": 265,
+  "fps": 60,
+  "loop": true,
+  "root_motion": "in_place",
+  "root_bone": "root",
+  "rig_type": "Humanoid",
+  "stage": "FIRST PASS",
+  "design_status": "approved",
+  "design_reference": "Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/revision-v246-20261024.md",
+  "approval_reference": "2026-10-24 user: replace stiff sliding on-deck motion with Sahur playing with his own stick; targeted revision of approved Oct18 intent",
+  "review_status": "accepted_for_stage",
+  "review_reference": "ArtSource/Encounter/v246/first-pass-review.md",
+  "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "contact_seconds": 0,
+  "contacts": [
+    {
+      "bone": "LeftFoot",
+      "start": 1,
+      "end": 265,
+      "max_drift_m": 0.002
+    },
+    {
+      "bone": "RightFoot",
+      "start": 1,
+      "end": 265,
+      "max_drift_m": 0.002
+    }
+  ]
+}

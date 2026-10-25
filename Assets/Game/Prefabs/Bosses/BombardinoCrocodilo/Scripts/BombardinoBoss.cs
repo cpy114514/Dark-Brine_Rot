@@ -52,6 +52,8 @@ namespace Mavis
         Quaternion visualRest;
         float clock, age, acquireAt, shotAt, deathGround, nextMarkerAt;
         float turnBank;
+        float impactAge=1,impactStrength=1;
+        Vector3 impactLocal=Vector3.back;
         float orbitAngle, attackAt, nextAttackAt;
         int attackCounter, shots;
         bool initialized,crashed;
@@ -116,12 +118,18 @@ namespace Mavis
             }
             if(health.IsDead)OnDeath();
         }
-        void OnHit(float damage){if(!FightActive&&CurrentState!=State.Dead)acquireAt=clock;}
+        void OnHit(float damage){if(!FightActive&&CurrentState!=State.Dead)acquireAt=clock;impactAge=0;}
+        public void ApplyCombatImpact(Vector3 direction,float strength)
+        {
+            impactLocal=transform.InverseTransformDirection(direction.normalized);
+            impactStrength=Mathf.Clamp(strength,.3f,1.8f);impactAge=0;
+        }
         void Update()=>Tick(Time.deltaTime);
         public void Tick(float deltaTime)
         {
             if(!initialized)Initialize();if(PauseSettingsMenu.IsOpen||deltaTime<=0)return;
             float dt=Mathf.Min(deltaTime,.1f);clock+=dt;age+=dt;
+            impactAge=Mathf.Min(.3f,impactAge+dt);
             for(int i=fireImpacts.Count-1;i>=0;i--)if(clock>=fireImpacts[i].at)
             {
                 var impact=fireImpacts[i];fireImpacts.RemoveAt(i);
@@ -153,7 +161,8 @@ namespace Mavis
             {
                 float roll=CurrentState==State.Attack && CurrentAttack==AttackKind.CrossBombing?360*Mathf.SmoothStep(0,1,Mathf.Clamp01(age/AttackDuration)):0;
                 float bank=turnBank+Mathf.Sin(clock*1.9f)*1.8f+roll;
-                visual.localRotation=Quaternion.Euler(Mathf.Sin(clock*2.4f)*1.8f,0,bank)*visualRest;
+                float hit=Mathf.Sin(Mathf.Clamp01(impactAge/.04f)*Mathf.PI*.5f)*Mathf.Pow(1-impactAge/.3f,1.6f)*impactStrength;
+                visual.localRotation=Quaternion.Euler(Mathf.Sin(clock*2.4f)*1.8f-impactLocal.z*hit*7f,0,bank+impactLocal.x*hit*8f)*visualRest;
             }
             switch(CurrentState)
             {

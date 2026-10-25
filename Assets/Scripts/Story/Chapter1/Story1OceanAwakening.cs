@@ -52,7 +52,7 @@ public sealed class Story1OceanAwakening : MonoBehaviour
             if (Application.CanStreamedLevelBeLoaded(islandScene))
             {
                 Mavis.GameSaveManager.CancelPendingContinue();
-                SceneManager.LoadSceneAsync(islandScene, LoadSceneMode.Single);
+                Mavis.SceneLoadingScreen.Load(islandScene);
                 yield break;
             }
             Debug.LogError("First Island/Main is missing from Build Settings.", this);

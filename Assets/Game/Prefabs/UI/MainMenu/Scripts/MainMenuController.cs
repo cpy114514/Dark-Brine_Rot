@@ -16,7 +16,6 @@ public sealed class MainMenuController : MonoBehaviour
     public PauseSettingsMenu settingsMenu;
 
     TMP_Text saveStatus;
-    AsyncOperation sceneLoad;
 
     void Awake()
     {
@@ -48,7 +47,7 @@ public sealed class MainMenuController : MonoBehaviour
 
     public void NewGame()
     {
-        if(sceneLoad!=null)return;
+        if(SceneLoadingScreen.IsLoading)return;
         if (!Application.CanStreamedLevelBeLoaded(StoryScenePath))
         {
             Debug.LogError("[Main Menu] Story1 is missing from Build Settings.", this);
@@ -62,7 +61,7 @@ public sealed class MainMenuController : MonoBehaviour
 
     public void ContinueGame()
     {
-        if(sceneLoad!=null)return;
+        if(SceneLoadingScreen.IsLoading)return;
         if (!GameSaveManager.QueueContinue())
         {
             RefreshSaveStatus();
@@ -74,7 +73,7 @@ public sealed class MainMenuController : MonoBehaviour
 
     void StartGame(string scenePath)
     {
-        if(sceneLoad!=null)return;
+        if(SceneLoadingScreen.IsLoading)return;
         if (!Application.CanStreamedLevelBeLoaded(scenePath))
         {
             GameSaveManager.CancelPendingContinue();
@@ -82,8 +81,7 @@ public sealed class MainMenuController : MonoBehaviour
             return;
         }
         Time.timeScale = 1f;
-        sceneLoad=SceneManager.LoadSceneAsync(scenePath, LoadSceneMode.Single);
-        if(sceneLoad!=null && saveStatus!=null)saveStatus.text="LOADING...";
+        SceneLoadingScreen.Load(scenePath);
     }
 
     void RefreshSaveStatus()

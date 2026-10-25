@@ -3,6 +3,8 @@ Shader "DarkBrine/Procedural Shore Foam"
     Properties
     {
         _FoamColor ("Foam colour", Color) = (0.94, 0.97, 0.98, 0.98)
+        _ShoreBandWidth ("Shoreline band width (m)", Range(0.25, 4)) = 1.8
+        _ShoreDensity ("Shoreline foam density", Range(0, 1)) = 0.96
         _SeaLevel ("Sea level", Float) = 0
         _OceanMotionSpeed ("Ocean animation speed", Range(0.25, 4)) = 1.8
         _WaveIrregularity ("Wave irregularity", Range(0, 1)) = 0.7
@@ -53,6 +55,8 @@ Shader "DarkBrine/Procedural Shore Foam"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _FoamColor;
+                float _ShoreBandWidth;
+                float _ShoreDensity;
                 float _SeaLevel;
                 float _OceanMotionSpeed;
                 float _WaveIrregularity;
@@ -74,6 +78,7 @@ Shader "DarkBrine/Procedural Shore Foam"
             {
                 float4 positionOS : POSITION;
                 float2 uv : TEXCOORD0;
+                float4 shoreData : TEXCOORD1;
             };
 
             struct Varyings
@@ -84,6 +89,7 @@ Shader "DarkBrine/Procedural Shore Foam"
                 half3 normalWS : TEXCOORD2;
                 half fogFactor : TEXCOORD3;
                 float4 screenPosition : TEXCOORD4;
+                float3 breaker : TEXCOORD5;
             };
 
             float Hash21(float2 p)
@@ -108,15 +114,23 @@ Shader "DarkBrine/Procedural Shore Foam"
                 float3 positionWS = TransformObjectToWorld(input.positionOS.xyz);
                 float oceanTime = _Time.y * _OceanMotionSpeed;
                 float3 displacement, waveNormal;
-                float crest;
+                float crest, primaryPhase;
                 float distanceXZ = distance(positionWS.xz, _WorldSpaceCameraPos.xz);
                 OceanEvaluateWaves(positionWS.xz, oceanTime, OceanDetailWeights(distanceXZ),
-                    displacement, waveNormal, crest);
-                float breakerLift = (Noise(positionWS.xz * 0.16
-                    + oceanTime * float2(0.055, -0.037)) - 0.5) * 0.085;
-                float wetEdge = smoothstep(0.02, 0.20, input.uv.y) * (1.0 - smoothstep(0.62, 0.88, input.uv.y));
+                    displacement, waveNormal, crest, primaryPhase);
+                // A crest arrives, rushes up the beach, spreads, then drains
+                // more slowly. Carry the unwrapped real swell phase across
+                // triangles; wrapping it per vertex would tear the breaker.
+                float waterY = _SeaLevel + displacement.y;
                 positionWS.xz += displacement.xz;
-                positionWS.y = _SeaLevel + displacement.y + 0.14 + breakerLift * wetEdge;
+                // Follow the actual water all the way to sand. Lifting a
+                // ribbon onto dry terrain leaves a detached white beach band
+                // while the incoming sea is in its trough.
+                // The ocean patch has coarser triangles than the shore ribbon.
+                // A small surface bias keeps its lace above that rasterized
+                // surface without raising it onto dry sand.
+                positionWS.y = waterY + 0.14;
+                output.breaker = float3(primaryPhase, waterY - input.shoreData.x, crest);
                 output.positionWS = positionWS;
                 output.normalWS = waveNormal;
                 output.positionCS = TransformWorldToHClip(positionWS);
@@ -134,26 +148,39 @@ Shader "DarkBrine/Procedural Shore Foam"
                 clip(opaqueEyeDepth - foamEyeDepth + 0.025);
                 float2 shore = input.positionWS.xz;
                 float oceanTime = _Time.y * _OceanMotionSpeed;
-                float broad = Noise(shore * 0.050 + oceanTime * float2(0.012, -0.008));
-                float fine = Noise(shore * 0.24 - oceanTime * float2(0.090, 0.065));
-                float sections = Noise(shore * 0.016 + oceanTime * float2(0.004, -0.003));
-                // Breakers advance in uneven groups, leaving brighter lace
-                // at the waterline instead of a faint, periodic white ring.
-                float phase = input.uv.y * 11.5 - oceanTime * 2.15
-                    + (broad - 0.5) * 4.5 + (sections - 0.5) * 3.0
-                    + (fine - 0.5) * 0.6;
-                float crest = smoothstep(0.54, 0.88, sin(phase) * 0.5 + 0.5);
-                float broken = 0.23 + 0.77 * smoothstep(0.32, 0.67,
-                    sections * 0.65 + broad * 0.35);
-                float lace = smoothstep(0.39, 0.68, fine) * (0.24 + broad * 0.25);
-                float backwash = smoothstep(0.61, 0.84, input.uv.y)
-                    * (1.0 - smoothstep(0.94, 1.0, input.uv.y))
-                    * (0.30 + 0.70 * smoothstep(0.32, 0.70, broad + fine * 0.15)) * 0.52;
-                float edge = smoothstep(0.04, 0.16, input.uv.y)
-                           * (1.0 - smoothstep(0.91, 1.0, input.uv.y));
-                float coverage = saturate(crest * broken * 1.05 + lace * broken * 0.38 + backwash);
-                half alpha = edge * coverage * _FoamColor.a;
-                half3 foamColor = lerp(_FoamColor.rgb * 0.86, _FoamColor.rgb, saturate(crest));
+                float broad = Noise(shore * 0.11 + oceanTime * float2(0.021, -0.014));
+                float fine = Noise(shore * 0.85 - oceanTime * float2(0.11, 0.08));
+                float grain = Noise(shore * 2.3 + fine * 0.6);
+                // Measure the contact in horizontal world metres. Eye-depth alone
+                // produces a broad white carpet on a gently sloping beach.
+                float depthGap = max(0.0, input.breaker.y);
+                float2 dx = ddx(shore), dy = ddy(shore);
+                float2 depthGradient = float2(ddx(depthGap) * dy.y - ddy(depthGap) * dx.y,
+                    ddy(depthGap) * dx.x - ddx(depthGap) * dy.x);
+                float determinant = abs(dx.x * dy.y - dx.y * dy.x);
+                float contactDistance = depthGap * determinant / max(length(depthGradient), 0.00001);
+                // A flat/deep background has no shoreline gradient and must not
+                // turn into foam. The original shallow-water gate remains.
+                contactDistance = max(contactDistance, depthGap * 0.35);
+                float cycle = frac((-input.breaker.x + PI * 0.5) / TWO_PI);
+                float surge = smoothstep(0.04, 0.28, cycle)
+                    * (1.0 - smoothstep(0.46, 0.98, cycle));
+                float width = _ShoreBandWidth * lerp(0.65, 1.1, surge) * (0.94 + broad * 0.12);
+                float aa = min(fwidth(contactDistance), 0.35);
+                float ribbon = 1.0 - smoothstep(width * 0.45, width + aa, contactDistance);
+                float lace = 1.0 - smoothstep(0.05, 0.22, abs(fine - 0.51));
+                float bubbles = smoothstep(0.18, 0.72, grain);
+                // Keep a solid, dense core all along the waterline. Noise varies
+                // bubbles and the thin outer lace, never punches holes in the line.
+                float fresh = ribbon * (0.86 + bubbles * 0.14);
+                float wash = (1.0 - smoothstep(width, width + 0.65 + aa, contactDistance))
+                    * (1.0 - ribbon) * lace * 0.22;
+                float wet = smoothstep(-0.03, 0.06, input.breaker.y)
+                    * (1.0 - smoothstep(0.6, 1.8, input.breaker.y));
+                float edge = smoothstep(0.0, 0.035, input.uv.y)
+                    * (1.0 - smoothstep(0.97, 1.0, input.uv.y));
+                half alpha = edge * wet * saturate(fresh + wash) * _ShoreDensity * _FoamColor.a;
+                half3 foamColor = _FoamColor.rgb * lerp(0.93, 1.0, saturate(fresh));
                 // Preserve the existing white-water tint and lace, but treat them as
                 // albedo rather than emission. Daylight stays white; moonlight and
                 // shore shadows now dim and colour the same foam naturally.

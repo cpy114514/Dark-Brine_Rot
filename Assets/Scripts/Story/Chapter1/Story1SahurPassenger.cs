@@ -6,15 +6,20 @@ using UnityEngine.Playables;
 [DefaultExecutionOrder(14000), DisallowMultipleComponent]
 public sealed class Story1SahurPassenger : MonoBehaviour
 {
+    // One brief opening action, including the voyage-to-warning handoff.
+    public const float OpeningFidgetSeconds=3f;
+    public const float OpeningLeadInSeconds=.3f;
     public Transform ship;
     Vector3 deckPosition;
     Quaternion deckRotation;
     Animator visual;
     Collider[] deckColliders;
     Vector3 leftSole,rightSole;
-    bool solesReady;
+    bool solesReady,deckCalibrated;
     PlayableGraph idleGraph;
     AnimationClipPlayable idlePose;
+    bool idleInitialized,priorRootMotion;
+    float priorAnimatorSpeed;
     public float StickIdleTime { get; private set; }
     void Awake()
     {
@@ -35,15 +40,6 @@ public sealed class Story1SahurPassenger : MonoBehaviour
         {
             visual.Play("Locomotion", 0, 0f);
             visual.SetFloat("Speed", 0f);
-            visual.applyRootMotion=false;
-            var clip=Story1EncounterClipCache.Find("CH1_SahurStickIdle_v221");
-            if(clip!=null)
-            {
-                idleGraph=PlayableGraph.Create("Sahur ship stick fidget v221");
-                idleGraph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
-                idlePose=AnimationClipPlayable.Create(idleGraph,clip);idlePose.SetSpeed(0);
-                AnimationPlayableOutput.Create(idleGraph,"Passenger idle",visual).SetSourcePlayable(idlePose);idleGraph.Play();
-            }
         }
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -54,6 +50,23 @@ public sealed class Story1SahurPassenger : MonoBehaviour
         transform.SetPositionAndRotation(ship.TransformPoint(deckPosition), ship.rotation * deckRotation);
         if (visual != null)
         {
+            // Runtime equipment/controller initialization can rebind the Animator
+            // during Start. Take ownership only after those initializers finish.
+            if(!idleInitialized)
+            {
+                var clip=Story1EncounterClipCache.Find("CH1_SahurStickIdle_v247");
+                if(clip==null)clip=Story1EncounterClipCache.Find("CH1_SahurStickIdle_v221");
+                priorRootMotion=visual.applyRootMotion;priorAnimatorSpeed=visual.speed;
+                visual.applyRootMotion=false;visual.speed=0;
+                if(clip!=null)
+                {
+                    idleGraph=PlayableGraph.Create("Sahur ship stick fidget v246");
+                    idleGraph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
+                    idlePose=AnimationClipPlayable.Create(idleGraph,clip);idlePose.SetSpeed(0);
+                    AnimationPlayableOutput.Create(idleGraph,"Passenger idle",visual).SetSourcePlayable(idlePose);idleGraph.Play();
+                }
+                idleInitialized=true;
+            }
             if(idleGraph.IsValid())
             {
                 StickIdleTime+=Time.deltaTime;
@@ -61,10 +74,26 @@ public sealed class Story1SahurPassenger : MonoBehaviour
             }
             visual.SetFloat("Speed", 0f);
             if(!solesReady){SahurSupportPose.MeasureSoles(visual,ref leftSole,ref rightSole);solesReady=true;}
-            AlignToDeck(transform,visual,deckColliders,leftSole,rightSole);
+            if(AlignToDeck(transform,visual,deckColliders,leftSole,rightSole)&&!deckCalibrated)
+            {
+                // Retain the fitted support height in ship space. Resetting to
+                // the unfitted spawn every frame projects that large vertical
+                // correction sideways across a rolling deck.
+                deckPosition=ship.InverseTransformPoint(transform.position);
+                deckCalibrated=true;
+            }
         }
     }
-    void OnDisable(){if(idleGraph.IsValid())idleGraph.Destroy();}
+    void OnDisable()
+    {
+        if(idleGraph.IsValid())idleGraph.Destroy();
+        if(idleInitialized&&visual!=null)
+        {
+            if(visual.speed==0)visual.speed=priorAnimatorSpeed;
+            if(!visual.applyRootMotion)visual.applyRootMotion=priorRootMotion;
+        }
+        idleInitialized=false;
+    }
 
     // Query the native hull mesh near the actual soles, excluding sails and
     // the lower hull. Shared by the passenger and the cinematic takeover.

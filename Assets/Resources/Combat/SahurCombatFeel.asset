@@ -13,36 +13,67 @@ MonoBehaviour:
   m_Name: SahurCombatFeel
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.CombatFeelProfile
   normal:
-    stop: 0.048
-    cameraStrength: 0.035
-    cameraDuration: 0.105
-    vfx: 0.75
-    reaction: 1
-    knockback: 0.13
+    stop: 0.055
+    cameraStrength: 0.065
+    cameraDuration: 0.13
+    vfx: 1.05
+    reaction: 1.25
+    knockback: 0.16
   second:
-    stop: 0.038
-    cameraStrength: 0.03
-    cameraDuration: 0.095
-    vfx: 0.7
-    reaction: 0.9
-    knockback: 0.1
+    stop: 0.04
+    cameraStrength: 0.05
+    cameraDuration: 0.11
+    vfx: 0.95
+    reaction: 1.1
+    knockback: 0.13
   finisher:
-    stop: 0.105
-    cameraStrength: 0.075
-    cameraDuration: 0.16
-    vfx: 1.1
-    reaction: 1.5
-    knockback: 0.4
+    stop: 0.11
+    cameraStrength: 0.095
+    cameraDuration: 0.18
+    vfx: 1.3
+    reaction: 1.7
+    knockback: 0.45
   heavy:
-    stop: 0.09
-    cameraStrength: 0.09
-    cameraDuration: 0.17
-    vfx: 1.25
+    stop: 0.095
+    cameraStrength: 0.1
+    cameraDuration: 0.19
+    vfx: 1.4
     reaction: 1.8
-    knockback: 0.65
+    knockback: 0.7
+  received:
+    stop: 0.055
+    cameraStrength: 0.075
+    cameraDuration: 0.15
+    vfx: 0.95
+    reaction: 1
+    knockback: 0
+  receivedHeavy:
+    stop: 0.085
+    cameraStrength: 0.1
+    cameraDuration: 0.19
+    vfx: 1.2
+    reaction: 1.25
+    knockback: 0
+  rifle:
+    stop: 0.028
+    cameraStrength: 0.025
+    cameraDuration: 0.075
+    vfx: 0.7
+    reaction: 0.65
+    knockback: 0
+  incomingDamageMultiplier: 0.7
+  maximumHitHealthFraction: 0.18
+  damageRecoverySeconds: 0.6
+  dodgeProtectionStart: 0.04
+  dodgeProtectionEnd: 0.72
+  receivedHitClip: {fileID: 7400000, guid: 51702e312b3878648bd9f4b5351a3e9b, type: 2}
+  receivedReactionSeconds: 0.36
+  receivedReactionWeight: 0.85
   inputBuffer: 0.22
   comboTransition: 0.07
   comboRecoveryChain: 0.9
+  lightDodgeCancel: 0.9
+  heavyDodgeCancel: 0.62
   trailLifetime: 0.095
   lightSpeed:
     serializedVersion: 2

@@ -214,9 +214,9 @@ public sealed class OceanWorld : MonoBehaviour
         // Shader displacement must remain inside the CPU culling volume.
         // Recompute flat bounds first so repeated quality rebuilds cannot grow it.
         generatedMesh.RecalculateBounds();
-        float verticalPadding = (wave1.amplitude + wave2.amplitude + wave3.amplitude + wave4.amplitude) * 1.6f;
+        float verticalPadding = (wave1.amplitude + wave2.amplitude + wave3.amplitude + wave4.amplitude) * 2.05f;
         float horizontalPadding = (wave1.amplitude * wave1.steepness + wave2.amplitude * wave2.steepness +
-            wave3.amplitude * wave3.steepness + wave4.amplitude * wave4.steepness) * 1.6f;
+            wave3.amplitude * wave3.steepness + wave4.amplitude * wave4.steepness) * 2.05f;
         Bounds waveBounds = generatedMesh.bounds;
         waveBounds.Expand(new Vector3(horizontalPadding * 2f, verticalPadding * 2f, horizontalPadding * 2f));
         generatedMesh.bounds = waveBounds;
@@ -305,9 +305,14 @@ public sealed class OceanWorld : MonoBehaviour
                 const float rearFraction = 0.25f;
                 float z = depth <= rearFraction
                     ? startDistance * Mathf.Pow(1f - depth / rearFraction, 1.7f)
-                    : radius * Mathf.Pow((depth - rearFraction) / (1f - rearFraction), 2.2f);
-                float distributedDepth = Mathf.Clamp01(z / radius);
-                float halfWidth = Mathf.Lerp(radius * 0.40f, radius * 1.10f, distributedDepth);
+                    : 12f * (Mathf.Pow(1f + radius / 12f,
+                        (depth - rearFraction) / (1f - rearFraction)) - 1f);
+                // Near rows used to span 80% of the entire ocean range even
+                // at the camera (2.9km for a 3km sea). Most vertices sat
+                // outside the frustum while beach contacts became stair steps.
+                // Keep a turning/near-plane margin and widen with distance;
+                // retain the same horizon extent and total triangle budget.
+                float halfWidth = Mathf.Min(radius * 1.10f, 90f + Mathf.Abs(z) * 2.2f);
                 for (int column = 0; column <= widthSegments; column++)
                     vertices[row * side + column] = new Vector3(columnPositions[column] * halfWidth, 0f, z);
             }
@@ -572,7 +577,7 @@ public sealed class OceanWorld : MonoBehaviour
         Light sun = cachedSun;
         if (sun != null && sun.type == LightType.Directional)
         {
-            DayNightCycle cycle = sun.GetComponent<DayNightCycle>();
+            sun.TryGetComponent<DayNightCycle>(out var cycle);
             skyMaterial.SetVector(SunDirectionId, cycle != null ? cycle.SunDirection : -sun.transform.forward);
         }
     }

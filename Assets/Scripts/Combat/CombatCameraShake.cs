@@ -53,6 +53,13 @@ namespace Mavis
             float impact=directionalStrength*Mathf.Pow(remaining/duration,2f);
             offset += Vector3.ProjectOnPlane(impactDirection,transform.forward)*(-impact*Mathf.Cos(phase*.6f));
             rotation = Quaternion.Euler(Mathf.Sin(phase * 0.8f) * a * 7f, 0f, Mathf.Sin(phase) * a * 5f);
+            // Frontal melee force is almost parallel to the follow camera.
+            // Projecting it onto the screen plane alone removed nearly all
+            // feedback. A bounded pitch/axial kick keeps that contact readable.
+            Vector3 local=transform.InverseTransformDirection(impactDirection);
+            float kick=Mathf.Cos(phase*.6f)*impact;
+            offset-=transform.forward*(kick*.45f);
+            rotation*=Quaternion.Euler(-kick*(6f+Mathf.Abs(local.z)*2f),-local.x*kick*3f,local.x*kick*2f);
             transform.position += offset;
             transform.rotation *= rotation;
             applied = true;

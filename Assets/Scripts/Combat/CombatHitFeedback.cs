@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 namespace Mavis
 {
-    public enum CombatHitKind { ComboOne, ComboTwo, ComboFinisher, ChargedHeavy, JumpSlash, Boomerang, Spin }
+    public enum CombatHitKind { ComboOne, ComboTwo, ComboFinisher, ChargedHeavy, JumpSlash, Boomerang, Spin, Rifle }
     public sealed class CombatHitFeedback : MonoBehaviour
     {
         public CombatFeelProfile profile;
@@ -23,13 +23,15 @@ namespace Mavis
             var victim=target as Component;
             if (!attacker || !victim || target==null || damage<=0 || !victim.gameObject.activeInHierarchy) return false;
             if (target is Health hp && hp.IsDead || target is NailongHealth nl && nl.IsDead ||
-                target is PlayerHealth ph && (ph.currentHealth<=0 || ph.IsProtected) ||
+                target is PlayerHealth ph && !ph.CanReceiveCombatDamage ||
                 target is Story1SharkHealth shark && shark.IsProtected) return false;
             var response=victim.GetComponent<CombatImpactResponse>();
             CombatHitResult result=response && response.blocksMelee ? CombatHitResult.Blocked :
                 response && response.unflinching ? CombatHitResult.Unflinching :
                 kind==CombatHitKind.ChargedHeavy || kind==CombatHitKind.ComboFinisher || kind==CombatHitKind.JumpSlash ? CombatHitResult.HeavyHit : CombatHitResult.Hit;
-            if(BossWeakPoint.Contains(victim,point))damage*=BossWeakPoint.DamageMultiplier;
+            // Rifle distance/counter/engine damage is already resolved by its trace.
+            if(kind!=CombatHitKind.Rifle && BossWeakPoint.Contains(victim,point))damage*=BossWeakPoint.DamageMultiplier;
+            float before=target is Health h0?h0.currentHealth:target is NailongHealth n0?n0.currentHealth:target is PlayerHealth p0?p0.currentHealth:-1;
             if(target is ICombatHitResolver resolver)result=resolver.ResolveCombatHit(attacker,damage,point,kind);
             else if(result!=CombatHitResult.Blocked)
             {
@@ -38,16 +40,29 @@ namespace Mavis
             }
             if(target is NailongHealth && result==CombatHitResult.Hit)result=CombatHitResult.Unflinching;
             if(victim.GetComponent<CappuccinoAI>() is CappuccinoAI capri && !capri.IsExposed && result==CombatHitResult.Hit)result=CombatHitResult.Unflinching;
+            float accepted=before<0?damage:before-(target is Health h1?h1.currentHealth:target is NailongHealth n1?n1.currentHealth:target is PlayerHealth p1?p1.currentHealth:before-damage);
+            if(result!=CombatHitResult.Blocked && accepted<=0)return false;
             Vector3 direction=swingDirection.sqrMagnitude>.0001f ? swingDirection.normalized : (point-attacker.transform.position).normalized;
             if(direction.sqrMagnitude<.01f)direction=attacker.transform.forward;
             // Edit Mode contract checks resolve damage without creating runtime audio, particles or clocks.
             if(!Application.isPlaying)return true;
-            var feedback=attacker.GetComponent<CombatHitFeedback>();
-            if(!feedback)feedback=attacker.AddComponent<CombatHitFeedback>();
-            var hit=new CombatHitEvent(attacker,victim,point,direction,kind,result,result==CombatHitResult.Blocked?0:damage);
+            var owner=target is PlayerHealth?victim.gameObject:attacker;
+            var feedback=owner.GetComponent<CombatHitFeedback>();
+            if(!feedback)feedback=owner.AddComponent<CombatHitFeedback>();
+            var hit=new CombatHitEvent(attacker,victim,point,direction,kind,result,result==CombatHitResult.Blocked?0:accepted);
             feedback.Emit(hit,response);
             HitConfirmed?.Invoke(hit);
             return true;
+        }
+        public static void Received(PlayerHealth victim,float damage,Vector3 point,Vector3 origin)
+        {
+            if(!victim || damage<=0 || victim.NarrativeDamageOwner)return;
+            var feedback=victim.GetComponent<CombatHitFeedback>();if(!feedback)feedback=victim.gameObject.AddComponent<CombatHitFeedback>();
+            Vector3 direction=Vector3.ProjectOnPlane(victim.transform.position-origin,Vector3.up).normalized;
+            if(direction.sqrMagnitude<.01f)direction=-victim.transform.forward;
+            var kind=damage>=victim.maxHealth*.15f?CombatHitKind.ChargedHeavy:CombatHitKind.ComboOne;
+            var hit=new CombatHitEvent(null,victim,point,direction,kind,kind==CombatHitKind.ChargedHeavy?CombatHitResult.HeavyHit:CombatHitResult.Hit,damage);
+            feedback.Emit(hit,null);HitConfirmed?.Invoke(hit);
         }
         public static void Block(GameObject defender,Vector3 point,Vector3 direction)
         {
@@ -72,30 +87,42 @@ namespace Mavis
             using(var sample=ImpactMarker.Auto())
             {
             LastHitKind=hit.kind;LastResult=hit.result;HitCount++;
-            var config=Profile;var settings=config.For(hit.kind);
+            var config=Profile;bool received=hit.target is PlayerHealth && hit.result!=CombatHitResult.Blocked;
+            var settings=received?(hit.result==CombatHitResult.HeavyHit?config.receivedHeavy:config.received):config.For(hit.kind);
             bool blocked=hit.result==CombatHitResult.Blocked, unflinching=hit.result==CombatHitResult.Unflinching;
             if(blocked){settings.stop*=.55f;settings.cameraStrength*=.5f;settings.vfx*=.65f;}
-            if(unflinching)settings.stop*=.7f;
             var melee=GetComponent<SahurAttack>();
             var attackerAnimator=melee ? melee.animator : GetComponentInChildren<Animator>();
-            CombatLocalHitStop.Freeze(gameObject,attackerAnimator,settings.stop);
             // Death and story/cinematic graphs retain their own clocks and poses.
             bool alive=!(hit.target is Health health && health.IsDead) && !(hit.target is NailongHealth nh && nh.IsDead) && !(hit.target is PlayerHealth ph && ph.currentHealth<=0);
-            if(alive && !(hit.target is Story1SharkHealth) && !blocked)
+            if((!received || alive) && hit.kind!=CombatHitKind.Rifle)CombatLocalHitStop.Freeze(gameObject,attackerAnimator,settings.stop);
+            if(alive && received)
             {
-                CombatLocalHitStop.Freeze(hit.target.gameObject,hit.target.GetComponentInChildren<Animator>(),settings.stop*(response?response.stopMultiplier:1)*(unflinching?.5f:1));
+                GetComponent<CombatReceivedReaction>()?.Hit(settings.reaction);
+            }
+            if(alive && !(hit.target is Story1SharkHealth) && !blocked && !received)
+            {
+                // Armor owns gameplay poise, not invisibility of the impact.
+                CombatLocalHitStop.Freeze(hit.target.gameObject,hit.target.GetComponentInChildren<Animator>(),settings.stop*(response?response.stopMultiplier:1)*(unflinching?.85f:1));
                 Vector3 recoilDirection=Vector3.ProjectOnPlane(hit.direction,Vector3.up);
                 if(recoilDirection.sqrMagnitude<.04f)recoilDirection=Vector3.ProjectOnPlane(hit.target.transform.position-hit.attacker.transform.position,Vector3.up);
                 if(recoilDirection.sqrMagnitude<.001f)recoilDirection=hit.attacker.transform.forward;
                 recoilDirection.Normalize();
                 hit.target.GetComponent<CappuccinoEnemy>()?.ApplyCombatImpact(recoilDirection,settings.reaction*(response?response.reactionMultiplier:1));
                 hit.target.GetComponent<NailongHitReaction>()?.SetImpactDirection(recoilDirection,settings.reaction*(response?response.reactionMultiplier:1));
+                hit.target.GetComponent<BombardinoBoss>()?.ApplyCombatImpact(recoilDirection,settings.reaction);
                 if(!unflinching && !hit.target.GetComponent<UnityEngine.AI.NavMeshAgent>())
                 {
                     var push=hit.target.GetComponent<CombatKnockback>();
                     if(!push && hit.target.GetComponent<CharacterController>())push=hit.target.gameObject.AddComponent<CombatKnockback>();
                     push?.Push(Vector3.ProjectOnPlane(hit.direction,Vector3.up).normalized*settings.knockback*(response?response.knockbackMultiplier:1));
                 }
+            }
+            if(!blocked && !(hit.target is Story1SharkHealth))
+            {
+                var flash=hit.target.GetComponent<CombatDamageFlash>();
+                if(!flash)flash=hit.target.gameObject.AddComponent<CombatDamageFlash>();
+                flash.Hit(config.impactBrightness*(received?.9f:hit.result==CombatHitResult.HeavyHit?1:.75f));
             }
             CombatMaterial surface=blocked?CombatMaterial.Metal:response?response.material:CombatMaterial.Flesh;
             visuals.Impact(hit,settings,surface,config.impactBrightness);

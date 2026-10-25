@@ -43,7 +43,7 @@ public sealed class WorldSampleV226:MonoBehaviour
     async void Start()
     {
         rate=Application.targetFrameRate;sync=QualitySettings.vSyncCount;oldCapture=Time.captureFramerate;oldProfiler=ProfilerDriver.enabled;
-        oldScale=Time.timeScale;if(label.StartsWith("frozen"))Time.timeScale=0;
+        oldScale=Time.timeScale;Time.timeScale=label.StartsWith("frozen")?0:1;
         ProfilerDriver.enabled=false;ProfilerDriver.ClearAllFrames();
         folder=Path.Combine(ProfileWorldV226.Root,label);Directory.CreateDirectory(folder);
         try
@@ -168,7 +168,7 @@ public sealed class WorldSampleV226:MonoBehaviour
         var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
         var items=((System.Collections.IEnumerable)typeof(WorldPerformanceManager).GetField("foliage",flags).GetValue(manager)).Cast<object>().ToArray();
         var renderers=UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Where(x=>x.enabled&&!x.forceRenderingOff).ToArray();
-        var summary=renderers.GroupBy(r=>r.GetComponent<MeshFilter>()?.sharedMesh?.name??r.name).Select(g=>new{mesh=g.Key,count=g.Count(),visible=g.Count(x=>x.isVisible),materials=g.First().sharedMaterials.Select(x=>x?x.shader.name:"none").ToArray()}).OrderByDescending(g=>g.count);
+        var summary=renderers.GroupBy(r=>r.TryGetComponent<MeshFilter>(out var filter)&&filter.sharedMesh?filter.sharedMesh.name:r.name).Select(g=>new{mesh=g.Key,count=g.Count(),visible=g.Count(x=>x.isVisible),materials=g.First().sharedMaterials.Select(x=>x?x.shader.name:"none").ToArray()}).OrderByDescending(g=>g.count);
         var batches=((System.Collections.IEnumerable)typeof(WorldPerformanceManager).GetField("activeGrassBatches",flags).GetValue(manager)).Cast<object>().ToArray();
         File.WriteAllText(Path.Combine(folder,name+"-renderers.json"),Newtonsoft.Json.JsonConvert.SerializeObject(new{summary,batches=batches.Length,instances=batches.Sum(b=>(int)b.GetType().GetField("count").GetValue(b)),items=items.Length,unhiddenBatchable=items.Count(o=>(bool)o.GetType().GetField("batchable").GetValue(o)&&!((MeshRenderer)o.GetType().GetField("renderer").GetValue(o)).forceRenderingOff)},Newtonsoft.Json.Formatting.Indented));
     }

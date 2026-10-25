@@ -11,6 +11,7 @@ Shader "DarkBrine/Procedural Sky"
         _CloudDetail ("Raymarch quality", Range(1, 5)) = 4
         _CloudRenderDistance ("Cloud render distance (m)", Range(4000, 48000)) = 12000
         _CloudSpeed ("Wind speed", Range(0, 1)) = 0.10
+        [HideInInspector] _CloudTimeOffset ("Cloud preview clock offset", Float) = 0
         _SunGlow ("Sunlight intensity", Range(0, 1)) = 0.72
         _Daylight ("Daylight", Range(0, 1)) = 1
         _NightFactor ("Night sky", Range(0, 1)) = 0
@@ -46,6 +47,7 @@ Shader "DarkBrine/Procedural Sky"
                 half _CloudDetail;
                 float _CloudRenderDistance;
                 half _CloudSpeed;
+                float _CloudTimeOffset;
                 half _SunGlow;
                 half _Daylight;
                 half _NightFactor;
@@ -88,79 +90,92 @@ Shader "DarkBrine/Procedural Sky"
             {
                 float total = 0.0;
                 float amplitude = 0.55;
+                float weights = 0.0;
                 [unroll]
                 for (int i = 0; i < 5; i++)
                 {
                     if (i >= octaves) break;
                     total += ValueNoise(p) * amplitude;
+                    weights += amplitude;
                     p = p.zxy * 2.03 + float3(19.1, -7.7, 11.3);
                     amplitude *= 0.5;
                 }
-                return total / 1.06875;
+                return total / max(weights, 0.0001);
             }
 
-            float CloudDensity(float3 position, float cloudBase, float cloudThickness)
+            float FilteredFbm(float3 p, float footprint, int octaves)
             {
-                float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
-                float3 samplePosition = position;
-                samplePosition.xz += wind;
-                // Use broader noise at long range. Fine 600 m features cannot be
-                // resolved by a horizon ray that travels tens of kilometres.
-                float distanceLod = saturate((distance(position, _WorldSpaceCameraPos) - 4500.0) / 15000.0);
-                // Each horizontal column gets its own floor and thickness so the
-                // volume reads as stacked tiers instead of a single flat slab.
-                float columnShape = Fbm(samplePosition * lerp(0.0008, 0.00015, distanceLod) + float3(7.0, 0.0, -3.0), 3);
-                float localBase = cloudBase + (columnShape - 0.5) * 420.0;
-                float localThickness = cloudThickness * lerp(0.30, 1.55, saturate(columnShape * 1.15));
+                float total = 0.0, weight = 0.0, amplitude = 0.55;
+                [unroll]
+                for (int i = 0; i < 3; i++)
+                {
+                    if (i >= octaves) break;
+                    float resolved = 1.0 - smoothstep(0.35, 0.90, footprint);
+                    [branch] if (resolved > 0.001)
+                        total += (ValueNoise(p) - 0.5) * amplitude * resolved;
+                    weight += amplitude;
+                    p = p.zxy * 2.03 + float3(19.1, -7.7, 11.3);
+                    footprint *= 2.03;
+                    amplitude *= 0.5;
+                }
+                return 0.5 + total / max(weight, 0.0001);
+            }
 
-                float heightFraction = (position.y - localBase) / localThickness;
-                float verticalProfile = smoothstep(0.02, 0.16, heightFraction) * (1.0 - smoothstep(0.64, 1.0, heightFraction));
-                [branch] if (verticalProfile <= 0.0)
-                    return 0.0;
+            float3 CloudPosition(float3 position)
+            {
+                // One coherent air mass. Fine and broad detail share the same
+                // modest wind speed instead of boiling or racing independently.
+                position.xz += (_Time.y + _CloudTimeOffset) * _CloudSpeed * float2(16.0, -9.0);
+                return position;
+            }
 
-                float macro = Fbm(samplePosition * lerp(0.00165, 0.00018, distanceLod), 4);
-                // Each normalized noise term lies in [0,1]. Even its largest possible
-                // erosion/wisp contribution cannot make these empty samples visible.
-                // Retain every octave for samples which can contribute to the image.
-                float threshold = lerp(0.74, 0.31, _CloudCoverage);
-                [branch] if (macro - threshold < -0.20001)
-                    return 0.0;
-                float erosion = Fbm(samplePosition * lerp(0.0052, 0.00038, distanceLod) + float3(31.0, 7.0, -12.0), 3);
-                [branch] if (macro - threshold + (erosion - 0.50) * 0.30 < -0.05001)
-                    return 0.0;
-                float wisps = Fbm(samplePosition * lerp(0.012, 0.0007, distanceLod) + float3(-13.0, 41.0, 9.0), 2);
-                float shape = macro - threshold + (erosion - 0.50) * 0.30 + (wisps - 0.50) * 0.10;
-                return saturate(shape * 3.25) * verticalProfile;
+            float CloudProfile(float3 position, float cloudBase, float cloudThickness, out float coverage)
+            {
+                // Horizontal weather columns must not change with sample height.
+                float weather = Fbm(float3(position.x * 0.00045, 0.37, position.z * 0.00045), 2);
+                float threshold = lerp(0.76, 0.32, saturate(_CloudCoverage));
+                coverage = smoothstep(threshold - 0.10, threshold + 0.14, weather);
+                float localBase = cloudBase + (weather - 0.5) * 100.0;
+                float localThickness = cloudThickness * lerp(0.65, 1.35, weather);
+                float h = (position.y - localBase) / localThickness;
+                return smoothstep(0.0, 0.16, h) * (1.0 - smoothstep(0.55, 1.0, h));
+            }
+
+            float CloudDensity(float3 position, float cloudBase, float cloudThickness, float stepLength)
+            {
+                float distanceLod = smoothstep(3500.0, 10000.0, distance(position, _WorldSpaceCameraPos));
+                position = CloudPosition(position);
+                float coverage;
+                float profile = CloudProfile(position, cloudBase, cloudThickness, coverage);
+                [branch] if (profile * coverage < 0.0001) return 0.0;
+                float3 p = float3(position.x, position.y - cloudBase, position.z) * 0.0018;
+                float macro = FilteredFbm(p + float3(coverage * 0.55, 0.0, -coverage * 0.36), stepLength * 0.0018, 3);
+                // Filter unresolved detail; do not rescale the noise field with
+                // camera distance, which made the volume stretch into sheets.
+                macro = lerp(macro, 0.5, distanceLod * 0.6);
+                float shape = macro - lerp(0.65, 0.50, coverage);
+                [branch] if (shape < -0.0501) return 0.0;
+                float erosion = FilteredFbm(p * 2.2 + float3(31.0, 7.0, -12.0), stepLength * 0.00396, 2);
+                shape += (erosion - 0.5) * 0.10 * (1.0 - distanceLod);
+                return saturate(shape * 5.5) * profile * coverage;
             }
 
             float ShadowDensity(float3 position, float cloudBase, float cloudThickness)
             {
-                float distanceLod = saturate((distance(position, _WorldSpaceCameraPos) - 4500.0) / 15000.0);
-                float2 wind = _Time.y * _CloudSpeed * float2(95.0, -58.0);
-                position.xz += wind;
-                // Lighting must use the same columnShape as the view march, otherwise
-                // shadows would appear under columns that have already lifted their floor.
-                float columnShape = Fbm(position * lerp(0.0008, 0.00015, distanceLod) + float3(7.0, 0.0, -3.0), 3);
-                float localBase = cloudBase + (columnShape - 0.5) * 420.0;
-                float localThickness = cloudThickness * lerp(0.30, 1.55, saturate(columnShape * 1.15));
-
-                float heightFraction = (position.y - localBase) / localThickness;
-                float verticalProfile = smoothstep(0.02, 0.16, heightFraction)
-                    * (1.0 - smoothstep(0.64, 1.0, heightFraction));
-                [branch] if (verticalProfile <= 0.0)
-                    return 0.0;
-                // Lighting only needs the broad cloud silhouette. The view march retains
-                // all fine erosion and wisps, avoiding three full density evaluations here.
-                float macro = Fbm(position * lerp(0.00165, 0.00018, distanceLod), 2) * 1.29545;
-                float threshold = lerp(0.74, 0.31, _CloudCoverage);
-                return saturate((macro - threshold) * 3.25) * verticalProfile;
+                position = CloudPosition(position);
+                float coverage;
+                float profile = CloudProfile(position, cloudBase, cloudThickness, coverage);
+                [branch] if (profile * coverage < 0.0001) return 0.0;
+                float3 p = float3(position.x, position.y - cloudBase, position.z) * 0.0018;
+                float macro = Fbm(p + float3(coverage * 0.55, 0.0, -coverage * 0.36), 2);
+                return saturate((macro - lerp(0.65, 0.50, coverage)) * 5.5) * profile * coverage;
             }
 
             float SampleSunLight(float3 position, float3 sunDirection, float cloudBase, float cloudThickness)
             {
-                float shadow = ShadowDensity(position + sunDirection * 110.0, cloudBase, cloudThickness);
-                shadow += ShadowDensity(position + sunDirection * 285.0, cloudBase, cloudThickness) * 0.7;
-                return exp(-shadow * 2.1);
+                float shadow = ShadowDensity(position + sunDirection * 130.0, cloudBase, cloudThickness);
+                shadow += ShadowDensity(position + sunDirection * 310.0, cloudBase, cloudThickness) * 0.7;
+                return exp(-shadow * 3.4);
             }
 
             Varyings vert(Attributes input)
@@ -211,29 +226,32 @@ Shader "DarkBrine/Procedural Sky"
                 sky += moonColor * (moonGlow + moonAureole) * saturate(_NightFactor);
 
                 // World-space, high-altitude volume: no billboards or cloud textures.
-                float cloudBase = rayOrigin.y + 650.0;
-                float cloudThickness = 460.0;
-                float cloudTop = cloudBase + cloudThickness;
+                float cloudBase = 1100.0;
+                float cloudThickness = 800.0;
+                // Enclose every possible local floor/top, not just the centre
+                // slab: clipping shifted columns produced the old hard edges.
+                float cloudBottom = cloudBase - 55.0;
+                float cloudTop = cloudBase + cloudThickness * 1.35 + 55.0;
                 float3 cloudLight = 0.0;
 
                 // Extend detailed clouds toward the horizon, then blend into the
                 // angular layer beyond the view distance to avoid undersampled rays.
                 float cloudDistance = clamp(_CloudRenderDistance, 4000.0, 48000.0);
-                float horizonStart = (cloudBase - rayOrigin.y) / cloudDistance;
-                if (rayDirection.y > horizonStart)
+                float horizonStart = max(0.0, cloudBottom - rayOrigin.y) / cloudDistance;
+                if (rayDirection.y > max(0.001, horizonStart))
                 {
-                    float entry = max(0.0, (cloudBase - rayOrigin.y) / rayDirection.y);
+                    float entry = max(0.0, (cloudBottom - rayOrigin.y) / rayDirection.y);
                     float exit = min(cloudDistance, (cloudTop - rayOrigin.y) / rayDirection.y);
                     if (exit > entry)
                     {
                         uint steps = _CloudDetail < 3.0 ? 8u : (_CloudDetail < 5.0 ? 14u : 20u);
-                        if (entry > 3500.0) steps = max(10u, steps);
-                        else if (entry > 1600.0) steps = max(6u, (steps * 3u) >> 2u);
+                        // Keep each quality tier continuous across viewing angles.
+                        // Distance-dependent step-count jumps exposed hard rings.
                         float segmentLength = (exit - entry) / steps;
                         // Smooth angular jitter breaks up sampling bands without
                         // introducing pixel-sized grain in the distant cloud layer.
-                        float jitter = ValueNoise(rayDirection * 37.7) - 0.5;
-                        float jitterStrength = 0.65 * (1.0 - saturate((entry - 4000.0) / 8000.0));
+                        float jitter = ValueNoise(rayDirection * 173.0) - 0.5;
+                        float jitterStrength = 0.20 * (1.0 - saturate((entry - 4000.0) / 8000.0));
                         float transmittance = 1.0;
                         [loop]
                         for (uint i = 0u; i < 20u; i++)
@@ -241,18 +259,20 @@ Shader "DarkBrine/Procedural Sky"
                             if (i >= steps || transmittance < 0.015) break;
                             float travel = entry + (i + 0.5 + jitter * jitterStrength) * segmentLength;
                             float3 samplePosition = rayOrigin + rayDirection * travel;
-                            float density = CloudDensity(samplePosition, cloudBase, cloudThickness);
+                            float density = CloudDensity(samplePosition, cloudBase, cloudThickness, segmentLength);
                             if (density > 0.001)
                             {
                                 float lightThroughCloud = SampleSunLight(samplePosition, sunDirection, cloudBase, cloudThickness);
-                                float phase = 0.72 + pow(sunFacing, 5.0) * 0.28;
-                                float3 nightLight = float3(0.13, 0.19, 0.34);
-                                float3 sunlitCloud = lerp(nightLight, _CloudColor.rgb * _SunColor.rgb * 1.45,
-                                    saturate(lightThroughCloud * (0.25 + _Daylight * 0.75)));
-                                float3 shaded = lerp(nightLight, sunlitCloud, 0.35 + _Daylight * 0.65);
-                                float opacity = density * segmentLength * 0.0034;
-                                cloudLight += transmittance * shaded * opacity * phase;
-                                transmittance *= exp(-opacity * 1.35);
+                                float h = saturate((samplePosition.y - cloudBase) / cloudThickness);
+                                float3 ambient = lerp(_HorizonColor.rgb * 0.40, _CloudColor.rgb * 0.74, 0.22 + h * 0.78);
+                                float3 shaded = ambient + _CloudColor.rgb * _SunColor.rgb
+                                    * (0.30 * _Daylight * lightThroughCloud) * (0.9 + pow(sunFacing, 5.0) * 0.1);
+                                float rangeFade = 1.0 - smoothstep(cloudDistance * 0.65, cloudDistance, travel);
+                                float opacity = 1.0 - exp(-density * rangeFade * segmentLength * 0.007);
+                                // Beer-Lambert compositing: integrate absorbed energy,
+                                // rather than adding a full linear step at soft edges.
+                                cloudLight += transmittance * shaded * opacity;
+                                transmittance *= 1.0 - opacity;
                             }
                         }
                         cloudAlpha = saturate(1.0 - transmittance);
@@ -260,19 +280,9 @@ Shader "DarkBrine/Procedural Sky"
                 }
 
                 float3 cloudColor = cloudLight / max(cloudAlpha, 0.001);
-                float horizonMix = 1.0 - smoothstep(horizonStart, horizonStart * 4.0, rayDirection.y);
-                if (horizonMix > 0.0)
-                {
-                    float2 farWind = _Time.y * _CloudSpeed * float2(0.021, -0.014);
-                    float2 farPosition = rayDirection.xz * 13.0 + farWind;
-                    float farCloudShape = 0.5
-                        + 0.31 * sin(farPosition.x * 0.81 + farPosition.y * 0.43)
-                        + 0.19 * sin(farPosition.x * 1.63 - farPosition.y * 0.92 + 1.7);
-                    float farCloud = saturate(lerp(0.015, 0.70, _CloudCoverage)
-                        + (farCloudShape - 0.5) * 0.22);
-                    cloudAlpha = lerp(cloudAlpha, farCloud, horizonMix);
-                    cloudColor = lerp(cloudColor, float3(0.77, 0.85, 0.92), horizonMix);
-                }
+                // The distant volume fades into atmosphere without a second,
+                // unrelated sinusoidal cloud pattern or a hard angular cut.
+                cloudAlpha *= smoothstep(0.015, 0.065, rayDirection.y);
 
                 sky = lerp(sky, cloudColor, cloudAlpha * _CloudStrength);
                 sky *= 1.0 - cloudAlpha * saturate(_NightFactor) * 0.35;

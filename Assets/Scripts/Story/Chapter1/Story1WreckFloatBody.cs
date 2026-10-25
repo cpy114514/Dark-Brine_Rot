@@ -13,7 +13,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         get
         {
             Vector3 normal=new Vector3(-slopeX*.75f,1,-slopeZ*.75f).normalized;
-            return Quaternion.RotateTowards(Quaternion.identity,Quaternion.FromToRotation(Vector3.up,normal),16)*Vector3.up;
+            return Quaternion.RotateTowards(Quaternion.identity,Quaternion.FromToRotation(Vector3.up,normal),surfaceTiltLimit)*Vector3.up;
         }
     }
     OceanWorld ocean;
@@ -28,6 +28,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
     float surface,slopeX,slopeZ,sampleTime,surfaceVelocity,nextSample;
     Vector3 broadAxisA,broadAxisB;
     float thickness;
+    float angularStiffness,angularDamping,surfaceTiltLimit;
     readonly Vector3[] waterPoints=new Vector3[4];
     readonly Vector3[] samplePoints=new Vector3[4];
     readonly Vector3[] pressureLocal=new Vector3[4];
@@ -99,7 +100,8 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         Body=GetComponent<Rigidbody>();Body.isKinematic=false;Body.useGravity=true;
         // Set the physics pose before enabling interpolation; newly added bodies start at the origin.
         Body.position=transform.position;Body.rotation=transform.rotation;
-        float volume=MaterialVolume(GetComponent<MeshFilter>()?.sharedMesh,size);
+        var source=TryGetComponent<MeshFilter>(out var filter) ? filter.sharedMesh : null;
+        float volume=MaterialVolume(source,size);
         // Volume is in world cubic metres. Eight kg/m3 made a deck lighter
         // than foam while the shark's contact solver transfers 1500 kg of
         // momentum: it repeatedly lifted the passenger's platform from below.
@@ -122,7 +124,6 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         // Irregular triangular fragments do not have four rectangular corners.
         // Put the pressure probes near the real timber perimeter, retaining
         // the same four surface samples and the body's actual mass/inertia.
-        var source=GetComponent<MeshFilter>()?.sharedMesh;
         PreparePressureGeometry(source,size);
         for(int i=0;i<4;i++)pressureWeights[i]=.25f;
         massSettlingSteps=0;weightedCentre=Vector3.positiveInfinity;
@@ -134,6 +135,13 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         // Light timber displaces less than half its thickness. A positive
         // centre-plane draft submerged most of a thin deck before any swell.
         draft=-thickness*.15f;
+        // A wide landing deck rolls slowly under a passing swell; a short
+        // shard can turn with it. Keep the deck's existing boarding limit,
+        // without imposing its heavy response on every small offcut.
+        float span=Mathf.Max(broadAxisA.magnitude,broadAxisB.magnitude)/.35f;
+        angularStiffness=36f*Mathf.Clamp(Mathf.Sqrt(5f/Mathf.Max(.5f,span)),.55f,1.4f);
+        angularDamping=2f*Mathf.Sqrt(angularStiffness);
+        surfaceTiltLimit=Mathf.Lerp(27f,16f,Mathf.InverseLerp(3f,9f,span));
     }
     void OnEnable() { if(launchPending && Body!=null)ApplyPendingLaunch(); }
     void ApplyPendingLaunch()
@@ -181,8 +189,14 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
         Vector3 position=Body.position;Quaternion rotation=Body.rotation;
         // Small distant debris needs fewer expensive ocean queries. Rigid-body
         // contacts and buoyancy forces still run on every physics step.
-        float sampleInterval=samplingFocus!=null && (samplingFocus.position-position).sqrMagnitude>6400 &&
-            Mathf.Max(dimensions.x,dimensions.z)<10 ? .24f : .08f;
+        bool distant=samplingFocus!=null && (samplingFocus.position-position).sqrMagnitude>6400 &&
+            Mathf.Max(dimensions.x,dimensions.z)<10;
+        // Keep the prediction horizon short enough for a changing crest.
+        // Distant timber previously extrapolated 80ms, then held for 160ms;
+        // sample twice as often instead of amplifying stale wave velocity.
+        float sampleInterval=distant ? .12f : .06f;
+        if(Body.linearVelocity.sqrMagnitude>36f || Body.angularVelocity.sqrMagnitude>2.25f)
+            sampleInterval=Mathf.Min(sampleInterval,.04f);
         if(sampled)nextSample=sampleTime+sampleInterval;
         if(!sampled || Time.time>=nextSample)
         {
@@ -285,7 +299,7 @@ public sealed class Story1WreckFloatBody : MonoBehaviour
             Vector3 normal=rotation*broadFaceNormal;
             Vector3 upright=normal.y>=0 ? SurfaceNormal : -SurfaceNormal;
             Vector3 tiltSpin=Vector3.ProjectOnPlane(Body.angularVelocity,Vector3.up);
-            Body.AddTorque((Vector3.Cross(normal,upright)*36f-tiltSpin*12f)*submerged,ForceMode.Acceleration);
+            Body.AddTorque((Vector3.Cross(normal,upright)*angularStiffness-tiltSpin*angularDamping)*submerged,ForceMode.Acceleration);
         }
         Body.AddTorque(-Body.angularVelocity*(.65f*submerged),ForceMode.Acceleration);
         if(!Floats)Body.AddForce(-Vector3.up*Body.linearVelocity.y*(.65f*submerged),ForceMode.Acceleration);

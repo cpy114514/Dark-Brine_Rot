@@ -11,6 +11,10 @@ public sealed partial class Story1WreckBattle
     bool redTutorialEnvelopeReady;
     IEnumerator<object> redTutorialEnvelopeWork;
     Vector3[] redTutorialSharkVertices;
+    int redTutorialVerticesFrame=-1,redTutorialVerticesVersion=-1;
+    bool redTutorialVerticesLocal;
+    Matrix4x4 redTutorialVerticesMatrix;
+    Bounds redTutorialSharkBounds;
     readonly List<RedWaterCapsule> redTutorialBodySpace=new List<RedWaterCapsule>(13);
     public float RedesignTutorialHeroGap { get; private set; }=float.PositiveInfinity;
     public int RedesignDodgeCandidates { get; private set; }
@@ -270,8 +274,19 @@ public sealed partial class Story1WreckBattle
         margin/=scale;
         redTutorialBodySpace.Clear();
         foreach(var capsule in redWaterCapsules)redTutorialBodySpace.Add(new RedWaterCapsule(inverse.MultiplyPoint3x4(capsule.a),inverse.MultiplyPoint3x4(capsule.b),capsule.radius/scale));
-        Bounds bounds=new Bounds(local?redPosedVertices[0]:matrix.MultiplyPoint3x4(redPosedVertices[0]),Vector3.zero);
-        for(int i=0;i<redPosedVertices.Count;i++){redTutorialSharkVertices[i]=local?redPosedVertices[i]:matrix.MultiplyPoint3x4(redPosedVertices[i]);bounds.Encapsulate(redTutorialSharkVertices[i]);}
+        // Root fitting cannot change local skinned vertices. Rebuild this exact
+        // snapshot only after a native bake; nonuniform/world fallback also
+        // tracks the complete renderer matrix. No padded/approximate substitute.
+        bool sameVertices=redTutorialVerticesFrame==redContactBakedFrame&&redTutorialVerticesVersion==redContactBakedVersion&&
+            redTutorialVerticesLocal==local&&(local||redTutorialVerticesMatrix.Equals(matrix));
+        if(!sameVertices)
+        {
+            redTutorialSharkBounds=new Bounds(local?redPosedVertices[0]:matrix.MultiplyPoint3x4(redPosedVertices[0]),Vector3.zero);
+            for(int i=0;i<redPosedVertices.Count;i++){redTutorialSharkVertices[i]=local?redPosedVertices[i]:matrix.MultiplyPoint3x4(redPosedVertices[i]);redTutorialSharkBounds.Encapsulate(redTutorialSharkVertices[i]);}
+            redTutorialVerticesFrame=redContactBakedFrame;redTutorialVerticesVersion=redContactBakedVersion;
+            redTutorialVerticesLocal=local;redTutorialVerticesMatrix=matrix;
+        }
+        Bounds bounds=redTutorialSharkBounds;
         // A conservative bound can prove separation without refitting and
         // traversing the full triangle tree while the shark is retreating.
         float lowerGap=float.PositiveInfinity;

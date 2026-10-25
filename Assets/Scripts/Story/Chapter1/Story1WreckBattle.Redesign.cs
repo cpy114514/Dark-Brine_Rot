@@ -87,7 +87,7 @@ public sealed partial class Story1WreckBattle
     // Keep the existing playable wreck encounter until all of the paired film's assets exist.
     public static string[] MissingRedesignClips()
     {
-        return new[] { "CH1_SahurStickIdle_v221", "CH1_SahurGuard_v050", "CH1_SahurSlash_v006", "CH1_SahurOverhead_v215", "CH1_SahurProneDodge_v215",
+        return new[] { "CH1_SahurStickIdle_v247", "CH1_SahurGuard_v050", "CH1_SahurSlash_v006", "CH1_SahurOverhead_v215", "CH1_SahurProneDodge_v215",
             "CH1_SahurGetUp_v215", "CH1_SahurStow_v214", "CH1_SahurRetrieve_v214", "CH1_SahurAirHit_v214",
             "PLAYER_Climb_v241", "PLAYER_Walk_v241", "PLAYER_Fall_v006", "PLAYER_JumpAir_v006", "PLAYER_PursuitSwim_v210", "PLAYER_Throw_v064",
             "CH1_SharkLeapCrush_v214", "CH1_SharkHeadShake_v214", "CH1_SharkFeintTail_v214" }
@@ -235,7 +235,7 @@ public sealed partial class Story1WreckBattle
             // Only soften supported stance changes. Impacts, traversal and the
             // separately authored splash blend retain their exact contact poses.
             float duration=!blend||redClip==null?0:
-                name=="CH1_SahurGuard_v050"?(redClip.name=="CH1_SahurStickIdle_v221"?.45f:.16f):
+                name=="CH1_SahurGuard_v050"?(redClip.name=="CH1_SahurStickIdle_v247"?.45f:.16f):
                 name=="CH1_SahurRetrieve_v214"?.18f:
                 name=="CH1_SahurOverhead_v215"?.12f:
                 name=="CH1_SahurSlash_v006"?.10f:
@@ -433,9 +433,14 @@ public sealed partial class Story1WreckBattle
         if(!shattered){RedCrushShark(Mathf.Min(t,6));RedRiggingTick(t,dt);}
         if(t<6)
         {
-            RedesignBeat=t<3?"Sahur spots the approaching shadow":"The shark breaches and crushes the ship";
-            RedPose(t<1.3f?"CH1_SahurStickIdle_v221":"CH1_SahurGuard_v050",t<1.3f?redShipIdleStart+t:t-1.3f);
-            player.transform.SetPositionAndRotation(redStart-redRight*REase(t,2.2f,3.3f)*1.4f,Quaternion.Slerp(redStartRotation,Quaternion.LookRotation(redRight),REase(t,1.4f,2.4f)));
+            // Keep the fidget visible inside the existing deck close-up,
+            // then finish the alert blend as the animal starts breaching.
+            const float alertAt=Story1SahurPassenger.OpeningFidgetSeconds-Story1SahurPassenger.OpeningLeadInSeconds;
+            RedesignBeat=t<alertAt?"Sahur idly rolls his stick as a shadow approaches":t<3?"Sahur spots the approaching shadow":"The shark breaches and crushes the ship";
+            RedPose(t<alertAt?"CH1_SahurStickIdle_v247":"CH1_SahurGuard_v050",t<alertAt?redShipIdleStart+t:t-alertAt);
+            // An in-place fidget/alert has no authored retreat steps. Keep the
+            // supporting stance instead of sliding and pivoting planted feet.
+            player.transform.SetPositionAndRotation(redStart,redStartRotation);
             Story1SahurPassenger.AlignToDeck(player.transform,redAnimator,redShipDeckColliders,redLeftSole,redRightSole);
             Vector3 nose=sharkAnimator.NoseWorldPoint;
             if(t<1.5f)RedShot(0,redStart+redRight*75-redForward*65+Vector3.up*115,redStart+redRight*20+redForward*18,55);
@@ -457,7 +462,7 @@ public sealed partial class Story1WreckBattle
             if(scatterPlayback!=null)scatterPlayback.enabled=false;
             landingBoard=planks.Where(RedUsableDeck).OrderBy(p=>Vector3.Distance(p.transform.position,redStart)).FirstOrDefault();
             if(landingBoard==null)throw new InvalidOperationException("Crush has no physical landing fragment");
-            redCombatBoard=landingBoard;redEnd=RedBoardPoint(landingBoard);
+            redCombatBoard=landingBoard;deckClearance?.Reserve(redCombatBoard);redEnd=RedBoardPoint(landingBoard);
             RedEvent("Body crush; visible underside/hull gap="+RedesignContactGap.ToString("F3")+"; original hull fractured; landing="+landingBoard.name);
         }
         if(t<landingTime)
@@ -625,7 +630,7 @@ public sealed partial class Story1WreckBattle
             bool complete=CurrentLesson==Lesson.Swim?moved&&redMoveDistance>=8&&redSwimControlSeconds>=6:moved;
             if(redDiagnosticMovement || complete)
             {
-                if(CurrentLesson==Lesson.Move){if(rider!=null&&rider.Support()!=null)redCombatBoard=rider.Support();RedStoreTutorialStance(player.transform.position+Vector3.up*player.LowestFootWorldOffset);RedManual(true);RedOnBoard("CH1_SahurGuard_v050",0);lessonExecuting=false;lessonTime=0;CurrentLesson=Lesson.Attack;}
+                if(CurrentLesson==Lesson.Move){if(rider!=null&&rider.Support()!=null)redCombatBoard=rider.Support();deckClearance?.Reserve(redCombatBoard);RedStoreTutorialStance(player.transform.position+Vector3.up*player.LowestFootWorldOffset);RedManual(true);RedOnBoard("CH1_SahurGuard_v050",0);lessonExecuting=false;lessonTime=0;CurrentLesson=Lesson.Attack;}
                 else {controls.text="";RedBeginPursuit();}
             }
             return;
@@ -685,6 +690,7 @@ public sealed partial class Story1WreckBattle
         redStart=player.transform.position;
         redCombatBoard=chosen;
         if(redCombatBoard==null)throw new InvalidOperationException("Pursuit needs a surviving real board");
+        deckClearance?.Reserve(redCombatBoard);
         redEdgeLocal=redCombatBoard.transform.InverseTransformPoint(edge);
         redStanceLocal=redCombatBoard.transform.InverseTransformPoint(stance);redHasStance=true;
         redEnd=RedBoardPoint(redCombatBoard);redForward=-outward;redRight=Vector3.Cross(Vector3.up,redForward);
