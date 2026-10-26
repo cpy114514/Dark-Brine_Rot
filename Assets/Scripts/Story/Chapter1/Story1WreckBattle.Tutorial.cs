@@ -45,7 +45,8 @@ public sealed partial class Story1WreckBattle
     }
     void RedStartTutorialStaging()
     {
-        Vector3 feet=RedBoardPoint(redCombatBoard);
+        // The free walk may end anywhere on the deck. Start from the real feet.
+        Vector3 feet=player.transform.position+Vector3.up*player.LowestFootWorldOffset;
         redTutorialStepStart=redCombatBoard.transform.InverseTransformPoint(feet);
         redTutorialFacingStart=player.transform.rotation;
         Vector3 edge=feet;

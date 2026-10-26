@@ -91,6 +91,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Camera playerCamera;
     Mavis.EnemyLockOn enemyLock;
     Mavis.SahurWeaponLoadout rifleLoadout;
+    Mavis.SahurRifleCombat rifleCombat;
     float rifleCameraShoulder;
     float yaw;
     float pitch = 10f;
@@ -147,6 +148,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public Animator CharacterAnimator => animator;
     public SahurMotionContext Motion { get; private set; }
     public bool RifleLocomotionAllowed => enabled && characterController && characterController.enabled && motionState == 0 && rollTimer <= 0 && airFlipTimer <= 0 && IsGroundedOrOnSea() && !Swimming && !ExternalControlLock && !ExternalMovementLock;
+    public bool IsSprinting { get; private set; }
+    public bool RifleAimRequested => rifleLoadout && rifleLoadout.UsesRifle && !IsSprinting &&
+        !(RequestedMoveDirection.sqrMagnitude > .01f && GameInputSettings.Pressed(GameInputSettings.Action.Sprint)) &&
+        Mouse.current != null && Mouse.current.rightButton.isPressed && Cursor.lockState == CursorLockMode.Locked &&
+        !PauseSettingsMenu.IsOpen && !Mavis.SahurLoadoutUI.BlocksInput && RifleLocomotionAllowed;
     public Vector3 WorldVelocity => planarVelocity+platformCarryVelocity+Vector3.up*verticalSpeed;
     public Vector3 RequestedMoveDirection
     {
@@ -163,6 +169,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool ExternalControlLock { get; set; }
     [System.NonSerialized] public bool OnFloatingWreckDeck;
     public bool ExternalMovementLock { get; set; }
+    // Owned only by the walking tutorial; normal traversal leaves this null.
+    public System.Func<Vector3, Vector3> WalkingTutorialConstraint { get; set; }
     public string ExternalMovementAnimation { get; set; }
     public Transform ExternalCameraFocus { get; set; }
     public bool KeepCameraAboveWater { get; set; }
@@ -200,6 +208,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     public bool CanUseGroundAttack => characterController != null && verticalSpeed <= 0f && rollTimer <= 0f &&
                                       IsGroundedOrOnSea() && !IsSwimming();
+    // Use the same brief ground grace as locomotion across slopes and steps.
+    // A jump, dodge, swim, fall or external owner still ends a charge immediately.
+    public bool CanMaintainGroundCharge => enabled && characterController && characterController.enabled &&
+        verticalSpeed <= 0 && rollTimer <= 0 && airFlipTimer <= 0 && (motionState == 0 || motionState == 3 && coyoteTimer > 0) &&
+        (IsGroundedOrOnSea() || coyoteTimer > 0) && !Swimming && !ExternalControlLock && !ExternalMovementLock;
     public bool CanUseAirAttack => characterController != null && rollTimer <= 0f && airFlipTimer <= 0f &&
                                    (verticalSpeed > 0f || !IsGroundedOrOnSea()) && !IsSwimming();
 
@@ -339,6 +352,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void Update()
     {
+        IsSprinting = false;
         if (characterController == null || Keyboard.current == null || Mouse.current == null)
             return;
 
@@ -397,13 +411,15 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         bool wantsSprint = input.sqrMagnitude > 0.01f &&
                            GameInputSettings.Pressed(GameInputSettings.Action.Sprint);
         if (!rifleLoadout) rifleLoadout = GetComponent<Mavis.SahurWeaponLoadout>();
-        float groundMoveSpeed = moveSpeed * (rifleLoadout && rifleLoadout.UsesRifle ? .5f : 1f);
+        bool holdingRifle = rifleLoadout && rifleLoadout.UsesRifle;
+        float groundMoveSpeed = moveSpeed * (holdingRifle ? .5f : 1f);
+        float sprintMoveSpeed = moveSpeed * sprintMultiplier * (holdingRifle ? .85f : 1f);
         Quaternion heading = Quaternion.Euler(0f, yaw, 0f);
         Vector3 cameraForward = heading * Vector3.forward;
         Vector3 cameraRight = heading * Vector3.right;
         Vector3 moveDirection = cameraForward * input.z + cameraRight * input.x;
         UpdateComboFacing(moveDirection, look.x, Time.deltaTime);
-        Vector3 desiredVelocity = moveDirection * groundMoveSpeed * (wantsSprint ? sprintMultiplier : 1f);
+        Vector3 desiredVelocity = moveDirection * (wantsSprint ? sprintMoveSpeed : groundMoveSpeed);
         Motion.Locomotion(IsSwimming(),IsGroundedOrOnSea());
         if (!acceptInput) dodgeBufferUntil = -1;
         else if (GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge)) dodgeBufferUntil = Time.time + Mavis.CombatFeelProfile.Default.inputBuffer;
@@ -444,6 +460,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         bool canSprint = wantsSprint && !movementLocked && moveDirection.sqrMagnitude > 0.01f;
         bool sprinting = canSprint &&
                          (playerStamina == null || playerStamina.TickSprint(Time.deltaTime));
+        IsSprinting = sprinting;
         if (!sprinting)
         {
             if (!canSprint) playerStamina?.StopSprinting();
@@ -470,8 +487,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         bool grounded = verticalSpeed <= 0f && IsGroundedOrOnSea();
         if(grounded && coyoteTimer<=0)platformCarryVelocity=Vector3.zero;
         bool isRolling = rollTimer > 0f;
-        bool dodgePressed = acceptInput && !combatLocked && (combatDodge || Time.time <= dodgeBufferUntil);
-        bool jumpPressed = acceptInput && !combatLocked &&
+        bool dodgePressed = WalkingTutorialConstraint == null && acceptInput && !combatLocked && (combatDodge || Time.time <= dodgeBufferUntil);
+        bool jumpPressed = WalkingTutorialConstraint == null && acceptInput && !combatLocked &&
                            GameInputSettings.PressedThisFrame(GameInputSettings.Action.Jump);
         if (grounded) airFlipUsed = false;
         rollCooldownTimer = Mathf.Max(0f, rollCooldownTimer - Time.deltaTime);
@@ -602,8 +619,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         float downwardSpeedBeforeMove = verticalSpeed;
         if (!attackRootMotion)
         {
-            CollisionFlags collisions = characterController.Move(
-                (planarVelocity + platformCarryVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement);
+            Vector3 movementDelta = (planarVelocity + platformCarryVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement;
+            if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
+            CollisionFlags collisions = characterController.Move(movementDelta);
             if ((collisions & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
                 verticalSpeed = 0f;
             if ((collisions & CollisionFlags.Below) != 0 && verticalSpeed < 0f)
@@ -626,7 +644,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (!onGround && !isRolling)
         {
             airborneTime += Time.deltaTime;
-            if (airFlipTimer <= 0f && (airborneTime > 0.18f || motionState == 0 || motionState == 7))
+            bool chargingOnStep = combat != null && combat.IsCharging && coyoteTimer > 0;
+            if (!chargingOnStep && airFlipTimer <= 0f && (airborneTime > 0.18f || motionState == 0 || motionState == 7))
                 SetMotion(3, "Jump Loop", 0.12f);
         }
         else if (onGround && (motionState == 2 || motionState == 3 || motionState == 7))
@@ -648,7 +667,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
 
         if (!rifleLoadout) rifleLoadout = GetComponent<Mavis.SahurWeaponLoadout>();
-        bool rifleFacing = rifleLoadout && rifleLoadout.UsesRifle && RifleLocomotionAllowed;
+        if (!rifleCombat) rifleCombat = GetComponent<Mavis.SahurRifleCombat>();
+        bool rifleFacing = rifleLoadout && rifleLoadout.UsesRifle && RifleLocomotionAllowed &&
+            (!IsSprinting || rifleCombat && rifleCombat.FirePoseActive);
         if (!movementLocked && !recoveringAttackFacing && rifleFacing)
         {
             Quaternion aim = enemyLock && enemyLock.IsLocked ? enemyLock.FacingRotation() : Quaternion.Euler(0, yaw, 0);
@@ -945,7 +966,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             }
         }
         bool shoulderView = rifleLoadout && rifleLoadout.UsesRifle && !Swimming && !ExternalControlLock && !ExternalCameraFocus;
-        float shoulderTarget = shoulderView ? 1.6f * Mathf.Abs(transform.lossyScale.y) / 3f : 0;
+        float shoulderTarget = shoulderView ? (RifleAimRequested ? 1.6f : .8f) * Mathf.Abs(transform.lossyScale.y) / 3f : 0;
         rifleCameraShoulder = Mathf.Lerp(rifleCameraShoulder, shoulderTarget, 1f - Mathf.Exp(-12f * Time.deltaTime));
         if (rifleCameraShoulder > .001f)
         {

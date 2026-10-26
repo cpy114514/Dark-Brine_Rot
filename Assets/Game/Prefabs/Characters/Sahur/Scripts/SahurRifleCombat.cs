@@ -23,6 +23,7 @@ namespace Mavis
         public float ReloadRemaining { get; private set; }
         public float ReloadProgress => IsReloading ? 1f - ReloadRemaining / Mathf.Max(.001f, ReloadDuration) : 0;
         public bool FirePoseActive => !IsReloading && CanOperate && Time.time < firePoseUntil;
+        public bool IsAiming => CanOperate && !IsReloading && movement.RifleAimRequested;
         public static float ReloadSecondsFor(int remaining) => EmptyReloadSeconds * (MagazineCapacity - Mathf.Clamp(remaining, 0, MagazineCapacity)) / MagazineCapacity;
 
         sealed class Bullet
@@ -276,7 +277,7 @@ namespace Mavis
             bool hit = Time.time < hitUntil;
             Color crosshairColor = hit ? new Color(1, .55f, .2f) : Color.white;
             for (int i = 0; i < reticleArms.Length; i++) reticleArms[i].color = crosshairColor;
-            reticle.localScale = Vector3.one * (hit ? 1.15f : 1);
+            reticle.localScale = Vector3.one * (hit ? 1.15f : IsAiming ? .8f : movement && movement.IsSprinting ? 1.35f : 1);
             reloadFill.fillAmount = ReloadProgress;
             bool blocked = !CanOperate;
             if (ReserveRounds == shownReserve && Rounds == shownAmmo && IsReloading == shownReload && blocked == shownBlocked && Time.unscaledTime < nextHud) return;

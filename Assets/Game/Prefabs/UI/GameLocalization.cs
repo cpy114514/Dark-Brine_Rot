@@ -117,7 +117,7 @@ namespace Mavis
             Add("MOVE FORWARD","向前移动"); Add("MOVE BACK","向后移动"); Add("MOVE LEFT","向左移动"); Add("MOVE RIGHT","向右移动");
             Add("SPRINT","奔跑"); Add("JUMP","跳跃"); Add("DODGE","闪避"); Add("Click to rebind","点击修改按键");
             Add("HEALING PACK", "治疗包");
-            Add("{0}  HEAL  {1}/2", "{0}  治疗包  {1}/2", "healing.count");
+            Add("{0}  HEAL  {1}/{2}", "{0}  治疗包  {1}/{2}", "healing.count");
             Add("Healing pack: +{0} HP", "使用治疗包：+{0} HP", "healing.used");
             Add("Health is full", "生命值已满", "healing.full");
             Add("No healing packs remaining", "治疗包已用完", "healing.empty");
@@ -137,7 +137,7 @@ namespace Mavis
             Add("CONFIRM QUIT","确认退出"); Add("SELECT AGAIN TO EXIT  /  ESC TO CANCEL","再次点击退出  /  Esc 取消"); Add("SAVE FAILED  /  EXIT CANCELLED","存档失败  /  已取消退出");
             Add("PRESS A KEY...","请按下新按键…"); Add("PRESS A KEY  /  ESC TO CANCEL","按下新按键  /  Esc 取消"); Add("SETTINGS SAVED","设置已保存"); Add("DEFAULTS READY  /  APPLY TO SAVE","已恢复默认值  /  应用以保存");
             Add("Karen Fairy","猪妖小仙人", "enemy.name", "Nailong", "奶龙"); Add("YOU DIED","你倒下了 · 这把先寄了","你倒下了"); Add("Respawn at the island checkpoint","回到岛上的复活点，下一把继续","在岛上的复活点重新出发");
-            Add("Health and stamina restored · Collected gear kept","生命与体力恢复 · 已拾取装备保留"); Add("RESPAWN  /  Enter","复活  /  Enter","复活  /  Enter");
+            Add("Health, stamina and healing packs restored · Collected gear kept","生命、体力与治疗包恢复 · 已拾取装备保留"); Add("RESPAWN  /  Enter","复活  / Enter","复活  /  Enter");
             Add("Locked on · Middle click to release","锁定 · 中键解除");
             Add("ISLAND MAP","岛屿地图"); Add("NORTH  N","北  N"); Add("LEGEND","地图图例"); Add("▲  Player / Facing","▲  玩家 / 朝向"); Add("◆  Island checkpoint","◆  岛上复活点"); Add("●  Karen Fairy","●  猪妖小仙人","●  Nailong", "●  奶龙");
             Add("M / Esc to close · Game paused while viewing","M / Esc 关闭地图 · 查看时游戏暂停"); Add("BACK TO GAME","返回游戏");

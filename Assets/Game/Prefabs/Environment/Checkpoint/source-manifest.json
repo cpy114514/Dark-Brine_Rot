@@ -1,0 +1,18 @@
+{
+  "creator": "Kenney",
+  "pack": "Pirate Kit 2.1",
+  "source": "https://kenney.nl/assets/pirate-kit",
+  "download": "https://kenney.nl/media/pages/assets/pirate-kit/e6d4bb1525-1771333093/kenney_pirate-kit.zip",
+  "license": "CC0 1.0",
+  "originalModel": "Models/FBX format/tower-complete-small.fbx",
+  "sourceModelSha256": "c6789d0fc339086a855e7bec98a2c1862cdf3651418fdad895ebc5c59bcfc32d",
+  "worldHeightMetres": 7,
+  "meshVertices": 748,
+  "renderers": 1,
+  "collision": "Static box collider; placed outside checkpoint spawn capsule",
+  "modifications": [
+    "URP Lit material with source atlas and warm stone tint",
+    "Normalized world scale and base pivot",
+    "Static batching flags and simple collision"
+  ]
+}

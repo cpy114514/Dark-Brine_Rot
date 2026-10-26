@@ -156,3 +156,9 @@ Assets/Game/Prefabs/Environment/Trees/CoastalTrees/Meshes/*.asset filter=lfs dif
 
 # Exact-layout runtime foliage meshes are generated assets, including nested variants.
 Assets/Resources/FoliagePerformance/RenderLayoutsV226/*.asset filter=lfs diff=lfs merge=lfs -text
+
+# Generated island grass mesh data follows the existing mesh LFS policy.
+Assets/Generated/**/*.asset filter=lfs diff=lfs merge=lfs -text
+
+# The grass-populated environment exceeds GitHub's ordinary blob limit.
+"Assets/Scenes/First Island/Environment.unity" filter=lfs diff=lfs merge=lfs -text

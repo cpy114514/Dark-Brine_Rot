@@ -130,14 +130,15 @@ public sealed class Story1WreckPlank : MonoBehaviour
         // Compatibility for historical cutscenes/tools. Input and cinematic
         // calls cannot propel or steer the real freely floating fragments.
     }
-    public Vector3 BoardingPoint(Vector3 from)
+    public Vector3 BoardingPoint(Vector3 from,float minimumInset=0)
     {
         Vector3 local=LocalSurfacePoint(from);
-        float insetX=Mathf.Min(.4f,.8f/size.x),insetZ=Mathf.Min(.4f,.8f/size.z);
+        float insetX=Mathf.Min(.4f,Mathf.Max(.8f,minimumInset)/size.x),insetZ=Mathf.Min(.4f,Mathf.Max(.8f,minimumInset)/size.z);
         local.x=Mathf.Clamp(local.x,-.5f+insetX,.5f-insetX);
         local.z=Mathf.Clamp(local.z,-.5f+insetZ,.5f-insetZ);local.y=TopLocalY;
         Vector2 point=new Vector2(local.x*size.x,local.z*size.z);
         float inset=Mathf.Min(.65f,Mathf.Min(size.x,size.z)*.12f);
+        if(minimumInset>0)inset=Mathf.Max(inset,Mathf.Min(minimumInset,Mathf.Min(size.x,size.z)*.35f));
         for(int pass=0;pass<12;pass++)for(int i=0;i<footprint.Length;i++)
         {
             Vector2 edge=footprint[(i+1)%footprint.Length]-footprint[i];

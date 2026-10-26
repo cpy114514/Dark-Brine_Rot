@@ -65,6 +65,10 @@ public sealed partial class Story1WreckBattle
     Vector3 redEdgeLocal,redStanceLocal,redLeftSole,redRightSole;
     bool redHasStance,redDiagnosticMovement;
     float redMoveDistance;
+    [SerializeField, Range(4f,20f)] float walkingTutorialSeconds=8f;
+    float redWalkControlSeconds;
+    public float RedesignWalkControlSeconds=>redWalkControlSeconds;
+    public float RedesignWalkMinimumSeconds=>walkingTutorialSeconds;
     float redShipIdleStart;
     float redPriorMaximumDelta,redCrushMaximumDelta;
     bool redOwnsMaximumDelta;
@@ -491,7 +495,7 @@ public sealed partial class Story1WreckBattle
         }
     }
     string RedKeys()=>string.Join(" / ",new[]{GameInputSettings.Action.Forward,GameInputSettings.Action.Left,GameInputSettings.Action.Back,GameInputSettings.Action.Right}.Select(a=>GameInputSettings.Get(a).ToString()));
-    string RedLessonMessage(Lesson lesson)=>lesson==Lesson.Move?RedKeys()+"  Move across the wreckage":
+    string RedLessonMessage(Lesson lesson)=>lesson==Lesson.Move?RedKeys()+"  Explore the wreckage — stay on the deck":
         lesson==Lesson.Attack?"Left Mouse  Attack the approaching shark":
         lesson==Lesson.Dodge?GameInputSettings.Get(GameInputSettings.Action.Dodge)+"  Dodge the bite":
         lesson==Lesson.ChargeHold?"Hold Right Mouse  Charge":lesson==Lesson.ChargeRelease?"Release Right Mouse  Heavy attack":
@@ -571,9 +575,10 @@ public sealed partial class Story1WreckBattle
             redSwimStart=player.transform.position;redMoveDistance=0;redDiagnosticMovement=false;
             redMovementBoard=null;RedManual(false);
             if(CurrentLesson==Lesson.Swim)redSwimControlSeconds=0;
+            else redWalkControlSeconds=0;
             if(CurrentLesson==Lesson.Move&&rider!=null)
             {
-                rider.ResumeCinematicSupport(redCombatBoard);
+                rider.BeginWalkingTutorial(redCombatBoard);
                 redMovementBoard=rider.Support();
                 if(redMovementBoard!=null)redMovementLocal=redMovementBoard.transform.InverseTransformPoint(player.transform.position);
             }
@@ -627,10 +632,11 @@ public sealed partial class Story1WreckBattle
             RedShark("Swim",redesignTime,nose,redForward);
             bool moved=RedMeasureMovement();
             if(CurrentLesson==Lesson.Swim&&player.Swimming&&RedMoveInput())redSwimControlSeconds+=dt;
-            bool complete=CurrentLesson==Lesson.Swim?moved&&redMoveDistance>=8&&redSwimControlSeconds>=6:moved;
+            if(CurrentLesson==Lesson.Move && rider!=null && rider.WalkingTutorialActive)redWalkControlSeconds+=dt;
+            bool complete=CurrentLesson==Lesson.Swim?moved&&redMoveDistance>=8&&redSwimControlSeconds>=6:moved&&redWalkControlSeconds>=walkingTutorialSeconds;
             if(redDiagnosticMovement || complete)
             {
-                if(CurrentLesson==Lesson.Move){if(rider!=null&&rider.Support()!=null)redCombatBoard=rider.Support();deckClearance?.Reserve(redCombatBoard);RedStoreTutorialStance(player.transform.position+Vector3.up*player.LowestFootWorldOffset);RedManual(true);RedOnBoard("CH1_SahurGuard_v050",0);lessonExecuting=false;lessonTime=0;CurrentLesson=Lesson.Attack;}
+                if(CurrentLesson==Lesson.Move){rider?.EndWalkingTutorial();if(rider!=null&&rider.Support()!=null)redCombatBoard=rider.Support();deckClearance?.Reserve(redCombatBoard);RedStoreTutorialStance(player.transform.position+Vector3.up*player.LowestFootWorldOffset);RedManual(true);RedOnBoard("CH1_SahurGuard_v050",0);lessonExecuting=false;lessonTime=0;CurrentLesson=Lesson.Attack;redTutorialStaging=false;redTutorialStrikeReady=false;RedStartTutorialStaging();}
                 else {controls.text="";RedBeginPursuit();}
             }
             return;
@@ -975,6 +981,7 @@ public sealed partial class Story1WreckBattle
     }
     void DisposeRedesign()
     {
+        rider?.EndWalkingTutorial();
         RedReleaseCatchupBudget();
         redTutorialEnvelopeWork?.Dispose();redTutorialEnvelopeWork=null;
         RedWaterDispose();

@@ -6,7 +6,7 @@ namespace Mavis
     /// <summary>One shared, persistent supply for a campaign, across every Sahur instance.</summary>
     public static class HealingPackSupply
     {
-        public const int Total = 2;
+        public const int Total = 3;
         const string ActiveKey = "DarkBrine.HealingPacks.Campaign";
         const string CountPrefix = "DarkBrine.HealingPacks.Remaining.";
         static bool loaded;
@@ -44,10 +44,14 @@ namespace Mavis
         public static void RestoreCampaign(string id, int savedRemaining)
         {
             campaign = string.IsNullOrEmpty(id) ? "legacy" : id;
-            // Continuing an older save must not refund already consumed packs.
-            remaining = Mathf.Min(Mathf.Clamp(savedRemaining, 0, Total),
-                Mathf.Clamp(PlayerPrefs.GetInt(CountPrefix + campaign, Total), 0, Total));
+            // The local ledger includes consumption and respawn refills. An older
+            // checkpoint must neither refund spent packs nor undo a refill.
+            remaining = Mathf.Clamp(PlayerPrefs.GetInt(CountPrefix + campaign, savedRemaining), 0, Total);
             loaded = true; Persist();
+        }
+        public static void RefillAfterRespawn()
+        {
+            Load(); remaining = Total; Persist();
         }
         internal static bool Consume()
         {

@@ -31,6 +31,7 @@ namespace Mavis
         int locomotion = -1, fire = -1;
         float deathTime, deathLength, nearAimBlend;
         bool movingLastFrame, wasForward, firingLastFrame;
+        float aimBlend;
         public bool DeathPoseActive { get; private set; }
         public bool DeathAnimationPlaying => DeathPoseActive && deathTime < deathLength;
 
@@ -78,9 +79,11 @@ namespace Mavis
             if (!loadout || (!loadout.UsesRifle && locomotion < 0) || !Prepare()) return;
             if (Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput) return;
             bool active = loadout.UsesRifle && movement.RifleLocomotionAllowed && (!health || health.currentHealth > 0);
-            float weight = Mathf.MoveTowards(animator.GetLayerWeight(locomotion), active ? 1 : 0, Time.deltaTime * 12);
+            // Let the existing base run cycle animate the legs during sprint.
+            // The independent holding layer keeps both hands carrying the rifle.
+            float weight = Mathf.MoveTowards(animator.GetLayerWeight(locomotion), active && !movement.IsSprinting ? 1 : 0, Time.deltaTime * 12);
             animator.SetLayerWeight(locomotion, weight);
-            if (holding >= 0) animator.SetLayerWeight(holding, weight);
+            if (holding >= 0) animator.SetLayerWeight(holding, Mathf.MoveTowards(animator.GetLayerWeight(holding),active?1:0,Time.deltaTime*12));
             Vector3 velocity = capsule && capsule.enabled ? capsule.velocity : Vector3.zero;
             velocity.y = 0;
             bool moving = active && movement.RequestedMoveDirection.sqrMagnitude > .01f && velocity.sqrMagnitude > .09f;
@@ -138,7 +141,19 @@ namespace Mavis
             if (Time.timeScale <= 0 || Time.deltaTime <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput) { RestorePausedPose(); return; }
             if (!movement.RifleLocomotionAllowed) { gripReady = hasPoseSnapshot = false; return; }
             if (!rifleCombat) rifleCombat = GetComponent<SahurRifleCombat>();
-            if (rifleCombat) AlignToAim(rifleCombat.GetAimPoint());
+            if (rifleCombat)
+            {
+                aimBlend=Mathf.MoveTowards(aimBlend,rifleCombat.IsAiming?1:0,Time.deltaTime*8);
+                Vector3 target=rifleCombat.GetAimPoint();
+                if (!rifleCombat.IsAiming && !rifleCombat.FirePoseActive)
+                {
+                    Vector3 forward=movement.IsSprinting?transform.forward:Vector3.ProjectOnPlane(rifleCombat.AimRay.direction,Vector3.up).normalized;
+                    if(forward.sqrMagnitude<.01f)forward=transform.forward;
+                    Vector3 carry=(forward-Vector3.up*(movement.IsSprinting?.32f:.18f)).normalized;
+                    target=(spine?spine.position:transform.position)+carry*80;
+                }
+                AlignToAim(target);
+            }
         }
         Quaternion GunRotation(Vector3 direction)
         {
@@ -156,7 +171,7 @@ namespace Mavis
             Vector3 center = (rightUpperArm.position + leftUpperArm.position) * .5f;
             float targetDistance = Vector3.Distance(target, center);
             Vector3 direction = (target - center).normalized;
-            Vector3 cameraDirection = rifleCombat.AimRay.direction;
+            Vector3 cameraDirection = movement.IsSprinting && !rifleCombat.FirePoseActive ? transform.forward : rifleCombat.AimRay.direction;
             float closest = scale * .64f + .25f;
             float wantedNear = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(closest + 1.2f * bodyScale, closest, targetDistance));
             nearAimBlend = gripReady && Time.deltaTime > 0 ? Mathf.MoveTowards(nearAimBlend, wantedNear, 5 * Time.deltaTime) : wantedNear;
@@ -187,7 +202,7 @@ namespace Mavis
             center = (rightUpperArm.position + leftUpperArm.position) * .5f;
             // Lowering the muzzle raises the stock toward the face. Ease it outboard before contact.
             float lowerClearance = .14f * Mathf.SmoothStep(0, 1, Mathf.InverseLerp(.72f, .94f, Vector3.Dot(cameraDirection, -up)));
-            Vector3 preferred = new Vector3(gripOffset.x + lowerClearance, gripOffset.y, gripOffset.z) * bodyScale;
+            Vector3 preferred = new Vector3(gripOffset.x + lowerClearance, gripOffset.y - .18f*(1-aimBlend), gripOffset.z) * bodyScale;
             if (!gripReady || Time.deltaTime <= 0) lastGripOffset = preferred;
             else lastGripOffset = Vector3.Lerp(lastGripOffset, preferred, 1 - Mathf.Exp(-14 * Time.deltaTime));
             Vector3 grip = center + side * lastGripOffset.x + up * lastGripOffset.y + forward * lastGripOffset.z;

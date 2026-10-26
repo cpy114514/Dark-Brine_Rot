@@ -145,7 +145,7 @@ namespace Mavis
             if(remaining!=shownPacks||GameLocalization.Language!=shownLanguage||key!=shownHealKey)
             {
                 shownPacks=remaining;shownLanguage=GameLocalization.Language;shownHealKey=key;
-                healingLabel.text=GameLocalization.Format("healing.count",key.ToString().ToUpperInvariant(),remaining);
+                healingLabel.text=GameLocalization.Format("healing.count",key.ToString().ToUpperInvariant(),remaining,HealingPackSupply.Total);
                 healingLabel.color=remaining>0?GameUITheme.Foreground:GameUITheme.Secondary;
             }
             string message=healing!=null?healing.Feedback:"";

@@ -122,6 +122,7 @@ namespace Mavis
             }
             else transform.SetPositionAndRotation(position, rotation);
             health.currentHealth = health.maxHealth;
+            HealingPackSupply.RefillAfterRespawn();
             health.GrantProtection(protectionSeconds);
             var stamina = GetComponent<PlayerStamina>();
             if (stamina != null) { stamina.StopSprinting(); stamina.currentStamina = stamina.maxStamina; }
@@ -160,7 +161,7 @@ namespace Mavis
             backdrop.GetComponent<Image>().color = GameUITheme.Backdrop;
             Label("YOU DIED", 64, 125, GameUITheme.Foreground);
             Label("Respawn at the island checkpoint", 26, 32, Color.white);
-            Label("Health and stamina restored · Collected gear kept", 22, -25, GameUITheme.Secondary);
+            Label("Health, stamina and healing packs restored · Collected gear kept", 22, -25, GameUITheme.Secondary);
             var button = new GameObject("Respawn button", typeof(RectTransform), typeof(Image), typeof(Button));
             button.transform.SetParent(overlay.transform, false);
             var buttonRect = (RectTransform)button.transform; buttonRect.sizeDelta = new Vector2(380, 78); buttonRect.anchoredPosition = new Vector2(0, -130);

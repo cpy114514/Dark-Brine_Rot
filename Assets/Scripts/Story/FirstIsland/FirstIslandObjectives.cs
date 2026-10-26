@@ -219,7 +219,7 @@ namespace Mavis
                 case 0: return "1 / 4 · Lock on\nFace a nearby enemy; middle-click to lock on.\nMiddle-click again to release. Approach when ready.";
                 case 1: return "2 / 4 · Dodge\nPress " + GameInputSettings.Get(GameInputSettings.Action.Dodge) + " with a direction to dodge.\nDodging costs stamina; let the SP bar recover.";
                 case 2: return "3 / 4 · Charged strike\nHold right mouse for 0.5s, then release.\nUse a melee weapon; save SP for dodging.";
-                default: return "4 / 4 · Healing\nPress " + GameInputSettings.Get(GameInputSettings.Action.Heal) + " to try a healing pack (2 per campaign).\nFull health uses none. Shore camp also restores HP/SP.";
+                default: return "4 / 4 · Healing\nPress " + GameInputSettings.Get(GameInputSettings.Action.Heal) + " to try a healing pack (3 per life; refilled on respawn).\nFull health uses none. Shore camp also restores HP/SP.";
             }
         }
         static string BossName(BossKind kind, bool en) => kind == BossKind.Capri ? "Capri" :

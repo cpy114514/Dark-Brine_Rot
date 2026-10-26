@@ -92,13 +92,18 @@ namespace Mavis
         [Header("Twin blade rush")]
         [Min(0.2f)] public float twinBladeMinimumCharge = 1.2f;
         [Min(0.2f)] public float twinBladeFullCharge = 2.6f;
+        [Tooltip("A short press still releases a weaker rush; only accidental taps cancel.")]
+        [Min(.01f)] public float twinBladeReleaseThreshold = .10f;
+        [Range(.1f,1f)] public float twinBladeEarlyDamageMultiplier = .65f;
         [Min(0.05f)] public float twinBladeRaiseTime = .9f;
         [Tooltip("Fade the held X pose into the existing rush or locomotion before the damaging cut starts.")]
         [Range(.04f,.14f)] public float twinBladePoseReleaseBlend = .12f;
         bool fadingTwinBladeCharge;
         public static readonly Vector2 TwinBladeRushWindow = new Vector2(.20f, .56f);
         public float EffectiveFullChargeTime => UsesTwinBlades ? Mathf.Max(twinBladeMinimumCharge, twinBladeFullCharge) : Mathf.Max(.2f, fullChargeTime);
-        public bool ChargeReady => charging && (!UsesTwinBlades || ChargeElapsed >= twinBladeMinimumCharge);
+        public bool ChargeReady => charging && (!UsesTwinBlades || ChargeElapsed >= twinBladeReleaseThreshold);
+        public float ReleasedCharge01 { get; private set; }
+        float chargeInputUntil = -1;
         [Tooltip("Time to raise the weapon into its held pose. Damage keeps charging until fullChargeTime.")]
         [Min(0.05f)] public float chargeWindupTime = 0.42f;
         [Tooltip("Normalized end of the authored windup in the complete heavy clip. Holding freezes here; damage still reaches full charge.")]
@@ -318,10 +323,11 @@ namespace Mavis
 
         void Update()
         {
-            if(UpdateCombinations())return;
+            if(UpdateCombinations()){chargeInputUntil=-1;return;}
             // Check before animation progress, charge release or damage. The
             // movement controller also checks so script order cannot delay it.
-            if (TryCancelForMovementInput()) return;
+            if (TryCancelForMovementInput()) { BufferChargeInput(); return; }
+            BufferChargeInput();
             if (boomerang != null && boomerang.IsBusy)
             {
                 attackQueued = comboContinueQueued = false;
@@ -335,6 +341,7 @@ namespace Mavis
             }
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)
             {
+                chargeInputUntil = -1;
                 jumpAttackBufferedUntil = -1f;
                 attackQueued = false;
                 comboContinueQueued = false;
@@ -364,15 +371,18 @@ namespace Mavis
             var mouse = Mouse.current;
             bool gameHasFocus = Cursor.lockState == CursorLockMode.Locked;
             if (charging && (!gameHasFocus || mouse == null ||
-                             (controller != null && !controller.CanUseGroundAttack)))
+                             (controller != null && !controller.CanMaintainGroundCharge)))
                 CancelCharge();
             else if (charging && !mouse.rightButton.isPressed)
                 ReleaseCharge();
             if (charging) UpdateChargePose();
             else if (!CinematicHandoffPending && !charging && !attacking && mouse != null && gameHasFocus &&
-                     mouse.rightButton.wasPressedThisFrame && Time.time - lastFireTime >= cooldown &&
-                     (controller == null || controller.CanUseGroundAttack))
+                     mouse.rightButton.isPressed && Time.time <= chargeInputUntil && Time.time - lastFireTime >= cooldown &&
+                     (controller == null || controller.CanUseGroundAttack || controller.CanMaintainGroundCharge))
+            {
                 StartCharge();
+                if (charging) chargeInputUntil = -1;
+            }
 
             if (attackQueued && Time.time > queueExpiresAt)
                 attackQueued = false;
@@ -384,6 +394,16 @@ namespace Mavis
             }
 
             UpdateChargeLayerWeight();
+        }
+
+        void BufferChargeInput()
+        {
+            var mouse=Mouse.current;
+            if(mouse==null || !mouse.rightButton.isPressed || Cursor.lockState!=CursorLockMode.Locked ||
+                PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)
+                chargeInputUntil=-1;
+            else if(mouse.rightButton.wasPressedThisFrame)
+                chargeInputUntil=Time.time+Feel.inputBuffer;
         }
 
         void LateUpdate()
@@ -404,6 +424,11 @@ namespace Mavis
             {
                 GetWeaponVolume(out var trailA,out var trailB,out _);
                 impactFeedback.Visuals.Sample(trailA,trailB,attacking && trailActive,Feel.trailLifetime);
+                if(secondBlade is CapsuleCollider otherBlade)
+                {
+                    Story1CapsuleContact.Segment(otherBlade,out var otherA,out var otherB,out _);
+                    impactFeedback.Visuals.Sample(otherA,otherB,attacking && trailActive,Feel.trailLifetime,1);
+                }
             }
         }
 
@@ -558,6 +583,7 @@ namespace Mavis
             if (usesUpperBodyCharge) controller?.PrepareChargeLocomotion();
             controller?.BeginAttackFacing();
             charging = true;
+            ReleasedCharge01 = 0;
             fadingTwinBladeCharge = false;
             chargeStartedAt = Time.time;
             if (stickHitbox != null) stickHitbox.enabled = false;
@@ -573,7 +599,7 @@ namespace Mavis
 
         void ReleaseCharge()
         {
-            // An early release cancels immediately; it never queues a delayed rush or spends stamina.
+            // Debounce a tap; every deliberate partial blade charge releases now.
             if (!ChargeReady) { CancelCharge(); return; }
             if (stamina != null && !stamina.TrySpend(stamina.chargedAttackCost))
             {
@@ -582,11 +608,12 @@ namespace Mavis
             }
 
             float releasePhase = ChargePose01;
-            if (ChargeElapsed >= Mathf.Min(.5f, fullChargeTime)) ChargedAttacksPerformed++;
+            ReleasedCharge01 = Charge01;
+            if (UsesTwinBlades || ChargeElapsed >= Mathf.Min(.5f, fullChargeTime)) ChargedAttacksPerformed++;
             float releaseTime = chargedStrikeClip != null ? 0f : releasePhase * (chargeClip != null ? chargeClip.length : 0f);
             charging = false;
-            float multiplier = Mathf.Lerp(minChargeDamageMultiplier, maxChargeDamageMultiplier,
-                Mathf.Clamp01((Time.time - chargeStartedAt) / EffectiveFullChargeTime));
+            float multiplier = Mathf.Lerp(UsesTwinBlades ? twinBladeEarlyDamageMultiplier : minChargeDamageMultiplier,
+                maxChargeDamageMultiplier, ReleasedCharge01);
             PlayAttack(true, damage * multiplier, releaseTime);
         }
 
@@ -597,6 +624,7 @@ namespace Mavis
             fadingTwinBladeCharge = UsesTwinBlades && usesUpperBodyCharge && animator && chargeLayerIndex > 0 &&
                 animator.GetLayerWeight(chargeLayerIndex) > 0f;
             charging = false;
+            chargeInputUntil = -1;
             controller?.EndAttackFacing();
             if (animator != null && !fadingTwinBladeCharge) animator.SetFloat(chargeTimeHash, 0f);
             if (stickHitbox != null) stickHitbox.enabled = false;
@@ -659,6 +687,7 @@ namespace Mavis
             movementCancelFrame = Time.frameCount;
             boomerang?.CancelThrowForMovement();
             charging = attacking = usesRightArmHeavy = usesUpperBodyLight = activeAttackEntered = false;
+            chargeInputUntil = -1;
             attackQueued = comboContinueQueued = airImpactArmed = false;
             jumpAttackBufferedUntil = -1f;
             comboStep = -1;
@@ -1137,6 +1166,8 @@ namespace Mavis
 
         void ApplyLandingImpact()
         {
+            if(impactFeedback && impactFeedback.Visuals)
+                impactFeedback.Visuals.Landing(transform.position+Vector3.up*(controller?controller.LowestFootWorldOffset:0));
             // Landing cannot invent a radial hit: the same live weapon volume
             // and per-swing victim set remain authoritative for the chop.
             if(attacking && activeAttackHash==jumpSlashStateHash && stickHitbox && stickHitbox.enabled &&

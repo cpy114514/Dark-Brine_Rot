@@ -93,6 +93,27 @@ public sealed class Story1WreckRider : MonoBehaviour
         }
     }
 
+    Story1WreckPlank tutorialWalkingDeck;
+    public bool WalkingTutorialActive => tutorialWalkingDeck != null;
+    public void BeginWalkingTutorial(Story1WreckPlank board)
+    {
+        tutorialWalkingDeck=board;
+        player.WalkingTutorialConstraint=ConstrainTutorialStep;
+        ResumeCinematicSupport(board);
+    }
+    public void EndWalkingTutorial()
+    {
+        if(player!=null && player.WalkingTutorialConstraint==ConstrainTutorialStep)player.WalkingTutorialConstraint=null;
+        tutorialWalkingDeck=null;
+    }
+    Vector3 ConstrainTutorialStep(Vector3 delta)
+    {
+        if(tutorialWalkingDeck==null || !tutorialWalkingDeck.IsBoardable)return Vector3.zero;
+        Vector3 feet=transform.position+Vector3.up*player.LowestFootWorldOffset;
+        float inset=Mathf.Max(.85f,capsule.radius*Mathf.Max(Mathf.Abs(transform.lossyScale.x),Mathf.Abs(transform.lossyScale.z))+.15f);
+        Vector3 safe=tutorialWalkingDeck.BoardingPoint(feet+Vector3.ProjectOnPlane(delta,Vector3.up),inset);
+        return new Vector3(safe.x-feet.x,delta.y,safe.z-feet.z);
+    }
     public bool ResumeCinematicSupport(Story1WreckPlank board)
     {
         if(board==null||!board.IsBoardable||player==null||capsule==null)return false;
@@ -264,6 +285,12 @@ public sealed class Story1WreckRider : MonoBehaviour
     {
         if(player==null || !player.enabled || IsClimbing || !capsule.enabled ||
             player.ExternalControlLock || PauseSettingsMenu.IsOpen || Time.deltaTime<=0)return;
+        if(tutorialWalkingDeck!=null && tutorialWalkingDeck.IsBoardable)
+        {
+            Vector3 correction=ConstrainTutorialStep(Vector3.zero);
+            if(correction.sqrMagnitude>.000001f)capsule.Move(correction);
+            SetStandingBoard(tutorialWalkingDeck);player.OnFloatingWreckDeck=true;
+        }
         if(standingBoard!=null && player.VerticalSpeed>1.5f)
         {
             SetStandingBoard(null);player.OnFloatingWreckDeck=false;return;
@@ -303,6 +330,7 @@ public sealed class Story1WreckRider : MonoBehaviour
 
     public void Release()
     {
+        EndWalkingTutorial();
         player?.Motion?.Release(this);
         SetStandingBoard(null);
         NearbyBoard = null; combatBoard=null; Hint = "";

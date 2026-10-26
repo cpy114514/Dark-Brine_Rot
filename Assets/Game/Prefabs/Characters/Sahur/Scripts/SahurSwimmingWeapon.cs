@@ -6,6 +6,9 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
 {
     public Transform stick;
     [Min(0f)] public float backOffset = 0.55f;
+    [Min(0f)] public float bodyClearance = 0.12f;
+    [Min(0f)] public float drawSideOffset = 0.6f;
+    [Min(0f)] public float drawForwardOffset = 0.6f;
     public float heightOffset = 0.04f;
     [Range(-60f, 60f)] public float diagonalAngle = 22f;
 
@@ -18,6 +21,7 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     Mesh mesh;
     Vector3 shaftAxis;
     Vector3 shaftFront;
+    Vector3 shaftGripLocal;
     Collider[] colliders;
     bool[] colliderEnabled;
     bool stowed;
@@ -52,7 +56,11 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
             {
                 Vector3 axis = capsule.direction == 0 ? Vector3.right : capsule.direction == 1 ? Vector3.up : Vector3.forward;
                 shaftAxis = stick.InverseTransformDirection(capsule.transform.TransformDirection(axis)).normalized;
+                Story1CapsuleContact.Segment(capsule,out var a,out var b,out _);
+                Vector3 hand=stick.parent!=null?stick.parent.position:stick.position;
+                shaftGripLocal=stick.InverseTransformPoint((a-hand).sqrMagnitude<(b-hand).sqrMagnitude?a:b);
             }
+            else shaftGripLocal=mesh.bounds.ClosestPoint(stick.parent!=null?stick.InverseTransformPoint(stick.parent.position):Vector3.zero);
             shaftFront = Vector3.ProjectOnPlane(Vector3.forward, shaftAxis);
             if (shaftFront.sqrMagnitude < 0.01f) shaftFront = Vector3.ProjectOnPlane(Vector3.up, shaftAxis);
             shaftFront.Normalize();
@@ -92,16 +100,45 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
         if (up.sqrMagnitude < 0.5f || across.sqrMagnitude < 0.5f) return;
         float angle = diagonalAngle * Mathf.Deg2Rad;
         Vector3 shaft = up * Mathf.Cos(angle) + across * Mathf.Sin(angle);
+        Vector3 heldGrip=Vector3.zero;
+        Quaternion heldRotation=stick.parent.rotation*gripRotation;
+        if(blend<1)
+        {
+            stick.SetPositionAndRotation(stick.parent.TransformPoint(gripPosition),heldRotation);
+            heldGrip=stick.TransformPoint(shaftGripLocal);
+        }
         // Give the shaft a stable roll as well as its diagonal direction.
         stick.rotation = Quaternion.LookRotation(front, shaft) *
             Quaternion.Inverse(Quaternion.LookRotation(shaftFront, shaftAxis));
-        Vector3 centre = chest.position - front * backOffset + up * heightOffset;
+        Vector3 centre = chest.position - front * (backOffset+bodyClearance) + up * heightOffset;
         stick.position = centre - stick.TransformVector(mesh.bounds.center);
         if(blend<1)
         {
-            Vector3 hand=stick.parent.TransformPoint(gripPosition);
-            Quaternion rotation=stick.parent.rotation*gripRotation;
-            stick.SetPositionAndRotation(Vector3.Lerp(hand,stick.position,blend),Quaternion.Slerp(rotation,stick.rotation,blend));
+            // The imported origin is far from the grip. Blending that origin
+            // while rotating sweeps the shaft through the torso. Transport the
+            // real grip instead, then reconstruct the unchanged mesh transform.
+            Vector3 backGrip=stick.TransformPoint(shaftGripLocal);
+            float draw=1-blend;
+            Vector3 outsideAxis=-across;
+            Quaternion outside=Quaternion.LookRotation(front,outsideAxis)*
+                Quaternion.Inverse(Quaternion.LookRotation(shaftFront,shaftAxis));
+            stick.rotation=draw<.5f
+                ?Quaternion.Slerp(stick.rotation,outside,Mathf.SmoothStep(0,1,draw*2))
+                :Quaternion.Slerp(outside,heldRotation,Mathf.SmoothStep(0,1,(draw-.5f)*2));
+            // Quaternion roll can bow the shaft inward even when both key poses
+            // are clear. Constrain its physical axis to the outboard swing.
+            Vector3 desiredAxis=draw<.4f
+                ?Vector3.Slerp(shaft,outsideAxis,Mathf.SmoothStep(0,1,draw/.4f))
+                :draw<.75f
+                    ?Vector3.Slerp(outsideAxis,-front,Mathf.SmoothStep(0,1,(draw-.4f)/.35f))
+                    :Vector3.Slerp(-front,heldRotation*shaftAxis,Mathf.SmoothStep(0,1,(draw-.75f)/.25f));
+            stick.rotation=Quaternion.FromToRotation(stick.rotation*shaftAxis,desiredAxis)*stick.rotation;
+            // Keep the grip outboard until the long end has cleared the torso;
+            // fading the arc halfway through the wrist turn cut the hips.
+            float sideWeight=Mathf.SmoothStep(0,1,draw/.4f)*(1-Mathf.SmoothStep(0,1,(draw-.92f)/.08f));
+            float forwardWeight=Mathf.SmoothStep(0,1,(draw-.35f)/.3f)*(1-Mathf.SmoothStep(0,1,(draw-.92f)/.08f));
+            Vector3 grip=Vector3.Lerp(heldGrip,backGrip,blend)+across*(sideWeight*drawSideOffset)+front*(forwardWeight*drawForwardOffset);
+            stick.position=grip-stick.TransformVector(shaftGripLocal);
         }
     }
 
