@@ -68,6 +68,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         public bool bloom;
         public bool vignette;
         public bool motionBlur;
+        public bool pixel360;
         public int resolutionIndex;
         public int textureMipmapLimit;
         public int frameLimitIndex;
@@ -106,6 +107,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         foreach (var row in GetComponentsInChildren<Transform>(true))
             if (row.name == "language row") row.gameObject.SetActive(false);
         options.RemoveAll(option => option.key == "language");
+        EnsurePixel360Option();
         LocalizedGameText.BindTree(transform);
         player = FindFirstObjectByType<ThirdPersonPlayerController>();
         foreach (Resolution resolution in Screen.resolutions)
@@ -164,6 +166,26 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             }
             if (option.slider != null) option.slider.onValueChanged.AddListener(value => SetSlider(key, value));
         }
+    }
+
+    void EnsurePixel360Option()
+    {
+        if (options.Exists(o => o.key == "pixel360")) return;
+        var template = options.Find(o => o.key == "antialiasing");
+        if (template?.button == null) return;
+        var source = template.button.transform.parent.parent as RectTransform;
+        var content = source.parent as RectTransform;
+        var row = Instantiate(source.gameObject, content, false).GetComponent<RectTransform>();
+        row.name = "360P PIXEL MODE row";
+        foreach (RectTransform existing in content)
+            if (existing != row) existing.anchoredPosition += Vector2.down * 76f;
+        row.SetAsFirstSibling(); row.anchoredPosition = new Vector2(0, -36);
+        content.sizeDelta += Vector2.up * 76f;
+        row.Find("Label").GetComponent<TextMeshProUGUI>().text = "360P PIXEL MODE";
+        row.Find("Explanation").GetComponent<TextMeshProUGUI>().text = "Crisp scene pixels; menus and HUD stay sharp";
+        var button = row.GetComponentInChildren<Button>(true);
+        button.onClick = new Button.ButtonClickedEvent();
+        options.Add(new OptionControl { key = "pixel360", button = button, value = button.GetComponentInChildren<TextMeshProUGUI>(true) });
     }
 
     void ConfigureScrollHitAreas()
@@ -350,6 +372,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             case "frameLimit": draft.frameLimitIndex = (draft.frameLimitIndex + 1) % FrameLimits.Length; break;
             case "texture": draft.textureMipmapLimit = (draft.textureMipmapLimit + 1) % 3; break;
             case "antialiasing": draft.antialiasing = (draft.antialiasing + 1) % 3; break;
+            case "pixel360": draft.pixel360 = !draft.pixel360; break;
             case "postProcessing": draft.postProcessing = !draft.postProcessing; break;
             case "shadows": draft.shadows = !draft.shadows; break;
             case "shadowResolution": draft.shadowResolutionIndex = (draft.shadowResolutionIndex + 1) % ShadowResolutions.Length; break;
@@ -506,6 +529,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         s.bloom = Get("Bloom", s.bloom);
         s.vignette = Get("Vignette", s.vignette);
         s.motionBlur = Get("MotionBlur", s.motionBlur);
+        s.pixel360 = Get("Pixel360", false);
         s.resolutionIndex = FindResolution(
             PlayerPrefs.GetInt(Prefix + "ResolutionWidth", resolutions[s.resolutionIndex].width),
             PlayerPrefs.GetInt(Prefix + "ResolutionHeight", resolutions[s.resolutionIndex].height));
@@ -535,6 +559,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         Put("Bloom", s.bloom);
         Put("Vignette", s.vignette);
         Put("MotionBlur", s.motionBlur);
+        Put("Pixel360", s.pixel360);
     }
 
     static void Put(string name, bool value) => PlayerPrefs.SetInt(Prefix + name, value ? 1 : 0);
@@ -594,6 +619,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void ApplySettings(Settings s)
     {
+        Pixel360Rendering.ReleaseCurrent();
         GameAudioPolicy.ApplyMasterVolume(s.masterVolume);
         if (Camera.main != null)
         {
@@ -652,6 +678,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         FullScreenMode mode = s.fullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
         if (Screen.width != resolution.width || Screen.height != resolution.height || Screen.fullScreenMode != mode)
             Screen.SetResolution(resolution.width, resolution.height, mode);
+        Pixel360Rendering.Configure(runtimePipelineAsset, s.pixel360);
     }
 
     void Refresh()
@@ -660,6 +687,11 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         {
             string value = ValueText(option.key);
             if (option.value != null) option.value.text = option.key == pendingKey ? "PRESS A KEY..." : value;
+            if (option.key == "antialiasing" || option.key == "motionBlur" || option.key == "renderScale")
+            {
+                if (option.button) option.button.interactable = !draft.pixel360;
+                if (option.slider) option.slider.interactable = !draft.pixel360;
+            }
             if (option.slider == null) continue;
             float current = option.key switch
             {
@@ -697,17 +729,18 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             case "vsync": return OnOff(draft.vsync);
             case "frameLimit": return FrameLimits[draft.frameLimitIndex] < 0 ? "UNLIMITED" : FrameLimits[draft.frameLimitIndex] + " FPS";
             case "texture": return new[] { "FULL", "HALF", "QUARTER" }[draft.textureMipmapLimit];
-            case "antialiasing": return new[] { "OFF", "FXAA", "SMAA" }[draft.antialiasing];
+            case "antialiasing": return draft.pixel360 ? "OFF / PIXEL" : new[] { "OFF", "FXAA", "SMAA" }[draft.antialiasing];
+            case "pixel360": return draft.pixel360 ? "360P / POINT" : "OFF";
             case "postProcessing": return OnOff(draft.postProcessing);
             case "shadows": return OnOff(draft.shadows);
-            case "renderScale": return Mathf.RoundToInt(draft.renderScale * 100f) + "%";
+            case "renderScale": return draft.pixel360 ? "360P" : Mathf.RoundToInt(draft.renderScale * 100f) + "%";
             case "shadowDistance": return Mathf.RoundToInt(draft.shadowDistance) + " M";
             case "shadowResolution": return ShadowResolutions[draft.shadowResolutionIndex].ToString();
             case "anisotropic": return new[] { "OFF", "PER TEXTURE", "FORCED" }[draft.anisotropicFiltering];
             case "lodBias": return draft.lodBias.ToString("0.0") + "X";
             case "bloom": return OnOff(draft.bloom);
             case "vignette": return OnOff(draft.vignette);
-            case "motionBlur": return OnOff(draft.motionBlur);
+            case "motionBlur": return draft.pixel360 ? "OFF / PIXEL" : OnOff(draft.motionBlur);
             default: return "";
         }
     }
@@ -716,6 +749,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void OnDestroy()
     {
+        Pixel360Rendering.Release(runtimePipelineAsset);
         GameLocalization.Changed -= Refresh;
         if (runtimePipelineAsset != null)
         {

@@ -58,7 +58,7 @@ namespace Mavis
         float nextShot, firePoseUntil, flashUntil, hitUntil, nextHud;
         int bulletCursor, impactCursor, shownAmmo = -1, shownReserve = -1;
         bool pendingShot, wasDead, shownReload, shownBlocked;
-        bool CanOperate => enabled && loadout && loadout.UsesRifle && loadout.HeldRifle && health && health.currentHealth > 0 && movement && movement.RifleLocomotionAllowed && !(death && death.IsDead);
+        bool CanOperate => enabled && loadout && loadout.UsesRifle && loadout.RifleUnlocked && loadout.HeldRifle && health && health.currentHealth > 0 && movement && movement.RifleLocomotionAllowed && !(death && death.IsDead);
 
         void Awake()
         {

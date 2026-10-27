@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Mavis
 {
-    /// <summary>Shore tutorial followed by three independent, proximity-guided boss objectives.</summary>
+    /// <summary>Shore tutorial, then Cappuccino, Nailong and Bombardino in order.</summary>
     [DisallowMultipleComponent]
     public sealed class FirstIslandObjectives : MonoBehaviour
     {
@@ -124,6 +124,7 @@ namespace Mavis
                 var saved = progress.bosses.Find(b => b.bossId == identity.id);
                 if (saved == null) { saved = new BossProgress { bossId = identity.id, kind = kind }; progress.bosses.Add(saved); }
                 saved.kind = kind;
+                FirstIslandBossProgression.Register(identity);
                 flows.Add(new BossFlow { identity = identity, progress = saved, health = identity.GetComponent<Health>(),
                     nailongHealth = identity.GetComponent<NailongHealth>(), capri = capri, nailong = nailong, aircraft = aircraft });
             }
@@ -141,10 +142,11 @@ namespace Mavis
                     QueueSave();
                 }
                 if (flow.progress.defeated || !flow.identity || !flow.identity.gameObject.activeInHierarchy) continue;
+                if (!FirstIslandBossProgression.IsUnlocked(flow.progress.kind)) continue;
                 float candidate = FlatDistanceSquared(transform.position, flow.identity.transform.position);
                 if (candidate < distance) { distance = candidate; nearest = flow; }
             }
-            // The old saved boss ID is now a recommendation, never an order or a gate.
+            // Recommend only the next unlocked, living encounter.
             progress.bossId = nearest == null ? null : nearest.progress.bossId;
         }
         void QueueSave()
@@ -200,10 +202,11 @@ namespace Mavis
                 case 1: value = "Recover your stick\nFollow the beach; press F near the stick."; break;
                 case 2: value = "Explore the shore\nMove with your movement keys; look with the mouse."; break;
                 case 3: value = "Practice an attack\nLeft mouse: attack. Try one swing on the shore."; break;
-                default: value = progress.stage < 7 && progress.combatLesson < 4 && DefeatedBossCount < 3 ? CombatLessonText() : BossText(true); break;
+                default: value = progress.stage < 7 && progress.combatLesson < 4 && DefeatedBossCount < 3 && !NearLockedBoss()
+                    ? CombatLessonText() + "\nNext boss: " + NextBossName() : BossText(true); break;
             }
-            bool bossesShown = progress.stage >= 4 && (progress.combatLesson >= 4 || DefeatedBossCount == 3);
-            Vector2 size = new Vector2(480, bossesShown ? 220 : progress.stage >= 4 ? 160 : 104);
+            bool bossesShown = progress.stage >= 4 && (progress.combatLesson >= 4 || DefeatedBossCount == 3 || NearLockedBoss());
+            Vector2 size = new Vector2(480, bossesShown ? 240 : progress.stage >= 4 ? 196 : 104);
             if (card.sizeDelta != size)
             {
                 card.sizeDelta = size;
@@ -222,7 +225,21 @@ namespace Mavis
                 default: return "4 / 4 · Healing\nPress " + GameInputSettings.Get(GameInputSettings.Action.Heal) + " to try a healing pack (3 per life; refilled on respawn).\nFull health uses none. Shore camp also restores HP/SP.";
             }
         }
-        static string BossName(BossKind kind, bool en) => kind == BossKind.Capri ? "Capri" :
+        bool NearLockedBoss()
+        {
+            foreach (var flow in flows)
+                if (!flow.progress.defeated && flow.identity && flow.identity.gameObject.activeInHierarchy &&
+                    !FirstIslandBossProgression.IsUnlocked(flow.progress.kind) &&
+                    FlatDistanceSquared(transform.position, flow.identity.transform.position) < 70f * 70f) return true;
+            return false;
+        }
+        string NextBossName()
+        {
+            for (int kind = 0; kind < 3; kind++)
+                if (!progress.bosses.Exists(b => (int)b.kind == kind && b.defeated)) return BossName((BossKind)kind, true);
+            return "All three defeated";
+        }
+        static string BossName(BossKind kind, bool en) => kind == BossKind.Capri ? "Cappuccino" :
             kind == BossKind.Nailong ? GameLocalization.Text("enemy.name") : ("Bombardino");
         string BossText(bool en)
         {
@@ -230,7 +247,7 @@ namespace Mavis
             text.Append("Island bosses  ").Append(DefeatedBossCount).Append(" / 3\n");
             if (nearest != null)
             {
-                text.Append("Nearest: ").Append(BossName(nearest.progress.kind, en));
+                text.Append("Next: ").Append(BossName(nearest.progress.kind, en));
                 if (nearest.identity) text.Append(" · ").Append(Bearing(nearest.identity.transform.position - transform.position, en));
                 text.Append('\n');
             }
@@ -242,6 +259,8 @@ namespace Mavis
                 var saved = flow == null ? progress.bosses.Find(b => (int)b.kind == kind) : flow.progress;
                 text.Append(BossName((BossKind)kind, en)).Append(" · ");
                 if (saved != null && saved.defeated) text.Append("Defeated");
+                else if (!FirstIslandBossProgression.IsUnlocked((BossKind)kind))
+                    text.Append("Locked — defeat ").Append(FirstIslandBossProgression.RequiredBossName((BossKind)kind));
                 else if (flow != null && flow.identity && flow.identity.gameObject.activeInHierarchy)
                 {
                     text.Append(Mathf.RoundToInt(Mathf.Sqrt(FlatDistanceSquared(transform.position, flow.identity.transform.position)))).Append(" m · ");
@@ -250,8 +269,12 @@ namespace Mavis
                 else text.Append("Not available");
                 text.Append('\n');
             }
+            string guidance = "M: map · Follow signs to ammo supply points";
+            var weapons = GetComponent<SahurWeaponLoadout>();
+            if (!FirstIslandBossProgression.CanObtainRifle(this)) guidance = FirstIslandBossProgression.RifleUnlockHint;
+            else if (weapons && !weapons.HasM4A1) guidance = "M4A1 unlocked — collect the rifle on the island";
             text.Append(DefeatedBossCount == 3 ? (en ? (progress.stage == 7 ? "Progress saved" : "Saving progress...") :
-                (progress.stage == 7 ? "Progress saved" : "Saving progress...")) : ("M: map · Follow signs to ammo supply points"));
+                (progress.stage == 7 ? "Progress saved" : "Saving progress...")) : guidance);
             return text.ToString();
         }
         public static string Bearing(Vector3 direction, bool english)

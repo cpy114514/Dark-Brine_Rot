@@ -17,6 +17,7 @@ namespace Mavis
         NailongAI ai;
         BossHudPanel encounter;
         int previousHealth=-1, previousMax=-1;
+        bool previousUnlocked;
         GameLanguage previousLanguage;
         public float DisplayedFraction => fill != null ? fill.fillAmount : 0f;
         public bool IsVisible => bar != null && bar.gameObject.activeSelf;
@@ -48,8 +49,9 @@ namespace Mavis
             label.color = Color.white;
             GameUITheme.OutlineSymbol(label);
             label.raycastTarget = false;
-            label.rectTransform.sizeDelta = new Vector2(180, 22);
+            label.rectTransform.sizeDelta = new Vector2(320, 22);
             label.rectTransform.anchoredPosition = new Vector2(0, 18);
+            textObject.AddComponent<Pixel360WorldText>();
             Refresh(0f);
         }
 
@@ -89,8 +91,10 @@ namespace Mavis
                 Mathf.MoveTowards(delayedFraction, fraction, Mathf.Max(0f, deltaTime) * .6f);
             chip.fillAmount = delayedFraction;
             int hp=Mathf.CeilToInt(health.currentHealth),max=Mathf.CeilToInt(health.maxHealth);
-            if(hp!=previousHealth||max!=previousMax||previousLanguage!=GameLocalization.Language)
-            {previousHealth=hp;previousMax=max;previousLanguage=GameLocalization.Language;label.text=GameLocalization.Text("enemy.name")+"  "+hp+" / "+max;}
+            bool unlocked=FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Nailong);
+            if(hp!=previousHealth||max!=previousMax||previousLanguage!=GameLocalization.Language||unlocked!=previousUnlocked)
+            {previousHealth=hp;previousMax=max;previousLanguage=GameLocalization.Language;previousUnlocked=unlocked;
+                label.text=unlocked?GameLocalization.Text("enemy.name")+"  "+hp+" / "+max:GameLocalization.Text("enemy.name")+" — defeat Cappuccino first";}
             if (!visible) return;
             Vector3 anchor = skin != null ? new Vector3(skin.bounds.center.x, skin.bounds.max.y + .5f, skin.bounds.center.z)
                 : transform.position + Vector3.up * 5f;

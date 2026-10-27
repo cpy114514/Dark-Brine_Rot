@@ -20,7 +20,7 @@ namespace Mavis
         }
         public bool Collect(EquipmentItem item)
         {
-            if (item == null) return false;
+            if (item == null || !FirstIslandBossProgression.CanCollectItem(this, item)) return false;
             items[item] = Count(item) + 1;
             GameplayAudio.Play(GameplayAudio.Cue.Pickup, transform.position, true);
             Collected?.Invoke(item);

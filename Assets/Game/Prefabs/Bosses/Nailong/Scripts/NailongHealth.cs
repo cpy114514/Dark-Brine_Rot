@@ -18,6 +18,7 @@ namespace Mavis
 
         void Awake()
         {
+            FirstIslandBossProgression.Register(this);
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
             if (GetComponent<NailongHealthBar>() == null) gameObject.AddComponent<NailongHealthBar>();
             if (GetComponent<NailongLoot>() == null) gameObject.AddComponent<NailongLoot>();
@@ -32,7 +33,7 @@ namespace Mavis
 
         public void ApplyCombatDamage(float amount, Vector3 hitPoint, CombatHitKind kind)
         {
-            if (IsDead || amount <= 0f) return;
+            if (IsDead || amount <= 0f || !FirstIslandBossProgression.CanChallenge(this, FirstIslandObjectives.BossKind.Nailong)) return;
             deathNotified=false;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             Damaged?.Invoke(amount);

@@ -246,6 +246,12 @@ namespace Mavis
         {
             if (Time.deltaTime <= 0f || PauseSettingsMenu.IsOpen) return;
             if (state == State.Dead) return;
+            if (!FirstIslandBossProgression.CanChallenge(this, FirstIslandObjectives.BossKind.Nailong))
+            {
+                engaged = false;
+                EnterIdle();
+                return;
+            }
             if (state == State.Staggered)
             {
                 if (Time.time < staggerUntil) return;

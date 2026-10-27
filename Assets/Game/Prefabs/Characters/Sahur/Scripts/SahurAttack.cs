@@ -400,9 +400,16 @@ namespace Mavis
         {
             var mouse=Mouse.current;
             if(mouse==null || !mouse.rightButton.isPressed || Cursor.lockState!=CursorLockMode.Locked ||
-                PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)
+                PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
+                controller!=null&&(!controller.enabled||controller.ExternalControlLock||controller.ExternalMovementLock||controller.Swimming))
                 chargeInputUntil=-1;
-            else if(mouse.rightButton.wasPressedThisFrame)
+            // RMB is a held intention, not just a press event. Movement can
+            // briefly put us in a fall/landing or recovery state longer than
+            // the press buffer; honor the still-held button once grounded.
+            // Airborne, swimming, dodge and external-control gates still own
+            // eligibility, and a released button clears the intention above.
+            else if(mouse.rightButton.wasPressedThisFrame || !charging &&
+                (controller==null || controller.CanMaintainGroundCharge || controller.CanUseGroundAttack))
                 chargeInputUntil=Time.time+Feel.inputBuffer;
         }
 
