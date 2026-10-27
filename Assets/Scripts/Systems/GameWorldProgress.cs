@@ -62,6 +62,12 @@ namespace Mavis
             if (snapshot.changes != null)
                 foreach (var entry in snapshot.changes)
                     if (entry != null && !string.IsNullOrEmpty(entry.id)) changes[entry.id] = entry.value;
+            // Earlier saves can carry a confirmed boss defeat in the objective
+            // snapshot. Preserve it without replaying a death or dropping loot.
+            if (snapshot.tutorial?.bosses != null)
+                foreach (var boss in snapshot.tutorial.bosses)
+                    if (boss != null && boss.defeated && !string.IsNullOrEmpty(boss.bossId) && (int)boss.kind >= 0 && (int)boss.kind < 3)
+                        changes[boss.bossId] = 0;
             var items = new Dictionary<string, EquipmentItem>();
             foreach (var item in Resources.LoadAll<EquipmentItem>("Equipment"))
                 if (!string.IsNullOrEmpty(item.id)) items[item.id] = item;

@@ -129,6 +129,8 @@ namespace Mavis
         {
             if(!initialized)Initialize();if(PauseSettingsMenu.IsOpen||deltaTime<=0)return;
             float dt=Mathf.Min(deltaTime,.1f);clock+=dt;age+=dt;
+            if(FightActive&&!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))
+            {FightActive=false;ClearHazards();SetState(State.Returning);}
             impactAge=Mathf.Min(.3f,impactAge+dt);
             for(int i=fireImpacts.Count-1;i>=0;i--)if(clock>=fireImpacts[i].at)
             {
@@ -191,6 +193,7 @@ namespace Mavis
         }
         void Acquire()
         {
+            if(!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))return;
             if(CurrentState==State.Dead||CurrentState==State.Returning)return;
             if(target==null||targetHealth==null||targetHealth.currentHealth<=0)
             {
@@ -202,6 +205,7 @@ namespace Mavis
         }
         void StartAttack(AttackKind kind)
         {
+            if(!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))return;
             if(target==null||IsDead)return;CurrentAttack=kind;
             prediction.Observe(target); committed=PredictedGround(Windup);
             heading=OrbitTangent(orbitAngle);

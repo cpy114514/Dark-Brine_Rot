@@ -20,6 +20,7 @@ namespace Mavis
         Material markerMaterial;
         Vector3 anchor;
         float age, searchAt;
+        bool captionUnlocked;
         readonly RaycastHit[] hits = new RaycastHit[32];
 
         void Start()
@@ -49,13 +50,22 @@ namespace Mavis
             var rect=(RectTransform)text.transform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
             label=text.GetComponent<Text>();label.font=GameLocalization.Font?GameLocalization.Font:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");label.fontSize=28;label.alignment=TextAnchor.MiddleCenter;label.color=new Color(1,.83f,.39f);label.raycastTarget=false;
             var outline=text.AddComponent<Outline>();outline.effectColor=new Color(0,0,0,.95f);outline.effectDistance=new Vector2(1.5f,-1.5f);
+            text.AddComponent<Pixel360WorldText>();
             GameLocalization.Changed+=RefreshLabel;RefreshLabel();
         }
 
-        void RefreshLabel(){if(label)label.text="▼ "+item.LocalizedName+"\n"+GameLocalization.Text("Loot · Walk up to collect");}
+        void RefreshLabel()
+        {
+            if(!label)return;
+            captionUnlocked=FirstIslandBossProgression.CanCollectItem(this,item);
+            label.text="▼ "+item.LocalizedName+"\n"+(captionUnlocked?GameLocalization.Text("Loot · Walk up to collect"):FirstIslandBossProgression.RifleUnlockHint);
+            label.color=captionUnlocked?new Color(1,.83f,.39f):new Color(.7f,.7f,.7f);
+            if(markerMaterial)markerMaterial.SetColor("_BaseColor",captionUnlocked?new Color(1,.75f,.23f):new Color(.45f,.45f,.45f));
+        }
         void Update()
         {
             if(IsCollected || !item)return;
+            if(captionUnlocked!=FirstIslandBossProgression.CanCollectItem(this,item))RefreshLabel();
             if(Time.unscaledTime>=searchAt){searchAt=Time.unscaledTime+.5f;if(!player)player=FindFirstObjectByType<EquipmentInventory>();if(!viewer)viewer=Camera.main;}
             if(player && player.Count(item)>0){gameObject.SetActive(false);Destroy(gameObject);return;}
             if(caption && viewer)
@@ -70,6 +80,7 @@ namespace Mavis
         public bool TryCollect(EquipmentInventory inventory)
         {
             if(IsCollected || !item || !inventory || !inventory.gameObject.activeInHierarchy || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)return false;
+            if(!FirstIslandBossProgression.CanCollectItem(inventory,item))return false;
             var health=inventory.GetComponent<PlayerHealth>();var movement=inventory.GetComponent<ThirdPersonPlayerController>();
             if(health && health.currentHealth<=0 || movement && (!movement.enabled || movement.ExternalControlLock))return false;
             var body=inventory.GetComponent<CharacterController>();Vector3 feet=inventory.transform.position;if(body)feet.y=body.bounds.min.y;

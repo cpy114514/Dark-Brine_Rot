@@ -257,7 +257,7 @@ public sealed partial class Story1WreckBattle
         finally{RedesignTutorialClearanceMs=RedRiggingElapsed(started);}
     }
     static readonly Unity.Profiling.ProfilerMarker RedSharkHeroMarker=new Unity.Profiling.ProfilerMarker("Opening.SharkHero");
-    void RedSeparateTutorialShark(float margin,Vector3? escape=null)
+    void RedSeparateTutorialShark(float margin,Vector3? escape=null,bool preciseContact=false)
     {
         using var measured=RedSharkHeroMarker.Auto();
         var skin=RedContactSkin();if(skin==null||redRiggingSkinTree==null)return;
@@ -310,13 +310,20 @@ public sealed partial class Story1WreckBattle
         // The shark can continue its committed attack only while the actual
         // posed skin stays clear of the hero's measured full-body envelope.
         // Query translations against this one posed tree, avoiding extra bakes.
+        Vector3 blockedOffset=Vector3.zero;bool hasBlockedOffset=false;
+        float GapAt(Vector3 candidate)
+        {
+            float result=float.PositiveInfinity;
+            foreach(var capsule in redTutorialBodySpace)
+                result=Mathf.Min(result,tree.CapsuleGapUpTo(capsule.a-candidate,capsule.b-candidate,capsule.radius,margin));
+            return result;
+        }
         for(int attempt=0;attempt<32;attempt++)
         {
-            float gap=float.PositiveInfinity;
-            foreach(var capsule in redTutorialBodySpace)
-                gap=Mathf.Min(gap,tree.CapsuleGapUpTo(capsule.a-offset,capsule.b-offset,capsule.radius,margin));
+            float gap=GapAt(offset);
             RedesignTutorialHeroGap=gap*scale;
             if(gap>=margin)break;
+            blockedOffset=offset;hasBlockedOffset=true;
             offset+=away*Mathf.Clamp(margin-gap+.03f/scale,.15f/scale,3/scale);
         }
         if(RedesignTutorialHeroGap<margin*scale)
@@ -327,6 +334,21 @@ public sealed partial class Story1WreckBattle
             offset-=forward*Mathf.Max(0,front+Vector3.Dot(offset,forward)-near+margin+.03f/scale);
             RedesignTutorialHeroGap=float.PositiveInfinity;
             foreach(var capsule in redTutorialBodySpace)RedesignTutorialHeroGap=Mathf.Min(RedesignTutorialHeroGap,tree.CapsuleGap(capsule.a-offset,capsule.b-offset,capsule.radius)*scale);
+        }
+        // Coarse clearance steps intentionally leave a safety pad during a
+        // near miss. A scripted contact instead needs the last clear position
+        // on the exact posed skin: its 15 cm minimum step can overshoot the
+        // 3.5 cm hit window and strand the finale forever. Refine only the
+        // bracket already proved blocked/clear, retaining full-body separation.
+        if(preciseContact&&hasBlockedOffset&&RedesignTutorialHeroGap>=margin*scale)
+        {
+            Vector3 clearOffset=offset;
+            for(int i=0;i<14&&(clearOffset-blockedOffset).sqrMagnitude>.000001f/(scale*scale);i++)
+            {
+                Vector3 middle=(blockedOffset+clearOffset)*.5f;
+                if(GapAt(middle)>=margin)clearOffset=middle;else blockedOffset=middle;
+            }
+            offset=clearOffset;RedesignTutorialHeroGap=GapAt(offset)*scale;
         }
         shark.position+=local?matrix.MultiplyVector(offset):offset;
     }

@@ -26,6 +26,7 @@ namespace Mavis
 
         void Awake()
         {
+            FirstIslandBossProgression.Register(this);
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
             if(Application.isPlaying && !(this is Story1SharkHealth) && !GetComponent<CombatDamageFlash>())gameObject.AddComponent<CombatDamageFlash>();
             OnHealthChanged?.Invoke(currentHealth, maxHealth);
@@ -33,7 +34,7 @@ namespace Mavis
 
         public virtual void ApplyDamage(float amount, Vector3 hitPoint)
         {
-            if (IsDead || amount <= 0f) return;
+            if (IsDead || amount <= 0f || !FirstIslandBossProgression.CanDamage(this)) return;
             deathNotified=false;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             OnDamaged?.Invoke(amount);

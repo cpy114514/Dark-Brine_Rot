@@ -923,7 +923,7 @@ public sealed partial class Story1WreckBattle
             // Fit the visible fin to the outside of the whole posed body.
             // A marker placed at the hip centre buried the broad native fin
             // through his chest before the previous contact check succeeded.
-            RedSeparateTutorialShark(0,-redRight);
+            RedSeparateTutorialShark(.003f,-redRight,true);
             RedesignContactGap=RedTailSkinBodyGap(out var contact);
             if(t>=21.6f&&RedesignContactGap<=.035f)
             {

@@ -165,7 +165,7 @@ namespace Mavis
             {
                 AddItemRow("Sahur stick",weapons!=null&&!weapons.HasStick?"Weapon lost":weapons!=null&&weapons.CurrentWeapon==SahurWeaponLoadout.Weapon.Stick?"Equipped":"Ready to equip",count++,()=>InspectWeapon(0));
                 AddItemRow("Capri twin blades",weapons!=null&&weapons.HasTwinBlades?(weapons.UsesTwinBlades?"Equipped":"Ready to equip"):"Locked · Defeat Capri",count++,()=>InspectWeapon(1));
-                AddItemRow("M4A1 assault rifle",weapons!=null&&weapons.HasM4A1?(weapons.UsesRifle?"Equipped":"Ready to equip"):"Not collected · Find it on the island",count++,()=>InspectWeapon(2));
+                AddItemRow("M4A1 assault rifle",weapons!=null&&!weapons.RifleUnlocked?FirstIslandBossProgression.RifleUnlockHint:weapons!=null&&weapons.HasM4A1?(weapons.UsesRifle?"Equipped":"Ready to equip"):"Not collected · Find it on the island",count++,()=>InspectWeapon(2));
                 InspectWeapon(selectedWeapon>=0?selectedWeapon:weapons!=null?(int)weapons.CurrentWeapon:0);
             }
             else
@@ -200,6 +200,7 @@ namespace Mavis
             selectedWeapon=index;selectedItem=null;
             if(specimen)specimen.SetDrawing(index==2?EquipmentJournalInk.Drawing.Rifle:index==0?EquipmentJournalInk.Drawing.Stick:EquipmentJournalInk.Drawing.Blades);
             bool owned=weapons!=null&&weapons.Owns((SahurWeaponLoadout.Weapon)index);
+            bool rifleLocked=index==2&&weapons!=null&&!weapons.RifleUnlocked;
             bool lostStick=index==0 && weapons!=null && !weapons.HasStick;
             bool equipped=owned && weapons!=null && index==(int)weapons.CurrentWeapon;
             itemTitle.text=SahurWeaponLoadout.DisplayName((SahurWeaponLoadout.Weapon)index);
@@ -208,6 +209,13 @@ namespace Mavis
             if(index==2)details.text="M4A1: ranged and anti-air support.\n\nLMB: automatic fire\nHold RMB: aim while standing or walking\nSprint: carry and fire; aiming is disabled\n30-round magazine - R: reload\nGround damage falls with distance.\nAttack the aircraft's engines during its counter window.\nSupply camps: up to 45 rounds, 45s restock.";
             actionText.text=equipped?"Equipped":owned?"Equip this weapon":index==2?"Collect on the island to unlock":"Defeat Capri to unlock";
             equipButton.interactable=owned&&!equipped;unequipButton.gameObject.SetActive(false);
+            if(rifleLocked)
+            {
+                selectionStatus.text="Locked";
+                details.text=FirstIslandBossProgression.RifleUnlockHint+".\n\n"+details.text;
+                actionText.text="Defeat "+GameLocalization.Text("enemy.name")+" first";
+                equipButton.interactable=false;
+            }
             HighlightSelection();
         }
         void InspectItem(EquipmentItem item)
@@ -290,7 +298,7 @@ namespace Mavis
                 string locked=GameLocalization.Text("Locked"),missing=GameLocalization.Text("Not collected");
                 weaponHint.text=(weapons.WeaponMissing?GameLocalization.Text("Weapon lost"):GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName)+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+(weapons.HasStick?"":" · "+GameLocalization.Text("Weapon lost"))+
                     "\n[2] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.CapriTwinBlades)+(weapons.HasTwinBlades?"":" · "+locked)+
-                    "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(weapons.HasM4A1?"":" · "+missing);
+                    "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(!weapons.RifleUnlocked?" · "+locked:weapons.HasM4A1?"":" · "+missing);
             }
             if (editingEquipment >= 0) SelectEquipment((EquipmentSlot)editingEquipment);
             else SelectSkillForAssignment(EditingSkill);
