@@ -1,5 +1,18 @@
 # Progress
 
+## 2026-10-28 — Batch 002 complete (hourly continuation)
+
+- Read all five QA records and latest checkpoint fc2e6c4. Usage check permits ordinary work; no reset credit or purchase used.
+- Native resource check: ~8.2 GB free physical memory, but Editor still ~433,940 handles / 170 threads. Used a small isolated scene rather than the full island runtime. SandFootprints source remains pre-existing and untracked; preserved without importing its unrelated feature into this checkpoint.
+- Reproduced QA-007 with native SerializedObject.ApplyModifiedPropertiesWithoutUndo in Play: six lifecycle warnings while OnValidate created shore child/components, terrain immediately changed from 33 to 49 vertices.
+- Minimal tracked source fix: queue validation rebuilds and consume them in LateUpdate; explicit/context-menu/OnEnable rebuild clears the request. Original geometry generation, materials, collisions and gameplay design remain unchanged.
+- Recompile completed with failed=false/errors=[]. Eleven targeted native checks pass, warnings fall from six to zero. Test explicitly invokes LateUpdate after native validation for deterministic scheduling/geometry checks; it is not a performance or visual quality benchmark.
+- Original five clean scenes were saved as an in-memory SessionState setup, temporarily unloaded for the isolated test, then restored without saving any scene or creating any scene asset. Final live inspection confirms all five loaded and clean, stopped Play, no compile failure, and recovery marker cleared.
+- Initial reproduction and scene restoration exceeded dispatcher timeouts; the reproduction result file and final native scene state establish completion. No blind replay of timed-out mutations.
+- Human save and backup hashes still match ignored safety copies. Unrelated worktree changes remain untouched.
+
+Checkpoint: commit titled `Defer procedural island rebuilds out of validation callbacks` (resolve with git log). Next task is QA-005 isolated SandFootprints reload repair with narrow provenance, followed by native combat input tests when Editor resources permit. Known missing GUID blocker remains unchanged.
+
 ## 2026-10-28 — Batch 001 complete
 
 - Read Unity CLI/Pipeline skills and animation router; confirmed one connected project Editor and no current compilation failure.

@@ -1,5 +1,20 @@
 # Test results
 
+## Batch 002 — complete
+
+| Check | Observed result |
+|---|---|
+| Resource/usage recheck | Ordinary usage allowed. Native Windows query: ~433,940 handles/170 threads; ~8.2 GB free physical RAM. Resource issue remains open. |
+| QA-007 before | Expected reproduction passes 9 checks; native SerializedObject validation rebuilds immediately (33 to 49 vertices) and emits 6 SendMessage lifecycle warnings. |
+| QA-007 recompile | PASS: completed, failed=false, errors=[] |
+| QA-007 after | PASS: 11 checks; native validation keeps 33 vertices and creates no child, explicit LateUpdate then produces 49 vertices; collider shares render mesh; material-only edits preserve terrain/shore vertex positions; one foam child after repeated validation; 0 lifecycle warnings. |
+| Scope | Same Editor, isolated small unsaved Play scene; no full island runtime, input, animation or performance acceptance claim. |
+| Workspace restore | PASS by final live inspection: original five scenes loaded/clean, Play stopped, scriptCompilationFailed=false, saved setup marker cleared. |
+| Save and backup | PASS: both SHA256 values match ignored safety copies. |
+| Console after test | Dispatcher timeout and known 606 missing-prefab restore errors remain; no new OnValidate lifecycle warning in post-test interval. |
+
+Reproduction/restore dispatcher calls timed out, but execution completed; result file and independent final scene-state query confirm outcomes. Test scripts live outside Assets; no source scene, art, animation, or prefab rewritten. No automatic claim that repeated validations improved FPS.
+
 ## Batch 001 — complete
 
 | Check | Observed result |

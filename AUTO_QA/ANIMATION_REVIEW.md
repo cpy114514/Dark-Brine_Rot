@@ -9,3 +9,5 @@ Combat visual lifecycle exceptions are repaired and verified with native reload/
 `Evidence/first-island-after-reload.png` is an actual native Game-view still, inspected this batch: Sahur is standing in dense grass beside the sea in the existing pixel style. It establishes rendered scene availability after reload; it contains no attack sequence and does not verify smoother animation. A transient black Game view during earlier loading was observed through desktop UI and subsequently resolved.
 
 Next review: moving attacks, combo buffering, charge release, jumping/landing recovery, dodge cancel, weapon switching and hit-window alignment using current native gameplay captures. Do not change clips or controllers without a reproduced issue.
+
+Batch 002: environment validation scheduling only. No character, camera, combat, clip or controller changes. No new visual animation observations or smoother-animation claim. Prior 30 animation contracts were not redundantly rerun for this unrelated source change.
