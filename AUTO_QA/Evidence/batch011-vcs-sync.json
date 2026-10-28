@@ -1,0 +1,19 @@
+{
+  "plasticChangeset": 192,
+  "plasticBranch": "/main",
+  "plasticAtHead": true,
+  "mergeProgressAbsent": true,
+  "githubPullRequest": "https://github.com/cpy114514/Dark-Brine_Rot/pull/1",
+  "githubMerged": true,
+  "githubMergeSha": "c6d8146e0e5b03b4ddcfbbe1812a57aced73728c",
+  "validatedSourceSha": "3a4ca40ec5ee03c1b5017b3fbaa8d5a4fd7d37e4",
+  "githubChecks": [],
+  "githubChecksMeaning": "No CI checks configured; native scripted checks are recorded separately.",
+  "pendingPlasticPreserved": [
+    "Assets/_Recovery/0.unity",
+    "Assets/_Recovery/0.unity.meta"
+  ],
+  "upstreamCacheAncestry": "99 unchanged CP revisions from cs191 required atomically by Plastic; no local cache regeneration or private cache add; excluded from Git.",
+  "gitNewLfsObjects": 10,
+  "gitNewLfsMegabytes": 342
+}

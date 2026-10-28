@@ -2,11 +2,11 @@
 
 Verified fixes: QA-016 footprint allocation, QA-017 equipment menu reload recovery, QA-018 map canvas ownership. Compile clean; 8 footprint functional + 13 footprint actual reload + 12 UI actual reload checks pass. Native Profiler positive controls validate 24,000 → 0 bytes per 1,000 footprint calls; no whole-game FPS claim. Source and full pre-existing project now tracked after authorized Git integration (7417515).
 
-VCS integration: incoming Plastic cs190/191 and full Environment merge applied, no mergeprogress file; original client.conf restored. Final Plastic checkin/GitHub PR #1 merge are being completed; inspect current status before retry. Exact manifests/backups are ignored under .codex/github-sync; never add that folder. Scene merge proof under Evidence. No unresolved scene design conflict: 41 documents merge without overlap; 3 generated mesh references have byte-identical bodies.
+VCS integration COMPLETE: Plastic cs192 at /main head, no unfinished merge; only pre-existing recovery scene additions remain pending. GitHub PR #1 merged to main at c6d8146, validated source 3a4ca40. Original client.conf restored. Exact manifests/backups stay ignored under .codex/github-sync. Do not repeat this integration. Preserve the 99 unchanged upstream cache ancestry records in Plastic; none were added to Git.
 
 Current Editor was externally restarted to PID 57472. Five first-island scenes restored loaded/clean, Play stopped, scene setup marker cleared. Preserve actual current state if user changes it. UI fixtures cleaned; native load reports only the same 606 missing plant references.
 
-Next wider QA batch: (1) normal input/click/escape/pause interlocks for equipment, map, death and settings, plus UI reload ownership for remaining runtime HUDs/localized labels; (2) Bombardino main Tick elapsed-time suspicion with terrain/wing safety; (3) native scene CPU/render profiling after the newly integrated grass changes. Reproduce before modifying. Do not rerun unchanged suites; no speculative animation edits.
+Next wider QA batch (also inspect PauseSettingsMenu disable/reload time ownership; suspected from missing OnDisable, not yet reproduced): (1) normal input/click/escape/pause interlocks for equipment, map, death and settings, plus UI reload ownership for remaining runtime HUDs/localized labels; (2) Bombardino main Tick elapsed-time suspicion with terrain/wing safety; (3) native scene CPU/render profiling after the newly integrated grass changes. Reproduce before modifying. Do not rerun unchanged suites; no speculative animation edits.
 
 Historical restart notes below are superseded where they describe untracked SandFootprints or unmeasured allocations.
 

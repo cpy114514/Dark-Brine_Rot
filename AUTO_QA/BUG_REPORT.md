@@ -85,3 +85,5 @@ BombardinoBoss.Tick itself still caps delta at .1 s; whether its flight/cooldown
 - QA-017 VERIFIED FIX: actual Play-mode script reload left SahurLoadoutUI without its managed UI caches/singleton. SetOpen no longer opened the equipment panel, and its old native canvas remained orphaned. Serialize canvas ownership and rebuild managed bindings on enable after reload.
 - QA-018 VERIFIED FIX: IslandMapUI lost ownership of its native canvas across reload and built another. Serialize root/font ownership; rebuild lazily if graphic cache is missing, retaining valid owned canvases. Camera/time restoration and disable/reenable remain valid.
 - Existing 606 missing plant prefab references remain open. No source/art replacement or animation change.
+
+Batch011 fixes accepted and synchronized: Git 3a4ca40, GitHub main via PR #1/c6d8146, Plastic cs192. No visual animation acceptance added.

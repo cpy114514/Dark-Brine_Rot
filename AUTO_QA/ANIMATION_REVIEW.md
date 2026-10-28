@@ -63,3 +63,5 @@ Current native queued input integration passes 28 assertions / 1,256 observed fr
 ## 2026-10-28 — Batch 011 — UI and performance
 
 No animation clip/controller/root-motion or combat timing changed. Footprint fading alpha, property isolation, pool/lifetime and actual reload pass. UI evidence verifies equipment/map ownership, reopen, pause and camera-mask restoration; no new gameplay render/video, visual smoothness or whole-game FPS claim. Native profiler marker timings are an isolated workload (2.351 to .184 ms per 1,000 calls), not frame-time acceptance.
+
+Batch011 fixes accepted and synchronized: Git 3a4ca40, GitHub main via PR #1/c6d8146, Plastic cs192. No visual animation acceptance added.
