@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78af5e4b69f4d2a41bbed380c25fc77c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.SahurWearableModel
+  item: {fileID: 11400000, guid: 0381ec09157e64e49a1bf1f7b6dfb4b6, type: 2}
+  parts:
+  - mesh: {fileID: 4300000, guid: d4caafc93a4ac404eb69af67ae179af0, type: 2}
+    materials:
+    - {fileID: 2100000, guid: cb9dc8062450a844687f35d1135526fd, type: 2}
+    bones: 05000000
+  - mesh: {fileID: 4300000, guid: 2fd6dda903ec7da4880393b5e0d969eb, type: 2}
+    materials:
+    - {fileID: 2100000, guid: cb9dc8062450a844687f35d1135526fd, type: 2}
+    bones: 06000000

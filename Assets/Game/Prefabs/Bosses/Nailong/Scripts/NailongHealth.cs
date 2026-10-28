@@ -34,6 +34,7 @@ namespace Mavis
         public void ApplyCombatDamage(float amount, Vector3 hitPoint, CombatHitKind kind)
         {
             if (IsDead || amount <= 0f || !FirstIslandBossProgression.CanChallenge(this, FirstIslandObjectives.BossKind.Nailong)) return;
+            amount=Mathf.Max(1f,Mathf.Round(amount));
             deathNotified=false;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             Damaged?.Invoke(amount);

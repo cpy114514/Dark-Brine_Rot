@@ -36,6 +36,7 @@ Shader "DarkBrine/Procedural Sky"
             #pragma fragment frag
             #pragma target 3.5
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Assets/Shaders/EnvironmentVisualStyle.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _HorizonColor;
@@ -245,6 +246,8 @@ Shader "DarkBrine/Procedural Sky"
                     if (exit > entry)
                     {
                         uint steps = _CloudDetail < 3.0 ? 8u : (_CloudDetail < 5.0 ? 14u : 20u);
+                        // The same coarse world buffer handles sky and geometry; fewer rays suffice here.
+                        if (_PixelStyleUI > .5) steps = 8u;
                         // Keep each quality tier continuous across viewing angles.
                         // Distance-dependent step-count jumps exposed hard rings.
                         float segmentLength = (exit - entry) / steps;
@@ -284,8 +287,17 @@ Shader "DarkBrine/Procedural Sky"
                 // unrelated sinusoidal cloud pattern or a hard angular cut.
                 cloudAlpha *= smoothstep(0.015, 0.065, rayDirection.y);
 
+                if (_PixelStyleUI > .5)
+                {
+                    // Broad, readable pixel clusters instead of a soft photographic cloud gradient.
+                    cloudAlpha = floor(cloudAlpha * 8 + .5) / 8;
+                    cloudColor = floor(cloudColor * 8 + .5) / 8;
+                }
+
                 sky = lerp(sky, cloudColor, cloudAlpha * _CloudStrength);
                 sky *= 1.0 - cloudAlpha * saturate(_NightFactor) * 0.35;
+                sky = StyleEnvironmentColor(sky, input.positionCS.xy / _ScaledScreenParams.xy,
+                    cloudAlpha * .16 * (1 - saturate(dot(cloudColor, float3(.2126, .7152, .0722)))));
                 return half4(sky, 1.0);
             }
             ENDHLSL

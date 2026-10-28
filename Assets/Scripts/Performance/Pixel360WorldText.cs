@@ -28,7 +28,7 @@ namespace Mavis
             {
                 var go = new GameObject("Native caption - " + name, typeof(RectTransform), typeof(Text));
                 go.transform.SetParent(Pixel360Rendering.OverlayRoot, false);
-                overlay = go.GetComponent<Text>(); overlay.raycastTarget = false;
+                overlay = go.GetComponent<Text>(); overlay.raycastTarget = false; overlay.material = PixelStyleUI.NativeTextMaterial;
                 var outline = source.GetComponent<Outline>();
                 if (outline) { var copy = go.AddComponent<Outline>(); copy.effectColor = outline.effectColor; copy.effectDistance = outline.effectDistance; }
             }

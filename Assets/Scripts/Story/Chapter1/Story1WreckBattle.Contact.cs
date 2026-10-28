@@ -248,7 +248,7 @@ public sealed partial class Story1WreckBattle
     {
         RedesignContactGap=RedHeldHeadGap(out var contact);
         if(RedesignContactGap>.18f)return false;
-        Effects.Impact(contact,impulse,strength);
+        Effects.Impact(contact,impulse,strength);RedImpactShake(strength*1.1f,.45f);
         RedEvent(label+"; visible head/shaft gap="+RedesignContactGap.ToString("F3"));return true;
     }
     float RedThrownHeadGap(out Vector3 contact)

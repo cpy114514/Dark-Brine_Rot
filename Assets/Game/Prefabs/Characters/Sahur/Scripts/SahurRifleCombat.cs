@@ -10,7 +10,7 @@ namespace Mavis
     {
         public const int MagazineCapacity = 30, ReserveCapacity = 210;
         public const int StartingReserveRounds = 90;
-        public const float BulletDamage = 20f, EmptyReloadSeconds = 7f;
+        public const float BulletDamage = 20f, EmptyReloadSeconds = 4.5f;
         [Min(1)] public float roundsPerSecond = 10f;
         [Min(20)] public float bulletSpeed = 240f;
         [Min(10)] public float range = 180f;

@@ -1,0 +1,26 @@
+{
+  "revision": "combat-v278",
+  "stage": "POLISH",
+  "source_clip": "Assets/Resources/Combat/Combinations/ClubJumpChopV277.anim",
+  "output_clip": "Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim",
+  "format": "Unity native Humanoid AnimationClip",
+  "source_fbx_preserved": true,
+  "frame_start": 1,
+  "frame_end": 52,
+  "fps": 60,
+  "duration_seconds": 0.85,
+  "loop": false,
+  "root_motion": "in_place; physical controller owns travel",
+  "runtime_ik": false,
+  "design_reference": "Documentation/JumpStable-v278.md",
+  "approval_reference": "User correction: Sahur shakes and attack belongs directly ahead of Sahur",
+  "changed_channels": "Full body and primary arm sparse bounded muscle curves; smooth forward body lean, constant RootT; fingers and hand/foot goals preserved",
+  "review_status": "targeted POLISH revision; human artistic approval pending",
+  "evidence": ".codex/jump-stable-v278/",
+  "damage_window": [
+    0.34,
+    0.67
+  ],
+  "forward_contact_half_angle_degrees": 45,
+  "off_hand": "guard only during jump chop"
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v266\\sahur-jump-chops-v266.blend",
+    "rig": "Armature",
+    "action": "PLAYER_ClubJumpChop_v266",
+    "unity_clip": "PLAYER_ClubJumpChop_v266",
+    "revision": "combat-v266",
+    "frame_start": 1,
+    "frame_end": 52,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "SECOND PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/JumpDiagonal-v266.md",
+    "approval_reference": "User: chop from upper right diagonally down and finish slightly left; existing gameplay contract retained.",
+    "review_status": "accepted_for_stage",
+    "review_reference": "ArtSource/Combat/v266/review.md",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "active": [
+        18,
+        35
+      ],
+      "startup": [
+        1,
+        18
+      ],
+      "recovery": [
+        35,
+        52
+      ]
+    }
+  },
+  {
+    "blend": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\ArtSource\\Combat\\v266\\sahur-jump-chops-v266.blend",
+    "rig": "Armature",
+    "action": "PLAYER_BladeJumpChop_v266",
+    "unity_clip": "PLAYER_BladeJumpChop_v266",
+    "revision": "combat-v266",
+    "frame_start": 1,
+    "frame_end": 52,
+    "fps": 60,
+    "loop": false,
+    "root_motion": "in_place",
+    "root_bone": "root",
+    "rig_type": "Humanoid",
+    "stage": "SECOND PASS",
+    "design_status": "approved",
+    "design_reference": "Documentation/JumpDiagonal-v266.md",
+    "approval_reference": "User: chop from upper right diagonally down and finish slightly left; existing gameplay contract retained.",
+    "review_status": "accepted_for_stage",
+    "review_reference": "ArtSource/Combat/v266/review.md",
+    "avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+    "gameplay": {
+      "active": [
+        18,
+        35
+      ],
+      "startup": [
+        1,
+        18
+      ],
+      "recovery": [
+        35,
+        52
+      ]
+    }
+  }
+]

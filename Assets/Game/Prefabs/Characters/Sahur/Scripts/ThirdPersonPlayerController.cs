@@ -77,6 +77,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool invertLookY;
     [Range(-75f, 10f)] public float minPitch = -48f;
     [Range(10f, 85f)] public float maxPitch = 78f;
+    [Tooltip("Magnifies the view while aiming the rifle. 1.45 makes distant targets 1.45 times larger.")]
+    [Range(1.15f, 2f)] public float rifleAimMagnification = 1.45f;
 
     CharacterController characterController;
     Animator animator;
@@ -93,6 +95,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Mavis.SahurWeaponLoadout rifleLoadout;
     Mavis.SahurRifleCombat rifleCombat;
     float rifleCameraShoulder;
+    float rifleAimZoomBlend;
+    float rifleRestFov = -1f;
+    float rifleAppliedFov = -1f;
     float yaw;
     float pitch = 10f;
     float verticalSpeed;
@@ -211,8 +216,28 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     // Use the same brief ground grace as locomotion across slopes and steps.
     // A jump, dodge, swim, fall or external owner still ends a charge immediately.
     public bool CanMaintainGroundCharge => enabled && characterController && characterController.enabled &&
-        verticalSpeed <= 0 && rollTimer <= 0 && airFlipTimer <= 0 && (motionState == 0 || motionState == 3 && coyoteTimer > 0) &&
-        (IsGroundedOrOnSea() || coyoteTimer > 0) && !Swimming && !ExternalControlLock && !ExternalMovementLock;
+        verticalSpeed <= 0 && rollTimer <= 0 && airFlipTimer <= 0 &&
+        (motionState == 0 || motionState == 3 || motionState == 4) &&
+        (IsGroundedOrOnSea() || coyoteTimer > 0 || HasChargeFooting()) && !Swimming && !ExternalControlLock && !ExternalMovementLock;
+    readonly RaycastHit[] chargeFootingHits=new RaycastHit[16];
+    bool HasChargeFooting()
+    {
+        // A tiny physical step-down can outlast coyote time when running over
+        // uneven terrain. Admit only a nearby walkable surface, never open air.
+        if(!characterController || !characterController.enabled || verticalSpeed>0)return false;
+        var bounds=characterController.bounds;
+        float radius=Mathf.Max(.03f,Mathf.Min(bounds.extents.x,bounds.extents.z)*.7f);
+        float tolerance=Mathf.Min(.25f,characterController.stepOffset*Mathf.Abs(transform.lossyScale.y));
+        Vector3 origin=new Vector3(bounds.center.x,bounds.min.y+radius+.02f,bounds.center.z);
+        int count=Physics.SphereCastNonAlloc(origin,radius,Vector3.down,chargeFootingHits,tolerance+.04f,~0,QueryTriggerInteraction.Ignore);
+        for(int i=0;i<count;i++)
+        {
+            var h=chargeFootingHits[i];
+            if(h.collider.transform.IsChildOf(transform)||Mavis.CombatBodyCollision.IsActor(h.collider))continue;
+            if(Vector3.Angle(h.normal,Vector3.up)<=characterController.slopeLimit)return true;
+        }
+        return false;
+    }
     public bool CanUseAirAttack => characterController != null && rollTimer <= 0f && airFlipTimer <= 0f &&
                                    (verticalSpeed > 0f || !IsGroundedOrOnSea()) && !IsSwimming();
 
@@ -365,7 +390,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             LockCursor();
         bool acceptInput = Cursor.lockState == CursorLockMode.Locked && !ExternalControlLock;
 
-        Vector2 look = acceptInput ? Mouse.current.delta.ReadValue() * mouseSensitivity : Vector2.zero;
+        Vector2 look = acceptInput ? Mouse.current.delta.ReadValue() * mouseSensitivity * RifleAimLookScale() : Vector2.zero;
         yaw += look.x;
         pitch = Mathf.Clamp(pitch + (invertLookY ? look.y : -look.y), minPitch, maxPitch);
         if (acceptInput)
@@ -436,7 +461,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge), dodgeReady || airDodgeReady);
         if (combatDodge) dodgeBufferUntil = -1;
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
-        bool armCombatMovementAllowed = combat != null && combat.CanMoveDuringCombat;
+        bool armCombatMovementAllowed = combat != null && combat.CanTranslateDuringCombat;
         bool movementLocked = combatLocked && !armCombatMovementAllowed;
         bool attackRootMotion = combat != null && combat.UsesAnimationRootMotion;
         if (!attackRootMotion)
@@ -613,7 +638,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             if (attackRootMotion)
                 planarVelocity = Vector3.zero;
-            else
+            // Keep airborne chop momentum through its movement lock. Landing and
+            // external control restore normal braking; gravity/collision stay live.
+            else if (grounded || combat == null || !combat.IsJumpSlashActive || ExternalControlLock)
             {
                 float rate = desiredVelocity.sqrMagnitude > planarVelocity.sqrMagnitude ? acceleration : deceleration;
                 planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity, rate * Time.deltaTime);
@@ -647,7 +674,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (!onGround && !isRolling)
         {
             airborneTime += Time.deltaTime;
-            bool chargingOnStep = combat != null && combat.IsCharging && coyoteTimer > 0;
+            bool chargingOnStep = combat != null && combat.IsCharging && CanMaintainGroundCharge;
             if (!chargingOnStep && airFlipTimer <= 0f && (airborneTime > 0.18f || motionState == 0 || motionState == 7))
                 SetMotion(3, "Jump Loop", 0.12f);
         }
@@ -1015,6 +1042,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             cameraInitialized = true;
             UpdateUnderwaterPresentation(IsCameraUnderwater());
             enemyLock?.RefreshMarker();
+            ApplyRifleAimZoom();
             return;
         }
 
@@ -1048,6 +1076,67 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
         UpdateUnderwaterPresentation(IsCameraUnderwater());
         enemyLock?.RefreshMarker();
+        ApplyRifleAimZoom();
+    }
+
+    float RifleAimLookScale()
+    {
+        if (rifleRestFov < 1f || rifleAppliedFov < 1f) return 1f;
+        return Mathf.Clamp(rifleAppliedFov / rifleRestFov, .45f, 1f);
+    }
+
+    bool RifleAimZoomHeld()
+    {
+        if (!rifleLoadout) rifleLoadout = GetComponent<Mavis.SahurWeaponLoadout>();
+        if (!rifleCombat) rifleCombat = GetComponent<Mavis.SahurRifleCombat>();
+        return rifleCombat && rifleCombat.IsAiming && ExternalCameraFocus == null;
+    }
+
+    void ApplyRifleAimZoom()
+    {
+        if (playerCamera == null) return;
+        bool held = RifleAimZoomHeld();
+        if (!held && rifleAimZoomBlend <= 0f && rifleAppliedFov < 0f) return;
+
+        float current = playerCamera.fieldOfView;
+        if (rifleAppliedFov < 0f || Mathf.Abs(current - rifleAppliedFov) > .25f)
+        {
+            rifleRestFov = current;
+            if (!held) rifleAimZoomBlend = 0f;
+        }
+
+        if (!held && Time.timeScale <= 0f) rifleAimZoomBlend = 0f;
+        else
+        {
+            float target = held ? 1f : 0f;
+            float rate = held ? 10f : 14f;
+            rifleAimZoomBlend += (target - rifleAimZoomBlend) * (1f - Mathf.Exp(-rate * Time.deltaTime));
+            if (Mathf.Abs(rifleAimZoomBlend - target) < .001f) rifleAimZoomBlend = target;
+        }
+
+        if (!held && rifleAimZoomBlend <= 0f)
+        {
+            if (rifleRestFov > 1f && rifleAppliedFov >= 0f && Mathf.Abs(current - rifleAppliedFov) <= .25f)
+                playerCamera.fieldOfView = rifleRestFov;
+            rifleAimZoomBlend = 0f;
+            rifleAppliedFov = -1f;
+            return;
+        }
+
+        if (rifleRestFov < 1f) return;
+        float zoomed = rifleRestFov / Mathf.Max(1.05f, rifleAimMagnification);
+        float weight = rifleAimZoomBlend * rifleAimZoomBlend * (3f - 2f * rifleAimZoomBlend);
+        rifleAppliedFov = Mathf.Lerp(rifleRestFov, zoomed, weight);
+        playerCamera.fieldOfView = rifleAppliedFov;
+    }
+
+    void ReleaseRifleAimZoom()
+    {
+        if (playerCamera != null && rifleAppliedFov >= 0f && rifleRestFov > 1f &&
+            Mathf.Abs(playerCamera.fieldOfView - rifleAppliedFov) <= .25f)
+            playerCamera.fieldOfView = rifleRestFov;
+        rifleAimZoomBlend = 0f;
+        rifleAppliedFov = -1f;
     }
 
     Vector3 ClampCinematicCameraTravel(Vector3 from,Vector3 destination)
@@ -1155,6 +1244,21 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (animator != null) animator.CrossFadeInFixedTime(name, blend, 0, 0f);
     }
 
+    // Called only after the aerial cut's damage window. Match the destination to
+    // real footing/input instead of blending an airborne body through ground idle.
+    public bool BeginJumpSlashRecovery(float blend)
+    {
+        if (animator == null || combat == null || !combat.IsJumpSlashActive) return false;
+        bool grounded = CanUseGroundAttack;
+        bool moving = RequestedMoveDirection.sqrMagnitude > .01f;
+        string destination = grounded ? moving ? "Locomotion" : "Land" : "Jump Loop";
+        int hash = Animator.StringToHash("Base Layer." + destination);
+        if (!animator.HasState(0, hash)) return false;
+        motionState = grounded ? moving ? 0 : 4 : 3;
+        if (grounded && !moving) landingTimer = .42f;
+        animator.CrossFadeInFixedTime(hash, Mathf.Max(.05f, blend), 0, 0f);
+        return true;
+    }
     public void PrepareChargeLocomotion()
     {
         if (animator == null) return;
@@ -1635,6 +1739,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     void OnDisable()
     {
         EndAttackFacing(true);
+        ReleaseRifleAimZoom();
         UnlockCursor();
     }
 

@@ -1,0 +1,9 @@
+{
+  "source": "C:/Users/pinyu/Downloads/cb51dbf5451798b8cb8f06c7168c6e6e.glb",
+  "before_triangles": 1499540,
+  "after_polygons": 6420,
+  "removed_bottom_faces": 5580,
+  "bottom_threshold": 0.04392869815041195,
+  "texture_resolution": 2048,
+  "status": "candidate only: requires visual, material, collision, gameplay and performance review"
+}

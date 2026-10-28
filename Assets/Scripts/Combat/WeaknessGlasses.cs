@@ -21,7 +21,7 @@ namespace Mavis
         void Initialize(){if(!inventory)inventory=GetComponent<EquipmentInventory>();if(!item)item=Resources.Load<EquipmentItem>(ItemPath);}
         public bool Equip()
         {
-            if(!Owned)return false;Equipped=true;FitWornModel();
+            if(!Owned)return false;GetComponent<SahurWearableEquipment>()?.Unequip(SahurLoadoutUI.EquipmentSlot.Head);Equipped=true;FitWornModel();
             return true;
         }
         void FitWornModel()
