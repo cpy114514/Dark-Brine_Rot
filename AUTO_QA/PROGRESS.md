@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-10-28 — Batch 003 complete (hourly continuation)
+
+- Resumed from a586744 and all five reports. Ordinary usage allowed; no reset/purchase used. Same project Editor remains connected; native query still shows ~443,310 handles/174 threads, so runtime work used an isolated unsaved scene.
+- QA-005 is reproduced in a current fixture with actual domain reload: native 28-object footprint pool survives, managed Stamp[] becomes null and Fade logs null references. Disabled and removed only the temporary fixture after capturing the failure.
+- Smallest repair is one System.Serializable attribute on Stamp. Fresh script compile passes. A second actual domain reload passes 13 checks preserving cache entries, all native object/mesh/material identities, next slot, lifetime, live prints, original fade alpha/expiry and bounded pool across five enable cycles. By subsequent native frame 2687 versus assertion frame 612, no further footprint errors appeared in the captured post-repair console interval.
+- Pre-existing SandFootprints.cs remains untracked. Its original bytes are preserved in ignored .codex/autoqa-source-before/SandFootprints-batch003.cs. Only the one-line repair patch, before/after hashes and repeatable QA evidence are checkpointed; do not mistake a clean Git checkout for the full pre-existing feature. Reverse patch check passes against working source.
+- One premature Prepare call correctly rejected a not-yet-entered Play state before creating a fixture. The redundant reload request had no test fixture; it is not counted as validation. Subsequent native state gating confirmed Play and an initialized fixture before the accepted actual reload.
+- Fixture cleaned; Play stopped; original five scenes restored clean without saving any scene, no compile failure, setup recovery marker cleared. Restore timed out at dispatcher but completed independently. Save and backup SHA256 still match local safety copies.
+
+Checkpoint: commit titled `Preserve footprint pool across Play-mode script reload` (resolve with git log). Next: current isolated character/combat input smoke (buffering, dodge/cancel, charge and landing), selecting a verified defect before changing combat. Footprint per-frame property-block allocations are only a source-level candidate until measured.
+
 ## 2026-10-28 — Batch 002 complete (hourly continuation)
 
 - Read all five QA records and latest checkpoint fc2e6c4. Usage check permits ordinary work; no reset credit or purchase used.

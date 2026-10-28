@@ -1,5 +1,19 @@
 # Test results
 
+## Batch 003 — complete
+
+| Check | Observed result |
+|---|---|
+| Original actual domain reload | Expected failure reproduced: 28 native children survive; Stamp[] becomes null; Fade errors captured. Fixture disabled and cleaned after evidence. |
+| One-line repair compile | PASS: completed, failed=false, errors=[] |
+| Repaired actual domain reload | PASS: 13 checks in sand-reload-repaired-after.json; 28 cache entries/native identities, mesh/material/cursor/lifetime/active prints preserved. |
+| Fade/expiry and enable cycles | PASS: original alpha curve numerically matches at 85% lifetime, expired stamp deactivates, five re-enables retain 28 original renderers/identities. |
+| Normal runtime continuation | Native frame advances from check frame 612 to observed 2687; post-repair console query since seq 168950 contains only an already-in-Play warning, no footprint error. This is a small isolated pool test, not a beach traversal/visual/performance benchmark. |
+| Patch provenance | PASS: original source backup retained; working repaired hash matches provenance JSON; git apply --reverse --check succeeds. Original full feature remains untracked. |
+| Workspace/save integrity | PASS: original five scenes restored loaded/clean, Play stopped, no compile failure, setup marker cleared, fixture gone; human save and backup hashes unchanged. |
+
+A premature repaired-fixture setup rejected its Play precondition without creating objects. Only the later state-gated initialized fixture and real reload count as accepted verification. Restore dispatcher timeout is documented separately; independent native inspection confirms completion. No current combat/animation/input acceptance claim.
+
 ## Batch 002 — complete
 
 | Check | Observed result |

@@ -1,0 +1,12 @@
+diff --git a/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs b/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs
+index 41b5e03..2d0673b 100644
+--- a/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs
++++ b/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs
+@@ -22,6 +22,7 @@ public sealed class SandFootprints : MonoBehaviour
+         int cursor;
+         float nextSearch;
+ 
++        [System.Serializable]
+         struct Stamp
+         {
+             public Transform transform;
