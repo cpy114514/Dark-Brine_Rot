@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "frame": 1177,
+  "checks": [
+    "Still in Play Mode",
+    "Production component survives reload",
+    "All ten native pool objects reused across reload",
+    "Eight managed pulse entries restored",
+    "Both managed ribbon entries restored",
+    "Both weapon ribbons sample and build mesh",
+    "Landing pressure emits after reload",
+    "Disable clears active pressure",
+    "Repeated re-enable does not duplicate native pool renderers",
+    "Re-enable preserves pool identities",
+    "Production Nailong health bar present",
+    "Nailong HUD refresh matches real HP after reload",
+    "Encounter panel restored after reload",
+    "Exactly one encounter panel after reload",
+    "Ordinary re-enable reuses managed HUD panel"
+  ]
+}

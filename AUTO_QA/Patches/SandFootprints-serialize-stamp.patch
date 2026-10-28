@@ -1,0 +1,8 @@
+diff --git a/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs b/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs
+--- a/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs
++++ b/Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs
+@@ -25,3 +25,4 @@
++        [System.Serializable]
+         struct Stamp
+         {
+             public Transform transform;

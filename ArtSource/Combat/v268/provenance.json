@@ -1,0 +1,12 @@
+{
+  "service": "Meshy",
+  "model": "Motion Prime",
+  "candidate": "Sahur_Aerial_Diagonal_Chop_02",
+  "generation_credits": 10,
+  "remaining_visible_credits": 300,
+  "source_rig": "temporary mannequin uploaded under explicitly approved CC BY 4.0",
+  "no_original_character_upload": true,
+  "source_asset": "Meshy_Sahur_Aerial_Diagonal_Chop_02.fbx",
+  "production_status": "source_retained; installed fitted club v269 / blade v270",
+  "review": "Documentation/MeshyJumpChop-v270.md"
+}

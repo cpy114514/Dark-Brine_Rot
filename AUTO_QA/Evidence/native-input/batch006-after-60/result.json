@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "error": null,
+  "finalSection": "blade guard dodge",
+  "checks": [
+    "Boundary equip Stick",
+    "Stick dodge intent traversed native input update at 0.2",
+    "Stick dodge intent traversed native input update at 0.45",
+    "Stick dodge intent traversed native input update at 0.6",
+    "Stick fresh dodge survives temporary stamina unavailability within its original deadline",
+    "Stick native dodge still exits established continuous spin",
+    "Boundary equip CapriTwinBlades",
+    "CapriTwinBlades dodge intent traversed native input update at 0.2",
+    "CapriTwinBlades dodge intent traversed native input update at 0.45",
+    "CapriTwinBlades dodge intent traversed native input update at 0.6",
+    "CapriTwinBlades fresh dodge survives temporary stamina unavailability within its original deadline",
+    "CapriTwinBlades native dodge still exits established continuous spin",
+    "Native dodge still exits blade guard",
+    "No evasion consumes a released dodge tap older than the configured input buffer plus two observed native frames; stale cases=0"
+  ],
+  "inputRestored": true,
+  "boundaryCases": [
+    {
+      "weapon": "Stick",
+      "requestedPhase": 0.2,
+      "actualPhase": 0.230537772,
+      "inputAt": 17.8182812,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0352678,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "Stick",
+      "requestedPhase": 0.45,
+      "actualPhase": 0.485565066,
+      "inputAt": 20.4859447,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0381072,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "Stick",
+      "requestedPhase": 0.6,
+      "actualPhase": 0.6351061,
+      "inputAt": 23.2355289,
+      "consumedAt": 23.41741,
+      "inputAge": 0.181880951,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0364926,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "Stick",
+      "scenario": "readiness returns",
+      "inputAt": 26.06883,
+      "consumedAt": 26.1687641,
+      "inputAge": 0.0999336243,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.03601661,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "requestedPhase": 0.2,
+      "actualPhase": 0.239999965,
+      "inputAt": 29.1521034,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.03601661,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "requestedPhase": 0.45,
+      "actualPhase": 0.480000079,
+      "inputAt": 31.83528,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0361406058,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "requestedPhase": 0.6,
+      "actualPhase": 0.6399999,
+      "inputAt": 34.77715,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.03601661,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "scenario": "readiness returns",
+      "inputAt": 37.7103462,
+      "consumedAt": 37.82667,
+      "inputAge": 0.116325378,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0375554,
+      "simulationHz": 60
+    }
+  ],
+  "simulationHz": 60,
+  "nativeFrames": 1467,
+  "firstFrame": 100,
+  "lastFrame": 1566,
+  "traceArchive": "raw-result.json.gz",
+  "archiveVerified": true
+}

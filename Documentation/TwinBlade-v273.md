@@ -1,0 +1,15 @@
+# Forward slash trajectory revision — 2026-10-27
+
+User rejected v272's direction: the first two normal attacks still swung too far to the side. Approved intent remains the same sideways/diagonal slashes, concentrated more in front of the character. V272's reduced body yaw and broad frontal-target damage checks did not establish this visual requirement.
+
+BladeSlashV273 rotates the complete authored pose frame toward the slash's forward contact region by 75 degrees, smoothly entering over phase .02–.24 and releasing over .67–.98. The mirrored state naturally receives the opposite correction. Root quaternion and horizontal body-position curves are rotated together; the original extraction settings and all 123 non-root muscle/IK curves remain identical to v272. This preserves the original arm/wrist/elbow action, pose-relative blade geometry, 1.5-second duration, entry/recovery endpoints and .28–.62 damage window. V272 and the original Capri source remain intact.
+
+The two normal states in gameplay, grounded and rifle controllers now reference BladeSlashV273, retaining speed 1.8 and their original mirror flags. Combo counting, persistent alternating sides, damage, stamina and the third-input two-turn BladeFinisherV272 are untouched. No runtime script changed for this revision.
+
+Native model-only humanoid Animator verification uses the actual Sahur avatar and the same fitted blade meshes, grip transforms and 2.52m blade size as gameplay. Across 35 samples in the damage window per mirrored side, forward tip fraction rises from 40% to 90%; mean absolute lateral reach falls from approximately 1.02–1.05 to .47–.50 model-local units, and mean forward reach rises from near zero to .88–.94. At phase .44 both blade tips are within 20 degrees of character forward in both states. Startup/recovery endpoint positions match within .003 local units. These measure visible blade geometry, rather than torso facing or target damage alone.
+
+Evidence: `.codex/twin-blade-v273/verified.json`, top and gameplay camera captures, and `comparison.jpg` (green arrow is character +Z). Front-biased arc accepted for this targeted revision by agent visual review; human subjective gameplay approval remains pending. Continuous movement/transition/gameplay damage was not rerun in this revision. Earlier v272 input tests remain historical evidence for the unchanged logic only.
+
+Work ran on disposable model-only preview scenes without gameplay actors, physical-input changes, Play toggles, scene saves or reloads. The user stopped their own Play session during this work. Their five dirty island scenes remain open and unsaved; there are zero remaining preview scenes and only enabled native keyboard/mouse devices. Unrelated missing foliage-prefab Console errors from the user's island load were not addressed here.
+
+Reproduction: `AuthorTwinBladeV273.Inspect`, `.Author`, `.Verify`, `.Install`; `ReviewTwinBladeV273.py` composes the annotated top-view comparison. Install changes only Capri Combo 1 and 2 in the existing three controllers.

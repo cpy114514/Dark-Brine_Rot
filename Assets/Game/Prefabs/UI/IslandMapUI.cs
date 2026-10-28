@@ -17,9 +17,9 @@ namespace Mavis
         public static bool BlocksInput => IsOpen || consumedFrame == Time.frameCount;
         public bool PanelVisible => root != null && root.activeSelf;
         public IslandMapGraphic MapGraphic { get; private set; }
-        GameObject root;
-        Font font;
-        bool ownsFont;
+        [SerializeField, HideInInspector] GameObject root;
+        [SerializeField, HideInInspector] Font font;
+        [SerializeField, HideInInspector] bool ownsFont;
         float previousTimeScale;
         CursorLockMode previousCursor;
         bool previousVisible;
@@ -36,6 +36,15 @@ namespace Mavis
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() { active = null; consumedFrame = -1; }
+        void OnEnable()
+        {
+            // Rebuild lazily after reload; keep ownership of the previous native canvas.
+            if (root == null || MapGraphic != null) return;
+            root.SetActive(false); Destroy(root); root = null;
+            if (ownsFont && font != null) Destroy(font);
+            font = null; ownsFont = false;
+            markers.Clear(); targets.Clear();
+        }
         void Update()
         {
             if (PlayerDeathRespawn.IsOpen) { if (PanelVisible) SetOpen(false); return; }
@@ -98,7 +107,7 @@ namespace Mavis
             foreach (var enemy in FindObjectsByType<BombardinoBoss>(FindObjectsSortMode.None))
                 if (!enemy.IsDead) AddMarker(enemy.transform, "B", GameUITheme.Foreground);
             foreach (var gun in FindObjectsByType<PlacedEquipmentPickup>(FindObjectsSortMode.None))
-                if (!gun.IsCollected) AddMarker(gun.transform, "+", new Color(1, .83f, .2f));
+                if (gun.isActiveAndEnabled && !gun.IsCollected) AddMarker(gun.transform, "+", new Color(1, .83f, .2f));
             foreach (var cache in FindObjectsByType<IslandSupplyCache>(FindObjectsSortMode.None))
                 AddMarker(cache.transform, cache.supportsMelee ? "R" : "▣", new Color(1, .83f, .2f));
             playerArrow.transform.SetAsLastSibling();

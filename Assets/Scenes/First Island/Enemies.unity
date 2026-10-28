@@ -330,6 +330,77 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.WorldSaveIdentity
   id: 5eb24e3476de4bcebd6d4560ef4f69c5
+--- !u!1 &807227197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 807227200}
+  - component: {fileID: 807227199}
+  - component: {fileID: 807227198}
+  m_Layer: 0
+  m_Name: Chicken Bro Encounter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &807227198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807227197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39d36e3b2567ce644a266eb3d719ac90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.WorldSaveIdentity
+  id: first-island-chicken-bro-flock
+--- !u!114 &807227199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807227197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42aefaa1107ed1949a494f99ceb45b39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.ChickenBroEncounter
+  prefab: {fileID: 4799430938750925070, guid: 643d624b44a6f8b4cbaafab6195044a1, type: 3}
+  duck: {fileID: 4633341426401108092, guid: bc14c279968fce54b982680d2294fc83, type: 3}
+  duckRatio: 0.3
+  waveCounts: 040000000600000008000000
+  maxAlive: 8
+  maxSimultaneousAttackers: 2
+  triggerRadius: 38
+  arenaSize: 72
+  spawnRadius: 8
+  waveGap: 2.4
+  distanceFromCappuccino: 50
+  placeBesideCappuccino: 1
+  completionId: first-island-chicken-bro-flock
+--- !u!4 &807227200
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807227197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -337,3 +408,4 @@ SceneRoots:
   - {fileID: 121329538}
   - {fileID: 77698231}
   - {fileID: 57646304}
+  - {fileID: 807227200}

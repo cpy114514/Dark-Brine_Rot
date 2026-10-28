@@ -152,6 +152,11 @@ InitTestScene*.unity*
 # Agent / assistant local caches (skills, run data, scratch)
 .agents/
 .codex/
+
+# Bundled DCC runtime and generated Python bytecode are local tools, not game source.
+/Tools/blender/
+__pycache__/
+*.py[cod]
 # Local-only agent / assistant tooling scripts (outside Assets/ so they don't trigger reimports).
 # Keep them out of the repo: they're scaffolding for AI-driven one-off jobs, not project source.
 AgentScripts/

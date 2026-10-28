@@ -129,7 +129,11 @@ namespace Mavis
         {
             if(!initialized)Initialize();if(PauseSettingsMenu.IsOpen||deltaTime<=0)return;
             float dt=Mathf.Min(deltaTime,.1f);clock+=dt;age+=dt;
+            if(FightActive&&!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))
+            {FightActive=false;ClearHazards();SetState(State.Returning);}
             impactAge=Mathf.Min(.3f,impactAge+dt);
+            if(FightActive&&(target==null||targetHealth==null||!targetHealth.isActiveAndEnabled||targetHealth.currentHealth<=0))
+            {FightActive=false;SetState(State.Returning);ClearHazards();}
             for(int i=fireImpacts.Count-1;i>=0;i--)if(clock>=fireImpacts[i].at)
             {
                 var impact=fireImpacts[i];fireImpacts.RemoveAt(i);
@@ -191,8 +195,9 @@ namespace Mavis
         }
         void Acquire()
         {
+            if(!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))return;
             if(CurrentState==State.Dead||CurrentState==State.Returning)return;
-            if(target==null||targetHealth==null||targetHealth.currentHealth<=0)
+            if(target==null||targetHealth==null||!targetHealth.isActiveAndEnabled||targetHealth.currentHealth<=0)
             {
                 target=null;targetHealth=null;float best=engageDistance*engageDistance;
                 foreach(var player in FindObjectsByType<PlayerHealth>(FindObjectsSortMode.None))if(player.currentHealth>0&&player.isActiveAndEnabled){float d=(Ground(player.transform.position)-home).sqrMagnitude;if(d<best){best=d;target=player.transform;targetHealth=player;}}
@@ -202,6 +207,7 @@ namespace Mavis
         }
         void StartAttack(AttackKind kind)
         {
+            if(!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))return;
             if(target==null||IsDead)return;CurrentAttack=kind;
             prediction.Observe(target); committed=PredictedGround(Windup);
             heading=OrbitTangent(orbitAngle);

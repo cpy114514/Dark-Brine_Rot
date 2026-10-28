@@ -1,0 +1,18 @@
+{
+  "sources": [
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Scripts/SahurAttack.cs",
+      "beforeSha256": "0989f9c7d50b4ce99b6fca25116c0c10a82906ee8ff808c1bf38f4fb12e0f921",
+      "afterSha256": "cb285a0ce0d039478805c583f14e17b8f4e2427a70f5892575547ce05e89d3dd"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Scripts/ThirdPersonPlayerController.cs",
+      "beforeSha256": "9e740025aa029e8aef7a51d02f6683fa98a87f3fc64b7d974a2dd3aa835d10d4",
+      "afterSha256": "69e529349f2fcbe536b977ee65de48a9551e1972b2efa95a7f5d4fcae9f17905"
+    }
+  ],
+  "workingDeltaVerified": true,
+  "preExistingDirtyChangesPreserved": true,
+  "scope": "Fresh dodge edge owns one combat deadline; readiness gates consumption without renewing it; legacy single-argument API and guard/spin cancel retained.",
+  "fileWriteNote": "Truncating writes to the motor source failed while ReadWrite open succeeded; a backed-up, guarded, extending r+ write completed and was read back exactly. No permissions changed."
+}

@@ -249,11 +249,9 @@ namespace Mavis
         {
             try
             {
-            // Preserve the authored grass coverage, including the distant hillside.
-            // Distance-only grass cuts visibly thin that silhouette. Batch the
-            // original geometry instead; the camera's normal clip/frustum still
-            // rejects work outside the view, without a separate short grass range.
-            float grassDistance = float.PositiveInfinity;
+            // Terrain textures carry the distant meadow. Drawing individual
+            // blades across the entire island overwhelms even instanced batches.
+            const float grassDistance = 180f;
             foreach (var batch in pendingGrassBatches) batch.count = 0;
             foreach (var group in grassBatches.Values) group.cursor = 0;
             pendingGrassBatches.Clear();
@@ -290,7 +288,9 @@ namespace Mavis
                 if (item.filter == null) continue;
                 if (item.grass)
                 {
-                    Mesh desired = item.compactWind && renderMeshes.TryGetValue(item.original, out var compact) ? compact : item.original;
+                    Mesh desired = item.detail != null && item.detail.far != null && squared > 35f * 35f
+                        ? item.detail.far : item.original;
+                    if (item.compactWind && renderMeshes.TryGetValue(desired, out var compact)) desired = compact;
                     if (item.currentMesh != desired)
                     { item.filter.sharedMesh = desired; item.currentMesh = desired; }
                 }

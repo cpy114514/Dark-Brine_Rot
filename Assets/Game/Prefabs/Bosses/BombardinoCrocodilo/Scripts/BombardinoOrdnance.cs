@@ -83,13 +83,31 @@ namespace Mavis
         {
             if(resolved||PauseSettingsMenu.IsOpen||deltaTime<=0)return;
             if(owner==null||!owner.isActiveAndEnabled||owner.IsDead){Expire();return;}
-            float dt=Mathf.Min(deltaTime,.1f);age+=dt;
             if(Payload==Kind.Fire)
             {
+                age+=deltaTime;
+                if(age>=5f){Expire();return;}
                 if(fire!=null){var emission=fire.emission;emission.rateOverTime=45*Mathf.Clamp01((5-age)/1.3f);}
-                if(age>=fireTick){fireTick=age+.65f;Blast(damage,false);}if(age>=5f)Expire();return;
+                if(age>=fireTick){fireTick=age+.65f;Blast(damage,false);}return;
             }
-            if(Payload==Kind.Bomb)velocity+=Vector3.down*25f*dt;
+            // Retain elapsed time; bound sweep curvature rather than slowing time on long frames.
+            float remaining=Mathf.Min(deltaTime,Mathf.Max(0,6f-age));
+            while(remaining>0)
+            {
+                float dt=Mathf.Min(remaining,1f/60f);remaining-=dt;age+=dt;
+                TickProjectile(dt);
+                if(resolved)return;
+            }
+            if(age>=6f)Expire();
+        }
+        void TickProjectile(float dt)
+        {
+            Vector3 step;
+            if(Payload==Kind.Bomb)
+            {
+                step=velocity*dt+Vector3.down*(.5f*25f*dt*dt);
+                velocity+=Vector3.down*25f*dt;
+            }
             else
             {
                 // Only steer during the first second, giving a committed dodge window.
@@ -99,8 +117,9 @@ namespace Mavis
                 float speed=Mathf.Lerp(12,36,Mathf.Clamp01((age-.12f)/.65f));
                 if(age<1.2f&&wanted.sqrMagnitude>.01f)velocity=Vector3.RotateTowards(velocity,wanted.normalized*speed,55f*Mathf.Deg2Rad*dt,80*dt);
                 else velocity=velocity.normalized*speed;
+                step=velocity*dt;
             }
-            Vector3 from=transform.position,step=velocity*dt;
+            Vector3 from=transform.position;
             int count=Physics.SphereCastNonAlloc(from,.25f,step.normalized,hits,step.magnitude,owner.groundMask,QueryTriggerInteraction.Ignore);
             float nearest=float.PositiveInfinity;RaycastHit contact=default;
             for(int i=0;i<count;i++)
@@ -110,7 +129,6 @@ namespace Mavis
             }
             if(nearest<float.PositiveInfinity){transform.position=contact.point+contact.normal*.05f;Detonate();return;}
             transform.position+=step;if(velocity.sqrMagnitude>.001f)transform.rotation=Quaternion.LookRotation(velocity);
-            if(age>6f)Expire();
         }
         public void Detonate()
         {

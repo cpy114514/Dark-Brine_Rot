@@ -1,0 +1,85 @@
+{
+  "batch": "007",
+  "productionSourceChanged": false,
+  "checks": 15,
+  "nativeFrames": 985,
+  "captures": 87,
+  "simulationHz": 60,
+  "displayFpsMeasured": false,
+  "rejectedTake": "batch007-review01",
+  "acceptedTake": "batch007-review02-before",
+  "initialAssertionCorrection": "Single Freeze request is clamped to 130ms; first test did not establish expiry before queue admission.",
+  "earlyAndAcceptedProof": [
+    {
+      "weapon": "Stick",
+      "queuedAt": 21.3375244,
+      "expiry": 21.5575237,
+      "expiryObservedBeforeQueue": true,
+      "observedAt": 21.7541752,
+      "phaseAtExpiry": 0.105323926,
+      "unexpectedContinuation": false,
+      "acceptedInputPhase": 0.313100874,
+      "acceptedInputAge": 0.8226960000000005,
+      "acceptedBeyondInitialTTL": true
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "queuedAt": 29.6890144,
+      "expiry": 29.9090137,
+      "expiryObservedBeforeQueue": true,
+      "observedAt": 30.35232,
+      "phaseAtExpiry": 0.099999994,
+      "unexpectedContinuation": false,
+      "acceptedInputPhase": 0.32,
+      "acceptedInputAge": 0.9004045000000005,
+      "acceptedBeyondInitialTTL": true
+    }
+  ],
+  "saveComparison": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "current": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "baseline": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "current": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "baseline": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "unchanged": true
+    }
+  ],
+  "editorResources": {
+    "Handles": 489418,
+    "Threads": 183,
+    "Responding": true
+  },
+  "reviewedAcceptedImages": [
+    "0013",
+    "0033",
+    "0038",
+    "0044",
+    "0049",
+    "0055",
+    "0060",
+    "0077",
+    "0082"
+  ],
+  "visualScope": "Selected rendered poses only, 640x480 native SRP at every four simulation frames, fixture follow camera. No full-rate video/smoothness, gameplay camera or target contact acceptance.",
+  "archives": [
+    {
+      "take": "batch007-review01",
+      "rawBytes": 306167,
+      "gzipBytes": 14052,
+      "nativeFrames": 414,
+      "captures": 42
+    },
+    {
+      "take": "batch007-review02-before",
+      "rawBytes": 817671,
+      "gzipBytes": 29729,
+      "nativeFrames": 985,
+      "captures": 87
+    }
+  ]
+}

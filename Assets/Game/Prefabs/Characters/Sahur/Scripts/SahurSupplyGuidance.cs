@@ -110,6 +110,7 @@ namespace Mavis
                 return candidate is RifleAmmoPickup ammo && ammo.isActiveAndEnabled && !ammo.IsCollected && ammo.amount > 0 ||
                     candidate is IslandSupplyCache cache && cache.IsAvailable;
             if (kind != GuidanceKind.Gun) return false;
+            if (!FirstIslandBossProgression.CanObtainRifle(this)) return false;
             if (candidate is PlacedEquipmentPickup placed)
                 return placed.isActiveAndEnabled && !placed.IsCollected && placed.item && placed.item == gunItem;
             return candidate is EquipmentPickup dropped && dropped.isActiveAndEnabled && !dropped.IsCollected && dropped.Item && dropped.Item == gunItem;

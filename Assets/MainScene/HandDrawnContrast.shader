@@ -62,6 +62,7 @@ Shader "UI/Hand Drawn Contrast"
             #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
             #include "UnityCG.cginc"
             #include "UnityUI.cginc"
+            #include "../Shaders/PixelStyleUI.cginc"
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -75,6 +76,7 @@ Shader "UI/Hand Drawn Contrast"
                 float4 color : COLOR;
                 float2 uv : TEXCOORD0;
                 float4 localPosition : TEXCOORD1;
+                float4 pixelScreen : TEXCOORD2;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
             sampler2D _MainTex;
@@ -110,13 +112,18 @@ Shader "UI/Hand Drawn Contrast"
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
                 output.localPosition = input.vertex;
-                output.vertex = UnityObjectToClipPos(input.vertex);
+                output.vertex = PixelUIVertex(UnityObjectToClipPos(input.vertex), input.uv, PixelUIEnabled(_TextureSampleAdd));
+                output.pixelScreen = ComputeScreenPos(output.vertex);
                 output.uv = TRANSFORM_TEX(input.uv, _MainTex);
                 output.color = input.color * _Color;
                 return output;
             }
             float4 frag(v2f input) : SV_Target
             {
+                float2 delta = PixelUIDelta(input.pixelScreen, PixelUIEnabled(_TextureSampleAdd));
+                input.uv = PixelUIUV(input.uv, delta);
+                input.color = PixelUIColor(input.color, delta);
+                input.localPosition.xy = PixelUIUV(input.localPosition.xy, delta);
                 float4 color = tex2D(_MainTex, input.uv) + _TextureSampleAdd;
                 if (_AlignmentEnabled > 0.5)
                 {

@@ -64,6 +64,9 @@ namespace Mavis
             bool ordinary=!NarrativeDamageOwner;
             var profile=CombatFeelProfile.Default;
             if(ordinary)amount=Mathf.Min(amount*profile.incomingDamageMultiplier,maxHealth*profile.maximumHitHealthFraction);
+            // Displayed combat damage and the actual health deduction use the
+            // same whole-number result after mitigation, rather than 5.6 HP hits.
+            if(ordinary)amount=Mathf.Max(1f,Mathf.Round(amount));
             float before=currentHealth;
             ApplyDamage(amount,hitPoint);
             if(currentHealth<before && ordinary)

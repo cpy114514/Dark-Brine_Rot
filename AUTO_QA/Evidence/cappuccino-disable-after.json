@@ -1,0 +1,215 @@
+{
+  "passed": true,
+  "error": null,
+  "checkCount": 36,
+  "failedChecks": 0,
+  "checks": [
+    {
+      "passed": true,
+      "name": "TwinSlash/component enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/component native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/component disabling cancels unfinished action"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/component disabled owner cannot damage"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/component no old hit within 50ms of re-enable"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/component fresh telegraph required before next attack"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/object enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/object native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/object disabling cancels unfinished action"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/object disabled owner cannot damage"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/object no old hit within 50ms of re-enable"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/object fresh telegraph required before next attack"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/component enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/component native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/component disabling cancels unfinished action"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/component disabled owner cannot damage"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/component no old hit within 50ms of re-enable"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/component fresh telegraph required before next attack"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/object enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/object native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/object disabling cancels unfinished action"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/object disabled owner cannot damage"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/object no old hit within 50ms of re-enable"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/object fresh telegraph required before next attack"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/component enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/component native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/component disabling cancels unfinished action"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/component disabled owner cannot damage"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/component no old hit within 50ms of re-enable"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/component fresh telegraph required before next attack"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/object enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/object native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/object disabling cancels unfinished action"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/object disabled owner cannot damage"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/object no old hit within 50ms of re-enable"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/object fresh telegraph required before next attack"
+    }
+  ],
+  "cases": [
+    {
+      "kind": "TwinSlash",
+      "mode": "component",
+      "disabledAt": 7.263126,
+      "enabledAt": 7.44546,
+      "stateAtDisable": "Idle",
+      "stateAfterEnable": "Idle",
+      "windowAtDisable": false,
+      "damageWithin50ms": 0.0
+    },
+    {
+      "kind": "TwinSlash",
+      "mode": "object",
+      "disabledAt": 8.228681,
+      "enabledAt": 8.411792,
+      "stateAtDisable": "Idle",
+      "stateAfterEnable": "Idle",
+      "windowAtDisable": false,
+      "damageWithin50ms": 0.0
+    },
+    {
+      "kind": "DashThrust",
+      "mode": "component",
+      "disabledAt": 9.478689,
+      "enabledAt": 9.6621685,
+      "stateAtDisable": "Idle",
+      "stateAfterEnable": "Windup",
+      "windowAtDisable": false,
+      "damageWithin50ms": 0.0
+    },
+    {
+      "kind": "DashThrust",
+      "mode": "object",
+      "disabledAt": 10.7121878,
+      "enabledAt": 10.895854,
+      "stateAtDisable": "Idle",
+      "stateAfterEnable": "Windup",
+      "windowAtDisable": false,
+      "damageWithin50ms": 0.0
+    },
+    {
+      "kind": "Whirlwind",
+      "mode": "component",
+      "disabledAt": 11.9619236,
+      "enabledAt": 12.1461134,
+      "stateAtDisable": "Idle",
+      "stateAfterEnable": "Windup",
+      "windowAtDisable": false,
+      "damageWithin50ms": 0.0
+    },
+    {
+      "kind": "Whirlwind",
+      "mode": "object",
+      "disabledAt": 13.1956177,
+      "enabledAt": 13.3784866,
+      "stateAtDisable": "Idle",
+      "stateAfterEnable": "Windup",
+      "windowAtDisable": false,
+      "damageWithin50ms": 0.0
+    }
+  ],
+  "fixtureCleared": true
+}

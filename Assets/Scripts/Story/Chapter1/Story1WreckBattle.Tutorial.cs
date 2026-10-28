@@ -6,6 +6,8 @@ public sealed partial class Story1WreckBattle
 {
     Vector3 redDodgeStartLocal,redDodgeEndLocal,redDodgeAttackLocal,redDodgeSharkStartLocal;
     Vector3 redDodgeDirection;
+    Vector3 redSpecialStartLocal;
+    bool redSpecialStartCaptured;
     Quaternion redDodgeFacingStart;
     float redSwimControlSeconds;
     bool redTutorialEnvelopeReady;
@@ -33,6 +35,44 @@ public sealed partial class Story1WreckBattle
     float redTutorialTurnInSeconds,redTutorialWalkSeconds,redTutorialTurnOutSeconds;
     Vector3 redTutorialLeftSole,redTutorialRightSole;
     const float RedLightContact=.585f;
+    // Safe practice reuses the duel's authored throw and held weapon mesh.
+    void RedTutorialSpecial(float seconds)
+    {
+        RedOnBoard("PLAYER_Throw_v064",Mathf.Min(seconds,2));
+        Vector3 feet=RedBoardPoint(redCombatBoard);
+        if(!redSpecialStartCaptured)
+        {
+            redSpecialStartLocal=redCombatBoard.transform.InverseTransformPoint(sharkAnimator.NoseWorldPoint);
+            redSpecialStartCaptured=true;
+        }
+        // Keep the shark visible in open water and move from its real previous pose.
+        Vector3 destination=feet+redForward*14;destination.y=RedWater(destination)+1.2f;
+        Vector3 start=redCombatBoard.transform.TransformPoint(redSpecialStartLocal);
+        Vector3 nose=Vector3.Lerp(start,destination,REase(seconds,0,.6f));
+        RedTutorialShark("Swim",redesignTime,nose,-redForward);RedKeepTutorialSharkClear();
+        if(seconds>=.55f&&!redReleased)
+        {
+            RedThrow();redReleased=true;redThrowStart=redStick.position;
+            redThrowTarget=redThrowStart+redForward*12;RedEvent("Special skill: club released");
+        }
+        if(redProjectile!=null)
+        {
+            float outT=R01(seconds,.55f,1.3f),back=R01(seconds,1.3f,2.3f);
+            redProjectile.rotation=redStickRotation*Quaternion.AngleAxis((seconds-.55f)*1100,Vector3.up);
+            redProjectile.position=seconds<1.3f?Vector3.Lerp(redThrowStart,redThrowTarget,outT)+Vector3.up*Mathf.Sin(outT*Mathf.PI):
+                Vector3.Lerp(redThrowTarget,redStick.position,back)+redRight*Mathf.Sin(back*Mathf.PI)*2;
+            if(seconds>2.05f)redProjectile.rotation=Quaternion.Slerp(redProjectile.rotation,redStick.rotation,REase(seconds,2.05f,2.3f));
+            if(seconds>=2.3f)
+            {
+                redProjectile.GetComponent<Renderer>().enabled=false;Destroy(redProjectile.gameObject);redProjectile=null;
+                RedShowStick(true);RedEvent("Special skill: club caught");
+            }
+        }
+        if(seconds>=2.65f)
+        {
+            redReleased=false;redSpecialStartCaptured=false;lessonExecuting=false;lessonTime=0;stowReady=false;CurrentLesson=Lesson.Jump;
+        }
+    }
     float RedHeavyContact=>redGameplayContactSeconds;
     public float RedesignTutorialRenderedHitGap { get; private set; }=-1;
     public int RedesignTutorialConfirmedHits { get; private set; }
@@ -131,7 +171,7 @@ public sealed partial class Story1WreckBattle
             :Quaternion.Slerp(walkFacing,strikeFacing,REase(seconds,walkEnd,settled));
         if(walking&&seconds>=turnIn&&seconds<walkEnd)
             RedOnBoard("PLAYER_Walk_v241",seconds-turnIn,facing);
-        else RedOnBoard("CH1_SahurGuard_v050",Mathf.Max(0,seconds-walkEnd),facing);
+        else RedOnBoard("Rig|Idle_Loop",Mathf.Max(0,seconds-walkEnd),facing);
         Vector3 feet=RedBoardPoint(redCombatBoard);
         Vector3 target=redTutorialStrikeReady?redCombatBoard.transform.TransformPoint(redTutorialStrikeNose):RedTutorialNose(feet,7,3);
         float approach=REase(seconds,settled,settled+1.4f);
@@ -189,7 +229,7 @@ public sealed partial class Story1WreckBattle
         if(lessonImpact&&age>=1.5f)
         {
             RedOnBoard("CH1_SahurGuard_v050",0);
-            if(heavy){lessonExecuting=false;lessonTime=0;stowReady=false;CurrentLesson=Lesson.Jump;}
+            if(heavy){RedGate(Lesson.Special);}
             else RedGate(Lesson.Dodge);
         }
     }
@@ -205,7 +245,7 @@ public sealed partial class Story1WreckBattle
         if(gap>.055f)return;
         lessonImpact=true;redTutorialHitTime=lessonTime;RedesignTutorialConfirmedHits++;
         redTutorialStrikeNose=redCombatBoard.transform.InverseTransformPoint(sharkAnimator.NoseWorldPoint);
-        Effects.Impact(contact,heavy?Vector3.down:-redForward,heavy?1.5f:.8f);
+        Effects.Impact(contact,heavy?Vector3.down:-redForward,heavy?1.5f:.8f);RedImpactShake(heavy?1.4f:.7f,heavy?.4f:.25f);
         RedEvent((heavy?"Charge success":"Attack success")+"; final rendered head/shaft gap="+gap.ToString("F3"));
     }
 
@@ -257,7 +297,7 @@ public sealed partial class Story1WreckBattle
         finally{RedesignTutorialClearanceMs=RedRiggingElapsed(started);}
     }
     static readonly Unity.Profiling.ProfilerMarker RedSharkHeroMarker=new Unity.Profiling.ProfilerMarker("Opening.SharkHero");
-    void RedSeparateTutorialShark(float margin,Vector3? escape=null)
+    void RedSeparateTutorialShark(float margin,Vector3? escape=null,bool preciseContact=false)
     {
         using var measured=RedSharkHeroMarker.Auto();
         var skin=RedContactSkin();if(skin==null||redRiggingSkinTree==null)return;
@@ -310,16 +350,30 @@ public sealed partial class Story1WreckBattle
         // The shark can continue its committed attack only while the actual
         // posed skin stays clear of the hero's measured full-body envelope.
         // Query translations against this one posed tree, avoiding extra bakes.
-        for(int attempt=0;attempt<32;attempt++)
+        Vector3 blockedOffset=Vector3.zero;bool hasBlockedOffset=false;
+        float GapAt(Vector3 candidate)
         {
-            float gap=float.PositiveInfinity;
+            float result=float.PositiveInfinity;
             foreach(var capsule in redTutorialBodySpace)
-                gap=Mathf.Min(gap,tree.CapsuleGapUpTo(capsule.a-offset,capsule.b-offset,capsule.radius,margin));
-            RedesignTutorialHeroGap=gap*scale;
-            if(gap>=margin)break;
-            offset+=away*Mathf.Clamp(margin-gap+.03f/scale,.15f/scale,3/scale);
+                result=Mathf.Min(result,tree.CapsuleGapUpTo(capsule.a-candidate,capsule.b-candidate,capsule.radius,margin));
+            return result;
         }
-        if(RedesignTutorialHeroGap<margin*scale)
+        // Past 32 short steps the old fallback threw the whole animal a body
+        // length behind the hero for one frame. Keep escaping the same way,
+        // with growing steps, before resorting to it.
+        bool cleared=false;
+        for(int attempt=0;attempt<64;attempt++)
+        {
+            float gap=GapAt(offset);
+            RedesignTutorialHeroGap=gap*scale;
+            if(gap>=margin){cleared=true;break;}
+            blockedOffset=offset;hasBlockedOffset=true;
+            offset+=away*Mathf.Clamp(margin-gap+.03f/scale,.15f/scale,3/scale)*(attempt<32?1:2);
+        }
+        // Re-testing the rescaled gap against the rescaled margin disagreed
+        // with the loop by float rounding, so an already clear pose took the
+        // fallback and was thrown a full body length (57 m) for one frame.
+        if(!cleared)
         {
             float front=float.NegativeInfinity,near=float.PositiveInfinity;
             foreach(var point in redTutorialSharkVertices)front=Mathf.Max(front,Vector3.Dot(point,forward));
@@ -327,6 +381,21 @@ public sealed partial class Story1WreckBattle
             offset-=forward*Mathf.Max(0,front+Vector3.Dot(offset,forward)-near+margin+.03f/scale);
             RedesignTutorialHeroGap=float.PositiveInfinity;
             foreach(var capsule in redTutorialBodySpace)RedesignTutorialHeroGap=Mathf.Min(RedesignTutorialHeroGap,tree.CapsuleGap(capsule.a-offset,capsule.b-offset,capsule.radius)*scale);
+        }
+        // Coarse clearance steps intentionally leave a safety pad during a
+        // near miss. A scripted contact instead needs the last clear position
+        // on the exact posed skin: its 15 cm minimum step can overshoot the
+        // 3.5 cm hit window and strand the finale forever. Refine only the
+        // bracket already proved blocked/clear, retaining full-body separation.
+        if(preciseContact&&hasBlockedOffset&&(cleared||RedesignTutorialHeroGap>=margin*scale))
+        {
+            Vector3 clearOffset=offset;
+            for(int i=0;i<14&&(clearOffset-blockedOffset).sqrMagnitude>.000001f/(scale*scale);i++)
+            {
+                Vector3 middle=(blockedOffset+clearOffset)*.5f;
+                if(GapAt(middle)>=margin)clearOffset=middle;else blockedOffset=middle;
+            }
+            offset=clearOffset;RedesignTutorialHeroGap=GapAt(offset)*scale;
         }
         shark.position+=local?matrix.MultiplyVector(offset):offset;
     }

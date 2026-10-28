@@ -1,0 +1,57 @@
+{
+  "issue": "QA-011",
+  "baselineCheckpoint": "e024611",
+  "reproduction": {
+    "file": "nailong-target-loss-before.json",
+    "failedChecks": 6,
+    "totalChecks": 20,
+    "inactiveTarget": "Attack, graph playing, pending glob released",
+    "destroyedTarget": "Idle, graph stopped, no release"
+  },
+  "repair": {
+    "path": "Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongAI.cs",
+    "clearInactiveTargetBeforeThrottledAcquisition": true,
+    "stopPendingPresentationOnAttackExit": true
+  },
+  "verification": {
+    "targetLoss": 20,
+    "cancellationMatrix": 75,
+    "inFlight": 6,
+    "totalPostFix": 101,
+    "allPassed": true,
+    "recompile": {
+      "failed": false,
+      "errors": []
+    },
+    "visualImprovementClaim": false
+  },
+  "rejectedSuspicion": "Phase graph cancellation was already performed by NailongAttackMotion.Stop; original 75-check matrix passes without a production graph fix.",
+  "infrastructure": "One run_script network error produced no result or fixture marker; verified no fixture objects before retry. Helper first compile lacked UnityEngine.Playables import; corrected before execution. Neither is a project compilation regression.",
+  "source": {
+    "path": "Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongAI.cs",
+    "exactExpectedEdits": true,
+    "backup": ".codex/autoqa-source-before/NailongAI-batch008.cs",
+    "cleanAtEntry": true
+  },
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "current": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "baseline": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "current": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "baseline": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "unchanged": true
+    }
+  ],
+  "editor": {
+    "id": 35488,
+    "handles": 497916,
+    "threads": 175,
+    "responding": true
+  },
+  "next": "Cappuccino AI/ultimate cancellation and delayed attack cleanup; inspect current user changes before tests."
+}

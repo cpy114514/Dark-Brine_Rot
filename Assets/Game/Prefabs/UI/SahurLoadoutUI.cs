@@ -41,7 +41,8 @@ namespace Mavis
         Text pickupNotice;
         float noticeUntil;
         int editingEquipment = -1;
-        GameObject root, panel;
+        [SerializeField, HideInInspector] GameObject root;
+        GameObject panel;
         CanvasGroup hud;
         Text loadoutHint;
         ThirdPersonPlayerController movement;
@@ -78,6 +79,14 @@ namespace Mavis
             panel.SetActive(false);
             GameLocalization.Changed += RefreshLanguage;
             RefreshVisibility();
+        }
+
+        void OnEnable()
+        {
+            // A script reload retains native canvases but resets managed UI caches.
+            if (active != null) return;
+            if (root != null) { root.SetActive(false); Destroy(root); }
+            Awake();
         }
 
         void Update()
@@ -165,7 +174,7 @@ namespace Mavis
             {
                 AddItemRow("Sahur stick",weapons!=null&&!weapons.HasStick?"Weapon lost":weapons!=null&&weapons.CurrentWeapon==SahurWeaponLoadout.Weapon.Stick?"Equipped":"Ready to equip",count++,()=>InspectWeapon(0));
                 AddItemRow("Capri twin blades",weapons!=null&&weapons.HasTwinBlades?(weapons.UsesTwinBlades?"Equipped":"Ready to equip"):"Locked · Defeat Capri",count++,()=>InspectWeapon(1));
-                AddItemRow("M4A1 assault rifle",weapons!=null&&weapons.HasM4A1?(weapons.UsesRifle?"Equipped":"Ready to equip"):"Not collected · Find it on the island",count++,()=>InspectWeapon(2));
+                AddItemRow("M4A1 assault rifle",weapons!=null&&!weapons.RifleUnlocked?FirstIslandBossProgression.RifleUnlockHint:weapons!=null&&weapons.HasM4A1?(weapons.UsesRifle?"Equipped":"Ready to equip"):"Not collected · Find it on the island",count++,()=>InspectWeapon(2));
                 InspectWeapon(selectedWeapon>=0?selectedWeapon:weapons!=null?(int)weapons.CurrentWeapon:0);
             }
             else
@@ -200,20 +209,30 @@ namespace Mavis
             selectedWeapon=index;selectedItem=null;
             if(specimen)specimen.SetDrawing(index==2?EquipmentJournalInk.Drawing.Rifle:index==0?EquipmentJournalInk.Drawing.Stick:EquipmentJournalInk.Drawing.Blades);
             bool owned=weapons!=null&&weapons.Owns((SahurWeaponLoadout.Weapon)index);
+            bool rifleLocked=index==2&&weapons!=null&&!weapons.RifleUnlocked;
             bool lostStick=index==0 && weapons!=null && !weapons.HasStick;
             bool equipped=owned && weapons!=null && index==(int)weapons.CurrentWeapon;
             itemTitle.text=SahurWeaponLoadout.DisplayName((SahurWeaponLoadout.Weapon)index);
             selectionStatus.text=equipped?"Currently equipped":owned?"Unlocked · Ready to equip":"Locked";
             details.text=index==0?"Wooden club\n\nLMB: three-hit combo\nHold RMB: charged strike (also while moving)\nHold LMB + RMB: two-handed spin\nJump + LMB: overhead chop\nE: throw and recall\n\nWeak points take 1.5x damage.":"Capri twin blades\n\nLMB: twin-blade combo\nHold RMB: X charge while moving; release to rush and cut outward\nPartial charge: lower damage, longer rush (up to 20m)\nFull charge (2.6s): maximum damage, 16m rush\nHold LMB + RMB: spin attack\n"+GameInputSettings.Get(GameInputSettings.Action.Guard).ToString()+": hold to block all frontal attacks\n\nInvulnerable during rush travel. Walls stop the rush.\nGuarding and spinning consume stamina.";
-            if(index==2)details.text="M4A1: ranged and anti-air support.\n\nLMB: automatic fire\nHold RMB: aim while standing or walking\nSprint: carry and fire; aiming is disabled\n30-round magazine - R: reload\nGround damage falls with distance.\nAttack the aircraft's engines during its counter window.\nSupply camps: up to 45 rounds, 45s restock.";
+            if(index==2)details.text="M4A1: ranged and anti-air support.\n\nLMB: automatic fire\nHold RMB: aim and zoom while standing or walking\nSprint: carry and fire; aiming is disabled\n30-round magazine - R: reload\nGround damage falls with distance.\nAttack the aircraft's engines during its counter window.\nSupply camps: up to 45 rounds, 45s restock.";
             actionText.text=equipped?"Equipped":owned?"Equip this weapon":index==2?"Collect on the island to unlock":"Defeat Capri to unlock";
             equipButton.interactable=owned&&!equipped;unequipButton.gameObject.SetActive(false);
+            if(rifleLocked)
+            {
+                selectionStatus.text="Locked";
+                details.text=FirstIslandBossProgression.RifleUnlockHint+".\n\n"+details.text;
+                actionText.text="Defeat "+GameLocalization.Text("enemy.name")+" first";
+                equipButton.interactable=false;
+            }
             HighlightSelection();
         }
         void InspectItem(EquipmentItem item)
         {
             selectedItem=item;selectedWeapon=-1;
             var glasses=GetComponent<WeaknessGlasses>();bool isGlasses=item&&item.id=="nailong_weakness_glasses";
+            var worn=GetComponent<SahurWearableEquipment>();bool wearable=SahurWearableEquipment.CanWear(item);
+            bool wearing=worn&&worn.IsEquipped(item);
             if(specimen)specimen.SetDrawing(isGlasses?EquipmentJournalInk.Drawing.Glasses:SlotDrawing(Mathf.Max(0,editingEquipment)));
             bool owned=item&&inventory!=null&&inventory.Count(item)>0;
             itemTitle.text=item?item.LocalizedName:"No gear";
@@ -223,6 +242,14 @@ namespace Mavis
             if(isGlasses)unequipText.text="Unequip Glasses";
             equipButton.interactable=isGlasses&&owned&&glasses&&!glasses.Equipped;
             unequipButton.gameObject.SetActive(isGlasses&&glasses&&glasses.Equipped);
+            if(wearable)
+            {
+                selectionStatus.text=wearing?"Equipped":owned?"Collected":"Locked";
+                details.text="Dropped by Nailong.\n\nWear this item on Sahur. It follows his movements and remains equipped when you load your save.\n\nAppearance only; your combat stats stay the same.";
+                actionText.text=wearing?"Equipped":owned?"Equip on Sahur":"Defeat Nailong to collect";
+                equipButton.interactable=owned&&!wearing;
+                unequipText.text="Unequip";unequipButton.gameObject.SetActive(wearing);
+            }
             HighlightSelection();
         }
         void HighlightSelection()
@@ -253,9 +280,10 @@ namespace Mavis
             if(!IsOpen)return;
             if(selectedWeapon>=0)weapons?.TryEquip((SahurWeaponLoadout.Weapon)selectedWeapon,true);
             else if(selectedItem&&selectedItem.id=="nailong_weakness_glasses")GetComponent<WeaknessGlasses>()?.Equip();
+            else if(selectedItem)GetComponent<SahurWearableEquipment>()?.Equip(selectedItem);
             RefreshLanguage();
         }
-        public void UnequipSelection(){if(!IsOpen)return;GetComponent<WeaknessGlasses>()?.Unequip();RefreshLanguage();}
+        public void UnequipSelection(){if(!IsOpen)return;if(selectedItem&&selectedItem.id!="nailong_weakness_glasses")GetComponent<SahurWearableEquipment>()?.Unequip(selectedItem.slot);else GetComponent<WeaknessGlasses>()?.Unequip();RefreshLanguage();}
 
         void OnCollected(EquipmentItem item)
         {
@@ -290,7 +318,7 @@ namespace Mavis
                 string locked=GameLocalization.Text("Locked"),missing=GameLocalization.Text("Not collected");
                 weaponHint.text=(weapons.WeaponMissing?GameLocalization.Text("Weapon lost"):GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName)+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+(weapons.HasStick?"":" · "+GameLocalization.Text("Weapon lost"))+
                     "\n[2] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.CapriTwinBlades)+(weapons.HasTwinBlades?"":" · "+locked)+
-                    "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(weapons.HasM4A1?"":" · "+missing);
+                    "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(!weapons.RifleUnlocked?" · "+locked:weapons.HasM4A1?"":" · "+missing);
             }
             if (editingEquipment >= 0) SelectEquipment((EquipmentSlot)editingEquipment);
             else SelectSkillForAssignment(EditingSkill);

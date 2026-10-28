@@ -157,7 +157,7 @@ namespace Mavis
             Add("M4A1 · {0} m", "M4A1 · {0} 米", "supply.gunDistance");
             Add("AMMO +{0} · {1} m", "弹药 +{0} · {1} 米", "supply.ammoDistance");
             Add("M4A1 ammunition ×{0}\nWalk up to collect", "M4A1 弹药 ×{0}\n靠近拾取", "rifle.ammoPickup");
-            Add("M4A1 assault rifle\n\nLeft mouse: automatic fire\n20 damage per round · 30-round magazine\nR: reload · 210-round reserve capacity\n\nAn empty reload takes 7 seconds; remaining rounds shorten the reload.","M4A1 突击步枪\n\n左键：全自动射击\n每发 20 伤害 · 弹夹 30 发\nR：换弹 · 备用弹药上限 210 发\n\n空弹夹换弹 7 秒；剩余子弹越多，换弹越快。");
+            Add("M4A1 assault rifle\n\nLeft mouse: automatic fire\n20 damage per round · 30-round magazine\nR: reload · 210-round reserve capacity\n\nAn empty reload takes 4.5 seconds; remaining rounds shorten the reload.","M4A1 突击步枪\n\n左键：全自动射击\n每发 20 伤害 · 弹夹 30 发\nR：换弹 · 备用弹药上限 210 发\n\n空弹夹换弹 4.5 秒；剩余子弹越多，换弹越快。");
             Add("Loot · Walk up to collect","掉落物 · 靠近拾取"); Add("Current weapon","当前武器"); Add("Locked","未解锁"); Add("Not collected","未拾取");
             Add("Not collected · Find it on the island","未拾取 · 在岛上寻找"); Add("Collect on the island to unlock","在岛上拾取后解锁");
             Add("An M4A1 found on the island.\n\nPress 3 or use the button below to switch to it.","岛上拾取的 M4A1 突击步枪。\n\n按 3 或点击下方按钮切换持有。");

@@ -1,0 +1,7 @@
+# Diagonal jump chop — v266
+
+User clarification: jump chop starts at Sahur's upper right, chops diagonally downward, and finishes slightly left of the body. Apply to both current melee weapon modes; club remains one-handed and twin blades retain separate lanes. Preserve the 0.85-second full action, original active contact window, damage, controls and controller-owned physical jump. This is a targeted revision of the approved jump-chop design, not a new move.
+
+Production: duplicate the retained v265 actions into v266, preserve rig/rest/source actions, review source front/side/three-quarter plus native gameplay contact/transition. Source and native acceptance are SECOND PASS; no human final artistic approval is inferred.
+
+Completed: source front/three-quarter and native gameplay reviewed. 369 native SRP frames and 27 input/contact/recovery checks pass. The exact v266 clip was verified while rendering both weapon modes. 24 controller/timing/recovery-mask contracts pass across all three controllers. Actual primary weapon endpoints in actor-local space confirm right/up to left/down: club (0.502,1.073) to (-0.551,-1.070); blade (0.642,0.734) to (-0.197,-0.760). Old revisions are retained, only the two jump states are rebound; the combination installer also preserves v266. Campaign save remains byte-identical, original five scenes restored, no build/upload. Preview .codex/jump-diagonal-v266/Sahur-DiagonalJumpChops-v266.mp4.

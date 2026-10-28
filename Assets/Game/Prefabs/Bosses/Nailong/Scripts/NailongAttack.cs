@@ -58,7 +58,7 @@ namespace Mavis
         public bool TryHit(Transform target, float reach, float damageMultiplier = 1f,
             float pushDistance = 0f, bool ignoreFacing = false, Vector3? rangeOrigin = null)
         {
-            if (target == null) return false;
+            if (target == null || !FirstIslandBossProgression.CanChallenge(this, FirstIslandObjectives.BossKind.Nailong)) return false;
             var playerHealth = target.GetComponentInParent<PlayerHealth>();
             if (playerHealth != null && (playerHealth.currentHealth <= 0f || playerHealth.IsProtected)) return false;
             // Allow the authored Sahur scene instance, which is Untagged but

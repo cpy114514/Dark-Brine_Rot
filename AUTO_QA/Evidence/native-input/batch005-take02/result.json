@@ -1,0 +1,127 @@
+{
+  "passed": true,
+  "error": null,
+  "finalSection": "keyboard weapon switching",
+  "checks": [
+    "Equip Stick",
+    "Stick native actor grounded",
+    "Stick queued LMB starts combo one through PlayerInput",
+    "Stick second real click continues combo",
+    "Stick third real click enters finisher",
+    "Stick combo recovers without further input",
+    "Stick real dodge key cancels recovery and starts evasion",
+    "Stick held RMB charges while moving",
+    "Stick real RMB release starts heavy strike",
+    "Stick simultaneous jump/LMB selects aerial chop",
+    "Stick jump chop lands and recovers",
+    "Stick real LMB respects total control lock",
+    "Stick fresh LMB works after control returns",
+    "Equip CapriTwinBlades",
+    "CapriTwinBlades native actor grounded",
+    "CapriTwinBlades queued LMB starts combo one through PlayerInput",
+    "CapriTwinBlades second real click continues combo",
+    "CapriTwinBlades third real click enters finisher",
+    "CapriTwinBlades combo recovers without further input",
+    "CapriTwinBlades real dodge key cancels recovery and starts evasion",
+    "CapriTwinBlades held RMB charges while moving",
+    "CapriTwinBlades real RMB release starts heavy strike",
+    "CapriTwinBlades simultaneous jump/LMB selects aerial chop",
+    "CapriTwinBlades jump chop lands and recovers",
+    "CapriTwinBlades real LMB respects total control lock",
+    "CapriTwinBlades fresh LMB works after control returns",
+    "Real digit1 equips stick",
+    "Real digit2 equips twin blades continuously"
+  ],
+  "inputRestored": true,
+  "nativeFrames": 1258,
+  "firstFrame": 19200,
+  "lastFrame": 20457,
+  "sections": {
+    "setup": {
+      "frames": 81,
+      "firstFrame": 19200,
+      "lastFrame": 19280,
+      "firstTime": 321.529938,
+      "lastTime": 322.863251
+    },
+    "Stick combo": {
+      "frames": 185,
+      "firstFrame": 19281,
+      "lastFrame": 19465,
+      "firstTime": 322.879944,
+      "lastTime": 325.9466
+    },
+    "Stick dodge cancel": {
+      "frames": 84,
+      "firstFrame": 19466,
+      "lastFrame": 19549,
+      "firstTime": 325.963257,
+      "lastTime": 327.3466
+    },
+    "Stick moving charge": {
+      "frames": 177,
+      "firstFrame": 19550,
+      "lastFrame": 19726,
+      "firstTime": 327.363251,
+      "lastTime": 330.2966
+    },
+    "Stick simultaneous jump attack": {
+      "frames": 95,
+      "firstFrame": 19727,
+      "lastFrame": 19821,
+      "firstTime": 330.313263,
+      "lastTime": 331.879944
+    },
+    "Stick total ownership lock": {
+      "frames": 48,
+      "firstFrame": 19822,
+      "lastFrame": 19869,
+      "firstTime": 331.8966,
+      "lastTime": 332.679932
+    },
+    "CapriTwinBlades combo": {
+      "frames": 195,
+      "firstFrame": 19870,
+      "lastFrame": 20064,
+      "firstTime": 332.6966,
+      "lastTime": 335.929932
+    },
+    "CapriTwinBlades dodge cancel": {
+      "frames": 91,
+      "firstFrame": 20065,
+      "lastFrame": 20155,
+      "firstTime": 335.9466,
+      "lastTime": 337.4466
+    },
+    "CapriTwinBlades moving charge": {
+      "frames": 127,
+      "firstFrame": 20156,
+      "lastFrame": 20282,
+      "firstTime": 337.463257,
+      "lastTime": 339.563263
+    },
+    "CapriTwinBlades simultaneous jump attack": {
+      "frames": 95,
+      "firstFrame": 20283,
+      "lastFrame": 20377,
+      "firstTime": 339.579926,
+      "lastTime": 341.1466
+    },
+    "CapriTwinBlades total ownership lock": {
+      "frames": 48,
+      "firstFrame": 20378,
+      "lastFrame": 20425,
+      "firstTime": 341.163269,
+      "lastTime": 341.9466
+    },
+    "keyboard weapon switching": {
+      "frames": 32,
+      "firstFrame": 20426,
+      "lastFrame": 20457,
+      "firstTime": 341.963257,
+      "lastTime": 342.479919
+    }
+  },
+  "traceArchive": "raw-result.json.gz",
+  "archiveVerified": true
+}

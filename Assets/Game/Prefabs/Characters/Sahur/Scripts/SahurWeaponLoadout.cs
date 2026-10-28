@@ -9,6 +9,8 @@ namespace Mavis
         public enum Weapon { Stick, CapriTwinBlades, M4A1 }
         public Weapon CurrentWeapon { get; private set; }
         public const string M4ItemPath = "Equipment/M4A1/M4A1";
+        public const string M4ItemId = "weapon_m4a1";
+        public bool RifleUnlocked => FirstIslandBossProgression.CanObtainRifle(this);
         public Transform HeldRifle => rifle ? rifle.transform : null;
         SahurRifleAnimation rifleAnimation;
         public bool UsesRifle => CurrentWeapon == Weapon.M4A1;
@@ -67,6 +69,7 @@ namespace Mavis
         void Update()
         {
             if (!initialized) Initialize();
+            if (UsesRifle && !RifleUnlocked) TryEquip(Weapon.Stick);
             if (restoredWeapon.HasValue) TryEquip(restoredWeapon.Value);
             if (!initialized || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
                 Cursor.lockState != CursorLockMode.Locked || Keyboard.current == null) return;
@@ -79,6 +82,7 @@ namespace Mavis
         public bool TryEquip(Weapon weapon, bool fromMenu = false)
         {
             Initialize();
+            if (weapon == Weapon.M4A1 && !RifleUnlocked) return false;
             if (!initialized || !enabled || !gameObject.activeInHierarchy || (health && health.currentHealth <= 0) ||
                 PauseSettingsMenu.IsOpen || (SahurLoadoutUI.BlocksInput && !(fromMenu && SahurLoadoutUI.IsOpen)) ||
                 (movement && (!movement.enabled || movement.Swimming || movement.ExternalControlLock)) ||
@@ -106,8 +110,9 @@ namespace Mavis
         {
             Initialize();
             if (ownsTwinBlades && inventory && twinBlades && !HasTwinBlades) inventory.Collect(twinBlades);
-            if(ownsM4A1 && inventory && rifleItem && !HasM4A1)inventory.Collect(rifleItem);
-            restoredWeapon = Owns(selected) ? selected : Weapon.Stick;
+            // Saved ownership is retained, but progression still controls use.
+            if(ownsM4A1 && inventory && rifleItem && !HasM4A1)inventory.RestoreStack(rifleItem,1);
+            restoredWeapon = Owns(selected) && (selected != Weapon.M4A1 || RifleUnlocked) ? selected : Weapon.Stick;
             // A saved pose may still be swimming or finishing its arrival sequence.
             // Retry on Update once normal weapon switching is available.
             TryEquip(restoredWeapon.Value);

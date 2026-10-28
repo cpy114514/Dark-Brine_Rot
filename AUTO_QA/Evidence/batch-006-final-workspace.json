@@ -1,0 +1,47 @@
+{
+  "playing": false,
+  "compileFailed": false,
+  "pendingSetup": false,
+  "inputFixture": false,
+  "previewCleared": true,
+  "inputSettingsValid": true,
+  "devices": [
+    {
+      "deviceId": 1,
+      "name": "Keyboard",
+      "enabled": true
+    },
+    {
+      "deviceId": 2,
+      "name": "Mouse",
+      "enabled": true
+    }
+  ],
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "loaded": true,
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "loaded": true,
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "loaded": true,
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "loaded": true,
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "loaded": true,
+      "dirty": false
+    }
+  ]
+}

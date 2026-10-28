@@ -136,16 +136,21 @@ public sealed partial class Story1WreckBattle
         long started=System.Diagnostics.Stopwatch.GetTimestamp();
         using var measurement=RedSolidsMarker.Auto();
         RedesignSolidUnresolved=0;
+        Vector3 authored=shark.position,afterHero=authored;
         try
         {
             RedSolidHeroTimber();
             bool tailContact=RedesignStage==OpeningStage.Duel&&redesignTime>=21.2f&&!redTailHit;
             if(!tailContact&&!redTailHit)
             {
-                Vector3 away=RedesignStage==OpeningStage.Duel&&redesignTime>=10&&redesignTime<13?Vector3.up:
+                // During the counter the nose rises over the hero, where its
+                // horizontal bearing flips from frame to frame; back off along the approach.
+                bool duel=RedesignStage==OpeningStage.Duel;
+                Vector3 away=duel&&redesignTime>=10&&redesignTime<13?Vector3.up:duel&&redesignTime>=3&&redesignTime<6.8f?redForward:
                     Vector3.ProjectOnPlane(sharkAnimator.NoseWorldPoint-RedChest,Vector3.up).normalized;
                 RedSeparateTutorialShark(.18f,away);
             }
+            afterHero=shark.position;
             var skin=RedContactSkin();if(skin==null)return;
             RedSolidIndex(skin);
             // Newly fractured shards are included in the same pass. They are
@@ -179,8 +184,14 @@ public sealed partial class Story1WreckBattle
             // body pass. Verify those new pieces in this very impact frame.
             RedSolidHeroTimber(skin);
         }
-        finally{RedesignSolidMs=RedRiggingElapsed(started);}
+        finally
+        {
+            RedesignSolidMs=RedRiggingElapsed(started);
+            RedesignSolidHeroPush=afterHero-authored;RedesignSolidWoodPush=shark.position-afterHero;
+        }
     }
+    public Vector3 RedesignSolidHeroPush { get; private set; }
+    public Vector3 RedesignSolidWoodPush { get; private set; }
     internal void RedResolveOpeningSolids()=>RedResolveOpeningContacts();
     void RedSolidHeroTimber(SkinnedMeshRenderer skin=null)
     {

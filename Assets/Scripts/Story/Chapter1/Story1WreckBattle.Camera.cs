@@ -21,6 +21,57 @@ public sealed partial class Story1WreckBattle
     static readonly float[] RedClearClimbRanges = { 1 };
     static readonly float[] RedClearProneRanges = { 1, .85f, 1.2f };
 
+    // Director shots set an absolute pose after CombatCameraShake runs, so
+    // cinematic impacts own a rotation-only shake that cannot move the lens into wood.
+    float redShakeStrength, redShakeAge = 1, redShakeDuration = .01f;
+    int redShakeFrame = -1;
+    Quaternion redShakeRotation = Quaternion.identity;
+    public int RedesignImpactShakes { get; private set; }
+
+    void RedImpactShake(float degrees, float seconds = .4f)
+    {
+        float remaining = redShakeStrength * Mathf.Pow(1 - Mathf.Clamp01(redShakeAge / redShakeDuration), 2);
+        redShakeStrength = Mathf.Max(remaining, degrees);
+        redShakeAge = 0;
+        redShakeDuration = Mathf.Max(.05f, seconds);
+        RedesignImpactShakes++;
+    }
+
+    Quaternion RedShakeRotation()
+    {
+        if (redShakeFrame != Time.frameCount)
+        {
+            redShakeFrame = Time.frameCount;
+            // Unscaled, so the shake still reads during hit-stop and slow motion.
+            redShakeAge += Mathf.Min(Time.unscaledDeltaTime, .05f);
+            float fade = 1 - Mathf.Clamp01(redShakeAge / redShakeDuration);
+            float a = redShakeStrength * fade * fade;
+            float phase = redShakeAge * 38;
+            redShakeRotation = a <= 0 ? Quaternion.identity :
+                Quaternion.Euler(Mathf.Sin(phase * 1.13f) * a * .8f, Mathf.Sin(phase * .71f + 1.3f) * a * .5f, Mathf.Sin(phase) * a);
+        }
+        return redShakeRotation;
+    }
+
+    // Original-scale shark bodies pass far wider than their nose path. Frame
+    // both actors from Sahur's side, away from the jaws, so the animal cannot
+    // sweep through the lens. Direction eases (or stays locked) within a shot.
+    int redTwoShot = int.MinValue;
+    Vector3 redTwoShotDirection;
+    void RedTwoShot(int shot, float distance, float lift, float side, float fov, bool locked = false, float lean = .45f)
+    {
+        Vector3 hero = RedChest, nose = sharkAnimator.NoseWorldPoint;
+        Vector3 toShark = Vector3.ProjectOnPlane(nose - hero, Vector3.up);
+        Vector3 wanted = toShark.sqrMagnitude > 1 ? toShark.normalized : redForward;
+        if (redTwoShot != shot) { redTwoShot = shot; redTwoShotDirection = wanted; }
+        else if (!locked)
+            redTwoShotDirection = Vector3.Slerp(redTwoShotDirection, wanted, 1 - Mathf.Exp(-Mathf.Max(0, Time.deltaTime) / .7f)).normalized;
+        Vector3 across = Vector3.Cross(Vector3.up, redTwoShotDirection);
+        Vector3 at = hero - redTwoShotDirection * distance + across * (distance * side) + Vector3.up * lift;
+        // A distant animal should pull the composition, not empty Sahur's side of it.
+        RedShot(shot, at, hero + Vector3.ClampMagnitude(nose - hero, 18) * lean, fov);
+    }
+
     /// <summary>Weighted real-wood obstruction of the returned camera; zero is clear.</summary>
     public float RedesignCameraWoodObstruction { get; private set; }
 
@@ -187,7 +238,7 @@ public sealed partial class Story1WreckBattle
         Vector3 delta = wanted - focus;
         Vector3 planar = Quaternion.AngleAxis(offset.x, Vector3.up) * Vector3.ProjectOnPlane(delta, Vector3.up) * offset.z;
         Vector3 at = focus + planar + Vector3.up * (delta.y + offset.y);
-        if (RedesignStage == OpeningStage.Pursuit || RedesignStage == OpeningStage.Duel && redClearShot == 34)
+        if (RedesignStage == OpeningStage.Pursuit || RedesignStage == OpeningStage.Duel && (redClearShot == 34 || redClearShot == 44))
         {
             // Sample the current displaced ocean at the actual lens and its
             // near surroundings, not at Sahur or at the board's centre.

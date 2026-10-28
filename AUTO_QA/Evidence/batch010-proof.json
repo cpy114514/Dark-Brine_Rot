@@ -1,0 +1,95 @@
+{
+  "baseline": "62a136b",
+  "scope": [
+    "Bombardino ownership/death cleanup",
+    "Ordnance time and collision",
+    "Blast/fire hit contracts",
+    "Footprint function and allocation-counter validation",
+    "Camera additive offset",
+    "Both weapons native PlayerInput integration"
+  ],
+  "fixes": [
+    "QA-013 invalid target encounter continuation",
+    "QA-014 disabled owner flame emission",
+    "QA-015 ordnance dropped time and frame-dependent gravity"
+  ],
+  "acceptedSuites": [
+    {
+      "file": "extended-bombardino-final.json",
+      "checks": 44
+    },
+    {
+      "file": "extended-ballistics-after.json",
+      "checks": 9
+    },
+    {
+      "file": "extended-contacts-final.json",
+      "checks": 11
+    },
+    {
+      "file": "extended-hotpaths-functional.json",
+      "checks": 7
+    },
+    {
+      "file": "native-input/batch010-player-integration/result.json",
+      "checks": 28
+    }
+  ],
+  "totalAcceptedChecks": 99,
+  "nativePlayerFrames": 1256,
+  "performance": "Unavailable: positive-control 1MB allocation also reads zero. Initial zero allocation result invalidated; no footprint source optimization.",
+  "rejectedTests": [
+    "extended-hotpaths-before: missing allocation-counter qualification",
+    "extended-hotpaths-control: expected control failure, counter unusable",
+    "extended-contacts-after: wrong raw-damage expectation and uncleared player recovery clock; corrected fixture isolates cadence and respects mitigation"
+  ],
+  "source": [
+    {
+      "path": "Assets/Game/Prefabs/Bosses/BombardinoCrocodilo/Scripts/BombardinoBoss.cs",
+      "cleanAtEntry": true,
+      "unchanged": false,
+      "originalSha256": "883592ae9bdebe150c8cd4b5a9ee88dd75b34b4f4d56404aea550451780a9937"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Bosses/BombardinoCrocodilo/Scripts/BombardinoFlameJet.cs",
+      "cleanAtEntry": true,
+      "unchanged": false,
+      "originalSha256": "9ba9328e1a7302b5798357876605a8270e81cdeafd4d8eeed24a78be548dc592"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Bosses/BombardinoCrocodilo/Scripts/BombardinoOrdnance.cs",
+      "cleanAtEntry": true,
+      "unchanged": false,
+      "originalSha256": "15c7f2197e7d80ae6f9669a859d7d6dbbb461d845a7a6bf3c7c760955c749e0e"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs",
+      "cleanAtEntry": false,
+      "unchanged": true,
+      "originalSha256": "def8c64e1561c8941d807865bf4436b53d515a104bdd3a67e75ac05f63e59d0e"
+    }
+  ],
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "current": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "baseline": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "current": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "baseline": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "unchanged": true
+    }
+  ],
+  "workspace": "Observed external switch to clean CombatTest; preserved new setup and restored it instead of overwriting with the old five-scene setup. Both setups archived in batch010-workspace-change.json.",
+  "editor": {
+    "pid": 35488,
+    "handles": 518647,
+    "threads": 174,
+    "responding": true
+  },
+  "visualClaim": false,
+  "validationScope": "Current user working tree, including existing modified prefabs/player/combat source, not clean HEAD."
+}

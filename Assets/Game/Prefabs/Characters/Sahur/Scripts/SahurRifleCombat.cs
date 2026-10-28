@@ -10,7 +10,7 @@ namespace Mavis
     {
         public const int MagazineCapacity = 30, ReserveCapacity = 210;
         public const int StartingReserveRounds = 90;
-        public const float BulletDamage = 20f, EmptyReloadSeconds = 7f;
+        public const float BulletDamage = 20f, EmptyReloadSeconds = 4.5f;
         [Min(1)] public float roundsPerSecond = 10f;
         [Min(20)] public float bulletSpeed = 240f;
         [Min(10)] public float range = 180f;
@@ -58,7 +58,7 @@ namespace Mavis
         float nextShot, firePoseUntil, flashUntil, hitUntil, nextHud;
         int bulletCursor, impactCursor, shownAmmo = -1, shownReserve = -1;
         bool pendingShot, wasDead, shownReload, shownBlocked;
-        bool CanOperate => enabled && loadout && loadout.UsesRifle && loadout.HeldRifle && health && health.currentHealth > 0 && movement && movement.RifleLocomotionAllowed && !(death && death.IsDead);
+        bool CanOperate => enabled && loadout && loadout.UsesRifle && loadout.RifleUnlocked && loadout.HeldRifle && health && health.currentHealth > 0 && movement && movement.RifleLocomotionAllowed && !(death && death.IsDead);
 
         void Awake()
         {

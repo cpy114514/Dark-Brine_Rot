@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "expectDeferred": true,
+  "immediateVertices": 33,
+  "warnings": [],
+  "checks": [
+    "Fixture starts with expected 8x4 terrain geometry",
+    "Shore foam shader and generated child present",
+    "Native OnValidate leaves terrain unchanged until normal update",
+    "Native OnValidate creates no child objects",
+    "Updated 12x4 terrain geometry appears by LateUpdate",
+    "Physics and render mesh remain synchronized",
+    "Exactly one regenerated foam child",
+    "Material tiling updates preserve terrain vertex positions",
+    "Material tiling updates preserve shore vertex positions",
+    "Repeated validations do not duplicate foam children",
+    "No OnValidate SendMessage lifecycle warnings"
+  ]
+}

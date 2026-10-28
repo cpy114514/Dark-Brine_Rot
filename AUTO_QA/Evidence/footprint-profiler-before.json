@@ -1,0 +1,93 @@
+{
+  "validMeasurement": true,
+  "error": null,
+  "controlSamples": 16,
+  "footprintSamples": 16,
+  "controlBytes": 16777728,
+  "footprintBytes": 384000,
+  "bytesPer1000Calls": 24000.0,
+  "meanMsPer1000Calls": 2.3511499762535095,
+  "rows": [
+    {
+      "frame": 0,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 1,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 3,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 4,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 5,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 6,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 7,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 8,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 9,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 10,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 11,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 12,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 13,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 14,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 15,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    },
+    {
+      "frame": 16,
+      "controlBytes": 1048608,
+      "footprintBytes": 24000
+    }
+  ],
+  "originalProfilerRestored": true
+}
