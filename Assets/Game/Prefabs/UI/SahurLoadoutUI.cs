@@ -206,7 +206,7 @@ namespace Mavis
             itemTitle.text=SahurWeaponLoadout.DisplayName((SahurWeaponLoadout.Weapon)index);
             selectionStatus.text=equipped?"Currently equipped":owned?"Unlocked · Ready to equip":"Locked";
             details.text=index==0?"Wooden club\n\nLMB: three-hit combo\nHold RMB: charged strike (also while moving)\nHold LMB + RMB: two-handed spin\nJump + LMB: overhead chop\nE: throw and recall\n\nWeak points take 1.5x damage.":"Capri twin blades\n\nLMB: twin-blade combo\nHold RMB: X charge while moving; release to rush and cut outward\nPartial charge: lower damage, longer rush (up to 20m)\nFull charge (2.6s): maximum damage, 16m rush\nHold LMB + RMB: spin attack\n"+GameInputSettings.Get(GameInputSettings.Action.Guard).ToString()+": hold to block all frontal attacks\n\nInvulnerable during rush travel. Walls stop the rush.\nGuarding and spinning consume stamina.";
-            if(index==2)details.text="M4A1: ranged and anti-air support.\n\nLMB: automatic fire\nHold RMB: aim while standing or walking\nSprint: carry and fire; aiming is disabled\n30-round magazine - R: reload\nGround damage falls with distance.\nAttack the aircraft's engines during its counter window.\nSupply camps: up to 45 rounds, 45s restock.";
+            if(index==2)details.text="M4A1: ranged and anti-air support.\n\nLMB: automatic fire\nHold RMB: aim and zoom while standing or walking\nSprint: carry and fire; aiming is disabled\n30-round magazine - R: reload\nGround damage falls with distance.\nAttack the aircraft's engines during its counter window.\nSupply camps: up to 45 rounds, 45s restock.";
             actionText.text=equipped?"Equipped":owned?"Equip this weapon":index==2?"Collect on the island to unlock":"Defeat Capri to unlock";
             equipButton.interactable=owned&&!equipped;unequipButton.gameObject.SetActive(false);
             if(rifleLocked)
@@ -222,6 +222,8 @@ namespace Mavis
         {
             selectedItem=item;selectedWeapon=-1;
             var glasses=GetComponent<WeaknessGlasses>();bool isGlasses=item&&item.id=="nailong_weakness_glasses";
+            var worn=GetComponent<SahurWearableEquipment>();bool wearable=SahurWearableEquipment.CanWear(item);
+            bool wearing=worn&&worn.IsEquipped(item);
             if(specimen)specimen.SetDrawing(isGlasses?EquipmentJournalInk.Drawing.Glasses:SlotDrawing(Mathf.Max(0,editingEquipment)));
             bool owned=item&&inventory!=null&&inventory.Count(item)>0;
             itemTitle.text=item?item.LocalizedName:"No gear";
@@ -231,6 +233,14 @@ namespace Mavis
             if(isGlasses)unequipText.text="Unequip Glasses";
             equipButton.interactable=isGlasses&&owned&&glasses&&!glasses.Equipped;
             unequipButton.gameObject.SetActive(isGlasses&&glasses&&glasses.Equipped);
+            if(wearable)
+            {
+                selectionStatus.text=wearing?"Equipped":owned?"Collected":"Locked";
+                details.text="Dropped by Nailong.\n\nWear this item on Sahur. It follows his movements and remains equipped when you load your save.\n\nAppearance only; your combat stats stay the same.";
+                actionText.text=wearing?"Equipped":owned?"Equip on Sahur":"Defeat Nailong to collect";
+                equipButton.interactable=owned&&!wearing;
+                unequipText.text="Unequip";unequipButton.gameObject.SetActive(wearing);
+            }
             HighlightSelection();
         }
         void HighlightSelection()
@@ -261,9 +271,10 @@ namespace Mavis
             if(!IsOpen)return;
             if(selectedWeapon>=0)weapons?.TryEquip((SahurWeaponLoadout.Weapon)selectedWeapon,true);
             else if(selectedItem&&selectedItem.id=="nailong_weakness_glasses")GetComponent<WeaknessGlasses>()?.Equip();
+            else if(selectedItem)GetComponent<SahurWearableEquipment>()?.Equip(selectedItem);
             RefreshLanguage();
         }
-        public void UnequipSelection(){if(!IsOpen)return;GetComponent<WeaknessGlasses>()?.Unequip();RefreshLanguage();}
+        public void UnequipSelection(){if(!IsOpen)return;if(selectedItem&&selectedItem.id!="nailong_weakness_glasses")GetComponent<SahurWearableEquipment>()?.Unequip(selectedItem.slot);else GetComponent<WeaknessGlasses>()?.Unequip();RefreshLanguage();}
 
         void OnCollected(EquipmentItem item)
         {

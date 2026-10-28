@@ -26,6 +26,13 @@ namespace Mavis
 
         void Awake()
         {
+            // Cappuccino has a fixed health cap in every encounter phase, including
+            // older scene instances authored before the current balance pass.
+            if(GetComponent<CappuccinoAI>()!=null)
+            {
+                currentHealth=(maxHealth>0?Mathf.Clamp01(currentHealth/maxHealth):1)*999f;
+                maxHealth=999f;
+            }
             FirstIslandBossProgression.Register(this);
             currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
             if(Application.isPlaying && !(this is Story1SharkHealth) && !GetComponent<CombatDamageFlash>())gameObject.AddComponent<CombatDamageFlash>();
@@ -35,6 +42,7 @@ namespace Mavis
         public virtual void ApplyDamage(float amount, Vector3 hitPoint)
         {
             if (IsDead || amount <= 0f || !FirstIslandBossProgression.CanDamage(this)) return;
+            amount=Mathf.Max(1f,Mathf.Round(amount));
             deathNotified=false;
             currentHealth = Mathf.Max(0f, currentHealth - amount);
             OnDamaged?.Invoke(amount);

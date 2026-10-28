@@ -61,7 +61,9 @@ namespace Mavis
 
         void BuildHud()
         {
-            solidSprite = Sprite.Create(Texture2D.whiteTexture, new Rect(0f, 0f, 1f, 1f),
+            // Use the whole texture so pixel edge snapping receives UVs spanning 0..1.
+            var white = Texture2D.whiteTexture;
+            solidSprite = Sprite.Create(white, new Rect(0f, 0f, white.width, white.height),
                 new Vector2(0.5f, 0.5f), 1f);
 
             var hud = new GameObject("Sahur Vitals HUD", typeof(RectTransform));
@@ -90,22 +92,14 @@ namespace Mavis
             SetTopRow(healthBack.rectTransform, 18f, -44f, 8f);
             healthFill = CreateImage(healthBack.transform, "Health Fill", new Color32(245, 245, 245, 255));
             SetFillRect(healthFill.rectTransform);
-            healthFill.type = Image.Type.Filled;
-            healthFill.fillMethod = Image.FillMethod.Horizontal;
-            healthFill.fillOrigin = (int)Image.OriginHorizontal.Left;
-            healthFill.fillAmount = 1f;
 
             var staminaBack = CreateImage(hud.transform, "Stamina Track", GameUITheme.Track);
-            SetTopRow(staminaBack.rectTransform, 46f, -62f, 3f);
-            staminaBack.rectTransform.sizeDelta=new Vector2(-64,3);
-            var sp=HealingText(hud.transform,"Stamina label",new Vector2(18,-52),new Vector2(28,20));
-            sp.text="SP";sp.fontSize=10;sp.color=GameUITheme.Secondary;
+            SetTopRow(staminaBack.rectTransform, 46f, -62f, 8f);
+            staminaBack.rectTransform.sizeDelta=new Vector2(-64,8);
+            var sp=HealingText(hud.transform,"Stamina label",new Vector2(18,-56),new Vector2(28,20));
+            sp.text="SP";sp.fontSize=13;sp.color=GameUITheme.Secondary;
             staminaFill = CreateImage(staminaBack.transform, "Stamina Fill", GameUITheme.Secondary);
             SetFillRect(staminaFill.rectTransform);
-            staminaFill.type = Image.Type.Filled;
-            staminaFill.fillMethod = Image.FillMethod.Horizontal;
-            staminaFill.fillOrigin = (int)Image.OriginHorizontal.Left;
-            staminaFill.fillAmount = 1f;
 
 
             var pack = CreateImage(hud.transform, "Healing pack icon", GameUITheme.Track);
@@ -191,8 +185,17 @@ namespace Mavis
             int maximum=health?Mathf.CeilToInt(health.maxHealth):0;
             if(hpValue && (hp!=shownHp || maximum!=shownMaxHp))
             {shownHp=hp;shownMaxHp=maximum;hpValue.text=hp+" / "+maximum;}
-            if (healthFill != null) healthFill.fillAmount = shownHealth;
-            if (staminaFill != null) staminaFill.fillAmount = shownStamina;
+            SetBarFill(healthFill, shownHealth);
+            SetBarFill(staminaFill, shownStamina);
+        }
+
+        static void SetBarFill(Image image, float amount)
+        {
+            if (!image) return;
+            // Resize the rectangle, retaining full UVs even for a sub-cell remaining amount.
+            // A Filled Image crops its UVs and can snap both ends to the same pixel edge.
+            image.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(amount), 1f);
+            image.enabled = amount > 0f;
         }
 
         Image CreateImage(Transform parent, string objectName, Color color)

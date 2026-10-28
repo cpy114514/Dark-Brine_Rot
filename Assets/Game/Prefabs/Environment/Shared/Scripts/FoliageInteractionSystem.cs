@@ -21,9 +21,11 @@ namespace Mavis
         readonly List<Body> bodies = new List<Body>(4);
         readonly List<Trail> trails = new List<Trail>(8);
         readonly Dictionary<Vector2Int, List<Renderer>> grass = new Dictionary<Vector2Int, List<Renderer>>();
+        readonly HashSet<Renderer> beachGrass = new HashSet<Renderer>();
         readonly Vector4[] positions = new Vector4[12], motions = new Vector4[12];
         float nextScan;
         Coroutine indexRoutine;
+        bool beachClipReady, indexReady;
         AudioSource rustle;
         AudioClip rustleClip;
         static Vector2Int Cell(Vector3 p) { return new Vector2Int(Mathf.FloorToInt(p.x / 10f), Mathf.FloorToInt(p.z / 10f)); }
@@ -48,6 +50,9 @@ namespace Mavis
         IEnumerator BuildGrassIndex()
         {
             grass.Clear();
+            beachGrass.Clear();
+            indexReady = false;
+            beachClipReady = false;
             double deadline=Time.realtimeSinceStartupAsDouble+.002;
             int visited=0;
             foreach (var renderer in FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -59,6 +64,7 @@ namespace Mavis
                 foreach (var material in renderer.sharedMaterials)
                     if (material && material.shader.name == "Mavis/FoliageWind" && material.name.ToLowerInvariant().Contains("grass")) isGrass = true;
                 if (!isGrass) continue;
+                beachGrass.Add(renderer);
                 Bounds bounds = renderer.bounds;
                 Vector2Int min = Cell(bounds.min), max = Cell(bounds.max);
                 // Guard accidentally assigned terrain materials: never allocate a whole-island grid.
@@ -70,6 +76,7 @@ namespace Mavis
                     list.Add(renderer);
                 }
             }
+            indexReady = true;
         }
 
         bool NearGrass(Vector3 feet)
@@ -109,6 +116,7 @@ namespace Mavis
         void LateUpdate()
         {
             if(AdditiveSceneBootstrap.IsLoading)return;
+            HideBeachGrass();
             if (Time.time >= nextScan) { ScanBodies(); nextScan = Time.time + 1.5f; }
             float dt = Time.deltaTime;
             if (dt <= 0f) return; // Paused map/backpack/death keeps both wind and interaction frozen.
@@ -168,6 +176,28 @@ namespace Mavis
                 if (!rustle.isPlaying && soundVolume > 0f) rustle.Play();
                 rustle.volume = Mathf.Lerp(rustle.volume, soundVolume, 1f - Mathf.Exp(-dt * 8f));
             }
+        }
+
+        void HideBeachGrass()
+        {
+            if (beachClipReady || !indexReady || beachGrass.Count == 0) return;
+            var ocean = FindFirstObjectByType<OceanWorld>();
+            ProceduralIsland island = null;
+            foreach (var candidate in FindObjectsByType<ProceduralIsland>(FindObjectsSortMode.None))
+                if (candidate && candidate.isActiveAndEnabled && candidate.beachSand) { island = candidate; break; }
+            if (!ocean || !island) return;
+            Shader.SetGlobalFloat("_MavisSeaLevel", ocean.oceanHeight);
+            Shader.SetGlobalFloat("_MavisBeachCeiling", island.beachHeight + .55f);
+            var block = new MaterialPropertyBlock();
+            foreach (var renderer in beachGrass)
+            {
+                if (!renderer) continue;
+                renderer.GetPropertyBlock(block);
+                block.SetFloat("_ClipBelowSea", 1f);
+                renderer.SetPropertyBlock(block);
+            }
+            beachClipReady = true;
+            if (!GetComponent<SandFootprints>()) gameObject.AddComponent<SandFootprints>();
         }
 
         void EnsureEffects()

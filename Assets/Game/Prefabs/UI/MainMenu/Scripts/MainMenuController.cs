@@ -34,6 +34,7 @@ public sealed class MainMenuController : MonoBehaviour
             saveStatus = saveStatusTransform.GetComponent<TMP_Text>();
         RefreshSaveStatus();
         MinimalMenuLayout.MainMenu(this);
+        Mavis.VisualStyles.VisualStyleUIController.InstallMainMenu(this);
     }
 
     void Update()

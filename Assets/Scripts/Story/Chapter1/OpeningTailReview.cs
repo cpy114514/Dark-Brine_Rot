@@ -15,6 +15,8 @@ using UnityEngine.SceneManagement;
 public sealed class OpeningTailReview : MonoBehaviour
 {
     public string output;
+    public bool recordAll;
+    public bool includeHelm;
     Story1SharkCollisionSequence sequence;
     Story1WreckBattle battle;
     Keyboard keyboard, previousKeyboard;
@@ -38,9 +40,25 @@ public sealed class OpeningTailReview : MonoBehaviour
     static void Boot()
     {
         var args=Environment.GetCommandLineArgs();int i=Array.IndexOf(args,"--tail-review");
+#if UNITY_EDITOR
+        // Editor review tools request a replay before entering Play Mode, so the crush is captured from its first frame.
+        const string request="Temp/opening-review-request.txt";
+        if(i<0&&File.Exists(request))
+        {
+            string requested=File.ReadAllText(request).Trim();File.Delete(request);
+            var editorGo=new GameObject("Opt-in opening review");DontDestroyOnLoad(editorGo);
+            var editorReview=editorGo.AddComponent<OpeningTailReview>();
+            editorReview.output=requested;editorReview.recordAll=true;
+            const string helmRequest="Temp/opening-review-helm.flag";
+            editorReview.includeHelm=File.Exists(helmRequest);if(editorReview.includeHelm)File.Delete(helmRequest);
+            return;
+        }
+#endif
         if(i<0)return;
         var go=new GameObject("Opt-in opening tail review");DontDestroyOnLoad(go);
-        go.AddComponent<OpeningTailReview>().output=i+1<args.Length?args[i+1]:Path.Combine(Application.persistentDataPath,"tail-review.json");
+        var review=go.AddComponent<OpeningTailReview>();
+        review.output=i+1<args.Length?args[i+1]:Path.Combine(Application.persistentDataPath,"tail-review.json");
+        review.recordAll=Array.IndexOf(args,"--tail-review-record")>=0;
     }
     IEnumerator Start()
     {
@@ -66,9 +84,10 @@ public sealed class OpeningTailReview : MonoBehaviour
         if(!sequence){Finish("Missing story sequence");yield break;}
         battle=sequence.GetComponent<Story1WreckBattle>();
         previousTarget=sequence.storyCamera.targetTexture;
-        target=new RenderTexture(960,540,24);target.Create();sequence.storyCamera.targetTexture=target;
+        target=new RenderTexture(960,540,24);target.Create();
+        if(!recordAll)sequence.storyCamera.targetTexture=target;
         pixels=new Texture2D(960,540,TextureFormat.RGB24,false);
-        if(!battle.RedesignActive)sequence.BeginImpact();
+        if(!includeHelm&&!battle.RedesignActive)sequence.BeginImpact();
     }
     void ExcludeSave(Scene scene,LoadSceneMode mode)
     {
@@ -94,12 +113,15 @@ public sealed class OpeningTailReview : MonoBehaviour
         {
             var lesson=battle.CurrentLesson;
             if(lesson==Story1WreckBattle.Lesson.Move||lesson==Story1WreckBattle.Lesson.Swim)keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};
+            if(lesson==Story1WreckBattle.Lesson.Sprint)keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Back),GameInputSettings.Get(GameInputSettings.Action.Sprint)};
+            if(lesson==Story1WreckBattle.Lesson.Special&&(gateFrames/3)%2==0)keys=new[]{Key.E};
             if(lesson==Story1WreckBattle.Lesson.Attack)left=(gateFrames/3)%2==0;
             if(lesson==Story1WreckBattle.Lesson.Dodge&&(gateFrames/3)%2==0)keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Dodge)};
             if(lesson==Story1WreckBattle.Lesson.ChargeHold)right=true;
             if(lesson==Story1WreckBattle.Lesson.Jump&&(gateFrames/3)%2==0)keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Jump)};
         }
         else if(!battle.TutorialWaiting&&(battle.CurrentLesson==Story1WreckBattle.Lesson.Move||battle.CurrentLesson==Story1WreckBattle.Lesson.Swim))keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};
+        else if(!battle.TutorialWaiting&&battle.CurrentLesson==Story1WreckBattle.Lesson.Sprint)keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Back),GameInputSettings.Get(GameInputSettings.Action.Sprint)};
         float t=(float)Field("redesignTime");bool tail=(bool)Field("redTailHit");
         if(!fitReviewed&&battle.RedesignStage==Story1WreckBattle.OpeningStage.Duel&&tail)
         {fitReviewed=true;ReviewContactFit();}
@@ -109,19 +131,26 @@ public sealed class OpeningTailReview : MonoBehaviour
             if(frame%3==0)samples.Add(new{frame,t,tail,gap=battle.RedesignContactGap,bodyGap=battle.RedesignTutorialHeroGap,hero=sequence.sahur.transform.position.ToString("F4"),shark=sequence.swimmer.transform.position.ToString("F4")});
         }
         sawSplash|=battle.RedesignStage==Story1WreckBattle.OpeningStage.Drift;
-        if(battle.RedesignStage==Story1WreckBattle.OpeningStage.Duel&&t>=21||sawSplash)RenderEvidence();
+        if(recordAll)RecordFrame();
+        else if(battle.RedesignStage==Story1WreckBattle.OpeningStage.Duel&&t>=21||sawSplash)RenderEvidence();
         if(frame%60==0)File.WriteAllText(output+".progress",Newtonsoft.Json.JsonConvert.SerializeObject(new{frame,stage=battle.RedesignStage.ToString(),lesson=battle.CurrentLesson.ToString(),t,tail,gap=battle.RedesignContactGap,scale=Time.timeScale,dt=Time.deltaTime,paused=PauseSettingsMenu.IsOpen,loadout=SahurLoadoutUI.BlocksInput,map=IslandMapUI.IsOpen,waiting=battle.TutorialWaiting,ownsPause=Field("ownsPause")}));
-        if(sawSplash&&t>3){Finish(null);return;}
+        if(sawSplash&&(t>(recordAll?7:3)||battle.RedesignStage==Story1WreckBattle.OpeningStage.Finished)){Finish(null);return;}
         if(battle.RedesignStage==Story1WreckBattle.OpeningStage.Duel&&t>24){Finish("Tail strike never registered");return;}
-        if(frame>replayFps*140)Finish("Full opening timed out");
+        if(frame>replayFps*(includeHelm?180:140))Finish("Full opening timed out");
     }
     void Finish(string error)
     {
         if(done)return;done=true;
-        var result=new{passed=error==null&&sawTail&&sawFlight&&sawSplash&&errors.Count==0,error,frame,replayFps,renderedFrames,images,sawTail,sawFlight,sawSplash,scale=Time.timeScale,paused=PauseSettingsMenu.IsOpen,loadout=SahurLoadoutUI.BlocksInput,map=IslandMapUI.IsOpen,errors,health=sequence?sequence.sahur.GetComponent<PlayerHealth>().currentHealth:0,contacts=battle?battle.RedesignContacts:0,tutorialHits=battle?battle.RedesignTutorialConfirmedHits:0,events=battle?battle.RedesignEvents:null,fitSamples,samples};
+        var result=new{passed=error==null&&sawTail&&sawFlight&&sawSplash&&errors.Count==0,error,frame,replayFps,renderedFrames,images,sawTail,sawFlight,sawSplash,includeHelm,helmSeconds=sequence?sequence.VoyageTime:0,scale=Time.timeScale,paused=PauseSettingsMenu.IsOpen,loadout=SahurLoadoutUI.BlocksInput,map=IslandMapUI.IsOpen,errors,health=sequence?sequence.sahur.GetComponent<PlayerHealth>().currentHealth:0,contacts=battle?battle.RedesignContacts:0,tutorialHits=battle?battle.RedesignTutorialConfirmedHits:0,events=battle?battle.RedesignEvents:null,fitSamples,samples};
         File.WriteAllText(output,Newtonsoft.Json.JsonConvert.SerializeObject(result,Newtonsoft.Json.Formatting.Indented));
+        if(recordAll)File.WriteAllText(output+"-frames.json",Newtonsoft.Json.JsonConvert.SerializeObject(recorded));
         if(!Application.isEditor)Application.Quit();else enabled=false;
         Cleanup();
+#if UNITY_EDITOR
+        // An unattended completed replay must not continue into First Island,
+        // where a newly spawned campaign player can overwrite the user's save.
+        if(recordAll)UnityEditor.EditorApplication.isPaused=true;
+#endif
     }
     void ReviewContactFit()
     {
@@ -165,6 +194,32 @@ public sealed class OpeningTailReview : MonoBehaviour
             File.WriteAllBytes(Path.Combine(folder,(images++).ToString("D4")+".png"),pixels.EncodeToPNG());
         }
         finally{RenderTexture.active=active;}
+    }
+    readonly List<object> recorded=new List<object>();
+    TralaleroSwimAnimator swim;
+    void RecordFrame()
+    {
+        if(!swim)swim=FindFirstObjectByType<TralaleroSwimAnimator>();
+        // The tutorial hands the view to the player camera; film beats use the story camera.
+        Camera view=null;
+        foreach(var c in Camera.allCameras)
+            if(c.isActiveAndEnabled&&c.targetTexture==null&&(view==null||c.depth>view.depth))view=c;
+        if(view==null)return;
+        var active=RenderTexture.active;
+        try
+        {
+            view.targetTexture=target;view.Render();
+            RenderTexture.active=target;pixels.ReadPixels(new Rect(0,0,target.width,target.height),0,0,false);
+            string folder=output+"-images";Directory.CreateDirectory(folder);
+            File.WriteAllBytes(Path.Combine(folder,(images++).ToString("D5")+".jpg"),pixels.EncodeToJPG(88));
+            renderedFrames++;
+            recorded.Add(new{frame,time=Time.time,stage=battle.RedesignStage.ToString(),t=(float)Field("redesignTime"),shot=battle.RedesignShot,beat=battle.RedesignBeat,lesson=battle.CurrentLesson.ToString(),waiting=battle.TutorialWaiting,camera=view.name,fov=view.fieldOfView,aspect=view.aspect,
+                hero=sequence.sahur.transform.position.ToString("F3"),shark=sequence.swimmer.transform.position.ToString("F3"),gap=battle.RedesignContactGap,
+                nose=swim?swim.NoseWorldPoint.ToString("F2"):null,body=swim&&swim.VisualRenderer?swim.VisualRenderer.bounds.center.ToString("F2"):null,
+                extent=swim&&swim.VisualRenderer?swim.VisualRenderer.bounds.extents.ToString("F2"):null,cam=view.transform.position.ToString("F2"),look=view.transform.forward.ToString("F3"),
+                rot=sequence.swimmer.transform.eulerAngles.ToString("F2"),heroPush=battle.RedesignSolidHeroPush.ToString("F3"),woodPush=battle.RedesignSolidWoodPush.ToString("F3")});
+        }
+        finally{view.targetTexture=null;RenderTexture.active=active;}
     }
     void OnDestroy(){Cleanup();}
 }

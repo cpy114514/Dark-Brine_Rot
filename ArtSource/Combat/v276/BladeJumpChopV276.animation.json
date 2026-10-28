@@ -1,0 +1,34 @@
+{
+  "revision": "combat-v276",
+  "stage": "POLISH",
+  "source_clip": "Assets/Resources/Combat/Combinations/BladeJumpChopV270.anim",
+  "output_clip": "Assets/Resources/Combat/Combinations/BladeJumpChopV276.anim",
+  "format": "Unity native humanoid AnimationClip",
+  "source_fbx_preserved": true,
+  "frame_start": 1,
+  "frame_end": 52,
+  "fps": 60,
+  "duration_seconds": 0.85,
+  "loop": false,
+  "root_motion": "in_place; physical character controller owns jump travel",
+  "source_rig_avatar": "Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx",
+  "design_reference": "Documentation/MeshyJumpChop-v270.md",
+  "approval_reference": "User requested optimization of existing jump chop and selected transitions feel stiff/unnatural; original diagonal chop design retained",
+  "review_status": "agent accepted for targeted polish; human approval pending",
+  "changed_channels": "18 shoulder/arm/forearm/wrist humanoid muscle curves; 112 other curves unchanged",
+  "filter_weights": [
+    1,
+    4,
+    6,
+    4,
+    1
+  ],
+  "anatomical_limits": {
+    "twist": 0.85,
+    "wrist_in_out": 0.7,
+    "wrist_down_up": 0.85,
+    "other_arm": 1
+  },
+  "review_reference": "Documentation/JumpTransitions-v276.md",
+  "evidence": ".codex/jump-transitions-v276/acceptance.json"
+}

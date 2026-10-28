@@ -732,8 +732,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc5144fb204e504fb1f75660ae7e741, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.Health
-  maxHealth: 600
-  currentHealth: 600
+  maxHealth: 999
+  currentHealth: 999
   OnDamaged:
     m_PersistentCalls:
       m_Calls: []
@@ -766,6 +766,7 @@ MonoBehaviour:
   deathClip: {fileID: -203655887218126122, guid: 382b70ca680f0b74891ea35d2b62a2f7, type: 3}
   attackOnHit: 0
   hitReactionDuration: 0.22
+  combatRecoilDegrees: 18
   deathDuration: 3.9
   removeAfterDeath: 4
   hitColor: {r: 1, g: 0.32, b: 0.18, a: 1}
@@ -822,6 +823,7 @@ MonoBehaviour:
   attackRange: 5.6
   attackReach: 5.9
   damage: 18
+  attackDamageScale: 0.75
   attackArc: 130
   aimLockTime: 0.16
   hitWindowStart: 0.28
@@ -860,6 +862,7 @@ MonoBehaviour:
   damageMultiplier: 2
   showWarnings: 1
   chargeSeconds: 0.95
+  healingAmount: 200
 --- !u!114 &8906083485748290430
 MonoBehaviour:
   m_ObjectHideFlags: 0

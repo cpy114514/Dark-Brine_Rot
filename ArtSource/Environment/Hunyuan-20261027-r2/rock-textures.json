@@ -1,0 +1,26 @@
+[
+  {
+    "name": "texture_pbr_20250901",
+    "file": "rock-base.png",
+    "size": [
+      2048,
+      2048
+    ]
+  },
+  {
+    "name": "texture_pbr_20250901_metallic-texture_pbr_20250901_roughness",
+    "file": "rock-metalrough.png",
+    "size": [
+      2048,
+      2048
+    ]
+  },
+  {
+    "name": "texture_pbr_20250901_normal",
+    "file": "rock-normal.png",
+    "size": [
+      2048,
+      2048
+    ]
+  }
+]

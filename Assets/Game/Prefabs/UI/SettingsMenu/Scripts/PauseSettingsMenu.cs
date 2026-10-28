@@ -108,6 +108,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             if (row.name == "language row") row.gameObject.SetActive(false);
         options.RemoveAll(option => option.key == "language");
         EnsurePixel360Option();
+        Mavis.VisualStyles.VisualStyleUIController.InstallGraphicsRow(this);
         LocalizedGameText.BindTree(transform);
         player = FindFirstObjectByType<ThirdPersonPlayerController>();
         foreach (Resolution resolution in Screen.resolutions)
@@ -136,6 +137,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         Bind();
         MinimalMenuLayout.Settings(this);
         GameLocalization.Changed += Refresh;
+        Mavis.VisualStyles.VisualStyleManager.Changed += Refresh;
         ApplySettings(saved);
         Refresh();
         HideImmediate();
@@ -176,13 +178,13 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         var source = template.button.transform.parent.parent as RectTransform;
         var content = source.parent as RectTransform;
         var row = Instantiate(source.gameObject, content, false).GetComponent<RectTransform>();
-        row.name = "360P PIXEL MODE row";
+        row.name = "PIXEL STYLE row";
         foreach (RectTransform existing in content)
             if (existing != row) existing.anchoredPosition += Vector2.down * 76f;
         row.SetAsFirstSibling(); row.anchoredPosition = new Vector2(0, -36);
         content.sizeDelta += Vector2.up * 76f;
-        row.Find("Label").GetComponent<TextMeshProUGUI>().text = "360P PIXEL MODE";
-        row.Find("Explanation").GetComponent<TextMeshProUGUI>().text = "Crisp scene pixels; menus and HUD stay sharp";
+        row.Find("Label").GetComponent<TextMeshProUGUI>().text = "PIXEL STYLE";
+        row.Find("Explanation").GetComponent<TextMeshProUGUI>().text = "Ultra-light rendering with bold pixels; text stays sharp";
         var button = row.GetComponentInChildren<Button>(true);
         button.onClick = new Button.ButtonClickedEvent();
         options.Add(new OptionControl { key = "pixel360", button = button, value = button.GetComponentInChildren<TextMeshProUGUI>(true) });
@@ -208,7 +210,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void Update()
     {
-        if (SahurLoadoutUI.BlocksInput) return;
+        if (Mavis.VisualStyles.VisualStyleUIController.BlocksParentInput || SahurLoadoutUI.BlocksInput) return;
         if (Keyboard.current == null) return;
         if (pendingKey != null)
         {
@@ -373,6 +375,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             case "texture": draft.textureMipmapLimit = (draft.textureMipmapLimit + 1) % 3; break;
             case "antialiasing": draft.antialiasing = (draft.antialiasing + 1) % 3; break;
             case "pixel360": draft.pixel360 = !draft.pixel360; break;
+            case "visualStyle": Mavis.VisualStyles.VisualStyleUIController.Open(transform); break;
             case "postProcessing": draft.postProcessing = !draft.postProcessing; break;
             case "shadows": draft.shadows = !draft.shadows; break;
             case "shadowResolution": draft.shadowResolutionIndex = (draft.shadowResolutionIndex + 1) % ShadowResolutions.Length; break;
@@ -730,10 +733,11 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             case "frameLimit": return FrameLimits[draft.frameLimitIndex] < 0 ? "UNLIMITED" : FrameLimits[draft.frameLimitIndex] + " FPS";
             case "texture": return new[] { "FULL", "HALF", "QUARTER" }[draft.textureMipmapLimit];
             case "antialiasing": return draft.pixel360 ? "OFF / PIXEL" : new[] { "OFF", "FXAA", "SMAA" }[draft.antialiasing];
-            case "pixel360": return draft.pixel360 ? "360P / POINT" : "OFF";
+            case "pixel360": return draft.pixel360 ? "ON / ULTRA LIGHT" : "OFF";
+            case "visualStyle": return Mavis.VisualStyles.VisualStyleManager.Instance?.Current?.displayName ?? "Realistic";
             case "postProcessing": return OnOff(draft.postProcessing);
             case "shadows": return OnOff(draft.shadows);
-            case "renderScale": return draft.pixel360 ? "360P" : Mathf.RoundToInt(draft.renderScale * 100f) + "%";
+            case "renderScale": return draft.pixel360 ? "PIXEL STYLE" : Mathf.RoundToInt(draft.renderScale * 100f) + "%";
             case "shadowDistance": return Mathf.RoundToInt(draft.shadowDistance) + " M";
             case "shadowResolution": return ShadowResolutions[draft.shadowResolutionIndex].ToString();
             case "anisotropic": return new[] { "OFF", "PER TEXTURE", "FORCED" }[draft.anisotropicFiltering];
@@ -751,6 +755,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     {
         Pixel360Rendering.Release(runtimePipelineAsset);
         GameLocalization.Changed -= Refresh;
+        Mavis.VisualStyles.VisualStyleManager.Changed -= Refresh;
         if (runtimePipelineAsset != null)
         {
             QualitySettings.renderPipeline = originalPipelineAsset;

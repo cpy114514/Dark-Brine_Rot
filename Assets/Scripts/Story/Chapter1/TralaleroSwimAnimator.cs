@@ -214,7 +214,7 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
             committedPositions=new Vector3[cinematicBones.Length];transitionPositions=new Vector3[cinematicBones.Length];
             committedRotations=new Quaternion[cinematicBones.Length];transitionRotations=new Quaternion[cinematicBones.Length];
         }
-        string action=authoredAction??(CinematicAction=="Swim" || CinematicActionSeconds>ActionDuration(CinematicAction)+.12f ? "Swim" : CinematicAction);
+        string action=authoredAction??ResolvedCinematicAction;
         if(hasCommittedPose && action!=committedAction)
         {
             System.Array.Copy(committedPositions,transitionPositions,cinematicBones.Length);
@@ -250,6 +250,8 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
             committedRotations[i]=cinematicBones[i].localRotation;
         }
     }
+    // A sampled action past its recovery window is rendered as Swim.
+    public string ResolvedCinematicAction=>rigAnimator==null||CinematicAction==null||CinematicAction=="Swim"||CinematicActionSeconds>ActionDuration(CinematicAction)+.12f?"Swim":CinematicAction;
     public void SampleCinematicAction(string state,float seconds)
     {
         if(rigAnimator==null)return;

@@ -6,10 +6,10 @@ using UnityEngine.SceneManagement;
 
 namespace Mavis
 {
-    /// <summary>URP scene resolution only; the display, input projection and overlay UI stay native.</summary>
+    /// <summary>Coarse world and non-text UI rendering; display, input projection and text stay native.</summary>
     public sealed class Pixel360Rendering : MonoBehaviour
     {
-        public const int TargetHeight = 360;
+        public const int TargetHeight = 180;
         static Pixel360Rendering instance;
         UniversalRenderPipelineAsset pipeline;
         float normalScale;
@@ -42,7 +42,7 @@ namespace Mavis
         {
             ReleaseCurrent();
             if (!enabled || !asset) return;
-            var go = new GameObject("360p pixel rendering");
+            var go = new GameObject("Pixel Style rendering");
             DontDestroyOnLoad(go);
             instance = go.AddComponent<Pixel360Rendering>();
             instance.pipeline = asset;
@@ -50,6 +50,7 @@ namespace Mavis
             instance.normalFilter = asset.upscalingFilter;
             instance.normalMsaa = asset.msaaSampleCount;
             instance.running = true;
+            go.AddComponent<PixelStyleUI>();
             asset.upscalingFilter = UpscalingFilterSelection.Point;
             asset.msaaSampleCount = 1;
             asset.renderScale = ScaleForHeight(Screen.height);
@@ -114,6 +115,7 @@ namespace Mavis
         void Restore()
         {
             if (!running) return; running = false;
+            GetComponent<PixelStyleUI>()?.Restore();
             RenderPipelineManager.beginCameraRendering -= BeginCamera;
             SceneManager.sceneLoaded -= SceneLoaded;
             if (pipeline) { pipeline.renderScale = normalScale; pipeline.upscalingFilter = normalFilter; pipeline.msaaSampleCount = normalMsaa; }

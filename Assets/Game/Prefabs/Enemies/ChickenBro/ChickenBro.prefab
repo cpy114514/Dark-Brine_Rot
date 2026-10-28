@@ -1,0 +1,233 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3815626643634895974
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1147062970726691496}
+  - component: {fileID: 7193117043002124614}
+  - component: {fileID: 2968725024231251538}
+  - component: {fileID: 4799430938750925070}
+  - component: {fileID: 1548064402530592748}
+  m_Layer: 0
+  m_Name: ChickenBro
+  m_TagString: Enemy
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1147062970726691496
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3815626643634895974}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5400185404024727479}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!143 &7193117043002124614
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3815626643634895974}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 4.765
+  m_Radius: 0.48
+  m_SlopeLimit: 45
+  m_StepOffset: 0.35
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 2.382, z: 0}
+--- !u!114 &2968725024231251538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3815626643634895974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbc5144fb204e504fb1f75660ae7e741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.Health
+  maxHealth: 30
+  currentHealth: 30
+  OnDamaged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDeath:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4799430938750925070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3815626643634895974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eab3241f7e22b34c822e83c64a71a55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.ChickenBroAI
+  sightRange: 16
+  giveUpRange: 26
+  meleeRange: 1.72
+  lungeMin: 2.05
+  lungeMax: 4
+  walkSpeed: 2.1
+  runSpeed: 4.8
+  lungeSpeed: 9
+  turnSpeed: 540
+  surroundDistance: 3.5
+  separationRadius: 1.16
+  strikeDamage: 3
+  lungeDamage: 5
+  strikeDuration: 0.86666673
+  lungeDuration: 1.5333334
+  attackCooldown: 1.15
+  strikeWindowStart: 0.32
+  strikeWindowEnd: 0.52
+  lungeWindowStart: 0.4
+  lungeWindowEnd: 0.68
+  attackRadius: 0.85
+  lightSlide: 3.2
+  heavySlide: 6.5
+  launchSlide: 9
+  launchHop: 7.5
+  flinchSeconds: 0.28
+  knockdownSeconds: 0.85
+  removeAfterDeath: 4
+  courtesySeconds: 0.4
+--- !u!114 &1548064402530592748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3815626643634895974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91f3b3d7189f79d46b710f1069e310d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.ChickenBroPose
+--- !u!1001 &5583312890541752412
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1147062970726691496}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.8608
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.8608
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.8608
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7371
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_Name
+      value: ChickenBro
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: ba4e4160593dbcd469dc53db6506d594, type: 2}
+    - target: {fileID: 5866666021909216657, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6602508436842350390, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5245826ccc48741489a58d65dee4b327, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+--- !u!4 &5400185404024727479 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b9ad0414ff2d544439e28e19928173fe, type: 3}
+  m_PrefabInstance: {fileID: 5583312890541752412}
+  m_PrefabAsset: {fileID: 0}

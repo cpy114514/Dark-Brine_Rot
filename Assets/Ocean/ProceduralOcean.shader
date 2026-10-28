@@ -87,6 +87,7 @@ Shader "DarkBrine/Procedural Ocean"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareOpaqueTexture.hlsl"
+            #include "Assets/Shaders/EnvironmentVisualStyle.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _DeepColor;
@@ -464,7 +465,7 @@ Shader "DarkBrine/Procedural Ocean"
                     0.0204h, 0.9796h, 1.0h - max(perceptualRoughness, roughnessFloor), alpha, waterBrdf);
                 half sunGlint = DirectBRDFSpecular(waterBrdf, normalWS, sun.direction, viewDirection);
                 water += waterBrdf.specular * sun.color * NoL * attenuation * sunGlint * _SpecularStrength *
-                    (0.75h + glintMask * glintCluster * _SunGlitterStrength);
+                    (0.75h + glintMask * glintCluster * _SunGlitterStrength) * (1 - .65 * _EnvironmentStyle.x);
 
                 // Foam drifts with the displaced surface and wind rather than
                 // reading as an independently sliding texture over the waves.
@@ -504,6 +505,7 @@ Shader "DarkBrine/Procedural Ocean"
                     shoreDistance)) * waveCrest * foamLace * 0.24h;
                 half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
                 foam = max(foam, SailingFoam(p, input.positionWS, foamDetail, foamNoise));
+                foam = lerp(foam, smoothstep(.15, .75, foam), .65 * _EnvironmentStyle.x);
                 // Lace stays white in daylight, but is no longer self-lit at night
                 // or under tree/island shadows.
                 half3 foamIllumination = saturate(ambient + sun.color *
@@ -513,6 +515,8 @@ Shader "DarkBrine/Procedural Ocean"
                 half haze = smoothstep(_MidDetailDistance * 0.68h, _ViewDistance, distanceToCamera);
                 water = lerp(water, coldSkyFallback, haze * 0.48h);
                 water = MixFog(water, input.fogFactor);
+                water = StyleEnvironmentColor(water, screenUv,
+                    saturate(waveCrest * .18 + contactFoam * shoreMask * .08));
                 return half4(water, 1.0h);
             }
             ENDHLSL
