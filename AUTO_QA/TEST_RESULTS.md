@@ -269,3 +269,18 @@ Accepted total: 208 contracts/checks, with diagnostic/rejected takes not counted
 Accepted total 94. Camera suite invokes real native LateUpdate and PhysX queries on the preview actor; it is a controlled obstruction fixture, not a filmed playthrough. No visual smoothness/FPS or managed-allocation measurement claim.
 
 Final console cursor 1463: known 606 missing-plant prefab instances on restore; no new accepted gameplay exception. Native scene/fixture verification saved in Evidence/batch015-workspace-final.json.
+
+## Batch 016 — broader discovery and rejected repairs
+
+| Check | Result |
+|---|---|
+| Actual quota recovery | Service reports allowed / 0% five-hour used; reset credits untouched. |
+| Fresh authored foliage fixture | PASS 9/9, original production source: 30 LOD maps, 4 compact maps, 36 renderers, 4 submitted batches. |
+| Actual reload reproduction | CONFIRMED OPEN: assembly unloaded; maps/renderers/submissions become zero. Failed health assertions are expected reproduction, not passing fix tests. |
+| Candidate acceptance | REJECTED: init-only, pre-reload cleanup, baseline serialization and inline iterator fail visibility/original material ownership; all production bytes restored. |
+| Render captures | UNQUALIFIED: black authored baseline and unstable candidate images; no visual or FPS acceptance. Historical pixel equality without reliable frame control is insufficient. |
+| Checkpoint platforms | PASS 12/12: native grounded control, activation and vertical exclusion at 0/15/30/40 degrees; sole-ground distances .015/.031/.085/.153 m. |
+| Final compile/source | PASS failed=false, errors=[]; WorldPerformanceManager exact original bytes, no production diff. |
+| Cleanup/saves | PASS five original clean scenes, stopped, recovery/foliage markers empty, preview absent; save and backup equal fresh batch016 copies. |
+
+This is a discovery checkpoint with an unresolved verified defect, not a successful foliage fix. Final console cursor 1503: known missing-prefab groups and recovered infrastructure timeout; no new accepted gameplay exception. See batch016-proof.json for take classification.

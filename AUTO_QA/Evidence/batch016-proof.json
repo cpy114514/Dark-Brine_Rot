@@ -1,0 +1,35 @@
+{
+  "batch": 16,
+  "status": "Discovery checkpoint only; no production fix accepted",
+  "terrainPass": 12,
+  "baselineFreshPass": 9,
+  "reloadReproduced": true,
+  "before": {
+    "details": 30,
+    "renderMeshes": 4,
+    "foliage": 36,
+    "submitted": 4
+  },
+  "after": {
+    "details": 0,
+    "renderMeshes": 0,
+    "foliage": 0,
+    "submitted": 0
+  },
+  "sourceRestoredByteForByte": true,
+  "saves": {
+    "dark-brine-rot-save.json": true,
+    "dark-brine-rot-save.json.bak": true
+  },
+  "renderAcceptance": false,
+  "reason": "Native frame fence/empty-camera positive control not qualified; historical black PNGs and candidate pixel comparisons are diagnostic only.",
+  "rejectedTakes": [
+    "fixed",
+    "accepted",
+    "final",
+    "ownership-final",
+    "inline-review",
+    "authored-material"
+  ],
+  "next": "Do not retry init-only, before-reload hook, original-baseline serialization, or inline iterator candidates unchanged. All failed original renderer/material ownership regression. Investigate reload snapshot/callback order on a persistent authored fixture with a qualified native rendering control."
+}

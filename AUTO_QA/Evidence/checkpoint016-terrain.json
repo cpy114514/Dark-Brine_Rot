@@ -1,0 +1,69 @@
+{
+  "error": null,
+  "rows": [
+    {
+      "ok": true,
+      "label": "Native capsule lands on platform",
+      "slope": 0.0
+    },
+    {
+      "ok": true,
+      "label": "Standing at slope/platform checkpoint activates",
+      "slope": 0.0,
+      "footDistance": 0.0150146484
+    },
+    {
+      "ok": true,
+      "label": "Separate floor remains excluded",
+      "slope": 0.0
+    },
+    {
+      "ok": true,
+      "label": "Native capsule lands on platform",
+      "slope": 15.0
+    },
+    {
+      "ok": true,
+      "label": "Standing at slope/platform checkpoint activates",
+      "slope": 15.0,
+      "footDistance": 0.0309448242
+    },
+    {
+      "ok": true,
+      "label": "Separate floor remains excluded",
+      "slope": 15.0
+    },
+    {
+      "ok": true,
+      "label": "Native capsule lands on platform",
+      "slope": 30.0
+    },
+    {
+      "ok": true,
+      "label": "Standing at slope/platform checkpoint activates",
+      "slope": 30.0,
+      "footDistance": 0.08508301
+    },
+    {
+      "ok": true,
+      "label": "Separate floor remains excluded",
+      "slope": 30.0
+    },
+    {
+      "ok": true,
+      "label": "Native capsule lands on platform",
+      "slope": 40.0
+    },
+    {
+      "ok": true,
+      "label": "Standing at slope/platform checkpoint activates",
+      "slope": 40.0,
+      "footDistance": 0.153381348
+    },
+    {
+      "ok": true,
+      "label": "Separate floor remains excluded",
+      "slope": 40.0
+    }
+  ]
+}

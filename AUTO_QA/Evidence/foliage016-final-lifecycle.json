@@ -1,0 +1,52 @@
+{
+  "rows": [
+    {
+      "ok": false,
+      "label": "Disable restores renderer visibility 0"
+    },
+    {
+      "ok": true,
+      "label": "Disable clears draw snapshots 0"
+    },
+    {
+      "ok": true,
+      "label": "Reenable retains one submission 0"
+    },
+    {
+      "ok": true,
+      "label": "Reenable restores complete cache 0"
+    },
+    {
+      "ok": false,
+      "label": "Disable restores renderer visibility 1"
+    },
+    {
+      "ok": true,
+      "label": "Disable clears draw snapshots 1"
+    },
+    {
+      "ok": true,
+      "label": "Reenable retains one submission 1"
+    },
+    {
+      "ok": true,
+      "label": "Reenable restores complete cache 1"
+    },
+    {
+      "ok": false,
+      "label": "Disable restores renderer visibility 2"
+    },
+    {
+      "ok": true,
+      "label": "Disable clears draw snapshots 2"
+    },
+    {
+      "ok": true,
+      "label": "Reenable retains one submission 2"
+    },
+    {
+      "ok": true,
+      "label": "Reenable restores complete cache 2"
+    }
+  ]
+}
