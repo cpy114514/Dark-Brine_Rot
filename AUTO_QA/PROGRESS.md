@@ -9,7 +9,7 @@
 - One premature Prepare call correctly rejected a not-yet-entered Play state before creating a fixture. The redundant reload request had no test fixture; it is not counted as validation. Subsequent native state gating confirmed Play and an initialized fixture before the accepted actual reload.
 - Fixture cleaned; Play stopped; original five scenes restored clean without saving any scene, no compile failure, setup recovery marker cleared. Restore timed out at dispatcher but completed independently. Save and backup SHA256 still match local safety copies.
 
-Checkpoint: commit titled `Preserve footprint pool across Play-mode script reload` (resolve with git log). Next: current isolated character/combat input smoke (buffering, dodge/cancel, charge and landing), selecting a verified defect before changing combat. Footprint per-frame property-block allocations are only a source-level candidate until measured.
+Checkpoint: `8a155b1` — Preserve footprint pool across Play-mode script reload. A patch-format follow-up removes an empty context line that Git's whitespace checker flagged; forward application checks against the preserved original and reverse checks against repaired source both pass, with no production code change. Next: current isolated character/combat input smoke (buffering, dodge/cancel, charge and landing), selecting a verified defect before changing combat. Footprint per-frame property-block allocations are only a source-level candidate until measured.
 
 ## 2026-10-28 — Batch 002 complete (hourly continuation)
 
