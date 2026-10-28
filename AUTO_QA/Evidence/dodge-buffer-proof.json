@@ -1,0 +1,126 @@
+{
+  "configuredBuffer": 0.22,
+  "before": [
+    {
+      "weapon": "Stick",
+      "requestedPhase": 0.45,
+      "actualPhase": 0.485565066,
+      "inputAt": 24.031805,
+      "consumedAt": 24.2985821,
+      "inputAge": 0.266777039,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0355392024,
+      "stale": true,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "requestedPhase": 0.45,
+      "actualPhase": 0.480000079,
+      "inputAt": 31.9656887,
+      "consumedAt": 32.33215,
+      "inputAge": 0.3664608,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0363757946,
+      "stale": true,
+      "simulationHz": 60
+    }
+  ],
+  "after": [
+    {
+      "weapon": "Stick",
+      "requestedPhase": 0.2,
+      "actualPhase": 0.230537772,
+      "inputAt": 17.8182812,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0352678,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "Stick",
+      "requestedPhase": 0.45,
+      "actualPhase": 0.485565066,
+      "inputAt": 20.4859447,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0381072,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "Stick",
+      "requestedPhase": 0.6,
+      "actualPhase": 0.6351061,
+      "inputAt": 23.2355289,
+      "consumedAt": 23.41741,
+      "inputAge": 0.181880951,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0364926,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "Stick",
+      "scenario": "readiness returns",
+      "inputAt": 26.06883,
+      "consumedAt": 26.1687641,
+      "inputAge": 0.0999336243,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.03601661,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "requestedPhase": 0.2,
+      "actualPhase": 0.239999965,
+      "inputAt": 29.1521034,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.03601661,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "requestedPhase": 0.45,
+      "actualPhase": 0.480000079,
+      "inputAt": 31.83528,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0361406058,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "requestedPhase": 0.6,
+      "actualPhase": 0.6399999,
+      "inputAt": 34.77715,
+      "consumedAt": -1,
+      "inputAge": -1,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.03601661,
+      "stale": false,
+      "simulationHz": 60
+    },
+    {
+      "weapon": "CapriTwinBlades",
+      "scenario": "readiness returns",
+      "inputAt": 37.7103462,
+      "consumedAt": 37.82667,
+      "inputAge": 0.116325378,
+      "configuredBuffer": 0.22,
+      "frameTolerance": 0.0375554,
+      "simulationHz": 60
+    }
+  ],
+  "sourceCause": "Movement forwarded a still-valid buffered flag every frame; combat treated each true value as a new press and renewed its unscaled deadline.",
+  "designReference": "Documentation/CombatFeel-20261019.md: 220 ms input buffer and recovery cancel windows",
+  "scope": "Queued synthetic input through normal PlayerInput; simulation delta fixed to 60 Hz; ages measured with Time.unscaledTime and two observed native frame tolerance."
+}

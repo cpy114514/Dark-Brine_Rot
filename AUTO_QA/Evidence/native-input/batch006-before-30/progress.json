@@ -1,0 +1,7 @@
+{
+  "status": "completed",
+  "passed": false,
+  "checks": 8,
+  "nativeFrames": 505,
+  "result": "result.json"
+}

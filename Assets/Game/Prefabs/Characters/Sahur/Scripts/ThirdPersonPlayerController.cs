@@ -430,7 +430,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         // of silently discarding Ctrl until the character lands.
         bool airDodgeReady = !(verticalSpeed<=0 && IsGroundedOrOnSea()) && !airFlipUsed && airFlipTimer<=0 && rollCooldownTimer<=0 &&
                             (playerStamina==null || playerStamina.CanSpend(playerStamina.airFlipCost));
-        bool combatDodge = acceptInput && (dodgeReady || airDodgeReady) && combat != null && combat.TryConsumeDodgeCancel(Time.time <= dodgeBufferUntil);
+        // Combat owns this press's lifetime; passing the movement buffer here
+        // would renew its deadline every frame after the key was released.
+        bool combatDodge = acceptInput && combat != null && combat.TryConsumeDodgeCancel(
+            GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge), dodgeReady || airDodgeReady);
         if (combatDodge) dodgeBufferUntil = -1;
         bool combatLocked = combat != null && combat.IsCombatMotionActive;
         bool armCombatMovementAllowed = combat != null && combat.CanMoveDuringCombat;

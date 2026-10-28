@@ -1,0 +1,50 @@
+[
+  {
+    "assembly": "PipelineRunScript_NativeInputSmoke_592f86ffbabf47fd8704d717bac6a167",
+    "armed": false,
+    "takeFolder": "AUTO_QA/Evidence/native-input/batch006-normal-60",
+    "expected": [
+      {
+        "id": 1,
+        "enabled": true
+      },
+      {
+        "id": 2,
+        "enabled": true
+      }
+    ],
+    "actual": [
+      {
+        "id": 1,
+        "name": "Keyboard",
+        "enabled": true
+      },
+      {
+        "id": 2,
+        "name": "Mouse",
+        "enabled": true
+      }
+    ],
+    "orderedMatch": true,
+    "membershipMatch": true,
+    "settingsMatch": true,
+    "originalSettingsId": -6796822,
+    "originalSettingsName": "InputSettings",
+    "originalSettingsPath": "",
+    "currentSettingsId": -6796822,
+    "currentSettingsName": "InputSettings",
+    "currentSettingsPath": "",
+    "originalSettingsFlags": "HideAndDontSave",
+    "currentSettingsFlags": "HideAndDontSave",
+    "expectedSettingsFlags": "HideAndDontSave",
+    "originalBackground": "ResetAndDisableNonBackgroundDevices",
+    "currentBackground": "ResetAndDisableNonBackgroundDevices",
+    "keyboard": 1,
+    "expectedKeyboard": 1,
+    "mouse": 2,
+    "expectedMouse": 2,
+    "captureDelta": 0,
+    "expectedCapture": 0,
+    "previewCleared": true
+  }
+]
