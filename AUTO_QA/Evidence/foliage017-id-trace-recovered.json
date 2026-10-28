@@ -1,0 +1,262 @@
+{
+  "before": [
+    {
+      "renderer": -2558370,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558570,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558610,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558594,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558386,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558410,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558538,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558426,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558402,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558578,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558522,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558482,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558418,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558586,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558378,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558546,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558602,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558394,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558354,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558626,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558618,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558490,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558458,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558530,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558498,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558634,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558474,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558562,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558434,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558450,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558506,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558514,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558554,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558442,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558466,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    },
+    {
+      "renderer": -2558362,
+      "rendererResolves": true,
+      "materialResolves": true,
+      "original": false,
+      "current": false
+    }
+  ],
+  "entries": 36,
+  "bad": 0,
+  "details": 30,
+  "meshes": 4,
+  "batches": 4,
+  "submitted": 4
+}

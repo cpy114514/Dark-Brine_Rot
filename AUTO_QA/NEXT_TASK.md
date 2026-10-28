@@ -1,4 +1,14 @@
-# Continuation — Batch 016
+# Continuation — Batch 017
+
+Latest accepted checkpoint title: "Preserve foliage originals through reload and bounded recache". QA-030 repaired; 67 accepted final-source checks, including 636 renderers across actual reload, original hidden/material/shadow/occlusion state, map camera-mask gating, real additive scene loading, repeated reload and true partial-scan cancellation (351 entries). One production script: WorldPerformanceManager.cs. Use batch017-proof.json whitelist; every earlier bulk/reload-only candidate is rejected. Do not repeat the completed reload repair unchanged.
+
+Next wider batch: qualify actual scene CPU/render costs and advance gameplay/UI/encounter coverage. Inspect IslandPerformanceBaseline hidden-manager lookup before using it: FindFirstObject misses the DontSave manager, confirmed in native probes, so its readiness wait may be skipped. Resolve the actual manager and wait for readiness, settle the pose and prove visible-versus-empty rendering with a native frame fence before interpreting GPU/frame data. Existing PNGs are unqualified and stopped-Editor counters do not establish game FPS. Keep original assets/design; no blind foliage thinning.
+
+Safe resumption: same Editor PID57472, five original scenes clean/stopped; scene, foliage, ownership, trace, preview/input and production handoff markers cleared; saves equal fresh batch017 copies. GATE entering Play on confirmed successful isolation: one failed preparation followed by Play entered the original scene set, was stopped, and save bytes were verified unchanged. Never continue dependent mutations after a prerequisite error.
+
+FoliageReloadRegression now accepts ExpectedCount for expanded probes and asserts additive ownership. FoliageOwnershipRegression verifies original flags/IDs and mask gating; its markers are AUTO_QA.Foliage017.Ownership.*. FoliageReloadTrace is an explicit-ID diagnostic helper, not final acceptance. Final helpers stay outside Assets. Production SessionState snapshots are Editor-only and consumed when recache completes; regular recache retains prior originals through the bounded scan. Partial iterator cancellation itself needed no source change.
+
+## Prior discovery — Batch 016 (superseded by batch017)
 
 Latest is a discovery checkpoint titled "Record foliage reload failure and platform checkpoint coverage". QA-030 remains OPEN: original native reload loses LOD/render maps (30/4 -> 0/0), 36 managed renderers and 4 draw submissions. No production patch accepted. All candidate changes reverted byte-for-byte; candidate backups in .codex/autoqa-source-before/batch016 are REJECTED. Do not reapply init-only, before-reload cleanup, serialized baseline, or inline-iterator candidates unchanged: original renderer/material ownership still fails. Historical takes named accepted/final/fixed are rejected, not acceptance.
 

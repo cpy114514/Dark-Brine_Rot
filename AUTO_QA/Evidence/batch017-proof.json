@@ -1,0 +1,51 @@
+{
+  "batch": 17,
+  "qa030": "verified repaired in native Editor tests",
+  "acceptedChecks": 67,
+  "accepted": [
+    {
+      "file": "foliage017-all-handoffs-fresh-before.json",
+      "checks": 9
+    },
+    {
+      "file": "foliage017-all-handoffs-fresh-interrupted-cache.json",
+      "checks": 5
+    },
+    {
+      "file": "foliage017-all-handoffs-reload-after.json",
+      "checks": 12
+    },
+    {
+      "file": "foliage017-all-handoffs-reload-lifecycle.json",
+      "checks": 12
+    },
+    {
+      "file": "foliage017-all-handoffs-originals-after.json",
+      "checks": 11
+    },
+    {
+      "file": "foliage017-all-handoffs-reload-scene-load.json",
+      "checks": 6
+    },
+    {
+      "file": "foliage017-all-handoffs-repeat-after.json",
+      "checks": 12
+    }
+  ],
+  "sourceSha256": "b5623936787dc2f3638eb848663c4bbeba0adbfe44824adc23d5134276ec07ec",
+  "renderers": 636,
+  "lodMaps": 30,
+  "compactMaps": 4,
+  "finalSubmittedBatches": 6,
+  "originalsPreserved": true,
+  "saves": {
+    "dark-brine-rot-save.json": true,
+    "dark-brine-rot-save.json.bak": true
+  },
+  "scope": "Native state/identity/submission evidence. No qualified rendered images, standalone build or FPS claim.",
+  "rejected": "Every earlier batch017 take not prefixed foliage017-all-handoffs is diagnostic/provisional; bulk and reload-only ownership candidates fail expanded/regenerated ownership.",
+  "fixtureCorrection": "Old partial=36 was the existing complete snapshot. New positive control excludes it and observes partial=351/636.",
+  "safetyEvent": "One failed isolation prerequisite was mistakenly followed by Play in original five scenes; stopped immediately on inspection, both save bytes unchanged. Later Play calls require confirmed isolation success.",
+  "consoleCursor": 1534,
+  "finalEditorResponding": true
+}

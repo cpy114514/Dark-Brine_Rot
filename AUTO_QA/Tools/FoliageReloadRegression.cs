@@ -114,7 +114,7 @@ public static class AutoQaFoliageReload
         var entries = ((IList)Get(manager, "foliage")).Cast<object>().ToArray();
         Check(rows, entries.All(e => !(bool)e.GetType().GetField("forced").GetValue(e)), "No managed override captured as original visibility");
         Check(rows, entries.All(e => ((Material[])e.GetType().GetField("materials").GetValue(e)).All(v => v && !v.name.Contains("Runtime Instanced"))), "Original material ownership stays valid");
-        Check(rows, Count(manager, "foliage") == 36 && manager.IsReady, "All authored fixture renderers classified and ready");
+        Check(rows, Count(manager, "foliage") == SessionState.GetInt(Key + ".ExpectedCount", 36) && manager.IsReady, "All authored fixture renderers classified and ready");
         Check(rows, Count(manager, "activeGrassBatches") > 0, "Complete grass draw snapshot exists");
         Check(rows, (int)Get(manager, "submittedGrassBatches") > 0, "Native late update submits visible grass batches");
         if (afterReload)
@@ -153,7 +153,7 @@ public static class AutoQaFoliageReload
             Check(rows, Count(manager, "activeGrassBatches") == 0, "Disable clears draw snapshots " + i);
             manager.enabled = true; await Ready();
             Check(rows, manager.GetComponents<GrassRenderSubmission>().Length == 1, "Reenable retains one submission " + i);
-            Check(rows, Count(manager, "foliage") == 36 && Count(manager, "activeGrassBatches") > 0, "Reenable restores complete cache " + i);
+            Check(rows, Count(manager, "foliage") == SessionState.GetInt(Key + ".ExpectedCount", 36) && Count(manager, "activeGrassBatches") > 0, "Reenable restores complete cache " + i);
         }
         return Write("-lifecycle", new { rows });
     }
@@ -194,8 +194,11 @@ public static class AutoQaFoliageReload
         await Ready();
         var rows = new List<object>();
         Check(rows, renderer.sharedMaterial.GetInstanceID() != oldMaterial, "Native additive sceneLoaded event refreshes managed renderers");
-        Check(rows, manager.IsReady && Count(manager, "foliage") == 36, "Additive recache retains all fixture foliage");
+        Check(rows, manager.IsReady && Count(manager, "foliage") == SessionState.GetInt(Key + ".ExpectedCount", 36), "Additive recache retains all fixture foliage");
         Check(rows, manager.GetComponents<GrassRenderSubmission>().Length == 1, "Scene recache retains one submission");
+        var entries = ((IList)Get(manager, "foliage")).Cast<object>().ToArray();
+        Check(rows, entries.All(e => !(bool)e.GetType().GetField("forced").GetValue(e)), "Scene recache retains original visibility ownership");
+        Check(rows, entries.All(e => ((Material[])e.GetType().GetField("materials").GetValue(e)).All(m => m && !m.name.Contains("Runtime Instanced"))), "Scene recache retains original material identities");
         operation = SceneManager.UnloadSceneAsync("Assets/Scenes/First Island/Lighting.unity");
         while (!operation.isDone) { if (DateTime.UtcNow > limit) throw new Exception("Unload timeout"); await Frames(1); }
         await Frames(3);
@@ -221,10 +224,10 @@ public static class AutoQaFoliageReload
         while (DateTime.UtcNow < deadline)
         {
             partial = Count(manager, "foliage");
-            if (partial > 0 && partial < 636 && Get(manager, "cacheRoutine") != null) break;
+            if (partial > 0 && partial != 36 && partial < 636 && Get(manager, "cacheRoutine") != null) break;
             await Frames(1);
         }
-        if (partial <= 0 || partial >= 636) throw new Exception("Interrupted-cache positive control missed");
+        if (partial <= 0 || partial == 36 || partial >= 636) throw new Exception("Interrupted-cache positive control missed");
         manager.enabled = false; manager.enabled = true; await Ready();
         var entries = ((IList)Get(manager, "foliage")).Cast<object>().ToArray();
         var rows = new List<object>();
@@ -249,7 +252,7 @@ public static class AutoQaFoliageReload
         }
         manager.enabled = true;
         var result = Write("-cleanup", new { cleaned = true, fixtures = UnityEngine.Object.FindObjectsByType<MeshRenderer>(FindObjectsSortMode.None).Length });
-        foreach (string n in new[] { "Root", "Material", "Target", "Manager", "LibraryCount", "Details", "RenderMeshes", "Submission" }) SessionState.EraseInt(Key + "." + n);
+        foreach (string n in new[] { "Root", "Material", "Target", "Manager", "LibraryCount", "Details", "RenderMeshes", "Submission", "ExpectedCount" }) SessionState.EraseInt(Key + "." + n);
         SessionState.EraseString(Key + ".Assembly"); SessionState.EraseString(Key + ".Take");
         return result;
     }

@@ -1,0 +1,48 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Ownership fixture actually reloaded"
+    },
+    {
+      "ok": true,
+      "label": "Exactly the original hidden renderer stays excluded"
+    },
+    {
+      "ok": true,
+      "label": "Original hidden/occlusion/shadow state preserved in cache"
+    },
+    {
+      "ok": true,
+      "label": "Original material identity preserved across reload"
+    },
+    {
+      "ok": true,
+      "label": "Original mesh identity preserved across reload"
+    },
+    {
+      "ok": true,
+      "label": "Production reload handoff consumed exactly once"
+    },
+    {
+      "ok": true,
+      "label": "Disable restores original hidden/occlusion/shadow flags"
+    },
+    {
+      "ok": true,
+      "label": "Disable restores exact original material and mesh"
+    },
+    {
+      "ok": true,
+      "label": "Other original visible renderers restored"
+    },
+    {
+      "ok": true,
+      "label": "Map-style zero camera mask submits no grass"
+    },
+    {
+      "ok": true,
+      "label": "Restored world camera resumes grass submissions"
+    }
+  ]
+}

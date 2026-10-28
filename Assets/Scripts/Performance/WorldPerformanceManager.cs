@@ -64,6 +64,55 @@ namespace Mavis
             public bool culled;
             public bool grass;
         }
+#if UNITY_EDITOR
+        // Native renderer overrides can outlive the managed batching graph. Keep
+        // original instance IDs outside Unity's object serialization until recache.
+        [System.Serializable] sealed class ReloadRenderer
+        {
+            public int renderer, filter, mesh;
+            public int[] materials;
+            public bool forced, occlusion;
+            public ShadowCastingMode shadows;
+        }
+        [System.Serializable] sealed class ReloadRenderers
+        {
+            public List<ReloadRenderer> items = new List<ReloadRenderer>();
+        }
+        string ReloadKey => "Mavis.WorldPerformance.Reload." + GetInstanceID();
+        void CaptureReloadRenderers()
+        {
+            var snapshot = new ReloadRenderers();
+            foreach (var item in foliage)
+            {
+                if (!item.renderer) continue;
+                var materials = new int[item.materials.Length];
+                for (int i = 0; i < materials.Length; i++) materials[i] = item.materials[i] ? item.materials[i].GetInstanceID() : 0;
+                snapshot.items.Add(new ReloadRenderer { renderer = item.renderer.GetInstanceID(),
+                    filter = item.filter ? item.filter.GetInstanceID() : 0, mesh = item.original ? item.original.GetInstanceID() : 0,
+                    materials = materials, forced = item.forced, occlusion = item.occlusion, shadows = item.shadows });
+            }
+            UnityEditor.SessionState.SetString(ReloadKey, JsonUtility.ToJson(snapshot));
+        }
+        Dictionary<int, ReloadRenderer> ReadReloadRenderers()
+        {
+            string json = UnityEditor.SessionState.GetString(ReloadKey, "");
+            if (string.IsNullOrEmpty(json)) return null;
+            var result = new Dictionary<int, ReloadRenderer>();
+            foreach (var item in JsonUtility.FromJson<ReloadRenderers>(json).items) result[item.renderer] = item;
+            return result;
+        }
+        static void RestoreReloadRenderer(ReloadRenderer item, MeshRenderer renderer)
+        {
+            var materials = new Material[item.materials.Length];
+            for (int i = 0; i < materials.Length; i++) materials[i] = UnityEditor.EditorUtility.EntityIdToObject(item.materials[i]) as Material;
+            renderer.forceRenderingOff = item.forced;
+            renderer.allowOcclusionWhenDynamic = item.occlusion;
+            renderer.shadowCastingMode = item.shadows;
+            renderer.sharedMaterials = materials;
+            var filter = UnityEditor.EditorUtility.EntityIdToObject(item.filter) as MeshFilter;
+            if (filter) filter.sharedMesh = UnityEditor.EditorUtility.EntityIdToObject(item.mesh) as Mesh;
+        }
+#endif
         readonly List<Foliage> foliage = new List<Foliage>();
         readonly List<FoliageCell> foliageCells = new List<FoliageCell>();
         Dictionary<(Mesh, Material, Vector2Int), GrassGroup> grassBatches = new Dictionary<(Mesh, Material, Vector2Int), GrassGroup>();
@@ -99,8 +148,6 @@ namespace Mavis
         }
         void Awake()
         {
-            visibleGrass = new GrassBatch();
-            gameObject.AddComponent<GrassRenderSubmission>().owner = this;
 #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
             int rate = Mathf.Clamp(PlayerPrefs.GetInt("Mavis.TargetFrameRate", 60), 30, 240);
             int sync = Mathf.Clamp(PlayerPrefs.GetInt("Mavis.VSync", 0), 0, 2);
@@ -108,6 +155,16 @@ namespace Mavis
             Application.targetFrameRate = sync == 0 ? rate : -1;
             Application.runInBackground = false;
 #endif
+        }
+        void OnEnable()
+        {
+            if (!Application.isPlaying) return;
+            // Draw graphs and mesh maps are managed state; recreate them after reload.
+            if (visibleGrass == null) visibleGrass = new GrassBatch();
+            var submission = GetComponent<GrassRenderSubmission>();
+            if (submission == null) submission = gameObject.AddComponent<GrassRenderSubmission>();
+            submission.owner = this;
+            details.Clear(); renderMeshes.Clear();
             var library = Resources.Load<FoliageMeshLibrary>("FoliagePerformance/Library");
             if (library != null)
                 foreach (var entry in library.entries)
@@ -116,9 +173,14 @@ namespace Mavis
                         details[entry.source] = entry;
                         if (entry.renderSource != null) renderMeshes[entry.source] = entry.renderSource;
                     }
+            SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
+#if UNITY_EDITOR
+            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload -= CaptureReloadRenderers;
+            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload += CaptureReloadRenderers;
+#endif
+            cacheRoutine = StartCoroutine(CacheAfterSceneLoad());
         }
-        void OnEnable() { if (Application.isPlaying) cacheRoutine = StartCoroutine(CacheAfterSceneLoad()); }
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             if (!isActiveAndEnabled) return;
@@ -377,7 +439,14 @@ namespace Mavis
         }
         IEnumerator CacheWorldRenderers()
         {
+            // Retain originals until each renderer transfers to the new bounded
+            // scan; native overrides may otherwise be read back after a yield.
+            var previousRenderers = new Dictionary<MeshRenderer, Foliage>();
+            foreach (var item in foliage) if (item.renderer) previousRenderers[item.renderer] = item;
             RestoreManagedRenderers();
+#if UNITY_EDITOR
+            var reloadRenderers = ReadReloadRenderers();
+#endif
             var grassCells = new Dictionary<Vector2Int, FoliageCell>();
             var block=new MaterialPropertyBlock();
             double deadline=Time.realtimeSinceStartupAsDouble+.002;
@@ -389,6 +458,13 @@ namespace Mavis
                 if(++visited%32==0 && Time.realtimeSinceStartupAsDouble>=deadline)
                 {yield return null;deadline=Time.realtimeSinceStartupAsDouble+.002;}
                 if(renderer==null)continue;
+                if (previousRenderers.TryGetValue(renderer, out var previous)) RestoreRenderer(previous);
+#if UNITY_EDITOR
+                // Restore immediately before taking ownership, including after
+                // every bounded-scan yield; an earlier bulk restore can go stale.
+                if (reloadRenderers != null && reloadRenderers.TryGetValue(renderer.GetInstanceID(), out var original))
+                    RestoreReloadRenderer(original, renderer);
+#endif
                 var filter = renderer.GetComponent<MeshFilter>();
                 var mesh = filter != null ? filter.sharedMesh : null;
                 if (mesh == null || renderer.GetComponentInParent<ProceduralIsland>() != null ||
@@ -469,7 +545,19 @@ namespace Mavis
                     item.renderOff = true;
                 }
             }
+#if UNITY_EDITOR
+            UnityEditor.SessionState.EraseString(ReloadKey);
+#endif
             nextUpdate=0;
+        }
+        static void RestoreRenderer(Foliage item)
+        {
+            if (item.renderer == null) return;
+            item.renderer.forceRenderingOff = item.forced;
+            item.renderer.allowOcclusionWhenDynamic = item.occlusion;
+            item.renderer.shadowCastingMode = item.shadows;
+            item.renderer.sharedMaterials = item.materials;
+            if (item.filter != null) item.filter.sharedMesh = item.original;
         }
         void RestoreManagedRenderers()
         {
@@ -477,12 +565,7 @@ namespace Mavis
             foliageRoutine = null; foliageRefreshing = false;
             foreach(var item in foliage)
             {
-                if(item.renderer==null)continue;
-                item.renderer.forceRenderingOff=item.forced;
-                item.renderer.allowOcclusionWhenDynamic=item.occlusion;
-                item.renderer.shadowCastingMode=item.shadows;
-                item.renderer.sharedMaterials=item.materials;
-                if(item.filter!=null)item.filter.sharedMesh=item.original;
+                RestoreRenderer(item);
             }
             foliage.Clear();
             foliageCells.Clear();
@@ -497,6 +580,10 @@ namespace Mavis
         }
         void OnDisable()
         {
+#if UNITY_EDITOR
+            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload -= CaptureReloadRenderers;
+#endif
+            SceneManager.sceneLoaded -= OnSceneLoaded;
             if (cacheRoutine != null) StopCoroutine(cacheRoutine);
             cacheRoutine = null;
             RestoreManagedRenderers();
