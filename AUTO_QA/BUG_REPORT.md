@@ -42,3 +42,11 @@ Batch 004 native Windows recheck: ~455,134 handles / 177 threads, responding. Is
 Batch 005 native Windows recheck: ~466,030 handles / 176 threads, responding. Normal-flow native input tests completed; resource issue remains open. No new production gameplay defect was demonstrated by this batch.
 
 Batch 006 final native Windows query: ~481,138 handles / 171 threads, responding. File truncation writes to the movement source failed despite a successful ReadWrite open; a guarded extending write succeeded and matched exact desired bytes. No permission/process changes were made. Resource/handle cause remains unproven.
+
+## Batch 007 — combo hit-stop suspicion rejected
+
+Native queued-input review passes 15 checks / 985 observations for stick and twin blades. Early taps expire before queue admission; accepted authored-window taps intentionally survive recovery and repeated local stops (consumed after 823/900 ms). No new production defect is demonstrated, so no combat source changed.
+
+Take batch007-review01 is a rejected test: a requested .35 s single Freeze is clamped to .13 s by CombatLocalHitStop. Its input reached the authored queue window before the .22 s lifetime ended. Treating the resulting chain as stale was incorrect. Corrected take batch007-review02-before renews .06 s stops for .35 s through the real API; both expired-tap and valid-intent cases pass. Its historical before suffix does not imply a subsequent fix. Evidence/combo-hitstop-review.json records actual deadlines and expiry phases.
+
+Native Editor recheck: 489,418 handles / 183 threads, responding. Resource cause remains open. Post-test console contains the known 606 missing-prefab scene restore errors; no new runtime exception appears in the captured interval.

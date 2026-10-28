@@ -1,5 +1,22 @@
 # Test results
 
+## Batch 007 — native render / combo hit-stop review
+
+| Check | Observed result |
+|---|---|
+| Initial take01 | REJECTED harness assertion: single .35 s requested stop is clamped to .13 s, so the click can validly enter the authored queue interval before expiry. Four prior checks and 414 frame observations retained; not a gameplay regression. |
+| Corrected take02 | PASS: 15 checks, 985 native frame observations, both weapons, 87 native SRP PNGs, no capture error. |
+| Expired early combo input | PASS: both weapons clear intent before queueOpen .12, observed phases .105/.100; no next stage. Actual unscaled deadlines in combo-hitstop-review.json. |
+| Accepted-window combo input | PASS: phases .313/.320, survives repeated local stop, consumed after 823/900 ms as designed. |
+| Rendered scope | Nine selected stills inspected for idle/startup/swing/jump/grounded recovery pose rendering. No temporal-smoothness, gameplay-camera or contact-quality acceptance. |
+| Input cleanup | PASS: original InputSettings object and HideAndDontSave flags, current Keyboard1/Mouse2 enabled, device roster matches, captureDelta=0, fixture preview removed. |
+| Workspace cleanup | PASS: original five scenes loaded/clean, Play stopped, compiling=false, scriptCompilationFailed=false, setup/fixture markers cleared. |
+| Saves | PASS: save and backup SHA256 equal fresh batch007 snapshots; no restoration needed. |
+| Production source | Unchanged versus entry backup. No project recompile/build requested for external test-only changes; run_script compiled corrected helper successfully. |
+| Console/resources | Known 606 missing-prefab errors on scene restore. No new runtime exception in captured interval. Editor responding, 489,418 handles / 183 threads; unresolved. |
+
+Evidence: combo-hitstop-review.json; native-input/batch007-review01 (rejected), native-input/batch007-review02-before (accepted; historical name, no subsequent production fix), result summaries, raw-result.json.gz, renders and cleanup.json. Gzip round trips verified byte-for-byte. These are native scripted assertions, not NUnit or a full boss encounter. No repeat of unrelated passing matrices.
+
 ## Batch 006 — complete
 
 | Check | Observed result |

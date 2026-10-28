@@ -1,0 +1,5 @@
+{
+  "status": "completed",
+  "passed": false,
+  "assessment": "Rejected test assertion: requested single .35s stop is clamped to .13s; queued input reaches authored window within .22s lifetime. This failure is not a gameplay bug."
+}

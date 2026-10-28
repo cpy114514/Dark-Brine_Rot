@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-10-28 — Batch 007 complete (hourly continuation)
+
+- Resumed from 2e2558d. Extended the existing native-input harness with bounded SRP readback and a fixture follow camera; no production source, prefab, scene or animation asset modified.
+- Initial take01 failed a mistaken assertion: single Freeze(.35) is capped at .13 s and the early click validly reached the queue window within .22 s. Corrected the test rather than changing working gameplay. The rejected take and reason are preserved.
+- Accepted take02 passes 15 assertions / 985 native observations and captures 87 rendered frames for both weapons. Repeated .06 s stops renewed for .35 s test actual expired early taps versus intentionally retained authored-window inputs. Both paths pass; independent trace analysis confirms expiry before queue admission and valid continuation after 823/900 ms.
+- Reviewed nine selected accepted images of startup, swing, jump contact and grounded recovery. Sparse captures establish pose rendering only; no visual smoothness, full-rate playback, gameplay camera, target-contact or artistic approval claim.
+- All original five scenes restored loaded/clean, Play stopped, input settings object/flags and physical current/enabled devices restored, fixture/setup markers cleared. Current save and backup hashes match this batch's fresh ignored snapshots. Existing user changes preserved.
+- Existing Editor PID 35488 responding, 489,418 handles / 183 threads; infrastructure issue remains open. Console shows known missing-prefab restore errors. Raw result archives are byte-verified lossless gzip; images use existing Git LFS rules.
+
+Checkpoint: commit titled `Capture native combat poses and verify combo hit-stop buffering` (resolve with git log). No production bug fix was justified this batch. Next: focused Nailong attack cancellation/death cleanup and hit-window ownership using the existing small fixture; inspect existing Tools test helpers before execution.
+
 ## 2026-10-28 — Batch 006 complete (hourly continuation)
 
 - Resumed from 7b57684; read QA records, ordinary usage available with refreshed five-hour window, no reset/purchase. Same Editor; final native query ~481,138 handles/171 threads, responding.
