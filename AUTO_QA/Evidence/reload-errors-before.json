@@ -1,0 +1,63 @@
+{
+  "entries": [
+    {
+      "seq": 168872,
+      "timestampUtc": "2026-10-28T07:42:31.0497176Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.NailongHealthBar.Refresh (System.Single deltaTime) (at Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongHealthBar.cs:82)\nMavis.NailongHealthBar.LateUpdate () (at Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongHealthBar.cs:76)\n"
+    },
+    {
+      "seq": 168873,
+      "timestampUtc": "2026-10-28T07:42:31.0497176Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.SandFootprints.Fade () (at Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs:128)\nMavis.SandFootprints.LateUpdate () (at Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs:64)\n"
+    },
+    {
+      "seq": 168874,
+      "timestampUtc": "2026-10-28T07:42:34.0552998Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.CombatImpactVisuals.Update () (at Assets/Scripts/Combat/CombatImpactVisuals.cs:123)\n"
+    },
+    {
+      "seq": 168875,
+      "timestampUtc": "2026-10-28T07:42:34.0573941Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.NailongHealthBar.Refresh (System.Single deltaTime) (at Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongHealthBar.cs:82)\nMavis.NailongHealthBar.LateUpdate () (at Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongHealthBar.cs:76)\n"
+    },
+    {
+      "seq": 168876,
+      "timestampUtc": "2026-10-28T07:42:34.0573941Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.SandFootprints.Fade () (at Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs:128)\nMavis.SandFootprints.LateUpdate () (at Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs:64)\n"
+    },
+    {
+      "seq": 168877,
+      "timestampUtc": "2026-10-28T07:42:34.1185179Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.CombatImpactVisuals.Update () (at Assets/Scripts/Combat/CombatImpactVisuals.cs:123)\n"
+    },
+    {
+      "seq": 168878,
+      "timestampUtc": "2026-10-28T07:42:34.1195632Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.NailongHealthBar.Refresh (System.Single deltaTime) (at Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongHealthBar.cs:82)\nMavis.NailongHealthBar.LateUpdate () (at Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongHealthBar.cs:76)\n"
+    },
+    {
+      "seq": 168879,
+      "timestampUtc": "2026-10-28T07:42:34.1195632Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Mavis.SandFootprints.Fade () (at Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs:128)\nMavis.SandFootprints.LateUpdate () (at Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs:64)\n"
+    }
+  ],
+  "cursor": 168879,
+  "returned": 8,
+  "dropped": false
+}

@@ -1,0 +1,311 @@
+ M Assets/Game/Prefabs/Bosses/CappuccinoAssassino/CappuccinoAssassino.prefab
+ M Assets/Game/Prefabs/Bosses/CappuccinoAssassino/Scripts/CappuccinoAI.cs
+ M Assets/Game/Prefabs/Bosses/CappuccinoAssassino/Scripts/CappuccinoUltimate.cs
+ M Assets/Game/Prefabs/Bosses/Nailong/Nailong.prefab
+ M Assets/Game/Prefabs/Bosses/Nailong/Scripts/NailongHealth.cs
+ M Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller
+ M Assets/Game/Prefabs/Characters/Sahur/Scripts/PlayerHealth.cs
+ M Assets/Game/Prefabs/Characters/Sahur/Scripts/SahurAttack.cs
+ M Assets/Game/Prefabs/Characters/Sahur/Scripts/SahurRifleCombat.cs
+ M Assets/Game/Prefabs/Characters/Sahur/Scripts/ThirdPersonPlayerController.cs
+ M Assets/Game/Prefabs/Environment/Shared/Scripts/FoliageInteractionSystem.cs
+ M Assets/Game/Prefabs/UI/EquipmentInventory.cs
+ M Assets/Game/Prefabs/UI/GameLocalization.cs
+ M Assets/Game/Prefabs/UI/GameUITheme.cs
+ M Assets/Game/Prefabs/UI/MainMenu/Scripts/MainMenuController.cs
+ M Assets/Game/Prefabs/UI/PlayerVitalsHUD.cs
+ M Assets/Game/Prefabs/UI/SahurLoadoutUI.cs
+ M Assets/Game/Prefabs/UI/SettingsMenu/Scripts/PauseSettingsMenu.cs
+ M Assets/MainScene/HandDrawnContrast.shader
+ M Assets/Ocean/ProceduralOcean.shader
+ M Assets/Ocean/ProceduralSky.shader
+ M Assets/Resources/Encounter/v006/SahurGameplay.controller
+ M Assets/Resources/Equipment/M4A1/SahurRifle.controller
+ M "Assets/Scenes/First Island/Enemies.unity"
+ M "Assets/Scenes/First Island/Environment.unity"
+ M Assets/Scripts/Combat/WeaknessGlasses.cs
+ M Assets/Scripts/Enemy/Health.cs
+ M Assets/Scripts/Performance/Pixel360Rendering.cs
+ M Assets/Scripts/Performance/Pixel360WorldText.cs
+ M Assets/Scripts/Story/Chapter1/OpeningTailReview.cs
+ M Assets/Scripts/Story/Chapter1/Story1SahurPassenger.cs
+ M Assets/Scripts/Story/Chapter1/Story1SharkCollisionSequence.cs
+ M Assets/Scripts/Story/Chapter1/Story1WreckBattle.Camera.cs
+ M Assets/Scripts/Story/Chapter1/Story1WreckBattle.Contact.cs
+ M Assets/Scripts/Story/Chapter1/Story1WreckBattle.Redesign.cs
+ M Assets/Scripts/Story/Chapter1/Story1WreckBattle.Solids.cs
+ M Assets/Scripts/Story/Chapter1/Story1WreckBattle.Tutorial.cs
+ M Assets/Scripts/Story/Chapter1/TralaleroSwimAnimator.cs
+ M Assets/Scripts/Systems/GameWorldProgress.cs
+ M Assets/Settings/Mobile_Renderer.asset
+ M Assets/Settings/PC_Renderer.asset
+ M Assets/Shaders/MavisFoliageWind.shader
+ M Documentation/AnimationWorkflow/project-animation-context.md
+ M Documentation/Pixel360-v260.md
+ M ProjectSettings/ProjectSettings.asset
+ M Tools/InstallCombatCombinations.cs
+?? ArtSource/Combat/v265/
+?? ArtSource/Combat/v266/
+?? ArtSource/Combat/v268/
+?? ArtSource/Combat/v269/
+?? ArtSource/Combat/v270/
+?? ArtSource/Combat/v276/
+?? ArtSource/Combat/v277/
+?? ArtSource/Combat/v278/
+?? ArtSource/Environment/
+?? Assets/AnimationStaging/NailongWearablesV265.meta
+?? Assets/AnimationStaging/NailongWearablesV265/
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v265.meta
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v265/
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v266.meta
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v266/
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v268.meta
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v268/
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v269.meta
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v269/
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v270.meta
+?? Assets/AnimationStaging/PLAYER_BladeJumpChop_v270/
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v265.meta
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v265/
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v266.meta
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v266/
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v268.meta
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v268/
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v269.meta
+?? Assets/AnimationStaging/PLAYER_ClubJumpChop_v269/
+?? Assets/Editor/CombatTestArenaBuilder.cs
+?? Assets/Editor/CombatTestArenaBuilder.cs.meta
+?? Assets/Editor/VisualStyleSetup.cs
+?? Assets/Editor/VisualStyleSetup.cs.meta
+?? Assets/Game/Equipment/Resources/Equipment/Wearables.meta
+?? Assets/Game/Equipment/Resources/Equipment/Wearables/
+?? Assets/Game/Prefabs/Enemies.meta
+?? Assets/Game/Prefabs/Enemies/
+?? Assets/Game/Prefabs/Environment/HunyuanCandidates.meta
+?? Assets/Game/Prefabs/Environment/HunyuanCandidates/
+?? Assets/Game/Prefabs/Environment/MeadowDressing.meta
+?? Assets/Game/Prefabs/Environment/MeadowDressing/
+?? Assets/Game/Prefabs/Environment/NatureKit.meta
+?? Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs
+?? Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs.meta
+?? Assets/Game/Prefabs/UI/SahurWearableEquipment.cs
+?? Assets/Game/Prefabs/UI/SahurWearableEquipment.cs.meta
+?? Assets/Game/Prefabs/UI/SahurWearableModel.cs
+?? Assets/Game/Prefabs/UI/SahurWearableModel.cs.meta
+?? Assets/Resources/Combat/Combinations/BladeFinisherV272.anim
+?? Assets/Resources/Combat/Combinations/BladeFinisherV272.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV265.anim
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV265.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV266.anim
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV266.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV269.anim
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV269.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV270.anim
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV270.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV276.anim
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV276.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV277.anim
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV277.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim
+?? Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeSlashV272.anim
+?? Assets/Resources/Combat/Combinations/BladeSlashV272.anim.meta
+?? Assets/Resources/Combat/Combinations/BladeSlashV273.anim
+?? Assets/Resources/Combat/Combinations/BladeSlashV273.anim.meta
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV265.anim
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV265.anim.meta
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV266.anim
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV266.anim.meta
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV269.anim
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV269.anim.meta
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV276.anim
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV276.anim.meta
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV277.anim
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV277.anim.meta
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim
+?? Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim.meta
+?? Assets/Resources/Rendering.meta
+?? Assets/Resources/Rendering/
+?? Assets/Resources/VisualStyles.meta
+?? Assets/Resources/VisualStyles/
+?? "Assets/Scenes/Combat Test.meta"
+?? "Assets/Scenes/Combat Test/"
+?? Assets/Scripts/Combat/CombatTestArena.cs
+?? Assets/Scripts/Combat/CombatTestArena.cs.meta
+?? Assets/Scripts/Performance/PixelStyleUI.cs
+?? Assets/Scripts/Performance/PixelStyleUI.cs.meta
+?? Assets/Scripts/VisualStyles.meta
+?? Assets/Scripts/VisualStyles/
+?? Assets/Shaders/DarkFairytale.shader
+?? Assets/Shaders/DarkFairytale.shader.meta
+?? Assets/Shaders/EnvironmentVisualStyle.hlsl
+?? Assets/Shaders/EnvironmentVisualStyle.hlsl.meta
+?? Assets/Shaders/MeadowProp.shader
+?? Assets/Shaders/MeadowProp.shader.meta
+?? Assets/Shaders/PixelStyleUI.cginc
+?? Assets/Shaders/PixelStyleUI.cginc.meta
+?? Assets/Shaders/SandFootprint.shader
+?? Assets/Shaders/SandFootprint.shader.meta
+?? Documentation/AIAnimationSources-v267.md
+?? Documentation/Combat-Wearables-v265.md
+?? Documentation/EditorInputRecovery-v271.md
+?? Documentation/EnvironmentStyles.md
+?? Documentation/HunyuanEnvironment-20261027.md
+?? Documentation/JumpDiagonal-v266.md
+?? Documentation/JumpForward-v277.md
+?? Documentation/JumpMomentum-v274.md
+?? Documentation/JumpStable-v278.md
+?? Documentation/JumpTransitions-v276.md
+?? Documentation/MeshyJumpChop-v270.md
+?? Documentation/OpeningHelm-SharkPatrol-v264.md
+?? Documentation/OpeningTutorial-Cappuccino-v263.md
+?? Documentation/PixelStyle-v2.md
+?? Documentation/StaminaPixelVisibility.md
+?? Documentation/TwinBlade-v272.md
+?? Documentation/TwinBlade-v273.md
+?? Documentation/TwinSpinMovement-v275.md
+?? Documentation/VisualStyleSystem-V1.md
+?? Tools/AnalyzeEnvironmentStyles.py
+?? Tools/AnalyzePixelStyleV2.py
+?? Tools/AnimationPipeline/blender/author_jump_chops_v265.py
+?? Tools/AnimationPipeline/blender/author_jump_diagonal_v266.py
+?? Tools/AnimationPipeline/blender/build_motion_proxy_v267.py
+?? Tools/AnimationPipeline/blender/build_wearable_lod_v265.py
+?? Tools/AnimationPipeline/blender/export_meshy_jump_v268.py
+?? Tools/AnimationPipeline/blender/export_meshy_jump_v269.py
+?? Tools/AnimationPipeline/blender/fit_meshy_blade_entry_v270.py
+?? Tools/AnimationPipeline/blender/fit_meshy_weapons_v269.py
+?? Tools/AnimationPipeline/blender/inspect_meshy_motion_v267.py
+?? Tools/AnimationPipeline/blender/retarget_meshy_jump_v268.py
+?? Tools/AnimationPipeline/blender/review_meshy_v267.py
+?? Tools/AnimationPipeline/bright_chicken_glb.py
+?? Tools/AnimationPipeline/compare_chicken_bones.py
+?? Tools/AnimationPipeline/encode_jump_v268.py
+?? Tools/AnimationPipeline/encode_jump_v270.py
+?? Tools/AnimationPipeline/export_chicken_fbx.py
+?? Tools/AnimationPipeline/export_chicken_tpose.py
+?? Tools/AnimationPipeline/extract_duck_textures.py
+?? Tools/AnimationPipeline/fix_chicken_hinges.py
+?? Tools/AnimationPipeline/fix_chicken_rig.py
+?? Tools/AnimationPipeline/inspect_chicken_rig.py
+?? Tools/AnimationPipeline/inspect_duck.py
+?? Tools/AnimationPipeline/inspect_jump_take_v269.py
+?? Tools/AnimationPipeline/pose_chicken_tpose.py
+?? Tools/AnimationPipeline/preview_chicken_hinges.py
+?? Tools/AnimationPipeline/probe_arm_axis.py
+?? Tools/AnimationPipeline/probe_arm_deform.py
+?? Tools/AnimationPipeline/retie_chicken_weights.py
+?? Tools/AnimationPipeline/review_opening_polish_v262.py
+?? Tools/AnimationPipeline/review_tutorial_v263.py
+?? Tools/AnimationPipeline/rig_duck.py
+?? Tools/AnimationPipeline/show_chicken_weights.py
+?? Tools/AnimationPipeline/shrink_chicken_glb.py
+?? Tools/AnimationPipeline/slice_duck.py
+?? Tools/AnimationPipeline/verify_tutorial_v263.py
+?? Tools/AnimationPipeline/weight_regions.py
+?? Tools/ApplyHunyuanGrass.cs
+?? Tools/ApplyHunyuanRocks.cs
+?? Tools/AuditForwardJumpV277.cs
+?? Tools/AuditJumpMotionV276.cs
+?? Tools/AuditMeshV265.cs
+?? Tools/AuthorForwardJumpV277.cs
+?? Tools/AuthorStableJumpV278.cs
+?? Tools/AuthorTwinBladeV273.cs
+?? Tools/BuildChickenBro.cs
+?? Tools/BuildHunyuanGrassMeshes.cs
+?? Tools/BuildWearablesV265.cs
+?? Tools/CalibrateJumpGeometryV268.cs
+?? Tools/CaptureVisualStylesV1.cs
+?? Tools/DebugWornV265.cs
+?? Tools/DressMeadow.cs
+?? Tools/FinishChickenBro.cs
+?? Tools/HunyuanCleanIslandPreview.cs
+?? Tools/HunyuanGrassIslandPreview.cs
+?? Tools/HunyuanGrassMeshPreview.cs
+?? Tools/HunyuanIslandPreview.cs
+?? Tools/ImportBladeJumpV270.cs
+?? Tools/ImportJumpV265.cs
+?? Tools/ImportJumpV266.cs
+?? Tools/ImportJumpV268.cs
+?? Tools/ImportJumpV269.cs
+?? Tools/InspectCombatV265.cs
+?? Tools/InspectGearV265.cs
+?? Tools/InspectJumpV278.cs
+?? Tools/InspectStableJumpV278.cs
+?? Tools/InspectV263.cs
+?? Tools/InspectVisualStylesV1.cs
+?? Tools/InspectVoyageV264.cs
+?? Tools/InstallChickenRig.cs
+?? Tools/InstallCombatV265.cs
+?? Tools/InstallLongLeggedDuck.cs
+?? Tools/JumpWeaponGeometryV268.cs
+?? Tools/MakeHunyuanGrassCard.cs
+?? Tools/ObserveTutorialV263.cs
+?? Tools/PolishJumpClipsV276.cs
+?? Tools/PrepareCombatV265.cs
+?? Tools/PreviewChickenBro.cs
+?? Tools/PreviewChickenGait.cs
+?? Tools/PreviewGearV265.cs
+?? Tools/PreviewHunyuanCard.cs
+?? Tools/PreviewHunyuanEnvironment.cs
+?? Tools/PreviewLowGearV265.cs
+?? Tools/PreviewWornV265.cs
+?? Tools/QueueSpecialSharkFix.cs
+?? Tools/RecoverPhysicalInputV271.cs
+?? Tools/RestoreCombatV265.cs
+?? Tools/RestoreCombatVisualCacheV274.cs
+?? Tools/ReviewForwardJumpV277.cs
+?? Tools/ReviewForwardJumpV277.py
+?? Tools/ReviewJumpFinalV268.cs
+?? Tools/ReviewJumpFinalV269.cs
+?? Tools/ReviewJumpFinalV270.cs
+?? Tools/ReviewJumpGeometryV268.cs
+?? Tools/ReviewJumpGeometryV269.cs
+?? Tools/ReviewJumpPolishV276.py
+?? Tools/ReviewJumpPresentationV270.cs
+?? Tools/ReviewJumpTransitionsV276.cs
+?? Tools/ReviewJumpV265.cs
+?? Tools/ReviewJumpV266.cs
+?? Tools/ReviewJumpV268.cs
+?? Tools/ReviewOpeningPolishV262.cs
+?? Tools/ReviewOpeningV264.cs
+?? Tools/ReviewStableJumpV278.cs
+?? Tools/ReviewStableJumpV278.py
+?? Tools/ReviewTwinBladeV272.py
+?? Tools/ReviewTwinBladeV273.py
+?? Tools/ReviewVisualStyleMotionV1.cs
+?? Tools/ShortenWalkTutorial.cs
+?? Tools/StageCleanRock.cs
+?? Tools/StageHunyuanEnvironment.cs
+?? Tools/StageHunyuanMaterials.cs
+?? Tools/TestCombatV265.cs
+?? Tools/TestTwinBladeV272.cs
+?? Tools/TuneTwinBladeV272.cs
+?? Tools/VerifyEnvironmentStyles.cs
+?? Tools/VerifyHunyuanScenePersistence.cs
+?? Tools/VerifyJumpContractsV265.cs
+?? Tools/VerifyJumpContractsV266.cs
+?? Tools/VerifyJumpContractsV268.cs
+?? Tools/VerifyJumpContractsV269.cs
+?? Tools/VerifyJumpContractsV270.cs
+?? Tools/VerifyJumpMomentumV274.cs
+?? Tools/VerifyPixelStyleV2.cs
+?? Tools/VerifyStableJumpV278.cs
+?? Tools/VerifyStaminaPixel.cs
+?? Tools/VerifyTutorialCapV263.cs
+?? Tools/VerifyTwinSpinMovementV275.cs
+?? Tools/VerifyVisualStyleRenderingV1.cs
+?? Tools/VerifyVisualStylesV1.cs
+?? Tools/VerifyWornUIV265.cs
+?? Tools/WireChickenAnimations.cs
+?? Tools/WorkspaceJumpResumeV268.cs
+?? Tools/WorkspaceJumpV266.cs
+?? Tools/WorkspaceJumpV268.cs
+?? Tools/build_hunyuan_rock_lod.py
+?? Tools/clean_hunyuan_rock.py
+?? Tools/extract_hunyuan_textures.py
+?? Tools/inspect_hunyuan_environment.py
+?? Tools/prepare_hunyuan_environment.py
+?? Tools/preview_hunyuan_environment.py
+?? Tools/preview_hunyuan_environment_r2.py
+?? Tools/trim_hunyuan_environment.py

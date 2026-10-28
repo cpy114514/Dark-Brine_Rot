@@ -1,0 +1,1605 @@
+{
+  "capturedUtc": "2026-10-28T07:40:49.7264163Z",
+  "unity": "6000.3.23f1",
+  "playing": true,
+  "compilationFailed": false,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "isDirty": false,
+      "roots": 1
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "isDirty": false,
+      "roots": 6
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "isDirty": false,
+      "roots": 11
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "isDirty": false,
+      "roots": 6067
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "isDirty": false,
+      "roots": 6
+    }
+  ],
+  "objects": 96706,
+  "missingScripts": [],
+  "missingPrefabs": [],
+  "missingGuidPaths": [
+    {
+      "guid": "2bde5fdeb204bc6418608a5fe3993ad1",
+      "path": ""
+    },
+    {
+      "guid": "8e67ad946c4264b479267ee1643fd2ce",
+      "path": ""
+    },
+    {
+      "guid": "ad3d230ef428f6049ab82c5136f00a47",
+      "path": ""
+    }
+  ],
+  "pools": [
+    {
+      "owner": "Sahur Player",
+      "active": true,
+      "pulseSlots": 8,
+      "ribbonSlots": 2,
+      "children": 16
+    }
+  ],
+  "animators": [
+    {
+      "name": "Sahur Player",
+      "controller": "SahurGameplay",
+      "applyRootMotion": false,
+      "speed": 1.0
+    },
+    {
+      "name": "Animation Source Rig",
+      "controller": "CapriCombat",
+      "applyRootMotion": false,
+      "speed": 1.0
+    },
+    {
+      "name": "Pbr Sahur Visual",
+      "controller": "SahurGameplay",
+      "applyRootMotion": true,
+      "speed": 0.0
+    },
+    {
+      "name": "Nailong",
+      "controller": "NailongBoss",
+      "applyRootMotion": false,
+      "speed": 1.0
+    }
+  ],
+  "controllers": [
+    {
+      "path": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Locomotion",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.85,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpStart_v006/PLAYER_JumpStart_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpAir_v006/PLAYER_JumpAir_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpLand_v006/PLAYER_JumpLand_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_Swim_v007/PLAYER_Swim_v007.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimIdle_v007/PLAYER_SwimIdle_v007.fbx",
+              "speed": 0.9,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.89,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 3.4,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimFast_v007/PLAYER_SwimFast_v007.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Climb_v006/PLAYER_Climb_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Stagger_v006/PLAYER_Stagger_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Fall_v006/PLAYER_Fall_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.5,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "motion": "Assets/Resources/Combat/Combinations/BladeFinisherV272.anim",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swimming",
+              "motion": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Club Spin",
+              "motion": "Assets/Resources/Combat/Combinations/ClubSpinOneHandV003.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSpin.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "motion": "Assets/Resources/Combat/Combinations/BladeGuard.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurChargeUpperBody",
+          "states": [
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Light Attack Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "LightAttackTorso",
+          "states": [
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurReceivedUpperBodyV245",
+          "states": [
+            {
+              "name": "Received Hit",
+              "motion": "Assets/Resources/Combat/SahurReceivedHitV245.anim",
+              "speed": 0.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Locomotion",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.85,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 2.8,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 2.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 0.9,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.89,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 3.4,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurFastFreestyle.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 0.7017544,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Surf",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 0.8,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.14285719,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.5,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "motion": "Assets/Resources/Combat/Combinations/BladeFinisherV272.anim",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Club Spin",
+              "motion": "Assets/Resources/Combat/Combinations/ClubSpinOneHandV003.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSpin.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "motion": "Assets/Resources/Combat/Combinations/BladeGuard.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurChargeUpperBody",
+          "states": [
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurReceivedUpperBodyV245",
+          "states": [
+            {
+              "name": "Received Hit",
+              "motion": "Assets/Resources/Combat/SahurReceivedHitV245.anim",
+              "speed": 0.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Locomotion",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.85,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpStart_v006/PLAYER_JumpStart_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpAir_v006/PLAYER_JumpAir_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpLand_v006/PLAYER_JumpLand_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_Swim_v007/PLAYER_Swim_v007.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimIdle_v007/PLAYER_SwimIdle_v007.fbx",
+              "speed": 0.9,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.89,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 3.4,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimFast_v007/PLAYER_SwimFast_v007.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Climb_v006/PLAYER_Climb_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Stagger_v006/PLAYER_Stagger_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Fall_v006/PLAYER_Fall_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.5,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "motion": "Assets/Resources/Combat/Combinations/BladeFinisherV272.anim",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swimming",
+              "motion": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSpin.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "motion": "Assets/Resources/Combat/Combinations/BladeGuard.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Club Spin",
+              "motion": "Assets/Resources/Combat/Combinations/ClubSpinOneHandV003.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurChargeUpperBody",
+          "states": [
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Light Attack Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "LightAttackTorso",
+          "states": [
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Locomotion",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Rifle Idle",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleIdle.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Rifle Move",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:If:0"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Rifle Move",
+              "motion": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+              "speed": 1.0,
+              "speedParameter": "RiflePlayback",
+              "transitions": [
+                {
+                  "target": "Rifle Stop",
+                  "duration": 0.13,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:IfNot:0",
+                    "RifleWasForward:If:0"
+                  ]
+                },
+                {
+                  "target": "Rifle Idle",
+                  "duration": 0.14,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:IfNot:0",
+                    "RifleWasForward:IfNot:0"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Rifle Stop",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleStop.anim",
+              "speed": 1.3,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Rifle Move",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:If:0"
+                  ]
+                },
+                {
+                  "target": "Rifle Idle",
+                  "duration": 0.2,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.88,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Rifle Death",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleDeath.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Holding Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Rifle upper body",
+          "states": [
+            {
+              "name": "Rifle Hold",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleIdle.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Fire Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Rifle upper body",
+          "states": [
+            {
+              "name": "Rifle Fire",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleFire.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurReceivedUpperBodyV245",
+          "states": [
+            {
+              "name": "Received Hit",
+              "motion": "Assets/Resources/Combat/SahurReceivedHitV245.anim",
+              "speed": 0.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

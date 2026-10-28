@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "error": "System.NullReferenceException: Object reference not set to an instance of an object\r\n  at Mavis.NailongHealthBar.Refresh (System.Single deltaTime) [0x00057] in D:\\indiegameDev\\unity\\Dark Brine_Rot\\Assets\\Game\\Prefabs\\Bosses\\Nailong\\Scripts\\NailongHealthBar.cs:82 \r\n  at AutoQaLifecycleRegression.MissingAi () [0x00065] in D:\\indiegameDev\\unity\\Dark Brine_Rot\\AUTO_QA\\Tools\\LifecycleRegression.cs:30 ",
+  "fraction": 1.0,
+  "expected": 1.0,
+  "hasAi": false
+}

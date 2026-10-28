@@ -22,6 +22,15 @@ namespace Mavis
         public float DisplayedFraction => fill != null ? fill.fillAmount : 0f;
         public bool IsVisible => bar != null && bar.gameObject.activeSelf;
 
+        void OnEnable()
+        {
+            // A Play-mode script reload loses the managed wrapper, but keeps its Canvas.
+            if(encounter != null)return;
+            var previous=transform.Find("Nailong Encounter HUD");
+            if(previous){previous.gameObject.SetActive(false);Destroy(previous.gameObject);}
+            encounter=new BossHudPanel(transform,"Nailong Encounter HUD");
+        }
+
         void Awake()
         {
             health = GetComponent<NailongHealth>();
@@ -80,7 +89,7 @@ namespace Mavis
             var camera = Camera.main;
             float distance=camera ? (camera.transform.position-transform.position).sqrMagnitude : float.PositiveInfinity;
             encounter.Refresh(enabled && ai && ai.FightActive && !health.IsDead && camera,
-                distance,health.HealthFraction,health.currentHealth,health.maxHealth,GameLocalization.Text("enemy.name")+"  /  PHASE "+ai.FightPhase,deltaTime);
+                distance,health.HealthFraction,health.currentHealth,health.maxHealth,GameLocalization.Text("enemy.name")+"  /  PHASE "+(ai ? ai.FightPhase : 1),deltaTime);
             bool visible = enabled && !health.IsDead && camera != null && !GameUITheme.ModalOpen &&
                 distance < 70f*70f && (ai==null || !ai.FightActive) &&
                 camera.WorldToViewportPoint(transform.position).z>0;
