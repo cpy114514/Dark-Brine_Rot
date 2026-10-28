@@ -1,0 +1,9 @@
+{
+  "source": "Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs",
+  "preExistingUntracked": true,
+  "originalSha256": "08108f28c2e3de8be66193cd888e7a3a2c2682353635a50c5b639539fcf2862c",
+  "repairedSha256": "def8c64e1561c8941d807865bf4436b53d515a104bdd3a67e75ac05f63e59d0e",
+  "preservedOriginal": ".codex/autoqa-source-before/SandFootprints-batch003.cs",
+  "checkpointDelta": "AUTO_QA/Patches/SandFootprints-serialize-stamp.patch",
+  "scope": "One Serializable attribute only; original feature remains untracked and is not claimed as QA-authored source."
+}

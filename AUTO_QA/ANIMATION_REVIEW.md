@@ -11,3 +11,5 @@ Combat visual lifecycle exceptions are repaired and verified with native reload/
 Next review: moving attacks, combo buffering, charge release, jumping/landing recovery, dodge cancel, weapon switching and hit-window alignment using current native gameplay captures. Do not change clips or controllers without a reproduced issue.
 
 Batch 002: environment validation scheduling only. No character, camera, combat, clip or controller changes. No new visual animation observations or smoother-animation claim. Prior 30 animation contracts were not redundantly rerun for this unrelated source change.
+
+Batch 003: footprint serialization only. Native fixture verifies numerical alpha/expiry, not visible footprint style or character animation. No art, animation, camera, weapon contact timing or controller change. Next substantive gameplay batch should prioritize current input/combo/dodge/charge/landing smoke in a small isolated character fixture before animation tuning.
