@@ -258,6 +258,11 @@ namespace Mavis
                 state = State.Idle;
             }
             if (state == State.Returning) { TickReturn(); return; }
+            if (target != null && !target.gameObject.activeInHierarchy)
+            {
+                target = null;
+                targetHealth = null;
+            }
             if ((target == null || !target.gameObject.activeInHierarchy) && Time.time >= acquireAt)
             { acquireAt = Time.time + .5f; AcquireTarget(); }
             if (target == null)
@@ -357,7 +362,7 @@ namespace Mavis
                 activeAttack = AttackPattern.None;
                 HideWarning();
                 if (attackMotion != null) attackMotion.Stop();
-                effects?.HideTaunt();
+                effects?.StopPresentation();
             }
             state = State.Idle;
             if (agent != null && agent.enabled && agent.isOnNavMesh) agent.isStopped = true;

@@ -1,0 +1,490 @@
+{
+  "passed": true,
+  "error": null,
+  "checkCount": 75,
+  "checks": [
+    {
+      "passed": true,
+      "name": "ScoldingSpit/heavy hit real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/heavy hit releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit stagger cancels pending spit and preserves launched glob"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/heavy hit graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/death real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/death releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/death cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/death graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/disable AI real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/disable AI releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/disable AI cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/disable AI graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/return real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/return releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ScoldingSpit/return graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/heavy hit real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/heavy hit releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam stagger cancels pending spit and preserves launched glob"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/heavy hit graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/death real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/death releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/death cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/death graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/disable AI real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/disable AI releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/disable AI cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/disable AI graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/return real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/return releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "GroundSlam/return graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Roar/heavy hit real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Roar/heavy hit releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Roar stagger cancels pending spit and preserves launched glob"
+    },
+    {
+      "passed": true,
+      "name": "Roar/heavy hit graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Roar/death real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Roar/death releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Roar/death cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "Roar/death graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Roar/disable AI real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Roar/disable AI releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Roar/disable AI cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "Roar/disable AI graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Roar/return real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Roar/return releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Roar/return graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/heavy hit real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/heavy hit releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Rampage stagger cancels pending spit and preserves launched glob"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/heavy hit graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/death real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/death releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/death cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/death graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/disable AI real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/disable AI releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/disable AI cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/disable AI graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/return real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/return releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "Rampage/return graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/heavy hit real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/heavy hit releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge stagger cancels pending spit and preserves launched glob"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/heavy hit graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/death real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/death releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/death cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/death graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/disable AI real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/disable AI releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/disable AI cancels pending and active projectiles"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/disable AI graph remains released on native frames"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/return real imported animation graph owns action weight"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/return releases imported graph immediately"
+    },
+    {
+      "passed": true,
+      "name": "ShamelessCharge/return graph remains released on native frames"
+    }
+  ],
+  "cases": [
+    {
+      "pattern": "ScoldingSpit",
+      "exit": "heavy hit",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Staggered",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "ScoldingSpit",
+      "exit": "death",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Dead",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "ScoldingSpit",
+      "exit": "disable AI",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Idle",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "ScoldingSpit",
+      "exit": "return",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Returning",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "GroundSlam",
+      "exit": "heavy hit",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Staggered",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "GroundSlam",
+      "exit": "death",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Dead",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "GroundSlam",
+      "exit": "disable AI",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Idle",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "GroundSlam",
+      "exit": "return",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Returning",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Roar",
+      "exit": "heavy hit",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Staggered",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Roar",
+      "exit": "death",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Dead",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Roar",
+      "exit": "disable AI",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Idle",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Roar",
+      "exit": "return",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Returning",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Rampage",
+      "exit": "heavy hit",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Staggered",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Rampage",
+      "exit": "death",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Dead",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Rampage",
+      "exit": "disable AI",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Idle",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "Rampage",
+      "exit": "return",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Returning",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "ShamelessCharge",
+      "exit": "heavy hit",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Staggered",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "ShamelessCharge",
+      "exit": "death",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Dead",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "ShamelessCharge",
+      "exit": "disable AI",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Idle",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    },
+    {
+      "pattern": "ShamelessCharge",
+      "exit": "return",
+      "started": true,
+      "actionWeight": 1.0,
+      "state": "Returning",
+      "playingAtExit": false,
+      "playingAfterFrames": false
+    }
+  ],
+  "fixtureCleared": true
+}

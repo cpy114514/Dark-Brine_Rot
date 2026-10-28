@@ -37,3 +37,11 @@ Reference: existing Sahur V278 jump/V272-V276 combat implementation; no replacem
 Files above are under Evidence/native-input/batch007-review02-before/renders/. No gross missing-body/weapon rendering observed in these selected poses. Sparse stills do not establish temporal smoothness, weight, clipping freedom, foot-contact precision or camera responsiveness; those scores remain N/A. No clip/controller/blend/root curve was changed. Original .85 s jump and authored hit interval remain unchanged.
 
 Queue stress passes: actual traces show early intent cleared at phases .105/.100 before queueOpen .12, with no next combo stage. Inputs admitted at phases .313/.320 persist beyond their initial lifetime as designed. The initial single-stop failing assertion was a harness mistake, retained and explicitly rejected; it is not animation snapping evidence.
+
+## Batch 008 — Boss attack ownership on target loss
+
+QA-011 repairs state/presentation ownership when Nailong's player target becomes inactive. Before: imported animation graph continues in Attack and a queued glob releases. After: AI enters Idle and the graph and pending release stop; native frames confirm the state remains idle, and an active target can be reacquired.
+
+Baseline cancellation was already correct for heavy-hit stagger, death, AI disable and return: five imported attack patterns have real action mixer weight above .5 before cancellation; 75 checks pass before and after. NailongAttackMotion.Stop already delegates to NailongPhaseAnimation.Stop, so no new direct graph teardown or animation replacement was introduced. Additional tests preserve launched projectile/wave behavior while cancelling future emissions; death cleans remaining effects.
+
+No new gameplay images/video captured. This is native graph/state and effect-lifetime evidence, not an observation that animation looks smoother. Smoothness, contact, silhouette and blend appearance remain unscored. No art, clip, controller, cue timing, boss damage, root motion or combat design changed.
