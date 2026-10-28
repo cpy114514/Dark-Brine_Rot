@@ -1,0 +1,41 @@
+{
+  "checks": [
+    {
+      "file": "pause012-final-retention-before",
+      "pass": 6,
+      "total": 6,
+      "error": null
+    },
+    {
+      "file": "pause012-final-retention-after",
+      "pass": 11,
+      "total": 11,
+      "error": null
+    },
+    {
+      "file": "pause012-native-final",
+      "pass": 16,
+      "total": 16,
+      "error": null
+    }
+  ],
+  "acceptedAssertions": 33,
+  "nativeFrames": 147,
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "unchanged": true
+    }
+  ],
+  "scope": "Actual authored pause prefab, native Play-mode script reload and queued device input on real Sahur preview; no visual layout/FPS claim.",
+  "repairs": [
+    "Owner disable restores pause/time/overlay",
+    "Only active owner can Resume or release global pause during destruction",
+    "Rebuild resolution/control/shadow caches and button listeners after actual reload; retain serializable settings",
+    "Consume Escape once per frame across multiple menus"
+  ]
+}

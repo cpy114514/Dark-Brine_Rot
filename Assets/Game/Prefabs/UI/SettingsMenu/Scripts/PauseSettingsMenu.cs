@@ -30,6 +30,11 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     }
 
     public static bool IsOpen { get; private set; }
+    static PauseSettingsMenu active;
+    static int consumedFrame = -1;
+    [NonSerialized] bool bindingsReady;
+    [Serializable] struct LightShadowState { public Light light; public LightShadows shadows; }
+    [SerializeField, HideInInspector] List<LightShadowState> lightShadowStates = new();
 
     [Header("Screen")]
     [Tooltip("Use this instance only as the settings overlay on the title screen.")]
@@ -51,6 +56,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     public GameObject[] sectionPanels;
     public List<OptionControl> options = new();
 
+    [Serializable]
     struct Settings
     {
         public float masterVolume;
@@ -111,21 +117,13 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         Mavis.VisualStyles.VisualStyleUIController.InstallGraphicsRow(this);
         LocalizedGameText.BindTree(transform);
         player = FindFirstObjectByType<ThirdPersonPlayerController>();
-        foreach (Resolution resolution in Screen.resolutions)
-            if (!resolutions.Exists(r => r.width == resolution.width && r.height == resolution.height))
-                resolutions.Add(resolution);
-        if (!resolutions.Exists(r => r.width == Screen.width && r.height == Screen.height))
-            resolutions.Add(new Resolution { width = Screen.width, height = Screen.height });
-
+        PopulateResolutions();
         foreach (Light light in FindObjectsByType<Light>(FindObjectsSortMode.None))
-            originalLightShadows[light] = light.shadows;
-        foreach (OptionControl option in options)
         {
-            if (option.key == "shadowDistance" && option.slider != null)
-                option.slider.maxValue = 800f;
-            controlsByKey[option.key] = option;
+            originalLightShadows[light] = light.shadows;
+            lightShadowStates.Add(new LightShadowState { light = light, shadows = light.shadows });
         }
-
+        CacheControls();
         CacheDifficultyTargets();
         ConfigureScrollHitAreas();
         factoryDefaults = CaptureDefaults();
@@ -134,14 +132,56 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         draft = saved;
         savedKeys = ReadKeys();
         draftKeys = (Key[])savedKeys.Clone();
-        Bind();
+        BindRuntimeControls();
         MinimalMenuLayout.Settings(this);
-        GameLocalization.Changed += Refresh;
-        Mavis.VisualStyles.VisualStyleManager.Changed += Refresh;
         ApplySettings(saved);
         Refresh();
         HideImmediate();
     }
+
+    void PopulateResolutions()
+    {
+        foreach (Resolution resolution in Screen.resolutions)
+            if (!resolutions.Exists(r => r.width == resolution.width && r.height == resolution.height))
+                resolutions.Add(resolution);
+        if (!resolutions.Exists(r => r.width == Screen.width && r.height == Screen.height))
+            resolutions.Add(new Resolution { width = Screen.width, height = Screen.height });
+    }
+
+    void CacheControls()
+    {
+        controlsByKey.Clear();
+        foreach (OptionControl option in options)
+        {
+            if (option.key == "shadowDistance" && option.slider != null) option.slider.maxValue = 800f;
+            controlsByKey[option.key] = option;
+        }
+    }
+
+    void BindRuntimeControls()
+    {
+        if (bindingsReady) return;
+        Bind();
+        GameLocalization.Changed -= Refresh;
+        GameLocalization.Changed += Refresh;
+        Mavis.VisualStyles.VisualStyleManager.Changed -= Refresh;
+        Mavis.VisualStyles.VisualStyleManager.Changed += Refresh;
+        bindingsReady = true;
+    }
+
+    void OnEnable()
+    {
+        if (bindingsReady) return;
+        // Native controls survive reload; managed caches and listeners do not.
+        PopulateResolutions();
+        CacheControls();
+        foreach (var state in lightShadowStates)
+            if (state.light) originalLightShadows[state.light] = state.shadows;
+        BindRuntimeControls();
+        Refresh();
+    }
+
+    void OnDisable() { if (active == this) Resume(); }
 
     void Bind()
     {
@@ -210,6 +250,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void Update()
     {
+        if (consumedFrame == Time.frameCount || (IsOpen && active != this)) return;
         if (Mavis.VisualStyles.VisualStyleUIController.BlocksParentInput || SahurLoadoutUI.BlocksInput) return;
         if (Keyboard.current == null) return;
         if (pendingKey != null)
@@ -231,6 +272,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             return;
         }
         if (!Keyboard.current.escapeKey.wasPressedThisFrame) return;
+        consumedFrame = Time.frameCount;
         if (!IsOpen)
         {
             if (!mainMenuSettingsOnly) Open();
@@ -248,7 +290,8 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     public void Open()
     {
-        if (IsOpen) return;
+        if (IsOpen || !isActiveAndEnabled) return;
+        active = this;
         IsOpen = true;
         previousTimeScale = Time.timeScale;
         Time.timeScale = 0f;
@@ -267,10 +310,11 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     public void Resume()
     {
-        if (!IsOpen) return;
+        if (active != this) return;
         pendingKey = null;
         draft = saved;
         IsOpen = false;
+        active = null;
         Time.timeScale = previousTimeScale;
         Cursor.lockState = mainMenuSettingsOnly ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = mainMenuSettingsOnly;
@@ -753,6 +797,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void OnDestroy()
     {
+        if (active == this) Resume();
         Pixel360Rendering.Release(runtimePipelineAsset);
         GameLocalization.Changed -= Refresh;
         Mavis.VisualStyles.VisualStyleManager.Changed -= Refresh;
@@ -761,10 +806,6 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             QualitySettings.renderPipeline = originalPipelineAsset;
             Destroy(runtimePipelineAsset);
         }
-        if (!IsOpen) return;
-        IsOpen = false;
-        Time.timeScale = previousTimeScale;
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+
     }
 }

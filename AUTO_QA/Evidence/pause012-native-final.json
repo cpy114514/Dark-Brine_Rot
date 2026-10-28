@@ -1,0 +1,74 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Queued Esc opens pause"
+    },
+    {
+      "ok": true,
+      "label": "Queued Esc resumes gameplay"
+    },
+    {
+      "ok": true,
+      "label": "Queued I opens equipment"
+    },
+    {
+      "ok": true,
+      "label": "Esc closes equipment without reopening pause"
+    },
+    {
+      "ok": true,
+      "label": "Next Esc can open pause after equipment consumes prior frame"
+    },
+    {
+      "ok": true,
+      "label": "Queued M opens map and suspends rendering"
+    },
+    {
+      "ok": true,
+      "label": "Map blocks equipment hotkey"
+    },
+    {
+      "ok": true,
+      "label": "Esc closes map without pause overlap and restores camera"
+    },
+    {
+      "ok": true,
+      "label": "Equipment blocks map hotkey"
+    },
+    {
+      "ok": true,
+      "label": "Simultaneous M/I yields one modal owner"
+    },
+    {
+      "ok": true,
+      "label": "Death closes map and retains death pause"
+    },
+    {
+      "ok": true,
+      "label": "Death blocks pause hotkey"
+    },
+    {
+      "ok": true,
+      "label": "Queued Enter respawns from death UI"
+    },
+    {
+      "ok": true,
+      "label": "Pause input works after respawn"
+    },
+    {
+      "ok": true,
+      "label": "One Esc closes pause without another instance reopening it"
+    },
+    {
+      "ok": true,
+      "label": "No runtime errors during native UI sequence"
+    }
+  ],
+  "error": null,
+  "errors": [],
+  "nativeFrames": 147,
+  "settingsRestored": true,
+  "devicesRestored": true,
+  "currentDevicesRestored": true
+}

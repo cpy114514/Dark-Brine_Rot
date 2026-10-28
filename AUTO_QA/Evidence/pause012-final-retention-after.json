@@ -1,0 +1,50 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Actual reload unloaded preparation assembly"
+    },
+    {
+      "ok": true,
+      "label": "Reload releases prior pause and overlay"
+    },
+    {
+      "ok": true,
+      "label": "Menu opens after reload with rehydrated settings"
+    },
+    {
+      "ok": true,
+      "label": "Resume binding survives actual reload"
+    },
+    {
+      "ok": true,
+      "label": "Reload preserves saved settings and factory defaults"
+    },
+    {
+      "ok": true,
+      "label": "Reload restores original light-shadow cache"
+    },
+    {
+      "ok": true,
+      "label": "Disabled menu rejects public Open"
+    },
+    {
+      "ok": true,
+      "label": "Title-screen settings open directly to settings"
+    },
+    {
+      "ok": true,
+      "label": "Title-screen Resume preserves visible cursor"
+    },
+    {
+      "ok": true,
+      "label": "Reenable does not duplicate option handlers"
+    },
+    {
+      "ok": true,
+      "label": "Runtime pipeline remains owned after reload"
+    }
+  ],
+  "openError": null,
+  "frame": 331653
+}

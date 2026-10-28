@@ -1,0 +1,29 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Pause opens, freezes time and owns overlay"
+    },
+    {
+      "ok": false,
+      "label": "Disabling owner releases pause and overlay"
+    },
+    {
+      "ok": false,
+      "label": "Destroying unrelated menu preserves active pause owner"
+    },
+    {
+      "ok": false,
+      "label": "Unrelated Resume cannot release another owner"
+    },
+    {
+      "ok": true,
+      "label": "Authored Resume button closes its menu"
+    },
+    {
+      "ok": true,
+      "label": "Equipment and map reject open while paused"
+    }
+  ],
+  "frame": 48457
+}

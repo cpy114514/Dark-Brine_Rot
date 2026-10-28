@@ -198,3 +198,21 @@ Store reproducible scripts and compact machine-readable results under Tools/ and
 Final workspace acceptance: merged Environment loads in the same Editor; five original scenes are clean, Play stopped and recovery marker cleared. Console reports only the same three missing-prefab groups (234+177+195=606). Saves and backup exactly match batch011 copies. Original client configuration restored. UI/camera fixtures absent. Full diff formatting reports inherited Unity asset whitespace; QA source/docs formatting is checked independently.
 
 Batch011 completion: validated source Git checkpoint 3a4ca40; PR #1 merged to GitHub main as c6d8146e0e5b03b4ddcfbbe1812a57aced73728c, verified by fetch/ancestry. No GitHub CI checks are configured; native tests provide acceptance. Unity Version Control cs192 is at /main head, with no unfinished merge and only the two pre-existing recovery additions pending. Plastic requires atomic incoming ancestry: 99 unchanged upstream cs191 cache CP records were preserved, with no new local generated cache added; Git excludes them. New Editor native handle count is 11,093 versus prior ~519k; this is an observed restart baseline, not an established leak fix.
+
+## Batch 012 — pause/settings and native UI integration
+
+| Check | Result |
+|---|---|
+| Baseline lifecycle | Expected FAIL 3/6: active disable freezes; unrelated destroy/Resume releases owner. |
+| Baseline actual reload | Expected FAIL 2/5; reopening throws ArgumentOutOfRangeException, Resume binding absent, prior pause/overlay not released. Pipeline ownership control already passes. |
+| Final lifecycle | PASS 6/6 with authored prefab; includes modal mutual exclusion and native Resume button. |
+| Final actual reload | PASS 11/11: old preparation assembly unloaded; pause released; settings/defaults and Soft light cache retained; reopen/Resume binding, title-screen settings/cursor, disabled Open, no duplicate handlers and pipeline ownership. |
+| Multi-menu Esc before | Expected FAIL 15/16, only same-frame reopen assertion fails. |
+| Native UI final | PASS 16/16 / 147 native frames; queued Esc/I/M/Enter on real Sahur preview, equipment/map/death interlocks, respawn, two-menu Esc. Zero captured runtime errors. |
+| Input cleanup | PASS: original settings object/flags, device enabled states and current keyboard/mouse restored. Preview/fixture markers cleared. |
+| Recompile | PASS failed=false, errors=[]. |
+| Saves | PASS current save and backup byte-identical to fresh batch012 safety copies. |
+
+Accept 33 assertions across the final lifecycle/reload/native suites. Setup/repeated takes are not counted again. Scripted tests do not establish visual layout, animation smoothness or overall FPS.
+
+Final workspace: same Editor, Play stopped, five original scenes loaded/clean; scene/pause/input markers cleared, preview absent, compilation clean. Native handles 19,274; leak cause remains open. Known missing prefab count remains 606. Git formatting checks pass for this batch.
