@@ -18,6 +18,7 @@ namespace Mavis
         bool leftReady, rightReady;
         Mesh oval;
         Material material;
+        MaterialPropertyBlock stampProperties;
         Stamp[] stamps;
         int cursor;
         float nextSearch;
@@ -136,10 +137,10 @@ namespace Mavis
             }
         }
 
-        static void SetAlpha(MeshRenderer renderer, float alpha)
+        void SetAlpha(MeshRenderer renderer, float alpha)
         {
             if (!renderer) return;
-            var block = new MaterialPropertyBlock();
+            var block = stampProperties ?? (stampProperties = new MaterialPropertyBlock());
             renderer.GetPropertyBlock(block);
             block.SetColor("_Color", new Color(.33f, .22f, .11f, .62f * Mathf.Clamp01(alpha)));
             renderer.SetPropertyBlock(block);

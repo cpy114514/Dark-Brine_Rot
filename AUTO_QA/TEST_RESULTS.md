@@ -180,3 +180,19 @@ Completed verification superseding the pending rows above:
 Unity Test Runner remains zero tests; the passing checks above are explicit native scripted regressions, not NUnit. No build, full boss fight, input playthrough, performance benchmark or comprehensive visual animation review performed.
 
 Store reproducible scripts and compact machine-readable results under Tools/ and Evidence/. Distinguish historical logs, injected fault tests, normal gameplay, static inspection and visual observations.
+
+## 2026-10-28 — Batch 011 — measured footprint and UI regressions
+
+| Check | Result |
+|---|---|
+| Native allocation before/after | Valid positive controls: 16 × 1,048,608 bytes in each run. Footprint: 24,000 → 0 bytes per 1,000 calls. |
+| Marker CPU time | 2.351 → .184 ms per 1,000 calls, isolated microbenchmark; no game FPS claim. |
+| Footprint function | PASS 8: alpha, property isolation, lifetime/pool, lazy block recovery and camera feedback contracts. Final repeat after integration passes 8. |
+| Footprint actual reload | PASS 13; preparation assembly unloaded. AppDomain.Id did not change and is not reload proof. |
+| UI baseline | Expected FAIL, 7/12. Equipment reopen/pause/reenable fail; equipment and map canvases orphan. |
+| UI final | PASS 12 after actual reload: reopen, pause/time restore, camera mask, canvas ownership, disable/reenable. |
+| Rejected UI assertion | Initial fixed take 11/12 wrongly required destruction of a retained owned map canvas. Inspection confirmed one map root with unchanged ID; corrected ownership assertion passes. |
+| Recompile | PASS failed=false, errors=[]. |
+| VCS scene merge | 264,648 unique selected documents; 41 conflict-free document merges; 3 references to identical generated meshes; proof in vcs-scene-merge-proof.json. Native load acceptance pending below. |
+
+Final workspace acceptance: merged Environment loads in the same Editor; five original scenes are clean, Play stopped and recovery marker cleared. Console reports only the same three missing-prefab groups (234+177+195=606). Saves and backup exactly match batch011 copies. Original client configuration restored. UI/camera fixtures absent. Full diff formatting reports inherited Unity asset whitespace; QA source/docs formatting is checked independently.

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "frame": 10522,
+  "checks": [
+    "Cache preservation expected after repair",
+    "All 28 stamp entries preserved across real domain reload",
+    "All native stamp identities preserved",
+    "Native shared stamp mesh reused",
+    "Native shared stamp material reused",
+    "Next pool slot preserved",
+    "Unexpired prints survive reload",
+    "Footprint lifetime preserved",
+    "Fading stamp remains active",
+    "Expired stamp deactivates",
+    "Original fade curve still controls renderer alpha",
+    "Repeated re-enable keeps pool bounded at 28",
+    "Repeated re-enable preserves pool identities"
+  ]
+}
