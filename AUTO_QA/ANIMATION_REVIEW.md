@@ -89,3 +89,7 @@ No animation/art/controller/timing edits. Actual smoothed camera position now ch
 ## 2026-10-28 — Batch 016 — rendering lifecycle and slope coverage
 
 No production animation/controller/camera/art changes accepted. Native foliage submissions drop from 4 to 0 after actual script reload; transient initialization and ownership candidates failed and were fully reverted. Diagnostic PNGs lack a qualified rendering control and do not support visual acceptance. Native Sahur capsule lands and activates floor checkpoints on four slopes, with foot-to-ground distances .015/.031/.085/.153 m; this does not assess animation foot contact visually.
+
+## 2026-10-28 — Batch 017 — restored rendering ownership
+
+QA-030 is repaired with native object/state/submission evidence: 636 renderers retain original material and mesh IDs, including one intentionally hidden renderer with TwoSided shadows and occlusion disabled. Map-style camera masking stops submissions and restoring the mask resumes them. No art/animation/controller/camera/combat edit or new qualified image/video; this does not establish perceived visual smoothness or whole-game FPS. Diagnostic PNGs remain unqualified.

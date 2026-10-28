@@ -284,3 +284,22 @@ Final console cursor 1463: known 606 missing-plant prefab instances on restore; 
 | Cleanup/saves | PASS five original clean scenes, stopped, recovery/foliage markers empty, preview absent; save and backup equal fresh batch016 copies. |
 
 This is a discovery checkpoint with an unresolved verified defect, not a successful foliage fix. Final console cursor 1503: known missing-prefab groups and recovered infrastructure timeout; no new accepted gameplay exception. See batch016-proof.json for take classification.
+
+## Batch 017 — accepted foliage ownership repair
+
+| Check | Final result |
+|---|---|
+| Explicit-ID diagnostic | 36 renderer/material identities resolve after actual reload; manual recovery has zero bad originals. Diagnostic control, excluded from accepted count. |
+| Fresh fixture | PASS 9/9, 30 LOD maps, 4 compact maps, 36 renderers. |
+| Bounded scan interruption | PASS 5/5, native partial=351/636; replacement owns each renderer once and restores originals. Excludes stale 36-entry snapshot. |
+| Expanded actual reload | PASS 12/12, 636 renderers, 30/4 maps, valid original visibility/materials, live submissions. |
+| Expanded lifecycle | PASS 12/12, three disable/reenable cycles; complete cache and single submission component. |
+| Original state and map gating | PASS 11/11 after actual reload: one originally hidden renderer, TwoSided shadows, occlusion false, exact material/mesh IDs, other renderers restored; camera mask 0 stops grass and restoration resumes it. |
+| Additive scene event | PASS 6/6, real Lighting load/unload recaches all 636 with original materials/visibility and one submission. |
+| Repeat after scene transition | PASS 12/12 after another actual reload; 636 entries, 30/4 maps and 6 submitted batches; no stale handoff. |
+| Rejected candidates | Bulk and reload-only handoffs fail expanded/scene ownership; only all-handoffs final files accepted. |
+| Compile/cleanup/saves | PASS failed=false/errors=[]; five clean original scenes stopped; scene/fixture/input/handoff markers clear; both save bytes unchanged. |
+
+Accepted total 67 from the exact whitelist in batch017-proof.json. Extra warm scene passes and earlier candidates are not counted again. No qualified images, standalone build, whole-scene CPU/GPU/FPS or memory-leak improvement claim. A non-isolated Play after a failed prerequisite was stopped, with unchanged saves; subsequent isolation is gated on confirmed success.
+
+Final console cursor 1534 contains only the known Environment missing-prefab groups in the captured error interval (234+177+195=606). Editor responds after scene restore; handle growth remains unproven.
