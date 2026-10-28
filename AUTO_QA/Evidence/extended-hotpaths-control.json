@@ -1,0 +1,50 @@
+{
+  "passed": false,
+  "error": null,
+  "checkCount": 8,
+  "failed": 1,
+  "checks": [
+    {
+      "passed": false,
+      "name": "Allocation counter positive control detects one megabyte allocation"
+    },
+    {
+      "passed": true,
+      "name": "First renderer retains original alpha and unrelated properties"
+    },
+    {
+      "passed": true,
+      "name": "Second renderer has independent properties"
+    },
+    {
+      "passed": true,
+      "name": "Original lifetime fade curve preserved"
+    },
+    {
+      "passed": true,
+      "name": "Expiry and bounded 28-stamp pool preserved"
+    },
+    {
+      "passed": true,
+      "name": "100 camera impact/remove cycles preserve base pose without drift"
+    },
+    {
+      "passed": true,
+      "name": "Pause removes camera offset and preserves shake lifetime"
+    },
+    {
+      "passed": true,
+      "name": "Disabling camera feedback releases offset and timer"
+    }
+  ],
+  "cases": [
+    {
+      "system": "SandFootprints.SetAlpha",
+      "calls": 10000,
+      "allocated": 0,
+      "controlBytes": 0,
+      "validAllocationCounter": false,
+      "measurement": "Bound delegate, native renderer, warmed; no per-call reflection"
+    }
+  ]
+}

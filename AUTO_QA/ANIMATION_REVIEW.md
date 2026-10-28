@@ -51,3 +51,11 @@ No new gameplay images/video captured. This is native graph/state and effect-lif
 QA-012 stops an interrupted sword action from resuming into an immediate damage window after its AI or whole object is disabled. All three attacks now require a new action/telegraph; regular fresh attacks retain their 7/11/12 native fixture damage. Logical cancellation is immediate, while locomotion pose recovery waits for the next valid Tick so an inactive Animator is never crossfaded. The initial immediate-pose version generated warnings and was rejected; final native tests record zero inactive Animator warnings including teardown.
 
 Existing user edits to ultimate pacing, fixed health, healing and immobilization are preserved byte-for-byte. Regression phase-clock checks confirm those numeric contracts and death ownership, without claiming an entire real-time ultimate encounter. No clip, controller, root curve, authored attack window or original art changed. No new rendered evidence was captured, so blend appearance and smoothness remain unscored.
+
+## Batch 010 — expanded aircraft, camera and player QA
+
+Native settings confirm flame emission stops when Bombardino is disabled or its encounter loses a valid target. This is emission/ownership evidence, not a visual improvement observation. No new image/video captured. Ordnance flight follows the existing 25 m/s² gravity using time-preserving swept steps; original bomb/missile damage, steering rules, fire height/cadence and boss art remain. No animation clip/controller changed.
+
+Camera feedback tests cover 100 additive apply/remove cycles without base-pose drift, pause lifetime preservation and disable cleanup. They do not establish gameplay follow-camera responsiveness, collision behavior or perceived shake quality. Footprint alpha, renderer property independence, lifetime/expiry and 28-stamp pool pass. A failed allocation positive control prevents any performance benefit claim or source optimization.
+
+Current native queued input integration passes 28 assertions / 1,256 observed frames for both weapons, including complete combos, recovery evasion, moving charge/release, jump attack/landing, total-control ownership and switching. No current visual smoothness/weight/clipping acceptance is implied by these numeric/input checks.

@@ -1,0 +1,78 @@
+{
+  "passed": false,
+  "error": null,
+  "checkCount": 9,
+  "failed": 6,
+  "checks": [
+    {
+      "passed": false,
+      "name": "1 partitions consume full second"
+    },
+    {
+      "passed": false,
+      "name": "1 partitions match authored constant-gravity trajectory"
+    },
+    {
+      "passed": true,
+      "name": "10 partitions consume full second"
+    },
+    {
+      "passed": false,
+      "name": "10 partitions match authored constant-gravity trajectory"
+    },
+    {
+      "passed": true,
+      "name": "30 partitions consume full second"
+    },
+    {
+      "passed": false,
+      "name": "30 partitions match authored constant-gravity trajectory"
+    },
+    {
+      "passed": true,
+      "name": "60 partitions consume full second"
+    },
+    {
+      "passed": false,
+      "name": "60 partitions match authored constant-gravity trajectory"
+    },
+    {
+      "passed": false,
+      "name": "Ground fire consumes full elapsed lifetime on a long frame"
+    }
+  ],
+  "cases": [
+    {
+      "partitions": 1,
+      "simulatedAge": 0.1,
+      "trajectoryError": 12.6565208,
+      "position": "(100.35360, 499.75000, 100.00000)",
+      "expected": "(103.53550, 487.50000, 100.00000)"
+    },
+    {
+      "partitions": 10,
+      "simulatedAge": 1.00000012,
+      "trajectoryError": 1.25,
+      "position": "(103.53550, 486.25000, 100.00000)",
+      "expected": "(103.53550, 487.50000, 100.00000)"
+    },
+    {
+      "partitions": 30,
+      "simulatedAge": 1.00000036,
+      "trajectoryError": 0.4166565,
+      "position": "(103.53550, 487.08330, 100.00000)",
+      "expected": "(103.53550, 487.50000, 100.00000)"
+    },
+    {
+      "partitions": 60,
+      "simulatedAge": 0.9999997,
+      "trajectoryError": 0.208343625,
+      "position": "(103.53530, 487.29170, 100.00000)",
+      "expected": "(103.53550, 487.50000, 100.00000)"
+    },
+    {
+      "fireLongFrameExpired": false,
+      "simulatedAge": 0.1
+    }
+  ]
+}

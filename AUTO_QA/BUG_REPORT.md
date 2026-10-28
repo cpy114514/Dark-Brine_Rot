@@ -18,6 +18,10 @@ Unity 6000.3.23f1; one project Editor connected, stopped in the five First Islan
 
 - **QA-012 / P2 — FIXED, batch 009: Cappuccino resumes an old hit after disable.** Native attack frames reproduced retained Attack state through component disable and whole-object deactivation. Re-enable delivered 7/11/12 damage for TwinSlash/DashThrust/Whirlwind in the short observation requested at 50 ms, with no fresh telegraph; 18/36 assertions failed. Disable now cancels the logical action and queues interrupted-pose recovery for the first valid Tick. Dead state is preserved. Final 52 checks pass, including fresh attack damage, existing ultimate phase/heal contracts and zero inactive Animator warnings. See Evidence/cappuccino-disable-proof.json.
 
+- **QA-013 / P2 — FIXED, batch 010: Bombardino attacks invalid targets.** Deactivating the target or disabling its PlayerHealth left FightActive/Attack set, retained hazards and created a delayed fire zone with acquisition both due/deferred. Validate ownership before processing delayed impacts and include active health in reacquisition. Invalid targets now cause Returning and hazard cleanup before new fire can spawn.
+- **QA-014 / P2 — FIXED, batch 010: flame jet ignores disabled Boss owner.** Boss component disable clears hazards but its separate emitter continued at 95 particles/s. Emission now also requires owner.isActiveAndEnabled; native emission settings drop to zero. Combined ownership/death matrix passes 44 checks. No rendered quality claim.
+- **QA-015 / P2 — FIXED, batch 010: ordnance discards elapsed time and changes bomb gravity by frame partition.** Tick(1) advanced only .1 s; a 5.1 s ground-fire tick did not expire. One-second bomb trajectory error ranged from 12.657 m (one step) to .208 m (60 steps). Full elapsed time now feeds bounded 1/60 s swept substeps and analytic constant-gravity displacement; four partitions match within .000229 m. Fire keeps real lifetime and at most one damage pulse per game frame, without catch-up bursts. Nine timing and 11 contact/cover/cadence checks pass.
+
 ## Confirmed, open
 
 - **QA-003 / P1 — Missing environment prefab dependencies.** Scene-open logs report 234 + 177 + 195 missing prefab instances (606 total), GUIDs `2bde5fdeb204bc6418608a5fe3993ad1`, `8e67ad946c4264b479267ee1643fd2ce`, `ad3d230ef428f6049ab82c5136f00a47`. Exact source asset recovery is required; do not replace or delete instances speculatively.
@@ -66,3 +70,11 @@ Editor PID 35488 final: 497,916 handles / 175 threads, responding. High-handle r
 The first cancellation repair passed gameplay assertions but introduced ten inactive Animator warnings by crossfading during object disable/destruction. It is superseded: pose recovery now runs after re-enable, and both final suites explicitly assert zero such warnings. The intermediate results/console are retained as rejected acceptance. No animation smoothness claim is made.
 
 Editor PID 35488 final: 510,092 handles / 178 threads, responding. Dispatcher/network failures still occur; foregrounding the existing Editor restored service. Known CS0108 and 606 missing-prefab restore issues remain; no new game exception in the final captured console.
+
+## Batch 010 — wider coverage and measurement qualification
+
+Accepted suites span aircraft hazard ownership (44), ballistics (9), physical hit/cover/fire contracts (11), camera/footprint function (7) and native two-weapon input (28): 99 assertions, including 1,256 native player frames. Performance measurement is unavailable: GC.GetAllocatedBytesForCurrentThread also reports zero for an explicit 1 MB allocation, invalidating the initial zero-allocation reading. SandFootprints remains unchanged; its suspected MPB allocation hotspot is still unmeasured. Qualify future zero-byte results with a positive control.
+
+The first contact fixture incorrectly assumed raw player damage and reused the post-hit recovery clock. Its four failures are test mistakes, not game regressions. Corrected tests honor existing mitigation and explicitly clear the independent player-recovery clock between directly stepped fire cadence samples.
+
+BombardinoBoss.Tick itself still caps delta at .1 s; whether its flight/cooldown/death clocks should preserve full long-frame time is a remaining suspected issue requiring focused movement/terrain evidence. Do not equate the repaired ordnance loop with a complete low-FPS boss encounter. Editor remains responding at 518,647 handles / 174 threads; existing infrastructure issue open.
