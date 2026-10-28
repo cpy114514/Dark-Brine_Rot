@@ -1,0 +1,478 @@
+{
+  "passed": false,
+  "error": null,
+  "failed": 33,
+  "inputRestored": true,
+  "checks": [
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: requested native weapon mode confirmed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: unlocked callback starts combo",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: duplicate same-frame callback does not spend or advance twice",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: total control lock rejects light callback without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: total control lock discards pending attack without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: disabled movement owner rejects attack callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: total control lock rejects aerial callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: existing cinematic handoff gate retained",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: expired normal attack buffer is discarded",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: valid unlocked attack buffer is consumed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: movement-only platform lock preserves existing light-attack behavior",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: total control lock prevents late hitbox reactivation",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: contact fixture has native weapon/target penetration",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller club: total control lock rejects already-delivered trigger contact",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: requested native weapon mode confirmed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: unlocked callback starts combo",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: duplicate same-frame callback does not spend or advance twice",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: total control lock rejects light callback without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: total control lock discards pending attack without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: disabled movement owner rejects attack callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: total control lock rejects aerial callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: existing cinematic handoff gate retained",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: expired normal attack buffer is discarded",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: valid unlocked attack buffer is consumed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: movement-only platform lock preserves existing light-attack behavior",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: total control lock prevents late hitbox reactivation",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: contact fixture has native weapon/target penetration",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Encounter/v006/SahurGameplay.controller blades: total control lock rejects already-delivered trigger contact",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: requested native weapon mode confirmed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: unlocked callback starts combo",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: duplicate same-frame callback does not spend or advance twice",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: total control lock rejects light callback without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: total control lock discards pending attack without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: disabled movement owner rejects attack callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: total control lock rejects aerial callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: existing cinematic handoff gate retained",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: expired normal attack buffer is discarded",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: valid unlocked attack buffer is consumed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: movement-only platform lock preserves existing light-attack behavior",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: total control lock prevents late hitbox reactivation",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: contact fixture has native weapon/target penetration",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller club: total control lock rejects already-delivered trigger contact",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: requested native weapon mode confirmed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: unlocked callback starts combo",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: duplicate same-frame callback does not spend or advance twice",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: total control lock rejects light callback without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: total control lock discards pending attack without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: disabled movement owner rejects attack callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: total control lock rejects aerial callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: existing cinematic handoff gate retained",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: expired normal attack buffer is discarded",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: valid unlocked attack buffer is consumed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: movement-only platform lock preserves existing light-attack behavior",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: total control lock prevents late hitbox reactivation",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: contact fixture has native weapon/target penetration",
+      "passed": true
+    },
+    {
+      "name": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller blades: total control lock rejects already-delivered trigger contact",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: requested native weapon mode confirmed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: unlocked callback starts combo",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: duplicate same-frame callback does not spend or advance twice",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: total control lock rejects light callback without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: total control lock discards pending attack without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: disabled movement owner rejects attack callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: total control lock rejects aerial callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: existing cinematic handoff gate retained",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: expired normal attack buffer is discarded",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: valid unlocked attack buffer is consumed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: movement-only platform lock preserves existing light-attack behavior",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: total control lock prevents late hitbox reactivation",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: contact fixture has native weapon/target penetration",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller club: total control lock rejects already-delivered trigger contact",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: requested native weapon mode confirmed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: unlocked callback starts combo",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: duplicate same-frame callback does not spend or advance twice",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: total control lock rejects light callback without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: total control lock discards pending attack without cost",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: disabled movement owner rejects attack callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: total control lock rejects aerial callback",
+      "passed": false
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: existing cinematic handoff gate retained",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: expired normal attack buffer is discarded",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: valid unlocked attack buffer is consumed",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: movement-only platform lock preserves existing light-attack behavior",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: total control lock prevents late hitbox reactivation",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: contact fixture has native weapon/target penetration",
+      "passed": true
+    },
+    {
+      "name": "Assets/Resources/Equipment/M4A1/SahurRifle.controller blades: total control lock rejects already-delivered trigger contact",
+      "passed": false
+    }
+  ],
+  "observations": [
+    {
+      "controller": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "blades": false,
+      "test": "locked callback",
+      "attacking": true,
+      "staminaSpent": 3.0
+    },
+    {
+      "controller": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "blades": false,
+      "test": "locked buffer",
+      "attacking": true,
+      "queued": false,
+      "staminaSpent": 3.0
+    },
+    {
+      "controller": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "blades": false,
+      "test": "locked trigger contact",
+      "penetration": true,
+      "hits": 1
+    },
+    {
+      "controller": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "blades": true,
+      "test": "locked callback",
+      "attacking": true,
+      "staminaSpent": 2.25
+    },
+    {
+      "controller": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "blades": true,
+      "test": "locked buffer",
+      "attacking": true,
+      "queued": false,
+      "staminaSpent": 2.25
+    },
+    {
+      "controller": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "blades": true,
+      "test": "locked trigger contact",
+      "penetration": true,
+      "hits": 1
+    },
+    {
+      "controller": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "blades": false,
+      "test": "locked callback",
+      "attacking": true,
+      "staminaSpent": 3.0
+    },
+    {
+      "controller": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "blades": false,
+      "test": "locked buffer",
+      "attacking": true,
+      "queued": false,
+      "staminaSpent": 3.0
+    },
+    {
+      "controller": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "blades": false,
+      "test": "locked trigger contact",
+      "penetration": true,
+      "hits": 1
+    },
+    {
+      "controller": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "blades": true,
+      "test": "locked callback",
+      "attacking": true,
+      "staminaSpent": 2.25
+    },
+    {
+      "controller": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "blades": true,
+      "test": "locked buffer",
+      "attacking": true,
+      "queued": false,
+      "staminaSpent": 2.25
+    },
+    {
+      "controller": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "blades": true,
+      "test": "locked trigger contact",
+      "penetration": true,
+      "hits": 1
+    },
+    {
+      "controller": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "blades": false,
+      "test": "locked callback",
+      "attacking": true,
+      "staminaSpent": 3.0
+    },
+    {
+      "controller": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "blades": false,
+      "test": "locked buffer",
+      "attacking": true,
+      "queued": false,
+      "staminaSpent": 3.0
+    },
+    {
+      "controller": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "blades": false,
+      "test": "locked trigger contact",
+      "penetration": true,
+      "hits": 1
+    },
+    {
+      "controller": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "blades": true,
+      "test": "locked callback",
+      "attacking": true,
+      "staminaSpent": 2.25
+    },
+    {
+      "controller": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "blades": true,
+      "test": "locked buffer",
+      "attacking": true,
+      "queued": false,
+      "staminaSpent": 2.25
+    },
+    {
+      "controller": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "blades": true,
+      "test": "locked trigger contact",
+      "penetration": true,
+      "hits": 1
+    }
+  ]
+}

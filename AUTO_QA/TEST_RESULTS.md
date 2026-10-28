@@ -1,5 +1,20 @@
 # Test results
 
+## Batch 004 — complete
+
+| Check | Observed result |
+|---|---|
+| QA-008 accepted before matrix | Expected failure: 33 failed / 84 assertions across three current controllers and actual stick/twin-blade modes. Locked callbacks/buffers spend 3 stick or 2.25 blade stamina; confirmed overlapping trigger contact damages during total lock. |
+| Repair recompile | PASS: completed, failed=false, errors=[] |
+| Final after matrix | PASS: 96 checks, zero failures/error, inputRestored=true. New total-lock and disabled-owner rejection plus existing unlocked callbacks, buffer expiry/consumption, duplicate callback prevention, cinematic gate, movement-only mount attacks, real overlap, unlocked contact and one-hit-per-swing behavior. |
+| Scope | Native actual prefab/Animator/controller/weapon and Physics.ComputePenetration; public/trigger callbacks directly delivered and phases set by harness. No claim of keyboard playthrough, full cinematic, visual smoothness, arbitrary collision coverage or boss fight. |
+| Source ownership | PASS: original dirty working source backed up; exactly five QA hunks staged via git apply --cached (5 added / 4 removed lines); byte reconstruction preserves all pre-existing edits. |
+| Input/camera cleanup | PASS: original device roster/enabled states and current devices, camera tags/cursor restored; physical devices not disabled. |
+| Workspace/save | PASS: fixture gone, original five scenes loaded/clean, Play stopped, no compile failure, recovery marker cleared; save/backup SHA256 unchanged. |
+| Console | Known missing prefab restore errors and CS0108 remain; no new runtime gameplay exception in captured batch interval. |
+
+Harness-only enum mismatch and an initial weapon-reset ordering issue were corrected before the accepted 84-check baseline. Final harness includes 12 additional positive contact/deduplication checks. Tests are explicit native scripted assertions, not discovered NUnit tests.
+
 ## Batch 003 — complete
 
 | Check | Observed result |
