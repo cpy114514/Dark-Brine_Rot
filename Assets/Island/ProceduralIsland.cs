@@ -59,9 +59,11 @@ public class ProceduralIsland : MonoBehaviour
     private Material shoreFoamMaterial;
     private OceanWorld shoreOcean;
     private OceanWorld.EffectsQuality shoreQuality;
+    private bool rebuildPending;
 
     private void LateUpdate()
     {
+        if (rebuildPending) Rebuild();
         if (shoreFoamMaterial == null) return;
         if (shoreOcean == null) shoreOcean = FindFirstObjectByType<OceanWorld>();
         if (shoreOcean == null) return;
@@ -94,15 +96,16 @@ public class ProceduralIsland : MonoBehaviour
         underwaterDepth = Mathf.Max(0.1f, underwaterDepth);
         textureTiling = Mathf.Max(0.001f, textureTiling);
         // Creating generated child objects during OnValidate causes Unity
-        // lifecycle warnings. OnEnable handles safe editor/runtime rebuilding;
-        // while playing inspector changes still update immediately.
+        // lifecycle warnings. Apply Play-mode inspector changes on the next
+        // normal update, coalescing repeated validations into one rebuild.
         if (Application.isPlaying && isActiveAndEnabled)
-            Rebuild();
+            rebuildPending = true;
     }
 
     [ContextMenu("Rebuild Island")]
     public void Rebuild()
     {
+        rebuildPending = false;
         var filter = GetComponent<MeshFilter>();
         var renderer = GetComponent<MeshRenderer>();
         var collider = GetComponent<MeshCollider>();
