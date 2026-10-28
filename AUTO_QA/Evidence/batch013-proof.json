@@ -1,0 +1,27 @@
+{
+  "deathFresh": 3,
+  "deathActualReload": 13,
+  "aircraftMatrix": 80,
+  "aircraftOwnership": 44,
+  "inputGuards": 6,
+  "total": 146,
+  "allPassed": true,
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "unchanged": true
+    }
+  ],
+  "maxHorizontalError": 0.000244140625,
+  "maxVerticalError": 0.08331299,
+  "nativePenetrations": 0,
+  "sourceHashes": {
+    "death": "2f888605dcd0d9cfd172cc7e7f8e528a20c74e6002d22ff81bb03a17d99bf387",
+    "boss": "b65129f967e3dbed7d2a66b939b4ed8f8b55bdbec4a8d65ffca5c58f1dde0c86"
+  },
+  "qualification": "Native authored SpeedRun with default cruise altitude and 2x visual scale clears tested floor/ridge/player at sample boundaries; no full encounter/FPS/visual smoothness acceptance."
+}

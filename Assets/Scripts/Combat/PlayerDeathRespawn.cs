@@ -26,7 +26,7 @@ namespace Mavis
         Vector3 initialPosition;
         Quaternion initialRotation;
         float animatorSpeed;
-        readonly List<Behaviour> disabled = new List<Behaviour>();
+        [SerializeField, HideInInspector] List<Behaviour> disabled = new List<Behaviour>();
         public bool PanelVisible => overlay != null && overlay.activeSelf;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -37,7 +37,24 @@ namespace Mavis
             movement = GetComponent<ThirdPersonPlayerController>();
             initialPosition = transform.position;
             initialRotation = transform.rotation;
-            health.OnDeath.AddListener(Die);
+        }
+        void OnEnable()
+        {
+            if (health == null) health = GetComponent<PlayerHealth>();
+            if (movement == null) movement = GetComponent<ThirdPersonPlayerController>();
+            if (health != null) { health.OnDeath.RemoveListener(Die); health.OnDeath.AddListener(Die); }
+            if (IsDead) active = this;
+            BindRespawnButton();
+        }
+        void OnDisable() { if (health != null) health.OnDeath.RemoveListener(Die); }
+        void RespawnFromButton() { Respawn(); }
+        void BindRespawnButton()
+        {
+            if (overlay == null) return;
+            var button = overlay.GetComponentInChildren<Button>(true);
+            if (button == null) return;
+            button.onClick.RemoveListener(RespawnFromButton);
+            button.onClick.AddListener(RespawnFromButton);
         }
         void Start() { FindCheckpoint(); }
         void FindCheckpoint()
@@ -166,7 +183,7 @@ namespace Mavis
             button.transform.SetParent(overlay.transform, false);
             var buttonRect = (RectTransform)button.transform; buttonRect.sizeDelta = new Vector2(380, 78); buttonRect.anchoredPosition = new Vector2(0, -130);
             GameUITheme.StyleButton(button.GetComponent<Button>());
-            button.GetComponent<Button>().onClick.AddListener(() => Respawn());
+            BindRespawnButton();
             var text = Label("RESPAWN  /  Enter", 28, 0, Color.white);
             text.transform.SetParent(button.transform, false);
             if (EventSystem.current == null)

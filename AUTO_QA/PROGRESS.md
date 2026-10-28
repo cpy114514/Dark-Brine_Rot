@@ -145,3 +145,13 @@ One production script repaired: explicit pause owner, disable cleanup, serializa
 The initial final-input request failed at transport after recompile. Evidence/marker inspection showed it had not executed; foregrounding the same Editor restored service, then the accepted take completed. No duplicate Editor or input fixture. Earlier failed takes are preserved as confirmed reproductions, not passing tests.
 
 Final workspace: same Editor, Play stopped, five original scenes loaded/clean; scene/pause/input markers cleared, preview absent, compilation clean. Native handles 19,274; leak cause remains open. Known missing prefab count remains 606. Git formatting checks pass for this batch.
+
+## 2026-10-28 — Batch 013 — two-system batch
+
+Continued from Git ba4f06d / Plastic cs194; same Editor PID 57472, five clean scenes. Fresh saves captured before isolated Play. Reproduced three death reload failures and preserved all original death/label evidence. Small PlayerDeathRespawn repair retains disabled ownership and rebinds death/Respawn handlers. Original localization passes; no speculative text-system edit.
+
+Aircraft matrix confirms elapsed-time loss in patrol, authored low-pass, return, phase-2 salvo and death. Final Tick wrapper preserves time in <=1/60 s steps. The first elapsed-time candidate omitted native transform sync and regressed a large-step low-pass up to 423.48 m vertically; rejected. Sync between catch-up steps removes that regression. Final horizontal deviation <=.000245 m; vertical <=.083313 m over a raised ground discontinuity, within one bounded vertical step (.335334 m). Exact vertical .06 m tolerance was over-strict for differing fractional partitions and is superseded by separate horizontal/vertical bounds.
+
+Initial clearance probes changed patrol cruise altitude to 4, which changed the clearance branch threshold. These are configuration stress evidence, not the authored low-pass baseline. A temporary box-sweep candidate gave no improvement and was reverted byte-for-byte before the timing patch. The shipped Boss diff changes only Tick stepping/synchronization and non-finite guards, preserving ground sampling.
+
+Accepted 146 checks: death/label fresh 3 + actual reload/reenable 13; aircraft temporal/clearance matrix 80; existing hazard ownership regression 44; invalid/small-time inputs 6. Catch-up is qualified up to the tested 1.25 s input, not a whole-game FPS benchmark. Extra visual marker work in catch-up is a performance profiling candidate for the next batch.

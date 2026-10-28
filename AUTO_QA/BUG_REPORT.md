@@ -95,3 +95,12 @@ Batch011 fixes accepted and synchronized: Git 3a4ca40, GitHub main via PR #1/c6d
 - QA-021 VERIFIED FIX: actual Play-mode script reload left the settings menu paused with no active static state; reopening threw ArgumentOutOfRangeException from the lost resolution cache, and Resume's runtime button listener was gone. Retain serializable Settings, rebuild resolution/control/original-light caches and bind listeners once per managed lifetime.
 - QA-022 VERIFIED FIX: with two enabled menus, one queued Esc closed the owner and another menu reopened pause in the same native frame. Only the owner handles open-menu input; consume Esc once per frame. Native before probe fails exactly this check; final probe passes.
 - No gameplay tuning, art, scene or animation asset changed. Known 606 missing prefab references remain open.
+
+## 2026-10-28 — Batch 013 — death reload and aircraft timing
+
+- QA-023 VERIFIED FIX: while the player is dead, a real script reload resets static death ownership. The death panel remains visible, but global IsOpen/BlocksInput no longer represent it. OnEnable now restores the active dead owner and health-event binding.
+- QA-024 VERIFIED FIX: readonly disabled-behaviour list disappears across reload. Respawn returned successfully while attack, boomerang, hit reaction and movement remained disabled. Serialize this exact ownership list; originally disabled flash stays disabled.
+- QA-025 VERIFIED FIX: the death panel's runtime Respawn listener disappears across reload. Rebind its named handler on enable with remove/add, retaining the original canvas. The actual native button and a second death/respawn after re-enable pass.
+- QA-026 VERIFIED FIX: BombardinoBoss.Tick caps every call at .1 s. A 1.25 s input consumes .1 s, misses three missile pairs and delays return/flight/death timing. Consume elapsed time in <=1/60 s steps and synchronize native collider transforms between catch-up steps. Original attack numbers, warnings and ground-clearance algorithm remain.
+- LocalizedGameText reload suspicion rejected: original legacy/TMP alias updates and unknown dynamic numbers already pass after actual reload. Source unchanged.
+- Non-authored configuration stress: patrol with cruiseAltitude=4 and 2x visual scale intersects an 8 m ledge in the initial probe. This is not the authored SpeedRun/default cruiseAltitude=55 acceptance. A footprint-sweep candidate did not repair that stress case and was fully reverted; no ground sampling change ships.

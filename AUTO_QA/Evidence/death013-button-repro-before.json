@@ -1,0 +1,23 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Fresh death owns global death pause"
+    },
+    {
+      "ok": true,
+      "label": "Death disables owned combat/movement behaviours"
+    },
+    {
+      "ok": true,
+      "label": "Fresh legacy and TMP labels translate known alias"
+    }
+  ],
+  "disabled": [
+    "SahurAttack",
+    "SahurBoomerang",
+    "CombatReceivedReaction",
+    "ThirdPersonPlayerController"
+  ],
+  "frame": 6083
+}

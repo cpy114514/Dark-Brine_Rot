@@ -69,3 +69,9 @@ Batch011 fixes accepted and synchronized: Git 3a4ca40, GitHub main via PR #1/c6d
 ## 2026-10-28 — Batch 012 — UI control ownership
 
 No clip, blend tree, animator controller, root-motion or attack window changed. Queued keyboard input exercised the real Sahur preview with equipment/map/pause, death and respawn. This validates modal/input/time/camera ownership, not rendered UI layout or motion smoothness. No new visual acceptance or frame-rate claim.
+
+## 2026-10-28 — Batch 013 — restored death recovery and bounded aircraft steps
+
+Death-reload evidence verifies retained disabled-component identities, the original canvas/button, restored combat/movement enables and preservation of an originally disabled component. It does not establish locomotion/attack blend appearance after respawn. No clip/controller/root-motion, authored attack windows, art or animation speed changed.
+
+Aircraft authored low-pass tests retain default cruise altitude (55), use SpeedRun with 2x visual scale, and query native body/floor/ridge/player capsule penetration at sampled tick boundaries. Positive overlap controls pass; accepted paths have zero overlaps. This is collision/time evidence, not a filmed full boss encounter or visual smoothness claim.

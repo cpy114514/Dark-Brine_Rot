@@ -216,3 +216,22 @@ Batch011 completion: validated source Git checkpoint 3a4ca40; PR #1 merged to Gi
 Accept 33 assertions across the final lifecycle/reload/native suites. Setup/repeated takes are not counted again. Scripted tests do not establish visual layout, animation smoothness or overall FPS.
 
 Final workspace: same Editor, Play stopped, five original scenes loaded/clean; scene/pause/input markers cleared, preview absent, compilation clean. Native handles 19,274; leak cause remains open. Known missing prefab count remains 606. Git formatting checks pass for this batch.
+
+## Batch 013 — death ownership and aircraft elapsed time
+
+| Check | Observed result |
+|---|---|
+| Death baseline | 7/11: global death owner and disabled list lost; real Respawn button unwired; direct fallback respawn leaves four behaviours disabled. |
+| Death final | PASS 3 fresh + 13 actual reload/reenable checks, including named-button callback, immediate health event, repeat respawn, original-disabled preservation and native label updates. |
+| Localization suspicion | Original legacy/TMP aliases and unknown dynamic numbers pass. No source fix required. |
+| Authored aircraft baseline | 17/52. Long input loses elapsed time; 1.25 s tick advances .1 s and releases 2 instead of 8 missiles. Authored scaled-wing collision controls pass. |
+| Initial synthetic clearance | Rejected as authored acceptance: cruiseAltitude=4 patrol differs from default-55 SpeedRun. Its overlaps remain configuration stress evidence. Rejected sweep candidate was reverted. |
+| First timing candidate | Rejected: no native transform sync between catch-up steps; low-pass trajectory rose ~423.48 m. Final sync fixes the regression. |
+| Final aircraft matrix | PASS 80/80 across 20 cases: patrol, SpeedRun with 2x scale, return/reset, four missile pairs, falling death; 1/60, .125, .3125 and 1.25 s partitions. Includes eight native collision positive controls. |
+| Trajectory qualification | Maximum horizontal error .000244141 m; vertical .083313 m at raised-ground discontinuity, below one bounded vertical step. No exact partition invariance claim. Zero accepted floor/ridge/player overlaps at sampled boundaries. |
+| Hazard ownership regression | PASS 44/44 after Tick change: disable/death/inactive target/disabled health cancel emissions and future fire. |
+| Time input guards | PASS 6/6: zero, negative, NaN and infinities inert; ordinary .016 s advances exactly. |
+| Fresh compile | PASS failed=false, errors=[]. |
+| Saves | Current save and backup exactly match fresh batch013 copies. |
+
+Total accepted assertions: 146. Do not count diagnostic/rejected takes or repeated setups again. Console since prior cursor contains only known missing-prefab scene-load groups; no new runtime error in the captured interval. No complete fight/playthrough, visual smoothness or scene CPU/FPS acceptance.

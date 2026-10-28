@@ -1,0 +1,28 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "name": "Invalid/zero elapsed input is inert: 0"
+    },
+    {
+      "ok": true,
+      "name": "Invalid/zero elapsed input is inert: -1"
+    },
+    {
+      "ok": true,
+      "name": "Invalid/zero elapsed input is inert: NaN"
+    },
+    {
+      "ok": true,
+      "name": "Invalid/zero elapsed input is inert: Infinity"
+    },
+    {
+      "ok": true,
+      "name": "Invalid/zero elapsed input is inert: -Infinity"
+    },
+    {
+      "ok": true,
+      "name": "Ordinary small step still advances exact elapsed time"
+    }
+  ]
+}
