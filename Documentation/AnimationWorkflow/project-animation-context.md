@@ -1,654 +1,1347 @@
+## Stable actor-forward jump chop v278 — 2026-10-27
+
+Read Documentation/JumpStable-v278.md. User rejects remaining Sahur shaking and emphasizes attacking directly in front of Sahur. V278 replaces hand-only V277 with bounded sparse full-body/limb muscle curves, a smooth forward body lean without lateral RootQ yaw/roll, constant RootT and a centered primary arm bake. Fingers/goals, .85s/60FPS/nonlooping, .34–.67 damage timing and V274–V276 movement/transition ownership remain. At 120Hz source sampling hips 6.67->.93deg, head 7.34->.97, right foot22.26->4.14, right lower leg23.03->9.21. SahurAttack now excludes the guard blade from jump damage and rejects confirmed contacts outside actor-forward +/-45deg; other attacks retain both blades. Expanded native after-focus-headings-60 passes72 checks/1727 frames across four actor headings, actual front hits, side/rear filter probes, moving/high-fall recovery and unchanged club spin. Main cut max side angle7.40deg/body-forward deviation4.38deg, zero sampled non-grip crossings. Three controllers bind V278; 30 controller/timing contracts pass. Native evidence/backups under .codex/jump-stable-v278/. Test-only copied input settings prevent focus-reset false failures and restore original settings/hardware on exit. Earlier direct-muscle trial and incomplete input takes rejected. No scene save/reload, upload, credits or full island claim. Agent POLISH accepted; human artistic approval pending.
+
+## Forward jump-chop correction v277 — 2026-10-27
+
+Read Documentation/JumpForward-v277.md. User explicitly corrects the jump chop to strike forward. ClubJumpChopV277 / BladeJumpChopV277 replace V276 in the three controllers; nine primary right-arm muscle bindings changed, 121 others preserved, .85s/60FPS/nonlooping and existing damage/recovery timing unchanged. Actual weapon path now descends through the front, maximum sampled contact side angle 10.30deg. Blade windup stays right-front to clear the head; first native candidate with four head crossings was rejected. Corrected expanded native take passes 33 checks/550 frames; installed-controller take passes 21 checks/147 frames with no override and zero sampled non-grip surface crossings over 8,148 edge tests. Native review/video, acceptance, curve contracts, numeric audit and backups under .codex/jump-forward-v277/. No runtime IK/gameplay C# changes; retain V272–V276 movement inertia/mobile spins/smooth transitions. Agent POLISH accepted, human artistic approval pending. Same CombatTest stopped/dirty, keyboard/mouse enabled, no scene save/reload or credits/upload.
+
+## Natural jump-chop transitions v276 — 2026-10-27
+
+Read Documentation/JumpTransitions-v276.md. User requests optimization specifically for stiff/unnatural transitions. ClubJumpChopV276 / BladeJumpChopV276 bound in three controllers; 18 arm/wrist muscle curves bounded+five-tap smoothed, 112 other curves and .85s/60FPS/root/body/legs/goals unchanged. Actual native arm-chain half-turn flips (~180deg/sample) reduced to ~42deg local maximum. Entry blend .08->.14s; recovery at .82 uses .20s blend to actual airborne Jump Loop / grounded Land / moving Locomotion. Attack ownership retained through outgoing blend; ground recovery permits translation, existing inertia/damage windows preserved. Final real queued input + native render take passes 33 checks/550 frames at 30Hz, including actual hits, moving recovery and high-fall recovery. 16,296 posed weapon edge tests: no sampled non-grip surface crossings. .codex/jump-transitions-v276/ contains final-bound-30, native-review.jpg, silent JumpChop-Transitions-v276.mp4, acceptance/contracts and source backups. Reject stale model-only poses/ and pose-review.jpg; final native captures are authoritative. Blender MCP unavailable; post-import Unity curve polish, original FBXs/Actions retained and no generation/credits/upload. Same CombatTest left stopped with its current unsaved flag preserved, physical input enabled, no test actors; one Editor-owned hidden light preview preserved. No human FINAL/all-layout clipping/audio claim. Keep v272-v275 changes.
+
+## Mobile twin-blade spins v275 — 2026-10-27
+
+Read Documentation/TwinSpinMovement-v275.md. User requests moving during twin-blade rotation. Both third-input finisher and continuous two-button blade spin now allow WASD/sprint without movement-input cancellation. IsTwinBladeSpinActive + CanTranslateDuringCombat separate capsule translation from full-body animation/hit-stop ownership; controller uses translation permission and finisher root-motion travel is disabled. Original body spin, costs/damage/chord/exhaustion, first two slashes and club spin remain. 472 native assertions / 24 directional cases pass across three controllers, including actual blade damage while translating, whole-body hit-stop with capsule movement, no duplicate same-turn hits and real wall blocking. V274 jump regression rerun: 402 checks pass. Evidence .codex/twin-spin-movement-v275/native.json. Temporary verification Play restored to preceding clean/stopped CombatTest; inputs/camera/actors cleaned, no source scene/save/animation asset edits. Historical post-recompile visual-cache errors predate fresh test Play; effects source unchanged. No full rendered/input playthrough claim.
+
+## Shared jump chop inertia v274 — 2026-10-27
+
+Read Documentation/JumpMomentum-v274.md. User requests all aerial chops carry movement. SahurAttack.IsJumpSlashActive identifies the shared aerial attack; ThirdPersonPlayerController skips normal horizontal braking while that attack is airborne, retaining existing planar velocity. Grounding/external control restore ordinary braking; gravity, collision, platform carry, clips and damage remain. Two source edits compiled. User subsequently approved briefly resuming the frozen CombatTest for verification and restoring it: 402 assertions pass across 276 synchronous native-controller/capsule steps at 1/60s, covering all three controllers, both melee modes, walking/sprinting, no-key inertia, gravity, landing, platform carry and a real wall. Evidence .codex/jump-momentum-v274/native.json. Play retained; timeScale=0/capture=0 restored, original scene clean, no temporary actors, physical inputs enabled and save/backup hashes unchanged. Existing post-recompile knife-trail cache error repaired for this live session by reconnecting existing pools/materials via RestoreCombatVisualCacheV274; production effects source unchanged, future reload hardening remains separate. No full rendered/input playthrough claim. Existing source modifications and v272/v273 work retained.
+
+## Actual forward blade trajectory v273 — 2026-10-27
+
+Read Documentation/TwinBlade-v273.md. User rejected v272's direction as still sideways. BladeSlashV273 rotates the authored slash pose frame 75 degrees into the frontal region with smooth entry/recovery; all 123 non-root curves, source duration, grip, mirrors, speeds, windows and input logic remain. Two normal states only changed across three controllers; v272 alternation and two-turn third-input finisher retained. Native avatar + actual fitted knife tip sampling verifies both mirrored contact poses within 20 degrees of forward at .44, damage-window tip-forward fraction 40% -> 90%. Top/gameplay screenshots and comparison: .codex/twin-blade-v273/. No input fixture, Play toggle, scene save/reload or runtime script changes. User stopped own Play; five dirty island scenes kept open, zero preview scenes left, native input enabled. Full live damage/transitions not rerun; human gameplay feel pending.
+
+## Twin blade frontal slashes and persistent alternation v272 — 2026-10-27
+
+Read Documentation/TwinBlade-v272.md. User requested slightly straighter first two normal slashes, alternating from the last ordinary swing even after a pause, and more rotation while retaining the third-consecutive-input finisher. SahurAttack separates nextTwinBladeSwing from comboStep; rejected stamina inputs do not change side. Three existing controllers now use body-curve-only BladeSlashV272 and two-turn BladeFinisherV272, retaining all 123 non-root curves, source clips, duration, speed, mirror, grip and damage windows. Native mouse tests pass 22 checks at 60 Hz and 26 at 30 Hz, including both sides hitting a real target directly ahead. Review/evidence: .codex/twin-blade-v272/. Original clean MainMenu + Enemies scene setup restored, Editor stopped, save and backup hashes unchanged; existing user changes retained.
+
+## Hunyuan island grass and rocks — 2026-10-27
+
+Read Documentation/HunyuanEnvironment-20261027.md. User requested realistic dark-fairytale environment using Hunyuan, saved and stopped Play for integration. Grass r12_b/c in Environment replaced by 10,694 Hunyuan-derived four-triangle cards preserving transforms and Mavis/FoliageWind; selected triangle total 101,593 -> 42,776. Twelve upright rocks in Enemies use welded/recalculated 3,133-triangle Hunyuan near LOD, original low-poly far LOD and original colliders. Both scenes backed up under .codex/hunyuan-environment before saving. Serialized refs and collider count pass; one island real-light preview shows major open faces fixed. User restarted Play in Story1 before scene reload/live gameplay testing, so do not claim reload, collision feel or FPS verified, and never interrupt their session. Pending: when stopped, VerifyHunyuanScenePersistence.Run and representative island visual/LOD/wind/performance testing. Preserve all other user scene modifications.
+
+## v271 input cleanup after animation review — 2026-10-27
+
+Read Documentation/EditorInputRecovery-v271.md. User's live MainMenu input failed: native RawInput keyboard/mouse disabled, anonymous synthetic devices15/16 were current. Restored physical1/2, removed unpaired orphan virtuals; menu UI actions enabled. Hardened all seven v268-v270 jump review tools with Stop/before-reload/quit cleanup, restoration before report IO, and stopped-wait cancellation. Stop/exception teardown regression passed using only disposable devices; no human hardware disabled during regression. User Play/menu/save retained, no restart or production input binding changes. Physical play confirmation requested; actual recompile not forced. Do not run a keyboard/mouse fixture without these lifecycle guards.
+
+## v270 Meshy diagonal jump chop — 2026-10-27
+
+Read Documentation/MeshyJumpChop-v270.md. User rejected v266 artistic result and authorized AI animation via signed-in sites with scarce credits. Meshy candidate 02 retargeted offline to actual retained rig; keep physical jump, .85 s/60 fps, damage and hit window. Installed ClubJumpChopV269 and BladeJumpChopV270, two jump motions only across three controllers. v268 world retarget corrected but weapon fit rejected; v269 fixes head/body path; v270 fixes off-hand knee contact at entry. Originals retained. Native final 366 frames/27 actual-input-contact checks +24 controller checks pass; 85 weapon poses/765 broad rays, one remaining non-grip broad candidate has 8,148 actual knife edges with zero body crossings. Held hand/finger contact is grip. Wide native presentation108frames/17checks; silent MP4 and acceptance under .codex/jump-meshy-v270. Agent FIRST PASS only, no human FINAL/all-layout clipping guarantee. Fresh resumed save unchanged; five latest on-disk scenes restored, no source scene saves/build/upload/schedule. Meshy total20credits, only explicitly approved disposable gray proxy uploaded; no original Sahur upload. Preserve unrelated Chicken Bro/meadow/rifle changes.
+
 ## v249 clear standing decks — 2026-10-24
+
+
 
 Read `Documentation/WreckLandingClearance-20261024.md`. User reports other timber stacking on Sahur's landing board and pushing it underwater. Runtime Story1WreckDeckClearance reserves the selected actual landing/tutorial/climb deck's XZ mesh envelope+1.25m, moves overlapping loose timber horizontally, strips only inward planar momentum, and tracks later appended plank/rigging/shard rosters. The deck's mass/gravity/pose/buoyancy are untouched; all native colliders/damage remain. Fixed+late enforcement excludes the actors' bounds when moving loose debris. Broken decks release ownership and the next selected deck takes over. Normalize only each physics query's quaternion copy: raw PhysX quaternions caused TRS tolerance assertions in the rejected first complete take. Do not restore raw-state InputState.Change replay for Jump; queued native events complete the fixture without game input changes.
 
+
+
 Final `deck-v249-normalized`:2705nativeframes/1964occupied-deck samples,zero overlaps/min1.25m gap; all62fixture/deck/charge/geometry contracts pass. Real two tutorial+threefilm hits, actual timber fracture, originalshark3,70HP ending;79 independent later-film probes minbodygap.028291m/no wood intersections; this layout's later continuity passes, not an arbitrary-layout guarantee. Clearance marker active median.3593ms/P95.52554ms;200warm fixture passes0managedbytes. Final Console no new errors. Silent retimed overhead review+sheet in final folder; actual wave wash remains (-.431m minimum sampled Tutorial standing point), not permanently dry/pinned platforms. Fresh human save/scene bytes/source buoyancy and ocean/combat hashes preserved. Existing unsaved scene edits retained, Editor stopped; no save/build/upload/newEditor/schedule. `.codex/deck-clearance-20261024/acceptance.json` and final hashes are authoritative; earlier stale-assembly/stalled-input/raw-quaternion takes are retained/rejected as final acceptance.
+
+
 
 ## v248 opening timing — 2026-10-24
 
+
+
 User requests only about3s of stick play. See latest section in `Documentation/ShipboardStickFidget-20261024.md`. Enabled story passenger now hands off naturally after0.3s voyage to existing2.7s warning fidget, eliminating the old long repeat/patrol. One shared3s duration/0.3s lead-in constant defines the timing; sourcev2474.4sFBX unchanged and only its first~3s sampled, then existingguardblend. Original shark/shot/crush timings remain relative to takeover; no unrelated combat edits. Current pass evidence `.codex/boat-fidget-20261024/three-second-v248/`. Prior later-film continuity failures remain unresolved.
+
+
 
 ## v247 shipboard stick fidget checkpoint — 2026-10-24
 
+
+
 Read `Documentation/ShipboardStickFidget-20261024.md`. User rejected stiff on-deck action/sliding. New retained-rig CH1_SahurStickIdle_v247 is4.4s/60FPS/in-place and preserves original sources. Anatomical forearm-relative wrist fixes rejected v246's179-degree native flips. Passenger owns playback after all Start initializers, restores Animator ownership and caches fitted ship-local support height. Remove1.4m scripted standing retreat/pivot; preserve planted on-deck position. Same fidget phase continues into existing closeup until2.7s then blends .45s into guard; shark/shot timings unchanged. Final393-frame native take passes15 checks, root0.20mm/feet0.33 and0.96mm deck-relative excursion, wristmax4.27deg/frame. Silent final previews under `.codex/boat-fidget-20261024/wrist-safe-30/`; side diagnostic is obstructed and not review evidence. No human FINAL/all-layout collision claim.
+
+
 
 Final full native `boat-v247-final` completes2670frames/70HP/originalshark3/two tutorial+threefilm hits/real fractures, all17charge checks;79 independent mesh probes have minbodygap.02832m/no timber intersections. HOWEVER3of23 later continuity checks fail: Pursuit7.48–7.6s step24.689m, Duel13–15.5s13.533m and19.48–19.6s4.644m. Record as unresolved later-film placement, not full opening acceptance; earlier v246 passed geometry but has rejected wrist motion. Preserve human save/current unsaved scene changes, v243/v244/v245 work. No scene save, build/upload/new Editor or schedule.
 
+
+
 ## v245 combat impact and recovery checkpoint — 2026-10-24
+
+
 
 Read `Documentation/CombatImpactRecovery-20261024.md`. Player received damage now owns one real-damage impact event, local stop, an authored upper-body backward reaction and cached material feedback. Ordinary controller layers appended to gameplay/grounded/rifle use SahurReceivedHitV245 and ReceivedHitPhase; do not restore the rejected internal-graph insertion, which had nonzero weights without rendered pose output. Final supported Spine/Chest Front-Back curves are positive .44/.36, calibrated on the actual rig. Root/legs stay masked; native locomotion, attack states, equipment and death remain authoritative. Boss light impacts retain useful local stop and existing poise; frontal camera impulses are readable and bounded; rifle uses the unified victim route without double engine damage or player locomotion stop.
 
+
+
 Hostile damage scales to .7 with an 18%-maximum-HP per-hit ceiling and .6s shared recovery; raw narrative damage remains unchanged. Dodge protects normalized .04–.72; Ctrl uses .22s input buffering and can enter the existing legal air flip after an authored attack step briefly lifts the feet. Original front twin guard and rush immunity remain. Final 115 checks pass, including real mouse/Ctrl input, rendered backward torso reaction, exact hit/material/death contracts and complete opening (2891 steps, original shark scale3,70HP, zero sampled wood intersections). Final silent native heavy/club/twin/received-hit video: `.codex/combat-recovery-20261023/final-controller-layer/CombatFeel-v245.mp4`. Warm 200-impact contract 3.4467ms/0 managed bytes is not a full-game FPS claim. Full island boss playthrough, low-end hardware, shipping build and subjective audio remain unverified. Human save/scenes/prefabs/quality and prior v243/v244 work preserved; no upload/build/schedule.
+
+
 
 ## v244 ocean and wreck buoyancy checkpoint — 2026-10-23
 
+
+
 See `Documentation/OceanBuoyancy-20261023.md` before further ocean/boat work. Shared CPU/HLSL wave groups now vary visibly; fragment response and sample intervals were tuned with paired native fixtures. Shore foam follows actual wet contacts with rush/spread/retreat, and the existing ocean triangle budget is concentrated near the view. The current wave/physics route passed 17 charge + 23 native geometry checks; final render-only mesh changes retain all quality budgets. Final 21s coast/sea recording and acceptance: `.codex/ocean-buoyancy-20261023/`. Preserve the v242 charge/direction work and v243 exact geometry caches.
+
+
 
 ## Oct23 project cleanup and exact-result performance v243 — latest performance checkpoint
 
+
+
 Read `Documentation/ProjectCleanupPerformance-20261023.md`. User requests cleanup/performance with unchanged playing experience. Four existing runtime sources change: tutorial shark/wood queries retain exact results across held frames only when pose/tree/matrix/offset keys match; exact tutorial shark vertex/bounds snapshots follow native bake stamps, also matrix-keyed for the nonuniform fallback; OceanWorld/ProceduralSun use TryGetComponent for optional DayNightCycle without caching its absence. Do not reduce collision precision, art quality, timing, input or damage. Same paused native-state A/B:solid CPU3.5909→0.8477ms(76.4%),actual median frame8.4152→7.3870ms(12.2%),final transforms/pixels identical. This is a paused-tutorial improvement, not all-game FPS.
+
+
 
 Native `performance-v243-verified`:2705 data-only rows,17 charge+23 contact/geometry/continuity checks pass,97 differential hero samples/2908 timber queries match forced fresh results exactly,including all three film contacts. Original shark3,70HP.79 independent later-film probes:min body gap0.028357m,no sampled shark/wood intersections. Intermediate missed-auditor and one-2.7cm-tail-envelope takes are retained/rejected; do not claim all-layout clipping freedom. Existing artistic v242 footage retained, no new large video/frame cache.
 
+
+
 Removed only two inventoried obsolete generated outputs (`standalone`,`standalone-snapshot`),740 files/3.445GB. Newest historicalv165,all reports/sources/review/saves/compiler/shader caches/Downloads retained.7 build scenes,406 dependency paths,745 Resources GUID paths unchanged;2611 meta GUIDs have0 duplicates/orphans;serialized assets/animations/controllers/shaders hash-match. Island/map regression at the existing user runtime scale0.6 completes six views and25514-entry foliage restore/rebuild with0 failures/leaks. Do not compare its FPS against older scale1 tests or claim a new island speedup;GPU/vegetation remain the island limit. Diagnostic tool MeshFilter null check/timeScale inheritance fixed,not production gameplay.
+
+
 
 16 aggregate acceptance checks pass. Fresh human save restored after Stop and Story1 bytes preserved; see preservation.json. Editor clean Story1,stopped/unpaused,authored PC pipeline scale1,cap60,VSync1,Console errors0. No source quality/preferences edits,new Editor/Player,build,Git/UVCS mutation,upload or schedule. Keep prior v239–v242/user work. Low-end/shipping-player/long-session FPS remain unverified.
 
+
+
 ## Oct23 ordinary gameplay charge in opening v242 — latest opening checkpoint
+
+
 
 Read `Documentation/OpeningGameplayCharge-20261023.md`. User requested that the opening charge match ordinary gameplay. Tutorial hold/release, cinematic counter and tail-feint preparation now reuse the existing SahurStandingMeleeDownward complete clip with its exact right-arm-only gameplay mask, held phase0.28, full charge1.8s and phase-dependent release speed. API-created runtime mask copy is `Encounter/v242/SahurGameplayChargeRightArm`. No new skeletal action or procedural bone replacement; existing gameplay sources/controllers and earlier direction fixes are retained. Actual heavy contact is phase0.39 inside the original0.35–0.43 window. Cinematic layer fade is smoothed over gameplay's0.18s duration.
 
+
+
 Two rejected native takes revealed temporary fall-preview state leaks: the live charge layer was dropped, then fall collision radii leaked into the currently held charge after tail fitting. Restore both composite pose and live envelope in finally; use the prepared larger fall envelope only for actual flight/drift. Keep these ownership fixes and strict independent contact tests.
+
+
 
 Frozen `final-30`:2605 rows/2604 native camera frames from crush to shore,17 charge plus23 contact/geometry/continuity checks pass;49 asset/controller/mask contracts and15 weight-zero graph passthrough samples also pass. Two tutorial hits,three film hits,13 native timber fractures,original shark scale3,70HP.79 later-film independent probes:minimum body gap0.029313m,no sampled shark/wood intersections. Native tutorial/counter side views and tail-contact consecutive camera frames reviewed; silent MP4 and all evidence in `.codex/opening-charge-20261023/final-30/`. No human artistic FINAL, full audio/speed review, all-layout clipping or hardware performance claim. Existing wave/timber shot occlusion remains.
 
+
+
 Fresh pre-test human save restored/verified after Stop; saved Story1 bytes unchanged (see preservation.json). Temporary diagnostic missing-script object removed, scene clean, Editor stopped/unpaused,Console errors0. Preserve prior v239/v240/v241/user edits. No new Editor/Player, build, commit/push,UVCS or scheduling.
+
+
 
 ## Oct23 rendered direction and action ownership v241 — latest opening checkpoint
 
+
+
 Read `Documentation/EncounterDirection-20261023.md`. User rejected the narrow v240 facing fix because many actual motions remained reversed. Native front/side mesh/skeleton sampling proves Walk_v006 and Climb_v010 use the opposite forward convention from Guard. New retained FBX copies PLAYER_Walk_v241 and PLAYER_Climb_v241 normalize only take orientation/name (180deg); source bytes, skeleton/avatar, frame ranges/FPS/durations/looping remain. Tutorial uses the forward Walk. Climb uses forward root and, critically, no longer samples Swim then Climb every frame: baseline102 climb frames had mixer weight0 forever; now the whole action plays after its0.18s blend. Keep this single-action ownership fix. Complete the original1.4667s tutorial roll recovery with bounded heading entry/return instead of cutting at.95s/snapping at1.05s. Shark film blends phase resets between distinct bites even when clip names match, using a cached segment/action identity; exact counter/tail contacts remain.
+
+
 
 Frozen-source `final-30`:2511 native rows/2510 gameplay-camera frames,38/38 direction+contact/geometry/continuity checks,70HP,two real tutorial hits,three film contacts,ten actual timber fractures,original shark scale3.25 independent board-relative moving samples across both staging lessons have minimum rendered chest/travel alignment0.989963;90 settled climb samples all weight1.80 independent later-film posed-geometry probes have min body gap0.004908m and no sampled shark/wood intersections. Actual native front/side and gameplay sheets/consecutive transition frames reviewed; silent full MP4/evidence `.codex/shark-direction-20261023/final-30/`. No claim of normal-speed sound review, human FINAL, all-layout clipping freedom or low-end FPS. Wave/timber occlusion remains a readability limitation. Earlier source preview scale/cache failures and the intermediate incomplete walk-audit take are documented and retained.
 
+
+
 Human save freshly protected/restored after confirmed Stop (SHA2568c65d7bcabe0c563aad31ed60e0bee2ac363d93edb721826986062b035357000); user-saved Story1 hashf13d1a3d625c04acf199c0713dde07f17fb25ddfd2329024bc514422c94f0c4d unchanged. Existing Editor stopped/unpaused, original scene clean, Console errors0. Preserve all preceding v239/v240/user changes. No second Editor/Player, build, commit, push, UVCS change or scheduling.
+
+
 
 ## Oct23 tutorial walking direction v240 — latest opening checkpoint
 
+
+
 Read `Documentation/TutorialFacing-20261023.md`. User reported a backwards-walking tutorial section. Only Story1WreckBattle.Tutorial.cs changes: automatic strike staging faces actual fitted travel while playing the original forward Walk clip, turns before/after walking as necessary, then resumes the original shark-facing strike heading. Commit turn-in/walk/turn-out durations once after sole/edge fitting, so wave-driven deck yaw cannot insert Guard midway through walking. Safe target, strike contact timings, original clips, shark size, controls and damage budget remain.
+
+
 
 Final existing-Editor `stable-30`:795 recorded frames to pursuit;69 walk frames in light/heavy staging with heading/path dot>=0.999999928;64 independent after-solids board-relative moving samples with dot>=0.921719 (no observed backpedal). Both fresh native contact/sole/timber probes pass,88HP and original scale3 retained;12/12 checks, Console errors0. Final camera sheets reviewed, silent staging preview/evidence `.codex/tutorial-facing-20261023/stable-30/`. First take passed contacts/heading but was rejected for a phase restart at the moving angle threshold; retained with rejection note. This is a targeted direction/phase fix, not all-layout clipping, turning foot-slide or human FINAL certification.
 
+
+
 Original user-saved Story1 hash preserved; Editor stopped/unpaused, scene clean (user's latest scene changes remain on disk). Current human save restored from this pass's fresh backup after Stop. All v239 melee hashes unchanged. No new Editor/Player, build, push, UVCS change or scheduling.
+
+
 
 ## Oct22 weapon-specific jump chops / one-hand club v239 — latest combat checkpoint
 
+
+
 Read `Documentation/MeleeCompletion-20261022.md`. User clarified jump chops for both melee weapons and single-hand club use, superseding the earlier two-hand club-spin request for gameplay. Retained rig/full v001 actions copied to v003; original assets preserved. ClubJumpChop retains one-right-hand overhead arc with leg tuck; BladeJumpChop has both blades raise/downward follow-through; ClubSpinOneHand retains original spin travel/right-hand weapon arc with a free counterbalance left arm. All three controllers, including shared rifle, bind the new clips; existing installer preserves them. Physical jump owns travel; new clips are in-place,60FPS,.85s chops/.9s spin; active window.34–.67.
+
+
 
 Ascending vertical speed now wins over stale grounded contact.150ms same-input-frame jump-attack buffer handles Space+LMB before the movement update, cleared on cancellation/expiry/pause/handoff. Native-current-30 passes25 actual-input/contact/recovery/miss/spin checks in367 final SRP frames;69 controller/asset/duration/loop/clock/mask checks pass (94 total). Source and native key-pose sheets reviewed; no runtime bone replacement. Preview/evidence `.codex/melee-completion-20261022/`. Original dirty Story1 and current human save preserved after Stop. No final human art approval, all-layout clipping guarantee or low-end FPS certification. Prior stale-assembly take and mistaken clip-name assertion are retained/documented; accepted replay checked current loaded field first. No push/build/scheduling for this revision.
 
+
+
 ## Oct22 UVCS/GitHub integration — latest repository checkpoint
+
+
 
 Read `Documentation/VersionControlIntegration-20261022.md`. User explicitly authorized conflict resolution and GitHub upload with local modifications highest priority. Native UVCS update181→182 completed;16 file conflicts resolved with local overlapping code hunks/local serialized scenes retained,2 recovery-directory change/delete reports keep prior local deletion. Compatible incoming island supply/practice/UI and historical ending recovery changes are included. All v234/v235/v236/v237 work remains; frozen v237 sources match. Three native Environment regression groups and42 shared melee controller contracts pass. Local backups/client configuration/raw recordings/saves remain ignored; original dirty Story1 and current human save preserved. No UVCS check-in or new build. Prior no-commit/push notes describe earlier scope and are superseded by this upload authorization.
 
+
+
 ## Oct21–22 shark film continuity v237 — latest opening checkpoint
+
+
 
 Read `Documentation/SharkAnimationPolish-20261021.md`. User authorized the same recording/review/local-polish workflow as blades, retaining approved scene intent. Original clips/models, shark scale3, tutorial controls/damage, real contact timing and actual timber fracture remain. Seed the cinematic pursuit from the live swimming clip/phase; blend the facing and clip handoff. Preserve the shark's resolved nose/rotation across movement segments, dive before turning the original broad body through wreckage and retain native avoidance offsets. Search uses a continuous180deg rotation instead of an opposite-vector zero crossing. Exact overhead/tail contact trajectories retain ownership. Rear retreat moves outboard before yaw, with1.4s transition and0.9s rise. Prone camera uses a closer/higher same-side view.
 
+
+
 Full native-camera baseline2534frames versus final2534frames/2533images: entry arm jump103.16→9.47deg; retreat maximum nose step51.03→3.84m in the aligned window. Final `accepted-30` and frozen-source `verified-10` pass46/46 functional/geometry/continuity checks,70HP, two real tutorial hits and three film contacts each;79 independent later-film mesh samples each show no shark/timber intersections. This is targeted movement/contact acceptance only. **Unresolved:** a crest over the actual board still obscures the prone actor around Duel10.35–10.6s; foreground fragments remain prominent. Do not claim complete shot readability, all-frame clipping freedom, hardware performance or human FINAL approval. Evidence, rejected takes, source hashes, silent full movie and before/after MP4 are in `.codex/shark-animation-polish-20261021/`.
+
+
 
 Three existing C# sources changed for this pass: Redesign, Camera and TralaleroSwimAnimator. Preserve preceding v234/v235/v236 changes. Original dirty Story1 retained unsaved, current human save80AE18C49EB1023655B5BA73412809312F95500C2FC3655062AE3EBF4285E976 restored/verified after final Stop; existing Editor stopped/unpaused, errors0. No new Editor/Player, build, commit, push or scheduling.
 
+
+
 ## Oct21 blade animation continuity v236 — latest combat checkpoint
+
+
 
 Read `Documentation/BladeAnimationPolish-20261021.md`. User authorized recording/review and local polish while retaining the overall moves. Native before/after recordings922/923frames at60Hz simulation revealed X-charge layer removal exposing idle for one frame at rush release and early cancellation. Preserve the evaluated charge pose during.12s layer fade and blend the original rush in over.08s; outgoing pose is fully gone before the active cut. Gameplay cancellation remains immediate. Existing idle wrist correction now fades out over.08s into movement/startup instead of switching off instantly. No authored clip, rig, controller or attack window changes in v236.
 
+
+
 Consecutive native-camera sheets inspected: rush-release arm step71.31→9.11deg, cancellation83.56→12.87deg, moving hand38.03→7.95deg.9 recording checks plus54 real-input rush/guard/pose-ownership checks at30Hz pass, including pause and swimming/disable/equipment handoff cleanup. Real16m travel and wall stopping retained. Evidence `.codex/blade-animation-polish-20261021/`, including before/after MP4s and aligned comparison. This is targeted continuity polish, not final human artistic approval or release performance certification. Original dirty Story1 retained; current human save80AE18C49EB1023655B5BA73412809312F95500C2FC3655062AE3EBF4285E976 restored after Stop; Editor stopped/unpaused. Preserve v234 tutorial/v235 controller restoration. No commit/push/build/scheduling.
+
+
 
 ## Oct21 twin-blade restore v235 — latest combat checkpoint
 
+
+
 Read `Documentation/TwinBladeRestore-20261021.md`. The user's live twin-blade player retained `Equipment/M4A1/SahurRifle.controller` after using the rifle. That older shared graph lacked spin/guard and the Twin Blade Charge layer, and still used CapriSlash for finisher/rush/charge. Restored the approved existing states/timing/mask from SahurGameplay into that shared graph through Unity APIs; all original rifle layers remain. Both combat combination/polish installers now include the rifle graph. Existing animation assets, 1.2x blades, 1.2/2.6s charge, 16m rush, rush immunity, frontal guard and preceding v234 opening edits remain.
+
+
 
 Native Input System tests explicitly equip/fire the rifle before blade testing:49 combination/switch checks and48 rush/guard checks pass at30Hz simulation. Final-pose measurement:359.113deg finisher, horizontal blades, down/back rush follow-through; native camera sheets inspected.42 controller contracts pass. This is restoration of the approved moves, not new final-art or release-FPS approval. Evidence `.codex/twin-blade-restore-20261021/`; original dirty Story1 remains unsaved, Editor stopped/unpaused, errors0. Latest human save is now **80AE18C49EB1023655B5BA73412809312F95500C2FC3655062AE3EBF4285E976**; backed up before tests and restored after Stop. Do not overwrite this with earlier tutorial/combat saves. No commit/push/build/scheduling.
 
+
+
 ## Oct21 tutorial placement/contact v234 — latest opening checkpoint
+
+
 
 Read `Documentation/TutorialContact-20261021.md`. The original tutorial reported hits before the final solid pass, leaving actual post-solve weapon gaps of about4m/3.25m; its frozen0.45s bite and per-frame head fitting produced large jumps. v234 stages the existing full attacks at the actual cut edge, previews their contact on the live floating deck, blends shark actions and confirms once after final native separation. Current retargeted contact cues are0.585s for the light slash and1.21s of the overhead clip (0.16s after release); old metadata is retained as provenance, not treated as the rendered contact authority.
 
+
+
 Cache the sampled strike's true skinned sole offsets and reserve footprint margin before walking to the stance. Existing bounded IK blends through contact. Charge pose blending uses an unscaled clock only when the tutorial pauses the world. The dodge now starts at the actual prior shark nose position, targets the pre-roll stance and keeps adaptive supported roll selection. Original shark scale3, real plank fracture, controls, nonlethal damage and6s/8m swim requirement remain. Paused shark geometry is reused by bone-pose version; tutorial hierarchy padding3 changes conservative bounds only, with3840 exact-reference checks passing.
+
+
 
 Final evidence is `.codex/tutorial-contact-20261021/verified-30` and `verified-10`, using normal input handlers, native final poses/SRP frames and independent fresh skin/wood/sole checks at both actual hits. See their summaries for measured gaps, foot support, continuity, fracture and88HP handoff. This is a targeted contact/transition checkpoint, not human FINAL artistic approval or a Windows/low-end FPS certification. Earlier rejected takes are retained/documented.
 
+
+
 Only four existing opening partial C# sources change; original scene/prefab/model/controller/animation assets remain. Original dirty Story1 and current human save968BD555DD0288F031ADFE4B4E714E8F6626E381A788C95DFBE8702F9AEF337A are protected. The previous GitHub upload request was completed atff39f8a; this subsequent tutorial revision is left uncommitted/unpushed. No new build, Editor, Player or automation.
+
+
 
 ## Oct20 balance v233 and UVCS integration — latest checkpoint
 
+
+
 Read `Documentation/NailongBalance-20261020.md` and `Documentation/VersionControlIntegration-20261020.md`. Persisted Nailong500HP, base6, sonic4 per ring; spit4.8 and roar4.2 by existing multipliers. Spit flight scale1.4 preserves the arc through matched speed/gravity; deep teal water now uses reflection0.72/smoothness0.95/specular2.4. Mouth socket remains(-0.058,0.070,0.350).70 contracts and a541-frame native island replay validate the reduced damage and oral emission after integration. Earlier v232 damage figures are superseded.
+
+
 
 User explicitly requested fixing Unity Version Control conflicts and uploading this project's current accumulated work to GitHub. This authorizes commit/push, superseding earlier no-commit notes. UVCS update180→181 preserves source changes and the prior deletion of the ignored recovery directory; incoming recovery scenes are separately backed up locally. Keep the original dirty Story1 and protected human save intact.
 
+
+
 ## Oct20 mouth-emitted sound v232 — latest boss checkpoint
+
+
 
 Read `Documentation/NailongMouthWaves-20261020.md`. User clarified sound must be shouted from the mouth. Active SONIC CRY/Roar/Rampage wave cues now use InitializeVoice on the legacy NailongGroundSlam component: upright closed circular tubes leave the posed mouth in LateUpdate510, travel forward and expand, with fixed airborne origins/directions and preserved near-transparent refraction. Geometry remains845 vertices/1536 triangles per pulse. Upper-body aim limited12deg vertically/35deg from facing. Original terrain mode remains API compatibility, not active sonic presentation; old3.2m crest no longer governs mouth-ring size.
 
+
+
 SONIC CRY uses existing authored roar action with held cue pose through final emission. Primary pressure retains15 per pulse and jump evasion but now uses continuous forward-front crossings. Roar retains14 default damage/knockback at actual travelling-front contact; removed old immediate radial damage to avoid duplicate/invisible hits. Interrupt cancels pending emissions, released fronts continue. Spit remains one larger deep-teal swept parabola.
+
+
 
 Face-validated actor-space mouth offset **(-0.058,0.070,0.350)** relative to current Head position is explicitly saved in Nailong.prefab through Unity APIs. Important: Unity's imported prefab cache retained the earlier head-local value despite changes to the C# initializer; it caused off-face emission. Installer, fresh prefab63rd contract and native startup assertion now validate persisted data. Do not accept a code-only default edit as proof of resource configuration. Model has no Jaw bone/blend shapes; mouth-opening facial deformation was not added.
 
+
+
 Final63 contracts pass: source/geometry/direction,10/30/60Hz forward contacts, original spit/legacy regressions, rear/outside misses, jump, interruption, no pre-arrival roar damage and exactly14 once at contact, sustained cue and zero allocations in1000 warm updates. Accepted native541-frame/18s capture `.codex/nailong-voice-20261020/island-socket-final`, final preview `Nailong_MouthWaves_v232_Final.mp4`; HP84/55/86/84 and max1glob. Face-marker proof `mouth-final/shout-mouth-1.png`, final unmarked live effect close-up also in accepted capture. Earlier island-first/final/accepted/verified captures are superseded; some retain stale offsets. See doc for rejected bake/diagnostic-camera evidence. Preview10Hz sampling is not gameplay FPS. Full autonomous fight, all-weather/mobile/release/low-end and facial animation not certified. Shader diagnostics0/Console errors0.
+
+
 
 Existing Editor7800 stopped/unpaused, original dirty Story1 retained unsaved; current human save **968BD555DD0288F031ADFE4B4E714E8F6626E381A788C95DFBE8702F9AEF337A** restored/verified after final Stop. Protect any newer human save before testing. Saliva material and ship source hashes unchanged. Original model/clips/controllers and prior shark/combat/performance work preserved. No second Editor/Player/build/commit/push/automation.
 
+
+
 ## Oct20 Nailong wave height v231 — latest boss checkpoint
+
+
 
 Read `Documentation/NailongWaveHeight-20261020.md`. User rejected v230 because the ring still looked flat. Its0.8m crest was too small beside native Sahur's5.30m capsule. The visible rounded pressure-front crest is now3.2m above terrain (3.12m surface span), with0.032 body opacity. Retains complete360-degree tube, original geometry count/cache/no-allocation update,6px refraction and0.26 rim. Existing15 damage/0.6m jumpable ground-contact rule remains; pressure height is presentation. Saliva material is unchanged from accepted deep teal v230.
 
+
+
 40 assertions pass; accepted actual island15s/451-frame recording at `.codex/nailong-height-20261020/island-final` visibly shows vertical wave walls from gameplay and low angles. Logged vertical span3.12m and projected sector height85.76–95.45px. HP84/55/84, max1glob,1000 warmed updates0 managed bytes. Shader/Console errors0. Preview `Nailong_Height_v231.mp4` uses10Hz native frame sampling, not measured FPS. Full autonomous fight/all-weather/mobile/low-end/release not repeated. Do not run old installers over current height/material settings.
+
+
 
 Current save SHA256968BD555DD0288F031ADFE4B4E714E8F6626E381A788C95DFBE8702F9AEF337A restored/verified after final Stop. Protect newer human saves before future tests. Existing Editor7800 stopped/unpaused; original dirty Story1 retained unsaved. Saliva material and ship source hashes unchanged. No second Editor/Player/build/commit/push/automation.
 
+
+
 ## Oct20 Nailong 3D ring / deeper saliva v230 — latest boss checkpoint
+
+
 
 Read `Documentation/NailongVolume-20261020.md`. User requested a complete 3D pressure ring and darker water colour. Sonar now uses a closed 64-by-12 elliptical torus (845 vertices / 1,536 triangles per pulse), terrain-following inner/outer/upper/lower surfaces, exact seams and outward winding. A radius-limited birth prevents inverted geometry. Height0.80m; normal-based refraction/Fresnel contours, backface culling,6px refraction,0.26 rim/0.012 body. Saliva uses deep teal transmission/body absorption with wet highlights; the larger0.24 base radius and single swept parabola remain. Fixed15 ring damage/0.6 jump clearance and existing actions unchanged. Material changes saved through Unity APIs; do not rerun older installers.
 
+
+
 40 final contracts pass, including geometry/winding, original10/30/60Hz damage/arc rules, pool reuse and zero allocations in1000 warm updates for each effect. Accepted native island15s/451-frame capture is `.codex/nailong-volume-20261020/island-final`, with side/top/rear frozen normal-rendered volume views. Max1glob; HP84/55/84. Preview `Nailong_Volume_v230_Final.mp4` samples actual frames at10Hz, not gameplay FPS. Preliminary `island-volume` has superseded rim settings. Full autonomous fight, release/mobile/low-end/all-weather testing not repeated. Shader messages0, Console errors0.
+
+
 
 Current human save SHA256 `968BD555DD0288F031ADFE4B4E714E8F6626E381A788C95DFBE8702F9AEF337A` restored/verified after final Stop. Protect any newer human progress before future Play. Existing Editor7800 stopped/unpaused; original dirty Story1 retained unsaved. No second Editor/Player/build/commit/push/automation. Shipv227 source hash unchanged; prior shark/combat/performance work preserved.
 
+
+
 ## Oct20 Nailong readability v229 — latest boss checkpoint
+
+
 
 Read `Documentation/NailongReadability-20261020.md`. User confirmed Unity Editor visibility was inadequate. Saliva radius0.12→0.24 before native size scaling, with matching visual/contact diameter; clearer Fresnel/highlight, mild blue transmission and stronger alpha/refraction. Sonar now has broader neutral light/dark rims,0.18 rim opacity,6px refraction,1.8× presentation width and0.50m crest; gameplay width,15 damage and0.6m jump clearance unchanged. Single-shot parabola, pool and v228 animation clips retained. Updated materials through Unity APIs; do not rerun the v228 installer over these stronger settings.
 
+
+
 32 contracts pass, including2× radius;1000 warm updates allocate0bytes. Actual island baseline/revised recordings use native equipped Nailong/Sahur, world and11m camera framing. Revised glob diameter42.6–66.6px; both recordings produce16 per spit and45 total ring damage, at most1glob. Shader messages0/Console0. Accepted artifacts `.codex/nailong-readability-20261020/island-baseline` and `island-after`; earlier `island-before` had an arrival-pose/protection fixture error and is superseded. Preview `Nailong_Readability_v229.mp4` is10fps native-frame sampling, not a gameplay FPS measurement. Full autonomous boss fight, low-end/release/all-weather tests not repeated.
+
+
 
 **NEWER human save** restored/verified SHA256 `968BD555DD0288F031ADFE4B4E714E8F6626E381A788C95DFBE8702F9AEF337A`. Protect any newer human save; do not restore A7A/3EA. Existing Editor7800 stopped/unpaused; original dirty Story1 retained unsaved. No second Editor/Player/build/commit/push/automation. Prior ship/combat/performance changes preserved.
 
+
+
 ## Oct20 Nailong attacks v228 — latest boss checkpoint
+
+
 
 Read `Documentation/NailongAttacks-20261020.md`. Sonar is now a nearly transparent refractive pressure rim with a no-colour/depth-texture fallback. Spit and Rampage spit release exactly one pooled water glob, following an exact swept parabola; watery Fresnel/refraction and short cosmetic beads replace the green solid ball/dust. The AI queues emission until after the mouth animation. New complete humanoid spit/roar clips under Resources/BossCombat/Animations/v228 preserve original assets and remap their release to gameplay cues. Recovery no longer Rebinds the entire Animator. Original ground-ring15 damage/jump rule and other melee patterns remain unchanged; roar's extra pressure visual never damages again.
 
+
+
 31 native contracts passed, including10/30/60Hz arcs, thin-wall sweep, duplicate damage, interruption and pool reuse.1000 warm projectile/visual steps allocate0 managed bytes.451-frame real release/animation recording and frozen effect comparisons render both desktop refraction and no-camera-texture fallback; both shaders compile with0 messages, final Console0 errors. Full island navigation, multi-boss/long sessions, packaged and low-end hardware tests were not repeated. Failed early shader/constructor/harness diagnostics are retained and explicitly superseded in the doc.
+
+
 
 Current human save SHA256 `A7A0DBD92F9F0E762BB6573D407A824CA2EB4253C4008ED62A2F6DAEE9984A1E` restored/verified; protect any newer save before testing. Existing Editor7800 stopped/unpaused, dirty Story1 kept unsaved. No second Editor/Player/build/commit/push/automation. Shipv227 and prior combat/performance changes preserved.
 
+
+
 ## Oct20 ship wind motion v227 — latest ship checkpoint
+
+
 
 Read `Documentation/ShipWindMotion-20261020.md`. `ShipSailingMotion.cs` now uses a 65% effective five-probe buoyancy span, shared native wave snapshot, averaged heave, damped angular response and slow wind heel using the sail wind direction. Existing native upside-down root, hull colliders, passenger support, speed/helm, camera horizon and cinematic takeover are preserved. Default pitch/roll limits remain4/5 degrees; new settings are in English. No other runtime source or animation assets changed in this task.
 
+
+
 24 isolated contracts passed; 5,000 warmed simulation steps0 managed bytes and~0.0608ms/step on this Editor. Real24-second30/10Hz voyages retain both sole contacts at~0.035m, no unintended passenger release. Both actual shark crush handoffs have0 position/rotation jump, no sailing reactivation and reach Tutorial after fracture. Console errors0. Full v225 contact suite, free deck walking/ladder, all-weather and low-end/release tests were not repeated. Evidence `.codex/ship-motion-20261020/`; observers/tests under Tools.
+
+
 
 **Latest protected human save is NEWER than v226**: SHA256 `A7A0DBD92F9F0E762BB6573D407A824CA2EB4253C4008ED62A2F6DAEE9984A1E`. It was restored/verified after final Stop. Always protect newer human progress before future tests; do not restore the old3EA save. Existing Editor7800 stopped/unpaused; dirty Story1 retained unsaved. No new Editor/Player/build/commit/push/automation.
 
+
+
 ## Oct20 whole-game rendering v226 — latest performance checkpoint
+
+
 
 Read `Documentation/WholeGamePerformance-20261020.md`. Grass registration/culling now retains full authored coverage, uses per-camera conservative instance rejection and complete double-buffered snapshots (1.5 ms visible / 0.35 ms offscreen work slices). `GrassRenderSubmission.cs` has persisted execution order 31000. Four exact render layouts strip shader-unused attributes (major grass stride80→32) while keeping original meshes/colliders. Exact cloud/foliage early-outs retain quality. Opening v225 and combat v003 remain unchanged.
 
+
+
 Accepted final checks:34 shader pairs and12 normal-rendered native-vs-instanced views pass with zero pixel differences;25,795 entries restore/rebuild with zero duplicate original grass draws; final console errors0. Existing-Editor live shore21.97→19.52ms and~10,600→862 draw submissions. Frozen-time GPU shore20.07→18.61ms. Forest/panorama do NOT show a meaningful gain; report their actual tables. Intermittent Editor allocation spikes remain unattributed; low-end/release/long-session performance is unverified. Do not promise universal60FPS or no stutter. Evidence and rejected diagnostics: `.codex/whole-game-performance-20261019/`.
+
+
 
 Final user save restored/verified SHA256 `3EA875D36D67463D847BDDB30494E75A689A349F1416A89AB60110931EE864A5`. Always protect any newer human save before Play. Existing Editor7800 stopped; dirty Story1 retained without save/reload/discard. No new Editor/Player/build/commit/push/automation. Source backups and final hashes remain in the evidence folder; the temporary old-source A/B was restored before final validation.
 
+
+
 ## Oct19 opening performance v225 — latest opening checkpoint
+
+
 
 Read `Documentation/AnimationPerformance-20261019.md`. Measured CPU bottlenecks reduced by sharing/caching exact native posed geometry, tight query leaves, synchronous support snapshots, cached water forecasts/bounded search, frame-budgeted native fall-envelope measurement and a prewarmed tail index. Tail preparation404.07→10.80ms, tail-contact cold189.32→3.17ms, support132.64→33.41ms in existing-Editor profiles. No graphic/mesh/animation quality reduction, source clip edits or original-scale change. Global/release60FPS is NOT accepted; Editor Crush/Pursuit spikes remain. Read limits/raw comparisons, do not promise no stutter.
 
+
+
 Frozen-source real-input30/10Hz captures pass:2,962/1,003 native-camera frames,1,502/507 independent contact samples,3 contacts/70HP,12/10 real fractures,zero sampled shark/wood,shark/hero or >1mm hero/timber failures. Cached forecasts/support rays exactly match old loops; prepared fall radii match fresh native measurement within.253mm. Art/fixed-camera foreground occlusion/storm-deck dry clearance is not universally certified. Evidence in `.codex/animation-performance-20261019/`; newest save remains **3EA875D36D67463D847BDDB30494E75A689A349F1416A89AB60110931EE864A5**, backed up/restored/verified this turn. Always protect newer human progress before Play. Existing Editor7800 stopped; dirty Story1 retained without save/reload/discard. No build/commit/push/scheduling/new Editor/Player. Combat v003 below remains unchanged.
+
+
 
 ## Oct19 rush/guard v003 — latest combat and save authority
 
+
+
 Read `Documentation/DualBladeRushGuard-20261019.md`. Rush is now16m, min/full blade charge1.2/2.6s (.9s X raise), live-phase travel immunity, and frontal180deg guarding across melee/projectile/blast/fire/sonar/strafe damage. Last active block absorbs the full hit before stamina exhaustion; rear damage remains. Shared .20–.56 phase, actual controller walls, real weapon sweeps, club timings and authored v002 poses retained. Final43 assertions pass at each60/30Hz with1,703/883 consecutive native frames and full MP4s; measured16m open travel and1.58m wall stopping. Test fixture body/weapon-wall visual overlap is not final collision/art acceptance; full island/slope/water/AI/release FPS remains unverified.
+
+
 
 **Newest human save authority: 3EA875D36D67463D847BDDB30494E75A689A349F1416A89AB60110931EE864A5**, protected/restored/verified this turn in `.codex/dual-blade-rush-guard-20261019/before/user-save.json`. Do NOT restore older F338/EE58 over it. Re-back up whatever latest human save exists before future Play. Existing Editor7800 stopped; dirty Story1 retained without save/reload/discard. No new Editor/Player/build/commit/push/automation.
 
+
+
 ## Oct19 dual-blade v002 — latest combat checkpoint
+
+
 
 Read `Documentation/DualBladePolish-20261019.md`. User-directed1.2x blades (native2.52m), authored horizontal-arms/horizontal-blades one-turn LMB combo3,7m collision-resolved rush and down/back blade follow-through are integrated in both active controllers. Former extra actor-root spin is removed. Two new versioned Actions/clips retain original28-bone rig/v001 assets; source `ArtSource/Combat/v002`. Nailong/Capri recoil now uses the world/parent force frame, waits for local stop, scales by strength and safely recovers; Nailong pause pose is retained. First two slashes, core controls/damage/poise, opening and original scene contents preserved.
 
+
+
 Native40 assertions pass at each60/30Hz; measured turns360.03/359.11deg, open rush7.29/7.14m including old settling, real wall stop1.58m. Final30Hz and targeted60Hz pause/performance use current source; full60Hz predates only the pause guard. Native captures/sheets/videos and rejected diagnostic iterations are under `.codex/dual-blade-polish-20261019/`. FIRST PASS acceptance, not final art/full boss-AI/floor-contact/audio/release-FPS approval. Warm dual sweep P95 .3192ms, stable160 transforms/16 particles. Current save authority is now **F33809D2D1C1F0A819E2F53BBFDD5E49F094B758EF7044628C56CE8F0AAA3827**, backed up/restored for this turn. Do NOT restore older EE58 over it. Existing Editor7800 stopped/compiling false/errors0; Story1 remains dirty and loaded, never automatically save/reload/discard. No new Editor/Player/build/commit/push or automation.
+
+
 
 ## Oct19 v224 — opening contact repair, latest checkpoint
 
+
+
 Read `Actions/CH1_SahurSharkEncounter_v001/contact-repair-20261019.md` first for the latest opening work. Shared late native posed-shark/timber contact now preserves real fracture, supported prone/get-up/climb and joint hero/wood/shark separation; movement tutorial explicitly restores rider support. Original scale(3,3,3), action assets, fixed camera policy and combat work remain. Final frozen-source recordings `contact-v224-eleventh-30` / `contact-v224-twelfth-10` finish with3 contacts/70HP,12/10 actual plank fractures, zero sampled shark/wood or shark/hero overlaps and no free-timber/body depth over1mm (1,502/491 native samples). Native source-vs-reference24 cases, simultaneous-constraint20 placements and contained-sphere18 regressions pass. Consecutive transition sheets reviewed; no normal-speed artistic or universal-layout approval.
+
+
 
 Performance is **not accepted**: native solid-pass long frames remain (30Hz capture Pursuit/Duel maxima436/471ms). Keep precise native references while profiling cost. Current save restored and verified EE58C485F0BA23FB6DE948F847944569C21BCFB2A83581104E4B61F1D1C523D0. Existing Editor7800 stopped, compiling false, console errors0. Story1 remains dirty in memory: never automatically save/reload/discard. No new Editor/Player/build/commit/push/scheduling. The one-time05:45 automation was already deleted.
 
+
+
 ## Oct19 05:45 continuation — completed once, automation deleted
+
+
 
 Read the **05:45 scheduled continuation** at the end of `Documentation/CombatCombinations-20261019.md`. Fixed a reproduced incoming-heavy transition bug: public attack phase used .970 locomotion time instead of .022 attack time and incorrectly authorized early recovery dodge. Incoming-state clock and shared damage/recovery window now agree. Also corrected actual Nailong melee block contact (1.347m outside player bounds before,0 after) using the real capsule contact. Original ranges/damage/animations/root ownership remain. Native front block spends12 stamina without HP loss; rear melee deals20HP. New evidence in `.codex/combat-combinations-20261019/heartbeat-0545/`: four focused checks,30 combination checks at each60/30Hz and moving three-stage club regression all PASS. Native guard screenshot inspected. Earlier video and source clips remain intact; this is still first-integration animation quality, not full boss-AI/release-FPS/final-art approval.
 
+
+
 Automation `automation` fired once at05:45 and was **deleted through the app**; do not reschedule. Existing Editor7800 left STOPPED, compiling false, console errors0. Current save remains **EE58C485F0BA23FB6DE948F847944569C21BCFB2A83581104E4B61F1D1C523D0** after Stop; protect newer human progress. Unsaved Story1 contents remain open; never automatically save/reload/discard. No scene/prefab/ProjectSettings/Packages changes, second Editor, build, commit or push this continuation. Historical scheduled-time instructions below are superseded.
+
+
 
 ## Oct19 — playable combat combinations, latest checkpoint
 
+
+
 Read `Documentation/CombatCombinations-20261019.md` and `Documentation/CombatFeel-20261019.md`. Six authored clips are now integrated: club spin, blade spin, X charge, outward rush, guard, jump chop. Hold LMB+RMB spins; blade E guards; club E still throws; airborne LMB chops. Source is `ArtSource/Combat/v001`, native clips `Resources/Combat/Combinations`. Animation stage remains BLOCKING/playable first integration, not final art approval. Do not rerun installers over new work. The corrected native import rotation offset is **0**, not the historical180. Both charge arms have their own upper-body mask and keep locomotion. Rush uses only CharacterController travel. Hit feedback uses the existing unified confirmed event, local stop and bounded pooled effects; no extra radial landing hits.
+
+
 
 Final grounded fixture: **30 native checks pass at each of60Hz and30Hz simulated delta**, real keyboard/mouse/equipment/sweeps/health; direct guard contract tests are not a complete boss-AI playthrough. Evidence `.codex/combat-combinations-20261019/tests-60hz.json`, `tests-30hz.json`, `combat-combinations-review.mp4`, `assets-audit.json`, `performance.json`; video is silent native camera-frame preview, not audio capture/FPS measurement. Warm sweep P95 .2411ms; preview-arena transforms158→158, particles16→16. New clips measured ~1.41MiB combined native memory. Rejected constant-curve optimization was fully restored from unchanged FBX and is NOT active.
 
+
+
 Only original Unity Editor/port7800 used; left **stopped**, compiling false, console errors0. Story1 is currently **dirty in memory**: preserve unsaved content and do not save, reload or discard it automatically. No scene/prefab/ProjectSettings/Packages file changes from this combat pass. Save SHA256 stays **EE58C485F0BA23FB6DE948F847944569C21BCFB2A83581104E4B61F1D1C523D0** after final Stop; preserve newer human progress. No commit/push/Player build. Automation id`automation` is now once today **Oct19 05:45 America/Vancouver**, replacing03:30; delete it on firing, no repeats. Continue polishing transition/body/weapon contact and verifying actual island/boss combat rather than reinstalling already passing mechanics. Existing shark/opening modifications remain untouched.
+
+
 
 ## Oct19 — Sahur melee combat feel and requested combinations
 
+
+
 Read `Documentation/CombatFeel-20261019.md` for the current combat changes, actual tests and the latest user continuation. Ordinary club clips/Avatar/masks are retained but their playback timing, local hit-stop, input buffers, recovery cancels, swept contacts and feedback are now polished. Mobile strikes freeze only their attack layer; preserve locomotion ownership and the corrected full-body-to-mobile handoff. The user's explicit layered audio request supersedes historical silent-gameplay restrictions; saved master volume/mute is preserved. The opening choreography is unchanged by this combat pass. The user then requested jump chop, two-handed horizontal club spin on both mouse buttons, dual-blade X charge/dash/outward cut, E block and dual-blade spin. One-time continuation is configured for Oct19 05:45 America/Vancouver in the same chat, no repeats. Current user save remains EE58C485F0BA23FB6DE948F847944569C21BCFB2A83581104E4B61F1D1C523D0; always protect newer progress.
+
 ## Oct17 v213 — shorter opening voyage, after-run BLOCKED
+
+
 
 Read `Documentation/AnimationWorkflow/short-opening-voyage-20261017.md` first. Human wants <=1/4 opening sailing. Actual BEFORE automatic attack52.49977s; source now has voyageDurationScale=.25, trims full-circle wait, retains normal8s physical approach and stages its initial orbit phase to the same final approach quarter. Intended budget13.047s/patrol3.090s; NEW ACTUAL TIME/VIDEO NOT YET VERIFIED. Compilation completed errors[]. Original current Editor9048 then became unresponsive entering Play Mode; CLI main-thread commands time out. Stop requested, not confirmed; no forced Editor close/restart/new Editor/Player or network changes. If recovery is required, user must restart the current Editor; inspect state/newer save first, then run ReviewShortVoyageV213.Start("after-30",30), compare actual <=13.125s, record/review. Fresh save authority `.codex/short-voyage-20261017/save-before.json` (5A296481F7414AF9DCE308C6F62B990A89CE67F92A1E9268D46136D87C4BF803); protect newer progress. Fixed18m cinematic camera/user-approved occlusion and all other prior protections persist. No commit/push. Broader animation still unfinished.
 
+
+
 ## Oct15 v212 — fixed cinematic camera, human override
+
+
 
 Latest human requires FIXED camera-to-Sahur distance during the cinematic and explicitly permits foreground occlusion. Read `Documentation/AnimationWorkflow/cinematic-fixed-distance-20261015.md` and `record-review-loop.md` first. Shared chase/climb/fight/fallen camera now stays18m from the actual chest with48deg lens, smooth authored spherical orbit and a2m aim leash; completion follow runs after all pose/solid correction. No automatic occlusion retraction, lift, side change, waterline pushing or FOV fitting. Never reintroduce these as a review "fix". Player/sailing/shipbreak cameras and physical contact/support/rig/actions remain unchanged. Latest real recording: `.codex/chase-entry-20261014/fixed212-final-multi-ground-hold-pause-10/`, camera metrics/movies/current source hashes retained. Original Editor stopped; diagnostic ended; fresh save protected/restored, no commit/push/new Editor/Player. Broader animation/contact/performance work remains unfinished in the v211 review below.
 
+
+
 ## Oct15 v211 — swimming/floating repair and actual recorded review
+
+
 
 Read `Documentation/AnimationWorkflow/swimming-floating-review-20261015.md` and `record-review-loop.md` before historical checkpoints. Original sole Editor16920 STOPPED; no active recorder. Current source resumes the normal shark tail after shipbreak, forward torso swimming throughout neutral chase/dock/film beats, mesh-volume timber mass/net buoyancy/time-integrated held pressure, scoped Story1 wave timing1.0/new211 native physical replay and natural dynamic drift, frozen validated support-facing, breathing/face-up wave clearance, real chest follow-through and actual timber camera visibility. Never restore surfing/XZ locks/old camera or rig assets.
 
+
+
 Latest source recordings are `shoulder211-playable-pause-30` and `shoulder211-multi-playable-ground-hold-10`; consult their actual verification JSON and movies. Both include the full20.8s plus genuine loss/float; the10Hz grounded/hold case is an explicit fixture. Broader full-animation art/alternative-board/performance work remains unfinished; clocked captures do not benchmark FPS. Preserve original ordinary062/walk/run/roll/mobile charge/noaudio/BWUI-colourimages,1000HP/both30%/random20–35s safe handoff and shore ending. No commit/push/new Editor/Player. Protected fresh save5A296481F7414AF9DCE308C6F62B990A89CE67F92A1E9268D46136D87C4BF803 restored, `.codex/float-swim-20261014/save-before.json`; protect newer progress. Intentional scene0D7A15BBC4A446F0BDEC25A0001E21436036BD8576926336D0991B7DF85B9269.
+
+
 
 <!-- Historical checkpoints below; superseded by Oct15 review above. -->
 
+
+
 ## Oct14 v210 — pursuit admission/fixed scatter integrated; animation quality INCOMPLETE
+
+
 
 Latest human direction is now `Actions/CH1_SahurSharkEncounter_v001/design-v210.md`; read `implementation-review-v210.md` before older checkpoints. The human's ACTUAL grounded admission failure was confirmed in the original running Editor. Both water/ground now use visible shark pursuit/swim, actual departure if grounded, moving-edge climb/turn and then the full20.8s main film. New Blender210 pursuit loops (retained53-bone source→original Pbr Avatar, retained16-bone shark) are native-reviewed/staged; humanoid importer180deg matching existing swim.214original fragments replay one6s physical fracture bake, then live vertical/tilt buoyancy with fixedXZ; native repeated releases match within.144mm. This supersedes old random-scatter rules; NEVER restore surfing. Protect the actual entry fragment; safe voluntary hops must also fit later tail contacts. Tail current-arc continuity penalty remains active.
 
+
+
 Current30Hz natural/10Hz TRUE grounded-fixture runs both play pursuit+all20.8s with genuine lost-stick/float/defeat.30Hz four movies/key sheet retained;45pause samples0motion/clock drift. HOWEVER current30Hz first probe1.793m/reversal1.337m misses; current10Hz all6contacts(max7.762mm) but foot224.396mm FAIL. Visual foreground/water occlusion and full performance remain incomplete; do not call entire animation FINAL or use older all6takes as current acceptance. Next capture WorstFootTime/sole/deck traces, fix grounded-foot residual and natural first/reversal routes, then shot visibility. Sole Editor16920 STOPPED clean MainMenu/errors[]; no active recorder/Blender/Player or checkin/push/new Editor/network changes. Preserve140 sailing/smooth break cameras and original ordinary062/walk/run/roll/mobile charge/noaudio/BWUI-colourimages. **NEW HUMAN SAVE5A296481F7414AF9DCE308C6F62B990A89CE67F92A1E9268D46136D87C4BF803**, fresh `.codex/chase-entry-20261014/save-before.json`, restored after finalStop. Never restore853/DA0/AB/51C over it; protect newer progress.
+
+
 
 ## Oct 14 — skipped fight admission repaired; broader choreography incomplete
 
+
+
 Read `Documentation/AnimationWorkflow/finale-admission-fix-20261014.md` first. Human's almost-missing fight reproduced: admission fell straight into 2.2s exhaustion with zero exchanges. Story1WreckFinale now samples the real combat grip instead of the swimming stow offset, searches real support within60m, and admits against continuous footing plus the opening exchange; later14/18s tail endpoints are still solved/contact-checked live rather than cancelling the whole film at entry. Natural water handoffs recorded full20.8s at30Hz625frames and different-seed10Hz209frames, no early-exit reason; throws/final defeats physically contact. Opening/reversal contacts STILL MISS in these takes: no all-contact/art/performance acceptance. Preserve both completed camera changes below, clips/rig/Avatar/controls/no-surfing protections. Sole Editor stopped clean MainMenu; own reviews ended; no checkin/push/new Editor/Player. NEW HUMAN SAVE AUTHORITY853AB760C2638AA1AE0300DF8C3676299FFEC1ABE3CC8F440960612B878E91BD, fresh `.codex/finale-admission-20261014/save-before.json` restored after finalStop. Never restore historicalDA0/AB/51C snapshots over it; protect newer human progress.
+
+
 
 ## Oct 14 — smooth shipbreak camera completed
 
+
+
 Latest human request DONE: Story1WreckBattle no longer snaps the camera at Begin. It inherits the current140-distance sailing view, eases around the hull with a stable180degree branch, damps focus/position through tail impact and fracture, then hands orientation/velocity to normal player follow. The temporary handoff sweeps its actual camera travel and avoids the prior distant occlusion contraction. See `Documentation/AnimationWorkflow/shipbreak-camera-smoothing.md` and `.codex/shipbreak-camera-20261014/`. Final native30Hz235-frame game preview/keyframes reviewed; default/10Hz opposite-quarter beginnings0m/0deg cut, handoff0deg turn,20paused samples stationary, handoff state finishes, real tail contact retained. Fixed-timestep functional evidence only; broader choreography/FPS still incomplete. Scene140camera parameters, rigs/Avatar/clips, ship1.35/gravity/buoyancy, controls, timing and no-audio policy remain. Source edits now intentionally include Story1WreckBattle and ThirdPersonPlayerController camera code: preserve them against older v208/UVCS snapshots. Sole Editor16920 stopped in clean MainMenu; own tests ended; saveDA0 restored after confirmed final stop. No commit/push/new Editor/Player/network changes.
+
+
 
 ## Oct 14 — sailing camera pulled back
 
+
+
 Latest human camera request DONE: Story1 ShipFollowCamera followDistance110→140; default offset scaled uniformly(height45→51.272728, side35→44.545452, lookHeight22 unchanged) to retain its default observation angle. Native Editor authoring followed by component-only scope preservation; EXACTLY three scene fields differ, no generated stairs/colliders or other serialized changes retained. Actual sailing140 game frame inspected; artifacts `.codex/sailing-camera-20261014/`. Single existing Editor was used; stopped clean MainMenu after validation. Current user save DA0 restored after confirmed validation stop. Story1 scene hash is now intentionally different from the prior UVCS/v208 manifest: preserve these camera settings, never blanket-restore the older scene. No animation/controller/rig changes, checkin or push. Broader animation v208 work remains incomplete below.
+
+
 
 ## Current checkpoint — Oct 14 v208 — overall work INCOMPLETE
 
+
+
 Read `Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/implementation-review-v208.md` before historical entries. No active benchmark/recorder/Blender/Player; sole main Editor16920 is stopped in clean MainMenu, compiling=false/errors[]. Current active clips:171Parry/097Tail+ShipSmash;186/194/197/198 remain inactive.207 first-probe failure at5.987m was cancelled at16.083s and198 reverted. Active source: conservative192 whole-attitude budget +204 actual current-arc bite-entry penalty +206 query counters.204 actor-only supported fixture recorded625frames/all SIX real contacts(max.299mm),1.323mm feet/1.226mm slide,0escapes/overruns and held unconscious wave/shore ending; four movies/key sheet inspected.206 admitted-film10FPS passes all four hero contacts/final tail but reversal misses2.263m; no claim of full lowFPS/performance/art acceptance.189 actual moving-board auto-climb/fracture/ordinary moving attack passed.200/202/205 no reachable support, so999 means unattempted, not successful film. Rejected200 admission-facing and202 root-rebase trials are preserved outside Assets. Next: physical supported admission/remaining root route and reversal tail obstruction, then eligible real-board hop/full game art and performance. Do not overfit a lucky wreck or loosen contacts. See review208 for exact helpers/evidence and remaining work.
+
+
 
 Save authority DA0FFBB38D301E72633F8830CCACCD5DA78F6A658E93CFF77822E7D791D20E84, `.codex/animation-continuation-20261014/save-before.json`; restored/hash-checked AFTER stop207. Preserve newer human progress.14 merged-file hashes rechecked: only intentional Story1WreckFinale changed; scenes/other13 match. No checkin/push, second Editor, Player/network/firewall changes, rig/Avatar rebuild or surfing/paddling. Prior wider physical scatter, voyage patrol, letterbox and minimal UI remain. All older RUNNING notes are superseded. Keep the continuation while entire objective is incomplete.
 
+
+
 ## Current continuation — Oct 13 — wider physical wreck scatter and inactive-launch fix
+
+
 
 Latest human request: stronger shark tail strike should throw ship wood farther apart to reduce cinematic clutter. Completed physics change in Story1WreckBattle and Story1WreckFloatBody. IMPORTANT native root cause: assigning velocity to prepared INACTIVE Rigidbody silently produced zero velocity. FloatBody now retains intended linear/angular launch, applies once on activation (or immediately if active), and clears pending so later enable never relaunches. Preserve this fix. Default shipBreakPower FINAL=1.35, radial source-centre fan12–22*(power-1), vertical factor1+.25*(power-1), local parent-cut shard separation1+2*(power-1); later board-attack impulse formula unchanged. Original meshes/fragment counts/spawn positions/gravity/water forces remain. First1.8 trials beforeactivationfix ineffective; actual57m/s overtuned1.8take rejected, not final. See Documentation/AnimationWorkflow/wider-wreck-impact.md and .codex/wider-wreck-impact-20261013/. Final native2runs originalEditor, diagnostic early tail request/samefractureseed (not strict controlled A/B):214pieces/31boards, actual median release31.21m/s, 12s median travel126.02m/nearestboardcentres28.37m/23usableboards, tailgap.122mm, activegravity/finite/nonkinematicPASS. Controlenabled/unlocked, immediate supportfalse both power1 andfinal; do NOT claim stable landing/climbing accepted. Last6.5sgameframe shows swimming beside realplank. Original20.8sfilm/control/contact/performance work still INCOMPLETE. Cinematic2.39bars/priorpatrol/minimalUI remain. SaveDA0FFBB38D301E72633F8830CCACCD5DA78F6A658E93CFF77822E7D791D20E84 restored/hashchecked after actualstop; preserve any newer human progress. No second Editor/Player, scene/rig/resource save, commit or push.
 
+
+
 ## Current continuation — Oct 13 — cinematic letterbox
+
+
 
 Latest human request: flatter AAA-style framing during story animations. Implemented reusable scene-owned CinematicLetterbox at 2.39:1, .3s transitions, no projection/aspect stretching; enables for tailbreak, paired finale/defeat, blackout, fresh shore arrival/getup and releases for playable combat/island control. Continue bypasses arrival request. Actual-subject finale camera fit reserves visible height. Bars sort at450 below the existing pause/death Canvas500 and arrival blackout/subtitle900. See Documentation/AnimationWorkflow/cinematic-letterbox.md and .codex/cinematic-letterbox-20261013/ (native layout PASS; original Editor runtime phase/capture review). No animation/rig/physics/input edits for this request. Broader opening-animation/contact/performance work remains INCOMPLETE; do not treat this framing feature as final approval. Current user's save authority remains DA0FFBB38D301E72633F8830CCACCD5DA78F6A658E93CFF77822E7D791D20E84, backed up before this task; preserve any genuinely newer user progress. Prior voyage patrol and terse UI changes remain active below.
 
+
+
 # Current continuation — Oct13 — voyage shark patrol integrated; current user save DA0
+
+
 
 Latest user request: make sailing less empty by having the SAME shark circle the boat and occasionally breach. Implemented only in Assets/Scripts/Story/Chapter1/Story1SharkCollisionSequence.cs (SHA25660A57CFD36F161F9FCD5969CB4AC607FBEE65DF5F077D13BFC66B2FAAAE187B6). Read Documentation/AnimationWorkflow/voyage-shark-patrol.md. Uses original rig/Swim/Breach clips, actual hull/animal clearance, bounded horizontal motion, gravity flight and gradual recovery, random opportunities with actual-hull ray and FOUR sail/flag render-bound checks at current/apex positions. Does not use a filled whole-ship render AABB. Current hull implies about44.15s one lap, then8s regular bow approach and existingtailbreak. Patrol animation ownership explicitly released on the exact transition/disable, including variable timestep. No ship/Avatar/mesh/animation resources, player input or physics fragments modified for this request; no new audio or combat text. Earlier minimal boss HUD cleanup remains active (name/HP only; Cappuccino ultimate texts removed; shark attack commentary removed).
 
+
+
 FINAL native-review/ complete:854actualframes x game/wide15FPS (simulation30), encodedtwoMP4s/contact-sheet/review.json in .codex/shark-voyage-patrol-20261013/native-review/. Circle359.45deg/THREEbreaches2.20,13.43,35.67s;413breachbody-viewportframes. Actual game keyframes personally inspected: left/right breaches visible, later player-observation angle shows breaching shark at frame edge; this is not claimed as normal-speed FINAL artistic approval. Ordinary rest-bounds exposuremax14.07%, horizontaltraveloverruns0, conservative hull-envelope clearancemin23.57m.25pausedframesheld.52.50s entersoriginaltailbreak and reachesFighting, tailgap0.122mm. Game-view camera can freely move; production patrol never steers it. The diagnostic wide camera is restored after each manualrender. Initialdiagnostic staging reset beforefirstcapturedframe, originalclock0.02s, NO mid-recording reset/teleport/placedwood. Historicalfirstpass(twojumpsoneoffcamera), late-start(incomplete,do notuse asfullproof), collider-onlyvisibility(hiddenbysails), all-renderer-visibility(overrejectedsidechances) preserved separately. Current cloth-only source is the successfulfinalrecording.
+
+
 
 ACTUAL 10FPS/realkeyboardhelm test .codex/shark-voyage-patrol-20261013/steering-10fps.json PASS:441patrolframes, ±helmmax28deg,0horizontaloverruns, hull-envelope min2.39m,0nativepenetration,90approachframes/0frozenAnimator, entersBreaking. Temporary keyboard/queryfixture removed. CLI timedoutbutreport/actualautostopproveONEcompletedrun; no duplicate. Both test helpers explicitly prepare diagnostic starting state, not production runtime rewinds. Tests are Editor functional/visual/lowFPS evidence ONLY, not independent1080p performance acceptance.
 
+
+
 IMPORTANT NEW SAVE AUTHORITY: user save AT THE START OF THIS REQUEST was already NEWER than oldAB. Snapshot .codex/shark-voyage-patrol-20261013/backups/save-before.json SHA256DA0FFBB38D301E72633F8830CCACCD5DA78F6A658E93CFF77822E7D791D20E84. Live C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json restored and verified IDENTICAL DA0 afteractualfinalStopped. NEVER restore oldAB or9BD snapshots; preserve genuinelynewerhumanprogress on futureturns. Each native diagnostic save preserved separately under this task's backups. Original Editor PID22012/port7800 STOPPED, compilingfalse, sceneclean, autotickTRUE16ms. No currentcapture/input/CLI/Blender/Playerworker. No scene save/commit/push/newEditor/newnetworklistener or firewall/buildconfig changes. Human network constraint remains in network-test-launch-constraint.md.
+
+
 
 This sailing feature and the minimal Boss-UI cleanup are done. The older full20.8s paired-opening/control/performance objective remains INCOMPLETE: denseplayable emergencyescapes and firstprobe/reversalmisses/wholeperformance/artreview remain as described in v181/v176 reviews and v184checkpoint below. Do not mark the entire animation project achieved or delete5-30 on this sailing feature alone. Physical wood-blocking kinematic geometry remains only an IDEA, neverimplemented. Existing collision181/175/176, parry171/slash128/hop086/bite078/tail097/throw064/originalordinary062/walk/run/roll/mobilecharge/1000HP/both30%/random20–35safehandoff/no surfing/freefloatingmeshcollision/unarmedfaceupshore protections retained. Historical checkpoints below superseded on saveauthority/currentextras.
 
+
+
 # Current continuation — Oct13 — v184 checked / whole objective INCOMPLETE
+
+
 
 Original Editor PID22012/port7800 actually STOPPED, compilingfalse, scene clean, autotick TRUE16ms. No Player/Blender/capture/CLI worker remains. Read implementation-review-v176.md and implementation-review-v181.md before historical entries. Current source Story1SharkWreckContact.cs SHA25641E97D709206A4AA7C45DF330FAE13998181C016561E3A0EFECD2928D0F2C3F6; active175 shortened root+bone advance,176 exact query geometry reuse,181 correct-centred current-pose recovery. Original158/162/163 remain;166OBB remains REJECTED/absent. No new animation assets/controllers/bone rigs were changed this turn;171Parry/128Slash/086Hop/078Bite/097Tail/064Throw and original062ordinaryattacks/walk/run/roll remain. No surfing/driving/paddle/audio; realmesh/gravity/buoyancy, BWminimalUI/colourpictures and loststick/wavefloat/shore preserved. No scene save/commit/push/extraEditor/network/config changes.
 
+
+
 175 keeps original four full-root attempts then tests75/50/25% of BOTHroot/articulatedpose; caller keeps ACTUAL solved root/heading rather than forcingfull destination. Native partial-root-v175:256paths/104originalsuccessesunchanged/27additional/131total/0mismatch/0residual, distancefloat excess0.0556mm. Actual rootpartial counts17688/17751/182104/183113; full173earliergenuine086hop remains valid, currenttakes nohop.
+
+
 
 176 exact radius/height capsule cache<=32peranatomy/128total, no rounding/shrink; fallbackoriginalmutablegeometry. Native3200comparisons/320cachedposes/259nativepenetrations/0mismatch/difference. Editor microquery accumulated21.149mutable vs19.377reuse ms ONLY, NOTgameFPS. Native184 currentAABBbroadphase independently checked4000pairs/1626unfilterednativehits/0falserejects. No OBB/padding edits; differentlayout doesnot retroactively classify167oldpath.184 firstCLIrequestaborted byplaydomainreload; actualevalverifiedno benchmark/observer beforeONEretry. Auditstoppeditsownbenchmark after4000, notfullfilm.
 
+
+
 181: original retainedpose recovery stillfirst; additionally searches CURRENTarticulatedpose in permittedball centeredonpreviousACTUALroot, not only aroundalreadydisplacediterative-result. Everyacceptedpoint allnative3mmchecks/unchangedframebudget. Native183targeted160hypotheticalorigins/110accepted/EIGHToldretainedfail-newcurrentclear/0mismatch,residual,excess; temporarybones/root/queryorigin sampled/restored, nowoodmoved. Production recenter counter0in182/183naturallayouts, so naturalbranch remainsunobserved; do NOT claimallteleportsfixed. No speculativeearlyheadliftasset/timing or physicalkinematicwoodbarrier changes made.
+
+
 
 Clean10FPSnative177 full20.854s/209filmframes all6contactsPASSlargest14.377mm,4hero2shark,0traveloverruns/residual2.966mm(existing3mmfallback),feet1.126mm/slide1.209mm,WHOLErun0emergencyescapesinthiscase. This numericalcase isNOTmovieorindependentperformance. Actualcontrol178prefabfixture: jumps60/20/10FPS2.698/2.697/2.697m against2.7,onejump/landeach,coyote/buffer/movingboardmomentum4.472m/s/ceilingPASS. Swim8normalfastxfourdirections movementdot1/facingminimum0.999948;headingposemin0.999736. Actualinput179charge+sprint+turn+reverse timercontinuous/movingheavyrelease/sprint16.8m/s/ordinaryleftmovingoverlayPASS. Fixtures/devicescleaned/saveExcluded, noclimbacceptanceinferred.
 
+
+
 Native180 full625frames/fourmovies ENCODED native-paired-v180,contactsheet/gamekeyframePERSONALLYinspected; probe/reversalMISSED2.324/3.384m,other4<=9.567mm,3hero1shark. FilmONE3.717m emergencydelta8.925s/2.617moverrun;playable1.307m;feet1.341mm/slide1.317mm. Artdefects: largeforegroundrealcutsobstructaction/probe1.19doesnotreadasparry/sharkdidnotreach;breach12.8andhorizontalfloatreadable. Fullnormal-speedartapprovalunobserved. Ending270samples/24pause/0upright/0clockdrift/0pausedmotion/loststick/unarmedunconsciousshorePASS. Framing541/crown0/feet0PASSscreenboundsonly. Latest all-six-successfulfourviewmovie remains174, NOT180. Native182AFTER181cleanfull20.824s625frames firstprobeMISS3.132m/fiveothers<=1.474mm,film0overruns/residual1.822mm,feet1.326mm/slide1.378mm,ONEplayable1.307mescape. Native183full20.801s includesearlierhypotheticalfixture, reversalMISS2.106m/other5<=38.849mm,film0overruns/residual0,feet1.024mm/slide1.358mm,TWOplayableescapes6.031/1.957m. Differententry/evolvinglayouts, no causalA/Bclaim. Wholecontact/escaperobustness stillFAIL.
+
+
 
 HUMAN NETWORK CONSTRAINT remains: network-test-launch-constraint.md. NO independentlynumbereddevelopmentPlayerEXEs/listeners; anotherchatinvestigatesnetwork/config. NoFirewall/rules/Allowworkaround. ExistingEditorONLYuntilfixedidentity/unnecessarylistenersverified. Independent1080ptarget60FPS/1%low>=50 remainsFAIL/unverifiedlatest; previous16136.8351%lowFAIL and165fallback59FPSNOTfullfilm. No new standalone launched this turn.
 
+
+
 SAVE AUTHORITY pre175/save-user-after-play-052419 SHA256AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Latestlive C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json restored/verifiedAB AFTERactualStop184. Diagnostic175/176/177/179controls/180/182/183/184savedseparately underbackups. Protect genuinelynewerhumanprogress; neverold9BD/backups/save.json. Sourcebackups175/176/181 preserved. No animationbackupinstallers rerun.
+
+
 
 Next: actualdense-playablewoodintrusion/emergencyescapes, firstprobe/reversaltail reachability/foregroundvisibility and finalartpolish. Current solver anatomy volumes are query triggers; a physical blocking solution for incoming dynamicwood is only an IDEA, NOTimplemented or approvedfinaltested; inspect collider ownership/player exclusions/kinematic velocity before choosing any change. No arbitrarygeometrypad/shrink/deletion/falsehits/inventedwood/vehiclerestore. Actualmoving-edge climb/continuousmixedwaterwreckcontrols stillpending beyond178/179 targetedfixtures. User wantsautonomouscontinuation/noquestions. EntiretaskINCOMPLETE; do notdelete5-30orclaimfinalacceptance. Historicalentriesbelow superseded.
 
+
+
 # Current continuation — Oct13 — v174 checked / whole objective INCOMPLETE
+
+
 
 Original Editor PID22012/port7800 STOPPED, actual scene clean, autotick TRUE16ms. No Player/Blender/capture/preview/CLI worker active. Read implementation-review-v171.md(updated173/174) and v169.md before historical states. Native174625frames/four movies ENCODED in native-paired-v174; actual contact sheet inspected. ALL SIX gaps10.214/45.331/0/19.224/0/0mm PASS,4hero2shark,source60/record30,film20.824s; same-board/no-safe-neighbour variant. Film motion0overruns/residual0, feet1.218mm/slide1.222mm PASS. Ending270samples/25pause/0upright/0pausedmotion/0clockdrift/loststick/unarmedunconsciousshore PASS. Entry0.918s. TWO larger emergency escapes happened during playable Fighting before film(2.163/1.464m); whole robustness NOT accepted. Continuous normal-speed artistic approval remains NOTobserved. Latest all-six successful complete preview is NOW174, replacing146.
 
+
+
 NEW actual bone animation171 ACTIVE FIRST PASS integration accepted: original047/09028bone rig/rest/skin/parents retained, versioned ArtSource/Encounter/v171/sahur-open-water-parry-v171.blend/ActionCH1_SahurParry_v171. Right-hand forward/up arc modified with real shoulder/elbow rotations and original reach clamp, quaternion hemisphere continuity. Source ankles drift<0.315micrometres; native402originalskin images compare090/171: actual contacthand+0.299mY/total0.319m, lower-arm length variation25.5micrometres, max hand frame step36mm/60FPS. Raw native feet42.6mm before runtime IK vsold40.6mm; runtime174support PASS. Avatar originalPbrSahur valid/human,130curves/60FPS/1.1s/contact.484. Resources/Encounter/v171/CH1_SahurParry_v171 installed ONLY Parry beat; fullcurrentdefinition backup Resources/Encounter/v171/PreviousEncounterDefinition.asset. NEVER rerun installer over backup. Other attack/walk/run/roll/charge/controllers unchanged. Active128Slash/086Hop/078Bite/097Tail/064correctedThrow retained. No speculative new bite or hop-gating change was made.
+
+
 
 IMPORTANT positive086 observation: native173 actually LANDED ONE genuine neighbour hop(BoardJumpCount increments only when LandHop changes real support). Active definition verified bothHopbeats086. No placed/moved wood.173fullfilm20.808s firstprobeMISSED3.762m butfiveothers0,3hero2shark;625motionrows/residual0/nooverrun,feet1.228mm/slide1.247mm. One4.701m emergency escape occurred in earlier playableFighting.173was numerical full-run observation, no retroactive video claim. CLI Start response timed out but observer proved ONE run started/completed; do not duplicate timed-out detached calls blindly.174is different evolving layout, so no controlled causal comparison.
 
+
+
 Runtime169 fixes leftover surfing-oriented initial fracture: original flat deck sections(thickness<=1.2m) farther than18m from actualtailHullImpactPoint now detach whole at real source positions. Other existing original cut-source release/near-impact splinter logic remains; true gravity/buoyancy/meshcollision and later shark breaking remain. Native170initial214/214fragments/sevenwholethinoriginals/sourcepositionerror0, meshes/breakability PASS. OnlyTHREEoriginalflatcuts matched oldsmallstrip rule;169 newlypreservesTWO farther ones, not allseven. Actual later shark attacks may break these;170/173usedreal splinter,174usedoriginalHullboard3. No surfing/driving/paddle/audio restored;BWminimalUI/colourpictures preserved.
+
+
 
 Collision ACTIVE158exactrecentblockingpart rejection(3200nativecomparisons0mismatch),162same-solve failed-retained-search reuse,163actualfinite-boundary escape probes(24positiveactualmeshcases0radiusoverrun).166oriented-box pruning REJECTED:4000pairs/1664nativehits/TWOunexpected positiveNativepredictednoncontacts(max88.304mm); unknownold-pathclassification, do NOTguess padding or enable. Candidatepreservedbackups/v166/RejectedOrientedBroadphase.cs, source restored to163 and compilationPASS. Backups/v172 unused pre-change copies; no extra diagnostic source hooks installed.
 
+
+
 HUMAN NETWORK CONSTRAINT: read network-test-launch-constraint.md. NO new numbered standalone-vXXX network-listening EXE launches; they caused repeated Windows permission prompts. All known157/161/165Players quit; inventoryconfirmednone. Continue through existingEditor ONLY. Another chat investigates listeners/config; do not concurrently edit those resources. Never disableFirewall/addallowrules/clickAllow workaround. Resume independent profiling only after unnecessaryPlayerConnection/Pipeline listeners addressed and fixed runtime identity verified. Prior16559FPSresult is unconsciousfallback(no fight), NOT full performance acceptance. Priorfull1611%low36.835FAIL;157dense179ms/11>50msframesFAIL. Wholeperformance remains unverified/incomplete.
+
+
 
 SAVE AUTHORITY .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Live C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json restored/verifiedAB afteractualStop174 and preserving save-after-v174-native.json;173/170/167/164/160/159/156also preserved. Never old9BD/backups/save.json; protect genuinely newerhumanprogress. No scene save/commit/push/extraUnityEditor/duplicateautomation. BlenderMCP9876stillrefused; used existing portable5.2.2 -b CLI withoutMCPserver, workersfinished.
 
+
+
 Next work: dense-layout contact/entry and playable emergency-escape robustness, measured planningCPU(known25+ms) and final artistic polish/normal-speed review. LowFPS and continuousplayerinput regressions remain. Genuine086positive branch now mechanically observed in173;174full allcontact same-board variant covers fallback. Do not blindly weaken support/contact or inventwood. Maintain1000sharkHP/both30%/random20–35safehandoff, oldordinary062attack/walk/run/roll/mobilecharge, originalrig/Avatar/history, realcutmeshcollisions/naturalphysics and heldfaceupwavefloat/loststickshore. User wants independent work/no questions. EntiretaskINCOMPLETE; do notdelete5-30 or claimfinalacceptance. Historical checkpoints below superseded.
+
+
 
 # Current continuation — Oct13 — v168 checkpoint; whole objective INCOMPLETE
 
+
+
 Original Editor PID22012/port7800 actually STOPPED and scene clean; autotick TRUE16ms. No DarkBrineOpening.exe/Blender/capture active. Current collision source ACTIVE v158/v162/v163, compilation PASS. Experimental v166 oriented-box broadphase REJECTED after native167:4000pairs/1664nativehits/TWO predicted noncontacts with native positive penetration(max88.304mm). Cause/old-path classification undefined; do not add arbitrary padding or re-enable without better evidence. Candidate preserved backups/v166/RejectedOrientedBroadphase.cs; exact candidate hash checked before restoring immediately preceding source163. No unrelated changes discarded.
+
+
 
 NEW HUMAN CONSTRAINT: read network-test-launch-constraint.md. Stop new numbered standalone-vXXX network-listening EXE launches: they repeatedly request Windows network permissions. All our Players157/161/165 already quit; inventory confirms none. Continue via existing Editor only. Another chat investigates listeners/config; do not concurrently edit network/build configuration. Never disable Firewall/add allow rules/click Allow as workaround. Independent profiling may resume only after unnecessary PlayerConnection/Pipeline listeners are addressed and a fixed runtime identity verified. Older instructions to launch a new numbered EXE are superseded.
 
+
+
 Read implementation-review-v158.md, v163.md and v166.md. v155 narrow stable-mesh finale handoff PASS targeted native160: CC.isGroundedfalse/actualsettledtrue; ascent/.35m broad grace/disabled board rejected; actualadmission0.0333s/fromWaterfalse. Actor-only fixture is NOT natural no-teleport acceptance. Native156 water-only/inconclusive retained. v158 exact recent-part rejection3200comparisons/170penetrating/0mismatch/0accepteddifference/1337earlyrejects PASS native159. v162 avoids repeating an identical failed retained-pose search inside one synchronous solve. v163 adds actual finite escape boundary after original ordered radii; native16424/24original-mesh query cases find a real bounded clear point where old fixed radii fail,0mismatch/0radiusoverrun. No wood/actor root moved by query fixture. None proves universal dense-layout acceptance.
+
+
 
 Latest source163 independent165 Succeeded20.709s/0errors/1warning, actual1080p/DX12/4060/2999GPUfences0errors. NO reachable safe combat support,19.014s entry then honest unconscious fallback; counters0/0, all6gaps999(unattempted). Reported59.87FPS Finale is fallback ONLY, NOT full-fight acceptance. Playable1%low46.205FAIL;0largeescapes in this take. Prior full fight161 source158:20.806s/3hero2shark/firstprobeMISS1.204m/fiveothers<=44.328mm,1%low36.835FAIL,max34.245ms,0>50ms active phases but4largeescapes(onefilm11.925s2.809m). Prior157 all6PASS<=37.586mm butdensefilm179.363ms/11spikes>50/1%low9.669FAIL. Freely evolving layouts mean no controlled A/B FPS claim.
 
+
+
 Native full164 source163:20.814s, gaps3.525/.760/.009962/0/9.127/0m, THREE real misses, no fakehits.625motionrows/residual.522mm/ONEoverrun.239m(actual1.339m15.481s). Whole movement/contact FAIL. No genuine086hop in current tests. Latest all-six-successful continuous four-view movies remain native-paired-v146; inspected keyframe/contact sheets, normal-speed full artistic review NOTobserved. Active128actual Blender body-led Slash remains FIRSTPASS, parry090/hop086/bite078/tail097/throw064; original062ordinaryleftattack/walk/run/roll/mobilecharge retained. NEVER overwrite installer PreviousEncounterDefinition/PreviousEncounterShark or original rig/Avatar/history.
+
+
 
 SAVE AUTHORITY backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Live C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json restored and verified AB after actualStop167, preserving save-after-v167-native.json. Diagnostic156/159/160/164 also preserved. Never old9BD/backups/save.json; protect genuine newer human progress. No surf/drive/paddle/audio; BWminimalUI/colourpictures; real meshcollision/gravity/naturalfloat; heldwavefloat/loststick/unconsciousshore. No commit/push/scene save/extraEditor or duplicateautomation.
 
+
+
 Next: existing-Editor work only; dense contact/avoidance and planning CPU remain major defects. Exact facing planner may still consume25+ms; consider measured progressive/sliced work while preserving fully native-validated candidates and honest hits. Cold/warm timing and entry preparation vary; no safe surface must retain existing fallback. Genuine safe086 branch, full normal-speed multiview/gameplay artistic review, playable motion/charge/air/climb regressions and independent performance remain incomplete. User wants autonomous continuation/no questions; do not mark whole complete or delete5-30. Historical checkpoints below superseded.
+
+
 
 # Current continuation — Oct13 — v163 active / native164 complete; network-prompt workflow needs fixing
 
+
+
 Original Editor PID22012/port7800 actually STOPPED, scene clean, autotick TRUE after native164 completed. No Player/Blender/capture active. Diagnostic save164 preserved and live AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3 authority restored. Latest user asks why repeated network-access prompts: confirmed44 firewall rules for22 distinct standalone benchmark EXE paths; v161 boot.config has player-connection-mode=Listen and LAN addresses. These development builds keep receiving new paths. DO NOT change Windows firewall/security or launch another versioned EXE blindly. Use a fixed execution path and remove unnecessary development-network listening for the next offline benchmark; this workflow fix has NOT yet been implemented or verified. Preserve existing historical builds and original Editor control.
 
+
+
 v155 real-mesh supported handoff native160 PASS: actual settled support despite CC.isGroundedfalse, ascent/grace0.35m/disabled-board rejection,0.0333s admission/fromWaterfalse. Actor-only test setup, no wood repositioning; not natural admission proof. v158 native recent-blocker rejection equivalence3200comparisons/170penetrating/0mismatches/0accepted difference PASS. v162 avoids duplicate identical failed bounded retained search in one synchronous solver. v163 adds actual finite-radius boundary probes after original ordered probes fail; all original native anatomy/3mm clear checks and movement limits retained. Compilation PASS. Native164 hypothetical-query fixture24/24 finds valid bounded escapes missed by old stepped radii,0mismatches/0overbudget; only query volumes temporarily shifted/restored, no actors/wood moved. Full native164 motion625samples residual0.522mm BUT ONEtraveloverrun0.2389m/maxstep1.3389m: robustness NOT accepted. Read native-profile/pose-motion-v164 and implementation-review-v163; no claim whole fixed.
+
+
 
 Independent161 source158 completed/quit:4534GPUfences0errors, naturalTimer20.3896s,film20.8059s,3hero2shark, firstprobeMISS1.204m/fiveotherswithin44.328mm. All activephases0>50ms one evolving case, film1%low36.835FPS FAIL, entrypreparation21.846s,4largeemergencyescapes (onefilm11.925s/2.809m). Source163 newer independent measurement pending. Previous157 all6contactsPASS but film179ms/1%low9.669 shows dense-layout failure; no causal A/B claim across evolving wood. Latest four-view allcontact successful movies remain146; genuine086hop/fullnormal-speedart not accepted. Entire objective INCOMPLETE. Historical states below superseded.
 
 
+
+
+
 # Historical context
+
 # Current continuation — Oct13 — v150 pending regression; whole objective INCOMPLETE
+
+
 
 Original Editor PID22012/port7800 STOPPED, autoplay tickTRUE16ms; no Player/Blender/capture active. Read implementation-review-v150.md before historical states. v150 source compilation was requested; check recompile_status before any Play/build. Latest source introduces a real deadline inside sliced neighbour/contact grading, so a failed first-hop search cannot consume the later hop's lead-in. Default infinite deadline preserves other entry searches. New actual source v148 retry every0.6s within lead-in; unchanged anatomical/support criteria, no late redirect/placed wood. v149 native attempt counts6/2, no safe hop; search begun4.404s occupied work until8.870s, proving need for v150 inner cancellation. v148 initial missing List namespace compile error FIXED immediately with fullyqualified Generic.List; actual priorcompilePASS. v150 regression not yet run.
 
+
+
 Active v128 body-led Slash (actual original65bone Blender+130Humanoidcurves) FIRSTPASS integration, parry090/hop086/bite078/tail097, throw064 corrected, previous ordinary leftattacks062/walk/run/roll and mobilecharge unchanged. Never overwrite original rig/Avatar/mesh/history or installer PreviousEncounterDefinition/PreviousEncounterShark backups. No surf/drive/paddle/audio, BWUI/colourpictures, natural meshcollision/gravity/buoyancy.
+
+
 
 v138 swimming admission now uses actual existing15% SurfaceRootY instead of raised contact root height, all whole-swim/path/native collision/movement checks retained. v140 preferred natural yaw-zero attitude only wins after full same endpoint/intermediate anatomy/speed validation; obstructed candidates use original broad search. v142 registers original animated-body/fragment physics pairs during existing2ms sailing warm-up, no movement/input ownership before actualhandoff. Real nativev144:23088inactive and19936released pair flags ALLcorrect,386cachedshapes/221active/16bodycolliders; riderhandoff0.0904ms; all6contactsPASS max36.695mm,625wholefilm motion0residual/0traveloverrun,sole1.260mm/slip1.356mm. Generic actuallocalPhysicsScene activationv139 proves ignoreflags persist through activation/body reenabling. Initial helperEditorSceneManager API usage corrected; no production collider change beyond equivalent prewarming.
 
+
+
 Latest independent build145 Succeeded18.104s/0errors/1warning. Actualseed20261015 naturalTIMER trigger sampled20.378279s, observed20.388533s;3270completedGPUreadbacks0errors,1080p/DX12/i5-14400F/4060. Film20.802582s/fourhero-twoshark/all6contactsPASS [0,0,.040686,.005901,.004258,.004228]m,sole1.278mm/slip1.739mm,0hop. Rider0.1559ms. Break44.322/firstplayable47.118/entry42.644/filmmax33.851ms, all activephases0frames>50. ColdWaiting370.592ms still. Filmmean16.798ms/1%low42.857FPS FAIL>=50. Solidresidual0.800mm but TWOlargeescapes in playableFighting(delta1.278/2.057m); neitherinfilm, notfullmovementacceptance. No controlled causal FPS comparison with freely evolving other layouts. PlayerPID43580 finished/quit; autotickTRUE restored andABsaveverified.
+
+
 
 Latest complete continuous native146:625frames/fourENCODEDmovies(native-paired-v146), ALL6gaps[0,0,0,.002642,.000068,.006992]m PASS,sole1.222mm/slip1.269mm. Contactsheet personally inspected. First anticipation now submerged; right-hand impacts/readabledeclines, normal-speedfinalart NOTobserved. Ending265samples/25pause/0upright/0clockdrift/0pausedmotion/loststick/unarmedunconsciousisland PASS, waves5.702m/rock15.091deg/headfreeboard.040m. No genuinehop; readOnlyhop-eligibility shows1raw eligible later neighbour but nullplans. Raweligibility does NOT prove full safe landing or contact stance. v146 observers tied to ownbenchmark (oldv141motion observer accidentally sampled an earlierendedsceneONEframe and is rejected as motion evidence). v138 earlierdense take hadtwo misses3.540/.807m,146latestallpassdoesnotprovealllayouts.
 
+
+
 Latest native149 with retries:20.803630s/3hero1shark, firstprobe3.516m and reversaltail1.719m misses, nofakehits.625motion0residual/0traveloverrun,sole1.224mm/slip1.394mm. Neighbourgrading found no valid stance,6/2attempts. Actualnew source150 deadline cancellation needs native and independent verification; do not treat149 asfullacceptance. Files native-profile-v149/pose-motion-v149 available.
+
+
 
 SAVE AUTHORITY .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Live C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json restoredAB afteractualStop149 and preserving backups/save-after-v149-native.json. Previous132/135/138/141/144/146savesalso preserved. Never old9BD/backups/save.json; protect genuinely newerhumanprogress. No scene save/revert/commit/push/extraEditor or duplicateautomation.
 
+
+
 Next: verify v150 bounded hop deadlines and actual safe neighbour branch, diagnose slowest1%frames (currentreportonlyspikes>35misses33ms frames), remaining filmFPS/cold/initialization and dense-contact/earlyplayableescape robustness, actualmultiview/fullspeedart. v146 movies usable as latest complete mechanical all-contact preview, not FINAL approval. EntiretaskINCOMPLETE; do notdelete5-30. Historical states below superseded.
+
 # Current continuation — Oct13 — v137 measured; v138 native review IN PROGRESS
+
+
 
 Whole objective INCOMPLETE. Read implementation-review-v137.md before historical states. Original Unity Editor PID22012/port7800 only, autotickTRUE16ms. Native continuous four-view v138 was started ONCE via Tools/RunReviewV138.cs RunReviewV138.Start. Do not duplicate captures/builds, edit Assets or launch another Editor while it is running. Check native-paired-v138/review.json, ending-v138.json, framing-v138.json and submerged-entry-v138.json before stopping and backing up diagnostic save. No independent Player or Blender worker active.
 
+
+
 Completed v132:625frames/four encoded movies; sole1.107mm/slide1.305mm; TWO contacts fail1.498/1.810m in dense wood, no false hits. Ending278samples/25paused/0upright/0pausedmotion/0clockdrift, loststick/unarmed unconscious island PASS. Actual contact sheet inspected: ordinary probe shark is too exposed, foreground water/wood can occlude action. Normal-speed final art NOTobserved.
+
+
 
 Current v128 actual body-led Slash remains FIRSTPASS integration trial; original mesh/Avatar/rest retained. Original ordinary left attacks062/walk/run/roll, throw064, bite078/parry090/hop086/tail097 unchanged. Never rerun installers over PreviousEncounterDefinition/PreviousEncounterShark backups. v131 native recalculateBounds/axis-aligned8corners original capsule equivalence20poses<=1.176micrometres, fullscan56.731->1.968ms. v124 fastsole/v126 readonlyPlayer footmetadata active.
 
+
+
 v133 independent1080p/DX12/4060:all6contactsPASS,maxgap44.379mm,sole1.245mm/slide1.512mm; first playable frame59.052ms,film entry43.930ms,filmmax50.927ms/1%low33.50FPS FAIL. v134 searches fully-validated physically clear routes first, falls back to original exact blocked-route ranking. Nativev135 dense-layout motionPASS(residual2.439mm/0traveloverruns) but contacts fail3.711/3.135/1.103m. Honestmisses retained.
+
+
 
 v137 natural-trigger actualPlayer completed and quit:3653GPUreadbacks0errors,1080p/DX12/i5-14400F/4060,20.810s/fourhero-twoshark,all6contactsPASS max4.867mm,sole1.323mm/slide1.474mm,residual2.461mm/0largeescapes,0genuinehops. Actual reasonPlayerHealth after27.889s, sampled deadline30.408s; NOT timer-path acceptance. Diagnostic180s protection is replaced by production1.25s protection at playable release. Movie mean16.965/max36.938ms/1%low33.632FPS FAIL>=50. Waiting384.647/break53.328/firstplayable53.593/entry43.269ms. Clearroute early12/exactblocked20. Same seed does not fix freely evolving layouts; no causal A/B FPS claim.
 
+
+
 v138 targeted visual fix: previously swimming admission reused later raised bite's rootY, hovering above water through initial anticipation. Candidate whole-swim roots now use existing SurfaceRootY (15% bounds exposure), ALL original anatomical endpoint/path clearance and movement budgets retained; dynamic waiting root follows water rather than tilting board lifting shark. Contact pose, bite startup/window and breach unchanged. Source compilationPASS, actual four-view/submergence/contact/motion/ending validation running. Backups/v138.
+
+
 
 SAVE AUTHORITY .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Live C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json verifiedAB after v137. Stop/verifyactualfalse before preserving/restoring diagnostic state, protect genuinely newer human saves. NEVER old9BD/backups/save.json.
 
+
+
 Next: finish v138 review, improve route planning CPU and actual handoff initialization, native + independent rendered regression, genuine reachable086hop, fullnormal-speed/multiview artistic review. No surfing/driving/paddle/audio, original rigs/history/save protected, blackwhiteUI/colourimages, no scene save/revert/commit/push/extraEditor. Do not delete5-30 or claim whole finished. Historical states below superseded.
+
 # Current continuation — Oct13 — v131 / native v132 verification IN PROGRESS
+
+
 
 Read implementation-review-v131.md first. Original Unity Editor PID22012/port7800 only: actually PLAYING native continuous four-view v132 verification. Tools/RunReviewV132.cs entry RunReviewV132.Start ALREADY ran; do not start duplicate capture/build/Editor or edit Assets while it runs. Autotick TRUE16ms. No independent Player or Blender worker active. Check native-paired-v132/review.json, framing-v132.json, visibility-v132.json and ending-v132.json; wait for complete ending before stopping and preserving diagnostic save.
 
+
+
 New current paired Slash v128 ACTIVE FIRST PASS INTEGRATION TRIAL, 65-bone current v051 source retained, hip/chest power and quaternion continuity, original impact band preserved. Actual original skin510frames/3views, impact hand<=0.031mm/shaft<=0.011degree; whole-film verification pending. PreviousEncounterDefinition.asset in Resources/Encounter/v128 already preserved; NEVER rerun installer over backup. Inactive v122 draft retained. Existing bite078/parry090/hop086/tail097, corrected throw064, original ordinary left attacks062/walk/run/roll, mobile charge and ending unchanged.
+
+
 
 v124 fast sole calculation validated24native poses <=0.273mm/33.207->7.879ms. v125 release mesh-read error rejected; v126 binary original foot metadata fixes non-readable Player mesh, no original mesh/readability change. v127 actual independent1080p/DX12/4060 2662GPUreadbacks/0errors, all6contactsPASS [.013300,0,.009112,0,0,0], sole1.393mm/slide1.327mm. Same-board/no neighbourhop. Film1%low43.131FPS FAIL>=50; handoff95.504ms/entry57.765ms/cold378.183ms remain. Never claim whole performance accepted.
 
+
+
 v131 moving capsule bounds: preserves native BakeMesh, recalculates actual bounds then8corners ONLY axis-aligned frame;20nativeposes max1.176micrometre/56.731->1.968ms. Old stale baked.bounds approach failed~1m and was rejected. Rotated/sheared skins use original vertex path. Source compiledPASS, actual independent performance pending. Backups/v131. Profiler Sahur.ConfigureCollider added. After v132 finish/stop inspect actual current v131 Player handoff and new128 contacts.
+
+
 
 SAVE AUTHORITY remains .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Live C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json. Verified AB unchanged after v127; current native Play may create diagnostic state. Stop and verify actual false before backup/restoration. Never old9BD/backups/save.json; preserve genuine newer user saves.
 
+
+
 Whole objective INCOMPLETE. Need pending128film/support/ending,131actual performance, dense-layout contacts and real reachable086hop, full normal-speed/multiview art. No surf/drive/paddle/audio, original rig/Avatar/resources/save protection, blackwhiteUI/colourimages, no scene save/revert/commit/push/extraEditor. No duplicate schedule; do not delete5-30 while unfinished. Historical live states below superseded.
+
 # Current continuation — Oct13 Vancouver — v106 IN PROGRESS, not complete
+
+
 
 Original Unity Editor PID22012/port7800 only. Play requested for native v106 validation; no second Editor/Player/Blender/capture active. Confirm actual isPlaying before starting Tools/RunPoseProfileV106.cs entry RunSolidProfileV106.Start. It has not started at this checkpoint. Autotick TRUE16ms. Do not start duplicate recordings/builds.
 
+
+
 Current source: actual new original-16-bone shark tail/ship-smash clips v097 ACTIVE (native contact frame/marker exactly preserved), bite078, original rig/Avatar, Sahur parry090/hop086, original light attacks062/walk/run/roll, corrected throw064. Tail installer already ran; never overwrite Resources/Encounter/v097/PreviousEncounterShark.controller.
+
+
 
 Runtime: v094 conservative capsule segment/AABB prune (2061 native pairs/857 rejection/95 true hits/zero false rejects); v095 progressive four-route exploration; v096 displaced-water sightline camera; v098 orbital camera/direct follow plus actual-immersion exhaustion gravity; v100 powerful tail detours and bounded endpoint classification (320 native comparisons/zero mismatch); v101 articulated collision-limited pose advance, eight MTD passes, early clear retained pose; v102 removes combat setup teleport and preserves actual dive root; v103 body-centre flank/open-water same-board breach; v104 exact geometry-cache invalidation (real 0.1deg original-mesh test: stale error20.370mm ->0.061mm, PASS); v105 refreshes actual entry origin, tests whole swim cycle at setbacks2/4/6/8/12m, at most1s additional physical admission; v106 ranks all cheap real-supported/open-water candidate edges BEFORE costly pose grading, rather than early exiting on first angle. v106 compilation PASS, native validation pending.
 
+
+
 Latest independent rendered build is v102 (actual1080p/DX12/i5-14400F/4060,2591 completed GPU readbacks/0 errors): main film max26.256ms/mean16.798ms/1%low44.500FPS (FAIL >=50), five contacts PASS but reversal tail10.762m miss. Breakup51.999ms, fighting96.560ms, entry76.814ms => whole-opening FPS remains incomplete. Build0errors/488warnings actually audited, mostly package Sentis/ConvGeneric warnings + existing oceanSailingFoam warning + optional runtimePipeline config; no shader/package silencing.
+
+
 
 Latest full four-view take v103:625frames, both shark contacts authentic, first two hero contacts fail [7.090758,.465545,0,0,0,0]m, height1.306mm/slide1.573mm; framing541frames0cropping/FOV53.092 PASS; ending264samples0upright/clockdrift,24pause0motion,lossstick/unarmedunconsciousisland/waves PASS. Images in native-paired-v103; encode movies/contactsheet still pending (use copy of encode_paired_v090.py with version replacement). Earlier v099 four encoded views already exist and were inspected, five contacts PASS/final miss; no normal-speed final approval.
 
+
+
 Latest native v105 diagnostic: first FIVE contacts pass [0,0,0,0,.027179], final miss .517779m triggers honest exhaustion. Staging flagfalse/setback2/admission+.0333s in a dense layout; zero large escapes across ALL phases; native residualmax2.938mm, 1000 articulated advances/13 partial. Main travel overrun occurs on fallback clock/cue frame18.6:1.390m vs existing24*dt+.30 diagnostic max1.10m. Potential next local fix: enforce one frame's remaining travel/rotation budget across manual contact-cue ResolvePose and automatic LateUpdate; NOT implemented yet. No fake contacts/teleports/wood placement.
+
+
 
 v106 reason: actual sliced edge search returned first clear 15deg edge regardless better open-water score elsewhere, producing inner seams near huge hull walls (17x26x19m). Now cheap real geometry is gathered in2ms slices, sorted by clearance/walk/wave score, then actual full pose/collision checks are applied. Same source feeds real-neighbour hop planning; check genuine new086 transfer (still0 in prior latest takes), never place/move wood to obtain it.
 
+
+
 SAVE AUTHORITY: .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Live destination C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json. Original confirmed stopped/Story1 clean before v106; v105 diagnostic backed up save-after-v105-native.json and authority restored. Always stop/confirm actualPlay=false before preserving diagnostic save and restoring authority. NEVER old9BD/backups/save.json. Protect genuine newer human progress. No scene save/revert, commit or push.
+
+
 
 No surfing/board driving/leg paddling; wood natural physical supports, mesh collision/free gravity/buoyancy; no sound; blackwhiteUI/original-colour pictures; original charge/mobile attack/locomotion and ending contracts persist. One-time heartbeat5-30 fired; no duplicate schedules and do not mark whole work complete/delete task while required work remains. Read implementation-review-v095/v098/v100/v103/v105 plus current actual outputs for detail; old v092/historical instructions below are superseded.
 
 
+
+
+
 # Current continuation — 2026-10-13 Vancouver — v092 checkpoint; INCOMPLETE
+
+
 
 LATEST HUMAN: one-time continuation TODAY Oct13 05:30 America/Vancouver, continue animation independently, no questions. NEW heartbeat id5-30 CREATED ACTIVE with COUNT1 daily05:30 rule; previous id automation does not exist. Do not duplicate. No commits/pushes/new Unity Editor. Continue unfinished work from here, not from old v006/old schedule text.
 
+
+
 ACTUAL FINAL CHECKPOINT: original EditorPID22012/port7800 STOPPED, not compiling, active Story1 clean/isDirty=false, autotickTRUE16ms restored. Current persistent quality pipeline Assets/Settings/PC_RPAsset.asset healthy. No capture/Blender worker/externalPlayer expected active. Independent v092PlayerPID46076 finished and quit. Authoritative user save HASH verifiedAB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3 unchanged after standalone. Last diagnostic save backup save-after-v090-capture.json. Do not leave autotickFALSE on resume.
+
+
 
 Active production/runtime: v062 restored previous ordinary left-click attacks, v064 corrected cinematic throw180deg import facing, original walk/run/roll and mobile charge. NO surfing/paddling/wood driving (human override). v078 Body-led bite on original16bone shark; v079 caches post-solid actual pose; v082 long landingcounter2.48s phase; v083 early real-neighbour search; v084 graded actually blended detours and24m/sbite arcs; v087 eased-tail root speed grade; v088 stops searches ONLYafteractualcontactwindow; v089 boolean escape probes test last blocking original anatomy first (same3mm/allvolumes/offsetorder); v091 sweptroute shortlist4 and first verifiedclear reachable route earlyexit. Source compilePASS.
 
+
+
 New actual28bone Sahur hopv086 and plantedparryv090 ACTIVE FIRST PASS INTEGRATION TRIALS, originalrig/Avatar/rest/bind/mesh unchanged. Source/Nativereviews in ArtSource/Encounter/v086 andv090. Hop1.85s/60FPS/takeoff.5/landing1.33, pelvic load/asymmetric tuck/loaded landing; valid isolated336imagesnative-framed-v086b. Parry1.1s/60FPS/contact.484, fixedsoles/right-arm deflect/torso recoil/freeleftbalance; valid isolated201imagesnative-framed-parry-v090, shaftmax1.08745deg/sourceframe. Sourcefoot drift<.32micrometres, nativeuncorrected4.061cm beforeliveIK. Installers ALREADYrun, do NOT rerun over PreviousEncounterDefinition.asset backups in Resources/Encounter/v086 andv090. Ordinary attacks/locomotion controllers untouched.
+
+
 
 Latest full native pairedv090 seed14:625frames/4encodedcontinuousmovies, ALL6actualcontactPASS [.029621,0,0,.031210,.005495,0]m, supportingheight1.395mm/fixedslide1.393mm (oldparryv040 slipped9.692cm). Strict actualheroRenderer bounds framingPASS541frames/0cropping,minY.0536/maxY.9464/maxFOV57.40. Ending264framesPASS0upright/clockdrift,25pauseframes0motion,loststick/unarmedunconsciousisland,headfreeboard.04m,waves2.408m/rock12.22deg.0hops/sameboardvariant; newhop NOTexercised in latesttake. v083 had1genuinehop with old047 source, do not labelthat asnew086live acceptance. Actual contact-sheet and game249/267throwframes inspected. Screen-boundsPASS doesNOTprovevisibility: foregroundwaves/wood hideparts ofactor/weapon. Full normal-speed continuous art notdirectlyobserved, no final approval.
 
+
+
 v089 actualnative geometry equivalencePASS150probes over5liveposes,122clear/28blocked/0mismatches. Not FPS evidence.
+
+
 
 Build-cache failure diagnosed fromactual v090BuildReport (notassumedCLI): URPPreprocessBuild.LogIncludedAssets MissingReferenceException on destroyedtemporarypipeline. CurrentpersistentPCpipelinehealthy. Official localCorepackage source lazyCoreBuildData singleton retainedstale gatheredrefs. Editor-only v092 RefreshRenderPipelineBuildCache preprocessorderint.MinValue+1 disposesgathereddata beforeCore+50/URP+100 recollectassets. No packagecache/Userpipelineassetmodified. Native stale-cache regression deliberatelyaddedthenDestroyedONLYtemporaryclone in gatheredlist, originalQualitypipelineunchanged; buildv092Succeeded23.888s/0errors/1warning. Source compilationPASS.
 
+
+
 Independent REAL1920x1080/DX12 v092seed14 (2237verifiedGPUreadbacks,0errors) completes20.802sDefeat, ALL6contactsPASS [.038334,0,.030808,0,0,0]m,entry2.939s,0hops. But performance FAILED:mean18.210ms/1%low9.289FPS/max222.788ms,maxattack43.326ms,maxsolid195.514ms. Largeststalls t4.220/4.392 and10.920/11.029 are solid collision solver, NOTattack planner. Read standalone-profile-v092-seed14.json. Differentfreelyevolvinglayouts cannot becontrolledcausalcomparisons withpreviouspasses. Noall-layoutguarantee.
+
+
 
 Next meaningful work: profile SolidContact internals (iterative overlaps / NearestClear / TryRetainedPlacement / EscapeWedge / finalpenetration) attheseactualspikes beforelooseninganything. Consider collision-limited pose blending at a boundedroot as a targetedalternative to exhaustive whole-animal escapes, but this is ONLYan unimplementedproposal: requireactualgeometry≤3mm/motionbudget/contact tests, neverfakehits orteleport. Currentroot/posecode unmodifiedbeyondv089probeorder. Improve boundedprogressive attack-route exploration if4candidatecap misses viablelater routes. Continue genuine086neighbourhop/newparry/gamecamera visibility and fullnormal-speedart; independently retest FPS withoutcapture clock oromittedrendering. Performance and robust layout/art are INCOMPLETE; do not claim finished/deletecontinuation.
 
+
+
 Save authority: .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json HASH AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. NEVERold9BD backups/save.json. Afterdiagnostics stop/verify actualPlay=false, preserveversionedsave andrestoreauthoritative unlessgenuinelyneweruserprogress exists. No sceneSave/revert, commits orpushes. Detailed implementation-review-v090.md/v092.md and rawreports take precedence over historicaltext below.
 
+
+
 ## Historical checkpoints — superseded where they disagree
+
+
 
 # Current continuation — 2026-10-13 Vancouver — v090 integration; INCOMPLETE
 
+
+
 Latest human: continue production now and resume TODAY Oct13 05:30 America/Vancouver. One-time heartbeat id5-30 CREATED ACTIVE COUNT1; old id automation no longer exists. Do not duplicate. User approved independent work/no questions. No extra Unity Editor, no commit/push.
+
+
 
 Latest ACTUAL live state: original EditorPID22012/7800 PLAYING/autotickTRUE. Full native-paired-v090 seed20261014 recording was started with ReviewPairedV053 (OFFLINE30FPS, not performance). Read-only ObserveApproachV082, ObserveFramingV075, ObserveEndingV074 and VerifyEscapeOrderV089 also attached. Check outputs/progress before restarting. Do NOT edit Assets while these captures run. No external Player/Blender worker expected active. Save may be diagnostic until stopped/restored; authoritative newer AB575 checkpoint remains protected.
 
+
+
 v090 source and actual original Avatar import/native isolated201image/three60FPSmovie review completed. New original28bone parry fixes old retargeted recovery slipping9.692cm: planted ankles throughout1.1s, unchanged.484s contact, Hips loads, single right-arm deflects, torso reacts and free left arm balances. Sourcefoot drift<.32micrometres/rootplanar3.38e-9m; native uncorrectedankle drift4.061cm before live IK; shaftmax1.08745deg/sourceframe. Native-framed-parry-v090 key poses inspected, accepted FIRST PASS integration trial only. InstallParryTrialV090 ALREADY installed: Resources/Encounter/v090/PreviousEncounterDefinition.asset backup, one Parry beat changed. Do NOT rerun installer. Source originalrig/Avatar/rest/bind/mesh unchanged, old Parry_v040 retained. Default beat mappedv090; source compiledPASS. Active hopv086 actual28bone 1.85s/60FPS loaded/asymmetric hop remains.
+
+
 
 v089 is only geometry-boolean optimization: ClearAt tests last blocking original anatomy first; all volumes must still clear same3mm threshold, and escape offset/distance order unchanged. No solve order/hitboxes/collision margin changed. Source compilationPASS. Native real-wreck equivalence150probe observer now attached; results pending. No FPS claim from diagnostic.
 
+
+
 Native-paired-v088 seed14 completed625frames: ALL6contactPASS [0,.001202,0,0,.0000207,0]m; footheight1.394mm, but oldParryrecovery fixedslide9.692cm FAILED. Screen framingPASS541frames/0cropped, endingPASS276frames/0upright,25pauseframes0motion/loststick/unarmedunconsciousshore. Encoded4movies/contact-sheet inspected as keyposes, not final continuous normal-speed approval.0hops/sameboard. Independentv088 seed13 remainsfirst2contacts/FPSFAILED; do not conflate layouts or claim all complete.
+
+
 
 Prior active runtime: v062 original ordinary light attacks, v064 cinematic throw180deg fix; original walk/run/roll, NO surfing/paddling/wooddriving; v078Bodyledbite, v079post-solidposejoins, v082longlanding2.48sphasefix, v083earlyrealneighbourplanning, v084blendeddetour/bite24m/sfeasibility, v087tailfeasibility, v088 stopsrouteplanningONLYafterauthoredactualcontactwindow to avoid recovery200mssearches. Original rigs/Avatar/history, mobilecharge, noaudio/BWUI/colourimages protected.
 
+
+
 Last STOPPED restoration afterv088: backup save-after-v088-capture.json; authoritative .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3 restored. Never old9BD backups/save.json. Stop/verify actual Play=false, version diagnostic backup and restore newer checkpoint; protect any genuinely newer user progress.
+
+
 
 Next: complete v090 capture/ending/framing/equivalence, stop/restoresave, encode/review, native slide/contact corrections. Tools/BuildOpeningBenchmarkV090.cs prepared nonblocking async Start but NOT run; no standalonev090 build/player yet. Independently measure real1080p once appropriate. Robust dense-layout contacts, new hop live art, full continuous art and FPS remain INCOMPLETE. Read implementation-review-v090.md for detailed provenance. Do not claim finished or delete the one-time continuation while incomplete.
 
+
+
 ## Historical checkpoints — superseded where they disagree
+
+
 
 # Current continuation — 2026-10-13 Vancouver — v088 active, INCOMPLETE
 
+
+
 LATEST HUMAN: continue production; one-time resume scheduled for TODAY Oct13 05:30 America/Vancouver. Previous automation id automation no longer exists; new heartbeat id5-30 was CREATED ACTIVE with COUNT1 daily05:30 rule. Do not create a duplicate. Continue current production independently, no questions, no new Unity Editor. Most recent actual UTC07:53 Oct13 =00:53Vancouver, so05:30 is upcoming.
+
+
 
 Current active runtime v088: previous v062 ordinary light attacks, v064 corrected throw facing, original walk/run/roll, NO surfing/paddling/wood driving; v078 Body-led bite, v079 post-solid pose join, v082 long landing-counter phase correction, v083 earlier real-neighbour planning, v084 actual blended detour/24m/s bite route grade, v087 eased-tail root speed grade, v088 stops attack route searches AFTER actual contact window (follow-through retains strike heading). No collision tolerances or hit windows loosened.
 
+
+
 New Sahur hop v086 is ACTIVE FIRST PASS INTEGRATION TRIAL: original28bone rig/mesh/Avatar/rest/bind retained; pelvis load, extension, asymmetric tuck, chest/free-arm overlap and loaded landing. Source1.85s/60FPS/takeoff.5/landing1.33; source support drift<0.5micrometres, root planar excursion6.75e-9m. Native Avatar valid130curves, full336image/three60FPSmovie review in native-framed-v086b, actual key poses inspected. v085 root-shift source inactive history. native-continuous-v086 empty visuals invalid; native-framed-v086 interrupted284frames invalid as complete review. Native-framed-v086b valid. Tools/InstallHopTrialV086 already installed, do NOT rerun: backup Resources/Encounter/v086/PreviousEncounterDefinition.asset. Two Hop beats use v086; runtime reads beat clip with v047 fallback. No locomotion/light controller change.
+
+
 
 Standalone v087 ALL6contacts passed (largest1.996cm), but post-active recovery at15.28–15.92s spent125–280ms searching routes, filmmax313.6ms. v088 cutoff fixes this identified unnecessary search; its standalone different freely evolving layout instead misses first2contacts (11.717/6.599m), others.015095,0,0,.003475m,20.800s Defeat,0hops. Filmmean17.033ms/1%low24.330FPS/max78.867ms, maxattack57.712ms at14.54active window, maxsolid64.981ms at9.07. These remain FAILURES; no fake impacts triggered. Do not infer all-layout acceptance from prior passing ones. v0880error/1warning build succeeded; original async delayCall did not run while unfocused, replaced by detached async500ms build (actual success24.04s).
 
+
+
 Latest actual original EditorPID22012/7800 was STOPPED/CLEAN/autotickTRUE after v088 independent Player finished/quit. editor_play now requested for full native-paired-v088 seed14 + approach/framing/ending observers; check actual play state before starting. No capture has been started at this checkpoint. No external Player expected active. Save hash still AB575 authoritative unchanged; last diagnostic backup save-after-v084-capture.json. Native four-view recording is OFFLINE, never FPS evidence.
+
+
 
 CRITICAL newer save: .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Never restore old9BD backups/save.json. Stop/verify actual Play=false before restoring diagnostics, preserving any newer user progress.
 
+
+
 Read implementation-review-v088.md and actual JSON reports for provenance. Full robust dense-layout contacts, new hop on real moving wood, continuous game art/camera and performance still unaccepted. Ending-v075 held pose/waves/pause/shore native checks PASS historically; recheck newest. v076 strict framing had9horizontal AABB corners outside; no final approval. Preserve user scenes/resources/saves; no commits/pushes. Whole task INCOMPLETE.
 
+
+
 ## Historical checkpoints — superseded where they disagree
+
+
 
 # Current continuation — 2026-10-13 Vancouver — v084 active / v086 source; INCOMPLETE
 
+
+
 Latest user: continue finishing animation; cinematic throw must face forward. v064 throw and v062 previous light attacks remain active and natively verified. No surfing/leg paddling, original walk/run/roll, mobile charge, silent audio and coloured pictures remain. Original rig/Avatar/user scenes protected; no commits/pushes.
+
+
 
 Active runtime: v078 original-rig Body-led shark bite; v079 caches post-solid solved bone poses (three original-rig joins PASS); v082 aligns the long landing-counter phase with its 2.48s approach; v083 starts real neighbour searches at0/6.4s; v084 grades actual gradually blended detours and penalties for bite root arcs exceeding24m/s, instead of selecting a geometric route runtime cannot follow. Geometry and real5cm contact checks remain authoritative.
 
+
+
 Native paired v083625frames has ONE actual neighbour jump, foot1.366mm/slide1.576mm, but landing contact6.411m missed. Four encoded movies/contact-sheet/hop-sequence are drafts, not final approval. v084 native paired625frames instead same-board variant, gaps3.260,0,0,0,6.701,0m; probing/reversal failed in that distinct freely evolving layout. DO NOT claim all random layouts solved.
+
+
 
 Standalone v084 development build succeeded0errors/1warning and completed real1920x1080 DX12 rendering:2383 async GPU readbacks all completed, no errors. ALL6contacts passed in that water-entry layout (largest4.310cm),20.8135s Defeat, entry preparation2.591s, zero actual hops. Film mean16.803ms/1%low42.017FPS/max30.741ms, no >50ms. FPS acceptance still FAILED; not controlled causal comparison to different evolving layouts. v081 async diagnostic removes synchronous readback serialization; it is a measurement change, not a game optimization.
 
+
+
 Latest actual state: original Editor PID22012/port7800 STOPPED/CLEAN/autotick TRUE after v084 capture. No recording/Player expected active; verify fresh status. Save backed up as save-after-v084-capture.json and authoritative newer AB575 checkpoint restored after actual Play=false. Do not restore old9BD backup. Newer authoritative: .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3.
+
+
 
 Blender v085 source adds real pelvis loading, extension, asymmetric tuck, torso/free-arm overlap and loaded landing on retained original28bone Sahur; original mesh/rest/hierarchy unchanged. First attempt failed overly short solve, repaired with12iterations and1cm extension, supported source sole error0.0000292cm. v085 horizontal root weight shift would be lost by in-place root baking, so keep it INACTIVE history. v086 moves the weight shift to Hips while root remains planar stationary. Tools/AnimationPipeline/blender/refine_board_hop_v086.py build was launched background; inspect session/source-audit before restarting. v086 source preview/validation/export/native import/continuous pose review remain pending. No hop asset replacement yet.
 
+
+
 Next: finish v086 source validation and three-angle review; export/stage with original PbrSahur Avatar; native action review before integration. Continue real-layout contact robustness and performance/continuous art. v076 camera strict framing still had9horizontal AABB-corner frames outside. Ending-v075 pose/waves/pause/shore PASS. Whole work remains INCOMPLETE; do not delete continuation automation.
 
+
+
 ## Historical checkpoints — superseded where they disagree
+
+
 
 # Current continuation — 2026-10-13 Vancouver — v081 diagnostic; INCOMPLETE
 
+
+
 v062 original left-click attacks and v064 corrected cinematic throw facing remain active and verified. No surfing, original walk/run/roll, movable single-hand charge, silent audio and original-colour images remain. Original rig, Avatar and user scenes are protected.
+
+
 
 v078 original-rig Body-led bite is active; v079 now records the actual post-collision rendered shark pose, so transitions do not start from a rejected pre-correction pose. Three original-rig retained-pose transition tests PASS with 0-degree/0-metre joins and exact settling. Full new art/layout regression remains pending.
 
+
+
 v080 standalone development Player completed at real 1920x1080/DX12, i5-14400F/RTX4060. All six real contacts passed in this water-entry layout (largest 4.5894cm); foot height 1.316mm and planted slide 1.279mm. Film 20.8s reached Defeat, zero neighbour hops. Finale mean18.968ms, p99 26.120ms, maximum38.837ms, zero >50ms. This FAILS the 60FPS/1%low50 target and does not resolve other layout failures. The synchronous one-pixel GPU fence serializes CPU/GPU work; v081 adds an opt-in bounded async GPU readback diagnostic with completion/error proof and a proper worst-1%-average metric. This is a measurement change, not a game performance improvement.
+
+
 
 v081 source compiled without errors. BuildOpeningBenchmarkV081.Build was launched through original stopped clean Editor PID22012/7800; inspect build-report-v081.json/process before restarting. A command timeout does not cancel a build. v081 Player has NOT been launched at this checkpoint. v080 Player completed and quit. Editor autotick TRUE; temporarily disable only during standalone performance tests and restore afterward. Child Unity asset-import-worker processes are not additional visible Editors; do not kill them.
 
+
+
 Authoritative save: .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json, SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. It supersedes old backups/save.json. Last native diagnostic backup save-after-v079-diagnostic.json; standalone v080 left authoritative save unchanged. Never restore old 9BD checkpoint. Stop/verify before restoring after diagnostics, and preserve any newer user progress.
+
+
 
 v076 four-view one-layout contacts PASS, but other layouts fail and strict framing still has 9 horizontal AABB-corner frames outside. v075 ending hold/waves/pause/shore native checks PASS. v075 baked crown approach was rejected and removed. True neighbour-hop art, robust dense layouts, continuous final art review and independent performance remain incomplete. Do not delete continuation automation or claim finished. No new Editor, scene save, commit or push.
 
+
+
 ## Historical checkpoints — superseded where they disagree
+
+
 
 # Current continuation — 2026-10-12 — v078 trial, incomplete
 
+
+
 Active v078 Body-led bite is authored on the original16bone rig and passed
+
 native import preservation checks; original jaw/Avatar/rest/bind remain. Native
+
 normal1080p v078 regression is running in ONLY original EditorPID22012/7800.
+
 Do not restart it. Source v077 was rejected and inactive. v076 renderer-bounds
+
 lens fitting replaces rejected v075 head-local crown (no runtime mesh baking).
+
 Full native v076625frames verified all6contacts in one real layout; other layouts
+
 still fail. Foot1.300mm/slide1.435mm,0hops/same-board variant. Horizontal AABB
+
 framing still has9outside frames; final art/performance unaccepted. Ending-v075
+
 native pose/waves/pause/unarmed unconscious shore PASS. No extra Editor/Player/
+
 build/scene saves/commits/pushes. Newer save AB575DF9…EC0F3 remains protected.
+
 See resume-at-0250.md and implementation-review-v078.md for actual evidence.
+
+
 
 # Previous continuation — v075 (historical)
 
+
+
 Throw orientation v064 and previous light attacks v062 remain verified; no
+
 surfing and original locomotion still apply. v071–v074 actual-root remaining
+
 attack arcs are integration trials. Native normal v074 reached5/6 contacts but
+
 the probing parry missed; full four-view v074625frames reached only2/6 in another
+
 layout and showed head cropping. This is not final art/contact/FPS acceptance.
+
 v075 corrects post-smoothing lens framing using a crown point measured once
+
 from the unchanged retained mesh; source compilation passed. Its new native
+
 review/crown/pause/shore verification is about to run; inspect live status.
+
 No new Editor/Player/build, scene save, commit or push. Newer user save AB575DF9…
+
 EC0F3 remains authoritative; never restore old9BDCCB. See resume-at-0250.md and
+
 implementation-review-v074.md. Whole work and continuation remain incomplete.
+
+
 
 # Previous continuation — v069/v070 (historical)
 
+
+
 User asks finish the film, fixes throw facing; v064 import180degree correction
+
 is active and natively verified. v062 previous stationary light attacks/mobile
+
 light layer and original walk/run/roll remain. No surfing, paddling or timber driving.
+
 v066 candidate deeper swimming arcs/cached cues, v067 rendered-only shark bone
+
 joins and v0696degree head-reach original-rig trial are active. v06812degree lift
+
 was rejected, never imported. Actual random-layout tail misses/art/performance
+
 remain unaccepted. Only original EditorPID22012/port7800; v070 tail-placement
+
 probe now running, no extra Editor/Player/build. Read live status before acting.
+
 Newer user save supersedes old9BDCCB checkpoint: backups/save-user-after-play-052419.json,
+
 SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3.
+
 Do not overwrite newer user progress with old backups/save.json. Last stopped
+
 Edit sceneStory1 was clean; never save/revert user scenes. Full latest evidence
+
 and next checks are in Actions/CH1_SahurSharkEncounter_v001/resume-at-0250.md
+
 and implementation-review-v067.md. Older text below is historical.
+
 # Dark Brine_Rot animation context
 
+
+
 CURRENT OVERRIDE (2026-10-12, v062): user restored previous ordinary left-mouse
+
 Combo1/2/3 appearance. Active v006 gameplay controller now keeps original full-body
+
 clips at rest and a separate torso/arms mobile-light layer carrying over current
+
 phase when movement starts. Original pose and native left-input three-hit moving
+
 combo regressions PASS. Charge still uses its separate right-arm mask. Original
+
 walk/run/roll and original rig/Avatar/resources remain protected. See current resume.
 
+
+
 User removed all board surfing/vehicle controls
+
 and leg paddling. Wreckage remains ordinary naturally floating walking support;
+
 preserve jumping with support momentum, swimming and moving-edge climbing.
+
 Use only the existing original Unity Editor; user objected to a second Editor.
+
 Snapshot PID12620 is closed; original PID22012 is currently recording native-paired-v062
+
 in Play Mode with a dirty Story1 scene
+
 (do not save/revert). Active paired clips were updated to versioned v057 integration
+
 trials. v058–v061 bounded planning/entry/preload/escape changes are active, but dense
+
 contact/admission and performance acceptance remain incomplete. v061's one-frame
+
 recorder report is invalid; fresh v062 uses its own benchmark instance. Check live
+
 state and completion report before resuming. See Actions/CH1_SahurSharkEncounter_v001/resume-at-0250.md for current evidence
+
 and unfinished art/performance checks. Older observations below are historical.
+
+
 
 Verified 2026-10-06/07 against the live Unity 6000.3.23f1 Editor, source code, Animator assets and read-only Blender audits. This is shared context for all animation skills. Update facts with evidence; a historical asset is not necessarily an active animation.
 
+
+
 ## Artistic and gameplay intent confirmed by the user
 
+
+
 - Relatively realistic motion, water and effects. UI is minimal black/white; illustrations remain coloured.
+
 - Sahur's charged stick attack uses the right hand, raises the weapon and cuts diagonally downward. Charging and heavy release must permit locomotion, sprint and direction changes.
+
 - The accepted source is Standing Melee Attack Downward; anticipation comes from the earlier part, release from the later part. Preserve the design when fixing local defects.
+
 - Shark breaks the ship with its tail, remains reasonably submerged, and exchanges attacks with Sahur. Fragment boards settle by physics; Sahur can walk, jump, swim and climb, without driving boards. The encounter eventually ends in Sahur's defeat.
+
 - Final encounter animation can begin on low player health, a randomized combat timer, or the previously specified shark-health condition. Check current encounter code and serialized tuning before authoring a replacement.
+
 - Sound is temporarily disabled. Do not introduce new sound or unrelated effects to solve animation defects.
+
+
 
 These facts establish existing intent, not approval for a newly designed move. For a materially new move, use action-designer and the user's design gate.
 
+
+
 ## Playable rig and active animation
 
+
+
 SahurPlayer: `Assets/Game/Prefabs/Characters/Sahur/SahurPlayer.prefab`.
+
 The actual player uses valid Humanoid `PbrSahurAvatar` from `Assets/Game/Prefabs/Characters/Sahur/Models/PbrSahur.fbx` and `SahurGrounded.controller`. The older `Models/sahur.fbx` is Generic with no Avatar; do not use it interchangeably with the active Humanoid model.
+
+
 
 `SahurGrounded.controller` has Base Layer and masked `Charge Upper Body`, with `SahurChargeUpperBody.mask`. Charging/release uses `Gameplay/SahurStandingDownwardCharge.anim` (clip name SahurStandingMeleeDownward, 30 FPS, about 2.266667 s). The prefab's separate chargedStrikeClip is unassigned. Other .anim files include earlier experiments; their existence does not prove that they are active.
 
+
+
 Prefab charge settings observed: fullChargeTime 1.8 s, chargeWindupTime 0.48 s, maxChargePosePhase 0.28, heavy damage phase 0.35–0.43. Scene overrides/runtime state may differ; inspect before making timing changes.
+
+
 
 `SahurAttack.cs` owns normalized hit windows, charge pose time, release and combo logic. `CanMoveDuringCombat` permits charging and right-arm heavy release. `UsesAnimationRootMotion` differs by action. `ThirdPersonPlayerController.cs` and `SahurRootMotionRelay` can apply combat displacement despite Animator.applyRootMotion being false. Do not replace this with a blanket root-motion policy or duplicate hitbox AnimationEvents.
 
+
+
 Camera: third-person gameplay camera is present in the controller/game; exact framing, distance and FOV for a new move are **undefined until inspected in the relevant scene**. A Blender preview camera is not a substitute for Unity gameplay capture.
+
+
 
 ## Shark and editable sources
 
+
+
 `ArtSource/SharkAnimation/tralalero_animated.blend` is an editable existing master. Actual scene: 60 FPS, metric scale_length 1, Tralalero_Rig, 16 bones, active Swim_Cruise. Blender forward -Y / up Z is documented in `Tools/BlenderSharkAnimation.py`.
+
+
 
 Important bones: Body, Spine_Mid, Spine_Rear, Tail_Base, Tail_Mid, Tail_Tip, Head, Jaw, Fin_Left, Fin_Right, Dorsal, Foot_Left/Right/Rear, Nose_Marker and Tail_Marker. Preserve marker names used by encounter code. Body is the top bone; it is not an independent zero-motion root control. Choose root sampling and water displacement ownership per action.
 
+
+
 | Action | Source frames | FPS | Duration | Unity looping |
+
 |---|---:|---:|---:|---|
+
 | Swim_Cruise | 1–97 | 60 | 1.6 s | yes |
+
 | Swim_Fast | 1–61 | 60 | 1.0 s | yes |
+
 | Tail_Strike | 1–70 | 60 | 1.15 s | no |
+
 | Ship_Smash | 1–70 | 60 | 1.15 s | no |
+
 | Bite_Lunge | 1–67 | 60 | 1.1 s | no |
+
 | Hit_Recoil | 1–49 | 60 | 0.8 s | no |
+
 | Threat | 1–109 | 60 | 1.8 s | no |
+
+
 
 Unity: `Assets/Resources/SharkAnimation/TralaleroAnimated.fbx`, Generic Avatar, `TralaleroAnatomy.controller` and `TralaleroRig.prefab`. Existing importer bakes root rotation/Y/XZ into pose and runtime owns world placement. The original shark builder exports all seven Actions; the new pipeline defaults to one Action per versioned FBX. Do not run the old builder merely to inspect or export one revision: it reconstructs the rig.
 
+
+
 `ArtSource/ShipWreck/ship_g_fractured.blend` is an existing ship fragment source. It is unrelated to a character action unless the approved action needs ship interaction.
+
+
 
 `BlenderWork/character_fixed.blend` was inspected read-only: Armature, 73 bones using Bone/Bone.001-style identifiers, no Actions, 24 FPS. It has not been verified as the active Sahur Humanoid animation skeleton. Do not rename those bones to fit naming examples or assume retargeting compatibility. The adjacent character_before_skin/before_finger_correction files are retained historical masters.
 
+
+
 ## Pipeline conventions and undefined decisions
 
+
+
 - Effective FPS = fps / fps_base. Preserve the source rate: active player assets include 30 and 60 FPS; shark is 60; old character master is 24. A universal preferred authoring FPS is **undefined**.
+
 - Clip duration = (last source sample − first source sample) / effective FPS; source endpoint samples are inclusive. Gameplay windows are half-open intervals.
+
 - New names: PLAYER_ATK_Heavy_01, PLAYER_Run_F, ENEMY_Name_ATK_01, BOSS_Name_ATK_TailStrike_01. Existing Action/state/bone names are not migrated automatically.
+
 - FBX initial contract: -Z forward / Y up, file units respected, import globalScale 1, no new leaf bones, one selected rig/Action, no all-Actions/NLA bake, step 1 and simplify 0. Verify orientation/scale after actual import.
+
 - Root policy is per action and runtime ownership; universal root-motion policy is **undefined**. Ground contacts, in-place compensation velocity, cancel windows and camera need action-specific evidence.
+
 - Other playable characters/enemies, boss phase library, formal art bible, final approval authority beyond the requesting user, and required quality score thresholds are **undefined**.
+
 - All important new moves require a presented design and actual user approval or explicit waiver. Review compares against DESIGN/BLOCKING/FIRST PASS/SECOND PASS/POLISH/FINAL/APPROVED and revises specific problem ranges.
+
+
 
 Evidence snapshots: `verification/project-unity-audit.json`, `verification/shark-source-audit.json`, `verification/character-source-audit.json`. Source files remain the authority; repeat inspection when assets change.
 
+
+
 Current integrated encounter revision (2026-10-07): `ArtSource/Encounter/v001/` and
+
 `v002/` retain original rig names and add isolated actions. Unity loads the cloned
+
 `Assets/Resources/Encounter/v001/EncounterShark.prefab/controller`; original assets
+
 remain available. Actual contact snapshots are .65 s for new tail/ship strikes.
+
 The v003 20.8 s paired finale owns cinematic pose/world placement with a shared manual
+
 clock; live locomotion, attacks and wreck traversal retain existing ownership.
+
 See `Actions/CH1_SahurSharkEncounter_v001/final-review.md` for the final evidence.
 
+
+
 v003 adds three hops between real wreck boards and two shark breaches; the existing
+
 Humanoid Jumping.fbx was copied to a versioned clip and retimed by pose phase. The
+
 new 60 FPS / 3.2 s Generic Breach Action was authored on a copy of the original shark
+
 rig in Blender. Active shark prefab/controller now come from Encounter/v003; v001
+
 and original assets remain available. The final fallen pose stays held through
+
 blackout while its world transform follows actual ocean height/slope. See
+
 `Actions/CH1_SahurSharkEncounter_v001/traversal-v003-review.md` for current captures
+
 and measured regression results. Tests must restore the current save after stopping
+
 the Editor too, because shutdown can flush previously queued save data.
 
+
+
 v004 contact integration retains v003 animation assets and the 20.8 s core clock.
+
 Anatomical shark/wood solving runs after cinematic pose sampling; live attack damage
+
 uses the solved pose. Ship fracture source is now
+
 `ArtSource/ShipWreck/ship_g_fractured_v002.blend`, with irregular deck cuts and real
+
 child fragments. Finale lead-in duration follows an animated walk to the board edge;
+
 landings face outward. See `Actions/CH1_SahurSharkEncounter_v001/wreck-contact-v004-review.md`
+
 and `Tools/SharkBoardContact-README.md` for measured tests and remaining wave occlusion.
 
+
+
 v005 fragment collision integration gives every small wreck piece a dynamic body
+
 and solid mesh contact. Twenty decks and 24 hulls use their authored child mesh
+
 parts as compound colliders. Shark contacts and board surface queries inspect all
+
 parts. Existing rig/actions and the core encounter clock are unchanged; see
+
 `Tools/WreckMeshColliders-README.md` for physical contact/traversal verification.

@@ -15,7 +15,7 @@ namespace Mavis
         void LateUpdate()
         {
             if(!jet||!boss||PauseSettingsMenu.IsOpen)return;
-            bool active=boss.FightActive&&!boss.IsDead&&boss.CurrentState==BombardinoBoss.State.Attack&&boss.CurrentAttack==BombardinoBoss.AttackKind.FlameRun;
+            bool active=boss.isActiveAndEnabled&&boss.FightActive&&!boss.IsDead&&boss.CurrentState==BombardinoBoss.State.Attack&&boss.CurrentAttack==BombardinoBoss.AttackKind.FlameRun;
             var emission=jet.emission;emission.rateOverTime=active?95:0;
             if(!active)return;
             Vector3 origin=boss.WeaponOrigin(true);Vector3 delta=boss.FlameContact-origin;

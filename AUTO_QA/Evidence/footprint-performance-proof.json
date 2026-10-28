@@ -1,0 +1,12 @@
+{
+  "validBefore": true,
+  "validAfter": true,
+  "positiveControlBytesPerSample": 1048608,
+  "allocationBeforePer1000": 24000,
+  "allocationAfterPer1000": 0,
+  "markerMsBefore": 2.3511499762535095,
+  "markerMsAfter": 0.18387500196695328,
+  "scope": "Isolated native renderer microbenchmark with profiler marker and GC.Alloc metadata; no whole-game FPS claim.",
+  "reloadEvidence": "Original fixture ephemeral assembly unloaded after RequestScriptReload; AppDomain.Id remained 1 and is not used as reload proof.",
+  "source": "Assets/Game/Prefabs/Environment/Shared/Scripts/SandFootprints.cs"
+}

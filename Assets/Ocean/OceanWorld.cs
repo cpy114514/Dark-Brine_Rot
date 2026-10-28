@@ -86,6 +86,8 @@ public sealed class OceanWorld : MonoBehaviour
 
     // Initial conditions are replaced by DayNightCycle once the lighting scene is active.
     [Header("Dynamic Sky")]
+    [Tooltip("Scene-specific strength of the volumetric cloud layer. Set to zero when using sculpted cloud meshes.")]
+    [Range(0f, 1f)] public float skyCloudStrength = 1f;
     [Tooltip("Distance in metres before detailed clouds fade into the horizon sky.")]
     [Range(4000f, 48000f)] public float cloudRenderDistance = 12000f;
     [HideInInspector]
@@ -526,7 +528,7 @@ public sealed class OceanWorld : MonoBehaviour
         int cloudDetail = effectsQuality == EffectsQuality.Low ? 2 : effectsQuality == EffectsQuality.Medium ? 4 : 5;
         skyMaterial.SetFloat("_CloudDetail", cloudDetail);
         skyMaterial.SetFloat("_CloudRenderDistance", Mathf.Clamp(cloudRenderDistance, 4000f, 48000f));
-        skyMaterial.SetFloat("_CloudStrength", effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.72f : 0.80f);
+        skyMaterial.SetFloat("_CloudStrength", skyCloudStrength * (effectsQuality == EffectsQuality.Low ? 0.42f : effectsQuality == EffectsQuality.Medium ? 0.72f : 0.80f));
         // Coverage directly controls the raymarched cloud volume; there is no secondary
         // mesh-cloud layer competing with it.
         skyMaterial.SetFloat("_CloudCoverage", cloudiness);

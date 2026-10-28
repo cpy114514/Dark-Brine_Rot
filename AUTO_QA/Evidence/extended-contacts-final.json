@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "error": null,
+  "checkCount": 11,
+  "failed": 0,
+  "checks": [
+    {
+      "passed": true,
+      "name": "Bomb long frame sweeps into thin wall"
+    },
+    {
+      "passed": true,
+      "name": "Missile long frame sweeps into thin wall"
+    },
+    {
+      "passed": true,
+      "name": "Zero-delta payload tick preserves state"
+    },
+    {
+      "passed": true,
+      "name": "Blast damages real victim once despite multiple hurtboxes"
+    },
+    {
+      "passed": true,
+      "name": "Repeated detonation cannot duplicate damage"
+    },
+    {
+      "passed": true,
+      "name": "Solid cover still blocks blast damage"
+    },
+    {
+      "passed": true,
+      "name": "Floor fire does not burn a victim above its height band"
+    },
+    {
+      "passed": true,
+      "name": "Floor fire preserves authored pulse through existing player mitigation"
+    },
+    {
+      "passed": true,
+      "name": "Floor fire cannot repeat within its cooldown"
+    },
+    {
+      "passed": true,
+      "name": "Floor fire repeats after authored cooldown"
+    },
+    {
+      "passed": true,
+      "name": "Expired long-frame fire cannot deliver a final late pulse"
+    }
+  ],
+  "cases": [
+    {
+      "blastDamage": 12.0
+    },
+    {
+      "authoredPulse": 8,
+      "mitigatedPulse": 6.0,
+      "playerRecoveryClearedBetweenDirectSteps": true
+    }
+  ]
+}

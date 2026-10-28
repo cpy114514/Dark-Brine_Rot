@@ -14,6 +14,9 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     [Header("Encounter")]
     [Tooltip("Opening voyage duration relative to the original timing. Ship speed and attack animations are unchanged.")]
     [Range(.1f,1f)] public float voyageDurationScale = .25f;
+    [Tooltip("Playable helm time before the opening cinematic takes over.")]
+    [Min(3f)] public float helmControlSeconds = 8f;
+    public float HelmControlSeconds => Mathf.Max(3f, helmControlSeconds);
     [Min(1f)] public float battleAfterSeconds = 20f;
     [Min(1f)] public float impactAfterSeconds = 30f;
     [Min(0f)] public float bowDistance = 50f;
@@ -63,7 +66,9 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     System.Random voyageRandom;
     float patrolRadius, patrolAngle, patrolDirection, patrolEndsAt, nextVoyageBreach, voyageSwimClock,approachLeadSeconds,patrolTrim;
     Vector3 patrolBody, previousShipPosition;
+    Vector3 patrolNoseFromBody;
     bool voyageBreaching, breachLaunched, voyageOwnsAnimation;
+    bool helmOpening;
     float voyageBreachAt, flightDuration, launchY, launchSpeed, recoveryAt, recoveryVelocity, breachVisibilityAt;
     float VoyageScale => Mathf.Clamp(voyageDurationScale,.1f,1f);
     float ApproachDeadline => Mathf.Max(battleAfterSeconds*VoyageScale,patrolEndsAt+approachLeadSeconds);
@@ -111,7 +116,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         // shadow and warning. Do not loop the passenger's fidget throughout
         // the old patrol before showing those same opening beats again.
         if(sahur.TryGetComponent<Story1SahurPassenger>(out var passenger)&&passenger.enabled&&
-            voyageTime>=Story1SahurPassenger.OpeningLeadInSeconds)
+            voyageTime>=HelmControlSeconds)
         {
             BeginImpact();
             return;
@@ -128,7 +133,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
             UpdateSwimmer(voyageTime, deltaTime);
         }
         float gap = Vector3.ProjectOnPlane(swimAnimator.NoseWorldPoint - bowContactPoint, Vector3.up).magnitude;
-        if (!IsPatrolling && voyageTime >= Mathf.Max(impactAfterSeconds*VoyageScale,ApproachDeadline) && gap <= tailSetupDistance + contactTolerance &&
+        if (voyageTime>=HelmControlSeconds && !IsPatrolling && voyageTime >= Mathf.Max(impactAfterSeconds*VoyageScale,ApproachDeadline) && gap <= tailSetupDistance + contactTolerance &&
             Vector3.Angle(Vector3.ProjectOnPlane(swimmer.forward, Vector3.up), -heading) < 15)
             BeginImpact();
     }
@@ -232,6 +237,7 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
     void InitializeVoyagePatrol()
     {
         voyageRandom=new System.Random();
+        helmOpening=sahur.TryGetComponent<Story1SahurPassenger>(out var passenger)&&passenger.enabled;
         float hullRadius=Mathf.Sqrt(ship.hullLength*ship.hullLength+ship.hullBeam*ship.hullBeam)*.5f;
         float hullHeight=0;
         foreach(var collider in shipColliders)
@@ -272,6 +278,17 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         // frame, so the shorter patrol ends on the same approach quarter.
         // The shark keeps its normal speed and never skips position in view.
         patrolAngle=viewAngle+patrolDirection*(1.8f+patrolTrim*patrolSwimSpeed/Mathf.Max(1,patrolRadius));
+        if(helmOpening)
+        {
+            // Keep circling for the entire short playable voyage, instead of
+            // beginning the old bow approach partway through it. Stage the
+            // original-size shark once, before it becomes visible.
+            patrolEndsAt=HelmControlSeconds+.1f;
+            swimAnimator.SampleCinematicAction("Swim",0);
+            patrolNoseFromBody=Quaternion.Inverse(swimmer.rotation)*(swimAnimator.NoseWorldPoint-swimmer.position)-
+                Vector3.Scale(swimAnimator.RootMeshBounds.center,swimmer.lossyScale);
+            SelectVisiblePatrolArc(viewAngle);
+        }
         Vector3 radial=heading*Mathf.Cos(patrolAngle)+side*Mathf.Sin(patrolAngle);
         Vector3 tangent=(-heading*Mathf.Sin(patrolAngle)+side*Mathf.Cos(patrolAngle))*patrolDirection;
         swimRotation=Quaternion.LookRotation(tangent,Vector3.up);
@@ -281,11 +298,50 @@ public sealed class Story1SharkCollisionSequence : MonoBehaviour
         PlaceVoyageBody(patrolBody,swimRotation);
         swimVelocity=heading*ship.CurrentSpeed+tangent*patrolSwimSpeed;
         previousShipPosition=shipTransform.position;
-        nextVoyageBreach=2+(float)voyageRandom.NextDouble()*1.5f;
+        nextVoyageBreach=helmOpening?float.PositiveInfinity:2+(float)voyageRandom.NextDouble()*1.5f;
+    }
+    void SelectVisiblePatrolArc(float viewAngle)
+    {
+        float best=float.NegativeInfinity;
+        for(int direction=-1;direction<=1;direction+=2)
+        for(int candidate=0;candidate<24;candidate++)
+        {
+            float angle=viewAngle+candidate*Mathf.PI/12,score=0;
+            for(int sample=0;sample<5;sample++)
+            {
+                float phase=angle+direction*patrolSwimSpeed/Mathf.Max(1,patrolRadius)*HelmControlSeconds*sample/4;
+                Vector3 aim=shipTransform.position+(heading*Mathf.Cos(phase)+side*Mathf.Sin(phase))*patrolRadius;
+                aim.y=WaterAt(aim)+5;
+                Vector3 screen=storyCamera.WorldToViewportPoint(aim);
+                if(screen.z<=0||screen.x<.12f||screen.x>.88f||screen.y<.1f||screen.y>.85f){score-=8;continue;}
+                if(Mathf.Abs(screen.x-.5f)<.18f){score-=20;continue;}
+                // Prefer an open flank rather than the mast/sail silhouette.
+                score+=VoyagePointVisible(aim)?5:-3;
+                score+=1-Mathf.Clamp01(Mathf.Abs(Mathf.Abs(screen.x-.5f)-.22f)*4);
+            }
+            if(score>best){best=score;patrolAngle=angle;patrolDirection=direction;}
+        }
+    }
+    bool VoyagePointVisible(Vector3 aim)
+    {
+        Vector3 from=storyCamera.transform.position,delta=aim-from;
+        var ray=new Ray(from,delta.normalized);
+        foreach(var collider in shipColliders)
+            if(collider!=null&&collider.enabled&&!collider.isTrigger&&collider.Raycast(ray,out _,delta.magnitude))return false;
+        foreach(var renderer in voyageOccluders)
+            if(renderer!=null&&renderer.enabled&&renderer.gameObject.activeInHierarchy&&
+                renderer.bounds.IntersectRay(ray,out float at)&&at<delta.magnitude)return false;
+        return true;
     }
     float WaterAt(Vector3 point)=>ocean!=null ? ocean.SampleSurfaceHeight(point,Time.time) : oceanHeight;
-    float SurfaceBodyY(float water,Quaternion rotation)=>swimAnimator.SurfaceRootY(water,rotation)+
-        (rotation*Vector3.Scale(swimAnimator.RootMeshBounds.center,swimmer.lossyScale)).y;
+    float SurfaceBodyY(float water,Quaternion rotation)
+    {
+        // Use the posed head rather than padded import bounds. Bounds-based
+        // waterlining left the actual snout underwater even with a visible fin.
+        if(helmOpening)return water+2-(rotation*patrolNoseFromBody).y;
+        return swimAnimator.SurfaceRootY(water,rotation)+
+            (rotation*Vector3.Scale(swimAnimator.RootMeshBounds.center,swimmer.lossyScale)).y;
+    }
     void PlaceVoyageBody(Vector3 body,Quaternion rotation)
     {
         swimRotation=rotation;swimmer.SetPositionAndRotation(body-rotation*Vector3.Scale(swimAnimator.RootMeshBounds.center,swimmer.lossyScale),rotation);

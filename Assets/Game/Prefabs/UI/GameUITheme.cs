@@ -46,7 +46,11 @@ public static class GameUITheme
     {
         get
         {
-            if (!whiteSprite) whiteSprite = Sprite.Create(Texture2D.whiteTexture,new Rect(0,0,1,1),new Vector2(.5f,.5f));
+            if (!whiteSprite)
+            {
+                var white = Texture2D.whiteTexture;
+                whiteSprite = Sprite.Create(white,new Rect(0,0,white.width,white.height),new Vector2(.5f,.5f));
+            }
             return whiteSprite;
         }
     }
@@ -56,6 +60,7 @@ public static class GameUITheme
         rect.pivot=new Vector2(alignment==TextAnchor.MiddleLeft?0:alignment==TextAnchor.MiddleRight?1:.5f,.5f);
         rect.anchoredPosition=position;
         var text=rect.gameObject.AddComponent<Text>();text.font=GameLocalization.Font?GameLocalization.Font:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        if(Pixel360Rendering.IsActive)text.material=PixelStyleUI.NativeTextMaterial;
         text.fontSize=size;text.color=Foreground;text.alignment=alignment;text.raycastTarget=false;
         text.horizontalOverflow=HorizontalWrapMode.Wrap;text.verticalOverflow=VerticalWrapMode.Overflow;return text;
     }

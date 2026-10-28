@@ -11,6 +11,27 @@ public sealed class DayNightCycle : MonoBehaviour
     [Min(2f)] public float fullDayMinutes = 24f;
     [Range(0f, 24f)] public float startHour = 8f;
     public bool clockRuns = true;
+    [Tooltip("Preview this scene's starting time in the editor without entering Play Mode.")]
+    public bool previewInEditor;
+
+#if UNITY_EDITOR
+    void OnValidate()
+    {
+        UnityEditor.EditorApplication.delayCall -= PreviewStartingTime;
+        if (previewInEditor && !Application.isPlaying)
+            UnityEditor.EditorApplication.delayCall += PreviewStartingTime;
+    }
+
+    void PreviewStartingTime()
+    {
+        if (this == null || !previewInEditor || Application.isPlaying || !isActiveAndEnabled)
+            return;
+        sun = GetComponent<Light>();
+        originalShadows = sun.shadows;
+        ApplyTimeOfDay();
+        UnityEditor.SceneView.RepaintAll();
+    }
+#endif
 
     [Header("Cloud Weather")]
     [Range(0f, 1f)] public float minimumCloudCoverage = 0.62f;

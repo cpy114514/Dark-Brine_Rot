@@ -1,0 +1,98 @@
+[
+  {
+    "assembly": "PipelineRunScript_NativeInputSmoke_ec73ec3140454e9c8322b07404bfd796",
+    "armed": false,
+    "takeFolder": "AUTO_QA/Evidence/native-input/batch005-take01",
+    "expected": [
+      {
+        "id": 1,
+        "enabled": true
+      },
+      {
+        "id": 2,
+        "enabled": true
+      }
+    ],
+    "actual": [
+      {
+        "id": 1,
+        "name": "Keyboard",
+        "enabled": true
+      },
+      {
+        "id": 2,
+        "name": "Mouse",
+        "enabled": true
+      }
+    ],
+    "orderedMatch": true,
+    "membershipMatch": true,
+    "settingsMatch": false,
+    "originalSettingsId": 0,
+    "originalSettingsName": null,
+    "originalSettingsPath": null,
+    "currentSettingsId": -6796822,
+    "currentSettingsName": "InputSettings",
+    "currentSettingsPath": "",
+    "originalSettingsFlags": null,
+    "currentSettingsFlags": "HideAndDontSave",
+    "expectedSettingsFlags": null,
+    "originalBackground": null,
+    "currentBackground": "ResetAndDisableNonBackgroundDevices",
+    "keyboard": 1,
+    "expectedKeyboard": 1,
+    "mouse": 2,
+    "expectedMouse": 2,
+    "captureDelta": 0,
+    "expectedCapture": 0,
+    "previewCleared": true
+  },
+  {
+    "assembly": "PipelineRunScript_NativeInputSmoke_6e951e2025914b6882b7acd7563e15f9",
+    "armed": false,
+    "takeFolder": "AUTO_QA/Evidence/native-input/batch005-take02",
+    "expected": [
+      {
+        "id": 1,
+        "enabled": true
+      },
+      {
+        "id": 2,
+        "enabled": true
+      }
+    ],
+    "actual": [
+      {
+        "id": 1,
+        "name": "Keyboard",
+        "enabled": true
+      },
+      {
+        "id": 2,
+        "name": "Mouse",
+        "enabled": true
+      }
+    ],
+    "orderedMatch": true,
+    "membershipMatch": true,
+    "settingsMatch": true,
+    "originalSettingsId": -6796822,
+    "originalSettingsName": "InputSettings",
+    "originalSettingsPath": "",
+    "currentSettingsId": -6796822,
+    "currentSettingsName": "InputSettings",
+    "currentSettingsPath": "",
+    "originalSettingsFlags": "HideAndDontSave",
+    "currentSettingsFlags": "HideAndDontSave",
+    "expectedSettingsFlags": "HideAndDontSave",
+    "originalBackground": "ResetAndDisableNonBackgroundDevices",
+    "currentBackground": "ResetAndDisableNonBackgroundDevices",
+    "keyboard": 1,
+    "expectedKeyboard": 1,
+    "mouse": 2,
+    "expectedMouse": 2,
+    "captureDelta": 0,
+    "expectedCapture": 0,
+    "previewCleared": true
+  }
+]

@@ -27,6 +27,7 @@ Shader "Mavis/FoliageWind"
         [HideInInspector] _MavisWindResponse ("Wind Response", Float) = 1.0
         _PlayerPushStrength   ("Player Push Strength", Range(0,4)) = 1.0
         _PlayerPushHeightBias ("Player Push Height Bias (height where push applies)", Range(0,4)) = 1.0
+        [HideInInspector] _ClipBelowSea ("Clip On Beach", Float) = 0
     }
 
     SubShader
@@ -56,6 +57,7 @@ Shader "Mavis/FoliageWind"
                 half   _LocalWindScale;
                 half   _PlayerPushStrength;
                 half   _PlayerPushHeightBias;
+                half   _ClipBelowSea;
             CBUFFER_END
 
             UNITY_INSTANCING_BUFFER_START(FoliageInstances)
@@ -72,6 +74,10 @@ Shader "Mavis/FoliageWind"
             // Global wind state (set every frame by FoliageWindDriver)
             float4 _MavisWindDir;       // xyz = direction (normalized), w = time
             float4 _MavisWindParams;    // x = base strength, y = phase, z = trunkStiffness override, w = gustiness
+
+            // Grass renderers set _ClipBelowSea. FoliageInteractionSystem fills the sand band.
+            float _MavisSeaLevel;
+            float _MavisBeachCeiling;
 
             // Global player state for foliage squish (xyz = world pos, w = radius)
             float4 _MavisPlayerPos;
@@ -194,12 +200,22 @@ Shader "Mavis/FoliageWind"
 
             half4 frag(Varyings IN) : SV_Target
             {
+                if (_ClipBelowSea > 0.5h && IN.positionWS.y < _MavisSeaLevel + _MavisBeachCeiling)
+                    clip(-1);
                 half4 baseTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
                 half opacity = baseTex.a * _BaseColor.a;
                 if (_UseAlphaMap > 0.5h)
                     opacity *= SAMPLE_TEXTURE2D(_AlphaMap, sampler_AlphaMap, IN.uv).r;
                 clip(opacity - _Cutoff);
                 half3 albedo  = baseTex.rgb * _BaseColor.rgb;
+                // Broad and fine patches keep one shared grass texture from reading as a flat carpet.
+                float2 meadow = IN.positionWS.xz;
+                float broad = sin(meadow.x * 0.041 + meadow.y * 0.017) * sin(meadow.y * 0.033 - meadow.x * 0.012);
+                float fine = sin(meadow.x * 0.19 + 1.7) * sin(meadow.y * 0.16);
+                half3 lush = half3(0.70, 1.08, 0.66);
+                half3 sun = half3(1.08, 0.98, 0.62);
+                albedo *= lerp(sun, lush, saturate(broad * 0.5 + 0.5));
+                albedo *= 0.93 + 0.09 * fine;
 
                 // Simple hemisphere ambient + main directional light
                 Light mainLight = GetMainLight(TransformWorldToShadowCoord(IN.positionWS));
@@ -241,6 +257,8 @@ Shader "Mavis/FoliageWind"
 
             half4 shadowFrag(Varyings IN) : SV_Target
             {
+                if (_ClipBelowSea > 0.5h && IN.positionWS.y < _MavisSeaLevel + _MavisBeachCeiling)
+                    clip(-1);
                 half opacity = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv).a * _BaseColor.a;
                 if (_UseAlphaMap > 0.5h)
                     opacity *= SAMPLE_TEXTURE2D(_AlphaMap, sampler_AlphaMap, IN.uv).r;

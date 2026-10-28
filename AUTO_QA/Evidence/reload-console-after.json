@@ -1,0 +1,91 @@
+{
+  "entries": [
+    {
+      "seq": 168897,
+      "timestampUtc": "2026-10-28T07:46:21.4613862Z",
+      "level": "error",
+      "message": "ExecutionEngineException: Couldn't create thread. Error 0x5af",
+      "stackTrace": "System.Threading.Thread.StartInternal (System.Object principal, System.Threading.StackCrawlMark& stackMark) (at <d49d4cb128564ee1b54a84338c98d353>:0)\nSystem.Threading.Thread.Start (System.Threading.StackCrawlMark& stackMark) (at <d49d4cb128564ee1b54a84338c98d353>:0)\nSystem.Threading.Thread.Start () (at <d49d4cb128564ee1b54a84338c98d353>:0)\nPlasticPipe.Client.ClientConnectionPool.StartConnectionCollector () (at <fb1d2a5292364582990246a47acfa372>:0)\nCodice.Client.Common.CmConnection..ctor (Codice.Client.Common.ClientConfig clientConfig, System.String tokensConfFilePath, System.String cloudRegionsConfFilePath, System.String unityOrgsConfigFilePath, System.Boolean testing) (at <fb1d2a5292364582990246a47acfa372>:0)\nCodice.Client.Common.CmConnection.Get () (at <fb1d2a5292364582990246a47acfa372>:0)\nCodice.Client.BaseCommands.ClientHandlers.Register () (at <fb1d2a5292364582990246a47acfa372>:0)\nUnity.PlasticSCM.Editor.PlasticApp.InitializeIfNeeded () (at ./Library/PackageCache/com.unity.collab-proxy@4628d2ba6ea4/Editor/PlasticApp.cs:87)\nUnity.PlasticSCM.Editor.Settings.UVCSProjectSettingsProvider.OnEnable () (at ./Library/PackageCache/com.unity.collab-proxy@4628d2ba6ea4/Editor/Settings/UVCSProjectSettingsProvider.cs:39)\n"
+    },
+    {
+      "seq": 168898,
+      "timestampUtc": "2026-10-28T07:46:21.5170354Z",
+      "level": "error",
+      "message": "Cannot open lmdb database Library/Search/.SearchIndexArtifactImporter.196609.b.index because another process has a lock on it. Will retry.",
+      "stackTrace": "UnityEditor.Search.SearchDatabase:OnEnable ()\n"
+    },
+    {
+      "seq": 168899,
+      "timestampUtc": "2026-10-28T07:46:21.9803172Z",
+      "level": "warn",
+      "message": "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate (Procedural Shore Foam: OnDidAddComponent)",
+      "stackTrace": "UnityEngine.GameObject:.ctor (string)\nProceduralIsland:BuildShoreFoam () (at Assets/Island/ProceduralIsland.cs:302)\nProceduralIsland:Rebuild () (at Assets/Island/ProceduralIsland.cs:171)\nProceduralIsland:OnValidate () (at Assets/Island/ProceduralIsland.cs:100)\n"
+    },
+    {
+      "seq": 168900,
+      "timestampUtc": "2026-10-28T07:46:21.980835Z",
+      "level": "warn",
+      "message": "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate (Procedural Shore Foam: OnBeforeTransformParentChanged)",
+      "stackTrace": "UnityEngine.Transform:SetParent (UnityEngine.Transform,bool)\nProceduralIsland:BuildShoreFoam () (at Assets/Island/ProceduralIsland.cs:303)\nProceduralIsland:Rebuild () (at Assets/Island/ProceduralIsland.cs:171)\nProceduralIsland:OnValidate () (at Assets/Island/ProceduralIsland.cs:100)\n"
+    },
+    {
+      "seq": 168901,
+      "timestampUtc": "2026-10-28T07:46:21.980835Z",
+      "level": "warn",
+      "message": "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate (Procedural Shore Foam: OnTransformParentChanged)",
+      "stackTrace": "UnityEngine.Transform:SetParent (UnityEngine.Transform,bool)\nProceduralIsland:BuildShoreFoam () (at Assets/Island/ProceduralIsland.cs:303)\nProceduralIsland:Rebuild () (at Assets/Island/ProceduralIsland.cs:171)\nProceduralIsland:OnValidate () (at Assets/Island/ProceduralIsland.cs:100)\n"
+    },
+    {
+      "seq": 168902,
+      "timestampUtc": "2026-10-28T07:46:21.980835Z",
+      "level": "warn",
+      "message": "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate (Sunset Island: OnTransformChildrenChanged)",
+      "stackTrace": "UnityEngine.Transform:SetParent (UnityEngine.Transform,bool)\nProceduralIsland:BuildShoreFoam () (at Assets/Island/ProceduralIsland.cs:303)\nProceduralIsland:Rebuild () (at Assets/Island/ProceduralIsland.cs:171)\nProceduralIsland:OnValidate () (at Assets/Island/ProceduralIsland.cs:100)\n"
+    },
+    {
+      "seq": 168903,
+      "timestampUtc": "2026-10-28T07:46:21.9813499Z",
+      "level": "warn",
+      "message": "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate (Procedural Shore Foam: OnDidAddComponent)",
+      "stackTrace": "UnityEngine.GameObject:AddComponent<UnityEngine.MeshFilter> ()\nProceduralIsland:BuildShoreFoam () (at Assets/Island/ProceduralIsland.cs:305)\nProceduralIsland:Rebuild () (at Assets/Island/ProceduralIsland.cs:171)\nProceduralIsland:OnValidate () (at Assets/Island/ProceduralIsland.cs:100)\n"
+    },
+    {
+      "seq": 168904,
+      "timestampUtc": "2026-10-28T07:46:21.9813499Z",
+      "level": "warn",
+      "message": "SendMessage cannot be called during Awake, CheckConsistency, or OnValidate (Procedural Shore Foam: OnDidAddComponent)",
+      "stackTrace": "UnityEngine.GameObject:AddComponent<UnityEngine.MeshRenderer> ()\nProceduralIsland:BuildShoreFoam () (at Assets/Island/ProceduralIsland.cs:307)\nProceduralIsland:Rebuild () (at Assets/Island/ProceduralIsland.cs:171)\nProceduralIsland:OnValidate () (at Assets/Island/ProceduralIsland.cs:100)\n"
+    },
+    {
+      "seq": 168905,
+      "timestampUtc": "2026-10-28T07:46:22.0666523Z",
+      "level": "error",
+      "message": "Cannot open lmdb database Library/Search/.SearchIndexArtifactImporter.196609.b.index because another process has a lock on it. Will retry.",
+      "stackTrace": "UnityEditor.Search.SearchDatabase:OnEnable ()\n"
+    },
+    {
+      "seq": 168906,
+      "timestampUtc": "2026-10-28T07:46:22.4356172Z",
+      "level": "error",
+      "message": "Cannot open lmdb database Library/Search/.SearchIndexArtifactImporter.196609.b.index because another process has a lock on it. Will retry.",
+      "stackTrace": "UnityEditor.Search.SearchDatabase:OnEnable ()\n"
+    },
+    {
+      "seq": 168907,
+      "timestampUtc": "2026-10-28T07:46:22.7581913Z",
+      "level": "error",
+      "message": "Cannot open lmdb database Library/Search/.SearchIndexArtifactImporter.196609.b.index because another process has a lock on it. Will retry.",
+      "stackTrace": "UnityEditor.Search.SearchDatabase:OnEnable ()\n"
+    },
+    {
+      "seq": 168908,
+      "timestampUtc": "2026-10-28T07:46:23.3503993Z",
+      "level": "error",
+      "message": "NullReferenceException: Object reference not set to an instance of an object",
+      "stackTrace": "Codice.Client.BaseCommands.BaseCommandsImpl.GetWorkspaceFromPath (System.String path, System.Boolean doPlatformGetSymLinkPath) (at <fb1d2a5292364582990246a47acfa372>:0)\nCodice.Client.BaseCommands.BaseCommandsImpl.GetWorkspaceFromPath (System.String path) (at <fb1d2a5292364582990246a47acfa372>:0)\nPlasticGui.PlasticAPI.GetWorkspaceFromPath (System.String wkPath) (at <fb1d2a5292364582990246a47acfa372>:0)\nUnity.PlasticSCM.Editor.FindWorkspace.InfoForApplicationPath (System.String path, PlasticGui.IPlasticAPI plasticApi) (at ./Library/PackageCache/com.unity.collab-proxy@4628d2ba6ea4/Editor/FindWorkspace.cs:29)\nUnity.PlasticSCM.Editor.UVCSPlugin.Enable () (at ./Library/PackageCache/com.unity.collab-proxy@4628d2ba6ea4/Editor/UVCSPlugin.cs:169)\nUnity.PlasticSCM.Editor.UVCSWindow.OnEnable () (at ./Library/PackageCache/com.unity.collab-proxy@4628d2ba6ea4/Editor/UVCSWindow.cs:454)\n"
+    }
+  ],
+  "cursor": 168908,
+  "returned": 12,
+  "dropped": false
+}

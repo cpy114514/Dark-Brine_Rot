@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "reproduced": true,
+  "cause": "Native children survived; nonserializable Stamp[] cache became null on actual domain reload",
+  "children": 28,
+  "enabled": false
+}

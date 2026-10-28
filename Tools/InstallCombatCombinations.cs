@@ -236,7 +236,16 @@ public static class InstallCombatCombinations
     static UnityEngine.AnimationClip Clip(string name)
     {
         // Keep the user's newer single-hand club and weapon-specific aerial moves.
-        string revised = name=="ClubSpin" ? "ClubSpinOneHandV003" : name=="JumpChop" ? "ClubJumpChopV003" : name=="BladeJumpChop" ? "BladeJumpChopV003" : null;
+        string stable = name=="JumpChop" ? "ClubJumpChopV278" : name=="BladeJumpChop" ? "BladeJumpChopV278" : null;
+        var stableClip = stable!=null ? AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Combat/Combinations/"+stable+".anim") : null;
+        if(stableClip)return stableClip;
+        string forward = name=="JumpChop" ? "ClubJumpChopV277" : name=="BladeJumpChop" ? "BladeJumpChopV277" : null;
+        var forwardClip = forward!=null ? AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Combat/Combinations/"+forward+".anim") : null;
+        if(forwardClip)return forwardClip;
+        string polished = name=="JumpChop" ? "ClubJumpChopV276" : name=="BladeJumpChop" ? "BladeJumpChopV276" : null;
+        var polishedClip = polished!=null ? AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Combat/Combinations/"+polished+".anim") : null;
+        if(polishedClip)return polishedClip;
+        string revised = name=="ClubSpin" ? "ClubSpinOneHandV003" : name=="JumpChop" ? "ClubJumpChopV269" : name=="BladeJumpChop" ? "BladeJumpChopV270" : null;
         var current = revised!=null ? AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Combat/Combinations/"+revised+".anim") : null;
         return current ? current : AssetDatabase.LoadAssetAtPath<AnimationClip>("Assets/Resources/Combat/Combinations/"+name+".anim");
     }

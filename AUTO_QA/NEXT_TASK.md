@@ -1,0 +1,48 @@
+# Current continuation — Batch 011
+
+Verified fixes: QA-016 footprint allocation, QA-017 equipment menu reload recovery, QA-018 map canvas ownership. Compile clean; 8 footprint functional + 13 footprint actual reload + 12 UI actual reload checks pass. Native Profiler positive controls validate 24,000 → 0 bytes per 1,000 footprint calls; no whole-game FPS claim. Source and full pre-existing project now tracked after authorized Git integration (7417515).
+
+VCS integration: incoming Plastic cs190/191 and full Environment merge applied, no mergeprogress file; original client.conf restored. Final Plastic checkin/GitHub PR #1 merge are being completed; inspect current status before retry. Exact manifests/backups are ignored under .codex/github-sync; never add that folder. Scene merge proof under Evidence. No unresolved scene design conflict: 41 documents merge without overlap; 3 generated mesh references have byte-identical bodies.
+
+Current Editor was externally restarted to PID 57472. Five first-island scenes restored loaded/clean, Play stopped, scene setup marker cleared. Preserve actual current state if user changes it. UI fixtures cleaned; native load reports only the same 606 missing plant references.
+
+Next wider QA batch: (1) normal input/click/escape/pause interlocks for equipment, map, death and settings, plus UI reload ownership for remaining runtime HUDs/localized labels; (2) Bombardino main Tick elapsed-time suspicion with terrain/wing safety; (3) native scene CPU/render profiling after the newly integrated grass changes. Reproduce before modifying. Do not rerun unchanged suites; no speculative animation edits.
+
+Historical restart notes below are superseded where they describe untracked SandFootprints or unmeasured allocations.
+
+---
+
+# Next task / restart instructions
+
+Latest completed batch: 010, commit titled `Repair aircraft hazards and preserve projectile elapsed time` (resolve with git log). Read the latest sections of all five AUTO_QA reports before work.
+
+1. Check git status and the existing Editor. Preserve all pre-existing dirty/untracked source, animation, art and scenes. Use one Editor; do not launch a replacement or force kill it. Never git add -A. For already-dirty source, back up current bytes and stage only QA hunks.
+2. Current editing workspace: Assets/Scenes/Combat Test/CombatTest.unity, loaded/clean, Play stopped. Batch010 observed this external workspace change and preserved it; the old five-scene setup is archived in Evidence/batch010-workspace-change.json. Check actual state again; never discard new unsaved user changes.
+3. Snapshot the current human save and backup into a new per-batch ignored directory before runtime tests. Compare/restore only that batch's own baseline, never an older session's save over legitimate new progress. Earlier unchanged copies remain in .codex/autoqa-save-backup/.
+4. Isolated tests use AutoQaIslandValidationRegression.PrepareIsolatedEditor/RestoreWorkspace. Saved scene setup uses SessionState key AUTO_QA.Batch002.SceneSetup. If interrupted with the marker present, stop Play and restore that setup before starting another fixture. Current marker is cleared. No source scene needs saving.
+5. NativeInputSmoke.StartBoundary(take,hz) supports unique 30/60 Hz simulation takes. The guarded settings lifetime is required: InputManager destroys replaced objects with exactly HideAndDontSave. Existing historical V276–V278 helpers lack the guard. Restore settings object/flags, physical enabled/current devices, capture delta, preview and CombatCombinationTests marker after every run. Current settings/devices are valid and restored.
+6. User now requests wider batches: cover several distinct systems and complete a set of evidence-backed corrections/regressions before ending a turn. Keep each patch small; do not stop after one tiny investigation. Update reports and checkpoint QA-only changes. Preserve rejected takes and distinguish reproduction failures from accepted post-fix tests.
+
+## Next high-value work
+
+Run a wider batch: (1) reproduce BombardinoBoss.Tick main flight/AI clock behavior when delta exceeds .1 s; projectile timing is repaired but the main AI still clamps elapsed time. Verify terrain/wing collision safety before changing that loop. (2) Validate returning/reacquiring an active target and phase-2 missile scheduling. (3) Add one independent player/camera collision or valid performance measurement path. Do not repeat unchanged full suites without a relevant reason.
+
+Batch010 fixes invalid-target aircraft hazards, disabled-owner flame emission and projectile time loss/gravity partition error. Ninety-nine valid checks pass across aircraft ownership, ballistics, contacts, footprint/camera function and both-weapon native input. Allocation counter is unusable in this Editor session: a 1 MB positive control also reads zero. Never claim zero allocations from that counter until it passes a positive control; footprint allocation suspicion remains unmeasured, source unchanged. ExtendedSystemsRegression methods require isolated unsaved Play and use AUTO_QA.ExtendedSystems (currently false). Tests reject the wrong scene before mutation. Preserve latest user workspace if it changes during a session; do not blindly restore an older setup over it.
+
+Batch 009 fixes Cappuccino stale attacks on re-enable. Final cancellation/native attack/ultimate-contract suites pass 52 checks, with zero inactive Animator warnings. Earlier functionally passing after takes are superseded because immediate CancelCombat pose recovery warned on inactive objects. Final code defers pose recovery to a valid Tick. CappuccinoCancellationRegression.Run(take,false/true) requires an isolated unsaved Play scene and uses AUTO_QA.CappuccinoCancellation (currently false). Do not repeat unchanged tests. Existing user AI/ultimate edits remain in working tree; checkpoint contains only QA hunks.
+
+Batch 008 fixes Nailong inactive-target Attack continuation and queued spit release. All 101 post-fix checks pass; do not repeat unchanged matrices. NailongAttackMotion.Stop already stops imported graph playback; the earlier suspicion was rejected with 75 baseline checks. NailongCancellationRegression.Run, RunTargetLoss and RunInFlight take unique evidence names and use AUTO_QA.NailongCancellation as their temporary fixture marker (currently false). No visual quality acceptance from this batch.
+
+Batch 007 completes the early-combo/local-stop probe with 15 passing checks and 87 rendered frames. Single Freeze requests clamp to .13 s; use repeated real Freeze calls for a longer stress stop, never assume requested duration. Early input expires before queue admission; accepted-window intent deliberately survives recovery. Initial take01 is a rejected test, not an open bug. Review StartReview(take) supports native captures; do not re-run unchanged coverage without new evidence. Sparse selected images are not full-rate smoothness acceptance.
+
+Batch 006 fixes renewed expired dodge input. Its 30/60 Hz boundary matrices and normal queued-input regression pass 56 assertions / 3,474 observations. Do not repeat the full suite without a relevant change. Batch 004 ownership matrix passes 96; visual/Nailong/footprint reload fixes and batch 005 normal-flow evidence already exist. None establishes current visual animation smoothness or exhaustive combat coverage.
+
+## Known constraints and provenance
+
+- Environment has 606 missing prefab references across GUIDs 2bde5fdeb204bc6418608a5fe3993ad1, 8e67ad946c4264b479267ee1643fd2ce, ad3d230ef428f6049ab82c5136f00a47. Source lookup is blocked and historical V253 reports match. Do not repeat searches or replace/delete plants without new source evidence.
+- Native Editor handles reached ~519k with 174 threads; prior thread/resource/Search failures remain unexplained. Use bounded existing-Editor operations and verify timed-out mutations before retrying. Unity Mono reports zero handle/thread counts, which are unavailable data. Heavy island performance profiling remains pending.
+- Motor and CappuccinoAI source truncation writes failed; a backed-up, guarded extending r+ write succeeded. Preserve exact bytes and do not change permissions or close user processes to force an edit.
+- SandFootprints.cs remains pre-existing/untracked with its Serializable repair applied. Only Patches/SandFootprints-serialize-stamp.patch is checkpointed; verify reverse --check, do not double apply. Its full original feature is not part of a clean Git checkout.
+- Source backups for batches 004/006/007/008/009/010 are under ignored .codex/autoqa-source-before/. User V272–V278 animation/movement edits remain in the working tree.
+- The footprint per-frame MaterialPropertyBlock allocation candidate is unmeasured. Bound-delegate/native-renderer testing was performed, but this Editor allocation counter fails a 1 MB positive control. Use another qualified profiler path before optimizing.
+- CLI beta.13 remains connected; beta.14 update was not authorized and is not needed for current QA. Hourly heartbeat dark-brine-rot-qa remains active at minute 10.

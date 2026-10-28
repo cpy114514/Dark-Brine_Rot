@@ -1,0 +1,4022 @@
+{
+  "capturedUtc": "2026-10-28T07:39:41.3047399Z",
+  "unity": "6000.3.23f1",
+  "playing": false,
+  "compilationFailed": false,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "isDirty": false,
+      "roots": 1
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "isDirty": false,
+      "roots": 4
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "isDirty": false,
+      "roots": 7
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "isDirty": false,
+      "roots": 6063
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "isDirty": false,
+      "roots": 4
+    }
+  ],
+  "objects": 96226,
+  "missingScripts": [],
+  "missingPrefabs": [
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4029) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4030) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4031) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4039) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4040) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4041) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4049) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4050) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4051) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4059) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4060) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4061) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4069) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4070) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4071) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4079) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4080) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4081) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4089) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4090) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4091) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4099) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4100) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4101) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4109) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4110) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4111) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4119) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4120) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4121) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4129) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4130) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4131) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4139) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4140) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4141) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4149) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4150) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4151) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4159) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4160) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4161) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4169) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4170) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4171) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4179) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4180) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4181) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4189) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4190) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4191) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4199) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4200) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4201) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4209) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4210) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4211) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4219) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4220) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4221) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4229) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4230) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4231) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4306) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4307) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4308) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4309) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4310) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4311) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4312) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4313) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4314) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4315) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4316) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4317) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4318) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4319) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4320) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4321) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4322) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4323) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4324) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4325) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4326) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4327) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4328) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4329) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4330) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4331) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4332) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4333) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4334) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4335) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4336) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4337) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4338) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4339) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4340) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4341) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4342) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4343) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4344) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4345) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4346) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4347) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4348) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4349) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4350) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4351) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4352) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4353) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4354) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4355) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4356) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4357) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4358) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4359) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4360) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4361) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4362) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4363) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4364) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4365) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4366) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4367) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4368) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4369) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4370) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4371) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4372) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4373) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4374) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4375) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4376) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4377) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4378) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4379) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4420) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4425) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4447) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4457) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4466) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4472) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4473) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4474) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4477) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4492) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4493) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4494) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4495) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4526) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4542) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4553) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4654) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4655) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4656) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4664) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4665) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4666) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4674) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4675) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4676) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4684) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4685) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4686) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4694) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4695) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4696) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4704) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4705) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4706) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4714) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4715) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4716) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4724) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4725) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4726) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4734) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4735) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4736) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4744) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4745) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4746) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4754) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4755) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4756) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4764) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4765) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4766) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4774) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4775) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4776) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4784) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4785) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4786) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4794) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4795) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4796) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4804) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4805) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4806) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4814) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4815) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4816) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4824) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4825) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4826) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4834) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4835) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4836) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4844) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4845) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4846) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4853) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4854) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4855) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4863) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4864) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4865) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4873) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4874) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4875) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4883) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4884) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4885) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4893) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4894) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4895) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4903) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4904) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4905) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4913) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4914) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4915) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4923) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4924) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4925) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4933) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4934) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4935) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4943) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4944) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4945) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4953) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4954) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4955) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4963) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4964) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4965) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4973) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4974) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4975) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4983) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4984) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4985) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4993) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4994) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4995) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5003) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5004) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5005) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5013) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5014) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5015) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5023) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5024) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5025) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5033) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5034) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5035) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5043) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5044) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5045) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5053) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5054) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5055) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5077) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5078) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5079) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5087) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5088) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5089) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5097) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5098) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5099) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5107) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5108) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5109) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5117) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5118) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5119) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5127) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5128) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5129) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5137) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5138) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5139) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5147) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5148) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5149) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5157) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5158) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5159) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5167) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5168) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5169) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5177) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5178) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5179) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5187) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5188) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5189) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5197) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5198) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5199) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5207) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5208) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5209) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5217) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5218) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5219) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5227) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5228) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5229) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5237) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5238) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5239) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5247) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5248) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5249) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5257) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5258) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5259) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5267) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5268) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5269) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5277) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5278) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5279) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5287) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5288) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5289) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5297) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5298) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5299) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5307) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5308) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5309) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5317) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5318) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5319) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5327) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5328) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5329) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5337) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5338) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5339) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5347) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5348) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5349) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5357) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5358) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5359) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5367) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5368) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5369) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5377) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5378) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5379) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5387) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5388) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5389) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5397) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5398) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5399) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5407) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5408) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5409) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5417) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5418) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5419) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5427) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5428) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5429) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5437) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5438) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5439) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5447) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5448) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5449) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5457) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5458) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5459) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5467) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5468) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5469) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5477) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5478) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5479) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3970) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3951) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3981) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3911) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3910) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3889) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4021) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3961) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4011) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3891) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3959) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3931) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3969) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4019) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3921) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3990) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4020) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4001) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3909) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3999) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3979) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3940) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3960) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3899) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3901) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3971) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3991) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3929) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3900) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4010) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3980) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3939) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3950) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4000) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3920) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3930) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3919) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3890) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3949) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3989) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (4009) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3941) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1556) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1557) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1558) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1564) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1565) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1566) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1573) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1574) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1575) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1581) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1582) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1583) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1589) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1590) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (1592) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3716) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3717) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3718) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3725) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3726) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3727) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3735) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3736) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3737) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3744) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3745) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3746) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3754) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3755) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3756) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3764) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3765) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3766) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3774) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3775) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3776) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3784) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3785) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3786) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3794) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3795) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3796) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3804) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3805) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3806) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3814) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3815) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3816) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3824) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3825) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3826) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3834) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3835) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3836) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3844) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3845) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (3846) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5542) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5543) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5544) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5558) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5559) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5560) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5568) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5569) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5570) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5578) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5579) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5580) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5588) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5589) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5590) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5598) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5599) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5600) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5608) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5609) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5610) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5618) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5619) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5620) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5628) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5629) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5630) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5638) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5639) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5640) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5648) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5649) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5650) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5658) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5659) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5660) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5668) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5669) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5670) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5678) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5679) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5680) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5688) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5689) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5690) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5698) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5699) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5700) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5708) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5709) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5710) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5718) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5719) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5720) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5728) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5729) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5730) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5738) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5739) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5740) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5748) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5749) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5750) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5758) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5759) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5760) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5768) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5769) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5770) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5778) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5779) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5780) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5788) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5789) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5790) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5798) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5799) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5800) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5808) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5809) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5810) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5818) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5819) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5820) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5828) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5829) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5830) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5838) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5839) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5840) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5848) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5849) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5850) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5858) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5859) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5860) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5868) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5869) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5870) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5878) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5879) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5880) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5888) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5889) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5890) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5898) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5899) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)"
+    },
+    {
+      "scene": "Assets/Scenes/First Island/Environment.unity",
+      "name": "rostlinka_07c_ske (5900) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)"
+    }
+  ],
+  "missingGuidPaths": [
+    {
+      "guid": "2bde5fdeb204bc6418608a5fe3993ad1",
+      "path": ""
+    },
+    {
+      "guid": "8e67ad946c4264b479267ee1643fd2ce",
+      "path": ""
+    },
+    {
+      "guid": "ad3d230ef428f6049ab82c5136f00a47",
+      "path": ""
+    }
+  ],
+  "pools": [],
+  "animators": [
+    {
+      "name": "Animation Source Rig",
+      "controller": "CapriCombat",
+      "applyRootMotion": false,
+      "speed": 1.0
+    },
+    {
+      "name": "Sahur Player",
+      "controller": "SahurGameplay",
+      "applyRootMotion": false,
+      "speed": 1.0
+    },
+    {
+      "name": "Pbr Sahur Visual",
+      "controller": null,
+      "applyRootMotion": true,
+      "speed": 1.0
+    },
+    {
+      "name": "Nailong",
+      "controller": "NailongBoss",
+      "applyRootMotion": false,
+      "speed": 1.0
+    }
+  ],
+  "controllers": [
+    {
+      "path": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Locomotion",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.85,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpStart_v006/PLAYER_JumpStart_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpAir_v006/PLAYER_JumpAir_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpLand_v006/PLAYER_JumpLand_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_Swim_v007/PLAYER_Swim_v007.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimIdle_v007/PLAYER_SwimIdle_v007.fbx",
+              "speed": 0.9,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.89,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 3.4,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimFast_v007/PLAYER_SwimFast_v007.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Climb_v006/PLAYER_Climb_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Stagger_v006/PLAYER_Stagger_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Fall_v006/PLAYER_Fall_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.5,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "motion": "Assets/Resources/Combat/Combinations/BladeFinisherV272.anim",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swimming",
+              "motion": "Assets/Resources/Encounter/v006/SahurGameplay.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Club Spin",
+              "motion": "Assets/Resources/Combat/Combinations/ClubSpinOneHandV003.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSpin.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "motion": "Assets/Resources/Combat/Combinations/BladeGuard.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurChargeUpperBody",
+          "states": [
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Light Attack Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "LightAttackTorso",
+          "states": [
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurReceivedUpperBodyV245",
+          "states": [
+            {
+              "name": "Received Hit",
+              "motion": "Assets/Resources/Combat/SahurReceivedHitV245.anim",
+              "speed": 0.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Locomotion",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.85,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 2.8,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 2.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 0.9,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.89,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 3.4,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurFastFreestyle.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 0.7017544,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Surf",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 0.8,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.14285719,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.5,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "motion": "Assets/Resources/Combat/Combinations/BladeFinisherV272.anim",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Club Spin",
+              "motion": "Assets/Resources/Combat/Combinations/ClubSpinOneHandV003.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSpin.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "motion": "Assets/Resources/Combat/Combinations/BladeGuard.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurChargeUpperBody",
+          "states": [
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurReceivedUpperBodyV245",
+          "states": [
+            {
+              "name": "Received Hit",
+              "motion": "Assets/Resources/Combat/SahurReceivedHitV245.anim",
+              "speed": 0.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Locomotion",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.85,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpStart_v006/PLAYER_JumpStart_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpAir_v006/PLAYER_JumpAir_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_JumpLand_v006/PLAYER_JumpLand_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_Swim_v007/PLAYER_Swim_v007.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimIdle_v007/PLAYER_SwimIdle_v007.fbx",
+              "speed": 0.9,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.15,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.89,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/ClubJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 3.4,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.94,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "motion": "Assets/Resources/Encounter/v007/PLAYER_SwimFast_v007/PLAYER_SwimFast_v007.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurShoreGetUp.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Climb_v006/PLAYER_Climb_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "motion": "Assets/ThirdParty/QuaterniusUniversalAnimations/Quaternius_Universal_Standard.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Stagger_v006/PLAYER_Stagger_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "motion": "Assets/Resources/Encounter/v006/PLAYER_Fall_v006/PLAYER_Fall_v006.fbx",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/QuaterniusUAL2/UAL2_Standard.fbx",
+              "speed": 1.5,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSlashV273.anim",
+              "speed": 1.8,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "motion": "Assets/Resources/Combat/Combinations/BladeFinisherV272.anim",
+              "speed": 1.65,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.16,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.98,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "motion": "Assets/Resources/Combat/Combinations/BladeJumpChopV278.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Locomotion",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 1.0,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Swimming",
+              "motion": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "motion": "Assets/Resources/Combat/Combinations/BladeSpin.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "motion": "Assets/Resources/Combat/Combinations/BladeGuard.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Club Spin",
+              "motion": "Assets/Resources/Combat/Combinations/ClubSpinOneHandV003.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurChargeUpperBody",
+          "states": [
+            {
+              "name": "Charge Windup",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Gameplay/SahurStandingDownwardCharge.anim",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "transitions": []
+            },
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Light Attack Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "LightAttackTorso",
+          "states": [
+            {
+              "name": "Combo 1",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.25,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "motion": "Assets/Game/Prefabs/Characters/Sahur/Animations/Source/SwordAndShieldSlash_ThreeHit.fbx",
+              "speed": 1.55,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Locomotion",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": null,
+          "states": [
+            {
+              "name": "Rifle Idle",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleIdle.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Rifle Move",
+                  "duration": 0.12,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:If:0"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Rifle Move",
+              "motion": "Assets/Resources/Equipment/M4A1/SahurRifle.controller",
+              "speed": 1.0,
+              "speedParameter": "RiflePlayback",
+              "transitions": [
+                {
+                  "target": "Rifle Stop",
+                  "duration": 0.13,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:IfNot:0",
+                    "RifleWasForward:If:0"
+                  ]
+                },
+                {
+                  "target": "Rifle Idle",
+                  "duration": 0.14,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:IfNot:0",
+                    "RifleWasForward:IfNot:0"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Rifle Stop",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleStop.anim",
+              "speed": 1.3,
+              "speedParameter": null,
+              "transitions": [
+                {
+                  "target": "Rifle Move",
+                  "duration": 0.1,
+                  "hasFixedDuration": true,
+                  "hasExitTime": false,
+                  "exitTime": 0.9,
+                  "conditions": [
+                    "RifleMoving:If:0"
+                  ]
+                },
+                {
+                  "target": "Rifle Idle",
+                  "duration": 0.2,
+                  "hasFixedDuration": true,
+                  "hasExitTime": true,
+                  "exitTime": 0.88,
+                  "conditions": []
+                }
+              ]
+            },
+            {
+              "name": "Rifle Death",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleDeath.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Holding Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Rifle upper body",
+          "states": [
+            {
+              "name": "Rifle Hold",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleIdle.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Fire Upper Body",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Rifle upper body",
+          "states": [
+            {
+              "name": "Rifle Fire",
+              "motion": "Assets/Resources/Equipment/M4A1/Animations/RifleFire.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "motion": "Assets/Resources/Combat/Combinations/BladeCharge.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "SahurReceivedUpperBodyV245",
+          "states": [
+            {
+              "name": "Received Hit",
+              "motion": "Assets/Resources/Combat/SahurReceivedHitV245.anim",
+              "speed": 0.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "blending": "Override",
+          "mask": "Twin blade charge torso and arms",
+          "states": [
+            {
+              "name": "Empty",
+              "motion": "",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "motion": "Assets/Resources/Combat/Combinations/BladeRushV002.anim",
+              "speed": 1.0,
+              "speedParameter": null,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

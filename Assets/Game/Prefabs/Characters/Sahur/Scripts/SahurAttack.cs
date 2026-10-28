@@ -31,12 +31,14 @@ namespace Mavis
         float dodgeBufferedUntil=-1;
         static readonly Unity.Profiling.ProfilerMarker SweepMarker=new Unity.Profiling.ProfilerMarker("Sahur.WeaponSweep");
         Vector3 queryWeaponA,queryWeaponB;
-        public bool TryConsumeDodgeCancel(bool pressed)
+        public bool TryConsumeDodgeCancel(bool pressed) => TryConsumeDodgeCancel(pressed, true);
+        public bool TryConsumeDodgeCancel(bool pressed, bool canConsume)
         {
             if(CinematicHandoffPending || !isActiveAndEnabled || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)return false;
-            if(pressed && (IsGuarding || IsSpinning && Time.time-specialStartedAt>=spinStartup)){EndCombination();return true;}
             if(pressed && IsCombatMotionActive)dodgeBufferedUntil=Time.unscaledTime+Feel.inputBuffer;
-            if(Time.unscaledTime>dodgeBufferedUntil || (localStop && localStop.IsStopped))return false;
+            if(canConsume && Time.unscaledTime<=dodgeBufferedUntil && (IsGuarding || IsSpinning && Time.time-specialStartedAt>=spinStartup))
+            {EndCombination();dodgeBufferedUntil=-1;return true;}
+            if(!canConsume || Time.unscaledTime>dodgeBufferedUntil || (localStop && localStop.IsStopped))return false;
             if(!IsCombatMotionActive){dodgeBufferedUntil=-1;return true;}
             float phase=CurrentAttackPhase;
             if(!charging && (!attacking || phase<Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.heavyDodgeCancel:Feel.lightDodgeCancel)))return false;
@@ -118,6 +120,7 @@ namespace Mavis
 
         public bool IsCombatMotionActive => IsGuarding || charging || attacking || (boomerang != null && boomerang.IsThrowing);
         public bool CinematicHandoffPending { get; set; }
+        bool ControlInputBlocked => controller != null && (!controller.enabled || controller.ExternalControlLock);
         public bool IsGroundComboActive => attacking && comboStep >= 0;
         public bool CanSteerGroundCombo
         {
@@ -135,11 +138,18 @@ namespace Mavis
             }
         }
         public bool IsHeavyAttackActive => attacking && activeAttackHash == heavyStateHash;
+        public bool IsJumpSlashActive => attacking && activeAttackHash == jumpSlashStateHash;
+        bool jumpSlashRecovering;
+        public bool IsJumpSlashRecovering => IsJumpSlashActive && jumpSlashRecovering;
+        public bool IsTwinBladeSpinActive => UsesTwinBlades && (IsSpinning || IsGroundComboActive && comboStep == 2);
         public bool CanDodgeCancel => attacking && !charging && !(localStop && localStop.IsStopped) &&
             CurrentAttackPhase >= Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.heavyDodgeCancel:Feel.lightDodgeCancel);
         public bool TryDodgeCancel() => CanDodgeCancel && TryConsumeDodgeCancel(true);
-        public bool CanMoveDuringCombat => charging || usesUpperBodyLight || (IsHeavyAttackActive && usesRightArmHeavy);
-        public bool UsesAnimationRootMotion => attacking && !IsSpinning && !(UsesTwinBlades && IsHeavyAttackActive) && activeAttackHash != jumpSlashStateHash && !usesRightArmHeavy && !usesUpperBodyLight;
+        public bool CanMoveDuringCombat => charging || usesUpperBodyLight || (IsHeavyAttackActive && (usesRightArmHeavy || usesBladeRecovery));
+        // Full-body spins retain their authored pose and hit-stop, while the capsule travels.
+        public bool CanTranslateDuringCombat => CanMoveDuringCombat || IsTwinBladeSpinActive ||
+            IsJumpSlashRecovering && controller != null && controller.CanUseGroundAttack;
+        public bool UsesAnimationRootMotion => attacking && !IsSpinning && !IsTwinBladeSpinActive && !(UsesTwinBlades && IsHeavyAttackActive) && activeAttackHash != jumpSlashStateHash && !usesRightArmHeavy && !usesUpperBodyLight;
         public bool SafeForCinematic => !IsSpinning && !IsGuarding && (!IsCombatMotionActive || (attacking && !charging && CurrentAttackPhase>=CurrentWindowEnd+.04f));
         public float CurrentAttackPhase
         {
@@ -246,6 +256,8 @@ namespace Mavis
         float jumpAttackBufferedUntil = -1f;
         bool airImpactArmed;
         int comboStep = -1;
+        // Swing side survives recovery/cancellation; comboStep only counts consecutive inputs.
+        int nextTwinBladeSwing;
         int lastAttackInputFrame = -1;
         int movementCancelFrame = -1;
         float queueExpiresAt;
@@ -263,8 +275,11 @@ namespace Mavis
         readonly int[] upperComboHashes=new int[3];
         static readonly int HeavyPlaybackSpeedHash = Animator.StringToHash("HeavyPlaybackSpeed");
         bool hasHeavyPlaybackSpeed;
-        int AttackAnimationLayer => usesUpperBodyLight ? lightLayerIndex : usesRightArmHeavy ? chargeLayerIndex : 0;
-        int AttackAnimationHash => usesRightArmHeavy ? rightArmHeavyStateHash : usesUpperBodyLight && comboStep>=0 ? upperComboHashes[comboStep] : activeAttackHash;
+        bool usesBladeRecovery;
+        int bladeRecoveryLayer=-1;
+        static readonly int BladeRecoveryHash=Animator.StringToHash("Twin Blade Recovery.Capri Recovery");
+        int AttackAnimationLayer => usesBladeRecovery ? bladeRecoveryLayer : usesUpperBodyLight ? lightLayerIndex : usesRightArmHeavy ? chargeLayerIndex : 0;
+        int AttackAnimationHash => usesBladeRecovery ? BladeRecoveryHash : usesRightArmHeavy ? rightArmHeavyStateHash : usesUpperBodyLight && comboStep>=0 ? upperComboHashes[comboStep] : activeAttackHash;
         int chargeLayerIndex = -1;
         int lightLayerIndex = -1;
         bool usesUpperBodyCharge;
@@ -339,7 +354,7 @@ namespace Mavis
                 SuspendForSwimming();
                 return;
             }
-            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)
+            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || ControlInputBlocked)
             {
                 chargeInputUntil = -1;
                 jumpAttackBufferedUntil = -1f;
@@ -400,9 +415,16 @@ namespace Mavis
         {
             var mouse=Mouse.current;
             if(mouse==null || !mouse.rightButton.isPressed || Cursor.lockState!=CursorLockMode.Locked ||
-                PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)
+                PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
+                controller!=null&&(!controller.enabled||controller.ExternalControlLock||controller.ExternalMovementLock||controller.Swimming))
                 chargeInputUntil=-1;
-            else if(mouse.rightButton.wasPressedThisFrame)
+            // RMB is a held intention, not just a press event. Movement can
+            // briefly put us in a fall/landing or recovery state longer than
+            // the press buffer; honor the still-held button once grounded.
+            // Airborne, swimming, dodge and external-control gates still own
+            // eligibility, and a released button clears the intention above.
+            else if(mouse.rightButton.wasPressedThisFrame || !charging &&
+                (controller==null || controller.CanMaintainGroundCharge || controller.CanUseGroundAttack))
                 chargeInputUntil=Time.time+Feel.inputBuffer;
         }
 
@@ -410,7 +432,7 @@ namespace Mavis
         {
             if (secondBlade) secondBlade.enabled = false;
             // Sample the pose Unity rendered this frame, after Animator/root motion.
-            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
+            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || ControlInputBlocked ||
                 (controller != null && controller.Swimming))
             {
                 if (stickHitbox != null) stickHitbox.enabled = false;
@@ -441,7 +463,7 @@ namespace Mavis
 
         public void TriggerAttack()
         {
-            if (!enabled || CinematicHandoffPending || IsSpinning || IsGuarding || ChordHeld) return;
+            if (!enabled || ControlInputBlocked || CinematicHandoffPending || IsSpinning || IsGuarding || ChordHeld) return;
             if (TryCancelForMovementInput() || movementCancelFrame == Time.frameCount) return;
             if (boomerang != null && boomerang.IsBusy) return;
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || charging || (controller != null && controller.Swimming) || Cursor.lockState != CursorLockMode.Locked)
@@ -526,7 +548,7 @@ namespace Mavis
             attackQueued = false;
             comboStep = -1;
             comboContinueQueued = false;
-            BeginAttack(jumpSlashStateHash, damage * jumpSlashDamageMultiplier, 0f, 0.08f);
+            BeginAttack(jumpSlashStateHash, damage * jumpSlashDamageMultiplier, 0f, 0.14f);
         }
 
         void StartComboStage(int stage)
@@ -539,6 +561,12 @@ namespace Mavis
 
             comboStep = stage;
             comboContinueQueued = false;
+            int animationStage = stage;
+            if (UsesTwinBlades && stage < 2)
+            {
+                animationStage = nextTwinBladeSwing;
+                nextTwinBladeSwing = 1 - nextTwinBladeSwing;
+            }
             chargeLayerIndex=animator.GetLayerIndex(ChargeUpperBodyLayer);
             var loadout=GetComponent<SahurWeaponLoadout>();
             lightLayerIndex=animator.GetLayerIndex(LightUpperBodyLayer);
@@ -552,7 +580,7 @@ namespace Mavis
             else controller?.BeginComboSourceTravel(stage);
             float multiplier = stage == 1 ? comboTwoDamageMultiplier :
                 stage == 2 ? comboThreeDamageMultiplier : 1f;
-            BeginAttack(comboStateHashes[stage], damage * multiplier, 0f,
+            BeginAttack(comboStateHashes[animationStage], damage * multiplier, 0f,
                 stage == 0 ? 0.08f : Feel.comboTransition);
         }
 
@@ -644,7 +672,7 @@ namespace Mavis
                 BlendLightIntoLocomotion();
             // Charging and the right-arm heavy strike share locomotion with running.
             // New direction presses must not clear their pose or charge timer.
-            if (!enabled || !IsCombatMotionActive || CanMoveDuringCombat || PauseSettingsMenu.IsOpen ||
+            if (!enabled || !IsCombatMotionActive || CanTranslateDuringCombat || PauseSettingsMenu.IsOpen ||
                 SahurLoadoutUI.BlocksInput || Cursor.lockState != CursorLockMode.Locked ||
                 (controller != null && (!controller.enabled || controller.ExternalControlLock || controller.ExternalMovementLock)))
                 return false;
@@ -680,6 +708,8 @@ namespace Mavis
 
         void CancelForMovement()
         {
+            if(usesBladeRecovery && animator && bladeRecoveryLayer>0)animator.SetLayerWeight(bladeRecoveryLayer,0);
+            usesBladeRecovery=false;
             fadingTwinBladeCharge = false;
             ResetCombinations();
             localStop?.Release();
@@ -815,6 +845,7 @@ namespace Mavis
 
         void BeginAttack(int stateHash, float amount, float offset, float blend)
         {
+            jumpSlashRecovering = false;
             stamina?.NotifyCombat();
             controller?.BeginAttackFacing();
             animator.ResetTrigger(attackTrigger);
@@ -880,6 +911,19 @@ namespace Mavis
 
         void UpdateAttackProgress()
         {
+            // Once the outward cut is over, keep its authored torso follow-through
+            // while the normal run blend tree takes the legs back immediately.
+            if(IsHeavyAttackActive && UsesTwinBlades && !usesBladeRecovery && animator &&
+                controller && controller.RequestedMoveDirection.sqrMagnitude>.01f && HeavyAttackPhase>=TwinBladeRushWindow.y+.035f)
+            {
+                bladeRecoveryLayer=animator.GetLayerIndex("Twin Blade Recovery");
+                if(bladeRecoveryLayer>0 && animator.HasState(bladeRecoveryLayer,BladeRecoveryHash))
+                {
+                    float phase=HeavyAttackPhase;
+                    usesBladeRecovery=true;animator.Play(BladeRecoveryHash,bladeRecoveryLayer,phase);
+                    animator.SetLayerWeight(bladeRecoveryLayer,1);controller.PrepareChargeLocomotion();
+                }
+            }
             if (IsSpinning || !attacking || animator == null || Time.time - attackStartedAt < 0.08f || lightLayerHandoffFrame==Time.frameCount)
                 return;
 
@@ -894,6 +938,18 @@ namespace Mavis
                 return;
             }
             if (inActiveAttack) activeAttackEntered = true;
+            // Ease out of the authored follow-through into the actual physical state.
+            // Keep attack ownership until the outgoing blend completes, so the hit
+            // window never restarts and aerial momentum survives the whole handoff.
+            if (IsJumpSlashActive && !jumpSlashRecovering && inActiveAttack && !transitioningToAttack &&
+                current.normalizedTime >= Mathf.Max(.82f, CurrentWindowEnd + .04f) &&
+                !(localStop && localStop.IsStopped) && controller != null)
+                jumpSlashRecovering = controller.BeginJumpSlashRecovery(.20f);
+            if(usesBladeRecovery && inActiveAttack)
+            {
+                animator.SetLayerWeight(bladeRecoveryLayer,1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.8f,.98f,current.normalizedTime)));
+                if(current.normalizedTime>=.98f){FinishAttack();return;}
+            }
             if (!activeAttackEntered)
             {
                 // CrossFade is applied by Animator after this component's Update.
@@ -931,6 +987,9 @@ namespace Mavis
 
         void FinishAttack()
         {
+            jumpSlashRecovering = false;
+            if(usesBladeRecovery && animator && bladeRecoveryLayer>0)animator.SetLayerWeight(bladeRecoveryLayer,0);
+            usesBladeRecovery=false;
             if(hasLightPlaybackSpeed && animator)animator.SetFloat(LightPlaybackSpeedHash,1);
             attacking = false;
             usesRightArmHeavy = false;
@@ -989,7 +1048,7 @@ namespace Mavis
             stickHitbox.enabled = activePose && (phase>=start && phase<=end || skippedWindow);
             if (stickHitbox.enabled)
             {
-                if (secondBlade) secondBlade.enabled = true;
+                if (secondBlade) secondBlade.enabled = !IsJumpSlashActive;
                 Physics.SyncTransforms();
                 if(skippedWindow)ScanCrossedWindow(start,end,phase);
                 else
@@ -1000,7 +1059,7 @@ namespace Mavis
                     {
                         float from=Mathf.InverseLerp(observedAttackPhase,phase,start);
                         ScanInterpolatedWeapon(observedA,observedB,from,1);
-                        if(secondBlade)
+                        if(secondBlade && !IsJumpSlashActive)
                         {
                             var first=stickHitbox;stickHitbox=secondBlade;
                             ScanInterpolatedWeapon(observedSecondA,observedSecondB,from,1);stickHitbox=first;
@@ -1013,7 +1072,7 @@ namespace Mavis
             if(activePose)
             {
                 GetWeaponVolume(out observedA,out observedB,out _);
-                if(secondBlade)
+                if(secondBlade && !IsJumpSlashActive)
                 {
                     var first=stickHitbox;stickHitbox=secondBlade;
                     GetWeaponVolume(out observedSecondA,out observedSecondB,out _);stickHitbox=first;
@@ -1066,7 +1125,7 @@ namespace Mavis
             float from=Mathf.InverseLerp(observedAttackPhase,phase,start);
             float to=Mathf.InverseLerp(observedAttackPhase,phase,end);
             ScanInterpolatedWeapon(observedA,observedB,from,to);
-            if(secondBlade)
+            if(secondBlade && !IsJumpSlashActive)
             {
                 var first=stickHitbox;stickHitbox=secondBlade;
                 ScanInterpolatedWeapon(observedSecondA,observedSecondB,from,to);stickHitbox=first;
@@ -1183,7 +1242,7 @@ namespace Mavis
 
         void TryHit(Collider other, bool weaponContact)
         {
-            if (!attacking || stickHitbox == null || !stickHitbox.enabled) return;
+            if (ControlInputBlocked || !attacking || stickHitbox == null || !stickHitbox.enabled) return;
             if (other == null || other == stickHitbox || other.transform.IsChildOf(transform)) return;
             if (((1 << other.gameObject.layer) & hitMask) == 0) return;
             var target = other.GetComponentInParent<IDamageable>();
@@ -1195,6 +1254,10 @@ namespace Mavis
                   !targetComponent.transform.root.CompareTag(enemyTag)))) return;
             Vector3 point = other.ClosestPoint(StrikeOrigin);
             Vector3 direction = Vector3.ProjectOnPlane(other.bounds.center - StrikeOrigin, Vector3.up);
+            // The jump chop lands ahead of Sahur. A guard blade or swept
+            // transition must not turn it into a side/back attack.
+            if (IsJumpSlashActive && direction.sqrMagnitude > .0001f &&
+                Vector3.Dot(transform.forward, direction.normalized) < .7071068f) return;
             if (!weaponContact && !Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
                     stickHitbox.transform.rotation, other, other.transform.position,
                     other.transform.rotation, out _, out _)) return;
@@ -1217,6 +1280,8 @@ namespace Mavis
 
         void OnDisable()
         {
+            if(usesBladeRecovery && animator && bladeRecoveryLayer>0)animator.SetLayerWeight(bladeRecoveryLayer,0);
+            usesBladeRecovery=false;
             fadingTwinBladeCharge = false;
             ResetCombinations();chordLatched=false;
             dodgeBufferedUntil=-1;

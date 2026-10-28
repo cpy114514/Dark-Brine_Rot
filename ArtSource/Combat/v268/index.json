@@ -1,0 +1,36 @@
+[
+  {
+    "action": "PLAYER_ClubJumpChop_v268",
+    "stage": "BLOCKING",
+    "source": "C:\\Users\\pinyu\\Downloads\\Meshy_AI_TemporaryMotionProxy_01a17c3e_ae70_7126_87.fbx",
+    "fps": 60,
+    "frames": [
+      1,
+      52
+    ],
+    "duration": 0.85,
+    "root_motion": "in_place",
+    "active_normalized": [
+      0.34,
+      0.67
+    ],
+    "notes": "Raw whole-body retarget; hand/weapon fit and dual-blade adaptation require visual review before export."
+  },
+  {
+    "action": "PLAYER_BladeJumpChop_v268",
+    "stage": "BLOCKING",
+    "source": "C:\\Users\\pinyu\\Downloads\\Meshy_AI_TemporaryMotionProxy_01a17c3e_ae70_7126_87.fbx",
+    "fps": 60,
+    "frames": [
+      1,
+      52
+    ],
+    "duration": 0.85,
+    "root_motion": "in_place",
+    "active_normalized": [
+      0.34,
+      0.67
+    ],
+    "notes": "Raw whole-body retarget; hand/weapon fit and dual-blade adaptation require visual review before export."
+  }
+]

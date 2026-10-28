@@ -1,0 +1,20 @@
+[
+  {
+    "action": "PLAYER_ClubJumpChop_v269",
+    "source_action": "PLAYER_ClubJumpChop_v268",
+    "fps": 60,
+    "frame_start": 1,
+    "frame_end": 52,
+    "duration": 0.85,
+    "stage": "FIRST PASS"
+  },
+  {
+    "action": "PLAYER_BladeJumpChop_v269",
+    "source_action": "PLAYER_BladeJumpChop_v268",
+    "fps": 60,
+    "frame_start": 1,
+    "frame_end": 52,
+    "duration": 0.85,
+    "stage": "FIRST PASS"
+  }
+]

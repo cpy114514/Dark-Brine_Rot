@@ -23,6 +23,8 @@ namespace Mavis
         [Min(0.1f)] public float attackRange = 5.6f;
         [Min(0.1f)] public float attackReach = 5.9f;
         [Min(0f)] public float damage = 18f;
+        [Range(0f,1f)] public float attackDamageScale = .75f;
+        public float AttackFrequencyMultiplier => ultimate != null && ultimate.HasHealed ? 1.1f : 1f;
         [Range(10f, 180f)] public float attackArc = 130f;
         [Range(0f, 1f)] public float aimLockTime = 0.16f;
         [Range(0f, 1f)] public float hitWindowStart = 0.28f;
@@ -64,6 +66,7 @@ namespace Mavis
         PlayerHealth targetHealth;
         readonly BossTargetPrediction prediction = new BossTargetPrediction();
         bool engaged, hitResolved, pendingRetreat;
+        bool resumeLocomotionPending;
         float acquireAt, actionAt, retreatAt, attackStartedAt, previousAttackTime;
         float verticalSpeed, locomotion, avoidanceSide = 1f;
         CappuccinoBossPresentation bossPresentation;
@@ -120,6 +123,11 @@ namespace Mavis
             if (deltaTime <= 0f || PauseSettingsMenu.IsOpen || health == null) return;
             lastTickTime = now;
             if (health.IsDead) { OnDeath(); return; }
+            if (resumeLocomotionPending)
+            {
+                resumeLocomotionPending = false;
+                presentation.ResumeLocomotion();
+            }
             if (ultimate != null && ultimate.isActiveAndEnabled) ultimate.Simulate(now);
             ApplyGravity(deltaTime);
             if (now - poiseHitAt > 2.5f) poise = Mathf.MoveTowards(poise, 0f, deltaTime * 20f);
@@ -139,10 +147,8 @@ namespace Mavis
             prediction.Observe(target);
             Vector3 toTarget = Vector3.ProjectOnPlane(target.position - transform.position, Vector3.up);
             float distance = toTarget.magnitude;
-            if (FightActive && (distance > giveUpRange ||
-                Vector3.ProjectOnPlane(target.position - home, Vector3.up).magnitude > arenaRadius ||
-                Vector3.ProjectOnPlane(transform.position - home, Vector3.up).magnitude > arenaRadius + 2f))
-            { BeginReturn(); return; }
+            // Once engaged, retain the living target across the whole island.
+            // Terrain/obstacle safety still applies; distance no longer resets the fight.
             if (distance <= sightRange && HasSight()) engaged = true;
             if (!engaged) { SetMovement(0f, deltaTime); return; }
             if (!FightActive) BeginEncounter(now);
@@ -177,7 +183,7 @@ namespace Mavis
             if (CurrentState == State.Recover || CurrentState == State.Staggered)
             {
                 CurrentState = State.Orbit;
-                actionAt = now + (FightPhase == 2 ? .45f : .7f);
+                actionAt = now + .7f / AttackFrequencyMultiplier;
                 presentation.ResumeLocomotion();
             }
             if (CurrentState == State.Orbit && now < actionAt && !movementLocked)
@@ -249,7 +255,7 @@ namespace Mavis
             GameplayAudio.Play(GameplayAudio.Cue.Warning, transform.position);
             CurrentAttack = kind; CurrentState = State.Windup;
             stateStartedAt = now; windupDuration = telegraphSeconds + (kind == AttackKind.TwinSlash ? 0f : .25f);
-            if (FightPhase == 2) windupDuration *= .9f;
+            windupDuration /= AttackFrequencyMultiplier;
             committedDirection = transform.forward; committedRotation = transform.rotation;
             ActionProgress = 0f; DamageWindowActive = false;
             presentation.SetBossPose(.10f);
@@ -277,11 +283,12 @@ namespace Mavis
             CurrentState = State.Attack; attackStartedAt = now;
             attackStartPosition = transform.position;
             swingSeconds = CurrentAttack == AttackKind.Whirlwind ? 1.05f : CurrentAttack == AttackKind.DashThrust ? .78f : .72f;
+            swingSeconds /= AttackFrequencyMultiplier;
             swingCount = CurrentAttack == AttackKind.TwinSlash ? (FightPhase == 2 ? 3 : 2) : 1;
             swingIndex = 0; previousAttackTime = .22f; hitResolved = false;
             attackCounter++;
-            if (CurrentAttack == AttackKind.DashThrust) dashReadyAt = now + dashCooldown;
-            if (CurrentAttack == AttackKind.Whirlwind) whirlReadyAt = now + 5f;
+            if (CurrentAttack == AttackKind.DashThrust) dashReadyAt = now + dashCooldown / AttackFrequencyMultiplier;
+            if (CurrentAttack == AttackKind.Whirlwind) whirlReadyAt = now + 5f / AttackFrequencyMultiplier;
             bossPresentation?.Cue(CappuccinoBossPresentation.CueKind.Swing);
         }
 
@@ -292,7 +299,8 @@ namespace Mavis
             else if(CurrentAttack==AttackKind.Whirlwind)warning.Circle(transform.position,attackReach*1.05f,.2f);
             else warning.Sector(transform.position,committedDirection,attackReach,attackArc,.2f);
             float elapsed = Mathf.Max(0f, now - attackStartedAt);
-            float cycle = swingSeconds + .18f;
+            float comboGap = .18f / AttackFrequencyMultiplier;
+            float cycle = swingSeconds + comboGap;
             int index = Mathf.Min(swingCount - 1, Mathf.FloorToInt(elapsed / cycle));
             if (index != swingIndex)
             {
@@ -310,7 +318,7 @@ namespace Mavis
             if (index < swingCount - 1 && stageElapsed >= swingSeconds)
             {
                 DamageWindowActive = false;
-                presentation.SetBossPose(Mathf.Lerp(.12f,.22f,Mathf.Clamp01((stageElapsed-swingSeconds)/.18f)), (index+1)%2==1);
+                presentation.SetBossPose(Mathf.Lerp(.12f,.22f,Mathf.Clamp01((stageElapsed-swingSeconds)/comboGap)), (index+1)%2==1);
                 return;
             }
             // Anticipation, fast cut, then a longer follow-through, all on the
@@ -342,14 +350,14 @@ namespace Mavis
                 else hitResolved = true;
             }
             previousAttackTime = normalized;
-            if (elapsed >= swingSeconds * swingCount + (swingCount - 1) * .18f)
+            if (elapsed >= swingSeconds * swingCount + (swingCount - 1) * comboGap)
                 FinishAttack(now, Mathf.Max(.8f, recoverySeconds + (CurrentAttack == AttackKind.TwinSlash ? .3f : .7f)));
         }
 
         void FinishAttack(float now, float recovery)
         {
             DamageWindowActive = false; hitResolved = true;
-            CurrentState = State.Recover; actionAt = now + recovery;
+            CurrentState = State.Recover; actionAt = now + recovery / AttackFrequencyMultiplier;
             presentation.ResumeLocomotion();
         }
 
@@ -368,7 +376,7 @@ namespace Mavis
                 Vector3 direction = Vector3.ProjectOnPlane(collider.bounds.center - origin, Vector3.up);
                 if (Vector3.Angle(transform.forward, direction) > arc * 0.5f || IsBlocked(origin, point)) continue;
                 float multiplier = CurrentAttack == AttackKind.TwinSlash ? .75f : CurrentAttack == AttackKind.DashThrust ? 1.15f : 1.25f;
-                if(!targetHealth.ApplyMeleeDamage(damage*multiplier,point,transform.position))return true;
+                if(!targetHealth.ApplyMeleeDamage(damage*attackDamageScale*multiplier,point,transform.position))return true;
                 // Collider count does not multiply damage. Both swords belong to this one attack.
                 target.GetComponent<CombatKnockback>()?.Push(direction.normalized * (CurrentAttack == AttackKind.TwinSlash ? .65f : 1.4f));
                 if (Camera.main != null) Camera.main.GetComponent<CombatCameraShake>()?.Pulse(0.025f, 0.12f);
@@ -563,18 +571,28 @@ namespace Mavis
             bossPresentation?.Cue(CappuccinoBossPresentation.CueKind.Defeated);
         }
 
-        void CancelCombat()
+        void CancelCombat(bool resumePose = true)
         {
             engaged = false;
             pendingRetreat = false;
             hitResolved = true;
             DamageWindowActive = false;
-            if (CurrentState == State.Attack || CurrentState == State.Windup)
+            if (resumePose && (CurrentState == State.Attack || CurrentState == State.Windup))
                 presentation.ResumeLocomotion();
             CurrentState = State.Idle;
         }
 
-        void OnDisable() { DamageWindowActive = false; if (animator != null) { animator.speed = 1f; animator.SetFloat(MoveParameter, 0f); } }
+        void OnDisable()
+        {
+            if (CurrentState != State.Dead)
+            {
+                // Object deactivation cannot safely crossfade its Animator.
+                resumeLocomotionPending |= CurrentState == State.Attack || CurrentState == State.Windup;
+                CancelCombat(false);
+            }
+            DamageWindowActive = false;
+            if (animator != null) { animator.speed = 1f; animator.SetFloat(MoveParameter, 0f); }
+        }
         void OnDestroy()
         {
             if (health == null) return;

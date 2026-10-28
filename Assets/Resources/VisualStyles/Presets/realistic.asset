@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ad53c5c53b8bb04abd698fc153f41ad, type: 3}
+  m_Name: realistic
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.VisualStyles.VisualStylePreset
+  id: realistic
+  displayName: Realistic
+  description: Natural cinematic rendering with realistic lighting and materials.
+  preview: {fileID: 2800000, guid: 45815bf20dd84944b95cfd45e4b9a587, type: 3}
+  illustrated: 0
+  outlinePixels: 1.6
+  outlineStrength: 0.85
+  outlineDistance: 65
+  normalEdges: 0.32
+  ink: {r: 0.055, g: 0.065, b: 0.085, a: 1}
+  shadows: {r: 0.78, g: 0.85, b: 1, a: 1}
+  highlights: {r: 1, g: 0.94, b: 0.79, a: 1}
+  saturation: 0.65
+  tonalBands: 7
+  paperGrain: 0.025
+  shadowInk: 0.045
+  atmosphereInfluence: 0.18
+  fogTint: {r: 0.42, g: 0.48, b: 0.55, a: 1}

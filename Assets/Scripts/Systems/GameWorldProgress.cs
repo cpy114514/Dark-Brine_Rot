@@ -15,6 +15,7 @@ namespace Mavis
         {
             public List<Entry> changes = new List<Entry>();
             public List<ItemStack> inventory = new List<ItemStack>();
+            public List<string> wornItems = new List<string>();
             public List<Drop> drops = new List<Drop>();
             public string checkpoint;
             public FirstIslandObjectives.Progress tutorial;
@@ -44,6 +45,8 @@ namespace Mavis
                 Record(cache, -Mathf.CeilToInt(cache.Remaining) - 1);
             foreach (var pair in changes) result.changes.Add(new Entry { id = pair.Key, value = pair.Value });
             var inventory = player.GetComponent<EquipmentInventory>();
+            if(player.TryGetComponent<SahurWearableEquipment>(out var worn))
+                foreach(var item in worn.EquippedItems)if(item)result.wornItems.Add(item.id);
             if (inventory != null)
                 foreach (var pair in inventory.Items)
                     if (pair.Key && !string.IsNullOrEmpty(pair.Key.id)) result.inventory.Add(new ItemStack { id = pair.Key.id, count = pair.Value });
@@ -62,6 +65,12 @@ namespace Mavis
             if (snapshot.changes != null)
                 foreach (var entry in snapshot.changes)
                     if (entry != null && !string.IsNullOrEmpty(entry.id)) changes[entry.id] = entry.value;
+            // Earlier saves can carry a confirmed boss defeat in the objective
+            // snapshot. Preserve it without replaying a death or dropping loot.
+            if (snapshot.tutorial?.bosses != null)
+                foreach (var boss in snapshot.tutorial.bosses)
+                    if (boss != null && boss.defeated && !string.IsNullOrEmpty(boss.bossId) && (int)boss.kind >= 0 && (int)boss.kind < 3)
+                        changes[boss.bossId] = 0;
             var items = new Dictionary<string, EquipmentItem>();
             foreach (var item in Resources.LoadAll<EquipmentItem>("Equipment"))
                 if (!string.IsNullOrEmpty(item.id)) items[item.id] = item;
@@ -73,6 +82,7 @@ namespace Mavis
                     if (stack != null && stack.count > 0 && stack.count <= 1000 && stack.id != null && items.TryGetValue(stack.id, out var item))
                         inventory.RestoreStack(item, stack.count);
             }
+            player.GetComponent<SahurWearableEquipment>()?.Restore(snapshot.wornItems);
             foreach (var identity in UnityEngine.Object.FindObjectsByType<WorldSaveIdentity>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 if (Key(identity) == null) continue;

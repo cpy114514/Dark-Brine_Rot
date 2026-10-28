@@ -30,23 +30,41 @@ namespace Mavis
         public int LandingEmissions { get; private set; }
         public int RushEmissions { get; private set; }
         public int ActivePulseCount { get {int n=0;for(int i=0;i<pulses.Length;i++)if(pulses[i]!=null&&pulses[i].active)n++;return n;} }
-        void Awake()
+        void Awake() => EnsurePool();
+        void OnEnable() => EnsurePool();
+        void EnsurePool()
         {
+            // Script reload preserves native children but recreates these managed caches.
+            // Reconnect the same bounded pool instead of leaking a second set of effects.
+            if(ribbons[0]!=null && pulses[0]!=null)return;
+            var existingRing=transform.Find("Pooled pressure ring 0");
+            var existingTrail=transform.Find("Weapon pressure ribbon");
+            if(existingRing)
+            {
+                ringMaterial=existingRing.GetComponent<MeshRenderer>().sharedMaterial;
+                ringMesh=existingRing.GetComponent<MeshFilter>().sharedMesh;
+            }
+            if(existingTrail)trailMaterial=existingTrail.GetComponent<MeshRenderer>().sharedMaterial;
             var template=Resources.Load<Material>("Combat/PressureAir");
-            ringMaterial=template?new Material(template):new Material(Shader.Find("DarkBrine/Combat Pressure"));
+            if(!ringMaterial)ringMaterial=template?new Material(template):new Material(Shader.Find("DarkBrine/Combat Pressure"));
             ringMaterial.name="Combat pressure rings";
-            trailMaterial=new Material(ringMaterial){name="Transparent weapon air trails"};trailMaterial.SetFloat("_Ribbon",1);trailMaterial.SetFloat("_Cull",0);
-            ringMesh=CreateRing();
+            if(!trailMaterial)trailMaterial=new Material(ringMaterial){name="Transparent weapon air trails"};trailMaterial.SetFloat("_Ribbon",1);trailMaterial.SetFloat("_Cull",0);
+            if(!ringMesh)ringMesh=CreateRing();
             for(int i=0;i<pulses.Length;i++)
             {
-                var go=new GameObject("Pooled pressure ring "+i);go.transform.SetParent(transform,false);go.AddComponent<MeshFilter>().sharedMesh=ringMesh;
-                var renderer=go.AddComponent<MeshRenderer>();Configure(renderer,ringMaterial);pulses[i]=new Pulse{transform=go.transform,renderer=renderer};
+                var child=transform.Find("Pooled pressure ring "+i);
+                var go=child?child.gameObject:new GameObject("Pooled pressure ring "+i);go.transform.SetParent(transform,false);
+                var filter=go.GetComponent<MeshFilter>();if(!filter)filter=go.AddComponent<MeshFilter>();filter.sharedMesh=ringMesh;
+                var renderer=go.GetComponent<MeshRenderer>();if(!renderer)renderer=go.AddComponent<MeshRenderer>();Configure(renderer,ringMaterial);pulses[i]=new Pulse{transform=go.transform,renderer=renderer};
             }
             for(int i=0;i<ribbons.Length;i++)
             {
-                var go=new GameObject(i==0?"Weapon pressure ribbon":"Offhand pressure ribbon");go.transform.SetParent(transform,false);
-                var r=new Ribbon{mesh=new Mesh{name="Bounded weapon motion ribbon"},renderer=go.AddComponent<MeshRenderer>()};
-                r.mesh.MarkDynamic();go.AddComponent<MeshFilter>().sharedMesh=r.mesh;Configure(r.renderer,trailMaterial);
+                string label=i==0?"Weapon pressure ribbon":"Offhand pressure ribbon";var child=transform.Find(label);
+                var go=child?child.gameObject:new GameObject(label);go.transform.SetParent(transform,false);
+                var filter=go.GetComponent<MeshFilter>();if(!filter)filter=go.AddComponent<MeshFilter>();
+                var renderer=go.GetComponent<MeshRenderer>();if(!renderer)renderer=go.AddComponent<MeshRenderer>();
+                var r=new Ribbon{mesh=filter.sharedMesh?filter.sharedMesh:new Mesh{name="Bounded weapon motion ribbon"},renderer=renderer};
+                r.mesh.MarkDynamic();filter.sharedMesh=r.mesh;Configure(r.renderer,trailMaterial);
                 for(int j=0;j<15;j++){int k=j*6,v=j*2;r.indices[k]=v;r.indices[k+1]=v+2;r.indices[k+2]=v+1;r.indices[k+3]=v+1;r.indices[k+4]=v+2;r.indices[k+5]=v+3;}
                 ribbons[i]=r;
             }
@@ -126,6 +144,7 @@ namespace Mavis
         }
         public void Sample(Vector3 a,Vector3 b,bool active,float lifetime,int hand=0)
         {
+            if(!isActiveAndEnabled)return;
             var r=ribbons[Mathf.Clamp(hand,0,1)];float now=Time.time;
             if(active&&!r.wasActive)r.count=0;r.wasActive=active;
             while(r.count>0&&now-r.times[0]>lifetime)Shift(r);

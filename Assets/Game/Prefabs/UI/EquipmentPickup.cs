@@ -78,6 +78,7 @@ namespace Mavis
         {
             if (IsCollected || Item == null || inventory == null || !inventory.gameObject.activeInHierarchy ||
                 PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput) return false;
+            if (!FirstIslandBossProgression.CanCollectItem(inventory, Item)) return false;
             var health = inventory.GetComponent<PlayerHealth>();
             if (health != null && health.currentHealth <= 0f) return false;
             Vector3 feet = inventory.transform.position;
