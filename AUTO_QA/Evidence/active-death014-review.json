@@ -1,0 +1,269 @@
+{
+  "passed": false,
+  "error": null,
+  "rows": [
+    {
+      "ok": true,
+      "label": "stick charge: native action active before death"
+    },
+    {
+      "ok": true,
+      "label": "stick charge: death owns pause"
+    },
+    {
+      "ok": true,
+      "label": "stick charge: active actions cancelled"
+    },
+    {
+      "ok": true,
+      "label": "stick charge: damage hitbox inactive"
+    },
+    {
+      "ok": true,
+      "label": "stick charge: charge layer cleared"
+    },
+    {
+      "ok": true,
+      "label": "stick charge: real Respawn button restores controls"
+    },
+    {
+      "ok": false,
+      "label": "stick charge: queued movement resumes grounded"
+    },
+    {
+      "ok": false,
+      "label": "stick charge: native locomotion graph resumes"
+    },
+    {
+      "ok": true,
+      "label": "stick charge: follow camera remains finite and near actor"
+    },
+    {
+      "ok": true,
+      "label": "throw windup: native action active before death"
+    },
+    {
+      "ok": true,
+      "label": "throw windup: death owns pause"
+    },
+    {
+      "ok": true,
+      "label": "throw windup: active actions cancelled"
+    },
+    {
+      "ok": true,
+      "label": "throw windup: damage hitbox inactive"
+    },
+    {
+      "ok": true,
+      "label": "throw windup: charge layer cleared"
+    },
+    {
+      "ok": true,
+      "label": "throw windup: real Respawn button restores controls"
+    },
+    {
+      "ok": false,
+      "label": "throw windup: queued movement resumes grounded"
+    },
+    {
+      "ok": false,
+      "label": "throw windup: native locomotion graph resumes"
+    },
+    {
+      "ok": true,
+      "label": "throw windup: follow camera remains finite and near actor"
+    },
+    {
+      "ok": true,
+      "label": "throw flight: native action active before death"
+    },
+    {
+      "ok": true,
+      "label": "throw flight: death owns pause"
+    },
+    {
+      "ok": true,
+      "label": "throw flight: active actions cancelled"
+    },
+    {
+      "ok": true,
+      "label": "throw flight: damage hitbox inactive"
+    },
+    {
+      "ok": true,
+      "label": "throw flight: charge layer cleared"
+    },
+    {
+      "ok": true,
+      "label": "throw flight: real Respawn button restores controls"
+    },
+    {
+      "ok": false,
+      "label": "throw flight: queued movement resumes grounded"
+    },
+    {
+      "ok": false,
+      "label": "throw flight: native locomotion graph resumes"
+    },
+    {
+      "ok": true,
+      "label": "throw flight: follow camera remains finite and near actor"
+    },
+    {
+      "ok": true,
+      "label": "blade charge: native action active before death"
+    },
+    {
+      "ok": true,
+      "label": "blade charge: death owns pause"
+    },
+    {
+      "ok": true,
+      "label": "blade charge: active actions cancelled"
+    },
+    {
+      "ok": true,
+      "label": "blade charge: damage hitbox inactive"
+    },
+    {
+      "ok": true,
+      "label": "blade charge: charge layer cleared"
+    },
+    {
+      "ok": true,
+      "label": "blade charge: real Respawn button restores controls"
+    },
+    {
+      "ok": false,
+      "label": "blade charge: queued movement resumes grounded"
+    },
+    {
+      "ok": false,
+      "label": "blade charge: native locomotion graph resumes"
+    },
+    {
+      "ok": true,
+      "label": "blade charge: follow camera remains finite and near actor"
+    },
+    {
+      "ok": true,
+      "label": "blade rush: native action active before death"
+    },
+    {
+      "ok": true,
+      "label": "blade rush: death owns pause"
+    },
+    {
+      "ok": true,
+      "label": "blade rush: active actions cancelled"
+    },
+    {
+      "ok": true,
+      "label": "blade rush: damage hitbox inactive"
+    },
+    {
+      "ok": true,
+      "label": "blade rush: charge layer cleared"
+    },
+    {
+      "ok": true,
+      "label": "blade rush: real Respawn button restores controls"
+    },
+    {
+      "ok": false,
+      "label": "blade rush: queued movement resumes grounded"
+    },
+    {
+      "ok": false,
+      "label": "blade rush: native locomotion graph resumes"
+    },
+    {
+      "ok": true,
+      "label": "blade rush: follow camera remains finite and near actor"
+    },
+    {
+      "ok": true,
+      "label": "combo: native action active before death"
+    },
+    {
+      "ok": true,
+      "label": "combo: death owns pause"
+    },
+    {
+      "ok": true,
+      "label": "combo: active actions cancelled"
+    },
+    {
+      "ok": true,
+      "label": "combo: damage hitbox inactive"
+    },
+    {
+      "ok": true,
+      "label": "combo: charge layer cleared"
+    },
+    {
+      "ok": true,
+      "label": "combo: real Respawn button restores controls"
+    },
+    {
+      "ok": false,
+      "label": "combo: queued movement resumes grounded"
+    },
+    {
+      "ok": false,
+      "label": "combo: native locomotion graph resumes"
+    },
+    {
+      "ok": true,
+      "label": "combo: follow camera remains finite and near actor"
+    },
+    {
+      "ok": true,
+      "label": "No runtime errors during active-action death sequence"
+    }
+  ],
+  "cases": [
+    {
+      "mode": "stick charge",
+      "distance": 4.50825357,
+      "frame": 607826,
+      "phase": 0.350000083
+    },
+    {
+      "mode": "throw windup",
+      "distance": 4.50825357,
+      "frame": 607898,
+      "phase": 0.350000083
+    },
+    {
+      "mode": "throw flight",
+      "distance": 4.50825357,
+      "frame": 607985,
+      "phase": 0.350000083
+    },
+    {
+      "mode": "blade charge",
+      "distance": 4.50825357,
+      "frame": 608079,
+      "phase": 0.350000083
+    },
+    {
+      "mode": "blade rush",
+      "distance": 4.50825357,
+      "frame": 608186,
+      "phase": 0.350000083
+    },
+    {
+      "mode": "combo",
+      "distance": 4.50825357,
+      "frame": 608258,
+      "phase": 0.350000083
+    }
+  ],
+  "errors": [],
+  "nativeFrames": 540,
+  "settingsRestored": true,
+  "devicesRestored": true,
+  "currentDevicesRestored": true
+}

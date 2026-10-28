@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Unity.Profiling;
 
 namespace Mavis
 {
@@ -51,6 +52,13 @@ namespace Mavis
         readonly BossTargetPrediction prediction = new BossTargetPrediction();
         Quaternion visualRest;
         float clock, age, acquireAt, shotAt, deathGround, nextMarkerAt;
+        bool markersDirty;
+#if UNITY_EDITOR
+        [System.NonSerialized] bool coalesceWarningsForQa=true;
+#endif
+        AttackKind markerKind;
+        Vector3 markerCommitted,markerHeading;
+        float markerStart,markerSweep;
         float turnBank;
         float impactAge=1,impactStrength=1;
         Vector3 impactLocal=Vector3.back;
@@ -63,6 +71,7 @@ namespace Mavis
         readonly List<LineRenderer> markers=new List<LineRenderer>();
         Material warningMaterial;
         const int MarkerSegments=32;
+        static readonly ProfilerMarker MarkerBuildProfile=new ProfilerMarker("DarkBrine.Bombardino.MarkerGeometry");
         readonly Vector3[] markerPoints=new Vector3[MarkerSegments+1];
         readonly HashSet<PlayerHealth> rushVictims=new HashSet<PlayerHealth>();
         readonly RaycastHit[] casts=new RaycastHit[96];
@@ -137,6 +146,12 @@ namespace Mavis
                 deltaTime-=dt;
                 // Collider bounds must follow each simulated pose before the next clearance query.
                 if(deltaTime>0f)Physics.SyncTransforms();
+            }
+            if(markersDirty)
+            {
+                markersDirty=false;
+                if(CurrentState==State.Telegraph||CurrentState==State.Attack)
+                    BuildMarkers(markerKind,markerCommitted,markerHeading,markerStart,markerSweep);
             }
         }
         void TickStep(float dt)
@@ -225,7 +240,7 @@ namespace Mavis
             prediction.Observe(target); committed=PredictedGround(Windup);
             heading=OrbitTangent(orbitAngle);
             attackAt=FightActive&&nextAttackAt>clock?nextAttackAt:clock+Windup;
-            rushVictims.Clear();SetState(State.Telegraph);BuildMarkers(kind);
+            rushVictims.Clear();SetState(State.Telegraph);RequestMarkers(kind);
             GameplayAudio.Play(GameplayAudio.Cue.Warning,target.position);
         }
         Vector3 PredictedGround(float remainingWindup)
@@ -445,15 +460,36 @@ namespace Mavis
             float y=terrain>float.NegativeInfinity?terrain:best>float.NegativeInfinity?best:home.y;
             return new Vector3(p.x,y,p.z);
         }
-        void BuildMarkers(AttackKind kind)
+        void RequestMarkers(AttackKind kind)
+        {
+            // Keep the warning pose from its scheduled simulation step, even when
+            // a long frame crosses from the telegraph into an attack.
+            markerKind=kind;markerCommitted=committed;markerHeading=heading;
+            markerStart=orbitAngle+cruiseSpeed/Mathf.Max(10f,patrolRadius)*Mathf.Max(0,attackAt-clock);
+            markerSweep=AttackSpeed/Mathf.Max(10f,patrolRadius)*AttackDuration;
+#if UNITY_EDITOR
+            // Repeatable Editor-only crossover profiling; player always coalesces.
+            if(!coalesceWarningsForQa)
+            {
+                BuildMarkers(kind,markerCommitted,markerHeading,markerStart,markerSweep);
+                return;
+            }
+#endif
+            markersDirty=true;
+        }
+        void BuildMarkers(AttackKind kind,Vector3 committed,Vector3 heading,float stripStart,float stripSweep)
+        {
+            using(MarkerBuildProfile.Auto())BuildMarkerGeometry(kind,committed,heading,stripStart,stripSweep);
+        }
+        void BuildMarkerGeometry(AttackKind kind,Vector3 committed,Vector3 heading,float stripStart,float stripSweep)
         {
             ClearMarkers();
             if(markers.Count==0)return;
             int count=kind==AttackKind.CrossBombing || kind==AttackKind.MissileSalvo?8:kind==AttackKind.HighBombing?6:1;
             if(kind==AttackKind.SpeedRun || kind==AttackKind.FlameRun)
             {
-                float start=orbitAngle+cruiseSpeed/Mathf.Max(10f,patrolRadius)*Mathf.Max(0,attackAt-clock);
-                float sweep=AttackSpeed/Mathf.Max(10f,patrolRadius)*AttackDuration;
+                float start=stripStart;
+                float sweep=stripSweep;
                 float width=kind==AttackKind.SpeedRun?2.6f:2.8f;
                 const int segments=15;
                 for(int i=0;i<=segments;i++)markerPoints[i]=OrbitPoint(start+sweep*i/segments,width)+Vector3.up*.15f;
@@ -476,9 +512,9 @@ namespace Mavis
         void UpdateMarkers()
         {
             if(CurrentState!=State.Telegraph || clock<nextMarkerAt)return;
-            nextMarkerAt=clock+.1f;BuildMarkers(CurrentAttack);
+            nextMarkerAt=clock+.1f;RequestMarkers(CurrentAttack);
         }
-        void ClearMarkers(){foreach(var line in markers)if(line!=null)line.enabled=false;GetComponent<BossAttackWarning>()?.Clear();}
+        void ClearMarkers(){markersDirty=false;foreach(var line in markers)if(line!=null)line.enabled=false;GetComponent<BossAttackWarning>()?.Clear();}
         public void Explosion(Vector3 p,float radius)
         {
             var go=new GameObject("Bombardino impact smoke");UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(go,gameObject.scene);go.transform.position=p;

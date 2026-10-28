@@ -1,0 +1,152 @@
+{
+  "valid": true,
+  "error": null,
+  "controls": 15,
+  "controlBytes": 15729120,
+  "normalSamples": 15,
+  "spikeSamples": 15,
+  "normalBuilds": 15,
+  "spikeBuilds": 60,
+  "normalMs": 0.08062666654586792,
+  "spikeMs": 1.2170066754023234,
+  "normalGeometryMs": 0.011533333299060663,
+  "spikeGeometryMs": 0.025773333121712007,
+  "rows": [
+    {
+      "frame": 185,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.1031000018119812,
+      "spikeMs": 1.260200023651123,
+      "normalGeometryMs": 0.0142000000923872,
+      "spikeGeometryMs": 0.034199999645352364
+    },
+    {
+      "frame": 187,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.1160999983549118,
+      "spikeMs": 1.1777000427246094,
+      "normalGeometryMs": 0.018799999728798866,
+      "spikeGeometryMs": 0.030099999625235796
+    },
+    {
+      "frame": 190,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.0794999971985817,
+      "spikeMs": 1.1794999837875366,
+      "normalGeometryMs": 0.0095999995246529579,
+      "spikeGeometryMs": 0.023899999679997563
+    },
+    {
+      "frame": 193,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.074100002646446228,
+      "spikeMs": 1.2178000211715698,
+      "normalGeometryMs": 0.011400000192224979,
+      "spikeGeometryMs": 0.026799999643117189
+    },
+    {
+      "frame": 196,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.075999997556209564,
+      "spikeMs": 1.4348000288009644,
+      "normalGeometryMs": 0.010099999606609344,
+      "spikeGeometryMs": 0.030699999071657658
+    },
+    {
+      "frame": 200,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.075199998915195465,
+      "spikeMs": 1.0116000175476074,
+      "normalGeometryMs": 0.010599999688565731,
+      "spikeGeometryMs": 0.019399999873712659
+    },
+    {
+      "frame": 202,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.073600001633167267,
+      "spikeMs": 0.89109998941421509,
+      "normalGeometryMs": 0.010900000110268593,
+      "spikeGeometryMs": 0.012799999909475446
+    },
+    {
+      "frame": 205,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.06889999657869339,
+      "spikeMs": 0.98540002107620239,
+      "normalGeometryMs": 0.009100000374019146,
+      "spikeGeometryMs": 0.016299999551847577
+    },
+    {
+      "frame": 208,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.070900000631809235,
+      "spikeMs": 0.9812999963760376,
+      "normalGeometryMs": 0.0097000002861022949,
+      "spikeGeometryMs": 0.019700000062584877
+    },
+    {
+      "frame": 211,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.075400002300739288,
+      "spikeMs": 1.5076999664306641,
+      "normalGeometryMs": 0.01080000028014183,
+      "spikeGeometryMs": 0.032200000714510679
+    },
+    {
+      "frame": 215,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.099299997091293335,
+      "spikeMs": 1.4232000112533569,
+      "normalGeometryMs": 0.015200000256299973,
+      "spikeGeometryMs": 0.033000000286847353
+    },
+    {
+      "frame": 218,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.069300003349781036,
+      "spikeMs": 1.5020999908447266,
+      "normalGeometryMs": 0.0087999999523162842,
+      "spikeGeometryMs": 0.024899999611079693
+    },
+    {
+      "frame": 222,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.0738999992609024,
+      "spikeMs": 1.0017000436782837,
+      "normalGeometryMs": 0.010499999858438969,
+      "spikeGeometryMs": 0.021500000031664968
+    },
+    {
+      "frame": 226,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.080099999904632568,
+      "spikeMs": 1.3086999654769897,
+      "normalGeometryMs": 0.012299999594688416,
+      "spikeGeometryMs": 0.026799999643117189
+    },
+    {
+      "frame": 229,
+      "normalBuilds": 1,
+      "spikeBuilds": 4,
+      "normalMs": 0.074000000953674316,
+      "spikeMs": 1.3723000288009644,
+      "normalGeometryMs": 0.010999999940395355,
+      "spikeGeometryMs": 0.034299999475479126
+    }
+  ],
+  "profilerRestored": true
+}

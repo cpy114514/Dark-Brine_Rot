@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "error": "System.NullReferenceException: Object reference not set to an instance of an object\r\n  at AutoQaActiveDeath.Get[T] (System.Object o, System.String n) [0x00000] in D:\\indiegameDev\\unity\\Dark Brine_Rot\\AUTO_QA\\Tools\\ActiveDeathRegression.cs:3 \r\n  at AutoQaActiveDeath.Run (System.String take) [0x00cd9] in D:\\indiegameDev\\unity\\Dark Brine_Rot\\AUTO_QA\\Tools\\ActiveDeathRegression.cs:8 ",
+  "rows": [
+    {
+      "ok": true,
+      "label": "stick charge: native action active before death"
+    },
+    {
+      "ok": true,
+      "label": "stick charge: death owns pause"
+    }
+  ],
+  "cases": [],
+  "errors": [],
+  "nativeFrames": 85,
+  "settingsRestored": true,
+  "devicesRestored": true,
+  "currentDevicesRestored": true
+}

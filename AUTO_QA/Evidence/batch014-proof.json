@@ -1,0 +1,200 @@
+{
+  "acceptedChecks": 208,
+  "allPassed": true,
+  "nativeFrames": 617,
+  "warningCases": [
+    {
+      "kind": "HighBombing",
+      "stage": "telegraph",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "HighBombing",
+      "stage": "cross to attack",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "HighBombing",
+      "stage": "target loss",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "HighBombing",
+      "stage": "death",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "telegraph",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "cross to attack",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "target loss",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "death",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "Missiles",
+      "stage": "telegraph",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "Missiles",
+      "stage": "cross to attack",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "Missiles",
+      "stage": "target loss",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "Missiles",
+      "stage": "death",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "telegraph",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "cross to attack",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "target loss",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "death",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "telegraph",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "cross to attack",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "target loss",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "death",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "telegraph",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "cross to attack",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "target loss",
+      "passed": true,
+      "maxPointDeviation": 0
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "death",
+      "passed": true,
+      "maxPointDeviation": 0
+    }
+  ],
+  "checkpoints": [
+    {
+      "ok": true,
+      "label": "Actor standing at checkpoint ground position activates radius 3"
+    },
+    {
+      "ok": true,
+      "label": "Outside horizontal radius does not activate"
+    },
+    {
+      "ok": true,
+      "label": "Checkpoint on another vertical floor remains out of range"
+    },
+    {
+      "ok": true,
+      "label": "Inside horizontal radius at ground level activates"
+    },
+    {
+      "ok": true,
+      "label": "Dead player cannot activate another checkpoint"
+    }
+  ],
+  "performance": {
+    "valid": true,
+    "controls": 15,
+    "positiveControlBytes": 15729120,
+    "oldBuildsPerSpike": 4,
+    "newBuildsPerSpike": 1,
+    "rebuildReduction": 0.75,
+    "oldGeometryMs": 0.02899333316211899,
+    "newGeometryMs": 0.010839999901751678,
+    "wholeTickOldMs": 1.220359989007314,
+    "wholeTickNewMs": 1.2476133227348327,
+    "pairedDifferenceMs": 0.027253333727518717,
+    "approx95DifferenceHalfWidth": 0.11610796009382097,
+    "wholeTickImprovementEstablished": false,
+    "scope": "Alternating matched 333 ms calls in same native frames; geometry work/cost reduced. Whole Tick time has high variance; no whole-game FPS claim."
+  },
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "unchanged": true
+    }
+  ],
+  "inputRestored": true
+}

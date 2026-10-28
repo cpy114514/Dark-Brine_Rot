@@ -75,3 +75,9 @@ No clip, blend tree, animator controller, root-motion or attack window changed. 
 Death-reload evidence verifies retained disabled-component identities, the original canvas/button, restored combat/movement enables and preservation of an originally disabled component. It does not establish locomotion/attack blend appearance after respawn. No clip/controller/root-motion, authored attack windows, art or animation speed changed.
 
 Aircraft authored low-pass tests retain default cruise altitude (55), use SpeedRun with 2x visual scale, and query native body/floor/ridge/player capsule penetration at sampled tick boundaries. Positive overlap controls pass; accepted paths have zero overlaps. This is collision/time evidence, not a filmed full boss encounter or visual smoothness claim.
+
+## 2026-10-28 — Batch 014 — warning pose preservation and death during actions
+
+Coalesced warnings retain committed target, heading, strip start and sweep from the scheduled simulation step. Native snapshots for six attacks × telegraph/cross-to-attack/target-loss/death have exactly zero point deviation; visibility, state and emission counters match. No original art/controller/clip or attack timing changed.
+
+55 native action/death/respawn checks pass over 617 observed frames: stick/blade charge, throw windup/flight, blade rush and combo. Controls, damage gate, charge layer, grounded movement, eventual locomotion graph and finite near-player camera are verified. The .42 s Land interval remains intentional and unchanged. No new images/video captured; smoothness, clipping and visual weapon recovery are not accepted from state flags alone.

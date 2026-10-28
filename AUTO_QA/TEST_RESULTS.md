@@ -235,3 +235,22 @@ Final workspace: same Editor, Play stopped, five original scenes loaded/clean; s
 | Saves | Current save and backup exactly match fresh batch013 copies. |
 
 Total accepted assertions: 146. Do not count diagnostic/rejected takes or repeated setups again. Console since prior cursor contains only known missing-prefab scene-load groups; no new runtime error in the captured interval. No complete fight/playthrough, visual smoothness or scene CPU/FPS acceptance.
+
+## Batch 014 — qualified geometry performance and gameplay checks
+
+| Check | Observed result |
+|---|---|
+| Profiler validity | Four external takes plus matched crossover each capture 15 controls of 1,048,608 bytes; prior Profiler enabled/CPU state restored. No thread-allocation counter used. |
+| Warning rebuild work | Matched 333 ms calls: old 60/15 = 4 builds, new 15/15 = 1; reduction 75%. Ordinary 1/60 s calls remain one build. |
+| Geometry CPU scope | Matched mean .028993→.010840 ms per spike. Whole-Tick performance inconclusive; no frame-rate claim. |
+| Warning snapshots | PASS 24 cases, six attacks × four states; points identical (max delta 0), visibility/state/bomb/missile/fire counters unchanged. |
+| Aircraft regressions | PASS 80 trajectory/clearance checks and 44 hazard ownership checks after coalescing. |
+| Active death | PASS 55 / 617 native frames: native charge/throw/rush/combo input, actual Respawn button, movement/graph/camera recovery; zero captured runtime errors. |
+| Rejected death takes | Null/lazy motion assumption; transient movingRush observation; fallback outside relocated arena; expected Locomotion before .42 s landing elapsed. Test mistakes/configuration, not production regressions. |
+| Native input cleanup | Original settings object/flags, enabled roster, current keyboard/mouse and capture delta restored; preview/markers cleared. |
+| Checkpoint before | Expected FAIL 3/5; actor directly on or inside radius at checkpoint fails due to root height 3.4149475 m. |
+| Checkpoint after | PASS 5/5: feet-on-point and inside radius activate; outside radius, other vertical floor and dead player do not. |
+| Fresh compilation | PASS failed=false, errors=[]. |
+| Save/backup | Both byte-identical to fresh batch014 safety copies. |
+
+Accepted total: 208 contracts/checks, with diagnostic/rejected takes not counted again. No full-scene performance or visual smoothness acceptance. Captured console errors contain the recovered main-thread timeout plus the known 606 missing prefab groups, not a new game exception.
