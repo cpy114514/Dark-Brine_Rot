@@ -19,3 +19,21 @@ Batch 004: current native actor/controller/weapon matrix exposed and repaired to
 Batch 005 accepted take02 uses queued synthetic device events through actual PlayerInput, normal player frames and Animator evaluation, without direct attack calls or phase injection. Twenty-eight checks / 1,258 native frame observations pass across stick and twin blades: three-stage combos, recovery evasion, moving charge/release, simultaneous jump slash and landing recovery, control-lock input, keyboard weapon switching. This establishes current normal-flow responsiveness contracts. No rendered frames were captured or visually reviewed, so smoothness, clipping, silhouette, camera quality and final artistic approval remain unobserved. No game animation/source/controller change was needed.
 
 Batch 006 removes measured late evasion from expired input, without changing clips, blends, root motion or authored cancel phases. Queued native input reproduces 267/366 ms stale dodge consumption against the 220 ms configured lifetime, then verifies expiry, valid recovery evasion, temporary stamina readiness and native guard/spin exits after repair. Both 30/60 Hz simulation deltas are tested; these labels are not measured display frame rates. No new visual smoothness/clipping observation is claimed. Rendered startup/landing/recovery review remains pending.
+
+## Batch 007 — native rendered pose review and queue semantics
+
+Reference: existing Sahur V278 jump/V272-V276 combat implementation; no replacement reference or new artistic approval. Stage: focused QA of existing animation. Native SRP captures use the real prefab/Animator and queued PlayerInput, 640x480, every four frames at a 60 Hz simulation delta (display FPS unmeasured). Accepted take batch007-review02-before contains 87 captures covering idle, first combo startup/recovery and moving jump chop/landing for both weapons. The isolated fixture uses its own follow camera, distant noncontact target and flat floor. This does not assess the gameplay camera, boss contact or full scene lighting.
+
+| Selected raw render | Native frame / phase | Observation |
+|---|---|---|
+| render-0013.png | Stick combo, frame 129 | Body and extended stick remain visible in the sampled swing pose. |
+| render-0033.png | Stick jump, frame 244 / .471 | Bent knees and forward/downward two-hand stick pose visible in the contact interval. |
+| render-0038.png | Stick recovery, frame 264 / .863 | Lowered legs and rising weapon; native trace reports grounded. |
+| render-0044.png, render-0049.png | Blades idle/startup, frames 546/566 | Both held blades visible from the oblique view. |
+| render-0055.png, render-0060.png | Blades combo, frames 590/610 | Forward swing then upright recovery poses visible. |
+| render-0077.png | Blades jump, frame 714 / .471 | Bent knees, two separated blade directions visible. |
+| render-0082.png | Blades recovery, frame 734 / .863 | Legs lower and blades return toward torso; native trace reports grounded. |
+
+Files above are under Evidence/native-input/batch007-review02-before/renders/. No gross missing-body/weapon rendering observed in these selected poses. Sparse stills do not establish temporal smoothness, weight, clipping freedom, foot-contact precision or camera responsiveness; those scores remain N/A. No clip/controller/blend/root curve was changed. Original .85 s jump and authored hit interval remain unchanged.
+
+Queue stress passes: actual traces show early intent cleared at phases .105/.100 before queueOpen .12, with no next combo stage. Inputs admitted at phases .313/.320 persist beyond their initial lifetime as designed. The initial single-stop failing assertion was a harness mistake, retained and explicitly rejected; it is not animation snapping evidence.

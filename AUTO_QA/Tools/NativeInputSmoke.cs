@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Users;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 
 public static class AutoQaNativeInputSmoke
 {
@@ -38,21 +39,30 @@ public static class AutoQaNativeInputSmoke
     static bool boundaryRun, previousDodgeRequest, watchEvasion;
     static int simulationHz = 60;
     static float dodgeInjectedAt, evasionAt, injectedDelta, evasionDelta, injectedPhase;
+    static bool reviewRun, captureEnabled, watchCombo, sawComboContinuation;
+    static float repeatedStopUntil = -1;
+    static Camera renderCamera;
+    static RenderTexture renderTarget;
+    static Texture2D readback;
+    static string captureError;
+    static int lastCapture;
+    static readonly List<object> captures = new List<object>(), reviewCases = new List<object>();
     static readonly BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
     static T Get<T>(object o, string name) => (T)o.GetType().GetField(name, Private).GetValue(o);
     static void Check(bool condition, string text) { if (!condition) throw new Exception(text); checks.Add(text); }
     static void Save(string file, object data) => File.WriteAllText(folder + "/" + file, Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented));
 
     public static object Start(string take) => Begin(take, false, 60);
-    static object Begin(string take, bool boundaries, int hz)
+    static object Begin(string take, bool boundaries, int hz, bool review = false)
     {
         if (!Application.isPlaying || SceneManager.sceneCount != 1 || !string.IsNullOrEmpty(SceneManager.GetActiveScene().path)) throw new Exception("Requires isolated unsaved Play scene");
         if (armed || SessionState.GetBool("CombatCombinationTests", false) || CombatFeelPreview.Player) throw new Exception("Another native fixture owns input");
         if (!System.Text.RegularExpressions.Regex.IsMatch(take, "^[a-z0-9-]+$")) throw new Exception("Invalid take name");
         folder = "AUTO_QA/Evidence/native-input/" + take;
         if (Directory.Exists(folder)) throw new Exception("Preserve previous take");
-        boundaryRun = boundaries; simulationHz = hz;
+        boundaryRun = boundaries; simulationHz = hz; reviewRun = review;
         Directory.CreateDirectory(folder); checks.Clear(); frames.Clear(); boundaryCases.Clear(); section = "setup";
+        captures.Clear(); reviewCases.Clear(); captureEnabled = watchCombo = sawComboContinuation = false; captureError = null; lastCapture = -100;
         previousDodgeRequest = watchEvasion = false; dodgeInjectedAt = evasionAt = -1;
         pending = Run(); return new { started = true, folder };
     }
@@ -62,6 +72,7 @@ public static class AutoQaNativeInputSmoke
         if (hz != 30 && hz != 60) throw new Exception("Use 30 or 60 Hz boundary probes");
         return Begin(take, true, hz);
     }
+    public static object StartReview(string take) => Begin(take, false, 60, true);
 
     static void Inject()
     {
@@ -77,6 +88,8 @@ public static class AutoQaNativeInputSmoke
     {
         if (!armed || !actor || !attack || Time.frameCount == lastFrame) return;
         lastFrame = Time.frameCount;
+        if (Time.unscaledTime < repeatedStopUntil) CombatLocalHitStop.Freeze(actor, attack.animator, .06f);
+        if (watchCombo && attack.CurrentComboStage > 0) sawComboContinuation = true;
         if (watchEvasion && evasionAt < 0 && (motor.IsDodging || Get<float>(motor, "airFlipTimer") > 0)) { evasionAt = Time.unscaledTime; evasionDelta = Time.unscaledDeltaTime; }
         if (frames.Count < 5000) frames.Add(new { frame = lastFrame, time = Time.time, section,
             stage = attack.CurrentComboStage, phase = attack.CurrentAttackPhase, charging = attack.IsCharging,
@@ -86,6 +99,7 @@ public static class AutoQaNativeInputSmoke
             keys = string.Join(",", keys), left, right, cursor = Cursor.lockState.ToString(),
             keyboardId = Keyboard.current?.deviceId, expectedKeyboard = keyboard.deviceId,
             unscaledTime = Time.unscaledTime, unscaledDelta = Time.unscaledDeltaTime,
+            comboQueued = Get<bool>(attack, "comboContinueQueued"), comboExpiry = Get<float>(attack, "comboInputExpiresAt"), stopped = CombatLocalHitStop.Active(actor),
             motorDodgeExpiry = Get<float>(motor, "dodgeBufferUntil"), attackDodgeExpiry = Get<float>(attack, "dodgeBufferedUntil") });
         if (lastFrame % 30 == 0) Save("progress.json", new { section, frame = lastFrame, checks = checks.Count, time = Time.time });
     }
@@ -107,11 +121,71 @@ public static class AutoQaNativeInputSmoke
     static async Task TapLeft() { left = true; await Wait(.05f); left = false; await Wait(.025f); }
     static async Task Reset(string next)
     {
+        captureEnabled = watchCombo = false; repeatedStopUntil = -1;
         left = right = false; keys = Array.Empty<Key>(); await Wait(.12f);
         attack.SuspendForSwimming(); actor.GetComponent<CombatLocalHitStop>()?.Release();
         motor.ExternalControlLock = motor.ExternalMovementLock = false;
         motor.RestoreSavedPose(home, Quaternion.identity); stamina.currentStamina = 100;
         await Wait(.5f); section = next;
+    }
+    static void CaptureFrame(ScriptableRenderContext context, Camera camera)
+    {
+        if (!armed || !captureEnabled || camera != renderCamera || captures.Count >= 120 || Time.frameCount - lastCapture < 4) return;
+        lastCapture = Time.frameCount;
+        var active = RenderTexture.active;
+        try
+        {
+            RenderTexture.active = renderTarget; readback.ReadPixels(new Rect(0, 0, renderTarget.width, renderTarget.height), 0, 0, false);
+            string file = "renders/render-" + (captures.Count + 1).ToString("D4") + ".png"; File.WriteAllBytes(folder + "/" + file, readback.EncodeToPNG());
+            var state = attack.animator.GetCurrentAnimatorStateInfo(0);
+            captures.Add(new { file, frame = Time.frameCount, time = Time.time, section, phase = attack.CurrentAttackPhase,
+                stage = attack.CurrentComboStage, grounded = motor.CanUseGroundAttack, jump = attack.IsJumpSlashActive,
+                stateHash = state.fullPathHash, statePhase = state.normalizedTime, transitioning = attack.animator.IsInTransition(0) });
+        }
+        catch (Exception ex) { captureError = ex.ToString(); captureEnabled = false; }
+        finally { RenderTexture.active = active; }
+    }
+    static async Task Review()
+    {
+        Directory.CreateDirectory(folder + "/renders"); renderCamera = CombatFeelPreview.Camera;
+        renderTarget = new RenderTexture(640, 480, 24) { name = "AUTO_QA native review target" }; renderTarget.Create();
+        readback = new Texture2D(640, 480, TextureFormat.RGB24, false); renderCamera.targetTexture = renderTarget;
+        renderCamera.gameObject.AddComponent<AutoQaNativeReviewCamera>().actor = actor;
+        RenderPipelineManager.endCameraRendering += CaptureFrame;
+        foreach (var weapon in new[] { SahurWeaponLoadout.Weapon.Stick, SahurWeaponLoadout.Weapon.CapriTwinBlades })
+        {
+            Check(weapons.TryEquip(weapon), "Review equip " + weapon);
+            await Reset("visual " + weapon + " idle"); captureEnabled = true; await Wait(.3f);
+            section = "visual " + weapon + " combo startup and recovery";
+            await TapLeft(); Check(attack.IsGroundComboActive, weapon + " visual clip uses native LMB attack");
+            await Until(() => !attack.IsCombatMotionActive, 4); await Wait(.2f);
+            await Reset("visual " + weapon + " moving jump chop"); captureEnabled = true;
+            keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Forward) }; await Wait(.25f); float startZ = actor.transform.position.z;
+            keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Forward), GameInputSettings.Get(GameInputSettings.Action.Jump) }; left = true;
+            await Wait(.06f); left = false; keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Forward) };
+            await Until(() => attack.IsJumpSlashActive, .6f); await Until(() => motor.CanUseGroundAttack && !attack.IsCombatMotionActive, 4); await Wait(.2f);
+            Check(actor.transform.position.z > startZ + .25f, weapon + " moving chop lands with forward travel");
+            captureEnabled = false;
+
+            await Reset(weapon + " early combo tap across hit stop");
+            left = true; await Wait(.018f); left = false; await Wait(.018f);
+            float earlyPhase = attack.CurrentAttackPhase;
+            Check(attack.IsGroundComboActive && earlyPhase < attack.comboQueueOpen, weapon + " early-tap fixture precedes authored queue interval");
+            repeatedStopUntil = Time.unscaledTime + .35f; CombatLocalHitStop.Freeze(actor, attack.animator, .06f); watchCombo = true; sawComboContinuation = false;
+            float earlyInputAt = Time.unscaledTime; await TapLeft(); bool earlyQueued = Get<bool>(attack, "comboContinueQueued");
+            await Wait(.4f); await Until(() => !attack.IsCombatMotionActive, 4); watchCombo = false;
+            reviewCases.Add(new { weapon = weapon.ToString(), scenario = "early expired tap", earlyPhase, earlyInputAt, earlyQueued, continued = sawComboContinuation, repeatedStopFor = .35f });
+            Check(earlyQueued && !sawComboContinuation, weapon + " expired pre-window combo tap does not chain after hit stop");
+
+            await Reset(weapon + " valid combo tap across hit stop"); await TapLeft();
+            await Until(() => attack.IsGroundComboActive && attack.CurrentAttackPhase >= .3f); float validPhase = attack.CurrentAttackPhase;
+            repeatedStopUntil = Time.unscaledTime + .35f; CombatLocalHitStop.Freeze(actor, attack.animator, .06f); float validInputAt = Time.unscaledTime; await TapLeft();
+            Check(Get<bool>(attack, "comboContinueQueued"), weapon + " valid queue-window tap registered during hit stop");
+            await Until(() => attack.CurrentComboStage == 1, 4);
+            reviewCases.Add(new { weapon = weapon.ToString(), scenario = "accepted queue-window tap", validPhase, validInputAt, consumedAt = Time.unscaledTime, repeatedStopFor = .35f });
+            Check(true, weapon + " authored-window combo intent survives recovery and hit stop");
+        }
+        Check(captureError == null && captures.Count > 20, "Native SRP review frames captured without readback error");
     }
     static async Task Boundaries()
     {
@@ -176,6 +250,10 @@ public static class AutoQaNativeInputSmoke
     {
         if (!armed) return;
         armed = false; InputSystem.onBeforeUpdate -= Inject; EditorApplication.update -= Observe;
+        RenderPipelineManager.endCameraRendering -= CaptureFrame;
+        if (renderCamera && renderCamera.targetTexture == renderTarget) renderCamera.targetTexture = null;
+        if (renderTarget) { renderTarget.Release(); UnityEngine.Object.DestroyImmediate(renderTarget); } renderTarget = null;
+        if (readback) UnityEngine.Object.DestroyImmediate(readback); readback = null; renderCamera = null;
         if (oldSettings) { InputSystem.settings = oldSettings; oldSettings.hideFlags = oldSettingsFlags; }
         if (settings && InputSystem.settings != settings) UnityEngine.Object.DestroyImmediate(settings); settings = null;
         if (keyboard != null && keyboard.added) InputSystem.RemoveDevice(keyboard);
@@ -215,6 +293,7 @@ public static class AutoQaNativeInputSmoke
             var input = actor.GetComponent<PlayerInput>(); InputUser.PerformPairingWithDevice(keyboard, input.user); InputUser.PerformPairingWithDevice(mouse, input.user); input.ActivateInput();
             await Wait(.7f); home = actor.transform.position; weapons.Restore(true, SahurWeaponLoadout.Weapon.Stick);
             if (boundaryRun) { await Boundaries(); return; }
+            if (reviewRun) { await Review(); return; }
             foreach (var weapon in new[] { SahurWeaponLoadout.Weapon.Stick, SahurWeaponLoadout.Weapon.CapriTwinBlades })
             {
                 Check(weapons.TryEquip(weapon), "Equip " + weapon); await Reset(weapon + " combo");
@@ -256,7 +335,20 @@ public static class AutoQaNativeInputSmoke
         {
             var finalSection = section; Restore();
             bool inputRestored = roster != null && roster.SequenceEqual(InputSystem.devices.Select(d => (d.deviceId, d.enabled)).ToArray()) && InputSystem.settings == oldSettings;
-            Save("result.json", new { passed = error == null && inputRestored, error, finalSection, checks, inputRestored, boundaryCases, simulationHz, frames });
+            Save("result.json", new { passed = error == null && inputRestored, error, finalSection, checks, inputRestored, boundaryCases, reviewCases, captures, captureError, simulationHz, frames });
         }
+    }
+}
+
+[DefaultExecutionOrder(32000)]
+public sealed class AutoQaNativeReviewCamera : MonoBehaviour
+{
+    public GameObject actor;
+    void LateUpdate()
+    {
+        if (!actor) return;
+        Vector3 focus = actor.GetComponent<CharacterController>().bounds.center + Vector3.up * .2f;
+        transform.position = focus + new Vector3(7, 2, 5); transform.LookAt(focus);
+        GetComponent<Camera>().fieldOfView = 46;
     }
 }
