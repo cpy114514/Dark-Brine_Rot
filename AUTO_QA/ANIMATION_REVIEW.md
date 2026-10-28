@@ -85,3 +85,7 @@ Coalesced warnings retain committed target, heading, strip start and sweep from 
 ## 2026-10-28 — Batch 015 — camera collision regression
 
 No animation/art/controller/timing edits. Actual smoothed camera position now checks side obstructions missed by the desired-pose ray. Four-heading native collider probes verify separation; no gameplay images/video were captured, so perceived camera smoothness is unscored. Native action/death/respawn regression passes 55 checks / 620 frames after the camera edit, including eventual locomotion and finite near-player camera.
+
+## 2026-10-28 — Batch 016 — rendering lifecycle and slope coverage
+
+No production animation/controller/camera/art changes accepted. Native foliage submissions drop from 4 to 0 after actual script reload; transient initialization and ownership candidates failed and were fully reverted. Diagnostic PNGs lack a qualified rendering control and do not support visual acceptance. Native Sahur capsule lands and activates floor checkpoints on four slopes, with foot-to-ground distances .015/.031/.085/.153 m; this does not assess animation foot contact visually.

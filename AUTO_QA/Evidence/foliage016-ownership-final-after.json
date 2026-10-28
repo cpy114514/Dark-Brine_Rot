@@ -1,0 +1,50 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Actual script reload unloaded preparation assembly"
+    },
+    {
+      "ok": true,
+      "label": "Authored source-to-LOD library available"
+    },
+    {
+      "ok": true,
+      "label": "Partial-frustum scratch batch exists"
+    },
+    {
+      "ok": true,
+      "label": "Exactly one submission component"
+    },
+    {
+      "ok": true,
+      "label": "Late submission owner retained"
+    },
+    {
+      "ok": true,
+      "label": "All authored fixture renderers classified and ready"
+    },
+    {
+      "ok": true,
+      "label": "Complete grass draw snapshot exists"
+    },
+    {
+      "ok": true,
+      "label": "Native late update submits visible grass batches"
+    },
+    {
+      "ok": true,
+      "label": "LOD map cardinality unchanged across reload"
+    },
+    {
+      "ok": true,
+      "label": "Compact render layout map preserved across reload"
+    }
+  ],
+  "details": 30,
+  "renderMeshes": 4,
+  "foliage": 36,
+  "batches": 4,
+  "submitted": 4,
+  "frame": 1530
+}

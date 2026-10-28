@@ -1,0 +1,20 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Native additive sceneLoaded event refreshes managed renderers"
+    },
+    {
+      "ok": true,
+      "label": "Additive recache retains all fixture foliage"
+    },
+    {
+      "ok": true,
+      "label": "Scene recache retains one submission"
+    },
+    {
+      "ok": true,
+      "label": "Loaded diagnostic lighting scene removed"
+    }
+  ]
+}

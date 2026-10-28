@@ -1,0 +1,38 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Authored source-to-LOD library available"
+    },
+    {
+      "ok": true,
+      "label": "Partial-frustum scratch batch exists"
+    },
+    {
+      "ok": true,
+      "label": "Exactly one submission component"
+    },
+    {
+      "ok": true,
+      "label": "Late submission owner retained"
+    },
+    {
+      "ok": true,
+      "label": "All authored fixture renderers classified and ready"
+    },
+    {
+      "ok": true,
+      "label": "Complete grass draw snapshot exists"
+    },
+    {
+      "ok": true,
+      "label": "Native late update submits visible grass batches"
+    }
+  ],
+  "details": 30,
+  "renderMeshes": 4,
+  "foliage": 36,
+  "batches": 2,
+  "submitted": 2,
+  "frame": 30
+}

@@ -1,4 +1,12 @@
-# Continuation — Batch 015
+# Continuation — Batch 016
+
+Latest is a discovery checkpoint titled "Record foliage reload failure and platform checkpoint coverage". QA-030 remains OPEN: original native reload loses LOD/render maps (30/4 -> 0/0), 36 managed renderers and 4 draw submissions. No production patch accepted. All candidate changes reverted byte-for-byte; candidate backups in .codex/autoqa-source-before/batch016 are REJECTED. Do not reapply init-only, before-reload cleanup, serialized baseline, or inline-iterator candidates unchanged: original renderer/material ownership still fails. Historical takes named accepted/final/fixed are rejected, not acceptance.
+
+Next bounded task: isolate Unity reload serialization/callback order with stable persistent assets and explicit original renderer/material IDs; qualify native frame fencing and a visible-vs-empty positive control before interpreting PNGs. Avoid another round of the same candidate analysis without new evidence. If blocked, pursue UI/encounter coverage; no core design or asset edits. Full-scene steady-state profiling remains pending, since stopped-Editor counters and black captures are unqualified.
+
+FoliageReloadRegression Prepare/AfterReload/Lifecycle/SceneLoad/Interrupt/Cleanup require isolated Play and own AUTO_QA.Foliage016.Take. Manager is hidden DontSave: use Resources.FindObjectsOfTypeAll filtered to valid scene; FindFirstObject misses it. Cleanup must finish before stop/restore. CheckpointTerrainRegression passes 12 new native platform/slope checks without source change. Fresh save baseline is .codex/autoqa-save-backup/batch016. Expected workspace remains same Editor, five clean scenes, stopped, no markers/preview; original gameplay source at 5286a35 unchanged.
+
+## Prior accepted gameplay batch — 015
 
 Latest batch015: QA-029 actual smoothed follow-camera side-wall collision repaired; 94 checks (20 camera + 19 vitals + 55 native action/death). Resolve checkpoint "Prevent smoothed follow camera from entering side obstructions" in git log. Batch015 restored clean five-scene workspace, save/backup unchanged. Camera015/VitalsRegression helpers are external isolated-Play fixtures. Do not repeat unchanged tests without relevant code changes. Next: qualify full-scene CPU/render costs and continue slope/platform checkpoint and moving obstruction/encounter coverage.
 
