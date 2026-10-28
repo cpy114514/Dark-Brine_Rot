@@ -1,6 +1,8 @@
-# Continuation — Batch 014
+# Continuation — Batch 015
 
-Latest accepted batch: QA-027 warning geometry coalescing and QA-028 capsule-foot checkpoint activation. Two production scripts; 208 accepted checks. Resolve checkpoint titled "Reduce aircraft warning rebuilds and fix capsule-foot checkpoint range" using git log. Prior checkpoint Git 9b24f8f / Plastic cs195; uploads remain authorized. Never repeat completed integration.
+Latest batch015: QA-029 actual smoothed follow-camera side-wall collision repaired; 94 checks (20 camera + 19 vitals + 55 native action/death). Resolve checkpoint "Prevent smoothed follow camera from entering side obstructions" in git log. Batch015 restored clean five-scene workspace, save/backup unchanged. Camera015/VitalsRegression helpers are external isolated-Play fixtures. Do not repeat unchanged tests without relevant code changes. Next: qualify full-scene CPU/render costs and continue slope/platform checkpoint and moving obstruction/encounter coverage.
+
+Prior batch014: QA-027 warning geometry coalescing and QA-028 capsule-foot checkpoint activation. Two production scripts; 208 accepted checks. Resolve checkpoint titled "Reduce aircraft warning rebuilds and fix capsule-foot checkpoint range" using git log. Prior checkpoint Git 9b24f8f / Plastic cs195; uploads remain authorized. Never repeat completed integration.
 
 Expected workspace: same Editor PID 57472, stopped, five first-island scenes clean; recovery/input/test markers cleared. Preserve local Plastic ShaderGraphSettings.asset and two recovery additions; unrelated and uncommitted.
 

@@ -1066,8 +1066,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Vector3 fromFocus=followPosition-focus;
         if(cameraCollision && !cinematicHandoff && closest<followDistance && fromFocus.magnitude>closest)
             followPosition=focus+fromFocus.normalized*closest;
-        if(cameraCollision && cinematicHandoff)
-            followPosition=ClampCinematicCameraTravel(playerCamera.transform.position,followPosition);
+        if(cameraCollision)
+            followPosition=ClampCameraTravel(cinematicHandoff ? playerCamera.transform.position : focus,followPosition);
         if(cinematicHandoff && (cinematicCameraBlendAge>=1.5f && Vector3.Distance(followPosition,desiredPosition)<1.25f ||
             cinematicCameraBlendAge>=.9f && Vector3.Distance(followPosition,desiredPosition)<.05f))
             continuingCinematicCamera=false;
@@ -1139,11 +1139,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         rifleAppliedFov = -1f;
     }
 
-    Vector3 ClampCinematicCameraTravel(Vector3 from,Vector3 destination)
+    Vector3 ClampCameraTravel(Vector3 from,Vector3 destination)
     {
-        // A distant cinematic camera must approach an occlusion-contracted
-        // follow target instead of teleporting to it. Sweep the actual camera
-        // travel so that smoothing never carries it through floating wood.
+        // Check the actual smoothed camera ray as well as the desired pose.
+        // A rotating follow camera can still be beside the player while its
+        // desired pose is behind him. A wall on that intermediate ray is not
+        // necessarily hit by the desired-pose cast, even after radial clamping.
+        // During a cinematic handoff sweep from the previous camera position
+        // so the distant view approaches an obstruction without teleporting.
         Vector3 delta=destination-from;float length=delta.magnitude;
         if(length<.0001f)return destination;
         int count=Physics.SphereCastNonAlloc(from,.12f,delta/length,cameraObstacles,length,~0,QueryTriggerInteraction.Ignore);

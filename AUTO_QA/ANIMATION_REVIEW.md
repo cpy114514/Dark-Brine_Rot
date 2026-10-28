@@ -81,3 +81,7 @@ Aircraft authored low-pass tests retain default cruise altitude (55), use SpeedR
 Coalesced warnings retain committed target, heading, strip start and sweep from the scheduled simulation step. Native snapshots for six attacks × telegraph/cross-to-attack/target-loss/death have exactly zero point deviation; visibility, state and emission counters match. No original art/controller/clip or attack timing changed.
 
 55 native action/death/respawn checks pass over 617 observed frames: stick/blade charge, throw windup/flight, blade rush and combo. Controls, damage gate, charge layer, grounded movement, eventual locomotion graph and finite near-player camera are verified. The .42 s Land interval remains intentional and unchanged. No new images/video captured; smoothness, clipping and visual weapon recovery are not accepted from state flags alone.
+
+## 2026-10-28 — Batch 015 — camera collision regression
+
+No animation/art/controller/timing edits. Actual smoothed camera position now checks side obstructions missed by the desired-pose ray. Four-heading native collider probes verify separation; no gameplay images/video were captured, so perceived camera smoothness is unscored. Native action/death/respawn regression passes 55 checks / 620 frames after the camera edit, including eventual locomotion and finite near-player camera.

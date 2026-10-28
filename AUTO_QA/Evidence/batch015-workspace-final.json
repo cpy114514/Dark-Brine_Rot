@@ -1,0 +1,30 @@
+{
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "dirty": false
+    }
+  ],
+  "recovery": "",
+  "preview": false,
+  "fixture": false,
+  "input": false,
+  "playing": false,
+  "consoleCursor": 1463
+}

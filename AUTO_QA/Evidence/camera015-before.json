@@ -1,0 +1,50 @@
+{
+  "error": null,
+  "rows": [
+    {
+      "ok": true,
+      "mode": "clear",
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": false,
+      "mode": "moving wall",
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "trigger",
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "disabled collision",
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "release",
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    }
+  ]
+}

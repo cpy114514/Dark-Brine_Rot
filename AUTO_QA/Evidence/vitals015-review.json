@@ -1,0 +1,81 @@
+{
+  "error": null,
+  "rows": [
+    {
+      "ok": true,
+      "label": "Binds actual preview player"
+    },
+    {
+      "ok": true,
+      "label": "HUD does not capture gameplay input"
+    },
+    {
+      "ok": true,
+      "label": "Reference resolution preserved"
+    },
+    {
+      "ok": true,
+      "label": "HP fill / zero visibility 1"
+    },
+    {
+      "ok": true,
+      "label": "SP fill / zero visibility 1"
+    },
+    {
+      "ok": true,
+      "label": "HP numeric label 1"
+    },
+    {
+      "ok": true,
+      "label": "HP fill / zero visibility 0.5"
+    },
+    {
+      "ok": true,
+      "label": "SP fill / zero visibility 0.5"
+    },
+    {
+      "ok": true,
+      "label": "HP numeric label 0.5"
+    },
+    {
+      "ok": true,
+      "label": "HP fill / zero visibility 0.01"
+    },
+    {
+      "ok": true,
+      "label": "SP fill / zero visibility 0.01"
+    },
+    {
+      "ok": true,
+      "label": "HP numeric label 0.01"
+    },
+    {
+      "ok": true,
+      "label": "HP fill / zero visibility 0"
+    },
+    {
+      "ok": true,
+      "label": "SP fill / zero visibility 0"
+    },
+    {
+      "ok": true,
+      "label": "HP numeric label 0"
+    },
+    {
+      "ok": true,
+      "label": "Alive enabled actor shows HUD"
+    },
+    {
+      "ok": true,
+      "label": "Disabled movement hides HUD"
+    },
+    {
+      "ok": true,
+      "label": "Dead actor hides HUD"
+    },
+    {
+      "ok": true,
+      "label": "Alive recovery restores HUD"
+    }
+  ]
+}
