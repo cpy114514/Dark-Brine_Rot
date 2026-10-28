@@ -1,0 +1,51 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Actual reload unloaded preparation assembly"
+    },
+    {
+      "ok": false,
+      "label": "Reload preserves global death ownership"
+    },
+    {
+      "ok": true,
+      "label": "Death panel stays reachable after reload"
+    },
+    {
+      "ok": false,
+      "label": "Reload preserves exact disabled behaviour ownership"
+    },
+    {
+      "ok": true,
+      "label": "Native label updates continue after reload"
+    },
+    {
+      "ok": true,
+      "label": "Unknown dynamic labels preserved"
+    },
+    {
+      "ok": false,
+      "label": "Authored Respawn button remains wired after reload"
+    },
+    {
+      "ok": true,
+      "label": "Respawn after actual reload completes"
+    },
+    {
+      "ok": false,
+      "label": "Respawn restores all death-owned behaviours"
+    },
+    {
+      "ok": true,
+      "label": "Respawn preserves originally disabled component"
+    },
+    {
+      "ok": true,
+      "label": "Respawn hides original death canvas"
+    }
+  ],
+  "respawnError": null,
+  "disabledCount": 0,
+  "frame": 6090
+}

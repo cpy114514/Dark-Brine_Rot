@@ -1,0 +1,457 @@
+{
+  "passed": 17,
+  "total": 52,
+  "error": null,
+  "rows": [
+    {
+      "ok": true,
+      "name": "patrol/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.01666667 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "patrol/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "patrol/0.125 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "patrol/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "patrol/0.3125 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "patrol/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "patrol/1.25 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.01666667 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.01666667 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": false,
+      "name": "low scaled wings/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "low scaled wings/0.125 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.125 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": false,
+      "name": "low scaled wings/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "low scaled wings/0.3125 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.3125 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": false,
+      "name": "low scaled wings/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "low scaled wings/1.25 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/1.25 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.01666667 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.01666667 completes return reset on time"
+    },
+    {
+      "ok": false,
+      "name": "returning/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "returning/0.125 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.125 completes return reset on time"
+    },
+    {
+      "ok": false,
+      "name": "returning/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "returning/0.3125 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "returning/0.3125 completes return reset on time"
+    },
+    {
+      "ok": false,
+      "name": "returning/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "returning/1.25 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "returning/1.25 completes return reset on time"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.01666667 preserves reference trajectory"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.01666667 releases four authored missile pairs"
+    },
+    {
+      "ok": false,
+      "name": "salvo/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "salvo/0.125 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "salvo/0.125 releases four authored missile pairs"
+    },
+    {
+      "ok": false,
+      "name": "salvo/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "salvo/0.3125 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "salvo/0.3125 releases four authored missile pairs"
+    },
+    {
+      "ok": false,
+      "name": "salvo/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "salvo/1.25 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "salvo/1.25 releases four authored missile pairs"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.01666667 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "dead/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "dead/0.125 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "dead/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "dead/0.3125 preserves reference trajectory"
+    },
+    {
+      "ok": false,
+      "name": "dead/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": false,
+      "name": "dead/1.25 preserves reference trajectory"
+    }
+  ],
+  "cases": [
+    {
+      "mode": "patrol",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "patrol",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.00000012,
+      "age": 1.00000012,
+      "positionError": 6.196161,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "patrol",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 0.4,
+      "age": 0.4,
+      "positionError": 17.1961384,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "patrol",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 0.1,
+      "age": 0.1,
+      "positionError": 22.8047314,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.00000012,
+      "age": 1.00000012,
+      "positionError": 17.76363,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 0.4,
+      "age": 0.4,
+      "positionError": 52.3128967,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 0.1,
+      "age": 0.1,
+      "positionError": 62.620697,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "returning",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 0.233333334,
+      "positionError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "returning",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.00000012,
+      "age": 0.0,
+      "positionError": 6.196161,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "returning",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 0.4,
+      "age": 0.4,
+      "positionError": 17.1961384,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Returning"
+    },
+    {
+      "mode": "returning",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 0.1,
+      "age": 0.1,
+      "positionError": 22.8047314,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Returning"
+    },
+    {
+      "mode": "salvo",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 8,
+      "state": "Attack"
+    },
+    {
+      "mode": "salvo",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.00000012,
+      "age": 1.00000012,
+      "positionError": 6.196161,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 6,
+      "state": "Attack"
+    },
+    {
+      "mode": "salvo",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 0.4,
+      "age": 0.4,
+      "positionError": 18.4329777,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 4,
+      "state": "Attack"
+    },
+    {
+      "mode": "salvo",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 0.1,
+      "age": 0.1,
+      "positionError": 26.2892742,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 2,
+      "state": "Attack"
+    },
+    {
+      "mode": "dead",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    },
+    {
+      "mode": "dead",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.00000012,
+      "age": 1.00000012,
+      "positionError": 3.14160156,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    },
+    {
+      "mode": "dead",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 0.4,
+      "age": 0.4,
+      "positionError": 8.991577,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    },
+    {
+      "mode": "dead",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 0.1,
+      "age": 0.1,
+      "positionError": 10.1616211,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    }
+  ]
+}

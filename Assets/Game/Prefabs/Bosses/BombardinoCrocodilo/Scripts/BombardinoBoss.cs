@@ -127,8 +127,21 @@ namespace Mavis
         void Update()=>Tick(Time.deltaTime);
         public void Tick(float deltaTime)
         {
-            if(!initialized)Initialize();if(PauseSettingsMenu.IsOpen||deltaTime<=0)return;
-            float dt=Mathf.Min(deltaTime,.1f);clock+=dt;age+=dt;
+            if(!initialized)Initialize();
+            if(PauseSettingsMenu.IsOpen||deltaTime<=0||float.IsNaN(deltaTime)||float.IsInfinity(deltaTime))return;
+            // Preserve elapsed time while keeping flight, clearance and attack steps bounded.
+            while(deltaTime>0f)
+            {
+                float dt=Mathf.Min(deltaTime,1f/60f);
+                TickStep(dt);
+                deltaTime-=dt;
+                // Collider bounds must follow each simulated pose before the next clearance query.
+                if(deltaTime>0f)Physics.SyncTransforms();
+            }
+        }
+        void TickStep(float dt)
+        {
+            clock+=dt;age+=dt;
             if(FightActive&&!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))
             {FightActive=false;ClearHazards();SetState(State.Returning);}
             impactAge=Mathf.Min(.3f,impactAge+dt);

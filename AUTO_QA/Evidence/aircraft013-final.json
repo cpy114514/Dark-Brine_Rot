@@ -1,0 +1,609 @@
+{
+  "passed": 80,
+  "total": 80,
+  "error": null,
+  "rows": [
+    {
+      "ok": true,
+      "name": "patrol/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.01666667 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.01666667 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.3125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "patrol/0.3125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "patrol/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "patrol/1.25 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "patrol/1.25 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "Native body/player penetration positive control 0.01666667"
+    },
+    {
+      "ok": true,
+      "name": "Native body/ground penetration positive control 0.01666667"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.01666667 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.01666667 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.01666667 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": true,
+      "name": "Native body/player penetration positive control 0.125"
+    },
+    {
+      "ok": true,
+      "name": "Native body/ground penetration positive control 0.125"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.125 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": true,
+      "name": "Native body/player penetration positive control 0.3125"
+    },
+    {
+      "ok": true,
+      "name": "Native body/ground penetration positive control 0.3125"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.3125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.3125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/0.3125 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": true,
+      "name": "Native body/player penetration positive control 1.25"
+    },
+    {
+      "ok": true,
+      "name": "Native body/ground penetration positive control 1.25"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/1.25 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/1.25 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "low scaled wings/1.25 native body clears floor, raised ridge and player capsule"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.01666667 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.01666667 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.01666667 completes return reset on time"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.125 completes return reset on time"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.3125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.3125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "returning/0.3125 completes return reset on time"
+    },
+    {
+      "ok": true,
+      "name": "returning/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "returning/1.25 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "returning/1.25 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "returning/1.25 completes return reset on time"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.01666667 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.01666667 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.01666667 releases four authored missile pairs"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.125 releases four authored missile pairs"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.3125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.3125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "salvo/0.3125 releases four authored missile pairs"
+    },
+    {
+      "ok": true,
+      "name": "salvo/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "salvo/1.25 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "salvo/1.25 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "salvo/1.25 releases four authored missile pairs"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.01666667 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.01666667 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.01666667 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.3125 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.3125 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "dead/0.3125 vertical partition error stays within one bounded step"
+    },
+    {
+      "ok": true,
+      "name": "dead/1.25 consumes full elapsed time"
+    },
+    {
+      "ok": true,
+      "name": "dead/1.25 preserves horizontal trajectory"
+    },
+    {
+      "ok": true,
+      "name": "dead/1.25 vertical partition error stays within one bounded step"
+    }
+  ],
+  "cases": [
+    {
+      "mode": "patrol",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "patrol",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 6.10351563E-05,
+      "horizontalError": 0.0,
+      "verticalError": 6.10351563E-05,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "patrol",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 1.2499994,
+      "age": 1.2499994,
+      "positionError": 0.08331299,
+      "horizontalError": 0.0,
+      "verticalError": 0.08331299,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "patrol",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 1.25,
+      "age": 1.25,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.00134277344,
+      "horizontalError": 0.0,
+      "verticalError": 0.00134277344,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 1.2499994,
+      "age": 1.2499994,
+      "positionError": 0.0007324219,
+      "horizontalError": 0.0,
+      "verticalError": 0.0007324219,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "low scaled wings",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 1.25,
+      "age": 1.25,
+      "positionError": 0.00269662123,
+      "horizontalError": 0.000244140625,
+      "verticalError": 0.00268554688,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Attack"
+    },
+    {
+      "mode": "returning",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 0.233333334,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "returning",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.24999952,
+      "age": 0.233333334,
+      "positionError": 6.10351563E-05,
+      "horizontalError": 0.0,
+      "verticalError": 6.10351563E-05,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "returning",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 1.2499994,
+      "age": 0.245833308,
+      "positionError": 0.08331299,
+      "horizontalError": 0.0,
+      "verticalError": 0.08331299,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "returning",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 1.25,
+      "age": 0.233333856,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Patrol"
+    },
+    {
+      "mode": "salvo",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 8,
+      "state": "Attack"
+    },
+    {
+      "mode": "salvo",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 6.10351563E-05,
+      "horizontalError": 0.0,
+      "verticalError": 6.10351563E-05,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 8,
+      "state": "Attack"
+    },
+    {
+      "mode": "salvo",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 1.2499994,
+      "age": 1.2499994,
+      "positionError": 0.08331299,
+      "horizontalError": 0.0,
+      "verticalError": 0.08331299,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 8,
+      "state": "Attack"
+    },
+    {
+      "mode": "salvo",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 1.25,
+      "age": 1.25,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 8,
+      "state": "Attack"
+    },
+    {
+      "mode": "dead",
+      "requested": 0.0166666675,
+      "ticks": 75,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    },
+    {
+      "mode": "dead",
+      "requested": 0.125,
+      "ticks": 10,
+      "clock": 1.24999952,
+      "age": 1.24999952,
+      "positionError": 0.00445556641,
+      "horizontalError": 0.0,
+      "verticalError": 0.00445556641,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    },
+    {
+      "mode": "dead",
+      "requested": 0.3125,
+      "ticks": 4,
+      "clock": 1.2499994,
+      "age": 1.2499994,
+      "positionError": 0.00158691406,
+      "horizontalError": 0.0,
+      "verticalError": 0.00158691406,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    },
+    {
+      "mode": "dead",
+      "requested": 1.25,
+      "ticks": 1,
+      "clock": 1.25,
+      "age": 1.25,
+      "positionError": 0.0,
+      "horizontalError": 0.0,
+      "verticalError": 0.0,
+      "penetrations": 0,
+      "contacts": [],
+      "missiles": 0,
+      "state": "Dead"
+    }
+  ]
+}
