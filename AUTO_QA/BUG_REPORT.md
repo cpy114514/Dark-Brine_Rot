@@ -87,3 +87,11 @@ BombardinoBoss.Tick itself still caps delta at .1 s; whether its flight/cooldown
 - Existing 606 missing plant prefab references remain open. No source/art replacement or animation change.
 
 Batch011 fixes accepted and synchronized: Git 3a4ca40, GitHub main via PR #1/c6d8146, Plastic cs192. No visual animation acceptance added.
+
+## 2026-10-28 — Batch 012 — pause/settings ownership
+
+- QA-019 VERIFIED FIX: disabling the active PauseSettingsMenu left IsOpen, timeScale=0 and its raycast overlay active. OnDisable now resumes only its own pause. Disabled public Open is rejected.
+- QA-020 VERIFIED FIX: destroying an unrelated menu or calling its Resume released another menu's global pause. Track the active instance and gate release/destruction by ownership.
+- QA-021 VERIFIED FIX: actual Play-mode script reload left the settings menu paused with no active static state; reopening threw ArgumentOutOfRangeException from the lost resolution cache, and Resume's runtime button listener was gone. Retain serializable Settings, rebuild resolution/control/original-light caches and bind listeners once per managed lifetime.
+- QA-022 VERIFIED FIX: with two enabled menus, one queued Esc closed the owner and another menu reopened pause in the same native frame. Only the owner handles open-menu input; consume Esc once per frame. Native before probe fails exactly this check; final probe passes.
+- No gameplay tuning, art, scene or animation asset changed. Known 606 missing prefab references remain open.

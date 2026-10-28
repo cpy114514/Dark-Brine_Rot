@@ -1,0 +1,26 @@
+{
+  "rows": [
+    {
+      "ok": true,
+      "label": "Actual reload unloaded preparation assembly"
+    },
+    {
+      "ok": false,
+      "label": "Reload releases prior pause and overlay"
+    },
+    {
+      "ok": false,
+      "label": "Menu opens after reload with rehydrated settings"
+    },
+    {
+      "ok": false,
+      "label": "Resume binding survives actual reload"
+    },
+    {
+      "ok": true,
+      "label": "Runtime pipeline remains owned after reload"
+    }
+  ],
+  "openError": "ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.\r\nParameter name: index",
+  "frame": 48866
+}
