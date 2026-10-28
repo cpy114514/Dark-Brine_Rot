@@ -45,3 +45,9 @@ QA-011 repairs state/presentation ownership when Nailong's player target becomes
 Baseline cancellation was already correct for heavy-hit stagger, death, AI disable and return: five imported attack patterns have real action mixer weight above .5 before cancellation; 75 checks pass before and after. NailongAttackMotion.Stop already delegates to NailongPhaseAnimation.Stop, so no new direct graph teardown or animation replacement was introduced. Additional tests preserve launched projectile/wave behavior while cancelling future emissions; death cleans remaining effects.
 
 No new gameplay images/video captured. This is native graph/state and effect-lifetime evidence, not an observation that animation looks smoother. Smoothness, contact, silhouette and blend appearance remain unscored. No art, clip, controller, cue timing, boss damage, root motion or combat design changed.
+
+## Batch 009 — Cappuccino disable/re-enable action ownership
+
+QA-012 stops an interrupted sword action from resuming into an immediate damage window after its AI or whole object is disabled. All three attacks now require a new action/telegraph; regular fresh attacks retain their 7/11/12 native fixture damage. Logical cancellation is immediate, while locomotion pose recovery waits for the next valid Tick so an inactive Animator is never crossfaded. The initial immediate-pose version generated warnings and was rejected; final native tests record zero inactive Animator warnings including teardown.
+
+Existing user edits to ultimate pacing, fixed health, healing and immobilization are preserved byte-for-byte. Regression phase-clock checks confirm those numeric contracts and death ownership, without claiming an entire real-time ultimate encounter. No clip, controller, root curve, authored attack window or original art changed. No new rendered evidence was captured, so blend appearance and smoothness remain unscored.

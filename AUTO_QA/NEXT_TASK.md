@@ -1,6 +1,6 @@
 # Next task / restart instructions
 
-Latest completed batch: 008, commit titled `Stop Nailong attacks when the player target becomes inactive` (resolve with git log). Read the latest sections of all five AUTO_QA reports before work.
+Latest completed batch: 009, commit titled `Cancel unfinished Cappuccino attacks on disable` (resolve with git log). Read the latest sections of all five AUTO_QA reports before work.
 
 1. Check git status and the existing Editor. Preserve all pre-existing dirty/untracked source, animation, art and scenes. Use one Editor; do not launch a replacement or force kill it. Never git add -A. For already-dirty source, back up current bytes and stage only QA hunks.
 2. Current editing workspace: First Island Main/Lighting/Gameplay/Environment/Enemies, all loaded and clean in memory, Play stopped. Check actual state again; never discard new unsaved user changes.
@@ -11,7 +11,9 @@ Latest completed batch: 008, commit titled `Stop Nailong attacks when the player
 
 ## Next high-value work
 
-Inspect CappuccinoAI/CappuccinoUltimate/CappuccinoEnemy and existing targeted test helpers. Those AI/ultimate files already contain user edits: snapshot current bytes, understand them and stage only any newly verified QA hunks. Probe disable/death/target-loss cancellation of delayed damage, grabs/ownership and spawned effects in the existing isolated fixture workflow. Reproduce one actionable issue before changing code; preserve boss timing and design.
+Inspect BombardinoBoss/BombardinoOrdnance/BombardinoFlameJet and existing Tools regressions. Probe death/disable cancellation of delayed impacts, live projectile ownership and lingering flame damage in a small isolated native fixture. Preserve attack timing and existing design; reproduce a concrete issue before changing code.
+
+Batch 009 fixes Cappuccino stale attacks on re-enable. Final cancellation/native attack/ultimate-contract suites pass 52 checks, with zero inactive Animator warnings. Earlier functionally passing after takes are superseded because immediate CancelCombat pose recovery warned on inactive objects. Final code defers pose recovery to a valid Tick. CappuccinoCancellationRegression.Run(take,false/true) requires an isolated unsaved Play scene and uses AUTO_QA.CappuccinoCancellation (currently false). Do not repeat unchanged tests. Existing user AI/ultimate edits remain in working tree; checkpoint contains only QA hunks.
 
 Batch 008 fixes Nailong inactive-target Attack continuation and queued spit release. All 101 post-fix checks pass; do not repeat unchanged matrices. NailongAttackMotion.Stop already stops imported graph playback; the earlier suspicion was rejected with 75 baseline checks. NailongCancellationRegression.Run, RunTargetLoss and RunInFlight take unique evidence names and use AUTO_QA.NailongCancellation as their temporary fixture marker (currently false). No visual quality acceptance from this batch.
 
@@ -22,9 +24,9 @@ Batch 006 fixes renewed expired dodge input. Its 30/60 Hz boundary matrices and 
 ## Known constraints and provenance
 
 - Environment has 606 missing prefab references across GUIDs 2bde5fdeb204bc6418608a5fe3993ad1, 8e67ad946c4264b479267ee1643fd2ce, ad3d230ef428f6049ab82c5136f00a47. Source lookup is blocked and historical V253 reports match. Do not repeat searches or replace/delete plants without new source evidence.
-- Native Editor handles reached ~498k with 175 threads; prior thread/resource/Search failures remain unexplained. Use bounded existing-Editor operations and verify timed-out mutations before retrying. Unity Mono reports zero handle/thread counts, which are unavailable data. Heavy island performance profiling remains pending.
-- Motor source truncation writes failed; a backed-up, guarded extending r+ write succeeded. Preserve exact bytes and do not change permissions or close user processes to force an edit.
+- Native Editor handles reached ~510k with 178 threads; prior thread/resource/Search failures remain unexplained. Use bounded existing-Editor operations and verify timed-out mutations before retrying. Unity Mono reports zero handle/thread counts, which are unavailable data. Heavy island performance profiling remains pending.
+- Motor and CappuccinoAI source truncation writes failed; a backed-up, guarded extending r+ write succeeded. Preserve exact bytes and do not change permissions or close user processes to force an edit.
 - SandFootprints.cs remains pre-existing/untracked with its Serializable repair applied. Only Patches/SandFootprints-serialize-stamp.patch is checkpointed; verify reverse --check, do not double apply. Its full original feature is not part of a clean Git checkout.
-- Source backups for batches 004/006/007/008 are under ignored .codex/autoqa-source-before/. User V272–V278 animation/movement edits remain in the working tree.
+- Source backups for batches 004/006/007/008/009 are under ignored .codex/autoqa-source-before/. User V272–V278 animation/movement edits remain in the working tree.
 - The footprint per-frame MaterialPropertyBlock allocation candidate is unmeasured. If runtime work is blocked, measure it using a bound delegate/native renderer before optimizing.
 - CLI beta.13 remains connected; beta.14 update was not authorized and is not needed for current QA. Hourly heartbeat dark-brine-rot-qa remains active at minute 10.

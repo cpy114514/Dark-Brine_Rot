@@ -64,6 +64,7 @@ namespace Mavis
         PlayerHealth targetHealth;
         readonly BossTargetPrediction prediction = new BossTargetPrediction();
         bool engaged, hitResolved, pendingRetreat;
+        bool resumeLocomotionPending;
         float acquireAt, actionAt, retreatAt, attackStartedAt, previousAttackTime;
         float verticalSpeed, locomotion, avoidanceSide = 1f;
         CappuccinoBossPresentation bossPresentation;
@@ -120,6 +121,11 @@ namespace Mavis
             if (deltaTime <= 0f || PauseSettingsMenu.IsOpen || health == null) return;
             lastTickTime = now;
             if (health.IsDead) { OnDeath(); return; }
+            if (resumeLocomotionPending)
+            {
+                resumeLocomotionPending = false;
+                presentation.ResumeLocomotion();
+            }
             if (ultimate != null && ultimate.isActiveAndEnabled) ultimate.Simulate(now);
             ApplyGravity(deltaTime);
             if (now - poiseHitAt > 2.5f) poise = Mathf.MoveTowards(poise, 0f, deltaTime * 20f);
@@ -563,18 +569,28 @@ namespace Mavis
             bossPresentation?.Cue(CappuccinoBossPresentation.CueKind.Defeated);
         }
 
-        void CancelCombat()
+        void CancelCombat(bool resumePose = true)
         {
             engaged = false;
             pendingRetreat = false;
             hitResolved = true;
             DamageWindowActive = false;
-            if (CurrentState == State.Attack || CurrentState == State.Windup)
+            if (resumePose && (CurrentState == State.Attack || CurrentState == State.Windup))
                 presentation.ResumeLocomotion();
             CurrentState = State.Idle;
         }
 
-        void OnDisable() { DamageWindowActive = false; if (animator != null) { animator.speed = 1f; animator.SetFloat(MoveParameter, 0f); } }
+        void OnDisable()
+        {
+            if (CurrentState != State.Dead)
+            {
+                // Object deactivation cannot safely crossfade its Animator.
+                resumeLocomotionPending |= CurrentState == State.Attack || CurrentState == State.Windup;
+                CancelCombat(false);
+            }
+            DamageWindowActive = false;
+            if (animator != null) { animator.speed = 1f; animator.SetFloat(MoveParameter, 0f); }
+        }
         void OnDestroy()
         {
             if (health == null) return;
