@@ -10,3 +10,5 @@
 Pending CLI beta.14 update is optional infrastructure work and not required for game repairs; beta.13 is connected. Never infer a successful test from a trigger response.
 
 Editor infrastructure: ~434k handles and thread-creation failure were observed. Do not force kill or launch a replacement. Bring the same Editor forward when scene startup stalls, allow completion, use bounded calls and document new infrastructure failures separately. Native image exists at Evidence/first-island-after-reload.png; no animation-smoothness claim yet. Save/backup safety copies in ignored .codex/autoqa-save-backup; compare/restore after each test if changed. Hourly heartbeat dark-brine-rot-qa remains active at minute 10.
+
+Bundled PowerShell then hit OutOfMemoryException during startup. Use lightweight direct file/process APIs if needed; do not repeatedly launch failing shells. First checkpoint e2389b7 is already committed. Before a new heavy runtime batch, check current resource state. If still constrained, work on source-level controller/weapon/AI audits and precise regression design, recording untested findings separately.
