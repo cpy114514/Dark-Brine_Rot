@@ -1,5 +1,27 @@
 # Test results
 
+## Batch 010 — expanded multi-system batch
+
+Validation uses current working tree with existing user prefab/player/scene edits. Three production files were clean at entry; only their QA changes are checkpointed.
+
+| Check | Result |
+|---|---|
+| Aircraft ownership before | Expected FAIL: 22/44. Owner disable emits 95 particles/s; inactive/disabled-health target retains attack and creates delayed fire. Death controls pass. |
+| Aircraft ownership final | PASS: 44. Due/deferred acquisition, target/component loss, hazard retirement and death; emission zero and no late fire. |
+| Ballistics before | Expected FAIL: 6/9. One step consumes .1 of 1 s; .208–12.657 m bomb errors across frame partitions; fire does not expire on 5.1 s tick. |
+| Ballistics after | PASS: 9. Four partitions consume 1 s with .000229 m trajectory error; 5.1 s fire expires. Input partitions are simulation samples, not measured display FPS. |
+| Contact contracts | PASS: 11. Bomb/missile sweep hits thin wall; zero delta inert; repeated detonation and multiple hurtboxes do not multiply damage; cover blocks blast; fire height/cooldown/expiry preserved. Raw 8-damage pulse mitigates to 6 by current player profile. |
+| Rejected contact take | Four failures were fixture assumptions: raw damage ignored player mitigation and prior hit recovery was retained. Final direct-step cadence sample explicitly clears the independent player recovery clock; not a gameplay regression. |
+| Footprint/camera function | PASS: 7. Alpha/fade/expiry/pool/property isolation; 100 shake apply/remove cycles, pause lifetime and disable release. |
+| Allocation measurement | UNAVAILABLE. Bound 10,000-call result is zero, but explicit 1 MB positive-control result is also zero. Initial zero-allocation acceptance rejected. Strict control take deliberately fails; final functional-only take makes no allocation assertion. SandFootprints source unchanged. |
+| Native player integration | PASS: 28 assertions / 1,256 native observations, both weapons. Input settings identity/flags and device state independently restored. |
+| Accepted total | 99 assertions across five suites. Existing health/movement and reflected state/cue setups used; no NUnit/build/full-encounter/visual-smoothness acceptance. |
+| Recompile | Both production edit cycles complete with failed=false, errors=[]. |
+| Cleanup | Latest externally changed CombatTest restored loaded/clean, Play stopped, setup/fixture markers clear. Save/backup hashes equal batch010 snapshots; no reset/purchase. |
+| Console/resources | Existing CS0108 and dispatcher timeout errors; no new gameplay runtime exception in captured interval. Same Editor responding, 518,647 handles / 174 threads; issue open. |
+
+Evidence: batch010-proof.json and batch010-cleanup.json; batch010-workspace-change.json; extended-bombardino-before/after/final.json; extended-ballistics-before/after.json; extended-contacts-after/final.json; extended-hotpaths-before/control/functional.json; native-input/batch010-player-integration with independent restore and byte-verified compressed raw trace. Rejected/unavailable evidence is explicitly separated from accepted assertions.
+
 ## Batch 009 — Cappuccino interrupted attack repair
 
 Validation uses the current working tree, including pre-existing user source/prefab edits; it is not a clean-HEAD checkout. Only QA source hunks (+19/-3) are staged, while the original AI (+15/-13) and ultimate (+16/-52) worktree differences remain.

@@ -1,5 +1,18 @@
 # Progress
 
+## 2026-10-28 — Batch 010 complete (expanded user-requested scope)
+
+- User explicitly requested larger batches covering more systems. Investigated aircraft ownership/death, projectile time/physics, blast/fire contracts, camera offsets, footprint function/performance qualification and two-weapon input integration; do not revert to ending after one tiny check.
+- Resumed from 62a136b, saved current per-batch save and four source snapshots. Three Bombardino source files were clean at entry; untracked SandFootprints source preserved exactly. No reset/purchase.
+- Initial ownership matrix failed 22/44 checks: disabled Boss still emitted at 95 particles/s; inactive target or disabled PlayerHealth kept attacking and spawned delayed fire. Fixed target validation before delayed impacts/reacquisition and emitter owner gate. Final 44 checks pass.
+- Timing probe failed 6/9: one-second step became .1 s, ground fire outlived a 5.1 s tick, bomb gravity depended on frame partition. Full elapsed time is consumed through bounded swept substeps and analytic gravity; final nine checks pass with .000229 m trajectory error at four partitions. Eleven collision/cover/dedup/fire-height/cadence checks pass. Fire does not catch up missed damage pulses.
+- Footprint/performance + camera investigation: initial zero-allocation result rejected after 1 MB positive control also returned zero. No speculative footprint edit. Seven valid functional tests pass, including 100 camera offset/remove cycles and footprint fading/property isolation. Initial contact test assumptions about mitigation/recovery were corrected; rejected evidence retained.
+- Native player integration passes 28 checks / 1,256 frames for both weapons. Original input settings object/flags/device roster/current devices/capture delta and preview independently restored; raw trace losslessly compressed with byte-verified round trip. Total accepted assertions: 99 across five suites. No visual polish claim or full boss encounter claim.
+- Workspace changed outside the QA fixture to clean CombatTest. Guards prevented test execution there; archived both old/new setups and preserved the latest workspace as the restoration target. Final CombatTest loaded/clean, Play stopped, setup/fixture markers clear. Old five-scene setup is archived, not restored over the new workspace. Save/backup hashes unchanged from batch010 snapshots.
+- Editor transition network/dispatcher errors persist; actual state inspected, existing Editor focused, no second Editor launched. Native PID 35488: 518,647 handles / 174 threads, responding.
+
+Checkpoint: commit titled `Repair aircraft hazards and preserve projectile elapsed time` (resolve with git log). Next expanded batch: aircraft AI long-frame clock/flight and terrain safety, valid-target reacquisition, and one independent player/camera or measured-performance path.
+
 ## 2026-10-28 — Batch 009 complete (hourly continuation)
 
 - Resumed from 53a73ca. Read current QA records and inspected Cappuccino AI, presentation, health and user-edited ultimate. Snapshot current source/save bytes in ignored batch009 paths; one existing Editor, no quota reset or purchase.
