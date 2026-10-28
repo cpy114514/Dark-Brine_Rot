@@ -1,0 +1,122 @@
+{
+  "passed": false,
+  "error": null,
+  "checkCount": 20,
+  "checks": [
+    {
+      "passed": true,
+      "name": "inactive/True attack setup"
+    },
+    {
+      "passed": false,
+      "name": "inactive/True lost target ends attack immediately"
+    },
+    {
+      "passed": false,
+      "name": "inactive/True lost target cancels pending release"
+    },
+    {
+      "passed": false,
+      "name": "inactive/True lost target remains idle on native frames"
+    },
+    {
+      "passed": true,
+      "name": "inactive/True active target can be reacquired"
+    },
+    {
+      "passed": true,
+      "name": "inactive/False attack setup"
+    },
+    {
+      "passed": false,
+      "name": "inactive/False lost target ends attack immediately"
+    },
+    {
+      "passed": false,
+      "name": "inactive/False lost target cancels pending release"
+    },
+    {
+      "passed": false,
+      "name": "inactive/False lost target remains idle on native frames"
+    },
+    {
+      "passed": true,
+      "name": "inactive/False active target can be reacquired"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/True attack setup"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/True lost target ends attack immediately"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/True lost target cancels pending release"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/True lost target remains idle on native frames"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/True active target can be reacquired"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/False attack setup"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/False lost target ends attack immediately"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/False lost target cancels pending release"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/False lost target remains idle on native frames"
+    },
+    {
+      "passed": true,
+      "name": "destroyed/False active target can be reacquired"
+    }
+  ],
+  "cases": [
+    {
+      "loss": "inactive",
+      "acquireDue": true,
+      "stateAtLoss": "Attack",
+      "graphAtLoss": true,
+      "activeGlobsAtLoss": 1,
+      "stateAfterFrames": "Attack"
+    },
+    {
+      "loss": "inactive",
+      "acquireDue": false,
+      "stateAtLoss": "Attack",
+      "graphAtLoss": true,
+      "activeGlobsAtLoss": 1,
+      "stateAfterFrames": "Attack"
+    },
+    {
+      "loss": "destroyed",
+      "acquireDue": true,
+      "stateAtLoss": "Idle",
+      "graphAtLoss": false,
+      "activeGlobsAtLoss": 0,
+      "stateAfterFrames": "Idle"
+    },
+    {
+      "loss": "destroyed",
+      "acquireDue": false,
+      "stateAtLoss": "Idle",
+      "graphAtLoss": false,
+      "activeGlobsAtLoss": 0,
+      "stateAfterFrames": "Idle"
+    }
+  ],
+  "fixtureCleared": true
+}

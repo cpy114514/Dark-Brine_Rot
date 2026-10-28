@@ -1,5 +1,22 @@
 # Test results
 
+## Batch 008 — Nailong target-loss repair
+
+| Check | Observed result |
+|---|---|
+| Initial cancellation suspicion | Rejected. Original 75 checks pass across ScoldingSpit/GroundSlam/Roar/Rampage/ShamelessCharge and heavy hit/death/AI disable/return. Actual mixer action weights exceed .5 before exit; existing indirect Stop releases graph. |
+| QA-011 before | Expected FAIL: 6/20 assertions. Inactive target, acquisition due or deferred: Attack + graph playing + one queued glob released. Destroyed target controls pass. |
+| Recompile | PASS: completed, failed=false, errors=[]. |
+| QA-011 after | PASS: 20/20. Inactive/destroyed target with due/deferred acquisition enters Idle, releases graph, cancels pending release and reacquires an active target. Native follow-up frames remain Idle. |
+| Cancellation regression after | PASS: 75/75, five imported attack patterns and four exits; pending glob cancelled, launched glob intentionally survives heavy-hit stagger. |
+| In-flight regression | PASS: 6/6. Target loss preserves launched glob and first wave, stops pending glob/future waves, permits reacquisition. Death recycles glob and destroys wave on native frames. |
+| Post-fix total | PASS: 101 explicit native assertions. State entry/cue boundaries use reflected AI methods and public damage; this is not a full autonomous encounter or NUnit run. |
+| Cleanup | PASS: fixtures removed, five original scenes loaded/clean, Play stopped, compiling=false, scriptCompilationFailed=false, setup/fixture markers cleared. Save/backup SHA256 unchanged from batch008 baseline. |
+| Infrastructure | Initial helper compile missing Playables namespace was corrected before execution. One after-test network failure had no result/marker/object and was safely retried. Console has only known CS0108/missing-prefab restore issues since prior cursor. |
+| Visual scope | No captures or smoothness/pose-quality claims this batch. |
+
+Evidence: nailong-cancellation-before.json, nailong-cancellation-after.json, nailong-target-loss-before.json, nailong-target-loss-after.json, nailong-inflight-after.json, nailong-target-loss-proof.json, nailong-cancellation-cleanup.json. Reproduction failure is expected; post-fix checks pass. QA source ownership is exact against entry backup, with no pre-existing NailongAI diff.
+
 ## Batch 007 — native render / combo hit-stop review
 
 | Check | Observed result |

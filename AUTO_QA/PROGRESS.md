@@ -1,5 +1,17 @@
 # Progress
 
+## 2026-10-28 — Batch 008 complete (hourly continuation)
+
+- Resumed from e024611, read QA reports and Unity workflow instructions. Same project Editor PID 35488; fresh per-batch save/backup and AI source snapshots saved under ignored .codex paths. No reset/purchase.
+- Built isolated native Nailong cancellation fixture. Initial graph-teardown suspicion rejected: existing AttackMotion.Stop already handles it, with 75 baseline checks passing. One helper-only compile needed the Playables extension namespace; corrected before execution.
+- Verified QA-011: deactivated target remains selected through acquisition and Attack continues, releasing pending saliva. Inactive-target controls fail six of 20 checks while destroyed-target controls pass.
+- Minimal production correction: clear inactive target/health before the throttled acquisition gate; use existing StopPresentation when leaving Attack for Idle. No new architecture, clip, controller or design change. Source was clean at entry and exact intended edits match its backup.
+- Fresh recompile passes. Post-fix: 20 target-loss/reacquisition checks, 75 interruption/death/disable/return checks across five patterns, six launched-effect/death checks = 101 passing assertions. Launched glob/first wave preserved on target loss, queued glob/later emissions cancelled; death cleans effects. No visual-improvement claim.
+- One network error occurred before the target-loss after run: verified no result, marker or boss fixture before retry; accepted result then completed. Test helpers and explicit observations are not NUnit or a full encounter.
+- Restored all original five scenes loaded/clean, Play stopped, no compilation failure, setup/fixture markers cleared. Human save/backup hashes match current batch008 snapshots. Native resources: 497,916 handles / 175 threads, Editor responding; prior infrastructure issue open. Known missing-prefab errors remain.
+
+Checkpoint: commit titled `Stop Nailong attacks when the player target becomes inactive` (resolve with git log). Next: Cappuccino AI/ultimate cancellation and delayed attack cleanup, preserving its pre-existing user edits.
+
 ## 2026-10-28 — Batch 007 complete (hourly continuation)
 
 - Resumed from 2e2558d. Extended the existing native-input harness with bounded SRP readback and a fixture follow camera; no production source, prefab, scene or animation asset modified.

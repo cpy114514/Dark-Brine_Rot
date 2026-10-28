@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "error": null,
+  "checkCount": 6,
+  "checks": [
+    {
+      "passed": true,
+      "name": "Released glob and first wave exist before target loss"
+    },
+    {
+      "passed": true,
+      "name": "Target loss exits attack with in-flight effects"
+    },
+    {
+      "passed": true,
+      "name": "Target loss preserves launched glob and cancels queued glob"
+    },
+    {
+      "passed": true,
+      "name": "Target loss preserves launched wave but stops later emissions"
+    },
+    {
+      "passed": true,
+      "name": "Returning active target is reacquired with effects in flight"
+    },
+    {
+      "passed": true,
+      "name": "Death still recycles launched glob and destroys remaining waves"
+    }
+  ],
+  "fixtureCleared": true
+}
