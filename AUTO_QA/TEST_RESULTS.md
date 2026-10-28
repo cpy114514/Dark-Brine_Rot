@@ -1,5 +1,23 @@
 # Test results
 
+## Batch 009 — Cappuccino interrupted attack repair
+
+Validation uses the current working tree, including pre-existing user source/prefab edits; it is not a clean-HEAD checkout. Only QA source hunks (+19/-3) are staged, while the original AI (+15/-13) and ultimate (+16/-52) worktree differences remain.
+
+| Check | Observed result |
+|---|---|
+| Before | Expected FAIL: 18/36 checks. TwinSlash/DashThrust/Whirlwind x AI component/whole-object disable retain Attack and deliver 7/11/12 damage after re-enable in requested .05 s observation. Native frame quantization applies. |
+| First repair | Superseded: 36+14 functional checks passed, but Console recorded ten inactive Animator warnings from immediate pose recovery during object disable/destruction. Do not treat it as final acceptance. |
+| Final recompile | PASS: completed, failed=false, errors=[]. |
+| Final cancellation | PASS: 37/37. Disable sets Idle and closes damage; re-enable stays Idle or starts new Windup, old hit causes zero damage. Zero inactive Animator warnings, including fixture destruction. |
+| Fresh attacks / ultimate | PASS: 15/15. Three native uninterrupted attacks still deal 7/11/12. Explicit phase-clock checks preserve charge lock, empowerment without health multiplication, heal/immobilization, one spent phase and death state. Zero inactive Animator warnings. |
+| Accepted total | 52 explicit passing checks. Reflected action entry plus native AI/physics frames; ultimate clock is deliberately sampled directly. No NUnit/full boss encounter/visual-smoothness acceptance. |
+| Preservation | Actual AI bytes equal exact desired patch against entry backup; ultimate bytes equal entry snapshot. Stage only QA source hunks because both files originally had user changes. |
+| Workspace/saves | PASS: five original scenes loaded/clean, Play stopped, markers cleared, scriptCompilationFailed=false. Save and backup hashes match fresh batch009 snapshots. |
+| Infrastructure | Initial truncation edit failed unchanged, guarded extending write readback matches. Transition network/dispatcher errors resolved by focusing same Editor. Final console retains known CS0108/missing-prefab errors, no inactive Animator warning. Resource issue open. |
+
+Evidence: cappuccino-disable-before.json; superseded cappuccino-disable-after.json, cappuccino-regression-after.json, cappuccino-disable-cleanup.json; accepted cappuccino-disable-final.json, cappuccino-regression-final.json, cappuccino-disable-final-cleanup.json; cappuccino-disable-proof.json. Tests explicitly subscribe to native log callbacks for the inactive Animator regression.
+
 ## Batch 008 — Nailong target-loss repair
 
 | Check | Observed result |

@@ -16,6 +16,8 @@ Unity 6000.3.23f1; one project Editor connected, stopped in the five First Islan
 
 - **QA-011 / P2 — FIXED, batch 008: Nailong keeps attacking an inactive player.** Native windup fixture reproduced Attack state, active imported graph and one pending glob released after the player GameObject became inactive, both when reacquisition was due and when throttled. Six of 20 assertions failed; destroyed-target controls passed. Clear inactive target/health before the acquisition timer, and stop unfinished presentation when leaving Attack for Idle. The corrected matrix passes 20 checks; a 75-check five-pattern interruption/death/disable/return matrix and six in-flight regressions also pass. Already-launched attacks retain their existing interruption behavior; death still clears them. See Evidence/nailong-target-loss-proof.json.
 
+- **QA-012 / P2 — FIXED, batch 009: Cappuccino resumes an old hit after disable.** Native attack frames reproduced retained Attack state through component disable and whole-object deactivation. Re-enable delivered 7/11/12 damage for TwinSlash/DashThrust/Whirlwind in the short observation requested at 50 ms, with no fresh telegraph; 18/36 assertions failed. Disable now cancels the logical action and queues interrupted-pose recovery for the first valid Tick. Dead state is preserved. Final 52 checks pass, including fresh attack damage, existing ultimate phase/heal contracts and zero inactive Animator warnings. See Evidence/cappuccino-disable-proof.json.
+
 ## Confirmed, open
 
 - **QA-003 / P1 — Missing environment prefab dependencies.** Scene-open logs report 234 + 177 + 195 missing prefab instances (606 total), GUIDs `2bde5fdeb204bc6418608a5fe3993ad1`, `8e67ad946c4264b479267ee1643fd2ce`, `ad3d230ef428f6049ab82c5136f00a47`. Exact source asset recovery is required; do not replace or delete instances speculatively.
@@ -58,3 +60,9 @@ Native Editor recheck: 489,418 handles / 183 threads, responding. Resource cause
 An initial phase-graph cancellation suspicion was disproved: NailongAttackMotion.Stop already releases the graph. The untouched baseline passes 75 explicit checks. No graph/clip/controller fix was made. Target loss was then separately reproduced and repaired as QA-011. Tests invoke actual AI state boundaries and public damage APIs, allowing native Animator frames between observations; they are not a full autonomous boss encounter or visual polish acceptance.
 
 Editor PID 35488 final: 497,916 handles / 175 threads, responding. High-handle resource issue remains open. Console since previous cursor contains the known CS0108 warning and missing-prefab restore errors, no new runtime exception. Other Unity-named processes were the CLI/MCP and asset workers, not additional project Editors.
+
+## Batch 009 — regression qualification
+
+The first cancellation repair passed gameplay assertions but introduced ten inactive Animator warnings by crossfading during object disable/destruction. It is superseded: pose recovery now runs after re-enable, and both final suites explicitly assert zero such warnings. The intermediate results/console are retained as rejected acceptance. No animation smoothness claim is made.
+
+Editor PID 35488 final: 510,092 handles / 178 threads, responding. Dispatcher/network failures still occur; foregrounding the existing Editor restored service. Known CS0108 and 606 missing-prefab restore issues remain; no new game exception in the final captured console.

@@ -1,5 +1,17 @@
 # Progress
 
+## 2026-10-28 — Batch 009 complete (hourly continuation)
+
+- Resumed from 53a73ca. Read current QA records and inspected Cappuccino AI, presentation, health and user-edited ultimate. Snapshot current source/save bytes in ignored batch009 paths; one existing Editor, no quota reset or purchase.
+- Confirmed QA-012 on native attack frames: three attacks x component/object disable keep Attack state and deal 7/11/12 damage shortly after re-enable without another telegraph. Eighteen of 36 pre-fix assertions fail. Requested observation wait is .05 s, native-frame quantized, not a precise display-FPS measurement.
+- Cancel unfinished combat on disable, preserve Dead, and defer interrupted-pose recovery to the next valid Tick. First repair was superseded after Console review caught ten inactive Animator warnings; final repair eliminates them. No animation asset or ultimate-design change.
+- Final recompile succeeds. Accepted 37 cancellation checks + 15 regression checks = 52 passing assertions, zero inactive Animator warnings. All normal fresh attacks still hit; numeric ultimate charge/empower/heal/immobilize/spent/death contracts pass. Native action begins through reflected entry points, then advances on normal frames; not a full encounter.
+- Normal source truncation write failed with unchanged readback; a guarded extending r+ write succeeded exactly. Existing CappuccinoAI and CappuccinoUltimate user changes preserved. Only QA diff against entry backup is staged; ultimate source is untouched.
+- Network/main-thread calls failed during transitions; checked actual state/markers rather than replaying unknown mutations. Bringing the same Editor forward restored response; auto-tick confirmed enabled at 16 ms.
+- Original five scenes restored loaded/clean, Play stopped, no compile failure, setup/fixture markers cleared. Save/backup hashes equal fresh batch009 snapshots. Final resource query: 510,092 handles / 178 threads, responding; infrastructure issue remains open.
+
+Checkpoint: commit titled `Cancel unfinished Cappuccino attacks on disable` (resolve with git log). Next: Bombardino death/disable cleanup of delayed ordnance and flame attacks in an isolated fixture.
+
 ## 2026-10-28 — Batch 008 complete (hourly continuation)
 
 - Resumed from e024611, read QA reports and Unity workflow instructions. Same project Editor PID 35488; fresh per-batch save/backup and AI source snapshots saved under ignored .codex paths. No reset/purchase.

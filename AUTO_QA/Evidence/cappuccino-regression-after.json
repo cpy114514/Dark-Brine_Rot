@@ -1,0 +1,82 @@
+{
+  "passed": true,
+  "error": null,
+  "checkCount": 14,
+  "failedChecks": 0,
+  "checks": [
+    {
+      "passed": true,
+      "name": "TwinSlash/uninterrupted enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash/uninterrupted native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "TwinSlash fresh uninterrupted attack still deals damage"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/uninterrupted enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust/uninterrupted native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "DashThrust fresh uninterrupted attack still deals damage"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/uninterrupted enters authored telegraph"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind/uninterrupted native attack reached before damage window"
+    },
+    {
+      "passed": true,
+      "name": "Whirlwind fresh uninterrupted attack still deals damage"
+    },
+    {
+      "passed": true,
+      "name": "Existing ultimate enters locked charge"
+    },
+    {
+      "passed": true,
+      "name": "Empowerment preserves current fixed-health design"
+    },
+    {
+      "passed": true,
+      "name": "Existing heal and immobilized window preserved"
+    },
+    {
+      "passed": true,
+      "name": "Existing ultimate completes once"
+    },
+    {
+      "passed": true,
+      "name": "Disable preserves dead state and spent ultimate"
+    }
+  ],
+  "cases": [
+    {
+      "kind": "TwinSlash",
+      "mode": "uninterrupted",
+      "damage": 7.0
+    },
+    {
+      "kind": "DashThrust",
+      "mode": "uninterrupted",
+      "damage": 11.0
+    },
+    {
+      "kind": "Whirlwind",
+      "mode": "uninterrupted",
+      "damage": 12.0
+    }
+  ],
+  "fixtureCleared": true
+}

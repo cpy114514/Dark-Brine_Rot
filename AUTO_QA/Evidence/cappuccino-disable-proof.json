@@ -1,0 +1,150 @@
+{
+  "issue": "QA-012",
+  "baselineCheckpoint": "53a73ca",
+  "reproduction": {
+    "assertions": 36,
+    "failed": 18,
+    "cases": [
+      {
+        "kind": "TwinSlash",
+        "mode": "component",
+        "disabledAt": 0.951779068,
+        "enabledAt": 1.13513672,
+        "stateAtDisable": "Attack",
+        "stateAfterEnable": "Attack",
+        "windowAtDisable": false,
+        "damageWithin50ms": 7
+      },
+      {
+        "kind": "TwinSlash",
+        "mode": "object",
+        "disabledAt": 1.974159,
+        "enabledAt": 2.157915,
+        "stateAtDisable": "Attack",
+        "stateAfterEnable": "Attack",
+        "windowAtDisable": false,
+        "damageWithin50ms": 7
+      },
+      {
+        "kind": "DashThrust",
+        "mode": "component",
+        "disabledAt": 3.20804381,
+        "enabledAt": 3.39149737,
+        "stateAtDisable": "Attack",
+        "stateAfterEnable": "Attack",
+        "windowAtDisable": false,
+        "damageWithin50ms": 11
+      },
+      {
+        "kind": "DashThrust",
+        "mode": "object",
+        "disabledAt": 4.442125,
+        "enabledAt": 4.625017,
+        "stateAtDisable": "Attack",
+        "stateAfterEnable": "Attack",
+        "windowAtDisable": false,
+        "damageWithin50ms": 11
+      },
+      {
+        "kind": "Whirlwind",
+        "mode": "component",
+        "disabledAt": 5.69122458,
+        "enabledAt": 5.87541771,
+        "stateAtDisable": "Attack",
+        "stateAfterEnable": "Attack",
+        "windowAtDisable": false,
+        "damageWithin50ms": 12
+      },
+      {
+        "kind": "Whirlwind",
+        "mode": "object",
+        "disabledAt": 6.94154072,
+        "enabledAt": 7.125068,
+        "stateAtDisable": "Attack",
+        "stateAfterEnable": "Attack",
+        "windowAtDisable": false,
+        "damageWithin50ms": 12
+      }
+    ],
+    "requestedObservationSeconds": 0.05,
+    "observationNote": "Short native-frame observation requested at 50ms, not an exact wall-clock or frame-rate measurement."
+  },
+  "fix": "Cancel the logical action on disable; defer the interrupted locomotion pose restore to the next valid Tick; preserve dead state.",
+  "interimRegression": {
+    "files": [
+      "cappuccino-disable-after.json",
+      "cappuccino-regression-after.json",
+      "cappuccino-disable-cleanup.json"
+    ],
+    "status": "Functional assertions passed but superseded: ten inactive Animator warnings from immediate ResumeLocomotion during object deactivation/destruction."
+  },
+  "accepted": {
+    "files": [
+      "cappuccino-disable-final.json",
+      "cappuccino-regression-final.json",
+      "cappuccino-disable-final-cleanup.json"
+    ],
+    "assertions": 52,
+    "passed": true,
+    "inactiveAnimatorWarnings": 0,
+    "normalAttackDamage": [
+      {
+        "kind": "TwinSlash",
+        "mode": "uninterrupted",
+        "damage": 7
+      },
+      {
+        "kind": "DashThrust",
+        "mode": "uninterrupted",
+        "damage": 11
+      },
+      {
+        "kind": "Whirlwind",
+        "mode": "uninterrupted",
+        "damage": 12
+      }
+    ],
+    "ultimate": "Numeric phase/heal/fixed-health/death contracts preserved; not a full native timed ultimate encounter."
+  },
+  "source": {
+    "path": "Assets/Game/Prefabs/Bosses/CappuccinoAssassino/Scripts/CappuccinoAI.cs",
+    "exactExpectedEdit": true,
+    "ultimateUnchanged": true,
+    "backup": ".codex/autoqa-source-before/CappuccinoAI-batch009.cs",
+    "qaOnlyPatch": ".codex/cappuccino-batch009-qa.patch"
+  },
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "current": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "baseline": "09439469086c64a92f1518abc8ba1d8b546a4e5eeb0b4c8fbc5f474da8bee231",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "current": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "baseline": "138eb16b3307f0a547cfbc16d4920dd57b1048fa044f2fcd648cb88e75028b18",
+      "unchanged": true
+    }
+  ],
+  "resource": {
+    "pid": 35488,
+    "handles": 510092,
+    "threads": 178,
+    "responding": true
+  },
+  "visualClaim": false,
+  "validationScope": "Current working tree including pre-existing user source/prefab edits; not a clean-HEAD checkout.",
+  "staging": {
+    "qaSourceAdditions": 19,
+    "qaSourceDeletions": 3,
+    "remainingUserAI": {
+      "additions": 15,
+      "deletions": 13
+    },
+    "remainingUserUltimate": {
+      "additions": 16,
+      "deletions": 52
+    }
+  }
+}
