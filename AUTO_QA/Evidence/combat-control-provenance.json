@@ -1,0 +1,11 @@
+{
+  "source": "Assets/Game/Prefabs/Characters/Sahur/Scripts/SahurAttack.cs",
+  "preExistingDirty": true,
+  "originalWorkingSha256": "c52964d873d90e9fdaf9f7f78ba71279251c27be0a069810dec35b943cd1f6eb",
+  "repairedWorkingSha256": "0989f9c7d50b4ce99b6fca25116c0c10a82906ee8ff808c1bf38f4fb12e0f921",
+  "preservedOriginal": ".codex/autoqa-source-before/SahurAttack-batch004.cs",
+  "preservedUserDiff": ".codex/autoqa-source-before/SahurAttack-batch004-user-changes.patch",
+  "staging": "Only the five QA hunks applied to index using git apply --cached; pre-existing V272-V278 working changes excluded.",
+  "scope": "Total control lock or disabled controller; movement-only lock behavior preserved.",
+  "workingDeltaVerified": true
+}

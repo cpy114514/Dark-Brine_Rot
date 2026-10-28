@@ -118,6 +118,7 @@ namespace Mavis
 
         public bool IsCombatMotionActive => IsGuarding || charging || attacking || (boomerang != null && boomerang.IsThrowing);
         public bool CinematicHandoffPending { get; set; }
+        bool ControlInputBlocked => controller != null && (!controller.enabled || controller.ExternalControlLock);
         public bool IsGroundComboActive => attacking && comboStep >= 0;
         public bool CanSteerGroundCombo
         {
@@ -339,7 +340,7 @@ namespace Mavis
                 SuspendForSwimming();
                 return;
             }
-            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)
+            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || ControlInputBlocked)
             {
                 chargeInputUntil = -1;
                 jumpAttackBufferedUntil = -1f;
@@ -417,7 +418,7 @@ namespace Mavis
         {
             if (secondBlade) secondBlade.enabled = false;
             // Sample the pose Unity rendered this frame, after Animator/root motion.
-            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
+            if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || ControlInputBlocked ||
                 (controller != null && controller.Swimming))
             {
                 if (stickHitbox != null) stickHitbox.enabled = false;
@@ -448,7 +449,7 @@ namespace Mavis
 
         public void TriggerAttack()
         {
-            if (!enabled || CinematicHandoffPending || IsSpinning || IsGuarding || ChordHeld) return;
+            if (!enabled || ControlInputBlocked || CinematicHandoffPending || IsSpinning || IsGuarding || ChordHeld) return;
             if (TryCancelForMovementInput() || movementCancelFrame == Time.frameCount) return;
             if (boomerang != null && boomerang.IsBusy) return;
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || charging || (controller != null && controller.Swimming) || Cursor.lockState != CursorLockMode.Locked)
@@ -1190,7 +1191,7 @@ namespace Mavis
 
         void TryHit(Collider other, bool weaponContact)
         {
-            if (!attacking || stickHitbox == null || !stickHitbox.enabled) return;
+            if (ControlInputBlocked || !attacking || stickHitbox == null || !stickHitbox.enabled) return;
             if (other == null || other == stickHitbox || other.transform.IsChildOf(transform)) return;
             if (((1 << other.gameObject.layer) & hitMask) == 0) return;
             var target = other.GetComponentInParent<IDamageable>();

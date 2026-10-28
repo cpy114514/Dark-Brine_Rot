@@ -1,5 +1,17 @@
 # Progress
 
+## 2026-10-28 — Batch 004 complete (hourly continuation)
+
+- Read the five reports and resumed from 6b764aa. Usage permits ordinary work; no reset/purchase. Same Editor, ~455,134 native handles/177 threads; used a small unsaved isolated scene.
+- Inspected current movement, melee, combinations, loadout and existing native test harnesses. Reproduced QA-008: total ExternalControlLock/disabled movement did not gate light/aerial callbacks; queued attacks spent stamina under the lock, LateUpdate could reopen hitboxes, and direct delivered contacts with confirmed native weapon overlap still damaged a target.
+- Accepted baseline matrix confirms both actual weapon modes across all three current controllers: 33 failures / 84 assertions. Initial harness enum typo and weapon-reset-order diagnostics were corrected before accepted evidence; no production compile failure is inferred from harness compilation.
+- Minimal fix adds a shared total-control/disabled-owner predicate at four existing input/hit gates. Movement-only platform locking keeps its prior light-attack behavior; existing animation timing, source curves, combo costs and design preserved.
+- Recompile completed failed=false/errors=[]. Final matrix passes all 96 checks, including 12 added positive unlocked-contact/deduplication assertions. Device roster/enabled states/current devices, camera tags and cursor restored; no physical device disabled. Tests invoke actual gameplay callbacks/Animator/physics synchronously and do not claim a keyboard/rendered playthrough.
+- SahurAttack.cs already held unrelated V272–V278 edits. Original working bytes and original user diff are preserved in ignored .codex/autoqa-source-before/. Only QA's five source hunks were applied to the Git index (5 additions / 4 deletions). Byte-level reconstruction verifies no other working source changes.
+- Temporary fixture removed; original five scenes restored loaded/clean, Play stopped, no compilation failure, setup marker cleared. Save and backup hashes unchanged. Known missing-prefab errors recur on restoring the environment; no new gameplay exception appeared in the captured interval.
+
+Checkpoint: commit titled `Respect total player control ownership in melee input and hits` (resolve with git log). Next: natural frame-driven queued-input smoke for combo continuation/expiry, dodge buffering/cancel, held charge/release and jump/landing recovery. Use the existing copied-input-settings/focus-restoration pattern; do not call the direct-callback matrix a physical-input test.
+
 ## 2026-10-28 — Batch 003 complete (hourly continuation)
 
 - Resumed from a586744 and all five reports. Ordinary usage allowed; no reset/purchase used. Same project Editor remains connected; native query still shows ~443,310 handles/174 threads, so runtime work used an isolated unsaved scene.
