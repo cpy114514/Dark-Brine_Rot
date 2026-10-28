@@ -1,0 +1,57 @@
+{
+  "expectHealthy": false,
+  "passed": 7,
+  "total": 12,
+  "allPassed": false,
+  "rows": [
+    {
+      "ok": true,
+      "label": "Actual reload unloaded preparation assembly"
+    },
+    {
+      "ok": false,
+      "label": "Equipment menu reopens after reload"
+    },
+    {
+      "ok": false,
+      "label": "Equipment menu pauses game"
+    },
+    {
+      "ok": true,
+      "label": "Equipment close restores time"
+    },
+    {
+      "ok": true,
+      "label": "Map reopens after reload"
+    },
+    {
+      "ok": true,
+      "label": "Map suppresses world rendering"
+    },
+    {
+      "ok": true,
+      "label": "Map close restores camera mask"
+    },
+    {
+      "ok": false,
+      "label": "No orphan equipment canvas"
+    },
+    {
+      "ok": false,
+      "label": "No orphan map canvas"
+    },
+    {
+      "ok": false,
+      "label": "Equipment reenable opens"
+    },
+    {
+      "ok": true,
+      "label": "Map reenable opens"
+    },
+    {
+      "ok": true,
+      "label": "Disable open map restores world and time"
+    }
+  ],
+  "frame": 64132
+}

@@ -7,3 +7,5 @@ SandFootprints.cs already existed as an untracked user feature when QA began. Ba
 Before applying to another workspace, compare its source SHA256 with `Evidence/sand-source-provenance.json` (relative to AUTO_QA), then run `git apply --check AUTO_QA/Patches/SandFootprints-serialize-stamp.patch`. If the source differs, review the minimal change against the current code instead of overwriting it. `git apply --reverse --check` verifies the already-repaired source. Original bytes are preserved locally in ignored `.codex/autoqa-source-before/SandFootprints-batch003.cs`.
 
 Actual before/after domain-reload evidence and repeatable fixture are in `AUTO_QA/Evidence/sand-reload-*.json` and `AUTO_QA/Tools/SandFootprintsRegression.cs`. No original shader, art, prefab, scene or unrelated footprint behavior is included in this repair checkpoint.
+
+Batch011 provenance update: full pre-existing SandFootprints feature and Serializable repair are now tracked in Git checkpoint 7417515 under the user-authorized project integration. The patch remains historical; do not apply it again. A subsequent measured optimization reuses the property block.

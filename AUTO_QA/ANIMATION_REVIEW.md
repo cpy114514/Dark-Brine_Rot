@@ -59,3 +59,7 @@ Native settings confirm flame emission stops when Bombardino is disabled or its 
 Camera feedback tests cover 100 additive apply/remove cycles without base-pose drift, pause lifetime preservation and disable cleanup. They do not establish gameplay follow-camera responsiveness, collision behavior or perceived shake quality. Footprint alpha, renderer property independence, lifetime/expiry and 28-stamp pool pass. A failed allocation positive control prevents any performance benefit claim or source optimization.
 
 Current native queued input integration passes 28 assertions / 1,256 observed frames for both weapons, including complete combos, recovery evasion, moving charge/release, jump attack/landing, total-control ownership and switching. No current visual smoothness/weight/clipping acceptance is implied by these numeric/input checks.
+
+## 2026-10-28 — Batch 011 — UI and performance
+
+No animation clip/controller/root-motion or combat timing changed. Footprint fading alpha, property isolation, pool/lifetime and actual reload pass. UI evidence verifies equipment/map ownership, reopen, pause and camera-mask restoration; no new gameplay render/video, visual smoothness or whole-game FPS claim. Native profiler marker timings are an isolated workload (2.351 to .184 ms per 1,000 calls), not frame-time acceptance.

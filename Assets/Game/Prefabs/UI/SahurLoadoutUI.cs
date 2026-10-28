@@ -41,7 +41,8 @@ namespace Mavis
         Text pickupNotice;
         float noticeUntil;
         int editingEquipment = -1;
-        GameObject root, panel;
+        [SerializeField, HideInInspector] GameObject root;
+        GameObject panel;
         CanvasGroup hud;
         Text loadoutHint;
         ThirdPersonPlayerController movement;
@@ -78,6 +79,14 @@ namespace Mavis
             panel.SetActive(false);
             GameLocalization.Changed += RefreshLanguage;
             RefreshVisibility();
+        }
+
+        void OnEnable()
+        {
+            // A script reload retains native canvases but resets managed UI caches.
+            if (active != null) return;
+            if (root != null) { root.SetActive(false); Destroy(root); }
+            Awake();
         }
 
         void Update()

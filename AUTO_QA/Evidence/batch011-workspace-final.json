@@ -1,0 +1,25 @@
+{
+  "editorPid": 57472,
+  "playStopped": true,
+  "scenesLoaded": 5,
+  "allScenesClean": true,
+  "setupMarkerCleared": true,
+  "noRuntimeUiFixtures": true,
+  "compileFailed": false,
+  "knownMissingPrefabInstances": 606,
+  "plasticClientConfigRestored": true,
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "currentExists": true,
+      "baselineExists": true,
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "currentExists": true,
+      "baselineExists": true,
+      "unchanged": true
+    }
+  ]
+}

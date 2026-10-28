@@ -78,3 +78,10 @@ Accepted suites span aircraft hazard ownership (44), ballistics (9), physical hi
 The first contact fixture incorrectly assumed raw player damage and reused the post-hit recovery clock. Its four failures are test mistakes, not game regressions. Corrected tests honor existing mitigation and explicitly clear the independent player-recovery clock between directly stepped fire cadence samples.
 
 BombardinoBoss.Tick itself still caps delta at .1 s; whether its flight/cooldown/death clocks should preserve full long-frame time is a remaining suspected issue requiring focused movement/terrain evidence. Do not equate the repaired ordnance loop with a complete low-FPS boss encounter. Editor remains responding at 518,647 handles / 174 threads; existing infrastructure issue open.
+
+## 2026-10-28 — Batch 011 — performance and UI lifecycle
+
+- QA-016 VERIFIED FIX: SandFootprints.SetAlpha allocated a new MaterialPropertyBlock per fading stamp. Native raw Profiler GC.Alloc metadata measured 24,000 bytes per 1,000 warmed calls before, zero after reusing an instance block. Both 16-frame runs detect the explicit 1 MB positive control. Existing GetPropertyBlock preserves independent renderer properties.
+- QA-017 VERIFIED FIX: actual Play-mode script reload left SahurLoadoutUI without its managed UI caches/singleton. SetOpen no longer opened the equipment panel, and its old native canvas remained orphaned. Serialize canvas ownership and rebuild managed bindings on enable after reload.
+- QA-018 VERIFIED FIX: IslandMapUI lost ownership of its native canvas across reload and built another. Serialize root/font ownership; rebuild lazily if graphic cache is missing, retaining valid owned canvases. Camera/time restoration and disable/reenable remain valid.
+- Existing 606 missing plant prefab references remain open. No source/art replacement or animation change.
