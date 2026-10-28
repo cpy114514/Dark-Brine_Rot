@@ -34,26 +34,42 @@ public static class AutoQaNativeInputSmoke
     static Task pending;
     static readonly List<string> checks = new List<string>();
     static readonly List<object> frames = new List<object>();
+    static readonly List<object> boundaryCases = new List<object>();
+    static bool boundaryRun, previousDodgeRequest, watchEvasion;
+    static int simulationHz = 60;
+    static float dodgeInjectedAt, evasionAt, injectedDelta, evasionDelta, injectedPhase;
     static readonly BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
     static T Get<T>(object o, string name) => (T)o.GetType().GetField(name, Private).GetValue(o);
     static void Check(bool condition, string text) { if (!condition) throw new Exception(text); checks.Add(text); }
     static void Save(string file, object data) => File.WriteAllText(folder + "/" + file, Newtonsoft.Json.JsonConvert.SerializeObject(data, Newtonsoft.Json.Formatting.Indented));
 
-    public static object Start(string take)
+    public static object Start(string take) => Begin(take, false, 60);
+    static object Begin(string take, bool boundaries, int hz)
     {
         if (!Application.isPlaying || SceneManager.sceneCount != 1 || !string.IsNullOrEmpty(SceneManager.GetActiveScene().path)) throw new Exception("Requires isolated unsaved Play scene");
         if (armed || SessionState.GetBool("CombatCombinationTests", false) || CombatFeelPreview.Player) throw new Exception("Another native fixture owns input");
         if (!System.Text.RegularExpressions.Regex.IsMatch(take, "^[a-z0-9-]+$")) throw new Exception("Invalid take name");
         folder = "AUTO_QA/Evidence/native-input/" + take;
         if (Directory.Exists(folder)) throw new Exception("Preserve previous take");
-        Directory.CreateDirectory(folder); checks.Clear(); frames.Clear(); section = "setup";
+        boundaryRun = boundaries; simulationHz = hz;
+        Directory.CreateDirectory(folder); checks.Clear(); frames.Clear(); boundaryCases.Clear(); section = "setup";
+        previousDodgeRequest = watchEvasion = false; dodgeInjectedAt = evasionAt = -1;
         pending = Run(); return new { started = true, folder };
+    }
+
+    public static object StartBoundary(string take, int hz = 60)
+    {
+        if (hz != 30 && hz != 60) throw new Exception("Use 30 or 60 Hz boundary probes");
+        return Begin(take, true, hz);
     }
 
     static void Inject()
     {
         if (!armed || keyboard == null || InputState.currentUpdateType != InputUpdateType.Dynamic) return;
         keyboard.MakeCurrent(); mouse.MakeCurrent(); Cursor.lockState = CursorLockMode.Locked;
+        bool dodgeRequest = keys.Contains(GameInputSettings.Get(GameInputSettings.Action.Dodge));
+        if (dodgeRequest && !previousDodgeRequest) { dodgeInjectedAt = Time.unscaledTime; injectedDelta = Time.unscaledDeltaTime; injectedPhase = attack ? attack.CurrentAttackPhase : 0; }
+        previousDodgeRequest = dodgeRequest;
         InputSystem.QueueStateEvent(keyboard, new KeyboardState(keys));
         InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Left, left).WithButton(MouseButton.Right, right));
     }
@@ -61,13 +77,16 @@ public static class AutoQaNativeInputSmoke
     {
         if (!armed || !actor || !attack || Time.frameCount == lastFrame) return;
         lastFrame = Time.frameCount;
+        if (watchEvasion && evasionAt < 0 && (motor.IsDodging || Get<float>(motor, "airFlipTimer") > 0)) { evasionAt = Time.unscaledTime; evasionDelta = Time.unscaledDeltaTime; }
         if (frames.Count < 5000) frames.Add(new { frame = lastFrame, time = Time.time, section,
             stage = attack.CurrentComboStage, phase = attack.CurrentAttackPhase, charging = attack.IsCharging,
             chargeElapsed = attack.ChargeElapsed, heavy = attack.IsHeavyAttackActive, jumpSlash = attack.IsJumpSlashActive,
             ground = motor.CanUseGroundAttack, dodging = motor.IsDodging, airFlip = Get<float>(motor, "airFlipTimer"),
             position = actor.transform.position.ToString("F4"), weapon = weapons.CurrentWeapon.ToString(),
             keys = string.Join(",", keys), left, right, cursor = Cursor.lockState.ToString(),
-            keyboardId = Keyboard.current?.deviceId, expectedKeyboard = keyboard.deviceId });
+            keyboardId = Keyboard.current?.deviceId, expectedKeyboard = keyboard.deviceId,
+            unscaledTime = Time.unscaledTime, unscaledDelta = Time.unscaledDeltaTime,
+            motorDodgeExpiry = Get<float>(motor, "dodgeBufferUntil"), attackDodgeExpiry = Get<float>(attack, "dodgeBufferedUntil") });
         if (lastFrame % 30 == 0) Save("progress.json", new { section, frame = lastFrame, checks = checks.Count, time = Time.time });
     }
     static async Task Wait(float seconds)
@@ -93,6 +112,56 @@ public static class AutoQaNativeInputSmoke
         motor.ExternalControlLock = motor.ExternalMovementLock = false;
         motor.RestoreSavedPose(home, Quaternion.identity); stamina.currentStamina = 100;
         await Wait(.5f); section = next;
+    }
+    static async Task Boundaries()
+    {
+        int stale = 0;
+        var feel = attack.feel ? attack.feel : CombatFeelProfile.Default;
+        foreach (var weapon in new[] { SahurWeaponLoadout.Weapon.Stick, SahurWeaponLoadout.Weapon.CapriTwinBlades })
+        {
+            Check(weapons.TryEquip(weapon), "Boundary equip " + weapon);
+            foreach (float phase in new[] { .2f, .45f, .6f })
+            {
+                await Reset(weapon + " dodge tap at " + phase.ToString("F2"));
+                await TapLeft(); await Until(() => attack.IsGroundComboActive && attack.CurrentAttackPhase >= phase);
+                dodgeInjectedAt = evasionAt = -1; watchEvasion = true;
+                keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Dodge) }; await Wait(.025f); keys = Array.Empty<Key>();
+                await Wait(1.6f); watchEvasion = false;
+                Check(dodgeInjectedAt >= 0, weapon + " dodge intent traversed native input update at " + phase);
+                float age = evasionAt < 0 ? -1 : evasionAt - dodgeInjectedAt;
+                float tolerance = 2f * Mathf.Max(injectedDelta, evasionDelta) + .002f;
+                bool late = age > feel.inputBuffer + tolerance;
+                if (late) stale++;
+                boundaryCases.Add(new { weapon = weapon.ToString(), requestedPhase = phase, actualPhase = injectedPhase,
+                    inputAt = dodgeInjectedAt, consumedAt = evasionAt, inputAge = age, configuredBuffer = feel.inputBuffer,
+                    frameTolerance = tolerance, stale = late, simulationHz });
+            }
+            await Reset(weapon + " dodge waits for stamina");
+            await TapLeft(); await Until(() => attack.IsGroundComboActive && attack.CurrentAttackPhase >= .75f);
+            stamina.currentStamina = 0; dodgeInjectedAt = evasionAt = -1; watchEvasion = true;
+            keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Dodge) }; await Wait(.025f); keys = Array.Empty<Key>();
+            await Wait(.04f); stamina.currentStamina = 100; await Wait(1.2f); watchEvasion = false;
+            float readyAge = evasionAt < 0 ? -1 : evasionAt - dodgeInjectedAt;
+            float readyTolerance = 2f * Mathf.Max(injectedDelta, evasionDelta) + .002f;
+            boundaryCases.Add(new { weapon = weapon.ToString(), scenario = "readiness returns", inputAt = dodgeInjectedAt,
+                consumedAt = evasionAt, inputAge = readyAge, configuredBuffer = feel.inputBuffer, frameTolerance = readyTolerance, simulationHz });
+            Check(readyAge >= 0 && readyAge <= feel.inputBuffer + readyTolerance, weapon + " fresh dodge survives temporary stamina unavailability within its original deadline");
+
+            await Reset(weapon + " spin dodge"); left = right = true; await Until(() => attack.IsSpinning, .6f); await Wait(.25f);
+            keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Dodge) }; await Wait(.05f);
+            keys = Array.Empty<Key>(); left = right = false;
+            await Until(() => motor.IsDodging || Get<float>(motor, "airFlipTimer") > 0, .7f);
+            Check(!attack.IsSpinning, weapon + " native dodge still exits established continuous spin");
+            if (weapon == SahurWeaponLoadout.Weapon.CapriTwinBlades)
+            {
+                await Reset("blade guard dodge"); var guard = GameInputSettings.Get(GameInputSettings.Action.Guard);
+                keys = new[] { guard }; await Until(() => attack.IsGuarding, .6f); await Wait(.2f);
+                keys = new[] { guard, GameInputSettings.Get(GameInputSettings.Action.Dodge) }; await Wait(.05f); keys = Array.Empty<Key>();
+                await Until(() => motor.IsDodging || Get<float>(motor, "airFlipTimer") > 0, .7f);
+                Check(!attack.IsGuarding, "Native dodge still exits blade guard");
+            }
+        }
+        Check(stale == 0, "No evasion consumes a released dodge tap older than the configured input buffer plus two observed native frames; stale cases=" + stale);
     }
     static void Exiting(PlayModeStateChange state) { if (state == PlayModeStateChange.ExitingPlayMode || state == PlayModeStateChange.EnteredEditMode) Restore(); }
     public static object Cancel()
@@ -136,7 +205,7 @@ public static class AutoQaNativeInputSmoke
             settings = UnityEngine.Object.Instantiate(oldSettings); settings.hideFlags = HideFlags.DontSave;
             settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
             settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView; InputSystem.settings = settings;
-            CombatFeelPreview.Spawn(); ownsPreview = true; Time.captureDeltaTime = 1f / 60;
+            CombatFeelPreview.Spawn(); ownsPreview = true; Time.captureDeltaTime = 1f / simulationHz;
             actor = CombatFeelPreview.Player; attack = actor.GetComponent<SahurAttack>(); motor = actor.GetComponent<ThirdPersonPlayerController>();
             weapons = actor.GetComponent<SahurWeaponLoadout>(); stamina = actor.GetComponent<PlayerStamina>();
             CombatFeelPreview.Target.transform.position += Vector3.forward * 60; Physics.SyncTransforms();
@@ -145,6 +214,7 @@ public static class AutoQaNativeInputSmoke
             left = right = false; keys = Array.Empty<Key>(); InputSystem.onBeforeUpdate += Inject; EditorApplication.update += Observe;
             var input = actor.GetComponent<PlayerInput>(); InputUser.PerformPairingWithDevice(keyboard, input.user); InputUser.PerformPairingWithDevice(mouse, input.user); input.ActivateInput();
             await Wait(.7f); home = actor.transform.position; weapons.Restore(true, SahurWeaponLoadout.Weapon.Stick);
+            if (boundaryRun) { await Boundaries(); return; }
             foreach (var weapon in new[] { SahurWeaponLoadout.Weapon.Stick, SahurWeaponLoadout.Weapon.CapriTwinBlades })
             {
                 Check(weapons.TryEquip(weapon), "Equip " + weapon); await Reset(weapon + " combo");
@@ -186,7 +256,7 @@ public static class AutoQaNativeInputSmoke
         {
             var finalSection = section; Restore();
             bool inputRestored = roster != null && roster.SequenceEqual(InputSystem.devices.Select(d => (d.deviceId, d.enabled)).ToArray()) && InputSystem.settings == oldSettings;
-            Save("result.json", new { passed = error == null && inputRestored, error, finalSection, checks, inputRestored, frames });
+            Save("result.json", new { passed = error == null && inputRestored, error, finalSection, checks, inputRestored, boundaryCases, simulationHz, frames });
         }
     }
 }

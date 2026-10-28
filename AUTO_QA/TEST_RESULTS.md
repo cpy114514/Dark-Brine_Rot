@@ -1,5 +1,21 @@
 # Test results
 
+## Batch 006 — complete
+
+| Check | Observed result |
+|---|---|
+| Before, 60 Hz simulation | Expected failure: 2 expired dodge consumptions among 6 taps, ages 267/366 ms against configured 220 ms plus ~35–36 ms measured frame tolerance; 996 observations. |
+| Before, 30 Hz simulation | Expected failure: 1 stale blade tap at 267 ms; 505 observations. Hz denotes simulation delta, not actual display FPS. Input ages use unscaled time. |
+| Repair compile | PASS: completed, failed=false, errors=[] after both source edits completed. |
+| After, 60 Hz simulation | PASS: 14 checks / 1,467 observations; zero stale cases, original-deadline readiness recovery, spin/guard exits retained. |
+| After, 30 Hz simulation | PASS: 14 checks / 749 observations; zero stale cases and same positive readiness/combination contracts. |
+| Normal queued-input regression | PASS: 28 checks / 1,258 observations across both weapons; combos, dodge, moving charge/release, jump/landing, lock and switching retained. |
+| Input cleanup | All five runs report inputRestored=true. Independent final run inspection confirms same settings object/flags/focus policy, original current/enabled devices and capture delta. |
+| Source provenance | PASS: exact desired working bytes; user changes preserved; QA-only source hunks staged (9 additions / 4 deletions total). Original snapshots are ignored local backups. |
+| Workspace/save | PASS: original five scenes clean/loaded, stopped Play, no compile failure, markers cleared; save/backup hashes unchanged. |
+
+Accepted post-fix total: 56 assertions and 3,474 native observations. Raw traces use lossless byte-checked gzip archives. No visual smoothness, full boss encounter, hit-stop boundary coverage or frame-time improvement is claimed.
+
 ## Batch 005 — complete
 
 | Check | Observed result |

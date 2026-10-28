@@ -1,5 +1,17 @@
 # Progress
 
+## 2026-10-28 — Batch 006 complete (hourly continuation)
+
+- Resumed from 7b57684; read QA records, ordinary usage available with refreshed five-hour window, no reset/purchase. Same Editor; final native query ~481,138 handles/171 threads, responding.
+- Targeted native queued dodge taps at attack phases .20/.45/.60. Before fix: 60 Hz simulation take records 2 stale consumptions (stick 267 ms, blades 366 ms versus configured 220 ms + measured two-frame tolerance); 30 Hz simulation take records 1. Traces show the combat deadline advancing after key release while the movement deadline stays fixed.
+- Small repair: forward the fresh input edge, keep readiness separate and let combat own one lifetime. Public one-argument cancel API retained; buffered guard/spin exits clear the consumed buffer. Original cancel phases, stamina costs and animations preserved.
+- After: 14 boundary checks / 1,467 frames at 60 Hz simulation, 14 / 749 at 30 Hz, plus 28 normal-flow checks / 1,258 frames. Total 56 checks / 3,474 native observations pass, zero stale cases. Fresh inputs still survive a short stamina-unavailable interval; guard/spin exits work. All five before/after runs restore input state.
+- A two-file apply encountered a motor-file write failure after updating the first file. Readback confirmed the partial state; ordinary truncating writes failed, ReadWrite open succeeded. A backed-up, guarded extending r+ write completed exactly and full recompile passed. No permissions or user processes changed; no partial fix remains.
+- Both gameplay files already held user changes. Preserved original bytes; exact reconstruction verifies only QA deltas. Staged only QA source hunks (attack +5/-3, motor +4/-1); reduced patch context excludes the user's neighboring translation changes.
+- Original scenes restored loaded/clean, Play stopped, markers cleared, settings identity/flags/current device state independently restored; save/backup hashes unchanged. Accepted traces are losslessly compressed with byte-verified round trips; expected failing reproduction takes retained.
+
+Checkpoint: commit titled `Expire dodge cancels from the original input press` (resolve with git log). Next: focused rendered startup/recovery/landing review and early combo/hit-stop boundaries, then enemy/boss coverage. No visual animation improvement claimed this batch.
+
 ## 2026-10-28 — Batch 005 complete (hourly continuation)
 
 - Resumed from 3970951 and read all reports. Usage permits ordinary work; no reset/purchase. Same Editor ~466,030 handles/176 threads, responding; isolated scene used.

@@ -9,3 +9,9 @@ Take01 is rejected overall despite passing the 28 gameplay assertions: cleanup f
 The corrected harness protects the original default's lifetime while replacing it, then restores its same object, flags, focus policy, device roster/enabled states/current devices and capture delta. `independent-input-restore.json` confirms the accepted second take retains that object and HideAndDontSave flags, both original enabled devices and their current IDs. The first take's old native identity cannot be recovered and is not claimed as restored.
 
 Historical V276–V278 review helpers use the earlier unguarded settings-clone pattern. Adapt the guarded lifetime handling before reusing those helpers with temporary default settings. Do not modify approved historical evidence or silently treat their cleanup as verified in this environment.
+
+## Batch 006 boundary probes
+
+The five batch006 folders retain expected before failures and accepted after runs. Summaries include every measured dodge case, configured deadline and observed frame tolerance. Before 60 Hz simulation records 267/366 ms stale consumption; before 30 Hz records one 267 ms stale tap. After 30/60 Hz matrices pass 14 checks each, and the normal-flow regression passes 28. Positive cases retain fresh taps while stamina is temporarily unavailable and preserve spin/guard dodge exits.
+
+`simulationHz` sets Time.captureDeltaTime; it does not establish actual rendering FPS. Input age is measured in Time.unscaledTime, with tolerance based on observed native unscaled frame deltas. The source fix preserves the configured 220 ms lifetime and cancel phases. These are queued device/normal update checks, without direct attack invocation or visual animation acceptance. All five runs report successful input restoration.

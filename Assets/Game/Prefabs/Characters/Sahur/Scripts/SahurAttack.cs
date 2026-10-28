@@ -31,12 +31,14 @@ namespace Mavis
         float dodgeBufferedUntil=-1;
         static readonly Unity.Profiling.ProfilerMarker SweepMarker=new Unity.Profiling.ProfilerMarker("Sahur.WeaponSweep");
         Vector3 queryWeaponA,queryWeaponB;
-        public bool TryConsumeDodgeCancel(bool pressed)
+        public bool TryConsumeDodgeCancel(bool pressed) => TryConsumeDodgeCancel(pressed, true);
+        public bool TryConsumeDodgeCancel(bool pressed, bool canConsume)
         {
             if(CinematicHandoffPending || !isActiveAndEnabled || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)return false;
-            if(pressed && (IsGuarding || IsSpinning && Time.time-specialStartedAt>=spinStartup)){EndCombination();return true;}
             if(pressed && IsCombatMotionActive)dodgeBufferedUntil=Time.unscaledTime+Feel.inputBuffer;
-            if(Time.unscaledTime>dodgeBufferedUntil || (localStop && localStop.IsStopped))return false;
+            if(canConsume && Time.unscaledTime<=dodgeBufferedUntil && (IsGuarding || IsSpinning && Time.time-specialStartedAt>=spinStartup))
+            {EndCombination();dodgeBufferedUntil=-1;return true;}
+            if(!canConsume || Time.unscaledTime>dodgeBufferedUntil || (localStop && localStop.IsStopped))return false;
             if(!IsCombatMotionActive){dodgeBufferedUntil=-1;return true;}
             float phase=CurrentAttackPhase;
             if(!charging && (!attacking || phase<Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.heavyDodgeCancel:Feel.lightDodgeCancel)))return false;
