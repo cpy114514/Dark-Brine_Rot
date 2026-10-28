@@ -1,0 +1,14 @@
+{
+  "batch": 15,
+  "priorGit": "81e9274e3a3f8a382c8d476695ff8a45a1d47aff",
+  "checks": {
+    "camera": 20,
+    "vitals": 19,
+    "activeDeath": 55
+  },
+  "total": 94,
+  "saves": {
+    "dark-brine-rot-save.json": true,
+    "dark-brine-rot-save.json.bak": true
+  }
+}

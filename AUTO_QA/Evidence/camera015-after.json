@@ -1,0 +1,205 @@
+{
+  "error": null,
+  "rows": [
+    {
+      "ok": true,
+      "mode": "clear",
+      "angle": 0.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "moving wall",
+      "angle": 0.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.1965332,
+      "position": "(2054.5820, 550.0000, 2048.6150)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "trigger",
+      "angle": 0.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "disabled collision",
+      "angle": 0.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "release",
+      "angle": 0.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2055.0790, 550.0000, 2048.4650)",
+      "expected": "(2055.0790, 550.0000, 2048.4650)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "clear",
+      "angle": 45.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6553535,
+      "position": "(2052.5060, 550.0000, 2045.3230)",
+      "expected": "(2052.5060, 550.0000, 2045.3230)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "moving wall",
+      "angle": 45.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.190429688,
+      "position": "(2052.2430, 550.0000, 2045.8140)",
+      "expected": "(2052.5060, 550.0000, 2045.3230)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "trigger",
+      "angle": 45.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2052.5060, 550.0000, 2045.3230)",
+      "expected": "(2052.5060, 550.0000, 2045.3230)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "disabled collision",
+      "angle": 45.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2052.5060, 550.0000, 2045.3230)",
+      "expected": "(2052.5060, 550.0000, 2045.3230)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "release",
+      "angle": 45.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6553535,
+      "position": "(2052.5060, 550.0000, 2045.3230)",
+      "expected": "(2052.5060, 550.0000, 2045.3230)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "clear",
+      "angle": 90.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2048.4650, 550.0000, 2044.9210)",
+      "expected": "(2048.4650, 550.0000, 2044.9210)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "moving wall",
+      "angle": 90.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.1965332,
+      "position": "(2048.6150, 550.0000, 2045.4180)",
+      "expected": "(2048.4650, 550.0000, 2044.9210)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "trigger",
+      "angle": 90.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2048.4650, 550.0000, 2044.9210)",
+      "expected": "(2048.4650, 550.0000, 2044.9210)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "disabled collision",
+      "angle": 90.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2048.4650, 550.0000, 2044.9210)",
+      "expected": "(2048.4650, 550.0000, 2044.9210)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "release",
+      "angle": 90.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2048.4650, 550.0000, 2044.9210)",
+      "expected": "(2048.4650, 550.0000, 2044.9210)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "clear",
+      "angle": 180.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2044.9210, 550.0000, 2051.5350)",
+      "expected": "(2044.9210, 550.0000, 2051.5350)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "moving wall",
+      "angle": 180.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.1965332,
+      "position": "(2045.4180, 550.0000, 2051.3850)",
+      "expected": "(2044.9210, 550.0000, 2051.5350)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "trigger",
+      "angle": 180.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2044.9210, 550.0000, 2051.5350)",
+      "expected": "(2044.9210, 550.0000, 2051.5350)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "disabled collision",
+      "angle": 180.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 0.0,
+      "position": "(2044.9210, 550.0000, 2051.5350)",
+      "expected": "(2044.9210, 550.0000, 2051.5350)",
+      "dt": 0.0166666675
+    },
+    {
+      "ok": true,
+      "mode": "release",
+      "angle": 180.0,
+      "desiredRayClear": true,
+      "cameraSurfaceDistance": 18.6644726,
+      "position": "(2044.9210, 550.0000, 2051.5350)",
+      "expected": "(2044.9210, 550.0000, 2051.5350)",
+      "dt": 0.0166666675
+    }
+  ]
+}

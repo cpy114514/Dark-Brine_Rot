@@ -254,3 +254,18 @@ Total accepted assertions: 146. Do not count diagnostic/rejected takes or repeat
 | Save/backup | Both byte-identical to fresh batch014 safety copies. |
 
 Accepted total: 208 contracts/checks, with diagnostic/rejected takes not counted again. No full-scene performance or visual smoothness acceptance. Captured console errors contain the recovered main-thread timeout plus the known 606 missing prefab groups, not a new game exception.
+
+## Batch 015 — camera/world collision and vitals UI
+
+| Check | Result |
+|---|---|
+| Original camera probe | Expected FAIL 4/5: moving side wall contains smoothed camera (surface distance 0), while desired ray is clear. |
+| Final camera matrix | PASS 20/20: headings 0/45/90/180; clear, moving wall, trigger, collision off, obstacle release. Blocked center clearance .190–.197 m; unblocked interpolation unchanged within .002 m. |
+| Vitals review | PASS 19/19: actual player binding, input exclusion/scaling, HP/SP 100/50/1/0%, numeric labels, movement-disable/dead hiding and alive recovery. No UI source change. |
+| Native combat regression | PASS 55/55, 620 frames, six charge/throw/rush/combo death/respawn cases; zero captured runtime errors; exact input settings/device/capture-delta restoration. |
+| Compilation | Final PASS failed=false/errors=[]. Two transient write-length CS1022 errors corrected before acceptance; retained in console, not gameplay errors. |
+| Saves/workspace | Fresh batch015 save and backup bytes unchanged. Five original scenes clean, stopped, recovery marker empty, preview/input/camera fixtures absent. |
+
+Accepted total 94. Camera suite invokes real native LateUpdate and PhysX queries on the preview actor; it is a controlled obstruction fixture, not a filmed playthrough. No visual smoothness/FPS or managed-allocation measurement claim.
+
+Final console cursor 1463: known 606 missing-plant prefab instances on restore; no new accepted gameplay exception. Native scene/fixture verification saved in Evidence/batch015-workspace-final.json.
