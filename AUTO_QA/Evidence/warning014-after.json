@@ -1,0 +1,90 @@
+{
+  "valid": true,
+  "error": null,
+  "controls": 15,
+  "controlBytes": 15729120,
+  "normalSamples": 15,
+  "spikeSamples": 15,
+  "normalBuilds": 15,
+  "spikeBuilds": 15,
+  "normalMs": 0.0780600001414617,
+  "spikeMs": 1.2160533189773559,
+  "rows": [
+    {
+      "frame": 91,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 92,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 93,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 95,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 96,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 97,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 98,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 101,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 104,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 107,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 110,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 113,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 117,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 120,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    },
+    {
+      "frame": 123,
+      "normalBuilds": 1,
+      "spikeBuilds": 1
+    }
+  ],
+  "profilerRestored": true
+}

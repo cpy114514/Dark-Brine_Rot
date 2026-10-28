@@ -1,0 +1,266 @@
+{
+  "passed": true,
+  "error": null,
+  "checkCount": 44,
+  "failed": 0,
+  "checks": [
+    {
+      "passed": true,
+      "name": "boss disabled/True flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/True no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/True queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/True no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/True native fire object retired"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/False flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/False no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/False queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/False no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "boss disabled/False native fire object retired"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/True flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/True no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/True queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/True no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/True native fire object retired"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/False flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/False no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/False queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/False no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "boss dead/False native fire object retired"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/True flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/True no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/True queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/True no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/True leaves encounter promptly"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/True native fire object retired"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/False flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/False no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/False queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/False no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/False leaves encounter promptly"
+    },
+    {
+      "passed": true,
+      "name": "inactive target/False native fire object retired"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/True flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/True no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/True queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/True no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/True leaves encounter promptly"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/True native fire object retired"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/False flame setup active"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/False no continuing flame emission"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/False queued and live hazards cleared"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/False no delayed fire created after ownership loss"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/False leaves encounter promptly"
+    },
+    {
+      "passed": true,
+      "name": "disabled health/False native fire object retired"
+    }
+  ],
+  "cases": [
+    {
+      "mode": "boss disabled",
+      "acquireDue": true,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Attack",
+      "FightActive": true
+    },
+    {
+      "mode": "boss disabled",
+      "acquireDue": false,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Attack",
+      "FightActive": true
+    },
+    {
+      "mode": "boss dead",
+      "acquireDue": true,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Dead",
+      "FightActive": false
+    },
+    {
+      "mode": "boss dead",
+      "acquireDue": false,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Dead",
+      "FightActive": false
+    },
+    {
+      "mode": "inactive target",
+      "acquireDue": true,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Returning",
+      "FightActive": false
+    },
+    {
+      "mode": "inactive target",
+      "acquireDue": false,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Returning",
+      "FightActive": false
+    },
+    {
+      "mode": "disabled health",
+      "acquireDue": true,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Returning",
+      "FightActive": false
+    },
+    {
+      "mode": "disabled health",
+      "acquireDue": false,
+      "emission": 0.0,
+      "queued": 0,
+      "owned": 0,
+      "zonesCreatedAfterLoss": 0,
+      "state": "Returning",
+      "FightActive": false
+    }
+  ]
+}

@@ -1,0 +1,198 @@
+{
+  "error": null,
+  "cases": [
+    {
+      "kind": "HighBombing",
+      "stage": "telegraph",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "HighBombing",
+      "stage": "cross to attack",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "HighBombing",
+      "stage": "target loss",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "HighBombing",
+      "stage": "death",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "telegraph",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "cross to attack",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "target loss",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "SpeedRun",
+      "stage": "death",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "Missiles",
+      "stage": "telegraph",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "Missiles",
+      "stage": "cross to attack",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "Missiles",
+      "stage": "target loss",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "Missiles",
+      "stage": "death",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "telegraph",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "cross to attack",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "target loss",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "FlameRun",
+      "stage": "death",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "telegraph",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "cross to attack",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "target loss",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "MissileSalvo",
+      "stage": "death",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "telegraph",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "cross to attack",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "target loss",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    },
+    {
+      "kind": "CrossBombing",
+      "stage": "death",
+      "stateUnchanged": true,
+      "visibilityUnchanged": true,
+      "maxPointDeviation": 0,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

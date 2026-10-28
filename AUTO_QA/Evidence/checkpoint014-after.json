@@ -1,0 +1,26 @@
+{
+  "error": null,
+  "rootHeightAboveFeet": 3.41494751,
+  "rows": [
+    {
+      "ok": true,
+      "label": "Actor standing at checkpoint ground position activates radius 3"
+    },
+    {
+      "ok": true,
+      "label": "Outside horizontal radius does not activate"
+    },
+    {
+      "ok": true,
+      "label": "Checkpoint on another vertical floor remains out of range"
+    },
+    {
+      "ok": true,
+      "label": "Inside horizontal radius at ground level activates"
+    },
+    {
+      "ok": true,
+      "label": "Dead player cannot activate another checkpoint"
+    }
+  ]
+}
