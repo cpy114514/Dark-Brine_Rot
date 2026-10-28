@@ -1,5 +1,20 @@
 # Test results
 
+## Batch 005 — complete
+
+| Check | Observed result |
+|---|---|
+| Initial take01 | REJECTED overall: all 28 gameplay assertions pass / 1,259 frames, but inputRestored=false. Temporary default InputSettings was destroyed during replacement by package ownership rules. |
+| Recovery | PASS: all 23 prior managed settings fields copied exactly into a valid native runtime settings object; original native identity was destroyed and is not claimed restored. No settings asset overwritten. |
+| Accepted take02 | PASS: 28 queued-input checks / 1,258 observed native frames, error=null, inputRestored=true. Both native weapons complete combos, recovery evasion, moving charge/release, simultaneous jump chop/landing, total control lock and digit1/2 switching. |
+| Input scope | Synthetic device state events queued through actual PlayerInput and normal Animator/Update; no direct attack callbacks or phase injection. Not human hardware input or a rendered visual review. |
+| Independent cleanup | PASS for take02: same native settings instance and HideAndDontSave flags, original focus policy, device IDs/current IDs 1/2 enabled, captureDelta=0, preview gone. Take01's first destroyed instance remains identified as rejected. |
+| Final harness compile | PASS: dry-run compilation of final native-input and scoped recovery helpers, no execution/scene mutation. |
+| Final workspace/save | PASS: original five scenes loaded/clean, Play stopped, no compile failure, markers cleared, input settings valid and devices enabled; save/backup SHA256 unchanged. |
+| Evidence integrity | Both full native traces losslessly gzip-compressed and byte-checked; readable summaries keep all checks and section bounds. Raw safety copies in ignored .codex/autoqa-native-input/. |
+
+No production game source fix, new visual animation observation, boundary-buffer acceptance, performance benchmark, full cinematic or boss encounter is claimed. Forced-interruption cancellation hooks exist but were not exercised by the accepted normal-completion take.
+
 ## Batch 004 — complete
 
 | Check | Observed result |

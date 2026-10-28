@@ -1,0 +1,11 @@
+# Batch 005 native queued-input evidence
+
+`batch005-take02/result.json` is the accepted run: 28 checks / 1,258 native observed frames, using queued synthetic keyboard/mouse states through the actual PlayerInput component, normal Update/Animator evaluation and current Sahur prefab. Both weapons complete three-stage combos, recovery dodge/air-flip, moving charge/release, simultaneous jump/chop, landing recovery, total-control lock and keyboard weapon switching. No direct attack callbacks or Animator phase injection are used for those actions. These are software-injected devices, not human hardware input. No rendered animation quality or performance benchmark is claimed.
+
+The JSON summaries include per-section frame bounds. Full native frame telemetry is losslessly gzip-compressed in each take's `raw-result.json.gz`; decompression was byte-checked against the original JSON. Uncompressed safety copies are local under ignored `.codex/autoqa-native-input/`.
+
+Take01 is rejected overall despite passing the 28 gameplay assertions: cleanup failed to restore its original temporary InputSettings instance. Input System 1.20's InputManager.settings setter destroys replaced settings with exactly HideFlags.HideAndDontSave. The original default object was destroyed when the harness installed its clone. Its 23 managed backing fields were recovered exactly into a valid native runtime settings object; no project settings asset was overwritten. `take01-settings-recovery.json` records this, and the first take stays failed.
+
+The corrected harness protects the original default's lifetime while replacing it, then restores its same object, flags, focus policy, device roster/enabled states/current devices and capture delta. `independent-input-restore.json` confirms the accepted second take retains that object and HideAndDontSave flags, both original enabled devices and their current IDs. The first take's old native identity cannot be recovered and is not claimed as restored.
+
+Historical V276–V278 review helpers use the earlier unguarded settings-clone pattern. Adapt the guarded lifetime handling before reusing those helpers with temporary default settings. Do not modify approved historical evidence or silently treat their cleanup as verified in this environment.

@@ -1,5 +1,16 @@
 # Progress
 
+## 2026-10-28 — Batch 005 complete (hourly continuation)
+
+- Resumed from 3970951 and read all reports. Usage permits ordinary work; no reset/purchase. Same Editor ~466,030 handles/176 threads, responding; isolated scene used.
+- Implemented a current queued-input runner using actual PlayerInput, dynamic queued keyboard/mouse events and normal 60 Hz captured simulation frames. No direct attack callbacks or Animator phase injection for the tested actions.
+- Accepted take02 passes 28 checks over 1,258 observed native frames: both weapon three-hit combos, recovery dodge/air-flip, moving charge/release, simultaneous jump chop/landing, control lock and keyboard weapon switching. No new production gameplay bug exposed; no game source, art, prefab, controller or animation asset changed.
+- Rejected take01 passed gameplay assertions but failed cleanup: package InputManager.settings destroys replaced temporary defaults with exactly HideAndDontSave. Recovered all 23 original managed setting fields exactly into a valid native runtime object. The destroyed old native identity is not claimed as recovered. No settings asset was rewritten; first take remains failed in evidence.
+- Guarded lifetime handling protects the original default before replacement, then restores its same object, flags/focus policy and all physical device enabled/current states. Independent take02 inspection confirms identity/flags/policy, original device IDs 1/2 enabled, zero capture delta and cleared preview. Final harness compiles after adding cross-assembly cancellation lookup. Forced-interruption cancellation was not exercised in this batch.
+- Original five scenes restored loaded/clean, Play stopped, fixture/setup markers cleared, native settings valid, save and backup hashes unchanged. Raw traces are preserved losslessly in byte-verified gzip archives; readable summaries and rejected/accepted provenance retained.
+
+Checkpoint: commit titled `Add native combat input smoke with safe settings restoration` (resolve with git log). Next: targeted input-buffer/cancel boundary cases and native rendered startup/recovery evidence; do not repeat the whole passing normal-flow suite without a relevant change. Historical V276–V278 input helpers need the same temporary-settings lifetime guard before reuse.
+
 ## 2026-10-28 — Batch 004 complete (hourly continuation)
 
 - Read the five reports and resumed from 6b764aa. Usage permits ordinary work; no reset/purchase. Same Editor, ~455,134 native handles/177 threads; used a small unsaved isolated scene.
