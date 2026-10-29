@@ -1,3 +1,11 @@
+# Latest completed task — Visual Style System V2
+
+Both new modes, four-card gallery, arbitrary aligned comparison, independent existing pixel mode, saved detail controls and actual matched Unity previews are implemented. Final acceptance is 141 scripted checks (93+48), additional real reload/dropdown/composited UI evidence, source compile and unchanged-save safety. See Documentation/VisualStyleSystem-V2.md and AUTO_QA/Evidence/visual-style-v2. Checkpoint title: Extend visual styles with papercraft and monochrome. Original baseline Git8d207a8/Plasticcs199; inspect actual latest log/remote before upload, never repeat integration.
+
+Next valuable batch: qualify standalone/representative first-island GPU cost and moving-camera papercraft temporal stability, then broaden boss/tutorial/UI encounter coverage. Current RTX4060/D3D12 960×540 six-enemy samples are paced Editor data, not isolated shader cost or a full-island/low-end benchmark. Do not repeat 141 unchanged checks without new changes. Three warnings in unchanged ocean/sky helper functions and606 missing plant instances remain; no model/controller/animation/collider edits authorized by this feature.
+
+Safe continuation: same connected project Editor, stopped, five original scenes clean; original style dark-fairytale/intensity1 and fresh saves restored/unchanged. All V2 capture/UI/render/probe markers clear. Tools live outside Assets; prepare must succeed before Play, restore after stopped. Preserve unrelated Plastic ShaderGraphSettings.asset and two recovery entries. Only task-owned patches/evidence enter checkpoint; no .codex or build caches.
+
 # Continuation — Batch 017
 
 Latest accepted checkpoint title: "Preserve foliage originals through reload and bounded recache". QA-030 repaired; 67 accepted final-source checks, including 636 renderers across actual reload, original hidden/material/shadow/occlusion state, map camera-mask gating, real additive scene loading, repeated reload and true partial-scan cancellation (351 entries). One production script: WorldPerformanceManager.cs. Use batch017-proof.json whitelist; every earlier bulk/reload-only candidate is rejected. Do not repeat the completed reload repair unchanged.

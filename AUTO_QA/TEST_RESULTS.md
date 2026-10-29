@@ -303,3 +303,17 @@ This is a discovery checkpoint with an unresolved verified defect, not a success
 Accepted total 67 from the exact whitelist in batch017-proof.json. Extra warm scene passes and earlier candidates are not counted again. No qualified images, standalone build, whole-scene CPU/GPU/FPS or memory-leak improvement claim. A non-isolated Play after a failed prerequisite was stopped, with unchanged saves; subsequent isolation is gated on confirmed success.
 
 Final console cursor 1534 contains only the known Environment missing-prefab groups in the captured error interval (234+177+195=606). Editor responds after scene restore; handle growth remains unproven.
+
+## 2026-10-29 — Visual Style System V2
+
+| Coverage | Result |
+|---|---|
+| Gallery/settings/persistence/comparison/enemy/profile | PASS 93/93 in final verification.json. Four cards; all16 pairs; actual pointer drag/alignment; independent controls/pixel mode; six enemy skeletons advance. |
+| Native combat and renderer | PASS 48/48 in final rendering-verification.json. Four real queued movement/melee cases; active-animation switching preserves state/time/pose;8 native/pixel combinations; transparent probe and pressure on/off controls; fold/contrast pixel response; Mobile forward compatibility. |
+| Reload and actual overlay UI | PASS additional actual reload: one manager/gallery, four cards, open Monochrome85%. Native dropdown pointer selects Dark. Native/pixel composited images retain colored proof and native text. |
+| Real first-island previews | PASS four1600×900 Unity renders; identical camera/actor/enemy/frozen time in preview-provenance.json. No generated art. |
+| Compile | PASS production up_to_date; visual transform no shader messages. Ocean/Sky no shader errors;3 warnings in unchanged helper functions retained. |
+| Safety | Five original scenes clean/stopped; original preferences restored; fresh save+backup unchanged; input settings/flags/current devices/enabled states restored; no fixture marker. |
+| Performance | RTX4060/D3D12,960×540,60 actual renders/style,6 active enemies. GPU medians15.845/15.813/16.049/15.901ms. Editor pacing/AI variance limits attribution; no standalone/low-end or FPS-improvement claim. |
+
+Exact accepted evidence is Evidence/visual-style-v2/{verification,rendering-verification,overlay-verification,preview-provenance,final-native-state,safety}.json plus retained native PNGs. Earlier camera-space UI images are rejected and not included. Geometry/rig/UV/animation/collider/prefab/scene source assets remain unchanged. Detailed architecture/file list/remaining qualification: Documentation/VisualStyleSystem-V2.md.

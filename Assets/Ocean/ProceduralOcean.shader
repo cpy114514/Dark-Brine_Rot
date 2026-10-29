@@ -471,6 +471,14 @@ Shader "DarkBrine/Procedural Ocean"
                 // reading as an independently sliding texture over the waves.
                 float2 foamPosition = input.positionWS.xz - displacement.xz * 0.65
                     - windDirection * oceanTime * _FoamSpeed * 1.5;
+                // Paper lighting replaces optical glints before the existing foam layers.
+                if (_EnvironmentMode > 1.5)
+                {
+                    half bands = floor(NoL * 3 + .5) / 3;
+                    half3 paperWater = lerp(bodyColor, half3(.18,.54,.57), .22) * (.65h + .35h * bands);
+                    paperWater += smoothstep(.28,.65,waveCrest) * half3(.10,.14,.12);
+                    water = lerp(water, paperWater, _EnvironmentStyle.x * _EnvironmentPaper.z);
+                }
                 float foamNoise = ValueNoise(foamPosition * _FoamNoiseScale);
                 float foamRegion = ValueNoise(p * (_FoamNoiseScale * 0.27) + float2(9.3, -17.6)
                     + oceanTime * float2(0.008, -0.006) * _FoamSpeed);

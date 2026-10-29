@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "protectedAuthoredAssetsChanged": false,
+  "legacyPresetTuning": "git diff adds only V2 schema fields; legacy values and preview GUIDs unchanged",
+  "saves": [
+    {
+      "name": "dark-brine-rot-save.json",
+      "unchanged": true,
+      "bytes": 2533
+    },
+    {
+      "name": "dark-brine-rot-save.json.bak",
+      "unchanged": true,
+      "bytes": 2764
+    }
+  ],
+  "shaderErrors": 0,
+  "shaderWarnings": [
+    "SailingFoam potentially uninitialized",
+    "CloudDensity potentially uninitialized",
+    "ShadowDensity potentially uninitialized"
+  ],
+  "productionCompile": "up_to_date",
+  "inputRestored": true
+}

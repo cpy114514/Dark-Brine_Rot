@@ -17,6 +17,15 @@ MonoBehaviour:
   description: A mysterious hand-drawn world of ink, shadows, and storybook colors.
   preview: {fileID: 2800000, guid: 4878be0a8279d0a4f991d86fa3db6aa3, type: 3}
   illustrated: 1
+  renderingMode: 0
+  paper: {fileID: 0}
+  paperEnvironment: 1
+  monochromeContrast: 1.15
+  filmGrain: 0.006
+  vignette: 0.12
+  shadowIntensity: 0.45
+  highlightBloom: 0.025
+  monochromeDither: 0
   outlinePixels: 2.7
   outlineStrength: 0.95
   outlineDistance: 65

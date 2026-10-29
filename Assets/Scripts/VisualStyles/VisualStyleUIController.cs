@@ -22,6 +22,11 @@ namespace Mavis.VisualStyles
         readonly List<Image> borders = new List<Image>();
         GameObject panel, gallery, comparisonView;
         Text intensityText, subtitle;
+        GameObject detailPanel;
+        Button detailsButton;
+        readonly Slider[] detailSliders = new Slider[4];
+        readonly Text[] detailLabels = new Text[4];
+        public IReadOnlyList<Slider> DetailSliders => detailSliders;
         Selectable previousSelection;
         Transform owner;
         readonly Color parchment = new Color(.90f, .86f, .76f);
@@ -44,6 +49,15 @@ namespace Mavis.VisualStyles
         {
             panel.SetActive(false); closedFrame = Time.frameCount;
             if (previousSelection && previousSelection.IsActive()) previousSelection.Select();
+        }
+        void OnEnable()
+        {
+            instance = this;
+            if (panel && styleButtons.Count == 0)
+            {
+                bool open = panel.activeSelf; panel.SetActive(false); Destroy(panel); Build(); panel.SetActive(open);
+            }
+            if (panel) { VisualStyleManager.Changed -= Refresh; VisualStyleManager.Changed += Refresh; Refresh(); }
         }
         void Update()
         {
@@ -100,27 +114,48 @@ namespace Mavis.VisualStyles
             var presets = VisualStyleManager.Instance.Presets;
             for (int i = 0; i < presets.Count; i++)
             {
-                var preset = presets[i]; float x = (i - (presets.Count - 1) * .5f) * 700;
-                var card = Rect(gallery.transform, preset.id, new Vector2(664, 546), new Vector2(x, 28));
+                var preset = presets[i]; float x = (i - (presets.Count - 1) * .5f) * 350;
+                var card = Rect(gallery.transform, preset.id, new Vector2(342, 440), new Vector2(x, 75));
                 var border = card.gameObject.AddComponent<Image>(); border.color = GameUITheme.Gray(.32f); borders.Add(border);
                 var hover = card.gameObject.AddComponent<VisualStyleCardHover>();
                 hover.entered = () => border.color = VisualStyleManager.Instance.Current == preset ? parchment : GameUITheme.Gray(.58f);
                 hover.exited = Refresh;
-                var body = Rect(card, "Surface", new Vector2(660, 542), Vector2.zero); GameUITheme.Image(body, GameUITheme.Gray(.045f));
-                Picture(body, "Actual scene preview", preset.preview, new Vector2(640, 360), new Vector2(0, 81));
-                Label(body, preset.displayName, 28, new Vector2(0, -131), new Vector2(610, 42)).color = parchment;
-                Label(body, preset.description, 17, new Vector2(0, -178), new Vector2(590, 54)).color = GameUITheme.Secondary;
-                var button = Button(body, "SELECT", new Vector2(0, -235), new Vector2(610, 46), () => VisualStyleManager.Instance.Select(preset.id));
+                var body = Rect(card, "Surface", new Vector2(338, 436), Vector2.zero); GameUITheme.Image(body, GameUITheme.Gray(.045f));
+                Picture(body, "Actual scene preview", preset.preview, new Vector2(320, 180), new Vector2(0, 110));
+                Label(body, preset.displayName, 22, new Vector2(0, -10), new Vector2(312, 34)).color = parchment;
+                Label(body, preset.description, 17, new Vector2(0, -78), new Vector2(304, 88)).color = GameUITheme.Secondary;
+                var button = Button(body, "SELECT", new Vector2(0, -174), new Vector2(306, 44), () => VisualStyleManager.Instance.Select(preset.id));
                 styleButtons.Add(button); captions.Add(button.GetComponentInChildren<Text>());
             }
-            Button(gallery.transform, "COMPARE STYLES", new Vector2(0, -307), new Vector2(340, 54), () => ShowComparison(true));
-            intensityText = Label(gallery.transform, "STYLE INTENSITY", 16, new Vector2(-205, -375), new Vector2(320, 32));
-            IntensitySlider = Slider(gallery.transform, "Style intensity", new Vector2(350, 34), new Vector2(115, -375));
+            Button(gallery.transform, "COMPARE STYLES", new Vector2(0, -220), new Vector2(340, 54), () => ShowComparison(true));
+            intensityText = Label(gallery.transform, "STYLE INTENSITY", 16, new Vector2(-205, -290), new Vector2(320, 32));
+            IntensitySlider = Slider(gallery.transform, "Style intensity", new Vector2(350, 34), new Vector2(115, -290));
             IntensitySlider.minValue = .4f; IntensitySlider.maxValue = 1;
             IntensitySlider.onValueChanged.AddListener(value => VisualStyleManager.Instance.SetIntensity(value));
-            Label(gallery.transform, "Reference captures use 85% intensity. Pixel Style is available in Graphics.", 16, new Vector2(0, -428), new Vector2(1050, 32)).color = GameUITheme.Secondary;
+            Label(gallery.transform, "Reference captures use 85% intensity. Pixel Style is available in Graphics.", 16, new Vector2(0, -470), new Vector2(1050, 32)).color = GameUITheme.Secondary;
+            detailsButton = Button(gallery.transform, "DETAILS", new Vector2(540, -290), new Vector2(220, 44), () => detailPanel.SetActive(!detailPanel.activeSelf));
+            detailPanel = Rect(gallery.transform, "Style details", new Vector2(1400, 124), new Vector2(0, -395)).gameObject;
+            for (int i = 0; i < 4; i++)
+            {
+                int index = i; float x = (i - 1.5f) * 350;
+                detailLabels[i] = Label(detailPanel.transform, "", 16, new Vector2(x, 22), new Vector2(320, 34));
+                detailSliders[i] = Slider(detailPanel.transform, "Detail " + i, new Vector2(285, 34), new Vector2(x, -20));
+                detailSliders[i].onValueChanged.AddListener(value => VisualStyleManager.Instance.SetDetail(index, value));
+            }
+            detailPanel.SetActive(false);
             BuildComparison(sheet);
             VisualStyleManager.Changed += Refresh; panel.SetActive(false);
+        }
+        static Dropdown StyleChoice(Transform parent, string name, Vector2 position, int selected)
+        {
+            var go = DefaultControls.CreateDropdown(new DefaultControls.Resources()); go.name = name; go.transform.SetParent(parent, false);
+            var rect = go.GetComponent<RectTransform>(); rect.anchorMin = rect.anchorMax = new Vector2(.5f,.5f); rect.sizeDelta = new Vector2(370,44); rect.anchoredPosition = position;
+            foreach (var text in go.GetComponentsInChildren<Text>(true)) { text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); text.fontSize = 19; text.color = Color.white; if (Pixel360Rendering.IsActive) text.material = PixelStyleUI.NativeTextMaterial; }
+            foreach (var image in go.GetComponentsInChildren<Image>(true)) image.color = image.name == "Arrow" || image.name.Contains("Checkmark") ? GameUITheme.Foreground : GameUITheme.Gray(.16f);
+            var dropdown = go.GetComponent<Dropdown>(); dropdown.ClearOptions();
+            var names = new List<string>(); foreach (var p in VisualStyleManager.Instance.Presets) names.Add(p.displayName);
+            dropdown.AddOptions(names); dropdown.SetValueWithoutNotify(selected); dropdown.template.sizeDelta = new Vector2(0,180);
+            var item = dropdown.template.GetComponentInChildren<Toggle>(true); if (item) item.GetComponent<RectTransform>().sizeDelta = new Vector2(0,34); return dropdown;
         }
         void BuildComparison(RectTransform sheet)
         {
@@ -137,9 +172,12 @@ namespace Mavis.VisualStyles
             Label(divider.handleRect, "||", 21, Vector2.zero, new Vector2(40, 54)).gameObject.AddComponent<Outline>();
             Comparison = comparisonView.AddComponent<VisualStyleComparisonController>();
             Comparison.leftMask = mask; Comparison.leftImage = left.rectTransform; Comparison.imageArea = area; Comparison.divider = divider;
+            Comparison.leftPicture = left; Comparison.rightPicture = darkImage;
+            Comparison.leftStyle = StyleChoice(comparisonView.transform, "Left Style", new Vector2(-420,378), 0);
+            Comparison.rightStyle = StyleChoice(comparisonView.transform, "Right Style", new Vector2(420,378), 1);
             divider.SetValueWithoutNotify(.5f); Comparison.Initialize();
-            Label(comparisonView.transform, "REALISTIC", 18, new Vector2(-480, 378), new Vector2(300, 28));
-            Label(comparisonView.transform, "DARK FAIRYTALE", 18, new Vector2(480, 378), new Vector2(300, 28));
+            Label(comparisonView.transform, "LEFT STYLE", 14, new Vector2(-420, 420), new Vector2(300, 24));
+            Label(comparisonView.transform, "RIGHT STYLE", 14, new Vector2(420, 420), new Vector2(300, 24));
             Button(comparisonView.transform, "BACK TO STYLES", new Vector2(0, -390), new Vector2(330, 48), () => ShowComparison(false));
             Label(comparisonView.transform, "Drag the divider, or select it and use Left / Right.", 16, new Vector2(0, -435), new Vector2(900, 28)).color = GameUITheme.Secondary;
             comparisonView.SetActive(false);
@@ -162,7 +200,17 @@ namespace Mavis.VisualStyles
                 GameUITheme.StyleButton(styleButtons[i], selected);
             }
             IntensitySlider.SetValueWithoutNotify(manager.Intensity);
-            IntensitySlider.interactable = manager.Current && manager.Current.illustrated;
+            IntensitySlider.interactable = manager.Current && manager.Current.Stylized;
+            var mode = manager.Current.Mode;
+            bool advanced = mode == VisualStyleMode.Origami || mode == VisualStyleMode.Monochrome;
+            var names = mode == VisualStyleMode.Origami ? new[] { "Paper texture", "Fold shading", "Matte surface", "Paper edges" } : new[] { "Contrast", "Film grain", "Vignette", "Shadow depth" };
+            for (int i = 0; i < 4; i++)
+            {
+                detailSliders[i].SetValueWithoutNotify(manager.Details[i]); detailSliders[i].interactable = advanced;
+                detailLabels[i].text = names[i] + "  " + (mode == VisualStyleMode.Monochrome && i == 0 ? Mathf.Lerp(.7f,1.6f,manager.Details[i]).ToString("F2") + "x" : Mathf.RoundToInt(manager.Details[i]*100) + "%");
+            }
+            detailsButton.gameObject.SetActive(advanced);
+            if (!advanced) detailPanel.SetActive(false);
             intensityText.text = "STYLE INTENSITY  " + Mathf.RoundToInt(manager.Intensity * 100) + "%";
         }
         public static void InstallMainMenu(MainMenuController menu)

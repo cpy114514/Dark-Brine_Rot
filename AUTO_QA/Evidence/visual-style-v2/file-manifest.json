@@ -1,0 +1,278 @@
+[
+  {
+    "status": " M",
+    "path": "AUTO_QA/ANIMATION_REVIEW.md"
+  },
+  {
+    "status": " M",
+    "path": "AUTO_QA/BUG_REPORT.md"
+  },
+  {
+    "status": " M",
+    "path": "AUTO_QA/NEXT_TASK.md"
+  },
+  {
+    "status": " M",
+    "path": "AUTO_QA/PROGRESS.md"
+  },
+  {
+    "status": " M",
+    "path": "AUTO_QA/TEST_RESULTS.md"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Ocean/ProceduralOcean.shader"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Ocean/ProceduralSky.shader"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Resources/VisualStyles/Presets/dark-fairytale.asset"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Resources/VisualStyles/Presets/realistic.asset"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Resources/VisualStyles/Previews/dark-fairytale.png"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Resources/VisualStyles/Previews/realistic.png"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Scripts/VisualStyles/VisualStyleComparisonController.cs"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Scripts/VisualStyles/VisualStyleManager.cs"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Scripts/VisualStyles/VisualStylePreset.cs"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Scripts/VisualStyles/VisualStyleRendererFeature.cs"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Scripts/VisualStyles/VisualStyleSettings.cs"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Scripts/VisualStyles/VisualStyleUIController.cs"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Shaders/DarkFairytale.shader"
+  },
+  {
+    "status": " M",
+    "path": "Assets/Shaders/EnvironmentVisualStyle.hlsl"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/comparison-dropdown-native.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/comparison-ui.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/film-contrast-high.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/film-contrast-low.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/final-native-state.json"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/gallery-native.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/main-menu.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/mobile-forward-monochrome.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/mobile-forward-origami.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/native-dark-fairytale.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/native-monochrome.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/native-origami.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/native-realistic.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/overlay-native-color-proof.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/overlay-pixel-color-proof.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/overlay-verification.json"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/paper-fold-full.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/paper-fold-zero.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/pixel360-monochrome.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/pixel360-origami.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/pressure-off-monochrome.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/pressure-off-origami.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/pressure-on-monochrome.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/pressure-on-origami.png"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/preview-provenance.json"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/rendering-verification.json"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/safety.json"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/verification.json"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Editor/VisualStyleSetupV2.cs"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Editor/VisualStyleSetupV2.cs.meta"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Presets/monochrome.asset"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Presets/monochrome.asset.meta"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Presets/origami.asset"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Presets/origami.asset.meta"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Previews/monochrome.png"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Previews/monochrome.png.meta"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Previews/origami.png"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Previews/origami.png.meta"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Profiles.meta"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Profiles/Paper.asset"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Resources/VisualStyles/Profiles/Paper.asset.meta"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Scripts/VisualStyles/PaperMaterialProfile.cs"
+  },
+  {
+    "status": "??",
+    "path": "Assets/Scripts/VisualStyles/PaperMaterialProfile.cs.meta"
+  },
+  {
+    "status": "??",
+    "path": "Documentation/VisualStyleSystem-V2.md"
+  },
+  {
+    "status": "??",
+    "path": "Tools/CaptureVisualStylesV2.cs"
+  },
+  {
+    "status": "??",
+    "path": "Tools/VerifyVisualStyleRenderingV2.cs"
+  },
+  {
+    "status": "??",
+    "path": "Tools/VerifyVisualStylesV2.cs"
+  },
+  {
+    "status": "??",
+    "path": "Tools/VisualStyleV2OverlayProbe.cs"
+  },
+  {
+    "status": "??",
+    "path": "Tools/VisualStyleV2Workspace.cs"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/visual-style-v2/file-manifest.json"
+  }
+]
