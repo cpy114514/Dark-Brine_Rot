@@ -1,0 +1,945 @@
+{
+  "passed": true,
+  "changedPixels": 2073600,
+  "worldReady": true,
+  "traces": [
+    {
+      "phase": "native-world",
+      "frames": 34,
+      "inclusive": [
+        {
+          "name": "Main Thread",
+          "ms": 10.141220541561351
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 8.4607411971134265
+        },
+        {
+          "name": "UpdateScene",
+          "ms": 8.3188999961404235
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 1.7237676456348066
+        },
+        {
+          "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+          "ms": 1.6787441092378952
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 1.6777205782778122
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 1.551773519912625
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 1.5060705933719873
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 1.462061766315909
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::GrassRenderSubmission.LateUpdate() [Invoke]",
+          "ms": 1.4121823416036718
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 1.4004999925108517
+        },
+        {
+          "name": "TimeUpdate.WaitForLastPresentationAndUpdateTime",
+          "ms": 1.3993647118263386
+        },
+        {
+          "name": "GfxDeviceD3D12.WaitForLastPresentation",
+          "ms": 1.3917176520712127
+        },
+        {
+          "name": "GfxDeviceD3D12.WaitForLastPresentation.WaitForGPU",
+          "ms": 1.3900676483617109
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.3072088203009438
+        },
+        {
+          "name": "Gfx.EndAsyncJobFrame",
+          "ms": 1.2984588293243979
+        },
+        {
+          "name": "WaitForRenderJobs",
+          "ms": 1.2977352837436176
+        },
+        {
+          "name": "CoroutinesDelayedCalls",
+          "ms": 1.2718882300312757
+        },
+        {
+          "name": "Update.ScriptRunDelayedDynamicFrameRate",
+          "ms": 1.2697470565831548
+        },
+        {
+          "name": "EditorLoop",
+          "ms": 1.2322911746142542
+        },
+        {
+          "name": "Idle",
+          "ms": 1.1921823491301278
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Owned performance018 camera",
+          "ms": 1.0254794096245485
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.58974999709137
+        },
+        {
+          "name": "CullScriptable",
+          "ms": 0.42754411522079916
+        },
+        {
+          "name": "Profiler.FlushCounters",
+          "ms": 0.41734999856528116
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.39824705877724814
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.35436764534781962
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Owned performance018 camera",
+          "ms": 0.2450088240644511
+        },
+        {
+          "name": "Inl_RecordRenderGraph",
+          "ms": 0.23157647164428935
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.22800588125691695
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.22623823363991344
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.22344705813071308
+        },
+        {
+          "name": "EngineJob",
+          "ms": 0.20720588153948055
+        },
+        {
+          "name": "Update.ScriptRunBehaviourUpdate",
+          "ms": 0.20677058749339161
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.20600000023841858
+        },
+        {
+          "name": "EndRenderQueueExtraction",
+          "ms": 0.18462058764827602
+        },
+        {
+          "name": "SceneCulling",
+          "ms": 0.17369117631631739
+        },
+        {
+          "name": "CullResults.CreateSharedRendererScene",
+          "ms": 0.16312352918526707
+        },
+        {
+          "name": "RenderPlayModeViewCameras",
+          "ms": 0.14116176524583032
+        },
+        {
+          "name": "LOD.ComputeLOD",
+          "ms": 0.13252352879327886
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.11632646970889148
+        },
+        {
+          "name": "FixedUpdate.PhysicsFixedUpdate",
+          "ms": 0.11550294213435229
+        },
+        {
+          "name": "RenderLoop.ScheduleDraw",
+          "ms": 0.096667646375649119
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.08529117593870443
+        },
+        {
+          "name": "Physics.RunSimulationStage",
+          "ms": 0.084855882122236145
+        },
+        {
+          "name": "Physics.Simulate",
+          "ms": 0.084752940956284023
+        },
+        {
+          "name": "PxScene.simulate",
+          "ms": 0.084308823241907013
+        },
+        {
+          "name": "Director.ProcessFrame",
+          "ms": 0.080782352530471085
+        },
+        {
+          "name": "Animators.Update",
+          "ms": 0.079582352684262919
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.07831176512819879
+        },
+        {
+          "name": "PostLateUpdate.UpdateAllRenderers",
+          "ms": 0.0763617647702203
+        },
+        {
+          "name": "Shadows.PrepareDrawShadows",
+          "ms": 0.075629411374821376
+        },
+        {
+          "name": "PrepareSceneCullingParameters",
+          "ms": 0.070417647085645615
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoAI.Update() [Invoke]",
+          "ms": 0.068470588173059857
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.066261764287072075
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.065911764333791589
+        },
+        {
+          "name": "EarlyUpdate.PollPlayerConnection",
+          "ms": 0.062558823429486335
+        },
+        {
+          "name": "PlayerConnection.Poll",
+          "ms": 0.062073529314468891
+        },
+        {
+          "name": "CullSceneDynamicObjects",
+          "ms": 0.057852940579109335
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationEnd",
+          "ms": 0.056302941459066724
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.04952352899400627
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.047655882094712818
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.LateUpdate() [Invoke]",
+          "ms": 0.047370589422130516
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationBegin",
+          "ms": 0.046479411313638967
+        },
+        {
+          "name": "Inl_Setup Forward Lights",
+          "ms": 0.044414705870782625
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.043661764548981893
+        },
+        {
+          "name": "UnityEngine.IMGUIModule.dll!UnityEngine::GUIUtility.BeginGUI() [Invoke]",
+          "ms": 0.043314705630216527
+        },
+        {
+          "name": "Update.ScriptRunDelayedTasks",
+          "ms": 0.043035293874495173
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.042447058596093594
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]",
+          "ms": 0.04236764690893538
+        }
+      ],
+      "self": [
+        {
+          "name": "GfxDeviceD3D12.WaitForLastPresentation.WaitForGPU",
+          "ms": 1.3900676483617109
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.3072088203009438
+        },
+        {
+          "name": "EditorLoop",
+          "ms": 1.2322911746142542
+        },
+        {
+          "name": "Idle",
+          "ms": 1.1921823491301278
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 0.81024705425336241
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.58974999709137
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.39824705877724814
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.314417650394128
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.15833235180231414
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.11632646970889148
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.08529117593870443
+        },
+        {
+          "name": "UpdateScene",
+          "ms": 0.080361771505575982
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.07831176512819879
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.065685293751705426
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoAI.Update() [Invoke]",
+          "ms": 0.062958823524026875
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Owned performance018 camera",
+          "ms": 0.057923529808142443
+        },
+        {
+          "name": "RenderLoop.ScheduleDraw",
+          "ms": 0.048973529161337542
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.046635293867439032
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 0.04570292654063772
+        },
+        {
+          "name": "CullSceneDynamicObjects",
+          "ms": 0.0447117641040891
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 0.041438241005380405
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]",
+          "ms": 0.041141176343979381
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.039782352553790104
+        },
+        {
+          "name": "PxScene.simulate",
+          "ms": 0.0374441176198375
+        },
+        {
+          "name": "EditorConnection.CheckForIncomingConnections",
+          "ms": 0.033358823453240538
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.033241176155998427
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.ComputeShadowCasterCullingInfos",
+          "ms": 0.030479411539786002
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.029932351088064024
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.029679412299789393
+        },
+        {
+          "name": "CalculateLODJob",
+          "ms": 0.028488234972909969
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.027482352859806269
+        },
+        {
+          "name": "EditorConnection.PollAllCustomMessages",
+          "ms": 0.025847058455624124
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 0.024552944880269933
+        },
+        {
+          "name": "AssetDatabase.GetGUIDFromAssetPathV2",
+          "ms": 0.024247058636426705
+        },
+        {
+          "name": "Main Thread",
+          "ms": 0.023917583065614215
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.023044117247670384
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.022638235366791964
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 0.021950001425198828
+        },
+        {
+          "name": "Inl_ColorGradingLUT",
+          "ms": 0.02151470576577327
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.021470588261496126
+        },
+        {
+          "name": "MeshSkinning.Update",
+          "ms": 0.019870588219526003
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::RifleAmmoPickup.Update() [Invoke]",
+          "ms": 0.019432352931129142
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteBeginRenderpassCommand",
+          "ms": 0.01900882342734429
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.018999999951013119
+        },
+        {
+          "name": "Assembly-CSharp.dll!::OceanWorld.LateUpdate() [Invoke]",
+          "ms": 0.01883823529137504
+        }
+      ]
+    },
+    {
+      "phase": "pixel-world-four-card-gallery",
+      "frames": 34,
+      "inclusive": [
+        {
+          "name": "Main Thread",
+          "ms": 9.1566734173718629
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 7.259926397276371
+        },
+        {
+          "name": "UpdateScene",
+          "ms": 7.0788617554832909
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 1.9843705815043957
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 1.8796176430495346
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 1.7964058656190687
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 1.7273352882441353
+        },
+        {
+          "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+          "ms": 1.6779852930237265
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 1.6772117579684538
+        },
+        {
+          "name": "Gfx.EndAsyncJobFrame",
+          "ms": 1.5261323489822269
+        },
+        {
+          "name": "WaitForRenderJobs",
+          "ms": 1.5253147115348411
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::GrassRenderSubmission.LateUpdate() [Invoke]",
+          "ms": 1.4274088144302368
+        },
+        {
+          "name": "Idle",
+          "ms": 1.4245882362695685
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 1.417438237106099
+        },
+        {
+          "name": "EditorLoop",
+          "ms": 1.3712382272762411
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Owned performance018 camera",
+          "ms": 1.1650411714525784
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.1127500008134281
+        },
+        {
+          "name": "CoroutinesDelayedCalls",
+          "ms": 1.0746529386299646
+        },
+        {
+          "name": "Update.ScriptRunDelayedDynamicFrameRate",
+          "ms": 1.07270881762687
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.60563234996516258
+        },
+        {
+          "name": "CullScriptable",
+          "ms": 0.49634117589277382
+        },
+        {
+          "name": "Profiler.FlushCounters",
+          "ms": 0.47645588131511912
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.4557852964190876
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.41887941079981189
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Owned performance018 camera",
+          "ms": 0.29327353002393947
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.27275588012793484
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.25162646963315849
+        },
+        {
+          "name": "Inl_RecordRenderGraph",
+          "ms": 0.25068235178204146
+        },
+        {
+          "name": "EngineJob",
+          "ms": 0.24981764581196544
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.24499117626863368
+        },
+        {
+          "name": "EndRenderQueueExtraction",
+          "ms": 0.20681764700395219
+        },
+        {
+          "name": "SceneCulling",
+          "ms": 0.2032999987987911
+        },
+        {
+          "name": "CullResults.CreateSharedRendererScene",
+          "ms": 0.18168823333347545
+        },
+        {
+          "name": "RenderPlayModeViewCameras",
+          "ms": 0.18033529248307734
+        },
+        {
+          "name": "Update.ScriptRunBehaviourUpdate",
+          "ms": 0.16951176305027568
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.16891764674116583
+        },
+        {
+          "name": "LOD.ComputeLOD",
+          "ms": 0.15936764581676791
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.11227058794568567
+        },
+        {
+          "name": "RenderLoop.ScheduleDraw",
+          "ms": 0.10644411692320478
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.098217646810500062
+        },
+        {
+          "name": "Shadows.PrepareDrawShadows",
+          "ms": 0.086382352308753657
+        },
+        {
+          "name": "PrepareSceneCullingParameters",
+          "ms": 0.086344117517856991
+        },
+        {
+          "name": "CullSceneDynamicObjects",
+          "ms": 0.076444117544109333
+        },
+        {
+          "name": "FixedUpdate.PhysicsFixedUpdate",
+          "ms": 0.076285293873618626
+        },
+        {
+          "name": "PostLateUpdate.UpdateAllRenderers",
+          "ms": 0.076149999985800076
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.0732088231426828
+        },
+        {
+          "name": "Director.ProcessFrame",
+          "ms": 0.0729088232953526
+        },
+        {
+          "name": "Animators.Update",
+          "ms": 0.071670587831998575
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.070844117223339928
+        },
+        {
+          "name": "Physics.RunSimulationStage",
+          "ms": 0.057799999766490036
+        },
+        {
+          "name": "Physics.Simulate",
+          "ms": 0.057750000234912426
+        },
+        {
+          "name": "PxScene.simulate",
+          "ms": 0.05744117629878661
+        },
+        {
+          "name": "Bloom",
+          "ms": 0.054944117389181084
+        },
+        {
+          "name": "Inl_Setup Forward Lights",
+          "ms": 0.052144117434235179
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoAI.Update() [Invoke]",
+          "ms": 0.052061764413819593
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.051432352622642237
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.051252940998357886
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.051017646842143112
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationEnd",
+          "ms": 0.050311764592633527
+        },
+        {
+          "name": "UnityEngine.IMGUIModule.dll!UnityEngine::GUIUtility.BeginGUI() [Invoke]",
+          "ms": 0.048323529272559375
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.LateUpdate() [Invoke]",
+          "ms": 0.046973529811058304
+        },
+        {
+          "name": "CullSendEvents",
+          "ms": 0.044005882323664779
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationBegin",
+          "ms": 0.043529411668286604
+        },
+        {
+          "name": "PostLateUpdate.PlayerUpdateCanvases",
+          "ms": 0.04350000017267816
+        },
+        {
+          "name": "CalculateLODJob",
+          "ms": 0.042785294080043543
+        },
+        {
+          "name": "EditorResources.Load",
+          "ms": 0.0411441172747051
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.039970588062073258
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.039576470304061383
+        },
+        {
+          "name": "Inl_UpdateVolumeFramework",
+          "ms": 0.038214705446187186
+        },
+        {
+          "name": "Draw Main Light Shadowmap",
+          "ms": 0.03806176425560432
+        }
+      ],
+      "self": [
+        {
+          "name": "Idle",
+          "ms": 1.4245882362695685
+        },
+        {
+          "name": "EditorLoop",
+          "ms": 1.3712382272762411
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.1127500008134281
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 0.81150588715044092
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.60563234996516258
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.4557852964190876
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.30099117018599986
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.17419705892782933
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.11227058794568567
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.098217646810500062
+        },
+        {
+          "name": "UpdateScene",
+          "ms": 0.085850009749051159
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 0.083211777430466
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Owned performance018 camera",
+          "ms": 0.071473527456606359
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.070611764288461179
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 0.068997059556696674
+        },
+        {
+          "name": "CullSceneDynamicObjects",
+          "ms": 0.061226470508914
+        },
+        {
+          "name": "RenderLoop.ScheduleDraw",
+          "ms": 0.054961764412891009
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.051017646842143112
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoAI.Update() [Invoke]",
+          "ms": 0.047305882072952742
+        },
+        {
+          "name": "CalculateLODJob",
+          "ms": 0.042785294080043543
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.04129705852007165
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 0.039867636402050266
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.038811764436746561
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.037576470346025681
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine::UnitySynchronizationContext.ExecuteTasks() [Invoke]",
+          "ms": 0.035873529167635268
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.034135293234773115
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.ComputeShadowCasterCullingInfos",
+          "ms": 0.03208823507542119
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.030491176499601674
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.027773528766000012
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.026891176259489252
+        },
+        {
+          "name": "VolumeManager.Update",
+          "ms": 0.026729411671540755
+        },
+        {
+          "name": "PxScene.simulate",
+          "ms": 0.026035294184325989
+        },
+        {
+          "name": "AssetDatabase.GetGUIDFromAssetPathV2",
+          "ms": 0.025835293928941933
+        },
+        {
+          "name": "UnityEngine.UIModule.dll!UnityEngine::Canvas.SendPreWillRenderCanvases() [Invoke]",
+          "ms": 0.025335294046860381
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.0242294116775584
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.023794118343015296
+        },
+        {
+          "name": "Main Thread",
+          "ms": 0.023523499992306289
+        },
+        {
+          "name": "Inl_ColorGradingLUT",
+          "ms": 0.023326470571405748
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteBeginRenderpassCommand",
+          "ms": 0.022708823339438394
+        },
+        {
+          "name": "RenderPlayModeViewCameras",
+          "ms": 0.022094116540221663
+        },
+        {
+          "name": "Profiler.CollectUIStats",
+          "ms": 0.021567646835619063
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.021338235335433102
+        },
+        {
+          "name": "MeshSkinning.Update",
+          "ms": 0.020897058501278105
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.020202941440776855
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteInitializeResources",
+          "ms": 0.019885293922818487
+        }
+      ]
+    }
+  ],
+  "hardware": "NVIDIA GeForce RTX 4060",
+  "scope": "Editor CPU discovery, actual first-island Environment/Lighting; native1920x1080 and existing pixel plus gallery, no authored gameplay actors; profiler overhead included"
+}

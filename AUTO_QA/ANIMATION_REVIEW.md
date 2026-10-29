@@ -97,3 +97,7 @@ QA-030 is repaired with native object/state/submission evidence: 636 renderers r
 ## 2026-10-29 — Visual Style System V2 compatibility
 
 No models, UVs, rigs, clips, Animator controllers, colliders or combat timings changed. Native keyboard/mouse drives Sahur movement/melee in all four modes. Each mode changes its look during a real active action without changing same-frame actor position, Animator state or normalized time. Six existing Chicken Bro skeleton poses advance during live profiles. Actual pressure rings remain visible in Origami/Monochrome with reversible off/on pixel controls. This establishes rendering/state compatibility, not smoother animation or full boss anticipation acceptance. Matched first-island previews use identical frozen poses; runtime CombatTest captures and composited UI are retained under Evidence/visual-style-v2.
+
+## 2026-10-28 (Vancouver) — Batch018 — foliage CPU optimization
+
+No animation, camera behavior, clip, controller, gameplay or art change. The original and optimized foliage math produce identical classifications across16 actual camera configurations, including custom culling matrices, with unchanged property-array contents. Native first-island coast renders remain populated; water/weather times differ between captures, so images are not a pixel identity or animation-smoothness test. No new combat animation acceptance is claimed.

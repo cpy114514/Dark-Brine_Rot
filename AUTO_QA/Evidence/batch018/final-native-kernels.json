@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "checks": 192168,
+  "views": 16,
+  "boxes": 12000,
+  "frustumQueriesPerSample": 96000,
+  "legacyFrustumMs": {
+    "median": 10.1556,
+    "min": 9.7366,
+    "max": 12.0232,
+    "samples": 15
+  },
+  "cachedFrustumMs": {
+    "median": 5.6464,
+    "min": 5.3761,
+    "max": 7.6163,
+    "samples": 15
+  },
+  "propertyCallsPerSample": 4800,
+  "stringPropertyMs": {
+    "median": 0.4386,
+    "min": 0.4344,
+    "max": 0.4786,
+    "samples": 15
+  },
+  "idPropertyMs": {
+    "median": 0.1688,
+    "min": 0.162,
+    "max": 0.1935,
+    "samples": 15
+  },
+  "checksum": 0,
+  "scope": "Paired warmed Editor Mono kernels in the same ephemeral assembly; not whole-frame or Player FPS"
+}

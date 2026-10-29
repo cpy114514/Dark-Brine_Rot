@@ -317,3 +317,15 @@ Final console cursor 1534 contains only the known Environment missing-prefab gro
 | Performance | RTX4060/D3D12,960×540,60 actual renders/style,6 active enemies. GPU medians15.845/15.813/16.049/15.901ms. Editor pacing/AI variance limits attribution; no standalone/low-end or FPS-improvement claim. |
 
 Exact accepted evidence is Evidence/visual-style-v2/{verification,rendering-verification,overlay-verification,preview-provenance,final-native-state,safety}.json plus retained native PNGs. Earlier camera-space UI images are rejected and not included. Geometry/rig/UV/animation/collider/prefab/scene source assets remain unchanged. Detailed architecture/file list/remaining qualification: Documentation/VisualStyleSystem-V2.md.
+
+## 2026-10-28 (Vancouver) — Batch018 — foliage CPU
+
+| Coverage | Result |
+|---|---|
+| Native camera and classification | PASS192168 final cases/assertions, including192000 bounds cases over16 actual camera configurations, custom culling matrices, refreshed planes, nonfinite/zero padding and four production material arrays. Earlier takes not double-counted. |
+| Paired CPU kernels | PASS15 alternating warmed samples/path:96000 queries10.1556→5.6464ms;4800 property calls.4386→.1688ms. Same compiler/workload; inner-kernel scope. |
+| Actual scene discovery/regression | PASS34 main-thread frames/phase and source; World.GrassVisibility native1.400→1.100ms; pixel/gallery1.417→1.108ms. Separate short Editor windows, not a Player FPS claim. |
+| Native rendering control | PASS actual1920×1080 coast image before/after; culling-mask-zero control changes2073600 pixels for each. PNGs inspected; live weather/water means not pixel-identical. |
+| Compile/safety | PASS source completed failed=false/errors=[]; final up_to_date. Five original scenes clean/stopped; profiler/test marker clear; fresh saves unchanged; original settings restored. |
+
+Accepted evidence: Evidence/batch018/proof.json, final-native-kernels.json, before.json, after.json, final-native-state.json and native visible/empty PNGs. No shader/art/model/rig/animation/collider/scene edit, zero-allocation, GPU or overall FPS improvement claim. Existing606 missing plant instances retained. Details: Documentation/Performance-Batch018.md.

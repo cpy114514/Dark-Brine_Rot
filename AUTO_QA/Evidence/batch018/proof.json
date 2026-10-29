@@ -1,0 +1,59 @@
+{
+  "passed": true,
+  "baseline": "d6bba4f / Plastic cs200",
+  "acceptedFinalChecks": 192168,
+  "pairedKernelFrustumReductionPercent": 44.401118594666976,
+  "pairedKernelPropertyReductionPercent": 61.513907888736895,
+  "sceneTraces": [
+    {
+      "phase": "native-world",
+      "beforeTraceFrames": 34,
+      "afterTraceFrames": 34,
+      "beforeVisibilityMs": 1.4004999925108517,
+      "afterVisibilityMs": 1.1003029346466064,
+      "beforeVisibilitySelfMs": 0.8102470542533624,
+      "afterVisibilitySelfMs": 0.5191323486880506,
+      "beforeLateUpdateMs": 1.6787441092378952,
+      "afterLateUpdateMs": 1.3836205882184647
+    },
+    {
+      "phase": "pixel-world-four-card-gallery",
+      "beforeTraceFrames": 34,
+      "afterTraceFrames": 34,
+      "beforeVisibilityMs": 1.417438237106099,
+      "afterVisibilityMs": 1.1084235205369837,
+      "beforeVisibilitySelfMs": 0.8115058871504409,
+      "afterVisibilitySelfMs": 0.5317205825879628,
+      "beforeLateUpdateMs": 1.6779852930237265,
+      "afterLateUpdateMs": 1.4236205956515144
+    }
+  ],
+  "renderedWorldPositiveControl": {
+    "beforeChangedPixels": 2073600,
+    "afterChangedPixels": 2073600,
+    "pixels": 2073600
+  },
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "unchanged": true
+    }
+  ],
+  "productionCompile": "up_to_date; errors=[] on changed-source compile",
+  "limitations": [
+    "Editor CPU traces, separate short windows; includes profiler overhead and scene variation; not isolated GPU or whole-game FPS.",
+    "Environment includes authored NPC components seen in trace; Gameplay scene and player/input setup excluded. Older raw scope text saying no gameplay actors should be interpreted as no Gameplay scene.",
+    "Paired kernels share compiler/workload; microbenchmark reductions are not whole-frame reductions.",
+    "Time/water/weather advances between scene captures; pictures are not a pixel identity test. Classification equality is established by the numerical/native camera regression."
+  ],
+  "unrelatedPlasticPreserved": [
+    "ProjectSettings/EditorBuildSettings.asset (line-ending-only)",
+    "ProjectSettings/ShaderGraphSettings.asset",
+    "Assets/_Recovery/0.unity",
+    "Assets/_Recovery/0.unity.meta"
+  ]
+}
