@@ -154,3 +154,10 @@ A current seven-scene Mono Development Player completed1798 measured frames acro
 VERIFIED/FIXED:0.8m return-home threshold conflicted with4.5m patrol goals, causing158 direction reversals/240 intervals. Use6m outer/0.8m inner return hysteresis, separate patrol/repath timers and reset pooled state. Melee cooldown now integrates gravity and uses Idle instead of stationary running. Chicken visual offset lowered0.65m; final reversals2 and mean sole gap0.70665→0.07666m. Native captures inspected.
 
 User-requested duck enlargement:40% uniform visual/capsule growth, size-consistent reach/separation and compensated locomotion playback; damage/travel speed/windows preserved.27 native regression checks pass. The candidate tall-melee hit-volume change was rejected after correcting the fixture's scaled-player-sole placement; original Strike is byte-identical. Remaining measured limitation: occasional walk sole intersection about0.11m; full island crowd/precision foot planting pending. Details: Documentation/Enemy-Batch020.md.
+
+
+## 2026-10-29 — Batch021 — actual flock and diagnostic limitation
+
+No new gameplay defect confirmed. Actual first-island5 chicken+3 enlarged duck group passes360 sampled native frames across4 styles: max2 attackers,0 slot violations,0 missing ground,0 motor-sole penetrations deeper than0.35m and0 fixture-run exceptions. Ground clearance0.0508461–0.09234619m.
+
+Suspected per-access path-corner array allocation rejected: native getters return the same cached array and replanning invalidates it. No extra production cache added. Confirmed diagnostic limitation: GC.GetAllocatedBytesForCurrentThread returns0 even for native fresh arrays and256 managed byte-array allocations. All raw zero allocation readings are UNQUALIFIED; accepted proof uses null. No zero-allocation/FPS improvement claim. Batch020 precision visual foot contact remains open. Documentation/Flock-Batch021.md.

@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "sameReference": true,
+  "invalidated": true,
+  "cachedBytes": 0,
+  "freshBytes": 0,
+  "calls": 256,
+  "corners": 2,
+  "fields": [
+    {
+      "Name": "m_Ptr",
+      "type": "IntPtr"
+    },
+    {
+      "Name": "m_Corners",
+      "type": "Vector3[]"
+    }
+  ],
+  "scope": "Same Editor Mono/native NavMesh API, isolated in-memory box at(-1000,500,-1000); no scene or asset write. Repeated getters reuse a cached array; actual replanning invalidates it and provides a positive allocation control."
+}

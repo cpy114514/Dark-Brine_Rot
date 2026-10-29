@@ -1,0 +1,86 @@
+{
+  "batch": 21,
+  "baselineGit": "07ed6d9",
+  "baselinePlastic": 204,
+  "productionChanged": false,
+  "nativeFlock": {
+    "chickens": 5,
+    "ducks": 3,
+    "frames": 360,
+    "styles": 4,
+    "maxAttackers": 2,
+    "attackSlotViolations": 0,
+    "terrainPenetrationSamples": 0,
+    "missingGround": 0,
+    "minMotorSoleGap": 0.0508461,
+    "maxMotorSoleGap": 0.09234619,
+    "site": "(42.45, 62.64, 570.29)",
+    "terrain": "Sunset Island",
+    "runExceptions": 0
+  },
+  "steering": {
+    "nativePaths": 8,
+    "verifiedDirections": 8,
+    "pathCornerCounts": [
+      3,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "allocationMetricsQualified": false,
+    "allocationBytes": null,
+    "reason": "GC.GetAllocatedBytesForCurrentThread reports0 for both native fresh arrays and256 managed new byte[64] allocations. Raw report zeros are unavailable measurements, not zero allocation proof.",
+    "cacheIdentity": true,
+    "cacheInvalidation": true
+  },
+  "cleanup": {
+    "stopped": true,
+    "markerClear": true,
+    "clean": true,
+    "sceneMatch": true,
+    "savesUnchanged": true,
+    "scenes": [
+      {
+        "path": "Assets/Scenes/First Island/Main.unity",
+        "isLoaded": true,
+        "isActive": true,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Lighting.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Gameplay.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Environment.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Enemies.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      }
+    ]
+  },
+  "limits": [
+    "Protected diagnostic3.7m capsule target; no Sahur input/narrative progression/whole encounter victory.",
+    "Motor sole clearance is not skinned-mesh foot-plant acceptance; residual batch020 toe intersection remains open.",
+    "Orbit camera and4 native screenshots establish rendering in each mode, not flicker-free temporal or performance acceptance.",
+    "No FPS, GPU, allocation-free or speedup claim."
+  ],
+  "next": "Uncapped renderScale1 standalone timing with qualified controls, then longer combat/UI/tutorial and precision foot planting."
+}

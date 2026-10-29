@@ -358,3 +358,17 @@ Additional cleanup: build preload disk delta removed; five build-only text asset
 | Cleanup | Native five original scenes clean/stopped, actual encounter references current prefabs, both fresh saves unchanged, marker clear. Material side effect rolled back; unrelated Plastic files retained. |
 
 Remaining: measured walk sole intersection up to0.11088m and clearance up to0.14358m; no perfect foot-planting, full-island swarm, extended boss, UI or new performance acceptance. Before/after wandering poses differ. Historical failed fixture/candidate files are not acceptance. Read Documentation/Enemy-Batch020.md and Evidence/batch020/proof.json; final native run is qualified-final-regression.json.
+
+
+## 2026-10-29 — Batch021 — real terrain and availability controls
+
+| Coverage | Result |
+|---|---|
+| Native flock | PASS360 sampled frames,5 chicken+3 enlarged ducks,4 styles, max2 attackers;0 slot violations/ground misses/penetrations deeper than0.35m,0 fixture-run exceptions. |
+| Native steering | PASS8 actual paths/directions; one3-corner and seven2-corner paths. |
+| Visual evidence | Four actual1280×720 native PNGs inspected. Orbit camera/relocated protected capsule target; not actual Sahur input, narrative victory, temporal flicker or exact mesh-foot acceptance. |
+| Getter cache | PASS same array identity across repeated getters; actual replan invalidates the cache. No production optimization made. |
+| Allocation measurement | UNAVAILABLE: native fresh array and256 managed new byte[64] controls both report0. Raw steering/getter zeros rejected as allocation evidence; proof uses null. |
+| Cleanup | PASS original5 scenes clean/stopped, fresh saves unchanged, marker clear; own runtime objects/native NavMesh removed. Restore timeout completed and native readback checked. |
+
+No production code/assets changed; no new FPS/GC/speedup claim. External helper compiles/executes in the existing Editor. Evidence/batch021/proof.json qualifies the raw native report; rejected-counter-control.json is not accepted measurement. Small batch020 walk toe intersections and full combat/UI coverage remain.

@@ -1,0 +1,319 @@
+{
+  "completed": true,
+  "passed": true,
+  "site": "(42.45, 62.64, 570.29)",
+  "terrain": "Sunset Island",
+  "allocations": [
+    {
+      "actor": "ChickenBro(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 3,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.99, 0.00, 0.15)",
+      "nativeDirectionVerified": true
+    },
+    {
+      "actor": "ChickenBro(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 2,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.75, 0.00, 0.66)",
+      "nativeDirectionVerified": true
+    },
+    {
+      "actor": "ChickenBro(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 2,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.77, 0.00, 0.64)",
+      "nativeDirectionVerified": true
+    },
+    {
+      "actor": "ChickenBro(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 2,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.71, 0.00, 0.71)",
+      "nativeDirectionVerified": true
+    },
+    {
+      "actor": "ChickenBro(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 2,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.80, 0.00, 0.60)",
+      "nativeDirectionVerified": true
+    },
+    {
+      "actor": "LongLeggedDuck(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 2,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.79, 0.00, 0.61)",
+      "nativeDirectionVerified": true
+    },
+    {
+      "actor": "LongLeggedDuck(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 2,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.95, 0.00, 0.30)",
+      "nativeDirectionVerified": true
+    },
+    {
+      "actor": "LongLeggedDuck(Clone)",
+      "valid": true,
+      "calls": 256,
+      "corners": 2,
+      "allocatedBytes": 0,
+      "getterBytes": 0,
+      "emptyBytes": 0,
+      "direction": "(0.90, 0.00, 0.43)",
+      "nativeDirectionVerified": true
+    }
+  ],
+  "frames": 360,
+  "maxAttackers": 2,
+  "violations": 0,
+  "belowTerrain": 0,
+  "missingGround": 0,
+  "minGap": 0.0508461,
+  "maxGap": 0.09234619,
+  "phases": [
+    {
+      "style": "realistic",
+      "positions": [
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(43.13, 62.51, 566.86)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(43.67, 62.62, 568.71)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(45.82, 62.48, 571.03)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Lunge",
+          "position": "(43.33, 62.68, 570.97)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(41.64, 62.72, 573.70)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(37.32, 63.00, 575.03)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(35.57, 62.28, 568.95)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Lunge",
+          "position": "(39.21, 62.39, 567.46)",
+          "grounded": true
+        }
+      ]
+    },
+    {
+      "style": "dark-fairytale",
+      "positions": [
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(45.65, 62.54, 568.81)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(44.57, 62.59, 570.96)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(43.89, 62.50, 573.46)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(42.22, 62.74, 571.54)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Lunge",
+          "position": "(40.89, 62.81, 571.24)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Lunge",
+          "position": "(36.64, 62.33, 568.56)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(39.80, 61.87, 563.81)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(42.72, 62.58, 568.18)",
+          "grounded": true
+        }
+      ]
+    },
+    {
+      "style": "origami",
+      "positions": [
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(48.22, 62.10, 572.44)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(46.46, 62.17, 573.64)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(43.31, 62.60, 573.06)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(42.11, 62.75, 571.32)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(43.18, 62.65, 569.09)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(43.97, 62.18, 563.80)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(46.71, 62.42, 567.31)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Lunge",
+          "position": "(48.48, 62.29, 569.14)",
+          "grounded": true
+        }
+      ]
+    },
+    {
+      "style": "monochrome",
+      "positions": [
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(39.74, 62.88, 573.78)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(40.23, 62.82, 571.04)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(37.65, 62.69, 570.10)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Strike",
+          "position": "(38.56, 62.82, 570.90)",
+          "grounded": true
+        },
+        {
+          "name": "ChickenBro(Clone)",
+          "mode": "Chase",
+          "position": "(39.12, 62.30, 566.65)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Lunge",
+          "position": "(41.70, 62.43, 566.63)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(46.46, 62.44, 569.73)",
+          "grounded": true
+        },
+        {
+          "name": "LongLeggedDuck(Clone)",
+          "mode": "Chase",
+          "position": "(44.81, 62.20, 574.85)",
+          "grounded": true
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "scope": "Real Environment/Lighting terrain and scenery, matching native encounter NavMeshSurface geometry/volume, actual5 chicken+3 enlarged duck prefabs, protected3.7m diagnostic capsule target,90 native frames/style with orbit camera. Not narrative encounter/Sahur input/full combat or FPS acceptance."
+}
