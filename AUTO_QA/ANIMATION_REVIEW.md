@@ -117,3 +117,8 @@ Duck grows40%; Walk/Run state speeds divide by1.4 to retain world stride rate at
 ## 2026-10-29 — Batch021 — moving mixed flock in real terrain
 
 Native1280×720 Realistic/Dark Fairytale/Origami/Monochrome PNGs inspected after90 native frames per mode with an orbit camera.5 chicken+3 enlarged ducks animate/chase/attack on actual island terrain. Motor soles stay0.0508461–0.09234619m above sampled ground. No animation/controller/art or gameplay change. A protected capsule target substitutes for Sahur input; these captures do not qualify whole combat, precise mesh foot planting or flicker-free temporal behavior. Residual batch020 toe intersections remain. See Evidence/batch021 and Documentation/Flock-Batch021.md.
+
+
+## 2026-10-29 — Batch022 — standalone moving-camera matrix
+
+Four styles × coast/forest/boss vicinity,6s per phase, with8°/s orbit and real render fences. Four native1080 PNGs inspected; actual Sahur/world/boss visible. Proof captures pause orbit and compare visible/empty pixels outside measured windows. No authored animation/rig/model/controller/combat edit; camera changes only under opt-in diagnostics and teardown restores policy/style/pixel. This is not full combat, overlay UI, exact feet or flicker-free temporal acceptance. Sequential boss actions differ, so style rows are not shader-only comparisons. Batch020 residual foot contact remains open.

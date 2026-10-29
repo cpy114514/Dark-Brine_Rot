@@ -6,6 +6,8 @@ using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using Mavis.VisualStyles;
 
 namespace Mavis
 {
@@ -21,11 +23,16 @@ namespace Mavis
         [Serializable] public sealed class Report
         {
             public string capturedUtc, unity, cpu, gpu, os, quality, scene, status;
-            public bool editor, developmentBuild, batchmode;
+            public bool editor, developmentBuild, batchmode, nativeThroughput, styleMatrix, orbitCamera, pixelActive;
             public float renderScale, shadowDistance, lodBias;
             public int width, height, targetFps, vsync, errors, memoryMb, graphicsMemoryMb;
             public double loadSeconds;
             public bool gcCounterAvailable;
+            public bool gcCounterValid;
+            public long gcPositiveControlBytes;
+            public long gcBaselineBytes;
+            public string graphicsApi;
+            public List<string> skippedPhases = new List<string>();
             public int renderedFrames, unrenderedIntervals;
             public List<Summary> summaries = new List<Summary>();
             public List<Sample> samples = new List<Sample>();
@@ -35,6 +42,14 @@ namespace Mavis
         ProfilerRecorder allocations;
         string phase, output;
         bool measuring, finished, story;
+        bool nativeThroughput, styleMatrix, orbitCamera, overridesApplied, previousPixel, gcQualified;
+        int previousFps, previousVsync;
+        RenderPipelineAsset previousPipeline;
+        UniversalRenderPipelineAsset previousEffectivePipeline, diagnosticPipeline;
+        VisualStyleManager styles;
+        string previousStyle;
+        float previousIntensity, phaseStarted;
+        byte[] gcPositiveControl;
         Vector3 viewTarget;
         bool overrideCamera;
         float seconds = 10;
@@ -58,6 +73,9 @@ namespace Mavis
             output = Argument("-baseline-report=") ?? Path.Combine(Application.persistentDataPath, "island-baseline.json");
             if (float.TryParse(Argument("-baseline-seconds="), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float requested)) seconds = Mathf.Clamp(requested, 3, 60);
             story = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-story") >= 0;
+            nativeThroughput = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-native1080") >= 0;
+            styleMatrix = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-all-styles") >= 0;
+            orbitCamera = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-orbit") >= 0;
             previousBackground = Application.runInBackground; Application.runInBackground = true;
             report.capturedUtc = DateTime.UtcNow.ToString("o"); report.unity = Application.unityVersion;
             report.cpu = SystemInfo.processorType; report.gpu = SystemInfo.graphicsDeviceName; report.os = SystemInfo.operatingSystem;
@@ -66,6 +84,46 @@ namespace Mavis
             allocations = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Allocated In Frame", 1);
             Application.logMessageReceived += Log;
             RenderPipelineManager.endCameraRendering += CameraRendered;
+        }
+        void ApplyDiagnosticOverrides()
+        {
+            if (overridesApplied) return;
+            previousFps = Application.targetFrameRate; previousVsync = QualitySettings.vSyncCount;
+            previousPipeline = QualitySettings.renderPipeline;
+            previousEffectivePipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            previousPixel = Pixel360Rendering.IsActive;
+            if (styleMatrix)
+            {
+                styles = VisualStyleManager.Instance; previousStyle = styles.Current.id; previousIntensity = styles.Intensity;
+            }
+            overridesApplied = true;
+            report.nativeThroughput = nativeThroughput; report.styleMatrix = styleMatrix; report.orbitCamera = orbitCamera;
+            if (!nativeThroughput) return;
+            if (!previousEffectivePipeline) throw new InvalidOperationException("Native throughput requires URP");
+            Pixel360Rendering.ReleaseCurrent(); diagnosticPipeline = Instantiate(previousEffectivePipeline);
+            diagnosticPipeline.name = "Temporary opt-in native throughput pipeline"; diagnosticPipeline.renderScale = 1;
+            QualitySettings.renderPipeline = diagnosticPipeline; QualitySettings.vSyncCount = 0; Application.targetFrameRate = -1;
+        }
+        bool NativeConfigurationValid()
+        {
+            if (!nativeThroughput) return true;
+            var pipeline = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            return Screen.width == 1920 && Screen.height == 1080 && pipeline && Mathf.Abs(pipeline.renderScale - 1) < .0001f &&
+                QualitySettings.vSyncCount == 0 && Application.targetFrameRate == -1 && !Pixel360Rendering.IsActive;
+        }
+        IEnumerator QualifyGcCounter()
+        {
+            report.gcCounterValid = allocations.Valid;
+            if (!allocations.Valid) yield break;
+            // A valid handle alone does not establish usable readings. Keep this
+            // finite positive control outside all measured/render-proof windows.
+            long baseline = 0;
+            for (int i = 0; i < 5; i++) { yield return null; baseline = Math.Max(baseline, allocations.LastValue); }
+            const int bytes = 1024 * 1024; gcPositiveControl = new byte[bytes]; gcPositiveControl[0] = 1;
+            long peak = 0;
+            for (int i = 0; i < 6; i++) { yield return null; peak = Math.Max(peak, allocations.LastValue); }
+            report.gcBaselineBytes = baseline; report.gcPositiveControlBytes = peak;
+            gcQualified = peak - baseline >= bytes * .75f; gcPositiveControl = null;
         }
         static WorldPerformanceManager FindRuntimePerformance()
         {
@@ -106,6 +164,15 @@ namespace Mavis
                 if (finished) yield break;
             }
             report.loadSeconds = Time.realtimeSinceStartupAsDouble - start;
+            ApplyDiagnosticOverrides();
+            if (nativeThroughput && !Application.isEditor)
+            {
+                Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
+                float resolutionDeadline = Time.realtimeSinceStartup + 10;
+                while ((Screen.width != 1920 || Screen.height != 1080) && Time.realtimeSinceStartup < resolutionDeadline) yield return null;
+            }
+            if (!NativeConfigurationValid()) { Finish("native throughput configuration invalid"); yield break; }
+            yield return QualifyGcCounter();
             report.width = Screen.width; report.height = Screen.height; report.targetFps = Application.targetFrameRate;
             report.vsync = QualitySettings.vSyncCount; report.quality = QualitySettings.names[QualitySettings.GetQualityLevel()];
             Application.runInBackground = true;
@@ -113,6 +180,7 @@ namespace Mavis
             var pipeline = UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset;
             if (pipeline) { report.renderScale = pipeline.renderScale; report.shadowDistance = pipeline.shadowDistance; }
             report.graphicsMemoryMb = SystemInfo.graphicsMemorySize;
+            report.graphicsApi = SystemInfo.graphicsDeviceType.ToString(); report.pixelActive = Pixel360Rendering.IsActive;
             // A camera with a target texture renders when its window is occluded.
             // Accept only completed native camera intervals; do not synchronize the GPU
             // with ReadPixels every measured frame and charge that stall to the game.
@@ -133,18 +201,27 @@ namespace Mavis
             {
                 var arrival = player.GetComponent<FirstIslandArrival>();
                 Vector3 coast = arrival && arrival.shore ? arrival.shore.position : player.transform.position;
-                yield return Route("coast", coast, Vector3.forward);
-                if (finished) yield break;
-                yield return Route("forest", new Vector3(91.15f, 50, 370.89f), Vector3.forward);
-                if (finished) yield break;
-                var boss = FindFirstObjectByType<CappuccinoAI>();
-                if (boss) yield return Route("boss", boss.transform.position - boss.transform.forward * 12, boss.transform.forward);
+                string[] modes = styleMatrix ? new[] { "realistic", "dark-fairytale", "origami", "monochrome" } : new[] { "" };
+                foreach (string mode in modes)
+                {
+                    if (styleMatrix) { styles.Select(mode, false); styles.SetIntensity(.85f, false); }
+                    string prefix = mode.Length == 0 ? "" : mode + "-";
+                    yield return Route(prefix + "coast", coast, Vector3.forward);
+                    if (finished) yield break;
+                    yield return Route(prefix + "forest", new Vector3(91.15f, 50, 370.89f), Vector3.forward);
+                    if (finished) yield break;
+                    var boss = FindFirstObjectByType<CappuccinoAI>();
+                    if (boss) yield return Route(prefix + "boss", boss.transform.position - boss.transform.forward * 12, boss.transform.forward);
+                    else report.skippedPhases.Add(prefix + "boss");
+                    if (finished) yield break;
+                }
             }
             measuring = false; Finish("completed");
         }
         IEnumerator Route(string name, Vector3 point, Vector3 heading)
         {
             measuring = false;
+            if (!NativeConfigurationValid()) { Finish("native throughput configuration changed: " + name); yield break; }
             float ground = point.y;
             foreach (var hit in Physics.RaycastAll(point + Vector3.up * 100, Vector3.down, 300, ~0, QueryTriggerInteraction.Ignore))
                 if (hit.collider.GetComponentInParent<ProceduralIsland>()) ground = hit.point.y;
@@ -158,7 +235,7 @@ namespace Mavis
             yield return VerifyRenderedView(name);
             if (finished) yield break;
             previousFrameTick = 0;
-            phase = name; measuring = true;
+            phase = name; phaseStarted = Time.unscaledTime; measuring = true;
             yield return new WaitForSecondsRealtime(seconds);
             measuring = false;
         }
@@ -213,7 +290,9 @@ namespace Mavis
             if (overrideCamera && Camera.main)
             {
                 var camera = Camera.main;
-                camera.transform.SetPositionAndRotation(viewTarget + new Vector3(0, 5, -11), Quaternion.LookRotation(new Vector3(0, -5, 11)));
+                Vector3 offset = new Vector3(0, 5, -11);
+                if (orbitCamera && measuring) offset = Quaternion.AngleAxis((Time.unscaledTime - phaseStarted) * 8, Vector3.up) * offset;
+                camera.transform.SetPositionAndRotation(viewTarget + offset, Quaternion.LookRotation(-offset));
             }
             if (captureTarget && Camera.main)
             {
@@ -223,8 +302,9 @@ namespace Mavis
             }
             if (measuring && wallMs > 0)
             {
+                if (!NativeConfigurationValid()) { measuring = false; Finish("native throughput configuration changed during measurement"); return; }
                 if (lastRenderedFrame != Time.frameCount - 1) { report.unrenderedIntervals++; return; }
-                report.samples.Add(new Sample { phase = phase, ms = wallMs, engineMs = Time.unscaledDeltaTime * 1000, gcBytes = allocations.Valid ? allocations.LastValue : -1 });
+                report.samples.Add(new Sample { phase = phase, ms = wallMs, engineMs = Time.unscaledDeltaTime * 1000, gcBytes = gcQualified && allocations.Valid ? allocations.LastValue : -1 });
             }
         }
         public static Summary Summarize(string phase, List<Sample> source)
@@ -245,9 +325,10 @@ namespace Mavis
         void Finish(string status)
         {
             if (finished) return; finished = true; report.status = status;
-            report.gcCounterAvailable = allocations.Valid;
-            foreach (string name in new[] { "coast", "forest", "boss", "shipwreck" })
-            { var summary = Summarize(name, report.samples); if (summary.frames > 0) report.summaries.Add(summary); }
+            report.gcCounterAvailable = gcQualified && allocations.Valid;
+            var phases = new HashSet<string>();
+            foreach (var sample in report.samples)
+                if (phases.Add(sample.phase)) report.summaries.Add(Summarize(sample.phase, report.samples));
             report.memoryMb = (int)(UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024));
             Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(output)));
             File.WriteAllText(output, JsonUtility.ToJson(report, true));
@@ -261,6 +342,17 @@ namespace Mavis
                 if (previous.Key && previous.Key.targetTexture == captureTarget) previous.Key.targetTexture = previous.Value;
             previousTargets.Clear(); Application.runInBackground = previousBackground;
             if (captureTarget) { captureTarget.Release(); Destroy(captureTarget); }
+            if (overridesApplied)
+            {
+                if (styles) { styles.Select(previousStyle, false); styles.SetIntensity(previousIntensity, false); }
+                if (nativeThroughput)
+                {
+                    Pixel360Rendering.ReleaseCurrent(); QualitySettings.renderPipeline = previousPipeline;
+                    QualitySettings.vSyncCount = previousVsync; Application.targetFrameRate = previousFps;
+                    if (previousPixel && previousEffectivePipeline) Pixel360Rendering.Configure(previousEffectivePipeline, true);
+                    if (diagnosticPipeline) Destroy(diagnosticPipeline);
+                }
+            }
         }
     }
 }

@@ -1,0 +1,388 @@
+{
+  "batch": 22,
+  "baselineGit": "4db388d",
+  "baselinePlastic": 205,
+  "productionPath": "Assets/Scripts/Performance/IslandPerformanceBaseline.cs",
+  "normalGameChange": false,
+  "optInOnly": true,
+  "nativeChecks": 18,
+  "build": {
+    "result": "Succeeded",
+    "seconds": 158.9087858,
+    "bytes": 2729604757,
+    "warnings": 493,
+    "errors": 4,
+    "output": "D:/indiegameDev/unity/Dark Brine_Rot/.codex/performance022/player/DarkBrineQA022.exe",
+    "development": true,
+    "backend": "Mono2x",
+    "sameEditor": true,
+    "editorPid": 57472,
+    "scenes": [
+      "Assets/Scenes/Main Menu/MainMenu.unity",
+      "Assets/Scenes/First story/Story1.unity",
+      "Assets/Scenes/First Island/Main.unity",
+      "Assets/Scenes/First Island/Environment.unity",
+      "Assets/Scenes/First Island/Gameplay.unity",
+      "Assets/Scenes/First Island/Lighting.unity",
+      "Assets/Scenes/First Island/Enemies.unity"
+    ],
+    "errorDetails": [
+      "Problem detected while opening the Scene file: 'Assets/Scenes/First Island/Environment.unity'.\nCheck the following logs for more details.",
+      "Prefab instance problem: 'rostlinka_07c_ske (4335) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)'. 234 instances are missing the same Prefab Asset with guid 2bde5fdeb204bc6418608a5fe3993ad1.",
+      "Prefab instance problem: 'rostlinka_07c_ske (4915) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)'. 177 instances are missing the same Prefab Asset with guid 8e67ad946c4264b479267ee1643fd2ce.",
+      "Prefab instance problem: 'rostlinka_07c_ske (4358) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)'. 195 instances are missing the same Prefab Asset with guid ad3d230ef428f6049ab82c5136f00a47."
+    ]
+  },
+  "configuration": {
+    "output": [
+      1920,
+      1080
+    ],
+    "renderScale": 1,
+    "targetFps": -1,
+    "vsync": 0,
+    "pixelMode": false,
+    "quality": "PC",
+    "lodBias": 0.5,
+    "shadowDistance": 180,
+    "orbit": true,
+    "secondsPerPhase": 6,
+    "api": "Direct3D12"
+  },
+  "measuredFrames": 6963,
+  "renderedFrames": 9110,
+  "unrenderedIntervals": 0,
+  "runtimeErrors": 0,
+  "phases": [
+    {
+      "phase": "realistic-coast",
+      "frames": 727,
+      "spikes50ms": 0,
+      "averageFps": 121.22044372558594,
+      "averageMs": 8.249433517456055,
+      "p95Ms": 11.284000396728516,
+      "p99Ms": 12.214200019836426,
+      "maxMs": 13.355799674987793,
+      "onePercentLowFps": 79.48091125488281,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "realistic-forest",
+      "frames": 469,
+      "spikes50ms": 0,
+      "averageFps": 78.16494750976562,
+      "averageMs": 12.793457984924316,
+      "p95Ms": 14.780900001525879,
+      "p99Ms": 15.932900428771973,
+      "maxMs": 16.643299102783203,
+      "onePercentLowFps": 61.826019287109375,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "realistic-boss",
+      "frames": 647,
+      "spikes50ms": 0,
+      "averageFps": 107.88777160644531,
+      "averageMs": 9.268891334533691,
+      "p95Ms": 12.42770004272461,
+      "p99Ms": 13.152999877929688,
+      "maxMs": 15.713700294494629,
+      "onePercentLowFps": 69.0969009399414,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "dark-fairytale-coast",
+      "frames": 725,
+      "spikes50ms": 0,
+      "averageFps": 120.88526916503906,
+      "averageMs": 8.272306442260742,
+      "p95Ms": 11.212699890136719,
+      "p99Ms": 12.144499778747559,
+      "maxMs": 12.811599731445312,
+      "onePercentLowFps": 80.1034164428711,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "dark-fairytale-forest",
+      "frames": 463,
+      "spikes50ms": 0,
+      "averageFps": 77.24694061279297,
+      "averageMs": 12.945496559143066,
+      "p95Ms": 14.930500030517578,
+      "p99Ms": 16.07819938659668,
+      "maxMs": 16.21929931640625,
+      "onePercentLowFps": 61.9355354309082,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "dark-fairytale-boss",
+      "frames": 525,
+      "spikes50ms": 0,
+      "averageFps": 87.65563201904297,
+      "averageMs": 11.408280372619629,
+      "p95Ms": 14.21619987487793,
+      "p99Ms": 14.95829963684082,
+      "maxMs": 15.913700103759766,
+      "onePercentLowFps": 65.47045135498047,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "origami-coast",
+      "frames": 727,
+      "spikes50ms": 0,
+      "averageFps": 121.2872314453125,
+      "averageMs": 8.244891166687012,
+      "p95Ms": 11.184499740600586,
+      "p99Ms": 12.286199569702148,
+      "maxMs": 14.077500343322754,
+      "onePercentLowFps": 79.0881118774414,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "origami-forest",
+      "frames": 472,
+      "spikes50ms": 0,
+      "averageFps": 78.76957702636719,
+      "averageMs": 12.695256233215332,
+      "p95Ms": 14.6451997756958,
+      "p99Ms": 15.840100288391113,
+      "maxMs": 16.406099319458008,
+      "onePercentLowFps": 62.30809020996094,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "origami-boss",
+      "frames": 501,
+      "spikes50ms": 0,
+      "averageFps": 83.49508666992188,
+      "averageMs": 11.976752281188965,
+      "p95Ms": 14.393799781799316,
+      "p99Ms": 15.13010025024414,
+      "maxMs": 15.88539981842041,
+      "onePercentLowFps": 64.1759262084961,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "monochrome-coast",
+      "frames": 740,
+      "spikes50ms": 0,
+      "averageFps": 123.47731018066406,
+      "averageMs": 8.098653793334961,
+      "p95Ms": 10.588899612426758,
+      "p99Ms": 11.137399673461914,
+      "maxMs": 13.229700088500977,
+      "onePercentLowFps": 85.61946105957031,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "monochrome-forest",
+      "frames": 479,
+      "spikes50ms": 0,
+      "averageFps": 79.95448303222656,
+      "averageMs": 12.507116317749023,
+      "p95Ms": 14.48069953918457,
+      "p99Ms": 15.590299606323242,
+      "maxMs": 16.282800674438477,
+      "onePercentLowFps": 62.854103088378906,
+      "maxGcBytes": -1
+    },
+    {
+      "phase": "monochrome-boss",
+      "frames": 488,
+      "spikes50ms": 0,
+      "averageFps": 81.38249969482422,
+      "averageMs": 12.287653923034668,
+      "p95Ms": 14.75059986114502,
+      "p99Ms": 16.03890037536621,
+      "maxMs": 18.98699951171875,
+      "onePercentLowFps": 59.710548400878906,
+      "maxGcBytes": -1
+    }
+  ],
+  "renderProofs": [
+    {
+      "phase": "realistic-coast",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2073335
+    },
+    {
+      "phase": "realistic-forest",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2073586
+    },
+    {
+      "phase": "realistic-boss",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2073138
+    },
+    {
+      "phase": "dark-fairytale-coast",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 1999503
+    },
+    {
+      "phase": "dark-fairytale-forest",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2070139
+    },
+    {
+      "phase": "dark-fairytale-boss",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2070217
+    },
+    {
+      "phase": "origami-coast",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2073562
+    },
+    {
+      "phase": "origami-forest",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2073599
+    },
+    {
+      "phase": "origami-boss",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2073181
+    },
+    {
+      "phase": "monochrome-coast",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 1930501
+    },
+    {
+      "phase": "monochrome-forest",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 1577370
+    },
+    {
+      "phase": "monochrome-boss",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 1625581
+    }
+  ],
+  "allMeasuredGcUnavailable": true,
+  "gc": {
+    "editor": {
+      "valid": true,
+      "baselineBytes": 47139,
+      "positiveBytes": 1060575,
+      "qualified": true
+    },
+    "standalone": {
+      "valid": true,
+      "qualified": false,
+      "baselinePeak": 2282743,
+      "positivePeak": 1468294,
+      "note": "Noisy warmup rejected the incremental positive control; -1 is retained. Not proof ProfilerRecorder is always unsupported."
+    }
+  },
+  "loadSeconds": 82.6995362,
+  "memorySnapshotMb": 1411,
+  "safety": {
+    "timedOut": false,
+    "exitCode": 0,
+    "failure": null,
+    "nativePreferencesRestored": true,
+    "saves": [
+      {
+        "file": "dark-brine-rot-save.json.bak",
+        "unchanged": true
+      },
+      {
+        "file": "dark-brine-rot-save.json",
+        "unchanged": true
+      }
+    ]
+  },
+  "prefs": {
+    "values": 100,
+    "legacyEightByteDwords": 7
+  },
+  "nativeState": {
+    "state": {
+      "stopped": true,
+      "clean": true,
+      "sceneMatch": true,
+      "savesUnchanged": true,
+      "scenes": [
+        {
+          "path": "Assets/Scenes/First Island/Main.unity",
+          "isLoaded": true,
+          "isActive": true,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Lighting.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Gameplay.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Environment.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Enemies.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        }
+      ]
+    },
+    "development": false,
+    "debugging": false,
+    "connectProfiler": false,
+    "backend": "Mono2x",
+    "preloaded": [
+      "Assets/InputSystem_Actions.inputactions"
+    ],
+    "projectSettingsBytesRestored": true
+  },
+  "protected": [
+    {
+      "path": "ProjectSettings/EditorBuildSettings.asset",
+      "unchanged": true
+    },
+    {
+      "path": "ProjectSettings/ShaderGraphSettings.asset",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/_Recovery/0.unity",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/_Recovery/0.unity.meta",
+      "unchanged": true
+    }
+  ],
+  "sourceHash": "37aca2d078a70e9c7ae8f31afceda5b6a851f2446c3e8ede122c09e7d87c1cb8",
+  "limits": [
+    "Single Development/Mono offscreen-camera run with other Unity Editors on the system. Not an isolated GPU or shipping-build benchmark.",
+    "Sequential styles and active boss actions are not matched shader-only comparisons.",
+    "No pre/post game FPS optimization claim; batch019 had different settings/build/scene timing.",
+    "Loading82.70s excludes process/menu initialization; startup ring-buffer warnings are not a proven cause.",
+    "No full combat/UI/temporal-flicker/low-end acceptance; GC data unavailable in this run."
+  ]
+}

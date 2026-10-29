@@ -233,3 +233,12 @@ Rejected a speculative tall-attack capsule candidate: original failure came from
 Continued from07ed6d9/cs204. Real Environment/Lighting plus native encounter-size NavMeshSurface,5 chicken+3 enlarged ducks and a protected capsule target:360 sampled frames/4 styles, max2 attackers,0 slot/ground failures and0 fixture-run exceptions.8 native steering directions verified; four actual images inspected. No production change justified.
 
 Native cache identity/replanning controls reject the proposed repeated-corner-array suspicion. Allocation counter qualification fails both native and managed positive controls; raw zeros are unavailable, proof records null, no performance claim. First rejected counter result retained. Fresh saves unchanged, original5 scenes clean/stopped, marker clear, transient NavMesh data removed and runtime settings restored; restore timeout completed and was verified. Checkpoint title: Record first-island flock and allocation counter qualification. Next: uncapped standalone/performance and wider actual combat/UI/tutorial; precise mesh feet remain open.
+
+
+## 2026-10-29 — Batch022 — native1080p performance baseline
+
+Continued from4db388d/cs205. Optional sampler adds explicit native1080/all-style/orbit diagnostics, fail-closed per-frame configuration checks, dynamic summaries and qualified GC availability.18 native checks pass. Same Editor Windows Mono Development build succeeds158.91s/2.73GB,493 warnings and4 known missing-plant messages. Current7 enabled scenes; no new scene registration or art edit.
+
+Player exits0 after12 phases/6963 samples/9110 render callbacks,0 unrendered intervals/errors and12 image controls. Native1080/renderScale1,target-1,vSync0,pixel off: coast120.89–123.48FPS,forest77.25–79.95,boss81.38–107.89;0 samples>50ms. No pre/post optimization gain. Native GC control qualifies in Editor but rejects noisy standalone warmup, preserving-1. Island load82.70s and D3D12 ring-buffer warnings are un-attributed follow-ups.
+
+Fresh saves unchanged,100 native prefs/types restored including7 legacy8-byte DWORDs; original5 scenes/build flags/backend/preloads/ProjectSettings bytes restored. Four unrelated Plastic paths byte-unchanged. Build material side effect rolled back and scoped unchanged checkout cleared. Binary/private snapshots/logs/caches ignored. Checkpoint title: Qualify native1080p style matrix and benchmark counter reporting. Next: forest CPU/GPU and loading-stage attribution before evidenced fixes; wider combat/UI/tutorial/feet remain.
