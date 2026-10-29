@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Profiling;
+using UnityEngine.Profiling;
 
 namespace Mavis
 {
@@ -28,6 +30,7 @@ namespace Mavis
         {
             public bool timingFeatureEnabled;
             public bool cpuCounterQualified, gpuCounterQualified;
+            public bool binaryProfileCaptured, binaryProfileRestored;
             public double cpuPositiveDeltaMs, fullGpuMedianMs, emptyGpuMedianMs;
             public float originalTimeScale, frozenGameTime, endGameTime;
             public string style;
@@ -40,6 +43,33 @@ namespace Mavis
         ForestWindow forestWindow;
         readonly FrameTiming[] forestTiming = new FrameTiming[1];
         ulong forestLastTimestamp;
+        ProfilerMarker forestPhaseMarker;
+        bool forestOwnsProfiler, forestPreviousProfiler, forestPreviousBinary;
+        string forestPreviousLog;
+
+        void BeginForestProfiler()
+        {
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-forest-profiler") < 0) return;
+            string path = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(output)), "forest.raw");
+            if (System.IO.File.Exists(path)) throw new InvalidOperationException("Preserve existing forest profile");
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+            forestPreviousProfiler = Profiler.enabled; forestPreviousBinary = Profiler.enableBinaryLog;
+            forestPreviousLog = Profiler.logFile; forestOwnsProfiler = true;
+            Profiler.logFile = path; Profiler.enableBinaryLog = true; Profiler.enabled = true;
+        }
+        void EndForestProfiler()
+        {
+            if (!forestOwnsProfiler) return;
+            Profiler.enabled = false; Profiler.enableBinaryLog = false;
+            Profiler.logFile = forestPreviousLog; Profiler.enableBinaryLog = forestPreviousBinary;
+            Profiler.enabled = forestPreviousProfiler; forestOwnsProfiler = false;
+            if (report.forest != null)
+            {
+                report.forest.binaryProfileCaptured = true;
+                report.forest.binaryProfileRestored = Profiler.enabled == forestPreviousProfiler &&
+                    Profiler.enableBinaryLog == forestPreviousBinary && Profiler.logFile == forestPreviousLog;
+            }
+        }
 
         void BeginForestState(Camera camera)
         {
@@ -51,13 +81,23 @@ namespace Mavis
         void RestoreForestState()
         {
             forestMeasuring = false; forestSpinMs = 0;
+            EndForestProfiler();
             if (!forestOwnsState) return;
             if (forestCamera) forestCamera.cullingMask = forestOriginalMask;
             Time.timeScale = forestPreviousTimeScale; forestOwnsState = false;
         }
         void ForestControlWork()
         {
-            if (!forestOwnsState || finished || forestSpinMs <= 0) return;
+            if (!forestOwnsState || finished) return;
+            if (!forestMeasuring) { ForestSpin(); return; }
+            using (forestPhaseMarker.Auto())
+            {
+                ForestSpin();
+            }
+        }
+        void ForestSpin()
+        {
+            if (forestSpinMs <= 0) return;
             long end = System.Diagnostics.Stopwatch.GetTimestamp() +
                 (long)(forestSpinMs * System.Diagnostics.Stopwatch.Frequency / 1000.0);
             while (System.Diagnostics.Stopwatch.GetTimestamp() < end) { }
@@ -173,6 +213,7 @@ namespace Mavis
                 originalTimeScale = forestPreviousTimeScale, frozenGameTime = Time.time, style = VisualStyles.VisualStyleManager.Instance.Current.id };
             try
             {
+                BeginForestProfiler();
                 yield return ForestPhase("full-a", 1, false, 0, seconds);
                 if (finished) yield break;
                 yield return ForestPhase("half-a", .5f, false, 0, seconds);
@@ -199,6 +240,7 @@ namespace Mavis
             diagnosticPipeline.renderScale = scale; forestCamera.cullingMask = forestOriginalMask;
             forestWindow = new ForestWindow { name = name, scale = scale, empty = empty, spinMs = spinMs,
                 cameraPosition = forestCamera.transform.position, cameraRotation = forestCamera.transform.rotation };
+            forestPhaseMarker = new ProfilerMarker("ForestPhase." + name);
             report.forest.windows.Add(forestWindow);
             // Finite native pixel readback remains outside all timing windows.
             if (!empty) { yield return VerifyRenderedView("forest-" + name); if (finished) yield break; }

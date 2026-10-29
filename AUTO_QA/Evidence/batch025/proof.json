@@ -1,0 +1,190 @@
+{
+  "batch": 25,
+  "baselineGit": "4ef510acc44f1f91e1c23ad97949fd8fd5014965",
+  "baselinePlastic": 208,
+  "checkpointTitle": "Capture phase-labelled native Player CPU profiles",
+  "change": "Explicit optional binary CPU profile and measured-phase markers; normal game unchanged. Paired CPU/empty/native controls retained;no gameplay optimization invented.",
+  "nativeChecks": 21,
+  "standaloneFrames": 2101,
+  "runtimeErrors": 0,
+  "missingRenderedIntervals": 0,
+  "imageControls": 7,
+  "binaryProfileCaptured": true,
+  "binaryProfileRestored": true,
+  "rawProfile": {
+    "bytes": 711404418,
+    "sha256": "427cb92b30e41bb37ee45992b96d60f5241d13395e2c4c9ff2d5e5f594c6a52f",
+    "committed": false
+  },
+  "editorImport": {
+    "first": 1878,
+    "last": 3877,
+    "retained": 2000,
+    "totalTaggedFrames": 1040,
+    "completeTaggedFrames": 1018,
+    "completeControls": [
+      {
+        "phase": "cpu-control",
+        "profileFrames": 131,
+        "sampledNativeFrames": 130
+      },
+      {
+        "phase": "empty-control",
+        "profileFrames": 681,
+        "sampledNativeFrames": 680
+      },
+      {
+        "phase": "full-recovery",
+        "profileFrames": 206,
+        "sampledNativeFrames": 205
+      }
+    ],
+    "partialExcluded": {
+      "phase": "full-c",
+      "frames": 22
+    },
+    "missingEarly": [
+      "full-a",
+      "half-a",
+      "full-b",
+      "half-b"
+    ],
+    "historyLimitPreserved": true
+  },
+  "observations": {
+    "fullRecoveryMainFrameMs": 14.598166479647738,
+    "mainDxgiWaitMs": 7.550031532361669,
+    "mainFoliageRefreshMs": 1.5134184427776383,
+    "grassVisibilitySelfMs": 0.7984665059489839,
+    "grassSubmitSelfMs": 0.3848436876026082,
+    "renderWaitForMainMs": 10.158347550269381,
+    "renderLoopMs": 4.433846105152219,
+    "renderGeometryFenceMs": 2.420950481143504,
+    "cpuControlMarkerMs": 8.002910679533281,
+    "cpuControlDxgiWaitMs": 1.0140816814724698,
+    "emptyMainFrameMs": 2.9375857473645093
+  },
+  "safety": {
+    "player": {
+      "timedOut": false,
+      "exitCode": 0,
+      "failure": null,
+      "nativePreferencesRestored": true,
+      "saves": [
+        {
+          "file": "dark-brine-rot-save.json.bak",
+          "unchanged": true
+        },
+        {
+          "file": "dark-brine-rot-save.json",
+          "unchanged": true
+        }
+      ]
+    },
+    "profiler": {
+      "restored": true,
+      "flags": true
+    },
+    "userProfilerOriginalRange": [
+      0,
+      676
+    ],
+    "userProfilerFourFrameFingerprintsRestored": true,
+    "connectionUnchanged": -1,
+    "settingsUnchanged": {
+      "enabled": false,
+      "profileGPU": false,
+      "profileEditor": false,
+      "deep": false,
+      "selectedPropertyPath": ""
+    },
+    "protected": [
+      {
+        "path": "ProjectSettings/EditorBuildSettings.asset",
+        "unchanged": true
+      },
+      {
+        "path": "ProjectSettings/ShaderGraphSettings.asset",
+        "unchanged": true
+      },
+      {
+        "path": "Assets/_Recovery/0.unity",
+        "unchanged": true
+      },
+      {
+        "path": "Assets/_Recovery/0.unity.meta",
+        "unchanged": true
+      }
+    ],
+    "native": {
+      "state": {
+        "stopped": true,
+        "clean": true,
+        "sceneMatch": true,
+        "savesUnchanged": true,
+        "scenes": [
+          {
+            "path": "Assets/Scenes/First Island/Main.unity",
+            "isLoaded": true,
+            "isActive": true,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Lighting.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Gameplay.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Environment.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Enemies.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          }
+        ]
+      },
+      "development": false,
+      "debugging": false,
+      "connectProfiler": false,
+      "backend": "Mono2x",
+      "preloaded": [
+        "Assets/InputSystem_Actions.inputactions"
+      ],
+      "projectSettingsBytesRestored": true
+    },
+    "frameTimingRestoredFalse": true
+  },
+  "reportArchive": {
+    "rawBytes": 953321,
+    "gzipBytes": 86864,
+    "sha256": "54b863de330a943f4ded5e7851cc00e33f6a1d7c97818cd0dabbc59a729e13fe",
+    "roundTripExact": true
+  },
+  "sourceHashes": [
+    {
+      "path": "Assets/Scripts/Performance/IslandPerformanceBaseline.Forest.cs",
+      "sha256": "34006d483e22a3ddc019ed7d58d746e346ea12ddbc4af44d9c519bb5cccca968"
+    }
+  ],
+  "limits": [
+    "Actual profile localizes wait to main DXGI swap-chain wait; GPU/driver/queue root cause is still unqualified. No buffer/VSync/quality change or gameFPS gain.",
+    "Imported native history contains only last2000 frames;early phases missing and full-c22-frame tail excluded from headline aggregates. Complete CPU/empty/recovery controls remain.",
+    "Profiler I/O and instrumentation affect timing. Do not compare current profile throughput against024 as a game speedup/regression.",
+    "Thread times overlap;do not add main/render waiting times together. GPU raw counter remains unqualified;accepted gpuMs=-1.",
+    "Initial offline reader encountered an unnamed native sample;finally restored original capture and reader now retains anonymous samples under a labelled bucket. Immutable Player capture was analyzed again,not rerun.",
+    "Original user profiler backup754531172bytes remains private;restoration verifies range and4 full-frame name/time fingerprints plus flags,not fullbinary byte identity.",
+    "No original art/animation/collision/gameplay edits;no new fullcombat/UI or visual-smoothness claim."
+  ]
+}

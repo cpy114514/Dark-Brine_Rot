@@ -1,0 +1,2883 @@
+{
+  "first": 1878,
+  "last": 3877,
+  "threads": [
+    {
+      "index": 1,
+      "name": "Render Thread"
+    },
+    {
+      "index": 2,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 3,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 4,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 5,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 6,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 7,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 8,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 9,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 10,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 11,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 12,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 13,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 14,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 15,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 16,
+      "name": "AssetGarbageCollectorHelper"
+    },
+    {
+      "index": 17,
+      "name": "AsyncRead"
+    },
+    {
+      "index": 18,
+      "name": "Audio (WASAPI) Feeder Thread"
+    },
+    {
+      "index": 19,
+      "name": "Audio Mixer Thread"
+    },
+    {
+      "index": 20,
+      "name": "Audio Stream Thread"
+    },
+    {
+      "index": 21,
+      "name": "BatchDeleteObjects"
+    },
+    {
+      "index": 22,
+      "name": "Dispatcher"
+    },
+    {
+      "index": 23,
+      "name": "Finalizer"
+    },
+    {
+      "index": 24,
+      "name": "HIDInput"
+    },
+    {
+      "index": 25,
+      "name": "PreloadManager"
+    },
+    {
+      "index": 26,
+      "name": "Worker"
+    },
+    {
+      "index": 27,
+      "name": "Worker 0"
+    },
+    {
+      "index": 28,
+      "name": "Worker 0"
+    },
+    {
+      "index": 29,
+      "name": "Worker 0"
+    },
+    {
+      "index": 30,
+      "name": "Worker 1"
+    },
+    {
+      "index": 31,
+      "name": "Worker 1"
+    },
+    {
+      "index": 32,
+      "name": "Worker 10"
+    },
+    {
+      "index": 33,
+      "name": "Worker 10"
+    },
+    {
+      "index": 34,
+      "name": "Worker 11"
+    },
+    {
+      "index": 35,
+      "name": "Worker 11"
+    },
+    {
+      "index": 36,
+      "name": "Worker 12"
+    },
+    {
+      "index": 37,
+      "name": "Worker 12"
+    },
+    {
+      "index": 38,
+      "name": "Worker 13"
+    },
+    {
+      "index": 39,
+      "name": "Worker 13"
+    },
+    {
+      "index": 40,
+      "name": "Worker 14"
+    },
+    {
+      "index": 41,
+      "name": "Worker 14"
+    },
+    {
+      "index": 42,
+      "name": "Worker 15"
+    },
+    {
+      "index": 43,
+      "name": "Worker 2"
+    },
+    {
+      "index": 44,
+      "name": "Worker 2"
+    },
+    {
+      "index": 45,
+      "name": "Worker 3"
+    },
+    {
+      "index": 46,
+      "name": "Worker 3"
+    },
+    {
+      "index": 47,
+      "name": "Worker 4"
+    },
+    {
+      "index": 48,
+      "name": "Worker 4"
+    },
+    {
+      "index": 49,
+      "name": "Worker 5"
+    },
+    {
+      "index": 50,
+      "name": "Worker 5"
+    },
+    {
+      "index": 51,
+      "name": "Worker 6"
+    },
+    {
+      "index": 52,
+      "name": "Worker 6"
+    },
+    {
+      "index": 53,
+      "name": "Worker 7"
+    },
+    {
+      "index": 54,
+      "name": "Worker 7"
+    },
+    {
+      "index": 55,
+      "name": "Worker 8"
+    },
+    {
+      "index": 56,
+      "name": "Worker 8"
+    },
+    {
+      "index": 57,
+      "name": "Worker 9"
+    },
+    {
+      "index": 58,
+      "name": "Worker 9"
+    }
+  ],
+  "main": [
+    {
+      "phase": "full-c",
+      "thread": "Main Thread",
+      "frames": 22,
+      "frameMs": 14.524227315729314,
+      "inclusive": [
+        {
+          "name": "Main Thread",
+          "ms": 14.524227315729314
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 14.499463601545854
+        },
+        {
+          "name": "TimeUpdate.WaitForLastPresentationAndUpdateTime",
+          "ms": 7.4268636486747051
+        },
+        {
+          "name": "WaitForLastPresentation",
+          "ms": 7.4165045131336562
+        },
+        {
+          "name": "DXGI.WaitOnSwapChain",
+          "ms": 7.4066409414464776
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 2.6209408586675469
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 2.3455954312600871
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 2.3208181960508227
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 2.2776318300854075
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 1.6671045530926099
+        },
+        {
+          "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+          "ms": 1.6532954356887124
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 1.6524090929464861
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.5507136231118983
+        },
+        {
+          "name": "CoroutinesDelayedCalls",
+          "ms": 1.4254454523959958
+        },
+        {
+          "name": "Update.ScriptRunDelayedDynamicFrameRate",
+          "ms": 1.4233681742440571
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::GrassRenderSubmission.LateUpdate() [Invoke]",
+          "ms": 1.2075136412273755
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 1.1950363570993596
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.58684999435949559
+        },
+        {
+          "name": "CullScriptable",
+          "ms": 0.58285454051061114
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.53008636290376832
+        },
+        {
+          "name": "Inl_RecordRenderGraph",
+          "ms": 0.42879090796817432
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.41599545289169659
+        },
+        {
+          "name": "EndRenderQueueExtraction",
+          "ms": 0.41599090685221279
+        },
+        {
+          "name": "PostLateUpdate.ProfilerEndFrame",
+          "ms": 0.39516817778348923
+        },
+        {
+          "name": "Profiler.FlushCounters",
+          "ms": 0.39331363344734366
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.38581818005927332
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.3716045455499129
+        },
+        {
+          "name": "CullResults.CreateSharedRendererScene",
+          "ms": 0.36635454879565671
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.35736363381147385
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.35567272522232751
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.33722272583029489
+        },
+        {
+          "name": "EngineJob",
+          "ms": 0.30331363460539829
+        },
+        {
+          "name": "Update.ScriptRunBehaviourUpdate",
+          "ms": 0.1980272741480307
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.19724545560099863
+        },
+        {
+          "name": "Director.ProcessFrame",
+          "ms": 0.19040454648777747
+        },
+        {
+          "name": "Animators.Update",
+          "ms": 0.18934545522047716
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.18237272700802845
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.15398181695491076
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationEnd",
+          "ms": 0.15380908955227246
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.LateUpdate() [Invoke]",
+          "ms": 0.14449999923288653
+        },
+        {
+          "name": "UIEvents.IMGUIRenderOverlays",
+          "ms": 0.13391818072308193
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.13210000030019067
+        },
+        {
+          "name": "Shadows.PrepareDrawShadows",
+          "ms": 0.12991818142208186
+        },
+        {
+          "name": "SceneCulling",
+          "ms": 0.12914999980818143
+        },
+        {
+          "name": "LOD.ComputeLOD",
+          "ms": 0.12499545379118486
+        }
+      ],
+      "self": [
+        {
+          "name": "DXGI.WaitOnSwapChain",
+          "ms": 7.4066409414464776
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.5507136231118983
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 0.80909544977045944
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.38581818005927332
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.35736363381147385
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.30724999887487764
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.26301817818470724
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.18237272700802845
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.15398181695491076
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.11882728711828928
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.09730454500425946
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.078422727306050627
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 0.065704581615467425
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.062031817834147
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 0.061072701991096517
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.ComputeShadowCasterCullingInfos",
+          "ms": 0.047136363404040989
+        },
+        {
+          "name": "RenderLoop.ScheduleDraw",
+          "ms": 0.045831817922259106
+        },
+        {
+          "name": "UnityEngine.IMGUIModule.dll!UnityEngine::GUIUtility.BeginGUI() [Invoke]",
+          "ms": 0.045699999739802231
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 0.044213641694527309
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.043131817828080704
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.042277274717145534
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.041718182752281958
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.040990909012180055
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.039340910820597361
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.038663636456476524
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.037700000134381378
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 0.036377271929351
+        },
+        {
+          "name": "CullSceneDynamicObjects",
+          "ms": 0.035627272509207782
+        },
+        {
+          "name": "Inl_ColorGradingLUT",
+          "ms": 0.034436363557522949
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 0.033522729663342361
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.0328909087709855
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.03256363778299684
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.03254090900901991
+        },
+        {
+          "name": "PlayerConnection.Poll",
+          "ms": 0.030872727609345351
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteInitializeResources",
+          "ms": 0.030672727139806902
+        }
+      ]
+    },
+    {
+      "phase": "cpu-control",
+      "thread": "Main Thread",
+      "frames": 131,
+      "frameMs": 15.307330524648419,
+      "inclusive": [
+        {
+          "name": "Main Thread",
+          "ms": 15.307330524648419
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 15.284574006349986
+        },
+        {
+          "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+          "ms": 9.6125747957302412
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 9.6114472760498977
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::IslandPerformanceBaseline.LateUpdate() [Invoke]",
+          "ms": 8.0318793740891312
+        },
+        {
+          "name": "ForestPhase.cpu-control",
+          "ms": 8.0029106795332812
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 2.4134694601743276
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 2.1624793829183089
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 2.1388244146822406
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 2.0973473141211589
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 1.5436503814376947
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::GrassRenderSubmission.LateUpdate() [Invoke]",
+          "ms": 1.2085778585827078
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 1.1887236651573472
+        },
+        {
+          "name": "TimeUpdate.WaitForLastPresentationAndUpdateTime",
+          "ms": 1.0301060975948704
+        },
+        {
+          "name": "WaitForLastPresentation",
+          "ms": 1.0210099194824469
+        },
+        {
+          "name": "DXGI.WaitOnSwapChain",
+          "ms": 1.0140816814724698
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 0.90198931530231741
+        },
+        {
+          "name": "CoroutinesDelayedCalls",
+          "ms": 0.85555114200137
+        },
+        {
+          "name": "Update.ScriptRunDelayedDynamicFrameRate",
+          "ms": 0.85343434882727065
+        },
+        {
+          "name": "CullScriptable",
+          "ms": 0.62458702307621028
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.588780912995438
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.47564274823392622
+        },
+        {
+          "name": "EndRenderQueueExtraction",
+          "ms": 0.37659694467678323
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.36932595228271575
+        },
+        {
+          "name": "Inl_RecordRenderGraph",
+          "ms": 0.36259541654859789
+        },
+        {
+          "name": "PostLateUpdate.ProfilerEndFrame",
+          "ms": 0.35311526549226457
+        },
+        {
+          "name": "Profiler.FlushCounters",
+          "ms": 0.35125496096283426
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.3501900750717134
+        },
+        {
+          "name": "CullResults.CreateSharedRendererScene",
+          "ms": 0.3440519085594716
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.3227969456947487
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.32184885510506522
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.31850534336257524
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.30409999828757223
+        },
+        {
+          "name": "EngineJob",
+          "ms": 0.25326259496701992
+        },
+        {
+          "name": "Director.ProcessFrame",
+          "ms": 0.21961679327057743
+        },
+        {
+          "name": "Animators.Update",
+          "ms": 0.21844732713039594
+        },
+        {
+          "name": "Update.ScriptRunBehaviourUpdate",
+          "ms": 0.20105190745746818
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.200277098603831
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationEnd",
+          "ms": 0.18383206034662158
+        },
+        {
+          "name": "SceneCulling",
+          "ms": 0.18003053513874534
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.15054885422782474
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.12645801477034696
+        },
+        {
+          "name": "UIEvents.IMGUIRenderOverlays",
+          "ms": 0.12193053403428493
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.12033816773927848
+        },
+        {
+          "name": "LOD.ComputeLOD",
+          "ms": 0.1188312973684937
+        }
+      ],
+      "self": [
+        {
+          "name": "ForestPhase.cpu-control",
+          "ms": 8.0029106795332812
+        },
+        {
+          "name": "DXGI.WaitOnSwapChain",
+          "ms": 1.0140816814724698
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 0.90198931530231741
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 0.8192137434145188
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.36932595228271575
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.31850534336257524
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.30476335659422088
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.26212213648783528
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.15054885422782474
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.12645801477034696
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.1023328237747418
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.099450385914706688
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.099218320026407236
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 0.06265953932892139
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 0.057350383520995904
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.047987786132330429
+        },
+        {
+          "name": "RenderLoop.ScheduleDraw",
+          "ms": 0.044556488262205957
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 0.044470198418592274
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.043748855190142766
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 0.041736627345614112
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.040811450063294945
+        },
+        {
+          "name": "UnityEngine.IMGUIModule.dll!UnityEngine::GUIUtility.BeginGUI() [Invoke]",
+          "ms": 0.04072824399529526
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.04012137367070176
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.ComputeShadowCasterCullingInfos",
+          "ms": 0.03956106865337787
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.039084733234325653
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.038783970046326346
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.037585495727370896
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.037473282350657354
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.035616030284285345
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 0.03169923802382954
+        },
+        {
+          "name": "Inl_ColorGradingLUT",
+          "ms": 0.029474809097538468
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.027393130310675581
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.026747328183759904
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::IslandPerformanceBaseline.LateUpdate() [Invoke]",
+          "ms": 0.02623663350845552
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteInitializeResources",
+          "ms": 0.025167938765884423
+        }
+      ]
+    },
+    {
+      "phase": "empty-control",
+      "thread": "Main Thread",
+      "frames": 681,
+      "frameMs": 2.9375857473645093,
+      "inclusive": [
+        {
+          "name": "Main Thread",
+          "ms": 2.9375857473645093
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 2.9213767912944508
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 1.2794825242129366
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 1.1390800249295121
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 1.1075976478891849
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 1.047298968188388
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.76993421319647859
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.369502054286494
+        },
+        {
+          "name": "CoroutinesDelayedCalls",
+          "ms": 0.32978223156568465
+        },
+        {
+          "name": "Update.ScriptRunDelayedDynamicFrameRate",
+          "ms": 0.32895080681012262
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 0.32690161423382957
+        },
+        {
+          "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+          "ms": 0.29282819294806967
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 0.29222364086936747
+        },
+        {
+          "name": "CullScriptable",
+          "ms": 0.2567248161712582
+        },
+        {
+          "name": "Inl_RecordRenderGraph",
+          "ms": 0.21335726786027395
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.2078704841424015
+        },
+        {
+          "name": "Director.ProcessFrame",
+          "ms": 0.20624787039414727
+        },
+        {
+          "name": "Animators.Update",
+          "ms": 0.20520866297119777
+        },
+        {
+          "name": "LOD.ComputeLOD",
+          "ms": 0.19288017557012177
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.18776945627558425
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationEnd",
+          "ms": 0.17759441948672222
+        },
+        {
+          "name": "PostLateUpdate.ProfilerEndFrame",
+          "ms": 0.1689378850041682
+        },
+        {
+          "name": "Profiler.FlushCounters",
+          "ms": 0.16808546215252029
+        },
+        {
+          "name": "Update.ScriptRunBehaviourUpdate",
+          "ms": 0.15556651942442867
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.15491380281035244
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.14963465473900459
+        },
+        {
+          "name": "SceneCulling",
+          "ms": 0.13709251078258702
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.13334243715071994
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.12169236382373805
+        },
+        {
+          "name": "EngineJob",
+          "ms": 0.11494478645915522
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.11154346519235997
+        },
+        {
+          "name": "PrepareSceneCullingParameters",
+          "ms": 0.10257327422587181
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.10025139470282456
+        },
+        {
+          "name": "UIEvents.IMGUIRenderOverlays",
+          "ms": 0.068000587291479467
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.0672189425540303
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationBegin",
+          "ms": 0.064042731041906512
+        },
+        {
+          "name": "PostLateUpdate.PlayerUpdateCanvases",
+          "ms": 0.061902789751863689
+        },
+        {
+          "name": "Animators.WriteJob",
+          "ms": 0.061527459270720168
+        },
+        {
+          "name": "PostLateUpdate.UpdateAllRenderers",
+          "ms": 0.061388546051170334
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.058239353411657362
+        },
+        {
+          "name": "UIEvents.WillRenderCanvases",
+          "ms": 0.052871952809820093
+        },
+        {
+          "name": "UGUI.Rendering.UpdateBatches",
+          "ms": 0.052686637106095814
+        },
+        {
+          "name": "Animators.IKAndTwistBoneJob",
+          "ms": 0.052047576792680052
+        },
+        {
+          "name": "CullSendEvents",
+          "ms": 0.046219970379982052
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.04426681325277218
+        }
+      ],
+      "self": [
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 0.32690161423382957
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.24318986714398719
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.15177723918422625
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.14963465473900459
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.10025139470282456
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 0.066708661928137777
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.065533774443989265
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 0.045004698210212531
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.04417900121387449
+        },
+        {
+          "name": "CalculateLODJob",
+          "ms": 0.041117914643264468
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 0.038038033672871521
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.037533186266688348
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.036236123672787633
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 0.032580176689609046
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.03167371496369463
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 0.031482377040327122
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 0.030538182398373151
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.030533479987823582
+        },
+        {
+          "name": "CullSceneDynamicObjects",
+          "ms": 0.029482966066297009
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.027793979181953969
+        },
+        {
+          "name": "VolumeManager.Update",
+          "ms": 0.024451248009624876
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.022553304249014163
+        },
+        {
+          "name": "Assembly-CSharp.dll!::ThirdPersonPlayerController.LateUpdate() [Invoke]",
+          "ms": 0.022026872112864981
+        },
+        {
+          "name": "UnityEngine.IMGUIModule.dll!UnityEngine::GUIUtility.BeginGUI() [Invoke]",
+          "ms": 0.021846842707959436
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.SetupPerFrameShaderConstants",
+          "ms": 0.020733773802364693
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.019929955867688389
+        },
+        {
+          "name": "UGUI.Rendering.UpdateBatches",
+          "ms": 0.01865991205137299
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.017681645177394578
+        },
+        {
+          "name": "CullAllVisibleLights",
+          "ms": 0.017225991131041389
+        },
+        {
+          "name": "Inl_ColorGradingLUT",
+          "ms": 0.016809397850256747
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteDestroyResources",
+          "ms": 0.01659603506927898
+        },
+        {
+          "name": "Main Thread",
+          "ms": 0.01620895607005832
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteInitializeResources",
+          "ms": 0.015880029222423434
+        },
+        {
+          "name": "PlayerConnection.Poll",
+          "ms": 0.015867253972994228
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.015253157386591398
+        }
+      ]
+    },
+    {
+      "phase": "full-recovery",
+      "thread": "Main Thread",
+      "frames": 206,
+      "frameMs": 14.598166479647738,
+      "inclusive": [
+        {
+          "name": "Main Thread",
+          "ms": 14.598166479647738
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 14.5731902678036
+        },
+        {
+          "name": "TimeUpdate.WaitForLastPresentationAndUpdateTime",
+          "ms": 7.5708271461783108
+        },
+        {
+          "name": "WaitForLastPresentation",
+          "ms": 7.5598747406191036
+        },
+        {
+          "name": "DXGI.WaitOnSwapChain",
+          "ms": 7.5500315323616691
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 2.5968975644667172
+        },
+        {
+          "name": "UnityEngine.CoreModule.dll!UnityEngine.Rendering::RenderPipelineManager.DoRenderLoop_Internal() [Invoke]",
+          "ms": 2.318033971041622
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 2.2932378616165914
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 2.25011941125092
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 1.6641334931827285
+        },
+        {
+          "name": "PreLateUpdate.ScriptRunBehaviourLateUpdate",
+          "ms": 1.6161228100072991
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 1.6152121349445825
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.5134184427776383
+        },
+        {
+          "name": "CoroutinesDelayedCalls",
+          "ms": 1.4157364019785428
+        },
+        {
+          "name": "Update.ScriptRunDelayedDynamicFrameRate",
+          "ms": 1.4134597036969458
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::GrassRenderSubmission.LateUpdate() [Invoke]",
+          "ms": 1.1962203840607579
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 1.1834718440342875
+        },
+        {
+          "name": "CullScriptable",
+          "ms": 0.6138291233083577
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.605740288566364
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.50526650307826626
+        },
+        {
+          "name": "Inl_RecordRenderGraph",
+          "ms": 0.42500533952007014
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.41072135773098584
+        },
+        {
+          "name": "PostLateUpdate.ProfilerEndFrame",
+          "ms": 0.39484320298849956
+        },
+        {
+          "name": "Profiler.FlushCounters",
+          "ms": 0.39197281502114917
+        },
+        {
+          "name": "EndRenderQueueExtraction",
+          "ms": 0.38894514444745282
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.38484368760260818
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.36212961093603985
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.35499563111552912
+        },
+        {
+          "name": "CullResults.CreateSharedRendererScene",
+          "ms": 0.35048543705234247
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.34111213496009124
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.32314320328166185
+        },
+        {
+          "name": "EngineJob",
+          "ms": 0.2943834942461851
+        },
+        {
+          "name": "Director.ProcessFrame",
+          "ms": 0.20514611521481765
+        },
+        {
+          "name": "Animators.Update",
+          "ms": 0.2040572802454812
+        },
+        {
+          "name": "Update.ScriptRunBehaviourUpdate",
+          "ms": 0.198861164447752
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.19810631010428215
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.17196698999654014
+        },
+        {
+          "name": "PreLateUpdate.DirectorUpdateAnimationEnd",
+          "ms": 0.16818640742776464
+        },
+        {
+          "name": "SceneCulling",
+          "ms": 0.16540485417958603
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.14129999917434546
+        },
+        {
+          "name": "UIEvents.IMGUIRenderOverlays",
+          "ms": 0.13403592175505694
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.132203883084568
+        },
+        {
+          "name": "LOD.ComputeLOD",
+          "ms": 0.12819029087001838
+        },
+        {
+          "name": "Shadows.PrepareDrawShadows",
+          "ms": 0.12008834914168687
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.LateUpdate() [Invoke]",
+          "ms": 0.11650631090940329
+        }
+      ],
+      "self": [
+        {
+          "name": "DXGI.WaitOnSwapChain",
+          "ms": 7.5500315323616691
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::WorldPerformanceManager.RefreshFoliageWork() [Coroutine: MoveNext] [Invoke]",
+          "ms": 1.5134184427776383
+        },
+        {
+          "name": "World.GrassVisibility",
+          "ms": 0.79846650594898394
+        },
+        {
+          "name": "World.GrassSubmit",
+          "ms": 0.38484368760260818
+        },
+        {
+          "name": "Profiler.FlushMemoryCounters",
+          "ms": 0.35499563111552912
+        },
+        {
+          "name": "Inl_On Record Render Graph",
+          "ms": 0.3088368922099019
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 0.27207378522433323
+        },
+        {
+          "name": "ExecuteRenderQueueJob",
+          "ms": 0.17196698999654014
+        },
+        {
+          "name": "QueuePrepareIntegrateMainThreadObjects",
+          "ms": 0.14129999917434546
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.11239514831686392
+        },
+        {
+          "name": "Assembly-CSharp.dll!Mavis::CappuccinoMotionRig.LateUpdate() [Invoke]",
+          "ms": 0.097633009505214044
+        },
+        {
+          "name": "afterCullingOutputReady.Invoke",
+          "ms": 0.089658252160713076
+        },
+        {
+          "name": "PostLateUpdate.FinishFrameRendering",
+          "ms": 0.066562623400951773
+        },
+        {
+          "name": "PlayerLoop",
+          "ms": 0.065318970177561386
+        },
+        {
+          "name": "Inl_Forward+ Setup",
+          "ms": 0.055005825038782312
+        },
+        {
+          "name": "RenderLoop.ScheduleDraw",
+          "ms": 0.04713446567557273
+        },
+        {
+          "name": "UnityEngine.IMGUIModule.dll!UnityEngine::GUIUtility.BeginGUI() [Invoke]",
+          "ms": 0.045332524058395191
+        },
+        {
+          "name": "Inl_UniversalRenderPipeline.ComputeShadowCasterCullingInfos",
+          "ms": 0.04462038806088052
+        },
+        {
+          "name": "Inl_RenderCameraStack",
+          "ms": 0.043496599678777767
+        },
+        {
+          "name": "Inl_Setup Light Constants",
+          "ms": 0.042011650252179691
+        },
+        {
+          "name": "BehaviourUpdate",
+          "ms": 0.0419645634183767
+        },
+        {
+          "name": "GUI.Repaint",
+          "ms": 0.041779126435411172
+        },
+        {
+          "name": "CullSceneDynamicObjects",
+          "ms": 0.03997038820183732
+        },
+        {
+          "name": "Inl_ScriptableRenderContext.Submit",
+          "ms": 0.038833009309704174
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.038407767877906382
+        },
+        {
+          "name": "EarlyUpdate.RendererNotifyInvisible",
+          "ms": 0.038042232828232846
+        },
+        {
+          "name": "Assembly-CSharp.dll!::DayNightCycle.Update() [Invoke]",
+          "ms": 0.03798640777285011
+        },
+        {
+          "name": "LateBehaviourUpdate",
+          "ms": 0.037341266347124188
+        },
+        {
+          "name": "Inl_ColorGradingLUT",
+          "ms": 0.034561164912234231
+        },
+        {
+          "name": "Inl_UniversalRenderTotal",
+          "ms": 0.033052431007658437
+        },
+        {
+          "name": "Inl_ExecuteRenderGraph",
+          "ms": 0.03235194283143817
+        },
+        {
+          "name": "TransformChangeSystem",
+          "ms": 0.03216116471513196
+        },
+        {
+          "name": "CalculateLODJob",
+          "ms": 0.031875727883567219
+        },
+        {
+          "name": "Inl_NRPRGComp_ExecuteInitializeResources",
+          "ms": 0.029467475492920042
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.028483495009637514
+        }
+      ]
+    }
+  ],
+  "render": [
+    {
+      "phase": "full-c",
+      "thread": "Render Thread",
+      "frames": 22,
+      "frameMs": 14.51268178766424,
+      "inclusive": [
+        {
+          "name": "<unnamed native sample>",
+          "ms": 14.51268178766424
+        },
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 10.027790888585349
+        },
+        {
+          "name": "Gfx.WaitForGfxCommandsFromMainThread",
+          "ms": 10.013681745384185
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 4.4945363649759118
+        },
+        {
+          "name": "PutGeometryJobFence",
+          "ms": 2.4716317975987541
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 2.4656954539770428
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.69925909150730481
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.6960227299820293
+        },
+        {
+          "name": "BufferD3D12.InitializeResource",
+          "ms": 0.42216363426467235
+        },
+        {
+          "name": "BufferD3D12.CreateBufferResource",
+          "ms": 0.36543636277995328
+        },
+        {
+          "name": "CreateResourceWithTag",
+          "ms": 0.35029999814419582
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.34581818092953076
+        },
+        {
+          "name": "BufferD3D12.Reinitialize",
+          "ms": 0.32463636143471708
+        },
+        {
+          "name": "Bloom",
+          "ms": 0.14847727289254015
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.087786362929777664
+        },
+        {
+          "name": "Draw Main Light Shadowmap",
+          "ms": 0.073336363854733383
+        },
+        {
+          "name": "MainLightShadow",
+          "ms": 0.072540908882563759
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.069277272136373955
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.0549227273599668
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.04357727276245979
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.037904545106522906
+        },
+        {
+          "name": "Blit Color LUT",
+          "ms": 0.037245454351333057
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.036627272651954132
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.033627272329547188
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.029909090731631626
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.029227272649718958
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.028549999929964542
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.02796818180517717
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.025172727131575812
+        },
+        {
+          "name": "DrawDepthNormalPrepass",
+          "ms": 0.022349999963559887
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.021490908820520748
+        },
+        {
+          "name": "PlayerEndOfFrame",
+          "ms": 0.021268181743587113
+        },
+        {
+          "name": "DrawTransparentObjects",
+          "ms": 0.02043181818655946
+        },
+        {
+          "name": "DrawOpaqueObjects",
+          "ms": 0.018113636242395096
+        },
+        {
+          "name": "Gfx.RequestAsyncReadbackData",
+          "ms": 0.01787727258422158
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.01681818203492598
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.016509090761908075
+        },
+        {
+          "name": "DrawSkybox",
+          "ms": 0.015922727147963913
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.015436363491145048
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.01523636370389299
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.012990909035910259
+        },
+        {
+          "name": "Setup Forward Lights",
+          "ms": 0.010763636282221838
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.009499999948523262
+        },
+        {
+          "name": "D3D12ScratchAllocator.ReclaimMemory",
+          "ms": 0.0073181816389313262
+        },
+        {
+          "name": "D3D12ClientScratchAllocator.ReclaimMemory",
+          "ms": 0.0057818180843737946
+        }
+      ],
+      "self": [
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 10.027790888585349
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 2.46513181762533
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 0.66243184240870923
+        },
+        {
+          "name": "CreateResourceWithTag",
+          "ms": 0.35029999814419582
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.22475454850990156
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.072345453960059036
+        },
+        {
+          "name": "MainLightShadow",
+          "ms": 0.071495454362196717
+        },
+        {
+          "name": "BufferD3D12.InitializeResource",
+          "ms": 0.05672727148471908
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.049927272897383031
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.04357727276245979
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.038277272193557692
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.037904545106522906
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.036627272651954132
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.02796818180517717
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.02616363629931584
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.025677272637205369
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.025172727131575812
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.021181819494813681
+        },
+        {
+          "name": "DrawDepthNormalPrepass",
+          "ms": 0.020631818136528389
+        },
+        {
+          "name": "DrawTransparentObjects",
+          "ms": 0.020195454557489775
+        },
+        {
+          "name": "DrawOpaqueObjects",
+          "ms": 0.017636363521226238
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.01681818203492598
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.016509090761908075
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.015436363491145048
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.01523636370389299
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.015154545407064936
+        },
+        {
+          "name": "BufferD3D12.CreateBufferResource",
+          "ms": 0.015136364635757425
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.012990909035910259
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.0084545451979713762
+        },
+        {
+          "name": "PutGeometryJobFence",
+          "ms": 0.0059363436217112894
+        },
+        {
+          "name": "D3D12ClientScratchAllocator.ReclaimMemory",
+          "ms": 0.0057818180843737946
+        },
+        {
+          "name": "Gfx.DrawDynamic",
+          "ms": 0.0055863635868511419
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.0051590908445756541
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.0049818180586126718
+        },
+        {
+          "name": "<unnamed native sample>",
+          "ms": 0.0044636773041433616
+        }
+      ]
+    },
+    {
+      "phase": "cpu-control",
+      "thread": "Render Thread",
+      "frames": 131,
+      "frameMs": 15.31073817041994,
+      "inclusive": [
+        {
+          "name": "<unnamed native sample>",
+          "ms": 15.31073817041994
+        },
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 11.3295854442823
+        },
+        {
+          "name": "Gfx.WaitForGfxCommandsFromMainThread",
+          "ms": 11.318553375325889
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 3.98941830497437
+        },
+        {
+          "name": "PutGeometryJobFence",
+          "ms": 2.1386717487871292
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 2.1374526578286051
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.61707098816187322
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.61413282406239111
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.44616794054403558
+        },
+        {
+          "name": "BufferD3D12.InitializeResource",
+          "ms": 0.3576450366242469
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.329009160058189
+        },
+        {
+          "name": "BufferD3D12.Reinitialize",
+          "ms": 0.30880305225043808
+        },
+        {
+          "name": "BufferD3D12.CreateBufferResource",
+          "ms": 0.30587099090872605
+        },
+        {
+          "name": "CreateResourceWithTag",
+          "ms": 0.29335038026595728
+        },
+        {
+          "name": "Bloom",
+          "ms": 0.11002137386844359
+        },
+        {
+          "name": "Draw Main Light Shadowmap",
+          "ms": 0.074820610772789883
+        },
+        {
+          "name": "MainLightShadow",
+          "ms": 0.074156488313247226
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.066196946583631386
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.044845801358687057
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.03955190808233229
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.038537404361316037
+        },
+        {
+          "name": "PlayerEndOfFrame",
+          "ms": 0.033907633113056307
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.030550381524189738
+        },
+        {
+          "name": "Gfx.RequestAsyncReadbackData",
+          "ms": 0.028619084194416309
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.026990076285282164
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.026715267037276093
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.025874045599280422
+        },
+        {
+          "name": "Blit Color LUT",
+          "ms": 0.024329007539244097
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.023777099041879631
+        },
+        {
+          "name": "DrawDepthNormalPrepass",
+          "ms": 0.022395419703355728
+        },
+        {
+          "name": "DrawTransparentObjects",
+          "ms": 0.021618320421806274
+        },
+        {
+          "name": "DrawOpaqueObjects",
+          "ms": 0.0201992365737794
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.018129770921273086
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.017645038020779744
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.017080152599240533
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.01530381670321217
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.013305343381833029
+        },
+        {
+          "name": "DrawSkybox",
+          "ms": 0.011425954090673049
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.010832060995788975
+        },
+        {
+          "name": "Setup Forward Lights",
+          "ms": 0.0106961831507337
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.0094618320301573244
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.0094450381620012173
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.0072954198281557957
+        },
+        {
+          "name": "D3D12ScratchAllocator.ReclaimMemory",
+          "ms": 0.0067167937479431575
+        },
+        {
+          "name": "D3D12ClientScratchAllocator.ReclaimMemory",
+          "ms": 0.0048893128763013412
+        }
+      ],
+      "self": [
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 11.3295854442823
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 2.1368534212054655
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.40885114690116947
+        },
+        {
+          "name": "CreateResourceWithTag",
+          "ms": 0.29335038026595728
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 0.26539770539327684
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.22725877948093115
+        },
+        {
+          "name": "MainLightShadow",
+          "ms": 0.073048854751331563
+        },
+        {
+          "name": "BufferD3D12.InitializeResource",
+          "ms": 0.051774045715520856
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.050490076467928031
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.03955190808233229
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.039200763246097836
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.038537404361316037
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.030550381524189738
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.026990076285282164
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.023777099041879631
+        },
+        {
+          "name": "DrawTransparentObjects",
+          "ms": 0.021311450199051209
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.021294656370940638
+        },
+        {
+          "name": "DrawDepthNormalPrepass",
+          "ms": 0.020838931169563493
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.020206107807750919
+        },
+        {
+          "name": "DrawOpaqueObjects",
+          "ms": 0.019183969412635272
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.017645038020779744
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.013305343381833029
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.01300458007630757
+        },
+        {
+          "name": "BufferD3D12.CreateBufferResource",
+          "ms": 0.012520610642768727
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.010832060995788975
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.0095190839337199237
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.0094450381620012173
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.0090702290164963485
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.0072954198281557957
+        },
+        {
+          "name": "PutGeometryJobFence",
+          "ms": 0.0061335947021543408
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.004914503789840991
+        },
+        {
+          "name": "D3D12ClientScratchAllocator.ReclaimMemory",
+          "ms": 0.0048893128763013412
+        },
+        {
+          "name": "CustomRenderTextures.Update",
+          "ms": 0.0044312976880127013
+        },
+        {
+          "name": "Gfx.DrawDynamic",
+          "ms": 0.0039763358538927691
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.0037748092174075031
+        }
+      ]
+    },
+    {
+      "phase": "empty-control",
+      "thread": "Render Thread",
+      "frames": 681,
+      "frameMs": 2.9372945600319187,
+      "inclusive": [
+        {
+          "name": "<unnamed native sample>",
+          "ms": 2.9372945600319187
+        },
+        {
+          "name": "Gfx.WaitForGfxCommandsFromMainThread",
+          "ms": 2.0819286297863582
+        },
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 2.0801726820958262
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 0.85402261114137967
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.3662190882382414
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.36415286259329094
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.28547532974623374
+        },
+        {
+          "name": "Bloom",
+          "ms": 0.077947136140517376
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.0472212918977993
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.036802055549407145
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.033853450447639585
+        },
+        {
+          "name": "PlayerEndOfFrame",
+          "ms": 0.032837885327774124
+        },
+        {
+          "name": "Blit Color LUT",
+          "ms": 0.03057195280682673
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.030238179011316903
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.03006622601962387
+        },
+        {
+          "name": "Gfx.RequestAsyncReadbackData",
+          "ms": 0.028121879666212195
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.026428193860467134
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.023372687112195378
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.022318355240633442
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.020961086540626533
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.015663436048760054
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.012533920637924065
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.012278560874505014
+        },
+        {
+          "name": "Setup Forward Lights",
+          "ms": 0.011160499213889745
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.01012305427539585
+        },
+        {
+          "name": "DrawSkybox",
+          "ms": 0.0097588839572847509
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.0093888399182995245
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.0087494860107842267
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.00852731273888382
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.0082675476774584263
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.0057660792585019233
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.0052450807305619053
+        },
+        {
+          "name": "Setup Camera Properties",
+          "ms": 0.0051082231874663856
+        },
+        {
+          "name": "PutAllGeometryJobFence",
+          "ms": 0.00415227605746553
+        },
+        {
+          "name": "Gfx.DrawDynamic",
+          "ms": 0.003744933909768028
+        },
+        {
+          "name": "GUITexture.Draw",
+          "ms": 0.0035593245050592262
+        },
+        {
+          "name": "D3D12ClientScratchAllocator.ReclaimMemory",
+          "ms": 0.003298237807868803
+        },
+        {
+          "name": "D3D12ScratchAllocator.ReclaimMemory",
+          "ms": 0.0031834066797055715
+        },
+        {
+          "name": "WaitForRenderJobs",
+          "ms": 0.0018527165900439943
+        },
+        {
+          "name": "D3D12ScratchAllocator.ReclaimScratchBuffers",
+          "ms": 0.0016092510614056953
+        },
+        {
+          "name": "Gfx.UpdateAsyncReadbackData",
+          "ms": 0.0015781204053440109
+        },
+        {
+          "name": "AsyncUploadManager.AsyncResourceUploadAll",
+          "ms": 0.0015246695813226478
+        },
+        {
+          "name": "CustomRenderTextures.Update",
+          "ms": 0.0013408223148684937
+        },
+        {
+          "name": "ReflectionProbes.Update",
+          "ms": 0.00096475769633276142
+        },
+        {
+          "name": "Graphics.Blit",
+          "ms": 0.00084640234353214989
+        }
+      ],
+      "self": [
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 2.0801726820958262
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.25442217278221441
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.16273025006695432
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 0.085803377314139673
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.035023494621550064
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.033853450447639585
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.032034067364998309
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.030238179011316903
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.03006622601962387
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.026428193860467134
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.022318355240633442
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.017079001472081315
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.015663436048760054
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.012533920637924065
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.0093888399182995245
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.0087494860107842267
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.0077092510634353224
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.0070274595871072662
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.0064841409250765642
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.0057660792585019233
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.0052450807305619053
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.004500881032320765
+        },
+        {
+          "name": "PutAllGeometryJobFence",
+          "ms": 0.00415227605746553
+        },
+        {
+          "name": "Gfx.DrawDynamic",
+          "ms": 0.003744933909768028
+        },
+        {
+          "name": "D3D12ClientScratchAllocator.ReclaimMemory",
+          "ms": 0.003298237807868803
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.0032822320083219138
+        },
+        {
+          "name": "Setup Camera Properties",
+          "ms": 0.0025433186594145197
+        },
+        {
+          "name": "PlayerEndOfFrame",
+          "ms": 0.002244199507360527
+        },
+        {
+          "name": "Gfx.WaitForGfxCommandsFromMainThread",
+          "ms": 0.0021597656068078749
+        },
+        {
+          "name": "WaitForRenderJobs",
+          "ms": 0.0018527165900439943
+        },
+        {
+          "name": "Gfx.RequestAsyncReadbackData",
+          "ms": 0.0016936858057450617
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.0016772388687557145
+        },
+        {
+          "name": "D3D12ScratchAllocator.ReclaimScratchBuffers",
+          "ms": 0.0016092510614056953
+        },
+        {
+          "name": "Gfx.UpdateAsyncReadbackData",
+          "ms": 0.0015781204053440109
+        },
+        {
+          "name": "D3D12ScratchAllocator.ReclaimMemory",
+          "ms": 0.0015741556182998764
+        }
+      ]
+    },
+    {
+      "phase": "full-recovery",
+      "thread": "Render Thread",
+      "frames": 206,
+      "frameMs": 14.599496586808881,
+      "inclusive": [
+        {
+          "name": "<unnamed native sample>",
+          "ms": 14.599496586808881
+        },
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 10.166910178366237
+        },
+        {
+          "name": "Gfx.WaitForGfxCommandsFromMainThread",
+          "ms": 10.158347550269381
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 4.4338461051522193
+        },
+        {
+          "name": "PutGeometryJobFence",
+          "ms": 2.4209504811435041
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 2.4142898011464373
+        },
+        {
+          "name": "UniversalRenderPipeline.RenderSingleCameraInternal: Main Camera",
+          "ms": 0.69759077528148017
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.69439563010502792
+        },
+        {
+          "name": "BufferD3D12.InitializeResource",
+          "ms": 0.40536795977900908
+        },
+        {
+          "name": "BufferD3D12.CreateBufferResource",
+          "ms": 0.350683008203084
+        },
+        {
+          "name": "CreateResourceWithTag",
+          "ms": 0.33596650334708034
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.32862184420951362
+        },
+        {
+          "name": "BufferD3D12.Reinitialize",
+          "ms": 0.30850679465813691
+        },
+        {
+          "name": "Bloom",
+          "ms": 0.15129563093040754
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.091598543727282183
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.075833009284676858
+        },
+        {
+          "name": "Draw Main Light Shadowmap",
+          "ms": 0.074905825109736437
+        },
+        {
+          "name": "MainLightShadow",
+          "ms": 0.074168446211560254
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.058837378234828562
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.045010193868187588
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.040481067601946245
+        },
+        {
+          "name": "Blit Color LUT",
+          "ms": 0.037622815323541468
+        },
+        {
+          "name": "PlayerEndOfFrame",
+          "ms": 0.037159708790815642
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.036952427045885222
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.033730582379311036
+        },
+        {
+          "name": "Gfx.RequestAsyncReadbackData",
+          "ms": 0.032148057974657966
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.032025242622182204
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.031028640555959303
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.030277184346347179
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.02692281540248145
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.025300485335145759
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.025060679405514836
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.020840776550755339
+        },
+        {
+          "name": "DrawTransparentObjects",
+          "ms": 0.020212621215586233
+        },
+        {
+          "name": "DrawDepthNormalPrepass",
+          "ms": 0.019857766911459778
+        },
+        {
+          "name": "DrawOpaqueObjects",
+          "ms": 0.018408737746655073
+        },
+        {
+          "name": "DrawSkybox",
+          "ms": 0.017448543548330808
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.016842232944751248
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.016093203766289556
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.015097087280806696
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.012797572713309122
+        },
+        {
+          "name": "Setup Forward Lights",
+          "ms": 0.011383495049424541
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.010102912557573573
+        },
+        {
+          "name": "D3D12ScratchAllocator.ReclaimMemory",
+          "ms": 0.0067572813965049595
+        },
+        {
+          "name": "Gfx.DrawDynamic",
+          "ms": 0.0058310679182663411
+        }
+      ],
+      "self": [
+        {
+          "name": "Semaphore.WaitForSignal",
+          "ms": 10.166910178366237
+        },
+        {
+          "name": "WaitForJobGroupID",
+          "ms": 2.4136791215514148
+        },
+        {
+          "name": "RenderLoop",
+          "ms": 0.65059417095069227
+        },
+        {
+          "name": "CreateResourceWithTag",
+          "ms": 0.33596650334708034
+        },
+        {
+          "name": "ExecuteRenderGraph",
+          "ms": 0.21972815637014473
+        },
+        {
+          "name": "RG_BloomDownsample",
+          "ms": 0.075454854536112129
+        },
+        {
+          "name": "MainLightShadow",
+          "ms": 0.073118446236919918
+        },
+        {
+          "name": "BufferD3D12.InitializeResource",
+          "ms": 0.054684951575925046
+        },
+        {
+          "name": "SSAO",
+          "ms": 0.0532592229561505
+        },
+        {
+          "name": "BufferD3D12.UpdateInternal",
+          "ms": 0.045010193868187588
+        },
+        {
+          "name": "Gfx.PresentFrame",
+          "ms": 0.040971358927316882
+        },
+        {
+          "name": "Gfx.SetRenderTarget",
+          "ms": 0.040481067601946245
+        },
+        {
+          "name": "ColorGradingLUT",
+          "ms": 0.036952427045885222
+        },
+        {
+          "name": "GpuRecorder.FrameTick",
+          "ms": 0.032025242622182204
+        },
+        {
+          "name": "CreateCommittedResourceWithTag",
+          "ms": 0.030205825123965888
+        },
+        {
+          "name": "RG_BloomUpsample",
+          "ms": 0.026730582406247053
+        },
+        {
+          "name": "Canvas.RenderOverlays",
+          "ms": 0.025060679405514836
+        },
+        {
+          "name": "RG_BloomPrefilter",
+          "ms": 0.022780096998157938
+        },
+        {
+          "name": "ScheduleGeometryJobs",
+          "ms": 0.020115049551376728
+        },
+        {
+          "name": "DrawTransparentObjects",
+          "ms": 0.019820388213702245
+        },
+        {
+          "name": "DrawDepthNormalPrepass",
+          "ms": 0.019147572744965782
+        },
+        {
+          "name": "DrawOpaqueObjects",
+          "ms": 0.018047572704409567
+        },
+        {
+          "name": "Camera.RenderSkybox",
+          "ms": 0.016842232944751248
+        },
+        {
+          "name": "Profiler.CollectUsedTextureStats",
+          "ms": 0.016093203766289556
+        },
+        {
+          "name": "RG_UberPost",
+          "ms": 0.015097087280806696
+        },
+        {
+          "name": "BufferD3D12.CreateBufferResource",
+          "ms": 0.014716504856003719
+        },
+        {
+          "name": "CopyColor",
+          "ms": 0.013894660140668015
+        },
+        {
+          "name": "RG_FinalBlit",
+          "ms": 0.012797572713309122
+        },
+        {
+          "name": "UI.RenderOverlays",
+          "ms": 0.0086699029737961984
+        },
+        {
+          "name": "<unnamed native sample>",
+          "ms": 0.00730293138728034
+        },
+        {
+          "name": "PutGeometryJobFence",
+          "ms": 0.0066606799970667478
+        },
+        {
+          "name": "Gfx.DrawDynamic",
+          "ms": 0.0058310679182663411
+        },
+        {
+          "name": "D3D12ClientScratchAllocator.ReclaimMemory",
+          "ms": 0.0055533979480545878
+        },
+        {
+          "name": "UpdateReflectionProbeAtlas",
+          "ms": 0.005499029067543887
+        },
+        {
+          "name": "Profiler.FlushRenderCounters",
+          "ms": 0.0047475727844657825
+        }
+      ]
+    }
+  ],
+  "scope": "Actual Development Player binary CPU profile,phase-labelled native measured frames; profiler overhead is not a throughput delta or GPU timing"
+}

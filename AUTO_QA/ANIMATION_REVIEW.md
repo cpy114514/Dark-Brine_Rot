@@ -132,3 +132,8 @@ No model/UV/rig/clip/controller/collider/camera gameplay edit. Only fresh wind/r
 ## 2026-10-29 — Batch024 — frozen forest render controls
 
 Native final full-recovery/half-a PNGs inspected:actual Sahur,terrain,grass and trees at the same forest pose. Output1080p,temporary renderScale1/.5 controls;scaled simulation time/camera stay fixed. No animation/model/rig/clip/collider or normal camera edit. Numeric/native proof does not establish smoother animation,flicker-free movement,whole combat/UI or precise feet. Camera/time/quality ownership restores;all4 styles/pixel and chicken/duck fixes retained.
+
+
+## 2026-10-29 — Batch025 — native CPU capture only
+
+Only optional binary profiling/phase labels changed;no animation/model/rig/controller/collision or normal camera behavior edit. Native paired frozen forest renders pass7 existing pixel controls,without new temporal-smoothness/whole combat/UI/precision foot acceptance. Raw CPU markers qualify timing,not animation appearance. Styles/pixel and chicken/duck repairs remain;small toe intersections remain open.

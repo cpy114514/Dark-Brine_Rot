@@ -419,3 +419,18 @@ Fixture image qualification: two native PNGs are blank backgrounds, archived pri
 | Safety | Both100-pref/type restorations and fresh saves pass;5 original scenes clean/stopped,timescale1,build/preload/backend/timing flag/settings bytes restored;unrelated4 Plastic hashes unchanged. |
 
 Initial3433-frame archive is discovery/GPU-unqualified;final2172-frame archive accepted. Both compressed with exact round-trip bytes/SHA256. Resolution-sensitive rendering/presentation remains to be localized;no GPU/shader/driver/steadyFPS-gain or full combat/UI/temporal claim. Documentation/Performance-Batch024.md and Evidence/batch024/proof.json.
+
+
+## 2026-10-29 — Batch025 — native CPU profile acceptance
+
+| Coverage | Result |
+|---|---|
+| Native contracts | PASS21 incl new unflagged-profiler preservation and prior independent-counter/ownership controls;overlap not summed with024. |
+| Build/run | SameEditor7-scene Mono Development44.37s/2warnings/0errors;Player exit0,2101 fenced samples,0 missing render/runtime errors,7 image controls. |
+| Profile qualification |711404418byte native capture;CPU8ms phase marker8.003ms. Import retains2000 frames;complete3 controls1018 labelled frames,partialfull-c22 excluded from headline conclusions. |
+| Wait location | Full recovery main14.598ms,DXGI.WaitOnSwapChain7.550ms;render waits main10.158ms/RenderLoop4.434ms incl geometry fence2.421ms. Threads overlap;no GPU/driver/FPS-gain conclusion. |
+| Control response | CPU spin reduces swap-chain wait to1.014ms;empty main2.938ms. No quality/graphics policy production change. |
+| Profiler preservation | Original0–676 capture privately backed up;677-frame range,4 full-frame name/time fingerprints,flags/selection/connection restore. Initial offline reader error safely restored,then corrected/reanalyzed same file. |
+| Safety | Fresh saves/100 pref types restored;5 scenes clean/stopped,timescale1,frameTimingfalse/build policy/preloads/backend/settings bytes restored;unrelated4 Plastic paths hash-identical. |
+
+Raw CPU profile/logs/backup/build remain private;public report archive has exact byte/SHA256 roundtrip. New native profile instrumentation is optional;no original asset/gameplay/animation or steadyFPS claim. Documentation/Performance-Batch025.md and Evidence/batch025/proof.json.
