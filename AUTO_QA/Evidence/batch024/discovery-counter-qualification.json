@@ -1,0 +1,8 @@
+{
+  "cpuCounterQualified": true,
+  "gpuCounterQualified": false,
+  "cpuPositiveDeltaMs": 7.4767,
+  "fullGpuMedianMs": 0.012288,
+  "emptyGpuMedianMs": 0.011264,
+  "samples": 3433
+}

@@ -1,0 +1,365 @@
+{
+  "batch": 24,
+  "baselineGit": "401f770948d412c1a2e4c2ecd6e07548256e8f22",
+  "baselinePlastic": 207,
+  "checkpointTitle": "Qualify paired forest timing and isolate unavailable GPU data",
+  "issue": "QA-036 diagnostic trust: finite native GPU times do not respond to actual geometry-to-empty control. Initial collector also discarded independent CPU frames when GPU returnedzero.",
+  "change": "Explicit optional frozen fixed-camera forest scale1/.5 pairs and CPU8ms/empty controls; independently qualified CPU/GPU publication,unavailableGPU=-1. No normal gameplay/quality change.",
+  "nativeChecks": 20,
+  "discoveryFrames": 3433,
+  "finalFrames": 2172,
+  "finalRenderedIntervalsMissing": 0,
+  "finalRuntimeErrors": 0,
+  "cpuCounterQualified": true,
+  "gpuCounterQualified": false,
+  "cpuPositiveDeltaMs": 7.914,
+  "rawGpuControl": {
+    "fullMedianMs": 0.008192,
+    "emptyMedianMs": 0.011264,
+    "acceptedGpuMs": null
+  },
+  "finalRows": [
+    {
+      "name": "full-a",
+      "scale": 1,
+      "frames": 198,
+      "timed": 198,
+      "averageWallMs": 15.139190876122678,
+      "averageFps": 66.05372824628205,
+      "medianCpuMs": 15.1738,
+      "medianMainMs": 6.2178,
+      "medianRenderMs": 0.0877,
+      "medianPresentWaitMs": 8.9216,
+      "medianRawGpuMs": 0.007168,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    },
+    {
+      "name": "half-a",
+      "scale": 0.5,
+      "frames": 235,
+      "timed": 235,
+      "averageWallMs": 12.760062550483866,
+      "averageFps": 78.3695217827972,
+      "medianCpuMs": 12.8884,
+      "medianMainMs": 6.2402,
+      "medianRenderMs": 0.0855,
+      "medianPresentWaitMs": 6.5539,
+      "medianRawGpuMs": 0.012288,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    },
+    {
+      "name": "full-b",
+      "scale": 1,
+      "frames": 197,
+      "timed": 197,
+      "averageWallMs": 15.1785182904471,
+      "averageFps": 65.88258358718517,
+      "medianCpuMs": 15.2115,
+      "medianMainMs": 6.3241,
+      "medianRenderMs": 0.0901,
+      "medianPresentWaitMs": 8.8972,
+      "medianRawGpuMs": 0.012288,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    },
+    {
+      "name": "half-b",
+      "scale": 0.5,
+      "frames": 234,
+      "timed": 234,
+      "averageWallMs": 12.80755467700143,
+      "averageFps": 78.07891710942319,
+      "medianCpuMs": 12.9594,
+      "medianMainMs": 6.0948,
+      "medianRenderMs": 0.0882,
+      "medianPresentWaitMs": 6.7536,
+      "medianRawGpuMs": 0.012288,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    },
+    {
+      "name": "full-c",
+      "scale": 1,
+      "frames": 194,
+      "timed": 194,
+      "averageWallMs": 15.404596898973603,
+      "averageFps": 64.91568760664093,
+      "medianCpuMs": 15.3855,
+      "medianMainMs": 6.4497,
+      "medianRenderMs": 0.0954,
+      "medianPresentWaitMs": 8.8713,
+      "medianRawGpuMs": 0.007168,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    },
+    {
+      "name": "cpu-control",
+      "scale": 1,
+      "frames": 128,
+      "timed": 128,
+      "averageWallMs": 15.567002296447754,
+      "averageFps": 64.23844366157708,
+      "medianCpuMs": 15.4672,
+      "medianMainMs": 14.2188,
+      "medianRenderMs": 0.0825,
+      "medianPresentWaitMs": 1.6887,
+      "medianRawGpuMs": 0.012288,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    },
+    {
+      "name": "empty-control",
+      "scale": 1,
+      "frames": 788,
+      "timed": 788,
+      "averageWallMs": 2.537960913126844,
+      "averageFps": 394.01710043200393,
+      "medianCpuMs": 2.5357,
+      "medianMainMs": 2.5213,
+      "medianRenderMs": 0.0688,
+      "medianPresentWaitMs": 0.0065,
+      "medianRawGpuMs": 0.011264,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    },
+    {
+      "name": "full-recovery",
+      "scale": 1,
+      "frames": 198,
+      "timed": 198,
+      "averageWallMs": 15.147589380090887,
+      "averageFps": 66.01710509226913,
+      "medianCpuMs": 15.1794,
+      "medianMainMs": 6.2017,
+      "medianRenderMs": 0.0897,
+      "medianPresentWaitMs": 8.89,
+      "medianRawGpuMs": 0.008192,
+      "medianQualifiedGpuMs": null,
+      "missingRender": 0,
+      "missingTiming": 0,
+      "duplicateTiming": 0,
+      "rejectedTiming": 0
+    }
+  ],
+  "allSevenImageControls": [
+    {
+      "phase": "forest-full-a",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2072674
+    },
+    {
+      "phase": "forest-half-a",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2072660
+    },
+    {
+      "phase": "forest-full-b",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2072674
+    },
+    {
+      "phase": "forest-half-b",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2072660
+    },
+    {
+      "phase": "forest-full-c",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2072674
+    },
+    {
+      "phase": "forest-cpu-control",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2072674
+    },
+    {
+      "phase": "forest-full-recovery",
+      "width": 1920,
+      "height": 1080,
+      "changedPixels": 2072673
+    }
+  ],
+  "frozenTime": 21.1976375579834,
+  "endTime": 21.1976375579834,
+  "cameraFixed": true,
+  "settings": {
+    "output": [
+      1920,
+      1080
+    ],
+    "vsync": 0,
+    "targetFps": -1,
+    "style": "realistic",
+    "quality": "PC",
+    "lodBias": 0.5,
+    "shadowDistance": 180
+  },
+  "archives": [
+    {
+      "run": "a-paired",
+      "rawBytes": 1407581,
+      "gzipBytes": 135329,
+      "rawSha256": "eb5db3d10b16403258ed4cc4338e37b5edfe0394cba8ed7bd61f9c0820acdb7e",
+      "roundTripExact": true
+    },
+    {
+      "run": "b-qualified",
+      "rawBytes": 985325,
+      "gzipBytes": 87594,
+      "rawSha256": "cf2dcacf32792aaba6ebc89d7bc606c196880df6297143f53644785e8b363b37",
+      "roundTripExact": true
+    }
+  ],
+  "safety": [
+    {
+      "run": "a-paired",
+      "timedOut": false,
+      "exitCode": 0,
+      "failure": null,
+      "nativePreferencesRestored": true,
+      "saves": [
+        {
+          "file": "dark-brine-rot-save.json.bak",
+          "unchanged": true
+        },
+        {
+          "file": "dark-brine-rot-save.json",
+          "unchanged": true
+        }
+      ]
+    },
+    {
+      "run": "b-qualified",
+      "timedOut": false,
+      "exitCode": 0,
+      "failure": null,
+      "nativePreferencesRestored": true,
+      "saves": [
+        {
+          "file": "dark-brine-rot-save.json.bak",
+          "unchanged": true
+        },
+        {
+          "file": "dark-brine-rot-save.json",
+          "unchanged": true
+        }
+      ]
+    }
+  ],
+  "protected": [
+    {
+      "path": "ProjectSettings/EditorBuildSettings.asset",
+      "unchanged": true
+    },
+    {
+      "path": "ProjectSettings/ShaderGraphSettings.asset",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/_Recovery/0.unity",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/_Recovery/0.unity.meta",
+      "unchanged": true
+    }
+  ],
+  "nativeState": {
+    "state": {
+      "stopped": true,
+      "clean": true,
+      "sceneMatch": true,
+      "savesUnchanged": true,
+      "scenes": [
+        {
+          "path": "Assets/Scenes/First Island/Main.unity",
+          "isLoaded": true,
+          "isActive": true,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Lighting.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Gameplay.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Environment.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        },
+        {
+          "path": "Assets/Scenes/First Island/Enemies.unity",
+          "isLoaded": true,
+          "isActive": false,
+          "isSubScene": false
+        }
+      ]
+    },
+    "development": false,
+    "debugging": false,
+    "connectProfiler": false,
+    "backend": "Mono2x",
+    "preloaded": [
+      "Assets/InputSystem_Actions.inputactions"
+    ],
+    "projectSettingsBytesRestored": true
+  },
+  "frameTimingSettingRestored": true,
+  "finalBuildSettingsBytesRestored": true,
+  "sourceHashes": [
+    {
+      "path": "Assets/Scripts/Performance/IslandPerformanceBaseline.cs",
+      "sha256": "104c42802c08eb8c04b3b3b87f7892f3683aba43cf6444e16b5cf0226a956ce7"
+    },
+    {
+      "path": "Assets/Scripts/Performance/IslandPerformanceBaseline.Forest.cs",
+      "sha256": "5bfe54ec3205d3eba4f125c583213e3c31c180897259739326806f321f0a5582"
+    }
+  ],
+  "limits": [
+    "Final fixed-frozen realistic forest diagnostic; not normal moving/combat gameplay or optimizationFPS gain.",
+    "Half renderScale is a temporary control,not a production quality change. Other Editors remain open.",
+    "Full frame~15ms includes~9msPresent wait; main~6ms. Resolution-sensitive render path is observed,but unqualified GPU counter prevents a GPU/shader/driver-cause classification.",
+    "Initial3433-frame report is discovery/rawGPU-unqualified and superseded by final2172-frame independent qualification run.",
+    "20 final native checks include replay/synthetic controls; earlier15 checks overlap and are not added again.",
+    "No art/model/rig/animation/collision/style assets changed; no temporal smoothness or full encounter acceptance.",
+    "Known606 missing plants preserved; all private snapshots/logs/binaries remain ignored."
+  ]
+}

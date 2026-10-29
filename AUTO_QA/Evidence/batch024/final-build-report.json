@@ -1,0 +1,23 @@
+{
+  "result": "Succeeded",
+  "seconds": 41.1179421,
+  "bytes": 2729620771,
+  "warnings": 2,
+  "errors": 0,
+  "output": "D:/indiegameDev/unity/Dark Brine_Rot/.codex/performance024/final-build/player/DarkBrineQA024.exe",
+  "development": true,
+  "backend": "Mono2x",
+  "frameTimingStats": true,
+  "sameEditor": true,
+  "editorPid": 57472,
+  "scenes": [
+    "Assets/Scenes/Main Menu/MainMenu.unity",
+    "Assets/Scenes/First story/Story1.unity",
+    "Assets/Scenes/First Island/Main.unity",
+    "Assets/Scenes/First Island/Environment.unity",
+    "Assets/Scenes/First Island/Gameplay.unity",
+    "Assets/Scenes/First Island/Lighting.unity",
+    "Assets/Scenes/First Island/Enemies.unity"
+  ],
+  "errorDetails": []
+}
