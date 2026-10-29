@@ -329,3 +329,17 @@ Exact accepted evidence is Evidence/visual-style-v2/{verification,rendering-veri
 | Compile/safety | PASS source completed failed=false/errors=[]; final up_to_date. Five original scenes clean/stopped; profiler/test marker clear; fresh saves unchanged; original settings restored. |
 
 Accepted evidence: Evidence/batch018/proof.json, final-native-kernels.json, before.json, after.json, final-native-state.json and native visible/empty PNGs. No shader/art/model/rig/animation/collider/scene edit, zero-allocation, GPU or overall FPS improvement claim. Existing606 missing plant instances retained. Details: Documentation/Performance-Batch018.md.
+
+## 2026-10-28 (Vancouver) — Batch019 — standalone qualification
+
+| Coverage | Result |
+|---|---|
+| Native instrumentation | PASS22 checks: hidden-manager miss/recovery, ready/wait/timeout, actual native callbacks, missing/wrong-camera/target rejection, actual image positive control, summary/GC-unavailable semantics and target/background cleanup. |
+| Build | Succeeded, Windows64 Mono2x Development,220.34s/2728805367bytes, same Editor.4 known Environment/missing-prefab errors (606 instances),493 warnings; not an error-free asset inventory. |
+| Standalone render/frame validity | PASS completed report,1798 sampled frames,2159 rendered callbacks,0 unrendered intervals and0 runtime errors;3 image controls each differ at>2.07million pixels; PNGs inspected. |
+| Observed performance | Saved PC,1920×1080 output,renderScale0.6(approximately1152×648 internal),target60,vSync1. Coast59.99FPS/p95 18.25ms; forest60.01/p95 17.19ms; boss59.80/p95 17.42ms.0 sampled frames>50ms. Capped single build, not measured improvement/headroom/full1080p. |
+| Cleanup | Both fresh saves unchanged;100 native preference values/kinds restored including7 legacy8-byte REG_DWORD float entries. Initial managed cleanup failure repaired bit-exact via native API; first process exit code unavailable, report completion/process exit verified. Five scenes clean/stopped, build flags/backend/editor prefs restored. |
+
+Evidence: Evidence/batch019/{proof,verification,build-report,standalone-report,player-safety,final-native-state}.json and real PNGs. Intentionally failed native timeout control is not a performance result. No full encounter, long motion, all-style or low-end acceptance; GC counters lack an allocation positive control. Details and limitations: Documentation/Performance-Batch019.md.
+
+Additional cleanup: build preload disk delta removed; five build-only text asset/settings paths compared byte-identical to cs201 and their unchanged checkouts cleared with exact-path filtering. No art/material/profile source edit retained. Private snapshots and build caches excluded.

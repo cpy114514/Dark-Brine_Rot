@@ -1,0 +1,94 @@
+[
+  {
+    "status": "M ",
+    "path": "AUTO_QA/ANIMATION_REVIEW.md"
+  },
+  {
+    "status": "M ",
+    "path": "AUTO_QA/BUG_REPORT.md"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/boss.png"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/build-report.json"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/coast.png"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/file-manifest.json"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/final-native-state.json"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/forest.png"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/native-probe.png"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/player-safety.json"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/proof.json"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/standalone-report.json"
+  },
+  {
+    "status": "A ",
+    "path": "AUTO_QA/Evidence/batch019/verification.json"
+  },
+  {
+    "status": "M ",
+    "path": "AUTO_QA/NEXT_TASK.md"
+  },
+  {
+    "status": "MM",
+    "path": "AUTO_QA/PROGRESS.md"
+  },
+  {
+    "status": "MM",
+    "path": "AUTO_QA/TEST_RESULTS.md"
+  },
+  {
+    "status": "M ",
+    "path": "Assets/Scripts/Performance/IslandPerformanceBaseline.cs"
+  },
+  {
+    "status": "AM",
+    "path": "Documentation/Performance-Batch019.md"
+  },
+  {
+    "status": "A ",
+    "path": "Tools/BuildBaseline019.cs"
+  },
+  {
+    "status": "A ",
+    "path": "Tools/RestoreBaseline019Prefs.ps1"
+  },
+  {
+    "status": "A ",
+    "path": "Tools/RunBaseline019.ps1"
+  },
+  {
+    "status": "A ",
+    "path": "Tools/VerifyBaseline019.cs"
+  },
+  {
+    "status": "??",
+    "path": "AUTO_QA/Evidence/batch019/build-normalization.json"
+  }
+]

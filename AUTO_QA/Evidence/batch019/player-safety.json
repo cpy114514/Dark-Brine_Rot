@@ -1,0 +1,19 @@
+{
+  "completedReport": true,
+  "exitCode": null,
+  "playerExited": true,
+  "nativePreferencesRestored": true,
+  "restoredValues": 100,
+  "saves": [
+    {
+      "file": "dark-brine-rot-save.json",
+      "unchanged": true
+    },
+    {
+      "file": "dark-brine-rot-save.json.bak",
+      "unchanged": true
+    }
+  ],
+  "wrapperRepair": "Seven legacy Unity REG_DWORD floats contain eight bytes. Raw native type/length/bits restored; all 100 values and kinds verified.",
+  "limitation": "Exit code unavailable after initial managed-registry conversion error; runtime report completed and process exited"
+}

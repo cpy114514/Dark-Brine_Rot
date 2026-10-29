@@ -1,0 +1,27 @@
+[
+  {
+    "path": "Assets/Resources/Localization/NotoSansCJKsc SDF.asset",
+    "semanticChanges": false,
+    "restoredOriginalBytes": true
+  },
+  {
+    "path": "Assets/Settings/PC_RPAsset.asset",
+    "semanticChanges": false,
+    "restoredOriginalBytes": true
+  },
+  {
+    "path": "Assets/Settings/UniversalRenderPipelineGlobalSettings.asset",
+    "semanticChanges": false,
+    "restoredOriginalBytes": true
+  },
+  {
+    "path": "ProjectSettings/GraphicsSettings.asset",
+    "semanticChanges": false,
+    "restoredOriginalBytes": true
+  },
+  {
+    "path": "ProjectSettings/ProjectSettings.asset",
+    "semanticChanges": false,
+    "restoredOriginalBytes": true
+  }
+]
