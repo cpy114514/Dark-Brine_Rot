@@ -93,3 +93,7 @@ No production animation/controller/camera/art changes accepted. Native foliage s
 ## 2026-10-28 — Batch 017 — restored rendering ownership
 
 QA-030 is repaired with native object/state/submission evidence: 636 renderers retain original material and mesh IDs, including one intentionally hidden renderer with TwoSided shadows and occlusion disabled. Map-style camera masking stops submissions and restoring the mask resumes them. No art/animation/controller/camera/combat edit or new qualified image/video; this does not establish perceived visual smoothness or whole-game FPS. Diagnostic PNGs remain unqualified.
+
+## 2026-10-29 — Visual Style System V2 compatibility
+
+No models, UVs, rigs, clips, Animator controllers, colliders or combat timings changed. Native keyboard/mouse drives Sahur movement/melee in all four modes. Each mode changes its look during a real active action without changing same-frame actor position, Animator state or normalized time. Six existing Chicken Bro skeleton poses advance during live profiles. Actual pressure rings remain visible in Origami/Monochrome with reversible off/on pixel controls. This establishes rendering/state compatibility, not smoother animation or full boss anticipation acceptance. Matched first-island previews use identical frozen poses; runtime CombatTest captures and composited UI are retained under Evidence/visual-style-v2.

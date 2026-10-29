@@ -294,6 +294,13 @@ Shader "DarkBrine/Procedural Sky"
                     cloudColor = floor(cloudColor * 8 + .5) / 8;
                 }
 
+                if (_EnvironmentMode > 1.5)
+                {
+                    half3 layered = floor(cloudColor * 5 + .5) / 5;
+                    cloudColor = lerp(cloudColor, layered, _EnvironmentStyle.x * .7);
+                    float layeredAlpha = floor(cloudAlpha * 6 + .5) / 6;
+                    cloudAlpha = lerp(cloudAlpha, layeredAlpha, _EnvironmentStyle.x * .55);
+                }
                 sky = lerp(sky, cloudColor, cloudAlpha * _CloudStrength);
                 sky *= 1.0 - cloudAlpha * saturate(_NightFactor) * 0.35;
                 sky = StyleEnvironmentColor(sky, input.positionCS.xy / _ScaledScreenParams.xy,

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "afterActualReload": true,
+  "style": "monochrome",
+  "cards": 4,
+  "managers": 1,
+  "galleries": 1,
+  "pointerDropdownSelected": "dark-fairytale",
+  "nativeAndPixelScreens": "captured composited screen; red proof retained, native UI text"
+}
