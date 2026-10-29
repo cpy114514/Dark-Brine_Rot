@@ -127,3 +127,8 @@ Four styles × coast/forest/boss vicinity,6s per phase, with8°/s orbit and real
 ## 2026-10-29 — Batch023 — startup scheduling and wind preservation
 
 No model/UV/rig/clip/controller/collider/camera gameplay edit. Only fresh wind/renderer scan scheduling changes;6,420 scalar wind profile values match exactly across641 authored/owned renderers under fixed/adaptive policies. Actual reload/lifecycle/cancellation preserve original material/mesh/visibility/shadow/occlusion state. No new visual-smoothness or temporal-flicker acceptance; existing small chicken toe intersections remain open. Four styles/independent pixel mode and batch020 duck size/collision/stride remain unchanged.
+
+
+## 2026-10-29 — Batch024 — frozen forest render controls
+
+Native final full-recovery/half-a PNGs inspected:actual Sahur,terrain,grass and trees at the same forest pose. Output1080p,temporary renderScale1/.5 controls;scaled simulation time/camera stay fixed. No animation/model/rig/clip/collider or normal camera edit. Numeric/native proof does not establish smoother animation,flicker-free movement,whole combat/UI or precise feet. Camera/time/quality ownership restores;all4 styles/pixel and chicken/duck fixes retained.

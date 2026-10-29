@@ -404,3 +404,18 @@ Four representative actual PNGs inspected. Report load82.70s excludes process/me
 76 native rows plus stopped-Editor policy and wind comparisons. New loading result excludes executable/menu startup; no steadyFPS/GC/GPU or low-end guarantee. No full style matrix rerun. Helper cleanup failure repaired and owned fixtures removed; not counted as production failure. See Documentation/Performance-Batch023.md and Evidence/batch023/proof.json.
 
 Fixture image qualification: two native PNGs are blank backgrounds, archived privately and rejected as visual evidence. No pixel-identity/visible geometry acceptance; numeric renderer/ownership tests are independent.
+
+
+## 2026-10-29 — Batch024 — forest control acceptance
+
+| Coverage | Result |
+|---|---|
+| Final native contracts | PASS20:freeze/mask/pipeline/frame ownership and teardown,independentCPU/GPU validity,actual discovery replay,synthetic GPU response and missingCPUcontrol negative. Initial15 overlap,not added. |
+| Builds | SameEditor7-scene Mono Development;discovery90.87s/493warnings/4 known606-plant messages;final41.12s/2warnings/0errors. FrameTiming temporary and restored. |
+| Final native run | Exit0/errors0,2172 fenced samples,0 render misses/missing timings/duplicates/rejected CPU samples;7 real visible/empty controls,2 native PNGs inspected. |
+| CPU control | PASS8ms inserted work raises median main7.914ms. CPU data qualified independently. |
+| GPU control | FAIL qualification:raw full0.008192ms vs empty0.011264ms. All acceptedGPU=-1;raw finite data does not prove fastGPU/headroom. |
+| Paired effects | Full64.92–66.05FPS,half78.08–78.37FPS,empty394.02FPS,recovery66.02FPS. Same frozen time/pose. Temporaryhalfscale is diagnostic,not product optimization/quality change. |
+| Safety | Both100-pref/type restorations and fresh saves pass;5 original scenes clean/stopped,timescale1,build/preload/backend/timing flag/settings bytes restored;unrelated4 Plastic hashes unchanged. |
+
+Initial3433-frame archive is discovery/GPU-unqualified;final2172-frame archive accepted. Both compressed with exact round-trip bytes/SHA256. Resolution-sensitive rendering/presentation remains to be localized;no GPU/shader/driver/steadyFPS-gain or full combat/UI/temporal claim. Documentation/Performance-Batch024.md and Evidence/batch024/proof.json.

@@ -13,7 +13,7 @@ namespace Mavis
 {
     /// <summary>Opt-in deterministic standalone capture. Never runs in a normal game session.</summary>
     [DefaultExecutionOrder(20000)]
-    public sealed class IslandPerformanceBaseline : MonoBehaviour
+    public sealed partial class IslandPerformanceBaseline : MonoBehaviour
     {
         [Serializable] public sealed class Sample { public string phase; public float ms, engineMs; public long gcBytes; }
         [Serializable] public sealed class Summary
@@ -47,6 +47,7 @@ namespace Mavis
             public List<Summary> summaries = new List<Summary>();
             public List<Sample> samples = new List<Sample>();
             public List<RenderProof> renderProofs = new List<RenderProof>();
+            public ForestReport forest;
         }
         readonly Report report = new Report();
         ProfilerRecorder allocations;
@@ -92,6 +93,7 @@ namespace Mavis
             loadTrace = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-load-trace") >= 0;
             startupRender = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-startup-render") >= 0;
             loadOnly = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-load-only") >= 0;
+            forestAttribution = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-forest-attribution") >= 0;
             fixedBudgetControl = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-fixed-init-budget") >= 0;
             report.fixedInitializationControl = fixedBudgetControl;
             previousFixedBudget = WorldPerformanceManager.ForceFixedInitializationBudget;
@@ -251,6 +253,12 @@ namespace Mavis
             // Accept only completed native camera intervals; do not synchronize the GPU
             // with ReadPixels every measured frame and charge that stall to the game.
             EnsureCaptureTarget();
+            if (forestAttribution)
+            {
+                yield return RunForestAttribution();
+                if (!finished) Finish("forest attribution completed");
+                yield break;
+            }
             if (story)
             {
                 yield return new WaitForSecondsRealtime(8);
@@ -347,6 +355,7 @@ namespace Mavis
         }
         void LateUpdate()
         {
+            if (forestAttribution) ForestControlWork();
             long tick = System.Diagnostics.Stopwatch.GetTimestamp();
             float wallMs = previousFrameTick == 0 ? 0 : (float)((tick - previousFrameTick) * 1000.0 / System.Diagnostics.Stopwatch.Frequency);
             previousFrameTick = tick;
@@ -366,6 +375,7 @@ namespace Mavis
                 if (!previousTargets.ContainsKey(captureCamera)) previousTargets.Add(captureCamera, captureCamera.targetTexture);
                 captureCamera.targetTexture = captureTarget;
             }
+            if (forestAttribution) CollectForestTiming(wallMs);
             if (measuring && wallMs > 0)
             {
                 if (!NativeConfigurationValid()) { measuring = false; Finish("native throughput configuration changed during measurement"); return; }
@@ -402,6 +412,7 @@ namespace Mavis
         }
         void OnDestroy()
         {
+            RestoreForestState();
             if (fixedBudgetControl) WorldPerformanceManager.ForceFixedInitializationBudget = previousFixedBudget;
             Application.logMessageReceived -= Log; allocations.Dispose();
             RenderPipelineManager.endCameraRendering -= CameraRendered;

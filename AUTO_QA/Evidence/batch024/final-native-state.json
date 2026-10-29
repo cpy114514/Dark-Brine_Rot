@@ -1,0 +1,48 @@
+{
+  "state": {
+    "stopped": true,
+    "clean": true,
+    "sceneMatch": true,
+    "savesUnchanged": true,
+    "scenes": [
+      {
+        "path": "Assets/Scenes/First Island/Main.unity",
+        "isLoaded": true,
+        "isActive": true,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Lighting.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Gameplay.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Environment.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Enemies.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      }
+    ]
+  },
+  "development": false,
+  "debugging": false,
+  "connectProfiler": false,
+  "backend": "Mono2x",
+  "preloaded": [
+    "Assets/InputSystem_Actions.inputactions"
+  ],
+  "projectSettingsBytesRestored": true
+}

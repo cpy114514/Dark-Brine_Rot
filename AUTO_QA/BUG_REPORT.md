@@ -173,3 +173,8 @@ Qualified standalone12-phase/6963-frame result: native1920×1080,renderScale1,ta
 ## 2026-10-29 — Batch023 — QA-035 frame-paced startup work
 
 VERIFIED/FIXED: fresh wind/profile and world ownership scans used2ms per frame, stretching readiness to~80s at observed~8FPS startup pacing. Adapt only fresh acquisition to1/16 previous frame time,2–8ms target; interactive recache/Editor stays2ms. Same-binary adaptive/fixed/adaptive gives33.43/80.02/32.60s with identical saved preferences,target60/VSync1 and71,315-renderer roster:58.23–59.26% less diagnostic readiness wait. All7 controlled loads exit0/errors0; early RT alone does not help, so no hidden-window or D3D12 upload-cause claim.76 native checks plus6,420 exact wind property comparisons pass. No steadyFPS/GC/quality reduction claim. Documentation/Performance-Batch023.md.
+
+
+## 2026-10-29 — Batch024 — QA-036 independent native timing trust
+
+VERIFIED DIAGNOSTIC FIX: native finite GPU values barely respond to real full/empty geometry controls and initial collection unnecessarily dropped independent CPU samples when GPU returnedzero. Qualify CPU/GPU separately;GPU failure publishes-1 with explicit raw data. Final CPU8ms control adds7.914ms,20 native checks pass,final Player2172 frames/7 actual pixel controls/0 render misses/errors. GPU control fails0.008192ms full vs0.011264 empty. Full~65FPS/half~78FPS and~9ms Present wait show render-path sensitivity,not a proven GPU/shader/driver root cause or product gain. No normal gameplay/quality change. Documentation/Performance-Batch024.md.
