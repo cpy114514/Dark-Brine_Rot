@@ -178,3 +178,8 @@ VERIFIED/FIXED: fresh wind/profile and world ownership scans used2ms per frame, 
 ## 2026-10-29 — Batch024 — QA-036 independent native timing trust
 
 VERIFIED DIAGNOSTIC FIX: native finite GPU values barely respond to real full/empty geometry controls and initial collection unnecessarily dropped independent CPU samples when GPU returnedzero. Qualify CPU/GPU separately;GPU failure publishes-1 with explicit raw data. Final CPU8ms control adds7.914ms,20 native checks pass,final Player2172 frames/7 actual pixel controls/0 render misses/errors. GPU control fails0.008192ms full vs0.011264 empty. Full~65FPS/half~78FPS and~9ms Present wait show render-path sensitivity,not a proven GPU/shader/driver root cause or product gain. No normal gameplay/quality change. Documentation/Performance-Batch024.md.
+
+
+## 2026-10-29 — Batch025 — confirmed presentation location
+
+No new gameplay bug or safe production optimization confirmed. Actual native Player profile localizes main wait toDXGI.WaitOnSwapChain7.550ms of14.598ms full-recovery frame. Render thread waits10.158ms for main commands;RenderLoop4.434ms includes geometry fence2.421ms. Native8ms control marker measures8.003ms and reduces swap-chain wait to1.014ms. GPU/shader/driver/queue cause remains unqualified;no blind graphics/quality change. Bounded foliage refresh1.513ms is an observation,not a confirmed defect.21 native checks/2101 fenced intervals/errors0;offline unnamed-sample reader corrected after safe restoration. Documentation/Performance-Batch025.md.

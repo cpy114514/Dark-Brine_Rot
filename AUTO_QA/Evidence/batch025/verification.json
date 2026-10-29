@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "checks": [
+    "Normal diagnostic session does not enable forest controls",
+    "Normal report has no forest measurements",
+    "Unflagged diagnostic preserves existing profiler recording state",
+    "Owned paired experiment freezes scaled simulation",
+    "Repeated acquisition retains original timescale and camera mask",
+    "Idempotent teardown does not overwrite later external state",
+    "Finite native-unit timing shape accepts zero Present wait",
+    "CPU timing remains usable when GPU timing is missing",
+    "Unusable GPU timing does not discard independent CPU samples",
+    "Missing frame identity rejected",
+    "Nonfinite CPU counter rejected",
+    "Negative CPU counter rejected",
+    "Owned native configuration uses a cloned pipeline and uncapped policy",
+    "Unowned or mismatched forest configuration fails closed",
+    "Component destruction restores frozen state even during a control",
+    "Component destruction restores original native frame and render policy",
+    "Actual8ms CPU positive control qualifies independent CPU readings",
+    "Nonresponsive actual GPU counter publishes unavailable rather than misleading finite values",
+    "Counter qualification preserves all rendered frame samples",
+    "Synthetic finite GPU response control exercises qualified publication",
+    "Missing CPU positive control fails closed independently"
+  ],
+  "scope": "Native optional forest ownership/control validation; timing positive controls and paired performance require standalone"
+}
