@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "checks": [
+    "Native mode owns a separate full-scale pipeline",
+    "Original pipeline scale is preserved",
+    "Only explicit native mode uncaps frame policy",
+    "Native throughput temporarily releases pixel presentation",
+    "Repeated apply does not overwrite the original snapshot",
+    "Teardown restores pipeline and frame policy",
+    "Teardown restores style without saving preferences",
+    "Teardown restores pixel presentation",
+    "Finite GC control releases its buffer outside measurement",
+    "Orbit changes actual native camera position during measurement",
+    "Orbit preserves authored diagnostic camera radius",
+    "Render proof pauses orbit at a matching camera pose",
+    "Actual world/empty native pixels qualify the orbit camera target",
+    "Unqualified GC samples remain unavailable rather than zero",
+    "All new style/route names receive summaries",
+    "Report availability requires the positive control",
+    "Teardown restores the previous camera target",
+    "Teardown restores background policy"
+  ],
+  "gcControl": {
+    "valid": true,
+    "baselineBytes": 47139,
+    "positiveBytes": 1060575,
+    "qualified": true
+  },
+  "scope": "Native isolated opt-in diagnostic override/camera/counter contracts; no game FPS conclusion"
+}

@@ -161,3 +161,10 @@ User-requested duck enlargement:40% uniform visual/capsule growth, size-consiste
 No new gameplay defect confirmed. Actual first-island5 chicken+3 enlarged duck group passes360 sampled native frames across4 styles: max2 attackers,0 slot violations,0 missing ground,0 motor-sole penetrations deeper than0.35m and0 fixture-run exceptions. Ground clearance0.0508461–0.09234619m.
 
 Suspected per-access path-corner array allocation rejected: native getters return the same cached array and replanning invalidates it. No extra production cache added. Confirmed diagnostic limitation: GC.GetAllocatedBytesForCurrentThread returns0 even for native fresh arrays and256 managed byte-array allocations. All raw zero allocation readings are UNQUALIFIED; accepted proof uses null. No zero-allocation/FPS improvement claim. Batch020 precision visual foot contact remains open. Documentation/Flock-Batch021.md.
+
+
+## 2026-10-29 — Batch022 — QA-034 diagnostic counter/configuration trust
+
+VERIFIED DIAGNOSTIC FIX: sampler availability previously meant only ProfilerRecorder.Valid. Add a finite positive control; unqualified data becomes-1.18 new native contracts pass, including reversible native1080/frame/pixel/style overrides and orbit/proof isolation. One production script, opt-in only; no normal gameplay/art change.
+
+Qualified standalone12-phase/6963-frame result: native1920×1080,renderScale1,target-1,vSync0;0 measured frames>50ms,0 unrendered intervals/runtime errors. Forest77.25–79.95FPS versus coast120.89–123.48FPS is an observation requiring CPU/GPU attribution. Standalone allocation control rejected noisy warmup; no GC/optimization-gain claim. Suspected:82.70s island load and native D3D12 upload/ring-buffer warnings need stage attribution; no verified root cause. Four known missing-plant build messages/606 instances retained. See Documentation/Performance-Batch022.md.

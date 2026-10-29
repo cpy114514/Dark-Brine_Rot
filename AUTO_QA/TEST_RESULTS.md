@@ -372,3 +372,17 @@ Remaining: measured walk sole intersection up to0.11088m and clearance up to0.14
 | Cleanup | PASS original5 scenes clean/stopped, fresh saves unchanged, marker clear; own runtime objects/native NavMesh removed. Restore timeout completed and native readback checked. |
 
 No production code/assets changed; no new FPS/GC/speedup claim. External helper compiles/executes in the existing Editor. Evidence/batch021/proof.json qualifies the raw native report; rejected-counter-control.json is not accepted measurement. Small batch020 walk toe intersections and full combat/UI coverage remain.
+
+
+## 2026-10-29 — Batch022 — native1080 matrix acceptance
+
+| Coverage | Result |
+|---|---|
+| Instrumentation | PASS18 new native contracts; reversible pipeline/frame/pixel/style/background ownership, orbit/radius/frozen proof, actual pixels, counter fallback and new phase summaries. |
+| Build | Succeeded,Windows64 Mono Development,same Editor PID57472,158.91s/2729604757bytes;493 warnings/4 known Environment+606 missing-plant messages. |
+| Standalone validity | Completed/exit0,12 phases,6963 measured frames,9110 camera callbacks,0 missing intervals/errors;12 positive image controls,minimum1577370 changed pixels. |
+| Observed throughput | Output1920×1080/renderScale1,target-1/vSync0,pixel off; coast120.89–123.48FPS,forest77.25–79.95,boss81.38–107.89;0 samples>50ms. Single Development/offscreen run with other Editors open, not an optimization delta or isolated GPU result. |
+| GC qualification | Editor positive control passes47139→1060575bytes; standalone background2282743/positive1468294 rejects qualification. All standalone GC data remains-1. |
+| Cleanup | PASS both fresh saves unchanged;100 native pref values/types restored incl7 legacy8-byte DWORDs;5 original scenes clean/stopped,build policy/backend/preloads and ProjectSettings bytes restored; unrelated Plastic4 hashes unchanged. |
+
+Four representative actual PNGs inspected. Report load82.70s excludes process/menu; startup upload/ring-buffer warnings are not attributed. No full combat/UI/precise feet/flicker-free or low-end claim. Evidence/batch022/proof.json qualifies the full raw report; Documentation/Performance-Batch022.md contains12 rows and limitations.
