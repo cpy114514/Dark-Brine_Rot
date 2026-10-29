@@ -81,6 +81,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(1.15f, 2f)] public float rifleAimMagnification = 1.45f;
 
     CharacterController characterController;
+    MarshmallowTraversal marshmallow;
+    bool SoftTraversal => marshmallow != null && marshmallow.Active;
+    float TraversalGravity => SoftTraversal ? marshmallow.gravity : gravity;
+    float TraversalJumpHeight => SoftTraversal ? marshmallow.jumpHeight : jumpHeight;
     Animator animator;
     Transform visualTransform;
     Vector3 visualBasePosition;
@@ -171,7 +175,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     }
     public bool FastSwimming { get; private set; }
     // Story cinematics can keep buoyancy, animation and the camera running while withholding input.
-    public bool ExternalControlLock { get; set; }
+    bool externalControlLock;
+    public bool ExternalControlLock
+    {
+        get => externalControlLock || SecondIslandAwakening.BlocksInputFor(this);
+        set => externalControlLock = value;
+    }
     [System.NonSerialized] public bool OnFloatingWreckDeck;
     public bool ExternalMovementLock { get; set; }
     // Owned only by the walking tutorial; normal traversal leaves this null.
@@ -244,6 +253,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public void RestoreSavedPose(Vector3 position, Quaternion rotation)
     {
         enemyLock?.Clear();
+        if (marshmallow != null) marshmallow.CancelSpacewalk();
         if (characterController == null)
             characterController = GetComponent<CharacterController>();
 
@@ -286,6 +296,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         Motion=GetComponent<SahurMotionContext>();if(Motion==null)Motion=gameObject.AddComponent<SahurMotionContext>();
         characterController = GetComponent<CharacterController>();
         combat = GetComponent<Mavis.SahurAttack>();
+        marshmallow = GetComponent<MarshmallowTraversal>();
         swimmingOcean = FindFirstObjectByType<OceanWorld>();
         playerStamina = GetComponent<Mavis.PlayerStamina>();
         Animator rootAnimator = GetComponent<Animator>();
@@ -563,7 +574,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             }
             else
             {
-                verticalSpeed = Mathf.Sqrt(jumpHeight * 2f * gravity);
+                verticalSpeed = Mathf.Sqrt(TraversalJumpHeight * 2f * TraversalGravity);
+                if(SoftTraversal)marshmallow.CancelSpacewalk();
                 // A wet floating deck can lie below a passing crest. Let its jump
                 // clear the water before the swimming system can cancel ascent.
                 if(OnFloatingWreckDeck)swimExitJumpTimer=Mathf.Max(swimExitJumpTimer,.6f);
@@ -575,6 +587,22 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             }
         }
 
+        // A soft surface returns a little energy while walking. Manual jumps,
+        // combat, dodges and external movement owners keep their existing priority.
+        if (SoftTraversal && marshmallow.WantsBound(grounded, moveDirection.sqrMagnitude > .01f,
+            acceptInput && !combatLocked && !isRolling && !ExternalMovementLock &&
+            WalkingTutorialConstraint == null && !OnFloatingWreckDeck && jumpBufferTimer <= 0f, Time.deltaTime))
+        {
+            verticalSpeed = Mathf.Sqrt(2f * TraversalGravity *
+                (sprinting ? marshmallow.sprintingBoundHeight : marshmallow.walkingBoundHeight));
+            verticalSpeed += marshmallow.UphillLift(characterController, planarVelocity);
+            marshmallow.BeginSpacewalk(verticalSpeed);
+            coyoteTimer = jumpBufferTimer = 0f;
+            grounded = false;
+            airborneTime = 0f;
+            SetMotion(2, "Jump Start", .10f);
+        }
+
         // Latch a single press, including at the apex or while falling. The
         // timer owns the whole flip; holding/releasing Ctrl cannot shorten it.
         // Added lift both raises the jump and gives a late flip time to finish.
@@ -583,15 +611,21 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             (playerStamina == null || playerStamina.TrySpend(playerStamina.airFlipCost)))
         {
             airFlipUsed = true;
+            if(SoftTraversal)marshmallow.CancelSpacewalk();
             airFlipTimer = airFlipDuration;
             rollCooldownTimer = airFlipDuration + rollCooldown;
             jumpBufferTimer = 0f;
             float upwardSpeed = Mathf.Max(0f, verticalSpeed);
-            verticalSpeed = Mathf.Sqrt(upwardSpeed * upwardSpeed + 2f * gravity * airFlipExtraHeight);
+            verticalSpeed = Mathf.Sqrt(upwardSpeed * upwardSpeed + 2f * TraversalGravity * airFlipExtraHeight);
             // Even a deliberately small lift must leave time for one rotation.
-            verticalSpeed = Mathf.Max(verticalSpeed, gravity * (airFlipDuration + 0.08f) * 0.5f);
+            verticalSpeed = Mathf.Max(verticalSpeed, TraversalGravity * (airFlipDuration + 0.08f) * 0.5f);
             SetMotion(7, "Air Flip", 0.06f);
         }
+        // Preserve the second island's own low-gravity flight. In ordinary
+        // gravity, briefly soften descent only while a queued aerial chain is
+        // actually in progress; a single chop keeps the normal jump arc.
+        bool sustainAirCombo = !grounded && !SoftTraversal && combat != null && combat.SustainAirComboFall;
+        if (sustainAirCombo) verticalSpeed = Mathf.Max(verticalSpeed, -2f);
         float verticalDisplacement = verticalSpeed * Time.deltaTime;
         if (attackRootMotion)
             verticalSpeed = unsupportedAttackSpeed; // Source lift plus gravity only when there is no floor.
@@ -599,8 +633,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             // Integrate the ballistic displacement before gravity changes the
             // end velocity. Semi-implicit Euler cut jump height at low FPS.
-            verticalDisplacement -= .5f * gravity * Time.deltaTime * Time.deltaTime;
-            verticalSpeed -= gravity * Time.deltaTime;
+            verticalDisplacement -= .5f * TraversalGravity * Time.deltaTime * Time.deltaTime;
+            verticalSpeed -= TraversalGravity * Time.deltaTime;
+            if (sustainAirCombo) verticalSpeed = Mathf.Max(verticalSpeed, -2f);
         }
 
         bool rollFinishedThisFrame = false;
@@ -643,6 +678,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             else if (grounded || combat == null || !combat.IsJumpSlashActive || ExternalControlLock)
             {
                 float rate = desiredVelocity.sqrMagnitude > planarVelocity.sqrMagnitude ? acceleration : deceleration;
+                if (SoftTraversal && !grounded) rate *= marshmallow.airControl;
                 planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity, rate * Time.deltaTime);
             }
         }
@@ -680,6 +716,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         else if (onGround && (motionState == 2 || motionState == 3 || motionState == 7))
         {
+            if (SoftTraversal) marshmallow.Land(Mathf.Max(0f,-downwardSpeedBeforeMove));
             landingTimer = 0.42f;
             SetMotion(4, "Land", 0.09f);
         }
@@ -872,7 +909,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         float drop = foot.y - sourceLift - supportY;
         if (float.IsNegativeInfinity(supportY) || drop > probeHeight)
         {
-            unsupportedAttackSpeed -= gravity * Time.deltaTime;
+            unsupportedAttackSpeed -= TraversalGravity * Time.deltaTime;
             var flags = characterController.Move(Vector3.up * unsupportedAttackSpeed * Time.deltaTime);
             if ((flags & CollisionFlags.Below) != 0) unsupportedAttackSpeed = 0f;
             verticalSpeed = unsupportedAttackSpeed;
@@ -953,6 +990,11 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     void LateUpdate()
     {
         UpdateAirFlipVisual();
+        if (SoftTraversal && Time.deltaTime > 0f && !PauseSettingsMenu.IsOpen) marshmallow.TickFeedback();
+        if (marshmallow != null && Time.deltaTime > 0f && !PauseSettingsMenu.IsOpen)
+            marshmallow.ApplyVisual(visualTransform, GetLowestFootOffset(), verticalSpeed,
+                !Swimming && !ExternalControlLock && !ExternalMovementLock && rollTimer <= 0f &&
+                airFlipTimer <= 0f && (combat == null || !combat.IsCombatMotionActive));
         if(Swimming && !ExternalControlLock && !ExternalMovementLock && characterController.enabled &&
             animator!=null && animator.isHuman && Time.deltaTime>0 && !PauseSettingsMenu.IsOpen)
         {
@@ -973,6 +1015,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
         Quaternion cameraRotation = Quaternion.Euler(pitch, yaw, 0f);
         Vector3 focus = transform.position + Vector3.up * (visualBaseOffset + cameraHeight);
+        if (SoftTraversal) focus.y += marshmallow.CameraOffset;
         if (Swimming && animator != null && animator.isHuman)
         {
             var head = animator.GetBoneTransform(HumanBodyBones.Head);
@@ -980,6 +1023,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         }
         if (ExternalCameraFocus != null) focus = ExternalCameraFocus.position + Vector3.up * .25f;
         float followDistance = cameraDistance;
+        if (SoftTraversal) followDistance += marshmallow.CameraPullback;
         if (enemyLock != null && enemyLock.IsLocked && !Mavis.SahurLoadoutUI.BlocksInput && !PauseSettingsMenu.IsOpen)
         {
             Vector3 toward = enemyLock.AimPoint - focus;
