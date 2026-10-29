@@ -13,6 +13,8 @@ public sealed class DayNightCycle : MonoBehaviour
     public bool clockRuns = true;
     [Tooltip("Preview this scene's starting time in the editor without entering Play Mode.")]
     public bool previewInEditor;
+    [Tooltip("Use the Second Island's cream, rose and lavender atmosphere while preserving the day/night clock.")]
+    public bool marshmallowPalette;
 
 #if UNITY_EDITOR
     void OnValidate()
@@ -280,6 +282,17 @@ public sealed class DayNightCycle : MonoBehaviour
         horizon = Color.Lerp(horizon, goldenHorizon, twilight * 0.92f);
         cloud = Color.Lerp(cloud, goldenCloud, twilight * 0.8f);
 
+        if (marshmallowPalette)
+        {
+            zenith = Color.Lerp(new Color(.065f,.045f,.15f),new Color(.66f,.57f,.84f),daylight);
+            horizon = Color.Lerp(new Color(.17f,.10f,.25f),new Color(1f,.79f,.75f),daylight);
+            cloud = Color.Lerp(new Color(.27f,.20f,.38f),new Color(1f,.91f,.88f),daylight);
+            horizon = Color.Lerp(horizon,new Color(.94f,.61f,.73f),twilight*.3f);
+            sun.color = Color.Lerp(new Color(.65f,.57f,.85f),new Color(1f,.91f,.84f),daylight);
+            sun.shadowStrength *= .68f;
+            sunDisk = Color.Lerp(new Color(.72f,.65f,.94f),new Color(1f,.91f,.78f),daylight);
+        }
+
         RenderSettings.ambientMode = AmbientMode.Trilight;
         RenderSettings.ambientSkyColor = Color.Lerp(new Color(0.20f, 0.28f, 0.44f), new Color(0.53f, 0.65f, 0.76f), daylight);
         RenderSettings.ambientEquatorColor = Color.Lerp(new Color(0.12f, 0.16f, 0.25f), new Color(0.40f, 0.46f, 0.50f), daylight);
@@ -291,6 +304,13 @@ public sealed class DayNightCycle : MonoBehaviour
         RenderSettings.fogEndDistance = 3000f;
         RenderSettings.fogColor = Color.Lerp(new Color(0.035f, 0.052f, 0.105f), new Color(0.58f, 0.70f, 0.80f), daylight);
         RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor, goldenHorizon, twilight * 0.42f);
+        if (marshmallowPalette)
+        {
+            RenderSettings.ambientSkyColor = Color.Lerp(new Color(.16f,.12f,.28f),new Color(.69f,.61f,.78f),daylight);
+            RenderSettings.ambientEquatorColor = Color.Lerp(new Color(.13f,.09f,.20f),new Color(.62f,.47f,.57f),daylight);
+            RenderSettings.ambientGroundColor = Color.Lerp(new Color(.07f,.05f,.12f),new Color(.37f,.27f,.34f),daylight);
+            RenderSettings.fogColor = Color.Lerp(zenith,horizon,.55f);
+        }
 
         if (ocean == null || !ocean.isActiveAndEnabled)
             ocean = FindFirstObjectByType<OceanWorld>();

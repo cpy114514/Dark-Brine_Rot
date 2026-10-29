@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace Mavis
 {
-    /// <summary>Ground combo, charged swing, and a once-per-jump aerial chop.</summary>
+    /// <summary>Ground combo, charged swing, and a three-hit aerial combo.</summary>
     public partial class SahurAttack : MonoBehaviour
     {
         [Header("Animation")]
@@ -138,7 +138,12 @@ namespace Mavis
             }
         }
         public bool IsHeavyAttackActive => attacking && activeAttackHash == heavyStateHash;
-        public bool IsJumpSlashActive => attacking && activeAttackHash == jumpSlashStateHash;
+        public bool IsJumpSlashActive => attacking && airComboStep >= 0;
+        public int CurrentAirComboStage => IsJumpSlashActive ? airComboStep : -1;
+        // A committed chain gets a brief falling-speed limit on normal-gravity
+        // islands so all three strikes fit inside an ordinary jump.
+        public bool SustainAirComboFall => IsJumpSlashActive && !jumpSlashRecovering &&
+            (airComboQueued > 0 || airComboStep > 0 && CurrentAttackPhase <= CurrentWindowEnd + .05f);
         bool jumpSlashRecovering;
         public bool IsJumpSlashRecovering => IsJumpSlashActive && jumpSlashRecovering;
         public bool IsTwinBladeSpinActive => UsesTwinBlades && (IsSpinning || IsGroundComboActive && comboStep == 2);
@@ -149,7 +154,7 @@ namespace Mavis
         // Full-body spins retain their authored pose and hit-stop, while the capsule travels.
         public bool CanTranslateDuringCombat => CanMoveDuringCombat || IsTwinBladeSpinActive ||
             IsJumpSlashRecovering && controller != null && controller.CanUseGroundAttack;
-        public bool UsesAnimationRootMotion => attacking && !IsSpinning && !IsTwinBladeSpinActive && !(UsesTwinBlades && IsHeavyAttackActive) && activeAttackHash != jumpSlashStateHash && !usesRightArmHeavy && !usesUpperBodyLight;
+        public bool UsesAnimationRootMotion => attacking && !IsSpinning && !IsTwinBladeSpinActive && !(UsesTwinBlades && IsHeavyAttackActive) && !IsJumpSlashActive && !usesRightArmHeavy && !usesUpperBodyLight;
         public bool SafeForCinematic => !IsSpinning && !IsGuarding && (!IsCombatMotionActive || (attacking && !charging && CurrentAttackPhase>=CurrentWindowEnd+.04f));
         public float CurrentAttackPhase
         {
@@ -169,7 +174,7 @@ namespace Mavis
                 return current.fullPathHash==AttackAnimationHash ? current.normalizedTime : 0;
             }
         }
-        Vector2 CurrentDamageWindow => activeAttackHash==jumpSlashStateHash ? (UsesTwinBlades?jumpSlashHitWindow:jumpChopHitWindow) :
+        Vector2 CurrentDamageWindow => IsJumpSlashActive ? (airComboStep == 0 ? comboOneHitWindow : airComboStep == 1 ? comboTwoHitWindow : UsesTwinBlades ? jumpSlashHitWindow : jumpChopHitWindow) :
             comboStep==0 ? comboOneHitWindow : comboStep==1 ? comboTwoHitWindow : comboStep==2 ? comboThreeHitWindow :
             IsHeavyAttackActive ? UsesTwinBlades ? TwinBladeRushWindow : new Vector2(heavySwingWindowStart,heavySwingWindowEnd) :
             new Vector2(swingWindowStart,swingWindowEnd);
@@ -207,6 +212,7 @@ namespace Mavis
             chargeStateHash = Animator.StringToHash("Base Layer." + (useBlades ? "Capri Charge" : chargeState));
             upperBodyChargeStateHash=Animator.StringToHash(useBlades?"Twin Blade Charge.Capri Charge":ChargeUpperBodyLayer+"."+chargeState);
             jumpSlashStateHash = Animator.StringToHash("Base Layer." + (useBlades ? "Capri Jump Slash" : jumpSlashState));
+            SetAirComboHashes(useBlades);
             chargeClip = useBlades ? Resources.Load<AnimationClip>("Combat/Combinations/BladeCharge") : originalChargeClip;
             chargedStrikeClip = useBlades ? Resources.Load<AnimationClip>("Combat/Combinations/BladeRushV002") : originalChargedStrikeClip;
             comboOneHitWindow = useBlades ? new Vector2(.28f,.62f) : originalWindowOne;
@@ -253,6 +259,12 @@ namespace Mavis
         bool attacking;
         bool activeAttackEntered;
         bool airAttackUsed;
+        int airComboStep = -1;
+        int airComboQueued;
+        readonly int[] airComboStateHashes = new int[3];
+        const string AirLegLayer = "Air Attack Legs";
+        static readonly int AirLegPoseHash = Animator.StringToHash("Air Attack Legs.Airborne Pose");
+        int airLegLayerIndex = -1;
         float jumpAttackBufferedUntil = -1f;
         bool airImpactArmed;
         int comboStep = -1;
@@ -314,6 +326,7 @@ namespace Mavis
             rightArmHeavyStateHash = Animator.StringToHash(ChargeUpperBodyLayer + "." + heavyAttackState);
             chargeTimeHash = Animator.StringToHash(chargeTimeParameter);
             jumpSlashStateHash = Animator.StringToHash("Base Layer." + jumpSlashState);
+            SetAirComboHashes(false);
             comboStateHashes[0] = Animator.StringToHash("Base Layer." + comboOneState);
             comboStateHashes[1] = Animator.StringToHash("Base Layer." + comboTwoState);
             comboStateHashes[2] = Animator.StringToHash("Base Layer." + comboThreeState);
@@ -382,6 +395,7 @@ namespace Mavis
                 airAttackUsed = false;
 
             UpdateAttackProgress();
+            UpdateAirLegLayer();
             UpdateLightPlayback();
             var mouse = Mouse.current;
             bool gameHasFocus = Cursor.lockState == CursorLockMode.Locked;
@@ -475,6 +489,14 @@ namespace Mavis
 
             if (attacking)
             {
+                if (IsJumpSlashActive)
+                {
+                    // Keep up to two presses, including taps during the blend-in.
+                    if (controller != null && controller.CanUseAirAttack && !jumpSlashRecovering &&
+                        airComboStep + airComboQueued < 2 && CurrentAttackPhase <= comboQueueClose)
+                        airComboQueued++;
+                    return;
+                }
                 // Continue an existing combo even while its authored root motion
                 // temporarily lifts Sahur off the ground.
                 if (comboStep >= 0 && comboStep < 2 && animator != null)
@@ -533,22 +555,40 @@ namespace Mavis
                 PlayAttack(false, damage); // Existing scenes still work until their controller is upgraded.
         }
 
-        void StartJumpSlash()
+        void SetAirComboHashes(bool blades)
         {
-            if (animator == null || !animator.HasState(0, jumpSlashStateHash))
+            string prefix = blades ? "Capri Air Combo " : "Air Combo ";
+            airComboStateHashes[0] = Animator.StringToHash("Base Layer." + prefix + "1");
+            airComboStateHashes[1] = Animator.StringToHash("Base Layer." + prefix + "2");
+            airComboStateHashes[2] = jumpSlashStateHash;
+        }
+
+        void StartJumpSlash() => StartAirComboStage(0);
+
+        bool StartAirComboStage(int stage)
+        {
+            if (animator == null || !animator.HasState(0, airComboStateHashes[stage]))
             {
-                Debug.LogError("Sahur Jump Slash state is missing from the Animator controller.", this);
-                return;
+                Debug.LogError("Sahur aerial combo state is missing from the Animator controller.", this);
+                airComboQueued = 0;
+                return false;
             }
 
-            if (stamina != null && !stamina.TrySpend(stamina.jumpSlashCost)) return;
+            if (stamina != null && !stamina.TrySpend(stamina.jumpSlashCost))
+            {
+                airComboQueued = 0;
+                return false;
+            }
 
             airAttackUsed = true;
             airImpactArmed = true;
             attackQueued = false;
             comboStep = -1;
             comboContinueQueued = false;
-            BeginAttack(jumpSlashStateHash, damage * jumpSlashDamageMultiplier, 0f, 0.14f);
+            airComboStep = stage;
+            float multiplier = stage == 0 ? 1f : stage == 1 ? comboTwoDamageMultiplier : jumpSlashDamageMultiplier;
+            BeginAttack(airComboStateHashes[stage], damage * multiplier, 0f, stage == 0 ? .10f : .06f);
+            return true;
         }
 
         void StartComboStage(int stage)
@@ -708,6 +748,7 @@ namespace Mavis
 
         void CancelForMovement()
         {
+            ClearAirLegLayer();
             if(usesBladeRecovery && animator && bladeRecoveryLayer>0)animator.SetLayerWeight(bladeRecoveryLayer,0);
             usesBladeRecovery=false;
             fadingTwinBladeCharge = false;
@@ -721,6 +762,8 @@ namespace Mavis
             attackQueued = comboContinueQueued = airImpactArmed = false;
             jumpAttackBufferedUntil = -1f;
             comboStep = -1;
+            airComboStep = -1;
+            airComboQueued = 0;
             activeAttackHash = 0;
             swingDamage = 0f;
             activeSwish = null;
@@ -745,6 +788,7 @@ namespace Mavis
 
         public void SuspendForSwimming()
         {
+            ClearAirLegLayer();
             if(IsSpinning || IsGuarding)CancelForMovement();
             if (charging) CancelCharge();
             if (attacking) FinishAttack();
@@ -821,6 +865,23 @@ namespace Mavis
             animator.SetFloat(LightPlaybackSpeedHash,speed);
         }
 
+        void UpdateAirLegLayer()
+        {
+            if (!animator || airLegLayerIndex <= 0) return;
+            // One continuous airborne leg pose across all three strikes. Fade
+            // back to normal jump/landing animation when the attack ends.
+            bool airborneAttack = IsJumpSlashActive && !jumpSlashRecovering &&
+                (controller == null || !controller.CanUseGroundAttack);
+            float weight = Mathf.MoveTowards(animator.GetLayerWeight(airLegLayerIndex),
+                airborneAttack ? 1f : 0f, Time.deltaTime / .14f);
+            animator.SetLayerWeight(airLegLayerIndex, weight);
+        }
+
+        void ClearAirLegLayer()
+        {
+            if (animator && airLegLayerIndex > 0) animator.SetLayerWeight(airLegLayerIndex, 0f);
+        }
+
         void UpdateChargePose()
         {
             if (animator == null) return;
@@ -860,6 +921,12 @@ namespace Mavis
                 animator.SetLayerWeight(lightLayerIndex, 0f);
             swingDamage = BalancedDamage(amount, UsesTwinBlades);
             attacking = true;
+            if (IsJumpSlashActive && airComboStep == 0)
+            {
+                airLegLayerIndex = animator.GetLayerIndex(AirLegLayer);
+                if (airLegLayerIndex > 0 && animator.HasState(airLegLayerIndex, AirLegPoseHash))
+                    animator.Play(AirLegPoseHash, airLegLayerIndex, .5f);
+            }
             activeAttackEntered = false;
             attackStartedAt = Time.time;
             lastFireTime = Time.time;
@@ -938,6 +1005,18 @@ namespace Mavis
                 return;
             }
             if (inActiveAttack) activeAttackEntered = true;
+            // Start the next cut only after contact, and only while airborne.
+            if (IsJumpSlashActive && airComboStep < 2 && airComboQueued > 0 && inActiveAttack &&
+                !transitioningToAttack && current.normalizedTime >= CurrentWindowEnd + .025f &&
+                !(localStop && localStop.IsStopped))
+            {
+                if (controller != null && controller.CanUseAirAttack)
+                {
+                    airComboQueued--;
+                    if (StartAirComboStage(airComboStep + 1)) return;
+                }
+                else airComboQueued = 0;
+            }
             // Ease out of the authored follow-through into the actual physical state.
             // Keep attack ownership until the outgoing blend completes, so the hit
             // window never restarts and aerial momentum survives the whole handoff.
@@ -1000,6 +1079,8 @@ namespace Mavis
             activeAttackEntered = false;
             comboStep = -1;
             comboContinueQueued = false;
+            airComboStep = -1;
+            airComboQueued = 0;
             hasWeaponSample = false;
             observedAttackPhase = -1f;
             controller?.EndAttackFacing();
@@ -1048,7 +1129,7 @@ namespace Mavis
             stickHitbox.enabled = activePose && (phase>=start && phase<=end || skippedWindow);
             if (stickHitbox.enabled)
             {
-                if (secondBlade) secondBlade.enabled = !IsJumpSlashActive;
+                if (secondBlade) secondBlade.enabled = !IsJumpSlashActive || airComboStep < 2;
                 Physics.SyncTransforms();
                 if(skippedWindow)ScanCrossedWindow(start,end,phase);
                 else
@@ -1059,7 +1140,7 @@ namespace Mavis
                     {
                         float from=Mathf.InverseLerp(observedAttackPhase,phase,start);
                         ScanInterpolatedWeapon(observedA,observedB,from,1);
-                        if(secondBlade && !IsJumpSlashActive)
+                        if(secondBlade && (!IsJumpSlashActive || airComboStep < 2))
                         {
                             var first=stickHitbox;stickHitbox=secondBlade;
                             ScanInterpolatedWeapon(observedSecondA,observedSecondB,from,1);stickHitbox=first;
@@ -1072,7 +1153,7 @@ namespace Mavis
             if(activePose)
             {
                 GetWeaponVolume(out observedA,out observedB,out _);
-                if(secondBlade && !IsJumpSlashActive)
+                if(secondBlade && (!IsJumpSlashActive || airComboStep < 2))
                 {
                     var first=stickHitbox;stickHitbox=secondBlade;
                     GetWeaponVolume(out observedSecondA,out observedSecondB,out _);stickHitbox=first;
@@ -1125,7 +1206,7 @@ namespace Mavis
             float from=Mathf.InverseLerp(observedAttackPhase,phase,start);
             float to=Mathf.InverseLerp(observedAttackPhase,phase,end);
             ScanInterpolatedWeapon(observedA,observedB,from,to);
-            if(secondBlade && !IsJumpSlashActive)
+            if(secondBlade && (!IsJumpSlashActive || airComboStep < 2))
             {
                 var first=stickHitbox;stickHitbox=secondBlade;
                 ScanInterpolatedWeapon(observedSecondA,observedSecondB,from,to);stickHitbox=first;
@@ -1229,7 +1310,7 @@ namespace Mavis
                 impactFeedback.Visuals.Landing(transform.position+Vector3.up*(controller?controller.LowestFootWorldOffset:0));
             // Landing cannot invent a radial hit: the same live weapon volume
             // and per-swing victim set remain authoritative for the chop.
-            if(attacking && activeAttackHash==jumpSlashStateHash && stickHitbox && stickHitbox.enabled &&
+            if(IsJumpSlashActive && stickHitbox && stickHitbox.enabled &&
                 !(localStop && localStop.IsStopped))ScanHits();
         }
 
@@ -1272,7 +1353,7 @@ namespace Mavis
                     origin=queryWeaponA+axis*along;
                 }
                 CombatHitFeedback.Apply(gameObject, target, swingDamage, other.ClosestPoint(origin),
-                    IsSpinning ? CombatHitKind.Spin : activeAttackHash == jumpSlashStateHash ? CombatHitKind.JumpSlash
+                    IsSpinning ? CombatHitKind.Spin : IsJumpSlashActive ? CombatHitKind.JumpSlash
                     : activeAttackHash == heavyStateHash ? CombatHitKind.ChargedHeavy
                     : comboStep == 2 ? CombatHitKind.ComboFinisher : comboStep == 1 ? CombatHitKind.ComboTwo : CombatHitKind.ComboOne,swingDirection);
             }
@@ -1280,6 +1361,7 @@ namespace Mavis
 
         void OnDisable()
         {
+            ClearAirLegLayer();
             if(usesBladeRecovery && animator && bladeRecoveryLayer>0)animator.SetLayerWeight(bladeRecoveryLayer,0);
             usesBladeRecovery=false;
             fadingTwinBladeCharge = false;
@@ -1300,6 +1382,8 @@ namespace Mavis
             jumpAttackBufferedUntil = -1f;
             airAttackUsed = false;
             comboStep = -1;
+            airComboStep = -1;
+            airComboQueued = 0;
             hasWeaponSample = false;
             observedAttackPhase = -1f;
             if (stickHitbox != null) stickHitbox.enabled = false;
