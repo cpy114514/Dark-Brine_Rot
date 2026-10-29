@@ -1,4 +1,12 @@
-# Latest completed task — Visual Style System V2
+# Latest completed batch — 018 foliage CPU
+
+One production file optimized: WorldPerformanceManager caches absolute frustum normals per camera and four shader property IDs. Final192168 regression cases/assertions pass. Measured native visibility path1.400→1.100ms and pixel/gallery1.417→1.108ms; paired kernels independently improve. No density/distance/shadow/quality/gameplay changes and no overall FPS claim. Read Documentation/Performance-Batch018.md and Evidence/batch018/proof.json. Checkpoint title: Reduce repeated foliage frustum and property lookup work. Resolve latest log and actual remotes before syncing; baseline was d6bba4f/cs200.
+
+Next: longer standalone/representative first-island CPU/GPU timings, bounded refresh workload and moving-camera stability, followed by boss/tutorial/UI coverage. The bounded refresh coroutine remains about1.1–1.3ms in these traces; not established as a bug. Do not repeat final kernel/V2/batch017 matrices unchanged. Preserve four visual styles, original density/view distance,606 unavailable plants and unrelated Plastic ShaderGraph/recovery plus line-ending-only EditorBuildSettings.
+
+Safe continuation: same project Editor, five original scenes clean/stopped, fresh save/backup unchanged, original dark-fairytale/intensity1, profiler false and performance018 marker clear. .codex/performance018 contains this batch backups and scene setup; do not overwrite them with a new baseline. Tools/ProfileIsland018.cs is a batch-specific isolated discovery helper; preparation must succeed before Play and Restore requires stopped mode. Old raw scope wording means no Gameplay scene, not no Environment NPCs.
+
+# Prior completed task — Visual Style System V2
 
 Both new modes, four-card gallery, arbitrary aligned comparison, independent existing pixel mode, saved detail controls and actual matched Unity previews are implemented. Final acceptance is 141 scripted checks (93+48), additional real reload/dropdown/composited UI evidence, source compile and unchanged-save safety. See Documentation/VisualStyleSystem-V2.md and AUTO_QA/Evidence/visual-style-v2. Checkpoint title: Extend visual styles with papercraft and monochrome. Original baseline Git8d207a8/Plasticcs199; inspect actual latest log/remote before upload, never repeat integration.
 

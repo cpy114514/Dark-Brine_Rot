@@ -124,6 +124,11 @@ namespace Mavis
         List<GrassBatch> pendingGrassBatches = new List<GrassBatch>();
         GrassBatch visibleGrass;
         readonly Plane[] grassPlanes = new Plane[6];
+        readonly Vector3[] grassPlaneAbsoluteNormals = new Vector3[6];
+        static readonly int GrassAnchorId = Shader.PropertyToID("_MavisWindAnchorY");
+        static readonly int GrassHeightId = Shader.PropertyToID("_MavisWindInvHeight");
+        static readonly int GrassResponseId = Shader.PropertyToID("_MavisWindResponse");
+        static readonly int GrassStiffnessId = Shader.PropertyToID("_WindTrunkStiffness");
         readonly List<Vector4> bodyMotion = new List<Vector4>(12);
         readonly Dictionary<Material, Vector2> grassPadding = new Dictionary<Material, Vector2>();
         static readonly ProfilerMarker GrassVisibility = new ProfilerMarker("World.GrassVisibility");
@@ -219,6 +224,13 @@ namespace Mavis
             // The final camera pose is available here (after camera-follow LateUpdate).
             // Submit only to this camera, so multiple cameras do not duplicate draws.
             GeometryUtility.CalculateFrustumPlanes(camera.cullingMatrix, grassPlanes);
+            // Each plane is reused by every batch and intersecting blade bounds.
+            // Recompute per camera so camera movement and custom culling matrices stay exact.
+            for (int i = 0; i < grassPlanes.Length; i++)
+            {
+                var normal = grassPlanes[i].normal;
+                grassPlaneAbsoluteNormals[i] = new Vector3(Mathf.Abs(normal.x), Mathf.Abs(normal.y), Mathf.Abs(normal.z));
+            }
             float wind = Mathf.Abs(Shader.GetGlobalVector("_MavisWindParams").x);
             int count = Shader.GetGlobalInt("_MavisFoliageBodyCount");
             float sumStrength = 0f;
@@ -281,7 +293,8 @@ namespace Mavis
             {
                 var plane = grassPlanes[i]; var normal = plane.normal;
                 float distance = Vector3.Dot(normal, center) + plane.distance;
-                float radius = Mathf.Abs(normal.x) * extent.x + Mathf.Abs(normal.y) * extent.y + Mathf.Abs(normal.z) * extent.z;
+                var absoluteNormal = grassPlaneAbsoluteNormals[i];
+                float radius = absoluteNormal.x * extent.x + absoluteNormal.y * extent.y + absoluteNormal.z * extent.z;
                 if (distance + radius < 0f) return -1;
                 if (distance - radius < 0f) inside = false;
             }
@@ -296,10 +309,10 @@ namespace Mavis
         }
         static void SetGrassProperties(GrassBatch batch)
         {
-            batch.properties.SetFloatArray("_MavisWindAnchorY", batch.anchors);
-            batch.properties.SetFloatArray("_MavisWindInvHeight", batch.heights);
-            batch.properties.SetFloatArray("_MavisWindResponse", batch.responses);
-            batch.properties.SetFloatArray("_WindTrunkStiffness", batch.stiffness);
+            batch.properties.SetFloatArray(GrassAnchorId, batch.anchors);
+            batch.properties.SetFloatArray(GrassHeightId, batch.heights);
+            batch.properties.SetFloatArray(GrassResponseId, batch.responses);
+            batch.properties.SetFloatArray(GrassStiffnessId, batch.stiffness);
         }
         void RefreshFoliage(Vector3 cameraPosition)
         {

@@ -1,0 +1,29 @@
+{
+  "stopped": true,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "dirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "dirty": false
+    }
+  ],
+  "style": "dark-fairytale",
+  "intensity": 1.0,
+  "profiler": false,
+  "marker": false
+}
