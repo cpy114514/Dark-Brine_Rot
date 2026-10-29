@@ -219,3 +219,10 @@ Safety recovery: initial launcher finally failed converting legacy Unity floats 
 Build-only preload cleanup: the build serialized one extra App UI preload reference. Native API still held the original input-actions-only list. Restored/verified native list, then rolled back the sole confirmed build-owned ProjectSettings.asset disk delta. Builder now snapshots/restores those original bytes and native list; ProjectSettings is excluded from the patch.
 
 After byte verification against cs201, cleared five build-only unchanged asset/settings checkouts with scoped cm undo --unchanged; no semantic/byte changes discarded. Only the original four unrelated Plastic paths remain outside this patch.
+
+
+## 2026-10-29 — Batch020 — chicken repair and larger duck
+
+Continued latest user priority from Git461a66a/Plasticcs203 (contributorcs202 already integrated and published). Fixed conflicting patrol/home thresholds, shared patrol/repath timing, cooldown gravity/run-in-place and chicken's0.65m visual offset. Duck enlarged40% with capsule/range/stride compensation. Four production paths only; native asset APIs used, original model/UV/rig/clips/materials preserved.27 final native checks plus168 phase-displacement comparisons pass; actual captures inspected. No new FPS-gain claim.
+
+Rejected a speculative tall-attack capsule candidate: original failure came from test player sole placement ignoring scale. Original Strike restored and final sphere tests pass. Other rejected probe/fixture issues and residual0.11m walk toe intersection are documented. Both fresh saves unchanged; five original scenes restored clean/stopped, marker clear. A restore timeout completed and was checked natively before further work. Unrelated Plastic4 settings/recovery plus other existing checkouts/ignored caches preserved; incidental URP material serialization rolled back. Checkpoint title: Fix chicken patrol jitter and ground offset; enlarge duck. Evidence/batch020/proof.json is the acceptance record.

@@ -105,3 +105,10 @@ No animation, camera behavior, clip, controller, gameplay or art change. The ori
 ## 2026-10-28 (Vancouver) — Batch019 — standalone camera/AI evidence
 
 No authored animation, clip, rig, collider, model or normal camera behavior change. Actual standalone coast/forest/boss-vicinity PNGs show Sahur, native environment and the boss; they are fixed-camera diagnostic views with a protected player and camera RT output. This does not qualify overlay UI, full encounter anticipation, moving-camera paper stability or smoother animation. Diagnostic target restoration no longer forces a disabled camera on; verified natively.
+
+
+## 2026-10-29 — Batch020 — chicken contact and duck scale
+
+Actual native roaming/Idle PNGs and motion0/80/160 inspected. Chicken's rapid back-and-forth patrol changes are removed (158→2 reversals across separate240-interval runs), and cooldown uses Idle while gravity settles. Visual Y lowers0.65m, without changing chicken clips/rig/controller/collider.168 phase comparisons across8 states preserve pose and shift sole height exactly0.65m. Qualified native Idle sole gaps:chicken0.06729m,duck0.03435m. Walk still ranges-0.11088…0.14358m; precise foot planting is not complete.
+
+Duck grows40%; Walk/Run state speeds divide by1.4 to retain world stride rate at unchanged travel speed. Attack/reaction clip speeds and timing remain. No original art/animation asset overwritten. Rendered-proxy and1m translation controls qualify sole measurements; false-scale/CPU-unreadable results rejected. Original spherical hit volume retained after correcting a scaled-sole fixture error. Full island swarm, long combat and exact foot IK remain outside this batch. See Evidence/batch020 and Documentation/Enemy-Batch020.md.

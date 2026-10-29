@@ -1,0 +1,446 @@
+{
+  "captured": true,
+  "reversals": 2,
+  "samples": [
+    {
+      "frame": 0,
+      "mode": "Patrol",
+      "x": -1.954783,
+      "y": 20.0805,
+      "z": -2.14834738,
+      "yaw": 178.794266,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.12575531,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 8,
+      "mode": "Patrol",
+      "x": -1.9460988,
+      "y": 20.0805,
+      "z": -2.560946,
+      "yaw": 178.794266,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0917034149,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 16,
+      "mode": "Patrol",
+      "x": -2.01429486,
+      "y": 20.0805,
+      "z": -2.76939845,
+      "yaw": 203.104462,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0201911926,
+      "grounded": true,
+      "verticalSpeed": -3.260529
+    },
+    {
+      "frame": 24,
+      "mode": "Patrol",
+      "x": -2.26072979,
+      "y": 20.0805,
+      "z": -2.57227254,
+      "yaw": 284.209442,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.03250122,
+      "grounded": true,
+      "verticalSpeed": -7.46822071
+    },
+    {
+      "frame": 32,
+      "mode": "Patrol",
+      "x": -2.534388,
+      "y": 20.0805,
+      "z": -2.35337067,
+      "yaw": 308.656677,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.124540329,
+      "grounded": true,
+      "verticalSpeed": -2.94479
+    },
+    {
+      "frame": 40,
+      "mode": "Patrol",
+      "x": -2.8108027,
+      "y": 20.0805,
+      "z": -2.13226366,
+      "yaw": 308.656647,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.101396561,
+      "grounded": true,
+      "verticalSpeed": -4.35374165
+    },
+    {
+      "frame": 48,
+      "mode": "Patrol",
+      "x": -2.980211,
+      "y": 20.0805,
+      "z": -1.91217971,
+      "yaw": 326.681061,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.106811523,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 56,
+      "mode": "Patrol",
+      "x": -2.86503267,
+      "y": 20.0805,
+      "z": -1.5791961,
+      "yaw": 19.0803967,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.03360939,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 64,
+      "mode": "Patrol",
+      "x": -2.7611022,
+      "y": 20.0805,
+      "z": -1.27873051,
+      "yaw": 19.0803967,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.124162674,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 72,
+      "mode": "Patrol",
+      "x": -2.64635348,
+      "y": 20.0805,
+      "z": -0.946989238,
+      "yaw": 19.0803986,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.101364136,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 80,
+      "mode": "Patrol",
+      "x": -2.53181028,
+      "y": 20.0805,
+      "z": -0.615841568,
+      "yaw": 19.0803947,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0468578339,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 88,
+      "mode": "Patrol",
+      "x": -2.40292168,
+      "y": 20.0805,
+      "z": -0.243221581,
+      "yaw": 19.0803947,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0303554535,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 96,
+      "mode": "Patrol",
+      "x": -2.289131,
+      "y": 20.0805,
+      "z": 0.08575069,
+      "yaw": 19.0803986,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.143579483,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 104,
+      "mode": "Patrol",
+      "x": -2.174089,
+      "y": 20.0805,
+      "z": 0.418340355,
+      "yaw": 19.0803947,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.09469223,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 112,
+      "mode": "Patrol",
+      "x": -2.05926561,
+      "y": 20.0805,
+      "z": 0.7502973,
+      "yaw": 19.0803947,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0104160309,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 120,
+      "mode": "Patrol",
+      "x": -1.94484937,
+      "y": 20.0805,
+      "z": 1.08107781,
+      "yaw": 19.0803967,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.05201149,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 128,
+      "mode": "Patrol",
+      "x": -1.82851338,
+      "y": 20.0805,
+      "z": 1.41740835,
+      "yaw": 19.0803947,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.112762451,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 136,
+      "mode": "Patrol",
+      "x": -1.71471393,
+      "y": 20.0805,
+      "z": 1.74640536,
+      "yaw": 19.0803947,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.09844971,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 144,
+      "mode": "Patrol",
+      "x": -1.59983575,
+      "y": 20.0805,
+      "z": 2.078521,
+      "yaw": 19.0803947,
+      "motorFoot": 0.07999992,
+      "visualFoot": -0.0291671753,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 152,
+      "mode": "Patrol",
+      "x": -1.54354513,
+      "y": 20.0805,
+      "z": 1.9321847,
+      "yaw": 82.71205,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.07068825,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 160,
+      "mode": "Patrol",
+      "x": -1.51577437,
+      "y": 20.0805,
+      "z": 1.61586154,
+      "yaw": 164.339188,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.09384918,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 168,
+      "mode": "Patrol",
+      "x": -1.48093975,
+      "y": 20.0805,
+      "z": 1.2190752,
+      "yaw": 174.982758,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.104887009,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 176,
+      "mode": "Patrol",
+      "x": -1.45017052,
+      "y": 20.0805,
+      "z": 0.8685967,
+      "yaw": 174.982758,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0915660858,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 184,
+      "mode": "Patrol",
+      "x": -1.419592,
+      "y": 20.0805,
+      "z": 0.520291,
+      "yaw": 174.982758,
+      "motorFoot": 0.07999992,
+      "visualFoot": -0.110881805,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 192,
+      "mode": "Patrol",
+      "x": -1.38899434,
+      "y": 20.0805,
+      "z": 0.171766728,
+      "yaw": 174.982758,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.103084564,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 200,
+      "mode": "Patrol",
+      "x": -1.36119771,
+      "y": 20.0805,
+      "z": -0.144851714,
+      "yaw": 174.982758,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.118204117,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 208,
+      "mode": "Patrol",
+      "x": -1.33418143,
+      "y": 20.0805,
+      "z": -0.45258224,
+      "yaw": 174.982758,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0910759,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 216,
+      "mode": "Patrol",
+      "x": -1.14979935,
+      "y": 20.0805,
+      "z": -0.651634932,
+      "yaw": 131.805222,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.125141144,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 224,
+      "mode": "Patrol",
+      "x": -0.7993367,
+      "y": 20.0805,
+      "z": -0.6700646,
+      "yaw": 93.01022,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.0800628662,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 232,
+      "mode": "Patrol",
+      "x": -0.450499,
+      "y": 20.0805,
+      "z": -0.688408852,
+      "yaw": 93.01022,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.110134125,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    }
+  ],
+  "chickenHeight": 4.765,
+  "duckHeight": 4.76,
+  "chickenVisualFoot": 0.09740257,
+  "duckVisualFoot": 0.0268363953,
+  "footTranslationControl": 1.0,
+  "proxyControls": [
+    {
+      "scale": false,
+      "differentPixels": 92148,
+      "totalPixels": 518400
+    },
+    {
+      "scale": true,
+      "differentPixels": 5,
+      "totalPixels": 518400
+    }
+  ],
+  "idleFeet": {
+    "chicken": 0.06729126,
+    "duck": 0.0343532562
+  },
+  "cooldown": {
+    "startY": 21.0,
+    "endY": 20.0805,
+    "grounded": true,
+    "mode": "Idle",
+    "motion": 0
+  },
+  "feet": [
+    {
+      "actor": "ChickenBro(Clone)",
+      "root": "(-0.14, 20.08, -0.70)",
+      "human": true,
+      "bones": [
+        {
+          "bone": "LeftFoot",
+          "p": "(-0.10, 20.19, -0.32)"
+        },
+        {
+          "bone": "RightFoot",
+          "p": "(-0.05, 20.36, -1.09)"
+        },
+        {
+          "bone": "LeftToes",
+          "p": "none"
+        },
+        {
+          "bone": "RightToes",
+          "p": "none"
+        }
+      ],
+      "meshes": [
+        {
+          "name": "Mesh_0.001",
+          "scale": "(2.86, 2.86, 2.86)",
+          "position": "(-0.14, 20.17, -0.70)",
+          "bounds": "Center: (-0.29, 22.03, -0.72), Extents: (1.68, 2.38, 1.90)",
+          "footFalse": 19.9667854,
+          "footTrue": 20.0974026
+        }
+      ]
+    },
+    {
+      "actor": "LongLeggedDuck(Clone)",
+      "root": "(3.40, 20.05, 0.96)",
+      "human": false,
+      "bones": null,
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "scale": "(433.89, 433.89, 433.89)",
+          "position": "(3.40, 20.00, 0.96)",
+          "bounds": "Center: (3.38, 22.43, 0.96), Extents: (2.18, 2.38, 2.39)",
+          "footFalse": 32.4010849,
+          "footTrue": 20.0268364
+        }
+      ]
+    }
+  ],
+  "scope": "Actual prefabs, elevated flat floor, player outside awareness, 240 native roaming frames; baked skin feet versus floor qualified with 1m translation and rendered proxy controls; native camera capture; melee-cooldown gravity control"
+}

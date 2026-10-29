@@ -57,9 +57,9 @@ namespace Mavis
         readonly RaycastHit[] casts = new RaycastHit[16];
         readonly HashSet<PlayerHealth> struck = new HashSet<PlayerHealth>();
         Vector3 home, patrol, knock, committed;
-        float verticalSpeed = -2f, actionTime, nextAttack, nextPath, nextAcquire, lostSightAt, removeAt = -1f, repathStride;
+        float verticalSpeed = -2f, actionTime, nextAttack, nextPath, nextPatrol, nextAcquire, lostSightAt, removeAt = -1f, repathStride;
         int corner;
-        bool hasPath, reclaiming, subscribed, animatorReady;
+        bool hasPath, returningHome, reclaiming, subscribed, animatorReady;
         static readonly float[] AvoidAngles = { 0f, 28f, -28f, 56f, -56f, 84f, -84f };
         static readonly int SpeedHash = Animator.StringToHash("Speed");
         static readonly int MotionHash = Animator.StringToHash("Motion");
@@ -123,6 +123,8 @@ namespace Mavis
             actionTime = 0f;
             nextAttack = Time.time + .4f;
             nextPath = 0f;
+            nextPatrol = 0f;
+            returningHome = false;
             hasPath = false;
             reclaiming = false;
             removeAt = -1f;
@@ -246,8 +248,12 @@ namespace Mavis
             if (distance <= meleeRange && TryBegin(Mood.Strike)) return;
             if (distance >= lungeMin && distance <= lungeMax && Time.time >= nextAttack && Random.value < .45f && TryBegin(Mood.Lunge)) return;
             if (distance > meleeRange) MoveToward(target, runSpeed, dt, false);
-            else if (player) Face(FlatDirection(target), dt);
-            Mode = Mood.Chase;
+            else
+            {
+                if (player) Face(FlatDirection(target), dt);
+                Integrate(dt);
+            }
+            Mode = distance > meleeRange ? Mood.Chase : Mood.Idle;
         }
 
         bool TryBegin(Mood attack)
@@ -306,12 +312,25 @@ namespace Mavis
 
         void Roam(float dt)
         {
-            if (Flat(home) > .8f) { MoveToward(home, walkSpeed, dt, true); Mode = Mood.Patrol; return; }
-            if (Flat(patrol) < .6f || Time.time > nextPath)
+            // Wander goals occupy a 4.5m circle. A smaller home threshold reverses
+            // movement every frame at its boundary; return with a separate leash.
+            if (!returningHome && Flat(home) > 6f)
+            {
+                returningHome = true;
+                nextPath = 0f;
+            }
+            if (returningHome)
+            {
+                if (Flat(home) > .8f) { MoveToward(home, walkSpeed, dt, true); Mode = Mood.Patrol; return; }
+                returningHome = false;
+                nextPatrol = nextPath = 0f;
+            }
+            if (Flat(patrol) < .6f || Time.time >= nextPatrol)
             {
                 Vector2 ring = Random.insideUnitCircle * 4.5f;
                 patrol = Sample(home + new Vector3(ring.x, 0f, ring.y));
-                nextPath = Time.time + Random.Range(2.5f, 4.5f);
+                nextPatrol = Time.time + Random.Range(2.5f, 4.5f);
+                nextPath = 0f;
             }
             MoveToward(patrol, walkSpeed, dt, true);
             Mode = Flat(patrol) > .6f ? Mood.Patrol : Mood.Idle;
