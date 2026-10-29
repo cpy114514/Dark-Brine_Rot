@@ -1,0 +1,22 @@
+{
+  "cachePassed": true,
+  "counterQualified": false,
+  "sameReference": true,
+  "invalidated": true,
+  "cachedBytes": 0,
+  "freshBytes": 0,
+  "managedPositiveBytes": 0,
+  "calls": 256,
+  "corners": 2,
+  "fields": [
+    {
+      "Name": "m_Ptr",
+      "type": "IntPtr"
+    },
+    {
+      "Name": "m_Corners",
+      "type": "Vector3[]"
+    }
+  ],
+  "scope": "Same Editor Mono/native NavMesh API, isolated in-memory box at(-1000,500,-1000); no scene or asset write. Identity/invalidation establish the native array cache. A zero counter without successful native/managed positive controls cannot establish allocation-free operation."
+}

@@ -1,4 +1,12 @@
-# Latest completed batch — 020 chicken and duck
+# Latest completed batch — 021 real flock / diagnostic qualification
+
+Actual first-island Environment/Lighting:5 current chicken+3 enlarged ducks,360 sampled native frames/4 styles with orbit camera and protected capsule target. Max2 attackers,0 slot/ground violations,8 real path directions verified,4 actual PNGs inspected. No new gameplay defect or production patch. See Documentation/Flock-Batch021.md and Evidence/batch021/proof.json. Checkpoint title: Record first-island flock and allocation counter qualification. Baseline07ed6d9/cs204; inspect current log/remote before syncing.
+
+Next high-value work: uncapped renderScale1 standalone/all-style performance and longer movement, then actual Sahur combat/UI/tutorial and precision mesh-foot contact. Do not repeat successful unchanged flock/cache matrices. Native path.corners already caches its array; no extra cache needed. GC.GetAllocatedBytesForCurrentThread is UNAVAILABLE here: native fresh arrays and256 managed new byte[64] allocations both read0. Raw batch021 zeros cannot support allocation-free/GC claims; use a qualified alternative with positive controls. Motor sole clearance is not skinned-foot contact; batch020 small toe intersections remain.
+
+Safe completion: same Editor stopped, original5 scenes clean, fresh save+backup unchanged, running marker clear. .codex/flock021 has fresh private snapshots. WorldFlock021 Prepare refuses repeat preparation; tests only run after confirmed isolated Environment/Lighting. Restore timed out once but completed and was verified before another mutation. No original geometry/UV/rig/clip/material/scene/settings altered; protected diagnostic capsule is not a full Sahur encounter. Preserve all existing user/Plastic changes,606 missing plants, batch020 duck size/collider/stride and four styles/pixel mode.
+
+# Prior completed batch — 020 chicken and duck
 
 Latest actual user request handled: chicken patrol jitter/large hover/cooldown run-in-place repaired; duck enlarged40% with capsule/reach/stride compensation.27 native checks and168 pose-displacement comparisons pass, native PNGs inspected. See Documentation/Enemy-Batch020.md and Evidence/batch020/proof.json. Checkpoint title: Fix chicken patrol jitter and ground offset; enlarge duck. Baseline Git461a66a/Plasticcs203; inspect actual latest log/remote before any sync. Do not repeat finished matrices unchanged.
 
