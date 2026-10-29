@@ -39,6 +39,7 @@ namespace Mavis
         MaterialPropertyBlock propertyBlock;
         bool profilesDirty;
         Coroutine profileRoutine;
+        bool profilesInitialized;
         public bool ProfilesReady => !profilesDirty && profileRoutine==null;
 
         void OnEnable()
@@ -111,16 +112,17 @@ namespace Mavis
         }
         IEnumerator CacheRendererProfilesWork()
         {
+            bool initial = !profilesInitialized;
             foliage.Clear();
             var lodBounds = new Dictionary<LODGroup, Bounds>();
-            double deadline=Time.realtimeSinceStartupAsDouble+.002;
+            double deadline=Time.realtimeSinceStartupAsDouble+WorldPerformanceManager.InitializationBudget(initial,Time.unscaledDeltaTime);
             int visited=0;
             // Include inactive LOD renderers so they already have their wind profile
             // when a LODGroup activates them later.
             foreach (Renderer renderer in FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 if(Application.isPlaying && ++visited%32==0 && Time.realtimeSinceStartupAsDouble>=deadline)
-                {yield return null;deadline=Time.realtimeSinceStartupAsDouble+.002;}
+                {yield return null;deadline=Time.realtimeSinceStartupAsDouble+WorldPerformanceManager.InitializationBudget(initial,Time.unscaledDeltaTime);}
                 if(renderer==null)continue;
                 if (!UsesFoliageShader(renderer))
                     continue;
@@ -153,6 +155,7 @@ namespace Mavis
             }
             var interactions = GetComponent<FoliageInteractionSystem>();
             if (interactions != null) interactions.RebuildGrassIndex();
+            profilesInitialized = true;
         }
 
         static bool UsesFoliageShader(Renderer renderer)

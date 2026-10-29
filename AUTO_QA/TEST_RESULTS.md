@@ -386,3 +386,21 @@ No production code/assets changed; no new FPS/GC/speedup claim. External helper 
 | Cleanup | PASS both fresh saves unchanged;100 native pref values/types restored incl7 legacy8-byte DWORDs;5 original scenes clean/stopped,build policy/backend/preloads and ProjectSettings bytes restored; unrelated Plastic4 hashes unchanged. |
 
 Four representative actual PNGs inspected. Report load82.70s excludes process/menu; startup upload/ring-buffer warnings are not attributed. No full combat/UI/precise feet/flicker-free or low-end claim. Evidence/batch022/proof.json qualifies the full raw report; Documentation/Performance-Batch022.md contains12 rows and limitations.
+
+
+## 2026-10-29 — Batch023 — startup scheduling acceptance
+
+| Coverage | Result |
+|---|---|
+| Startup contracts | PASS13 native trace/scene/frame/render-callback/RT reuse/resize/external-target/teardown contracts. |
+| Scheduling | PASS20 Play policy checks plus stopped-Editor policy; fresh2–8ms target,interactive2ms,fixed control retains old2ms. |
+| Authored regression | PASS43 checks:9 cache,11 actual reload ownership,12 lifecycle,6 additive load,5 interruption at383 entries;0 fixtures remain. |
+| Wind preservation | PASS6,420 exact scalar comparisons across641 renderers incl mixed material slots. No visual-smoothness claim. |
+| Builds | Baseline succeeded135.06s,493warnings/4 known missing-plant messages;adaptive succeeded66.62s,2warnings/0errors,same Editor/7 scenes/Mono Development. Build duration not a measured gain. |
+| Paired loading | Same adaptive binary,identical launch prefs,VSync1/target60:adaptive33.43s,fixed80.02s,adaptive32.60s;58.23–59.26% less diagnostic island readiness wait. All71,315 foliage entries retained. |
+| Attribution controls | Original80.45s,earlyRT81.56s,VSync0 control23.03s,originalVSync1 repeat79.09s;camera callbacks present/focus true. No occlusion/upload-cause claim. |
+| Safety | All7 Players exit0/errors0,prefs/types restored and saves unchanged;original5 scenes clean/stopped,build policy/settings bytes restored,unrelated4 Plastic paths hash-identical. |
+
+76 native rows plus stopped-Editor policy and wind comparisons. New loading result excludes executable/menu startup; no steadyFPS/GC/GPU or low-end guarantee. No full style matrix rerun. Helper cleanup failure repaired and owned fixtures removed; not counted as production failure. See Documentation/Performance-Batch023.md and Evidence/batch023/proof.json.
+
+Fixture image qualification: two native PNGs are blank backgrounds, archived privately and rejected as visual evidence. No pixel-identity/visible geometry acceptance; numeric renderer/ownership tests are independent.

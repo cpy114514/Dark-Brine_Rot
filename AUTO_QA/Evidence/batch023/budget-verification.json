@@ -1,0 +1,85 @@
+{
+  "passed": true,
+  "rows": [
+    {
+      "ok": true,
+      "label": "60fps initial work retains its original2ms cap"
+    },
+    {
+      "ok": true,
+      "label": "Slow initial frames use at most8ms"
+    },
+    {
+      "ok": true,
+      "label": "Intermediate frame rates receive a bounded fraction"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at0"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at0"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at0.004"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at0.004"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at0.016"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at0.016"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at0.033"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at0.033"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at0.066"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at0.066"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at0.13"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at0.13"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at0.3"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at0.3"
+    },
+    {
+      "ok": true,
+      "label": "Initial budget bounds at1"
+    },
+    {
+      "ok": true,
+      "label": "Interactive recache remains2ms at1"
+    },
+    {
+      "ok": true,
+      "label": "Fixed-budget A/B control exactly retains the old policy"
+    }
+  ]
+}

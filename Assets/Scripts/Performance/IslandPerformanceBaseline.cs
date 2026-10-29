@@ -20,6 +20,13 @@ namespace Mavis
         { public string phase; public int frames, spikes50ms; public float averageFps, averageMs, p95Ms, p99Ms, maxMs, onePercentLowFps; public long maxGcBytes; }
         [Serializable] public sealed class RenderProof
         { public string phase; public int width, height, changedPixels; }
+        [Serializable] public sealed class LoadStage
+        {
+            public string name, scenes;
+            public double seconds;
+            public int frame, cameraCallbacks, foliage, fps, vsync;
+            public bool background, focused, loading, cacheRunning, refreshing, ready, windReady;
+        }
         [Serializable] public sealed class Report
         {
             public string capturedUtc, unity, cpu, gpu, os, quality, scene, status;
@@ -33,6 +40,9 @@ namespace Mavis
             public long gcBaselineBytes;
             public string graphicsApi;
             public List<string> skippedPhases = new List<string>();
+            public bool loadTrace, startupRender, loadOnly, fixedInitializationControl;
+            public int loadingCameraCallbacks;
+            public List<LoadStage> loadStages = new List<LoadStage>();
             public int renderedFrames, unrenderedIntervals;
             public List<Summary> summaries = new List<Summary>();
             public List<Sample> samples = new List<Sample>();
@@ -50,6 +60,9 @@ namespace Mavis
         string previousStyle;
         float previousIntensity, phaseStarted;
         byte[] gcPositiveControl;
+        bool loadTrace, startupRender, loadOnly;
+        bool fixedBudgetControl, previousFixedBudget;
+        double traceStarted, nextLoadTrace;
         Vector3 viewTarget;
         bool overrideCamera;
         float seconds = 10;
@@ -76,6 +89,15 @@ namespace Mavis
             nativeThroughput = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-native1080") >= 0;
             styleMatrix = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-all-styles") >= 0;
             orbitCamera = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-orbit") >= 0;
+            loadTrace = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-load-trace") >= 0;
+            startupRender = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-startup-render") >= 0;
+            loadOnly = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-load-only") >= 0;
+            fixedBudgetControl = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-fixed-init-budget") >= 0;
+            report.fixedInitializationControl = fixedBudgetControl;
+            previousFixedBudget = WorldPerformanceManager.ForceFixedInitializationBudget;
+            if (fixedBudgetControl) WorldPerformanceManager.ForceFixedInitializationBudget = true;
+            traceStarted = Time.realtimeSinceStartupAsDouble;
+            report.loadTrace = loadTrace; report.startupRender = startupRender; report.loadOnly = loadOnly;
             previousBackground = Application.runInBackground; Application.runInBackground = true;
             report.capturedUtc = DateTime.UtcNow.ToString("o"); report.unity = Application.unityVersion;
             report.cpu = SystemInfo.processorType; report.gpu = SystemInfo.graphicsDeviceName; report.os = SystemInfo.operatingSystem;
@@ -84,6 +106,44 @@ namespace Mavis
             allocations = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Allocated In Frame", 1);
             Application.logMessageReceived += Log;
             RenderPipelineManager.endCameraRendering += CameraRendered;
+            SceneManager.sceneLoaded += DiagnosticSceneLoaded;
+            TraceLoad("sampler-awake");
+        }
+        void DiagnosticSceneLoaded(Scene scene, LoadSceneMode mode) => TraceLoad("scene:" + scene.name);
+        void TraceLoad(string name)
+        {
+            if (!loadTrace) return;
+            var performance = FindRuntimePerformance();
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var type = typeof(WorldPerformanceManager);
+            var stage = new LoadStage { name = name, seconds = Time.realtimeSinceStartupAsDouble - traceStarted,
+                frame = Time.frameCount, cameraCallbacks = report.loadingCameraCallbacks, background = Application.runInBackground,
+                focused = Application.isFocused, fps = Application.targetFrameRate, vsync = QualitySettings.vSyncCount,
+                loading = AdditiveSceneBootstrap.IsLoading, windReady = true };
+            if (performance)
+            {
+                stage.cacheRunning = type.GetField("cacheRoutine", flags).GetValue(performance) != null;
+                stage.refreshing = (bool)type.GetField("foliageRefreshing", flags).GetValue(performance);
+                stage.foliage = ((System.Collections.ICollection)type.GetField("foliage", flags).GetValue(performance)).Count;
+                stage.ready = performance.IsReady;
+            }
+            foreach (var driver in FindObjectsByType<FoliageWindDriver>(FindObjectsSortMode.None))
+                if (driver.isActiveAndEnabled && !driver.ProfilesReady) stage.windReady = false;
+            for (int i = 0; i < SceneManager.sceneCount; i++) stage.scenes += (i == 0 ? "" : ",") + SceneManager.GetSceneAt(i).name;
+            report.loadStages.Add(stage); nextLoadTrace = Time.realtimeSinceStartupAsDouble + 1;
+        }
+        void TraceLoadProgress(string name)
+        {
+            if (loadTrace && Time.realtimeSinceStartupAsDouble >= nextLoadTrace) TraceLoad(name);
+        }
+        void EnsureCaptureTarget()
+        {
+            if (captureTarget && captureTarget.width == Screen.width && captureTarget.height == Screen.height) return;
+            var old = captureTarget;
+            captureTarget = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32); captureTarget.Create();
+            foreach (var entry in previousTargets)
+                if (entry.Key && entry.Key.targetTexture == old) entry.Key.targetTexture = captureTarget;
+            if (old) { old.Release(); Destroy(old); }
         }
         void ApplyDiagnosticOverrides()
         {
@@ -136,11 +196,12 @@ namespace Mavis
         {
             var performance = FindRuntimePerformance();
             while ((!performance || !performance.isActiveAndEnabled || !performance.IsReady) && Time.realtimeSinceStartup < deadline)
-            { yield return null; if (!performance || !performance.isActiveAndEnabled) performance = FindRuntimePerformance(); }
+            { TraceLoadProgress("waiting-world"); yield return null; if (!performance || !performance.isActiveAndEnabled) performance = FindRuntimePerformance(); }
             if (!performance || !performance.isActiveAndEnabled || !performance.IsReady) Finish("foliage initialization timeout");
         }
         void CameraRendered(ScriptableRenderContext context, Camera camera)
         {
+            if (loadTrace && report.loadSeconds == 0 && camera && camera.CompareTag("MainCamera")) report.loadingCameraCallbacks++;
             if (finished || camera != captureCamera || !captureTarget || camera.targetTexture != captureTarget) return;
             lastRenderedFrame = Time.frameCount; report.renderedFrames++;
         }
@@ -149,12 +210,15 @@ namespace Mavis
             double start = Time.realtimeSinceStartupAsDouble;
             string scene = story ? "Assets/Scenes/First story/Story1.unity" : "Assets/Scenes/First Island/Main.unity";
             report.scene = scene;
+            TraceLoad("load-request");
             if (SceneManager.GetSceneByPath(scene).isLoaded == false) yield return SceneManager.LoadSceneAsync(scene, LoadSceneMode.Single);
+            TraceLoad("main-loaded");
             float deadline = Time.realtimeSinceStartup + 120;
             while ((AdditiveSceneBootstrap.IsLoading || !(player = FindFirstObjectByType<ThirdPersonPlayerController>())) && Time.realtimeSinceStartup < deadline)
-            { ExcludePlayers(); yield return null; }
+            { TraceLoadProgress("waiting-scenes-player"); ExcludePlayers(); yield return null; }
             ExcludePlayers();
             if (!player) { Finish("player missing or loading timeout"); yield break; }
+            TraceLoad("player-ready");
             if (!story)
             {
                 var arrival = player.GetComponent<FirstIslandArrival>();
@@ -164,6 +228,8 @@ namespace Mavis
                 if (finished) yield break;
             }
             report.loadSeconds = Time.realtimeSinceStartupAsDouble - start;
+            TraceLoad("world-ready");
+            if (loadOnly) { Finish("load trace completed"); yield break; }
             ApplyDiagnosticOverrides();
             if (nativeThroughput && !Application.isEditor)
             {
@@ -184,8 +250,7 @@ namespace Mavis
             // A camera with a target texture renders when its window is occluded.
             // Accept only completed native camera intervals; do not synchronize the GPU
             // with ReadPixels every measured frame and charge that stall to the game.
-            captureTarget = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
-            captureTarget.Create();
+            EnsureCaptureTarget();
             if (story)
             {
                 yield return new WaitForSecondsRealtime(8);
@@ -286,6 +351,7 @@ namespace Mavis
             float wallMs = previousFrameTick == 0 ? 0 : (float)((tick - previousFrameTick) * 1000.0 / System.Diagnostics.Stopwatch.Frequency);
             previousFrameTick = tick;
             if (finished) return;
+            if (startupRender && Camera.main) EnsureCaptureTarget();
             if (!player) ExcludePlayers();
             if (overrideCamera && Camera.main)
             {
@@ -336,8 +402,10 @@ namespace Mavis
         }
         void OnDestroy()
         {
+            if (fixedBudgetControl) WorldPerformanceManager.ForceFixedInitializationBudget = previousFixedBudget;
             Application.logMessageReceived -= Log; allocations.Dispose();
             RenderPipelineManager.endCameraRendering -= CameraRendered;
+            SceneManager.sceneLoaded -= DiagnosticSceneLoaded;
             foreach (var previous in previousTargets)
                 if (previous.Key && previous.Key.targetTexture == captureTarget) previous.Key.targetTexture = previous.Value;
             previousTargets.Clear(); Application.runInBackground = previousBackground;

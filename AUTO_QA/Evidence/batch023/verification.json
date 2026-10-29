@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "checks": [
+    "Tracing is inert unless explicitly enabled",
+    "Default startup does not force a render target",
+    "Trace records the actual loaded scene set",
+    "Trace uses native frame and monotonic elapsed time",
+    "Early capture binds the actual startup camera at output resolution",
+    "Stable output size reuses its owned target",
+    "Resolution change replaces the owned target and rebinds its camera",
+    "Resize preserves the original external target",
+    "Actual native camera callbacks are counted during startup",
+    "Stage trace preserves rendered/frame/time progression",
+    "Early rendering does not override saved frame or quality policy",
+    "Teardown restores the original target after a resize",
+    "Teardown restores background policy"
+  ],
+  "scope": "Native opt-in startup trace and render-target ownership/resize contracts; no loading-speed or game FPS conclusion"
+}

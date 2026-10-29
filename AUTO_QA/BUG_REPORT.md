@@ -168,3 +168,8 @@ Suspected per-access path-corner array allocation rejected: native getters retur
 VERIFIED DIAGNOSTIC FIX: sampler availability previously meant only ProfilerRecorder.Valid. Add a finite positive control; unqualified data becomes-1.18 new native contracts pass, including reversible native1080/frame/pixel/style overrides and orbit/proof isolation. One production script, opt-in only; no normal gameplay/art change.
 
 Qualified standalone12-phase/6963-frame result: native1920×1080,renderScale1,target-1,vSync0;0 measured frames>50ms,0 unrendered intervals/runtime errors. Forest77.25–79.95FPS versus coast120.89–123.48FPS is an observation requiring CPU/GPU attribution. Standalone allocation control rejected noisy warmup; no GC/optimization-gain claim. Suspected:82.70s island load and native D3D12 upload/ring-buffer warnings need stage attribution; no verified root cause. Four known missing-plant build messages/606 instances retained. See Documentation/Performance-Batch022.md.
+
+
+## 2026-10-29 — Batch023 — QA-035 frame-paced startup work
+
+VERIFIED/FIXED: fresh wind/profile and world ownership scans used2ms per frame, stretching readiness to~80s at observed~8FPS startup pacing. Adapt only fresh acquisition to1/16 previous frame time,2–8ms target; interactive recache/Editor stays2ms. Same-binary adaptive/fixed/adaptive gives33.43/80.02/32.60s with identical saved preferences,target60/VSync1 and71,315-renderer roster:58.23–59.26% less diagnostic readiness wait. All7 controlled loads exit0/errors0; early RT alone does not help, so no hidden-window or D3D12 upload-cause claim.76 native checks plus6,420 exact wind property comparisons pass. No steadyFPS/GC/quality reduction claim. Documentation/Performance-Batch023.md.
