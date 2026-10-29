@@ -133,6 +133,18 @@ namespace Mavis
         readonly Dictionary<Material, Vector2> grassPadding = new Dictionary<Material, Vector2>();
         static readonly ProfilerMarker GrassVisibility = new ProfilerMarker("World.GrassVisibility");
         static readonly ProfilerMarker GrassSubmit = new ProfilerMarker("World.GrassSubmit");
+        // Diagnostic A/B control only; normal sessions always use the adaptive policy.
+        internal static bool ForceFixedInitializationBudget;
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void ResetInitializationControl() => ForceFixedInitializationBudget = false;
+        internal static double InitializationBudget(bool initial, float frameSeconds)
+        {
+            // A 2ms slice per rendered frame takes minutes when startup is paced
+            // slowly. Spend at most 1/16 of that frame, capped at 8ms, only while
+            // acquiring a fresh scene. Interactive refreshes retain the 2ms cap.
+            return Application.isPlaying && initial && !ForceFixedInitializationBudget
+                ? Mathf.Clamp(frameSeconds * .0625f, .002f, .008f) : .002;
+        }
         Camera mainCamera;
         float nextUpdate;
         Coroutine cacheRoutine;
@@ -456,20 +468,21 @@ namespace Mavis
             // scan; native overrides may otherwise be read back after a yield.
             var previousRenderers = new Dictionary<MeshRenderer, Foliage>();
             foreach (var item in foliage) if (item.renderer) previousRenderers[item.renderer] = item;
+            bool initial = previousRenderers.Count == 0;
             RestoreManagedRenderers();
 #if UNITY_EDITOR
             var reloadRenderers = ReadReloadRenderers();
 #endif
             var grassCells = new Dictionary<Vector2Int, FoliageCell>();
             var block=new MaterialPropertyBlock();
-            double deadline=Time.realtimeSinceStartupAsDouble+.002;
+            double deadline=Time.realtimeSinceStartupAsDouble+InitializationBudget(initial,Time.unscaledDeltaTime);
             int visited=0;
             foreach (var renderer in FindObjectsByType<MeshRenderer>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
                 // Bound initialization work so entering the island does not
                 // process every plant and material in one rendered frame.
                 if(++visited%32==0 && Time.realtimeSinceStartupAsDouble>=deadline)
-                {yield return null;deadline=Time.realtimeSinceStartupAsDouble+.002;}
+                {yield return null;deadline=Time.realtimeSinceStartupAsDouble+InitializationBudget(initial,Time.unscaledDeltaTime);}
                 if(renderer==null)continue;
                 if (previousRenderers.TryGetValue(renderer, out var previous)) RestoreRenderer(previous);
 #if UNITY_EDITOR

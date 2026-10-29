@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "comparedFloats": 6420,
+  "renderers": 641,
+  "initialized": true,
+  "scope": "Actual authored grass/tree meshes plus owned bark/branch/leaf/grass/mixed material cases; fixed/adaptive profile values identical, original assets untouched"
+}

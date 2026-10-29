@@ -122,3 +122,8 @@ Native1280×720 Realistic/Dark Fairytale/Origami/Monochrome PNGs inspected after
 ## 2026-10-29 — Batch022 — standalone moving-camera matrix
 
 Four styles × coast/forest/boss vicinity,6s per phase, with8°/s orbit and real render fences. Four native1080 PNGs inspected; actual Sahur/world/boss visible. Proof captures pause orbit and compare visible/empty pixels outside measured windows. No authored animation/rig/model/controller/combat edit; camera changes only under opt-in diagnostics and teardown restores policy/style/pixel. This is not full combat, overlay UI, exact feet or flicker-free temporal acceptance. Sequential boss actions differ, so style rows are not shader-only comparisons. Batch020 residual foot contact remains open.
+
+
+## 2026-10-29 — Batch023 — startup scheduling and wind preservation
+
+No model/UV/rig/clip/controller/collider/camera gameplay edit. Only fresh wind/renderer scan scheduling changes;6,420 scalar wind profile values match exactly across641 authored/owned renderers under fixed/adaptive policies. Actual reload/lifecycle/cancellation preserve original material/mesh/visibility/shadow/occlusion state. No new visual-smoothness or temporal-flicker acceptance; existing small chicken toe intersections remain open. Four styles/independent pixel mode and batch020 duck size/collision/stride remain unchanged.

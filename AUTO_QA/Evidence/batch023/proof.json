@@ -1,0 +1,291 @@
+{
+  "batch": 23,
+  "baselineGit": "db92b8ec91b680aebe0cebc5ef2149cb643f3fc0",
+  "baselinePlastic": 206,
+  "checkpointTitle": "Reduce frame-paced island initialization wait",
+  "verifiedIssue": "QA-035: two fixed2ms-per-frame fresh foliage initialization scans stretch island readiness at slow startup frame pacing",
+  "normalChange": "Only fresh acquisition uses1/16 of previous unscaled frame duration,clamped2–8ms; steady recache and stopped Editor retain2ms. No quality,VSync,density,art or gameplay change.",
+  "runs": [
+    {
+      "run": "a-base",
+      "condition": {
+        "earlyRender": false,
+        "temporaryVsyncOff": false,
+        "adaptiveBuild": false,
+        "source": "native report and owned executable; launcher condition file not recorded in these first two runs"
+      },
+      "loadSeconds": 80.4489308,
+      "playerReadySeconds": 5.6156424000000005,
+      "firstWindReadySeconds": 50.6136212,
+      "worldReadySeconds": 80.9732657,
+      "worldReadyFrame": 600,
+      "cameraCallbacks": 582,
+      "foliage": 71315,
+      "vsync": 1,
+      "targetFps": 60,
+      "fixedInitializationControl": false,
+      "errors": 0,
+      "exitCode": 0,
+      "prefsRestored": true,
+      "savesUnchanged": true
+    },
+    {
+      "run": "b-early",
+      "condition": {
+        "earlyRender": true,
+        "temporaryVsyncOff": false,
+        "adaptiveBuild": false,
+        "source": "native report and owned executable; launcher condition file not recorded in these first two runs"
+      },
+      "loadSeconds": 81.55686220000001,
+      "playerReadySeconds": 5.2810397999999985,
+      "firstWindReadySeconds": 52.319388200000006,
+      "worldReadySeconds": 82.0768002,
+      "worldReadyFrame": 611,
+      "cameraCallbacks": 594,
+      "foliage": 71315,
+      "vsync": 1,
+      "targetFps": 60,
+      "fixedInitializationControl": false,
+      "errors": 0,
+      "exitCode": 0,
+      "prefsRestored": true,
+      "savesUnchanged": true
+    },
+    {
+      "run": "c-nosync",
+      "condition": {
+        "earlyRender": false,
+        "temporaryVsyncOff": true
+      },
+      "loadSeconds": 23.026859200000004,
+      "playerReadySeconds": 2.731929800000001,
+      "firstWindReadySeconds": 17.1666178,
+      "worldReadySeconds": 23.5460388,
+      "worldReadyFrame": 575,
+      "cameraCallbacks": 528,
+      "foliage": 71315,
+      "vsync": 0,
+      "targetFps": 60,
+      "fixedInitializationControl": false,
+      "errors": 0,
+      "exitCode": 0,
+      "prefsRestored": true,
+      "savesUnchanged": true
+    },
+    {
+      "run": "d-base",
+      "condition": {
+        "earlyRender": false,
+        "temporaryVsyncOff": false
+      },
+      "loadSeconds": 79.0874656,
+      "playerReadySeconds": 4.237291100000001,
+      "firstWindReadySeconds": 50.3139073,
+      "worldReadySeconds": 79.6061888,
+      "worldReadyFrame": 599,
+      "cameraCallbacks": 583,
+      "foliage": 71315,
+      "vsync": 1,
+      "targetFps": 60,
+      "fixedInitializationControl": false,
+      "errors": 0,
+      "exitCode": 0,
+      "prefsRestored": true,
+      "savesUnchanged": true
+    },
+    {
+      "run": "e-adaptive",
+      "condition": {
+        "earlyRender": false,
+        "temporaryVsyncOff": false,
+        "adaptiveBuild": true,
+        "fixedBudget": false
+      },
+      "loadSeconds": 33.4253331,
+      "playerReadySeconds": 5.051002000000002,
+      "firstWindReadySeconds": 22.8919426,
+      "worldReadySeconds": 33.9509082,
+      "worldReadyFrame": 245,
+      "cameraCallbacks": 228,
+      "foliage": 71315,
+      "vsync": 1,
+      "targetFps": 60,
+      "fixedInitializationControl": false,
+      "errors": 0,
+      "exitCode": 0,
+      "prefsRestored": true,
+      "savesUnchanged": true
+    },
+    {
+      "run": "f-fixed",
+      "condition": {
+        "earlyRender": false,
+        "temporaryVsyncOff": false,
+        "adaptiveBuild": true,
+        "fixedBudget": true
+      },
+      "loadSeconds": 80.019113,
+      "playerReadySeconds": 4.3666770999999995,
+      "firstWindReadySeconds": 51.4281099,
+      "worldReadySeconds": 80.5383272,
+      "worldReadyFrame": 605,
+      "cameraCallbacks": 588,
+      "foliage": 71315,
+      "vsync": 1,
+      "targetFps": 60,
+      "fixedInitializationControl": true,
+      "errors": 0,
+      "exitCode": 0,
+      "prefsRestored": true,
+      "savesUnchanged": true
+    },
+    {
+      "run": "g-adaptive2",
+      "condition": {
+        "earlyRender": false,
+        "temporaryVsyncOff": false,
+        "adaptiveBuild": true,
+        "fixedBudget": false
+      },
+      "loadSeconds": 32.597348100000005,
+      "playerReadySeconds": 4.584916699999999,
+      "firstWindReadySeconds": 22.4053687,
+      "worldReadySeconds": 33.11633260000001,
+      "worldReadyFrame": 242,
+      "cameraCallbacks": 224,
+      "foliage": 71315,
+      "vsync": 1,
+      "targetFps": 60,
+      "fixedInitializationControl": false,
+      "errors": 0,
+      "exitCode": 0,
+      "prefsRestored": true,
+      "savesUnchanged": true
+    }
+  ],
+  "sameBinaryControl": {
+    "order": [
+      "e-adaptive",
+      "f-fixed",
+      "g-adaptive2"
+    ],
+    "launchPreferenceSnapshotsByteIdentical": true,
+    "reductionPercent": [
+      58.22831340307408,
+      59.26304744217797
+    ]
+  },
+  "acceptedNativeChecks": {
+    "trace": 13,
+    "budget": 20,
+    "authoredCache": 9,
+    "actualReloadOwnership": 11,
+    "lifecycle": 12,
+    "sceneLoad": 6,
+    "partialCancellation": 5,
+    "total": 76,
+    "stoppedEditorPolicy": true,
+    "windFloatComparisons": 6420,
+    "windRenderers": 641,
+    "partialCancellationEntries": 383
+  },
+  "safety": {
+    "protected": [
+      {
+        "path": "ProjectSettings/EditorBuildSettings.asset",
+        "unchanged": true
+      },
+      {
+        "path": "ProjectSettings/ShaderGraphSettings.asset",
+        "unchanged": true
+      },
+      {
+        "path": "Assets/_Recovery/0.unity",
+        "unchanged": true
+      },
+      {
+        "path": "Assets/_Recovery/0.unity.meta",
+        "unchanged": true
+      }
+    ],
+    "adaptiveSettingsBytesRestored": true,
+    "native": {
+      "state": {
+        "stopped": true,
+        "clean": true,
+        "sceneMatch": true,
+        "savesUnchanged": true,
+        "scenes": [
+          {
+            "path": "Assets/Scenes/First Island/Main.unity",
+            "isLoaded": true,
+            "isActive": true,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Lighting.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Gameplay.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Environment.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          },
+          {
+            "path": "Assets/Scenes/First Island/Enemies.unity",
+            "isLoaded": true,
+            "isActive": false,
+            "isSubScene": false
+          }
+        ]
+      },
+      "development": false,
+      "debugging": false,
+      "connectProfiler": false,
+      "backend": "Mono2x",
+      "preloaded": [
+        "Assets/InputSystem_Actions.inputactions"
+      ],
+      "projectSettingsBytesRestored": true
+    },
+    "fixtures": {
+      "cleaned": true,
+      "fixtures": 0
+    }
+  },
+  "sourceHashes": [
+    {
+      "path": "Assets/Scripts/Performance/WorldPerformanceManager.cs",
+      "sha256": "518e15fa0ff4e2fdd338107476f749d7b5f4ec30995f790b9ac3e8c5fcf6d2bb"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/Shared/Scripts/FoliageWindDriver.cs",
+      "sha256": "3c8beda549662b91c60094d113ae22952581009839a5097c5ec74e68dcf83c1c"
+    },
+    {
+      "path": "Assets/Scripts/Performance/IslandPerformanceBaseline.cs",
+      "sha256": "cfd941394245fb67a710495f40e9a66935ff1c1945ab328bb886545013543dfc"
+    }
+  ],
+  "limits": [
+    "Diagnostic island readiness excludes executable/menu startup; no executable-to-interactive,steadyFPS,GC or GPU-speed claim.",
+    "Same-binary paired control on this PC with other Editors open,not a low-end/shipping guarantee.",
+    "Native trace reports focused=true despite Hidden launch request; no hidden-window/occlusion-cause claim.",
+    "EarlyRT alone did not help; temporaryVSync0 is attribution only and saved policies were restored.",
+    "Readiness roster71315 retained;6420 exact wind property comparisons and ownership tests qualify preservation. No new visual-smoothness/temporal-flicker/complete-encounter acceptance.",
+    "76 native rows plus stoppedEditor policy; unchanged full style/FPS matrix was not repeated.",
+    "Initial wind helper cleanup error repaired and all owned fixtures removed; no production defect inferred from fixture cleanup.",
+    "Known606 unavailable plants and unrelated Plastic checkouts preserved.",
+    "Two authored-fixture camera PNGs are identical blank backgrounds; they are UNQUALIFIED visual evidence and archived privately. Numeric/native ownership acceptance remains, no pixel-identity/visual regression claim."
+  ]
+}

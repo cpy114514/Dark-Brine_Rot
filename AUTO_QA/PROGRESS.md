@@ -242,3 +242,12 @@ Continued from4db388d/cs205. Optional sampler adds explicit native1080/all-style
 Player exits0 after12 phases/6963 samples/9110 render callbacks,0 unrendered intervals/errors and12 image controls. Native1080/renderScale1,target-1,vSync0,pixel off: coast120.89–123.48FPS,forest77.25–79.95,boss81.38–107.89;0 samples>50ms. No pre/post optimization gain. Native GC control qualifies in Editor but rejects noisy standalone warmup, preserving-1. Island load82.70s and D3D12 ring-buffer warnings are un-attributed follow-ups.
 
 Fresh saves unchanged,100 native prefs/types restored including7 legacy8-byte DWORDs; original5 scenes/build flags/backend/preloads/ProjectSettings bytes restored. Four unrelated Plastic paths byte-unchanged. Build material side effect rolled back and scoped unchanged checkout cleared. Binary/private snapshots/logs/caches ignored. Checkpoint title: Qualify native1080p style matrix and benchmark counter reporting. Next: forest CPU/GPU and loading-stage attribution before evidenced fixes; wider combat/UI/tutorial/feet remain.
+
+
+## 2026-10-29 — Batch023 — island readiness optimization
+
+Continued fromdb92b8e/cs206. Traced actual scene/player/wind/ownership initialization with native frame/render controls. Scenes/player ready4–6s; two fixed2ms-per-frame scans dominate~80s readiness at slow startup pacing. Early RT81.56s and restored VSync1 repeat79.09s reject absent-rendering/simple warm-cache explanations; temporary VSync0 control23.03s is attribution only.
+
+Fresh-only adaptive2–8ms targets preserve quality/VSync and2ms interactive policy. Same executable adaptive/fixed/adaptive33.43/80.02/32.60s,identical preference snapshots,71,315 roster,0 runtime errors.76 native checks,stopped-Editor policy and6,420 exact wind-property comparisons pass; actual assembly reload,scene load,lifecycle and383-entry cancellation covered. Helper cleanup issue repaired and0 owned fixtures verified. Both builds succeeded; adaptive incremental build66.62s/0 errors.
+
+All7 Players exit0;100 native preferences/types restored each time,both fresh saves unchanged,original5 scenes clean/stopped,build policy/backend/preloads/ProjectSettings bytes restored,4 unrelated Plastic hashes unchanged. No original art/animation/gameplay or steadyFPS claim. Checkpoint title: Reduce frame-paced island initialization wait. Evidence/batch023/proof.json is the acceptance record. Next: paired forest CPU/GPU attribution and actual combat/UI/tutorial/precision feet; no unchanged matrix repetition.
