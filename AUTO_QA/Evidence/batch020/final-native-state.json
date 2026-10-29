@@ -1,0 +1,164 @@
+{
+  "stopped": true,
+  "sceneMatch": true,
+  "savesUnchanged": true,
+  "markerClear": true,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "isLoaded": true,
+      "isActive": true,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    }
+  ],
+  "assets": [
+    {
+      "path": "Assets/Game/Prefabs/Enemies/ChickenBro/ChickenBro.prefab",
+      "scale": "(1.00, 1.00, 1.00)",
+      "height": 4.765,
+      "center": "(0.00, 2.38, 0.00)",
+      "radius": 0.48,
+      "skin": 0.08,
+      "visuals": [
+        {
+          "name": "ChickenBro",
+          "position": "(0.00, 0.09, 0.00)",
+          "scale": "(2.86, 2.86, 2.86)"
+        }
+      ],
+      "animators": [
+        {
+          "name": "ChickenBro",
+          "enabled": true,
+          "applyRootMotion": false,
+          "isHuman": true,
+          "clips": [
+            "Armature|Idle_Loop",
+            "Armature|Walk_Loop",
+            "Armature|Walk_Loop",
+            "Armature|Punch_Jab",
+            "Armature|Sword_Attack",
+            "Armature|Hit_Chest",
+            "Armature|Hit_Head",
+            "Armature|Death01"
+          ]
+        }
+      ],
+      "scripts": [
+        "Health",
+        "ChickenBroAI",
+        "ChickenBroPose"
+      ]
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.prefab",
+      "scale": "(1.00, 1.00, 1.00)",
+      "height": 4.76,
+      "center": "(0.00, 2.38, 0.00)",
+      "radius": 0.77,
+      "skin": 0.05,
+      "visuals": [
+        {
+          "name": "LongLeggedDuckModel",
+          "position": "(0.00, -0.05, 0.00)",
+          "scale": "(4.34, 4.34, 4.34)"
+        }
+      ],
+      "animators": [
+        {
+          "name": "LongLeggedDuckModel",
+          "enabled": true,
+          "applyRootMotion": false,
+          "isHuman": false,
+          "clips": [
+            "Armature|Idle",
+            "Armature|Walk",
+            "Armature|Run",
+            "Armature|Peck",
+            "Armature|Lunge",
+            "Armature|Flinch",
+            "Armature|Knockdown",
+            "Armature|Death"
+          ]
+        }
+      ],
+      "scripts": [
+        "Health",
+        "ChickenBroAI"
+      ]
+    }
+  ],
+  "duckStates": [
+    {
+      "name": "Idle",
+      "speed": 1.0,
+      "clip": "Armature|Idle"
+    },
+    {
+      "name": "Walk",
+      "speed": 1.26428568,
+      "clip": "Armature|Walk"
+    },
+    {
+      "name": "Run",
+      "speed": 1.19999993,
+      "clip": "Armature|Run"
+    },
+    {
+      "name": "Strike",
+      "speed": 1.0,
+      "clip": "Armature|Peck"
+    },
+    {
+      "name": "Lunge",
+      "speed": 1.0,
+      "clip": "Armature|Lunge"
+    },
+    {
+      "name": "Flinch",
+      "speed": 1.0,
+      "clip": "Armature|Flinch"
+    },
+    {
+      "name": "Knockdown",
+      "speed": 1.0,
+      "clip": "Armature|Knockdown"
+    },
+    {
+      "name": "Death",
+      "speed": 1.0,
+      "clip": "Armature|Death"
+    }
+  ],
+  "encounters": [
+    {
+      "name": "Chicken Bro Encounter",
+      "chicken": "Assets/Game/Prefabs/Enemies/ChickenBro/ChickenBro.prefab",
+      "duck": "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.prefab"
+    }
+  ]
+}

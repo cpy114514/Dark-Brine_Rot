@@ -1,0 +1,442 @@
+{
+  "captured": true,
+  "reversals": 158,
+  "samples": [
+    {
+      "frame": 0,
+      "mode": "Patrol",
+      "x": -2.26054883,
+      "y": 20.0805,
+      "z": -0.7503023,
+      "yaw": 190.2463,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7701893,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 8,
+      "mode": "Patrol",
+      "x": -2.26147,
+      "y": 20.0805,
+      "z": -0.7529549,
+      "yaw": 181.112045,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7411976,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 16,
+      "mode": "Patrol",
+      "x": -2.25142479,
+      "y": 20.0805,
+      "z": -0.724027455,
+      "yaw": 172.381317,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.576478958,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 24,
+      "mode": "Patrol",
+      "x": -2.25376534,
+      "y": 20.0805,
+      "z": -0.730767965,
+      "yaw": 174.194046,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.740777969,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 32,
+      "mode": "Patrol",
+      "x": -2.254162,
+      "y": 20.0805,
+      "z": -0.731910646,
+      "yaw": 174.4778,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.751853943,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 40,
+      "mode": "Patrol",
+      "x": -2.25346684,
+      "y": 20.0805,
+      "z": -0.7299084,
+      "yaw": 230.676392,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.742321,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 48,
+      "mode": "Patrol",
+      "x": -2.255299,
+      "y": 20.0805,
+      "z": -0.7351849,
+      "yaw": 229.316177,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.544036865,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 56,
+      "mode": "Patrol",
+      "x": -2.254108,
+      "y": 20.0805,
+      "z": -0.7317548,
+      "yaw": 230.329575,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7458439,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 64,
+      "mode": "Patrol",
+      "x": -2.254586,
+      "y": 20.0805,
+      "z": -0.7331313,
+      "yaw": 230.031723,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7709656,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 72,
+      "mode": "Patrol",
+      "x": -2.254985,
+      "y": 20.0805,
+      "z": -0.7342801,
+      "yaw": 229.7933,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.741134644,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 80,
+      "mode": "Patrol",
+      "x": -2.25683713,
+      "y": 20.0805,
+      "z": -0.7396139,
+      "yaw": 228.407013,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.5709648,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 88,
+      "mode": "Patrol",
+      "x": -2.25668979,
+      "y": 20.0805,
+      "z": -0.739189565,
+      "yaw": 228.581879,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7438412,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 96,
+      "mode": "Patrol",
+      "x": -2.261688,
+      "y": 20.0805,
+      "z": -0.7535828,
+      "yaw": 224.695557,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.751812,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 104,
+      "mode": "Patrol",
+      "x": -2.265784,
+      "y": 20.0805,
+      "z": -0.765378356,
+      "yaw": 221.5452,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7424545,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 112,
+      "mode": "Patrol",
+      "x": -2.252984,
+      "y": 20.0805,
+      "z": -0.7285178,
+      "yaw": 231.694092,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.553951263,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 120,
+      "mode": "Patrol",
+      "x": -2.26593256,
+      "y": 20.0805,
+      "z": -0.7658059,
+      "yaw": 221.629349,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.744436264,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 128,
+      "mode": "Patrol",
+      "x": -2.25888968,
+      "y": 20.0805,
+      "z": -0.7455242,
+      "yaw": 227.279816,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.782665253,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 136,
+      "mode": "Patrol",
+      "x": -2.26197219,
+      "y": 20.0805,
+      "z": -0.754401445,
+      "yaw": 224.924469,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7418289,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 144,
+      "mode": "Patrol",
+      "x": -2.26268959,
+      "y": 20.0805,
+      "z": -0.7564672,
+      "yaw": 224.420441,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.600978851,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 152,
+      "mode": "Patrol",
+      "x": -2.22323632,
+      "y": 20.0805,
+      "z": -0.411714137,
+      "yaw": 314.1958,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7385483,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 160,
+      "mode": "Patrol",
+      "x": -2.20265317,
+      "y": 20.0805,
+      "z": -0.0620556176,
+      "yaw": 3.36891341,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.754810333,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 168,
+      "mode": "Patrol",
+      "x": -2.18214,
+      "y": 20.0805,
+      "z": 0.286413848,
+      "yaw": 3.36890864,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7451229,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 176,
+      "mode": "Patrol",
+      "x": -2.14196253,
+      "y": 20.0805,
+      "z": 0.5697226,
+      "yaw": 12.5933485,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.5759258,
+      "grounded": true,
+      "verticalSpeed": -2.47830462
+    },
+    {
+      "frame": 184,
+      "mode": "Patrol",
+      "x": -1.92835581,
+      "y": 20.0805,
+      "z": 0.29106456,
+      "yaw": 102.878754,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.685464859,
+      "grounded": true,
+      "verticalSpeed": -2.456946
+    },
+    {
+      "frame": 192,
+      "mode": "Patrol",
+      "x": -1.71357393,
+      "y": 20.0805,
+      "z": 0.0108735,
+      "yaw": 142.527847,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.776258469,
+      "grounded": true,
+      "verticalSpeed": -3.4136107
+    },
+    {
+      "frame": 200,
+      "mode": "Patrol",
+      "x": -1.50148606,
+      "y": 20.0805,
+      "z": -0.265803069,
+      "yaw": 142.527847,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.751983643,
+      "grounded": true,
+      "verticalSpeed": -4.26993752
+    },
+    {
+      "frame": 208,
+      "mode": "Patrol",
+      "x": -1.33969259,
+      "y": 20.0805,
+      "z": -0.4931061,
+      "yaw": 142.968109,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.719022751,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    },
+    {
+      "frame": 216,
+      "mode": "Patrol",
+      "x": -1.3806628,
+      "y": 20.0805,
+      "z": -0.5069207,
+      "yaw": 148.917847,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.568275452,
+      "grounded": true,
+      "verticalSpeed": -5.27151155
+    },
+    {
+      "frame": 224,
+      "mode": "Patrol",
+      "x": -1.4042002,
+      "y": 20.0805,
+      "z": -0.529502153,
+      "yaw": 149.797226,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7738762,
+      "grounded": true,
+      "verticalSpeed": -9.929086
+    },
+    {
+      "frame": 232,
+      "mode": "Patrol",
+      "x": -1.41246438,
+      "y": 20.0805,
+      "z": -0.5558778,
+      "yaw": 155.502533,
+      "motorFoot": 0.07999992,
+      "visualFoot": 0.7524166,
+      "grounded": true,
+      "verticalSpeed": -2.0
+    }
+  ],
+  "chickenHeight": 4.765,
+  "duckHeight": 3.40000033,
+  "chickenVisualFoot": 0.746145248,
+  "duckVisualFoot": 0.09577751,
+  "footTranslationControl": 1.0,
+  "proxyControls": [
+    {
+      "scale": false,
+      "differentPixels": 82223,
+      "totalPixels": 518400
+    },
+    {
+      "scale": true,
+      "differentPixels": 5,
+      "totalPixels": 518400
+    }
+  ],
+  "cooldown": {
+    "startY": 21.0,
+    "endY": 21.0,
+    "grounded": true,
+    "mode": "Chase",
+    "motion": 2
+  },
+  "feet": [
+    {
+      "actor": "ChickenBro(Clone)",
+      "root": "(-1.45, 20.08, -0.54)",
+      "human": true,
+      "bones": [
+        {
+          "bone": "LeftFoot",
+          "p": "(-0.83, 20.97, -0.74)"
+        },
+        {
+          "bone": "RightFoot",
+          "p": "(-1.73, 20.87, -0.48)"
+        },
+        {
+          "bone": "LeftToes",
+          "p": "none"
+        },
+        {
+          "bone": "RightToes",
+          "p": "none"
+        }
+      ],
+      "meshes": [
+        {
+          "name": "Mesh_0.001",
+          "scale": "(2.86, 2.86, 2.86)",
+          "position": "(-1.45, 20.82, -0.54)",
+          "bounds": "Center: (-1.51, 22.68, -0.40), Extents: (2.23, 2.38, 2.06)",
+          "footFalse": 20.6131821,
+          "footTrue": 20.7461452
+        }
+      ]
+    },
+    {
+      "actor": "LongLeggedDuck(Clone)",
+      "root": "(4.24, 20.05, 0.13)",
+      "human": false,
+      "bones": null,
+      "meshes": [
+        {
+          "name": "Mesh_0",
+          "scale": "(309.92, 309.92, 309.92)",
+          "position": "(4.24, 20.01, 0.13)",
+          "bounds": "Center: (4.24, 21.75, 0.14), Extents: (1.70, 1.70, 1.38)",
+          "footFalse": 45.656662,
+          "footTrue": 20.0957775
+        }
+      ]
+    }
+  ],
+  "scope": "Actual prefabs, elevated flat floor, player outside awareness, 240 native roaming frames; baked skin feet versus floor qualified with 1m translation and rendered proxy controls; native camera capture; melee-cooldown gravity control"
+}

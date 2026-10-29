@@ -1,0 +1,280 @@
+{
+  "completed": true,
+  "passed": 27,
+  "rows": [
+    {
+      "name": "patrol passes old home boundary",
+      "passed": true,
+      "detail": {
+        "position": "(2.11, 20.08, 0.00)"
+      }
+    },
+    {
+      "name": "repath does not overwrite patrol timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "lost enemy returns inside inner home threshold",
+      "passed": true,
+      "detail": {
+        "position": "(0.78, 20.08, 0.00)"
+      }
+    },
+    {
+      "name": "home hysteresis reset",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "pooled activation clears old return and patrol target",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ChickenBro(Clone) cooldown gravity",
+      "passed": true,
+      "detail": {
+        "y": 20.0805
+      }
+    },
+    {
+      "name": "ChickenBro(Clone) cooldown uses idle animation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ChickenBro(Clone) configured melee edge overlap",
+      "passed": true,
+      "detail": {
+        "range": 1.72,
+        "origin": "(0.00, 22.62, 0.83)",
+        "radius": 0.85,
+        "playerHeight": 1.76690447,
+        "contacts": [
+          "BodyHitbox_RightForeArm",
+          "BodyHitbox_RightWrist",
+          "BodyHitbox_RightHand",
+          "BodyHitbox_Torso",
+          "BodyHitbox_LeftForeArm",
+          "BodyHitbox_LeftWrist",
+          "BodyHitbox_LeftHand",
+          "BodyHitbox_LeftThigh",
+          "BodyHitbox_RightThigh",
+          "Sahur",
+          "ChickenBro(Clone)"
+        ]
+      }
+    },
+    {
+      "name": "ChickenBro(Clone) real strike damages player",
+      "passed": true,
+      "detail": {
+        "hp": 98.0,
+        "mode": "Strike"
+      }
+    },
+    {
+      "name": "ChickenBro(Clone) charged hit launches",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ChickenBro(Clone) launch still rises and lands",
+      "passed": true,
+      "detail": {
+        "peak": 21.0655422,
+        "y": 20.0805,
+        "mode": "Patrol"
+      }
+    },
+    {
+      "name": "ChickenBro(Clone) walks uphill with grounded capsule",
+      "passed": true,
+      "detail": {
+        "position": "(17.10, 25.05, 0.00)",
+        "grounded": true,
+        "surface": 24.9577847,
+        "footGap": 0.09122467
+      }
+    },
+    {
+      "name": "ChickenBro(Clone) windup cannot hit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ChickenBro(Clone) active window hits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ChickenBro(Clone) same swing does not hit twice",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "LongLeggedDuck(Clone) cooldown gravity",
+      "passed": true,
+      "detail": {
+        "y": 20.05
+      }
+    },
+    {
+      "name": "LongLeggedDuck(Clone) cooldown uses idle animation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "LongLeggedDuck(Clone) configured melee edge overlap",
+      "passed": true,
+      "detail": {
+        "range": 3.21,
+        "origin": "(0.00, 22.62, 1.12)",
+        "radius": 1.89,
+        "playerHeight": 1.76690447,
+        "contacts": [
+          "BodyHitbox_RightForeArm",
+          "BodyHitbox_RightHand",
+          "BodyHitbox_Torso",
+          "BodyHitbox_RightWrist",
+          "BodyHitbox_LeftWrist",
+          "BodyHitbox_LeftHand",
+          "BodyHitbox_LeftForeArm",
+          "Sahur",
+          "LongLeggedDuck(Clone)"
+        ]
+      }
+    },
+    {
+      "name": "LongLeggedDuck(Clone) real strike damages player",
+      "passed": true,
+      "detail": {
+        "hp": 98.0,
+        "mode": "Strike"
+      }
+    },
+    {
+      "name": "LongLeggedDuck(Clone) charged hit launches",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "LongLeggedDuck(Clone) launch still rises and lands",
+      "passed": true,
+      "detail": {
+        "peak": 22.2535629,
+        "y": 20.0500011,
+        "mode": "Patrol"
+      }
+    },
+    {
+      "name": "LongLeggedDuck(Clone) walks uphill with grounded capsule",
+      "passed": true,
+      "detail": {
+        "position": "(18.39, 25.30, 0.00)",
+        "grounded": true,
+        "surface": 25.2322922,
+        "footGap": 0.06720352
+      }
+    },
+    {
+      "name": "LongLeggedDuck(Clone) windup cannot hit",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "LongLeggedDuck(Clone) active window hits",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "LongLeggedDuck(Clone) same swing does not hit twice",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "raised player outside hit volume remains unharmed",
+      "passed": true,
+      "detail": {
+        "hp": 100.0,
+        "player": "(0.00, 38.41, 1.40)",
+        "colliders": [
+          {
+            "name": "Sahur",
+            "center": "(0.00, 37.65, 1.40)"
+          },
+          {
+            "name": "BodyHitbox_LeftFoot",
+            "center": "(-0.71, 35.22, 1.92)"
+          },
+          {
+            "name": "BodyHitbox_LeftShin",
+            "center": "(-0.56, 35.84, 1.72)"
+          },
+          {
+            "name": "BodyHitbox_LeftThigh",
+            "center": "(-0.36, 36.70, 1.60)"
+          },
+          {
+            "name": "BodyHitbox_RightFoot",
+            "center": "(0.72, 35.22, 1.16)"
+          },
+          {
+            "name": "BodyHitbox_RightShin",
+            "center": "(0.54, 35.83, 1.14)"
+          },
+          {
+            "name": "BodyHitbox_RightThigh",
+            "center": "(0.38, 36.70, 1.38)"
+          },
+          {
+            "name": "BodyHitbox_LeftHand",
+            "center": "(-0.75, 37.66, 1.16)"
+          },
+          {
+            "name": "BodyHitbox_LeftWrist",
+            "center": "(-0.69, 37.82, 1.09)"
+          },
+          {
+            "name": "BodyHitbox_LeftForeArm",
+            "center": "(-0.57, 38.26, 1.06)"
+          },
+          {
+            "name": "BodyHitbox_LeftUpperArm",
+            "center": "(-0.34, 38.61, 1.15)"
+          },
+          {
+            "name": "BodyHitbox_Head",
+            "center": "(0.05, 39.28, 0.98)"
+          },
+          {
+            "name": "BodyHitbox_RightHand",
+            "center": "(0.67, 37.70, 1.11)"
+          },
+          {
+            "name": "BodyHitbox_RightWrist",
+            "center": "(0.64, 37.86, 1.02)"
+          },
+          {
+            "name": "BodyHitbox_RightForeArm",
+            "center": "(0.56, 38.29, 1.02)"
+          },
+          {
+            "name": "BodyHitbox_RightUpperArm",
+            "center": "(0.35, 38.61, 1.14)"
+          },
+          {
+            "name": "BodyHitbox_Torso",
+            "center": "(0.07, 37.95, 1.50)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "wall still blocks enlarged duck strike",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

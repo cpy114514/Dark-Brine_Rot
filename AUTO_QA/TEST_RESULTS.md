@@ -343,3 +343,18 @@ Accepted evidence: Evidence/batch018/proof.json, final-native-kernels.json, befo
 Evidence: Evidence/batch019/{proof,verification,build-report,standalone-report,player-safety,final-native-state}.json and real PNGs. Intentionally failed native timeout control is not a performance result. No full encounter, long motion, all-style or low-end acceptance; GC counters lack an allocation positive control. Details and limitations: Documentation/Performance-Batch019.md.
 
 Additional cleanup: build preload disk delta removed; five build-only text asset/settings paths compared byte-identical to cs201 and their unchanged checkouts cleared with exact-path filtering. No art/material/profile source edit retained. Private snapshots and build caches excluded.
+
+
+## 2026-10-29 — Batch020 — final acceptance
+
+| Coverage | Result |
+|---|---|
+| Compilation | PASS native completed,failed=false,errors=[] after final gameplay source. |
+| Gameplay regression | PASS27 final checks: patrol/home/timers/pool reset; both species cooldown/gravity/Idle, melee edge and actual strike damage, launch/landing,12° uphill contact, windup/active/duplicate-hit rules; elevated-player and wall controls. |
+| Original attack preservation | PASS original Strike body byte-identical to baseline; capsule candidate rejected after scaled-sole fixture correction. |
+| Animation/grounding | PASS168 comparisons across8×21 native phases preserve pose displacement of-0.65m. Native roaming reversals158→2; mean qualified sole gap0.70665→0.07666m. Actual Idle and motion PNGs inspected. |
+| Measurement controls | PASS1m translation; true-scale baked proxy differs5/518400 pixels, false control92148. Invalid CPU/false-scale probes rejected. |
+| Duck | Native height4.76m/radius0.77m;40% uniform size increase. Walk/Run speeds1.2642857/1.2 compensate stride; other speeds/clips unchanged. |
+| Cleanup | Native five original scenes clean/stopped, actual encounter references current prefabs, both fresh saves unchanged, marker clear. Material side effect rolled back; unrelated Plastic files retained. |
+
+Remaining: measured walk sole intersection up to0.11088m and clearance up to0.14358m; no perfect foot-planting, full-island swarm, extended boss, UI or new performance acceptance. Before/after wandering poses differ. Historical failed fixture/candidate files are not acceptance. Read Documentation/Enemy-Batch020.md and Evidence/batch020/proof.json; final native run is qualified-final-regression.json.

@@ -1,0 +1,69 @@
+{
+  "batch": 20,
+  "baselineGit": "461a66a",
+  "baselinePlastic": 203,
+  "productionPaths": [
+    "Assets/Game/Prefabs/Enemies/ChickenBro/Scripts/ChickenBroAI.cs",
+    "Assets/Game/Prefabs/Enemies/ChickenBro/ChickenBro.prefab",
+    "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.prefab",
+    "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.controller"
+  ],
+  "nativeChecks": 27,
+  "clipDisplacementChecks": 168,
+  "reversals": {
+    "before": 158,
+    "after": 2,
+    "intervals": 240,
+    "meaning": "Separate roaming runs; deliberate random target turns remain. Not a paired animation-frame identity test."
+  },
+  "feet": {
+    "beforeMean": 0.7066479372333331,
+    "afterMean": 0.07666015645,
+    "afterMinimum": -0.110881805,
+    "afterMaximum": 0.143579483,
+    "idle": {
+      "chicken": 0.06729126,
+      "duck": 0.0343532562
+    },
+    "translationControl": 1,
+    "renderedProxyControls": [
+      {
+        "scale": false,
+        "differentPixels": 92148,
+        "totalPixels": 518400
+      },
+      {
+        "scale": true,
+        "differentPixels": 5,
+        "totalPixels": 518400
+      }
+    ]
+  },
+  "originalStrikeUnchanged": true,
+  "duckScaleMultiplier": 1.4,
+  "duckHeight": 4.76,
+  "sceneRestoration": true,
+  "savesUnchanged": true,
+  "compilation": {
+    "status": "completed",
+    "failed": false,
+    "errors": []
+  },
+  "limits": [
+    "Isolated native CombatTest floor and 12-degree slope, not full island swarm or extended boss acceptance.",
+    "Certain walk poses still intersect floor by about 0.11m; precision foot planting remains.",
+    "No overall FPS or GPU improvement measurement in batch020."
+  ],
+  "rejectedDiagnostics": [
+    "BakeMesh(false) fails rendered-proxy control; CPU vertex access was unavailable and produced Infinity. Both rejected.",
+    "Early home test checked reset before next update; early slope test let faster duck reach target and choose another. Fixtures corrected, no extra movement patch.",
+    "Early melee tests ignored scaled capsule sole height. Candidate vertical capsule hit volume reverted byte-for-byte; final27 checks use original sphere with proper floor placement and native settling.",
+    "Scene restoration call timed out but later native readback confirms all5 original scenes clean and stopped."
+  ],
+  "hashes": {
+    "Assets/Game/Prefabs/Enemies/ChickenBro/Scripts/ChickenBroAI.cs": "14b66bf5671deb1a80699bf4e884d20b701b37589ea9ef0d0f3d219e196e64f9",
+    "Assets/Game/Prefabs/Enemies/ChickenBro/ChickenBro.prefab": "20c3d2c1cf0b86df9c831157d827279b1ece020e522e090d1c1c35b4e8041665",
+    "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.prefab": "eb951d0fa53002cfcebef039b17c98dbe2ce6f22429eb030b8381590fef95a97",
+    "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.controller": "f8090129f58452c4bf9cdb88d73881113420f29210c3392cd48c0551523d62a4"
+  }
+}
