@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "checks": [
+    "Actual arena camera exists",
+    "Original ordinary search omits the installed DontSave manager",
+    "New runtime lookup resolves that actual hidden manager",
+    "Sampler starts without accepted measurements",
+    "Real endCameraRendering callbacks record rendered target frames",
+    "Sampler binds its owned camera render target",
+    "Only preceding rendered intervals become samples",
+    "A nonrendered camera interval is rejected rather than reported as FPS",
+    "Other cameras cannot qualify the measured camera",
+    "A callback using a different target is rejected",
+    "Actual world-versus-mask-zero pixel control qualifies the rendered scene",
+    "Positive control restores the original camera mask",
+    "Valid render proof leaves the measurement healthy",
+    "Unavailable GC measurements remain unavailable instead of zero bytes",
+    "Known frame summaries retain their existing arithmetic",
+    "Readiness fixture has a complete nonempty snapshot",
+    "Ready manager passes without delay",
+    "Incomplete manager actually waits",
+    "Completion releases the readiness wait",
+    "Expired incomplete initialization fails closed",
+    "Teardown restores the prior target without enabling a camera",
+    "Teardown restores run-in-background state"
+  ],
+  "scope": "Native opt-in benchmark instrumentation tests; no game FPS/GC performance conclusion"
+}

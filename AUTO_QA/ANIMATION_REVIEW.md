@@ -101,3 +101,7 @@ No models, UVs, rigs, clips, Animator controllers, colliders or combat timings c
 ## 2026-10-28 (Vancouver) — Batch018 — foliage CPU optimization
 
 No animation, camera behavior, clip, controller, gameplay or art change. The original and optimized foliage math produce identical classifications across16 actual camera configurations, including custom culling matrices, with unchanged property-array contents. Native first-island coast renders remain populated; water/weather times differ between captures, so images are not a pixel identity or animation-smoothness test. No new combat animation acceptance is claimed.
+
+## 2026-10-28 (Vancouver) — Batch019 — standalone camera/AI evidence
+
+No authored animation, clip, rig, collider, model or normal camera behavior change. Actual standalone coast/forest/boss-vicinity PNGs show Sahur, native environment and the boss; they are fixed-camera diagnostic views with a protected player and camera RT output. This does not qualify overlay UI, full encounter anticipation, moving-camera paper stability or smoother animation. Diagnostic target restoration no longer forces a disabled camera on; verified natively.

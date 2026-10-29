@@ -5,6 +5,7 @@ using System.IO;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
 
 namespace Mavis
 {
@@ -15,6 +16,8 @@ namespace Mavis
         [Serializable] public sealed class Sample { public string phase; public float ms, engineMs; public long gcBytes; }
         [Serializable] public sealed class Summary
         { public string phase; public int frames, spikes50ms; public float averageFps, averageMs, p95Ms, p99Ms, maxMs, onePercentLowFps; public long maxGcBytes; }
+        [Serializable] public sealed class RenderProof
+        { public string phase; public int width, height, changedPixels; }
         [Serializable] public sealed class Report
         {
             public string capturedUtc, unity, cpu, gpu, os, quality, scene, status;
@@ -22,8 +25,11 @@ namespace Mavis
             public float renderScale, shadowDistance, lodBias;
             public int width, height, targetFps, vsync, errors, memoryMb, graphicsMemoryMb;
             public double loadSeconds;
+            public bool gcCounterAvailable;
+            public int renderedFrames, unrenderedIntervals;
             public List<Summary> summaries = new List<Summary>();
             public List<Sample> samples = new List<Sample>();
+            public List<RenderProof> renderProofs = new List<RenderProof>();
         }
         readonly Report report = new Report();
         ProfilerRecorder allocations;
@@ -35,8 +41,10 @@ namespace Mavis
         ThirdPersonPlayerController player;
         long previousFrameTick;
         RenderTexture captureTarget;
-        Texture2D frameFence;
         Camera captureCamera;
+        readonly Dictionary<Camera, RenderTexture> previousTargets = new Dictionary<Camera, RenderTexture>();
+        int lastRenderedFrame = -1;
+        bool previousBackground;
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Install()
         {
@@ -50,13 +58,33 @@ namespace Mavis
             output = Argument("-baseline-report=") ?? Path.Combine(Application.persistentDataPath, "island-baseline.json");
             if (float.TryParse(Argument("-baseline-seconds="), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float requested)) seconds = Mathf.Clamp(requested, 3, 60);
             story = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-story") >= 0;
-            Application.runInBackground = true;
+            previousBackground = Application.runInBackground; Application.runInBackground = true;
             report.capturedUtc = DateTime.UtcNow.ToString("o"); report.unity = Application.unityVersion;
             report.cpu = SystemInfo.processorType; report.gpu = SystemInfo.graphicsDeviceName; report.os = SystemInfo.operatingSystem;
             report.editor = Application.isEditor; report.developmentBuild = Debug.isDebugBuild;
             report.batchmode = Application.isBatchMode;
             allocations = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Allocated In Frame", 1);
             Application.logMessageReceived += Log;
+            RenderPipelineManager.endCameraRendering += CameraRendered;
+        }
+        static WorldPerformanceManager FindRuntimePerformance()
+        {
+            // The installed manager is DontSave, so ordinary scene searches omit it.
+            foreach (var candidate in Resources.FindObjectsOfTypeAll<WorldPerformanceManager>())
+                if (candidate && candidate.isActiveAndEnabled && candidate.gameObject.scene.IsValid() && candidate.gameObject.scene.isLoaded) return candidate;
+            return null;
+        }
+        IEnumerator WaitForPerformance(float deadline)
+        {
+            var performance = FindRuntimePerformance();
+            while ((!performance || !performance.isActiveAndEnabled || !performance.IsReady) && Time.realtimeSinceStartup < deadline)
+            { yield return null; if (!performance || !performance.isActiveAndEnabled) performance = FindRuntimePerformance(); }
+            if (!performance || !performance.isActiveAndEnabled || !performance.IsReady) Finish("foliage initialization timeout");
+        }
+        void CameraRendered(ScriptableRenderContext context, Camera camera)
+        {
+            if (finished || camera != captureCamera || !captureTarget || camera.targetTexture != captureTarget) return;
+            lastRenderedFrame = Time.frameCount; report.renderedFrames++;
         }
         IEnumerator Start()
         {
@@ -74,8 +102,8 @@ namespace Mavis
                 var arrival = player.GetComponent<FirstIslandArrival>();
                 if (arrival) { arrival.StopAllCoroutines(); arrival.enabled = false; }
                 var objectives = player.GetComponent<FirstIslandObjectives>(); if (objectives) objectives.enabled = false;
-                var performance = FindFirstObjectByType<WorldPerformanceManager>();
-                while (performance && !performance.IsReady && Time.realtimeSinceStartup < deadline) yield return null;
+                yield return WaitForPerformance(deadline);
+                if (finished) yield break;
             }
             report.loadSeconds = Time.realtimeSinceStartupAsDouble - start;
             report.width = Screen.width; report.height = Screen.height; report.targetFps = Application.targetFrameRate;
@@ -85,16 +113,20 @@ namespace Mavis
             var pipeline = UnityEngine.Rendering.GraphicsSettings.currentRenderPipeline as UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset;
             if (pipeline) { report.renderScale = pipeline.renderScale; report.shadowDistance = pipeline.shadowDistance; }
             report.graphicsMemoryMb = SystemInfo.graphicsMemorySize;
-            // Windows may occlude hidden diagnostic windows. Render the real world camera
-            // and fence one pixel, so simulation-only frames cannot masquerade as GPU performance.
+            // A camera with a target texture renders when its window is occluded.
+            // Accept only completed native camera intervals; do not synchronize the GPU
+            // with ReadPixels every measured frame and charge that stall to the game.
             captureTarget = new RenderTexture(Screen.width, Screen.height, 24, RenderTextureFormat.ARGB32);
-            captureTarget.Create(); frameFence = new Texture2D(1, 1, TextureFormat.RGB24, false);
+            captureTarget.Create();
             if (story)
             {
                 yield return new WaitForSecondsRealtime(8);
                 var sequence = FindFirstObjectByType<Story1SharkCollisionSequence>();
                 if (!sequence) { Finish("story encounter missing"); yield break; }
                 sequence.BeginImpact();
+                yield return VerifyRenderedView("shipwreck");
+                if (finished) yield break;
+                previousFrameTick = 0;
                 phase = "shipwreck"; measuring = true; yield return new WaitForSecondsRealtime(seconds * 3);
             }
             else
@@ -102,7 +134,9 @@ namespace Mavis
                 var arrival = player.GetComponent<FirstIslandArrival>();
                 Vector3 coast = arrival && arrival.shore ? arrival.shore.position : player.transform.position;
                 yield return Route("coast", coast, Vector3.forward);
+                if (finished) yield break;
                 yield return Route("forest", new Vector3(91.15f, 50, 370.89f), Vector3.forward);
+                if (finished) yield break;
                 var boss = FindFirstObjectByType<CappuccinoAI>();
                 if (boss) yield return Route("boss", boss.transform.position - boss.transform.forward * 12, boss.transform.forward);
             }
@@ -121,9 +155,45 @@ namespace Mavis
             player.GetComponent<PlayerHealth>()?.GrantProtection(120);
             viewTarget = point + Vector3.up * 3; overrideCamera = true;
             yield return new WaitForSecondsRealtime(2);
+            yield return VerifyRenderedView(name);
+            if (finished) yield break;
+            previousFrameTick = 0;
             phase = name; measuring = true;
             yield return new WaitForSecondsRealtime(seconds);
             measuring = false;
+        }
+        IEnumerator VerifyRenderedView(string name)
+        {
+            if (!captureCamera || !captureTarget) { Finish("render target missing: " + name); yield break; }
+            var camera = captureCamera; int mask = camera.cullingMask;
+            var image = new Texture2D(captureTarget.width, captureTarget.height, TextureFormat.RGB24, false);
+            bool valid = false;
+            try
+            {
+                int before = report.renderedFrames; float deadline = Time.realtimeSinceStartup + 15;
+                while (report.renderedFrames < before + 2 && Time.realtimeSinceStartup < deadline) yield return null;
+                if (report.renderedFrames < before + 2) yield break;
+                var previous = RenderTexture.active;
+                try { RenderTexture.active = captureTarget; image.ReadPixels(new Rect(0, 0, image.width, image.height), 0, 0); image.Apply(); }
+                finally { RenderTexture.active = previous; }
+                var visible = image.GetPixels32();
+                string folder = Path.GetDirectoryName(Path.GetFullPath(output)); Directory.CreateDirectory(folder);
+                File.WriteAllBytes(Path.Combine(folder, name + ".png"), image.EncodeToPNG());
+                camera.cullingMask = 0; before = report.renderedFrames; deadline = Time.realtimeSinceStartup + 15;
+                while (report.renderedFrames < before + 2 && Time.realtimeSinceStartup < deadline) yield return null;
+                if (report.renderedFrames < before + 2) yield break;
+                previous = RenderTexture.active;
+                try { RenderTexture.active = captureTarget; image.ReadPixels(new Rect(0, 0, image.width, image.height), 0, 0); image.Apply(); }
+                finally { RenderTexture.active = previous; }
+                var empty = image.GetPixels32(); int changed = 0;
+                for (int i = 0; i < visible.Length; i++)
+                    if (Mathf.Abs(visible[i].r - empty[i].r) + Mathf.Abs(visible[i].g - empty[i].g) + Mathf.Abs(visible[i].b - empty[i].b) > 15) changed++;
+                valid = changed > visible.Length / 20;
+                if (valid) report.renderProofs.Add(new RenderProof { phase = name, width = image.width, height = image.height, changedPixels = changed });
+            }
+            finally { if (camera) camera.cullingMask = mask; Destroy(image); if (!valid) Finish("render verification failed: " + name); }
+            // Keep the finite readback/PNG work and mask-zero frame out of the measured interval.
+            yield return null; yield return null;
         }
         void ExcludePlayers()
         {
@@ -147,19 +217,20 @@ namespace Mavis
             }
             if (captureTarget && Camera.main)
             {
-                // An enabled camera with a target texture renders even when its window is occluded.
-                // Fence the preceding rendered frame without submitting a duplicate camera render.
                 captureCamera = Camera.main;
+                if (!previousTargets.ContainsKey(captureCamera)) previousTargets.Add(captureCamera, captureCamera.targetTexture);
                 captureCamera.targetTexture = captureTarget;
-                var previous = RenderTexture.active; RenderTexture.active = captureTarget;
-                frameFence.ReadPixels(new Rect(0, 0, 1, 1), 0, 0); frameFence.Apply(); RenderTexture.active = previous;
             }
-            if (measuring && wallMs > 0) report.samples.Add(new Sample { phase = phase, ms = wallMs, engineMs = Time.unscaledDeltaTime * 1000, gcBytes = allocations.Valid ? allocations.LastValue : 0 });
+            if (measuring && wallMs > 0)
+            {
+                if (lastRenderedFrame != Time.frameCount - 1) { report.unrenderedIntervals++; return; }
+                report.samples.Add(new Sample { phase = phase, ms = wallMs, engineMs = Time.unscaledDeltaTime * 1000, gcBytes = allocations.Valid ? allocations.LastValue : -1 });
+            }
         }
         public static Summary Summarize(string phase, List<Sample> source)
         {
             var frames = source.FindAll(s => s.phase == phase); frames.Sort((a, b) => a.ms.CompareTo(b.ms));
-            var result = new Summary { phase = phase, frames = frames.Count };
+            var result = new Summary { phase = phase, frames = frames.Count, maxGcBytes = -1 };
             if (frames.Count == 0) return result;
             double sum = 0, tail = 0; int worst = Mathf.Max(1, Mathf.CeilToInt(frames.Count * .01f));
             foreach (var frame in frames) { sum += frame.ms; result.maxGcBytes = Math.Max(result.maxGcBytes, frame.gcBytes); if (frame.ms > 50) result.spikes50ms++; }
@@ -174,6 +245,7 @@ namespace Mavis
         void Finish(string status)
         {
             if (finished) return; finished = true; report.status = status;
+            report.gcCounterAvailable = allocations.Valid;
             foreach (string name in new[] { "coast", "forest", "boss", "shipwreck" })
             { var summary = Summarize(name, report.samples); if (summary.frames > 0) report.summaries.Add(summary); }
             report.memoryMb = (int)(UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / (1024 * 1024));
@@ -184,9 +256,11 @@ namespace Mavis
         void OnDestroy()
         {
             Application.logMessageReceived -= Log; allocations.Dispose();
-            if (captureCamera) { captureCamera.targetTexture = null; captureCamera.enabled = true; }
+            RenderPipelineManager.endCameraRendering -= CameraRendered;
+            foreach (var previous in previousTargets)
+                if (previous.Key && previous.Key.targetTexture == captureTarget) previous.Key.targetTexture = previous.Value;
+            previousTargets.Clear(); Application.runInBackground = previousBackground;
             if (captureTarget) { captureTarget.Release(); Destroy(captureTarget); }
-            if (frameFence) Destroy(frameFence);
         }
     }
 }

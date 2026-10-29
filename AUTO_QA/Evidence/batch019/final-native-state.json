@@ -1,0 +1,11 @@
+{
+  "stopped": true,
+  "sceneCount": 5,
+  "clean": true,
+  "development": false,
+  "backend": "Mono2x",
+  "style": "dark-fairytale",
+  "intensity": 1.0,
+  "building": false,
+  "markers": 0
+}

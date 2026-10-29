@@ -1,0 +1,11 @@
+{
+  "result": "Succeeded",
+  "seconds": 220.3368323,
+  "bytes": 2728805367,
+  "warnings": 493,
+  "errors": 4,
+  "output": "D:/indiegameDev/unity/Dark Brine_Rot/.codex/performance019/player/DarkBrineQA.exe",
+  "development": true,
+  "backend": "Mono2x",
+  "sameEditor": true
+}

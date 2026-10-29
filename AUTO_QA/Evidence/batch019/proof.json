@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "baseline": "f57dc96 / Plastic cs201",
+  "nativeInstrumentationChecks": 22,
+  "standaloneCompleted": true,
+  "frames": 1798,
+  "renderedFrames": 2159,
+  "unrenderedIntervals": 0,
+  "target": 60,
+  "vsync": 1,
+  "outputResolution": [
+    1920,
+    1080
+  ],
+  "renderScale": 0.6000000238418579,
+  "approxInternalResolution": [
+    1152,
+    648
+  ],
+  "runtimeErrors": 0,
+  "buildErrorsClassified": "Known Environment opening error plus three unavailable plant prefab groups (234+177+195); BuildResult Succeeded",
+  "prefsAndSaves": {
+    "completedReport": true,
+    "exitCode": null,
+    "playerExited": true,
+    "nativePreferencesRestored": true,
+    "restoredValues": 100,
+    "saves": [
+      {
+        "file": "dark-brine-rot-save.json",
+        "unchanged": true
+      },
+      {
+        "file": "dark-brine-rot-save.json.bak",
+        "unchanged": true
+      }
+    ],
+    "wrapperRepair": "Seven legacy Unity REG_DWORD floats contain eight bytes. Raw native type/length/bits restored; all 100 values and kinds verified.",
+    "limitation": "Exit code unavailable after initial managed-registry conversion error; runtime report completed and process exited"
+  },
+  "limits": [
+    "One optimized build with no pre-optimization standalone comparator: not a measured FPS gain.",
+    "1920x1080 output uses saved 0.6 renderScale, approximately1152x648 internal; 60fps cap and vSync1; PC quality, Mono Development build.",
+    "Stationary protected player and fixed coast/forest/boss-vicinity camera; not a full encounter or long moving-camera stress test.",
+    "GC counter valid is metadata, not a positive-control allocation qualification.",
+    "Player exit code not retained after the first wrapper cleanup error; completed runtime report and absent process verified."
+  ],
+  "knownAssetIssue": "606 missing plant prefab instances preserved"
+}
