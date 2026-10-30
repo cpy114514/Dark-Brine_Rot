@@ -1,0 +1,195 @@
+{
+  "issue": "QA-040",
+  "priorFix": "027 blended changing density; user still observed changing grass. Reopened consistency requirement.",
+  "fixedPolicy": "Same original complete VerifiedGrassNear renderer at all visible distances; no thinner mesh transitions. Only the previous final cull band fades.",
+  "nativeOwnershipFinalChecks": 66,
+  "preparationChecksOverlap": true,
+  "densityProof": {
+    "label": "density-fixed-vs-fading",
+    "phaseMax": {
+      "legacy": 0.17541666666666667,
+      "fixed": 0.0
+    },
+    "stability": {
+      "heldChangedPixels": 0,
+      "turnRoundtripChangedPixels": 0,
+      "moveRoundtripChangedPixels": 0
+    },
+    "qualified": true,
+    "visiblePixels": 23193,
+    "maximum": 0.17541666666666667,
+    "changedMax": 1309,
+    "mode": "CrossFade",
+    "levels": [
+      {
+        "screenRelativeTransitionHeight": 0.09265892,
+        "fadeTransitionWidth": 0.0298508666,
+        "triangles": 23097
+      }
+    ],
+    "rows": [
+      {
+        "phase": "legacy",
+        "tier": 0,
+        "threshold": 0.5930171,
+        "maxMeanPixelDelta": 0.08801311728395061,
+        "maxChangedPixels": 925,
+        "differences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.02099537037037037,
+          0.07286844135802469,
+          0.08016010802469135,
+          0.07904128086419752,
+          0.08340470679012346,
+          0.08117283950617284,
+          0.08801311728395061,
+          0.008036265432098766
+        ]
+      },
+      {
+        "phase": "legacy",
+        "tier": 1,
+        "threshold": 0.2280835,
+        "maxMeanPixelDelta": 0.17541666666666667,
+        "maxChangedPixels": 1309,
+        "differences": [
+          0.11134645061728395,
+          0.12087577160493827,
+          0.1223707561728395,
+          0.1308005401234568,
+          0.1355787037037037,
+          0.13760223765432097,
+          0.14982060185185186,
+          0.15980902777777778,
+          0.1538599537037037,
+          0.16525077160493828,
+          0.17541666666666667,
+          0.017037037037037038
+        ]
+      },
+      {
+        "phase": "fixed",
+        "tier": 0,
+        "threshold": 0.5930171,
+        "maxMeanPixelDelta": 0.0,
+        "maxChangedPixels": 0,
+        "differences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "phase": "fixed",
+        "tier": 1,
+        "threshold": 0.2280835,
+        "maxMeanPixelDelta": 0.0,
+        "maxChangedPixels": 0,
+        "differences": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    ]
+  },
+  "nativeProductionGroups": 11298,
+  "foliageEntries": 71315,
+  "styleFrames": 192,
+  "styleCallbacks": 592,
+  "geometryObservation": [
+    {
+      "phase": "paired-geometry-a",
+      "medianTriangles": 11227594,
+      "emptyTriangles": 7,
+      "callbacks": 147
+    },
+    {
+      "phase": "paired-geometry-fixed",
+      "medianTriangles": 14408668,
+      "emptyTriangles": 7,
+      "callbacks": 148
+    },
+    {
+      "phase": "paired-geometry-b",
+      "medianTriangles": 11016249,
+      "emptyTriangles": 7,
+      "callbacks": 148
+    }
+  ],
+  "geometryLimit": "Native aggregate triangle counter, not GPU time/FPS. Baseline A/B vary; no FPS gain or negligible-cost claim.",
+  "pilotLimit": "Initial live and first environment sweeps include unscaled procedural Boss motion. Early one-LOD prototype initially left orphan renderers active; it was corrected before production. These trials are not performance acceptance.",
+  "workspace": {
+    "stopped": true,
+    "scenes": 1,
+    "dirty": false,
+    "groups": 0,
+    "originalRestored": 0,
+    "ownedFixtures": 0,
+    "savesUnchanged": true,
+    "editorPid": 17184
+  },
+  "saves": "Fresh stopped-user save and backup retained; all subsequent tests byte-unchanged. No old save rollback.",
+  "preferences": "Style persist=false, pixel runtime only; complete preference-byte equivalence not asserted.",
+  "playbackFps": 12,
+  "playbackIsGameFps": false,
+  "build": {
+    "result": "Succeeded",
+    "seconds": 65.3188464,
+    "bytes": 2729632395,
+    "warnings": 493,
+    "errors": 4,
+    "development": true,
+    "backend": "Mono2x",
+    "sameEditor": true,
+    "editorPid": 17184,
+    "scenes": [
+      "Assets/Scenes/Main Menu/MainMenu.unity",
+      "Assets/Scenes/First story/Story1.unity",
+      "Assets/Scenes/First Island/Main.unity",
+      "Assets/Scenes/First Island/Environment.unity",
+      "Assets/Scenes/First Island/Gameplay.unity",
+      "Assets/Scenes/First Island/Lighting.unity",
+      "Assets/Scenes/First Island/Enemies.unity"
+    ],
+    "errorDetails": [
+      "Problem detected while opening the Scene file: 'Assets/Scenes/First Island/Environment.unity'.\nCheck the following logs for more details.",
+      "Prefab instance problem: 'rostlinka_07c_ske (5127) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)'. 234 instances are missing the same Prefab Asset with guid 2bde5fdeb204bc6418608a5fe3993ad1.",
+      "Prefab instance problem: 'rostlinka_07c_ske (5189) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)'. 177 instances are missing the same Prefab Asset with guid 8e67ad946c4264b479267ee1643fd2ce.",
+      "Prefab instance problem: 'rostlinka_07c_ske (5024) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)'. 195 instances are missing the same Prefab Asset with guid ad3d230ef428f6049ab82c5136f00a47."
+    ]
+  },
+  "protectedBuildFilesUnchanged": {
+    "ProjectSettings/EditorBuildSettings.asset": true,
+    "ProjectSettings/ShaderGraphSettings.asset": true,
+    "Assets/_Recovery/0.unity": true,
+    "Assets/_Recovery/0.unity.meta": true,
+    "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.mat": true
+  },
+  "buildSettingsBytesRestored": true,
+  "runtimeRepresentation": "VerifiedGrassNear (23097 triangles), one selected renderer, two unused layouts disabled",
+  "farCull": "Original last screen height retained; old final fade band remapped to single-level range",
+  "playerWasNotLaunched": true,
+  "geometryObservationLimit": "Final ABA disables the procedural Cappuccino root only in the no-savable-player environment fixture. Baseline medians vary1.9%; fixed original full grass draws more triangles. Raw counter is not GPU time/FPS and does not prove no performance impact."
+}

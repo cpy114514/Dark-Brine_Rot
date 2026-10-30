@@ -70,6 +70,10 @@ namespace Mavis
             public LODFadeMode mode;
             public bool animated;
             public float[] widths;
+            public float[] heights;
+            public int[] rendererCounts, renderers;
+            public bool[] enabled;
+            [System.NonSerialized] public LOD[] levels;
         }
 #if UNITY_EDITOR
         // Native renderer overrides can outlive the managed batching graph. Keep
@@ -110,7 +114,21 @@ namespace Mavis
             var snapshot = JsonUtility.FromJson<ReloadRenderers>(json);
             if (snapshot.lods != null)
                 foreach (var state in snapshot.lods)
+                {
+                    if (state.heights != null)
+                    {
+                        state.levels = new LOD[state.heights.Length];
+                        int offset=0;
+                        for (int i=0;i<state.levels.Length;i++)
+                        {
+                            var parts=new Renderer[state.rendererCounts[i]];
+                            for (int j=0;j<parts.Length;j++)
+                                parts[j]=UnityEditor.EditorUtility.EntityIdToObject(state.renderers[offset++]) as Renderer;
+                            state.levels[i]=new LOD(state.heights[i],parts){fadeTransitionWidth=state.widths[i]};
+                        }
+                    }
                     RestoreGrassLod(UnityEditor.EditorUtility.EntityIdToObject(state.id) as LODGroup, state);
+                }
             foreach (var item in snapshot.items) result[item.renderer] = item;
             return result;
         }
@@ -593,15 +611,13 @@ namespace Mavis
         }
         void ConfigureGrassLod(MeshRenderer renderer)
         {
-            // These authored multi-material patches use native LOD rendering.
-            // Their low mesh drops whole cards; a hard swap changed the meadow
-            // whenever the following camera crossed a threshold. Keep the same
-            // ranges/meshes, but blend over a reversible distance band, also at
-            // the final cull. Do not override tree or already-authored fades.
+            // Keep the original complete grass layout at every visible distance.
+            // Cross-fading a thinned mesh still changed the meadow as the camera
+            // moved. Only the final distance cull fades; tree LODs stay authored.
             var group = renderer.GetComponentInParent<LODGroup>();
             if (group == null || grassLods.ContainsKey(group) || group.fadeMode != LODFadeMode.None) return;
             var levels = group.GetLODs();
-            if (levels.Length < 2) return;
+            if (levels.Length != 3) return;
             foreach (var level in levels)
                 foreach (var part in level.renderers)
                 {
@@ -613,17 +629,40 @@ namespace Mavis
                             material.shader.name != "Universal Render Pipeline/Lit")) return;
                 }
             var state = new GrassLodState { id=group.GetInstanceID(),mode=group.fadeMode,
-                animated=group.animateCrossFading,widths=new float[levels.Length] };
+                animated=group.animateCrossFading,widths=new float[levels.Length],
+                heights=new float[levels.Length],rendererCounts=new int[levels.Length],levels=levels };
+            var parts=new List<int>();var enabled=new List<bool>();
             for (int i=0;i<levels.Length;i++)
-            { state.widths[i]=levels[i].fadeTransitionWidth;levels[i].fadeTransitionWidth=.2f; }
+            {
+                state.widths[i]=levels[i].fadeTransitionWidth;state.heights[i]=levels[i].screenRelativeTransitionHeight;
+                state.rendererCounts[i]=levels[i].renderers.Length;
+                foreach (var part in levels[i].renderers)
+                {
+                    parts.Add(part.GetInstanceID());enabled.Add(part.enabled);
+                    // Removed LOD members become ordinary renderers unless
+                    // explicitly suppressed; do not draw all three layouts.
+                    if (i>0 && System.Array.IndexOf(levels[0].renderers,part)<0) part.enabled=false;
+                }
+            }
+            state.renderers=parts.ToArray();state.enabled=enabled.ToArray();
             grassLods.Add(group,state);
             group.fadeMode=LODFadeMode.CrossFade;
             group.animateCrossFading=false;
-            group.SetLODs(levels);
+            float cutoff=levels[levels.Length-1].screenRelativeTransitionHeight;
+            float band=(levels[levels.Length-2].screenRelativeTransitionHeight-cutoff)*.2f;
+            group.SetLODs(new[]{new LOD(cutoff,levels[0].renderers){fadeTransitionWidth=band/Mathf.Max(.001f,1-cutoff)}});
         }
         static void RestoreGrassLod(LODGroup group, GrassLodState state)
         {
             if (group == null) return;
+            if (state.levels != null)
+            {
+                group.SetLODs(state.levels);
+                int offset=0;
+                foreach (var level in state.levels)
+                    foreach (var part in level.renderers)
+                    { if (part != null) part.enabled=state.enabled[offset];offset++; }
+            }
             var levels=group.GetLODs();
             if (levels.Length == state.widths.Length)
             {

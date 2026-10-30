@@ -1,0 +1,131 @@
+{
+  "label": "lod-after-reload",
+  "passed": true,
+  "checks": 31,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Preparation assembly actually unloaded"
+    },
+    {
+      "ok": true,
+      "name": "Visible grass has exactly one layout"
+    },
+    {
+      "ok": true,
+      "name": "Original final cull retained"
+    },
+    {
+      "ok": true,
+      "name": "Original full-detail mesh selected"
+    },
+    {
+      "ok": true,
+      "name": "Unused LOD renderers suppressed"
+    },
+    {
+      "ok": true,
+      "name": "Only far cull fades by distance"
+    },
+    {
+      "ok": true,
+      "name": "Cull band preserved in screen-height units"
+    },
+    {
+      "ok": true,
+      "name": "Unowned layout count intact 1"
+    },
+    {
+      "ok": true,
+      "name": "Authored mode intact 1"
+    },
+    {
+      "ok": true,
+      "name": "Authored widths intact 1"
+    },
+    {
+      "ok": true,
+      "name": "Unowned layout count intact 2"
+    },
+    {
+      "ok": true,
+      "name": "Authored mode intact 2"
+    },
+    {
+      "ok": true,
+      "name": "Authored widths intact 2"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 0 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 0 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores membership/enabled flags 0 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores membership/enabled flags 1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores membership/enabled flags 2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 0 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 0 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores membership/enabled flags 0 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores membership/enabled flags 1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 2 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 2 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores membership/enabled flags 2 cycle1"
+    }
+  ]
+}
