@@ -218,10 +218,12 @@ namespace Mavis
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 canvas.sortingOrder = 40;
                 GameUITheme.Scale(canvas);
-                var card = GameUITheme.Rect(captionRoot.transform, "Card", new Vector2(.5f, 1f), new Vector2(640, 54));
-                card.anchoredPosition = new Vector2(0f, -28f);
+                var card = GameUITheme.Rect(captionRoot.transform, "Card", new Vector2(.5f, 1f), new Vector2(740, 64));
+                card.pivot = new Vector2(.5f, 1f);
+                card.anchoredPosition = new Vector2(0f, -132f);
                 GameUITheme.Image(card, new Color(.035f, .045f, .045f, .82f));
-                caption = GameUITheme.Label(card, "Caption", 22, Vector2.zero, new Vector2(600, 40), TextAnchor.MiddleCenter);
+                caption = GameUITheme.Label(card, "Caption", 22, Vector2.zero, new Vector2(700, 48), TextAnchor.MiddleCenter);
+                caption.rectTransform.anchorMin = caption.rectTransform.anchorMax = new Vector2(.5f, .5f);
             }
             captionRoot.SetActive(true);
             caption.text = message;

@@ -1,0 +1,18 @@
+{
+  "package": "@playwright/mcp",
+  "version": "0.0.83",
+  "configured": true,
+  "server": "playwright",
+  "transport": "stdio",
+  "browser": "chrome",
+  "headless": true,
+  "isolated": true,
+  "configBackupPrivate": true,
+  "outputsOutsideProject": true,
+  "tools": 25,
+  "navigationOk": true,
+  "exampleDomainVisible": true,
+  "closed": true,
+  "currentConversationToolCatalogHotLoaded": false,
+  "scope": "Installed in user tools and enabled in shared Codex MCP config;direct MCP client25-tool discovery/navigation/close verified. Current conversation tool list does not hot-load the newly added server. Client initializes/reloads MCP before native tools appear. No global config or credentials committed."
+}

@@ -1,0 +1,345 @@
+{
+  "label": "accepted",
+  "completed": true,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Wave text stays inside its card",
+      "detail": {
+        "card": {
+          "x": 786.6666,
+          "y": 1178.66663,
+          "width": 986.666748,
+          "height": 85.333374
+        },
+        "text": {
+          "x": 813.3333,
+          "y": 1189.33337,
+          "width": 933.3333,
+          "height": 64.0
+        }
+      }
+    },
+    {
+      "ok": true,
+      "name": "Wave card clears the encounter HUD",
+      "detail": {
+        "card": {
+          "x": 786.6666,
+          "y": 1178.66663,
+          "width": 986.666748,
+          "height": 85.333374
+        },
+        "boss": {
+          "x": 733.3333,
+          "y": 1285.33337,
+          "width": 1093.33325,
+          "height": 114.666626
+        }
+      }
+    },
+    {
+      "ok": true,
+      "name": "Caption remains noninteractive",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Duck is visibly taller than scaled Sahur capsule",
+      "detail": {
+        "duck": 7.14000034,
+        "player": 5.30071354
+      }
+    },
+    {
+      "ok": true,
+      "name": "slow-chase selects the matching locomotion",
+      "detail": {
+        "actual": 1,
+        "expected": 1,
+        "speed": 0.431718081
+      }
+    },
+    {
+      "ok": true,
+      "name": "slow-chase settles in the actual Walk animation",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "run selects the matching locomotion",
+      "detail": {
+        "actual": 2,
+        "expected": 2,
+        "speed": 0.9921445
+      }
+    },
+    {
+      "ok": true,
+      "name": "run settles in the actual Run animation",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Stopping immediately selects Idle instead of residual stepping",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "stationary selects the matching locomotion",
+      "detail": {
+        "actual": 0,
+        "expected": 0,
+        "speed": 0.0
+      }
+    },
+    {
+      "ok": true,
+      "name": "stationary settles in the actual Idle animation",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Observed original duck attack durations remain",
+      "detail": {
+        "strikeDuration": 0.53,
+        "lungeDuration": 0.8
+      }
+    },
+    {
+      "ok": true,
+      "name": "Enlarged walk retains world stride rate",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Enlarged run retains world stride rate",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Held motion cannot restart its own animation",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Existing chicken animation policy remains unchanged",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Actual occupied-slot surround decision selects Walk",
+      "detail": {
+        "motion": 1,
+        "mode": "Chase",
+        "speed": 0.432007074
+      }
+    },
+    {
+      "ok": true,
+      "name": "Actual chase decision selects Run",
+      "detail": {
+        "motion": 2,
+        "mode": "Chase",
+        "speed": 0.9885401
+      }
+    },
+    {
+      "ok": true,
+      "name": "Action/reaction overrides stale locomotion: Idle",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Action/reaction overrides stale locomotion: Strike",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Action/reaction overrides stale locomotion: Lunge",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Action/reaction overrides stale locomotion: Flinch",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Action/reaction overrides stale locomotion: Launch",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Action/reaction overrides stale locomotion: Knockdown",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Action/reaction overrides stale locomotion: Dead",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Default chicken patrol retains Walk",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Default chicken chase retains Run",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Enlarged original sphere reaches scaled Sahur at close range",
+      "detail": {
+        "health": 98.0,
+        "max": 100.0
+      }
+    },
+    {
+      "ok": true,
+      "name": "Original one-hit-per-action guard remains",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Distant target remains outside strike",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Cover still blocks the original strike",
+      "detail": null
+    }
+  ],
+  "passed": true,
+  "stages": [
+    {
+      "label": "slow-chase",
+      "frame": 0,
+      "motion": 1,
+      "speed": 0.187386855,
+      "state": 2081823275,
+      "transition": true
+    },
+    {
+      "label": "slow-chase",
+      "frame": 4,
+      "motion": 1,
+      "speed": 0.2882326,
+      "state": 2081823275,
+      "transition": true
+    },
+    {
+      "label": "slow-chase",
+      "frame": 10,
+      "motion": 1,
+      "speed": 0.369306177,
+      "state": 765711723,
+      "transition": false
+    },
+    {
+      "label": "slow-chase",
+      "frame": 20,
+      "motion": 1,
+      "speed": 0.418858737,
+      "state": 765711723,
+      "transition": false
+    },
+    {
+      "label": "slow-chase",
+      "frame": 29,
+      "motion": 1,
+      "speed": 0.431718081,
+      "state": 765711723,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 0,
+      "motion": 1,
+      "speed": 0.661685944,
+      "state": 765711723,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 4,
+      "motion": 2,
+      "speed": 0.7985674,
+      "state": 765711723,
+      "transition": true
+    },
+    {
+      "label": "run",
+      "frame": 10,
+      "motion": 2,
+      "speed": 0.9078338,
+      "state": 765711723,
+      "transition": true
+    },
+    {
+      "label": "run",
+      "frame": 20,
+      "motion": 2,
+      "speed": 0.974844635,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 29,
+      "motion": 2,
+      "speed": 0.9921445,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 0,
+      "motion": 0,
+      "speed": 0.0,
+      "state": 1748754976,
+      "transition": true
+    },
+    {
+      "label": "stationary",
+      "frame": 4,
+      "motion": 0,
+      "speed": 0.0,
+      "state": 1748754976,
+      "transition": true
+    },
+    {
+      "label": "stationary",
+      "frame": 10,
+      "motion": 0,
+      "speed": 0.0,
+      "state": 2081823275,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 20,
+      "motion": 0,
+      "speed": 0.0,
+      "state": 2081823275,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 29,
+      "motion": 0,
+      "speed": 0.0,
+      "state": 2081823275,
+      "transition": false
+    }
+  ],
+  "screen": {
+    "width": 2560,
+    "height": 1440
+  },
+  "duckHeight": 7.14000034,
+  "playerHeight": 5.30071354
+}

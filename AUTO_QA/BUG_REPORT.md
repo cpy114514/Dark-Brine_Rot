@@ -183,3 +183,10 @@ VERIFIED DIAGNOSTIC FIX: native finite GPU values barely respond to real full/em
 ## 2026-10-29 — Batch025 — confirmed presentation location
 
 No new gameplay bug or safe production optimization confirmed. Actual native Player profile localizes main wait toDXGI.WaitOnSwapChain7.550ms of14.598ms full-recovery frame. Render thread waits10.158ms for main commands;RenderLoop4.434ms includes geometry fence2.421ms. Native8ms control marker measures8.003ms and reduces swap-chain wait to1.014ms. GPU/shader/driver/queue cause remains unqualified;no blind graphics/quality change. Bounded foliage refresh1.513ms is an observation,not a confirmed defect.21 native checks/2101 fenced intervals/errors0;offline unnamed-sample reader corrected after safe restoration. Documentation/Performance-Batch025.md.
+
+
+## 2026-10-29 — Batch026 — QA-037 duck gait / QA-038 wave position
+
+QA-037 VERIFIED/FIXED:Chase mood emittedRun for walk-speed circling and zero movement. Duck-only measured planar travel now selects/damps locomotion,immediatezero prevents residual stepping;default chicken policy preserved. Native natural surround/chase,actual state settlement,reaction priority and sphere hit/dedup/range/cover regressions pass.
+
+QA-038 VERIFIED/FIXED:top-anchored wave label extended beyond card/screen and card overlappedBossHudPanel. Center label and lower top-center card;native2560×1440 containment/21.33px HUD gap and screenshots pass. User-requested duck grows another50% from4.76→7.14 vsSahur5.3007,matching capsule/reach/stride;originalFBX/clips/Strike/damage/timing preserved.31 final native checks;one baseline duration assertion was a rejected fixture assumption(.53/.8 actual,not.95/1.15). Documentation/Duck-UI-Batch026.md.

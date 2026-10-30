@@ -25,6 +25,8 @@ namespace Mavis
         [Min(1f)] public float turnSpeed = 540f;
         [Min(.2f)] public float surroundDistance = 3.5f;
         [Min(.4f)] public float separationRadius = 1.35f;
+        [Header("Animation")]
+        public bool matchLocomotionToMovement;
         [Header("Attacks")]
         [Min(1f)] public float strikeDamage = 3f;
         [Min(1f)] public float lungeDamage = 5f;
@@ -57,7 +59,7 @@ namespace Mavis
         readonly RaycastHit[] casts = new RaycastHit[16];
         readonly HashSet<PlayerHealth> struck = new HashSet<PlayerHealth>();
         Vector3 home, patrol, knock, committed;
-        float verticalSpeed = -2f, actionTime, nextAttack, nextPath, nextPatrol, nextAcquire, lostSightAt, removeAt = -1f, repathStride;
+        float verticalSpeed = -2f, actionTime, nextAttack, nextPath, nextPatrol, nextAcquire, lostSightAt, removeAt = -1f, repathStride, locomotionSpeed;
         int corner;
         bool hasPath, returningHome, reclaiming, subscribed, animatorReady;
         static readonly float[] AvoidAngles = { 0f, 28f, -28f, 56f, -56f, 84f, -84f };
@@ -121,6 +123,7 @@ namespace Mavis
             knock = Vector3.zero;
             verticalSpeed = -2f;
             actionTime = 0f;
+            locomotionSpeed = 0f;
             nextAttack = Time.time + .4f;
             nextPath = 0f;
             nextPatrol = 0f;
@@ -200,6 +203,7 @@ namespace Mavis
             if (!motor) return;
             float dt = Time.deltaTime;
             if (dt <= 0f || PauseSettingsMenu.IsOpen) return;
+            locomotionSpeed = 0f;
             if (Mode == Mood.Dead) { Integrate(dt); SettleCorpse(dt); Present(); return; }
             if (!IsAlive) return;
             Acquire();
@@ -338,6 +342,8 @@ namespace Mavis
 
         void MoveToward(Vector3 goal, float speed, float dt, bool walk)
         {
+            Vector3 before = transform.position;
+            locomotionSpeed = 0f;
             Vector3 direction = Steer(goal);
             direction += Separation();
             if (direction.sqrMagnitude > .01f) direction.Normalize();
@@ -350,6 +356,11 @@ namespace Mavis
             motor.Move(Vector3.up * verticalSpeed * dt);
             if (ocean && transform.position.y < ocean.oceanHeight + .08f)
                 motor.Move(Vector3.up * (ocean.oceanHeight + .16f - transform.position.y));
+            if (matchLocomotionToMovement && dt > 0f)
+            {
+                Vector3 moved = transform.position - before; moved.y = 0f;
+                locomotionSpeed = moved.magnitude / dt;
+            }
         }
 
         Vector3 Steer(Vector3 goal)
@@ -445,7 +456,14 @@ namespace Mavis
                 if (!animatorReady) { animator = null; return; }
             }
             float speed = Mode == Mood.Chase ? 1f : Mode == Mood.Patrol ? .45f : 0f;
-            animator.SetFloat(SpeedHash, speed);
+            if (matchLocomotionToMovement)
+            {
+                speed = Mode == Mood.Chase || Mode == Mood.Patrol ? Mathf.Clamp01(locomotionSpeed / Mathf.Max(.01f, runSpeed)) : 0f;
+                if (speed <= .001f) animator.SetFloat(SpeedHash, 0f);
+                else animator.SetFloat(SpeedHash, speed, .12f, Time.deltaTime);
+                speed = animator.GetFloat(SpeedHash);
+            }
+            else animator.SetFloat(SpeedHash, speed);
             animator.SetInteger(MotionHash, Mode == Mood.Dead ? 7 : Mode == Mood.Knockdown || Mode == Mood.Launch ? 6 :
                 Mode == Mood.Flinch ? 5 : Mode == Mood.Lunge ? 4 : Mode == Mood.Strike ? 3 : speed > .7f ? 2 : speed > .1f ? 1 : 0);
         }

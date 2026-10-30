@@ -1,0 +1,219 @@
+{
+  "label": "before",
+  "completed": true,
+  "rows": [
+    {
+      "ok": false,
+      "name": "Wave text stays inside its card",
+      "detail": {
+        "card": {
+          "x": 853.3333,
+          "y": 1366.66675,
+          "width": 853.3333,
+          "height": 72.0
+        },
+        "text": {
+          "x": 880.0,
+          "y": 1412.00012,
+          "width": 800.0,
+          "height": 53.333252
+        }
+      }
+    },
+    {
+      "ok": false,
+      "name": "Wave card clears the encounter HUD",
+      "detail": {
+        "card": {
+          "x": 853.3333,
+          "y": 1366.66675,
+          "width": 853.3333,
+          "height": 72.0
+        },
+        "boss": {
+          "x": 733.3333,
+          "y": 1285.33337,
+          "width": 1093.33325,
+          "height": 114.666626
+        }
+      }
+    },
+    {
+      "ok": true,
+      "name": "Caption remains noninteractive",
+      "detail": null
+    },
+    {
+      "ok": false,
+      "name": "Duck is visibly taller than scaled Sahur capsule",
+      "detail": {
+        "duck": 4.76,
+        "player": 5.30071354
+      }
+    },
+    {
+      "ok": false,
+      "name": "slow-chase selects the matching locomotion",
+      "detail": {
+        "actual": 2,
+        "expected": 1,
+        "speed": 1.0
+      }
+    },
+    {
+      "ok": true,
+      "name": "run selects the matching locomotion",
+      "detail": {
+        "actual": 2,
+        "expected": 2,
+        "speed": 1.0
+      }
+    },
+    {
+      "ok": false,
+      "name": "stationary selects the matching locomotion",
+      "detail": {
+        "actual": 2,
+        "expected": 0,
+        "speed": 1.0
+      }
+    },
+    {
+      "ok": false,
+      "name": "Original attack durations remain",
+      "detail": {
+        "strikeDuration": 0.53,
+        "lungeDuration": 0.8
+      }
+    }
+  ],
+  "passed": false,
+  "stages": [
+    {
+      "label": "slow-chase",
+      "frame": 0,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 2081823275,
+      "transition": true
+    },
+    {
+      "label": "slow-chase",
+      "frame": 4,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 2081823275,
+      "transition": true
+    },
+    {
+      "label": "slow-chase",
+      "frame": 10,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "slow-chase",
+      "frame": 20,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "slow-chase",
+      "frame": 29,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 0,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 4,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 10,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 20,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "run",
+      "frame": 29,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 0,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 4,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 10,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 20,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 29,
+      "motion": 2,
+      "speed": 1.0,
+      "state": 1748754976,
+      "transition": false
+    }
+  ],
+  "screen": {
+    "width": 2560,
+    "height": 1440
+  },
+  "duckHeight": 4.76,
+  "playerHeight": 5.30071354
+}

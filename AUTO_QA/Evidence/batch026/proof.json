@@ -1,0 +1,347 @@
+{
+  "batch": 26,
+  "baselineGit": "314b6f144ea5e4550678e53ce3d11dc8accc91ee",
+  "baselinePlastic": 209,
+  "checkpointTitle": "Enlarge duck and correct locomotion and wave banner layout",
+  "requests": [
+    "Increase duck again",
+    "Improve duck animation",
+    "Correct wave banner position",
+    "Install Playwright MCP"
+  ],
+  "verifiedBugs": {
+    "QA-037": "Slow Chase and zero movement emitted Run solely from AI mood;use actual horizontal displacement only for opted-in duck,with damped acceleration and immediatezero selection.",
+    "QA-038": "Wave label anchored at card top clipped above screen and overlapped actual BossHudPanel rectangle."
+  },
+  "size": {
+    "additionalScale": 1.5,
+    "totalScaleFromOriginal": 2.1,
+    "beforeHeight": 4.76,
+    "afterHeight": 7.14000034,
+    "sahurScaledCapsule": 5.30071354,
+    "colliderRadius": 1.155,
+    "reachAndSeparationScaled": true,
+    "travelSpeedsAndDamageUnchanged": true
+  },
+  "animation": {
+    "walkRate": 0.8428571,
+    "runRate": 0.799999952,
+    "locomotionBlendSeconds": 0.16,
+    "parameterDampingSeconds": 0.12,
+    "zeroMovementImmediateIdle": true,
+    "attackDurations": [
+      0.53,
+      0.8
+    ],
+    "attackReactionRatesUnchanged": true,
+    "originalFbxUnchanged": true,
+    "defaultChickenPolicyUnchanged": true,
+    "scope": "Targeted existing-controller polish;no new authored rig/clip or core combat design."
+  },
+  "beforeValidFailures": [
+    "Wave text stays inside its card",
+    "Wave card clears the encounter HUD",
+    "Duck is visibly taller than scaled Sahur capsule",
+    "slow-chase selects the matching locomotion",
+    "stationary selects the matching locomotion"
+  ],
+  "rejectedFixtureAssertion": "Initial test assumed shared AI defaults .95/1.15s;actual duck override is .53/.8s. That failing row is not a game bug. Final check preserves observed authored values.",
+  "nativeChecks": 31,
+  "intermediateChecksSuperseded": [
+    16,
+    26
+  ],
+  "sourceRecompilePassed": true,
+  "strikeBodyUnchanged": true,
+  "originalAssets": [
+    {
+      "path": "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.fbx",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.fbx.meta",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.mat",
+      "unchanged": true
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/ChickenBro/ChickenBro.prefab",
+      "unchanged": true
+    }
+  ],
+  "screen": {
+    "width": 2560,
+    "height": 1440
+  },
+  "acceptedUi": [
+    {
+      "ok": true,
+      "name": "Wave text stays inside its card",
+      "detail": {
+        "card": {
+          "x": 786.6666,
+          "y": 1178.66663,
+          "width": 986.666748,
+          "height": 85.333374
+        },
+        "text": {
+          "x": 813.3333,
+          "y": 1189.33337,
+          "width": 933.3333,
+          "height": 64
+        }
+      }
+    },
+    {
+      "ok": true,
+      "name": "Wave card clears the encounter HUD",
+      "detail": {
+        "card": {
+          "x": 786.6666,
+          "y": 1178.66663,
+          "width": 986.666748,
+          "height": 85.333374
+        },
+        "boss": {
+          "x": 733.3333,
+          "y": 1285.33337,
+          "width": 1093.33325,
+          "height": 114.666626
+        }
+      }
+    },
+    {
+      "ok": true,
+      "name": "Caption remains noninteractive",
+      "detail": null
+    }
+  ],
+  "stopTrace": [
+    {
+      "label": "stationary",
+      "frame": 0,
+      "motion": 0,
+      "speed": 0,
+      "state": 1748754976,
+      "transition": true
+    },
+    {
+      "label": "stationary",
+      "frame": 4,
+      "motion": 0,
+      "speed": 0,
+      "state": 1748754976,
+      "transition": true
+    },
+    {
+      "label": "stationary",
+      "frame": 10,
+      "motion": 0,
+      "speed": 0,
+      "state": 2081823275,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 20,
+      "motion": 0,
+      "speed": 0,
+      "state": 2081823275,
+      "transition": false
+    },
+    {
+      "label": "stationary",
+      "frame": 29,
+      "motion": 0,
+      "speed": 0,
+      "state": 2081823275,
+      "transition": false
+    }
+  ],
+  "browser": {
+    "package": "@playwright/mcp",
+    "version": "0.0.83",
+    "configured": true,
+    "server": "playwright",
+    "transport": "stdio",
+    "browser": "chrome",
+    "headless": true,
+    "isolated": true,
+    "configBackupPrivate": true,
+    "outputsOutsideProject": true,
+    "tools": 25,
+    "navigationOk": true,
+    "exampleDomainVisible": true,
+    "closed": true,
+    "currentConversationToolCatalogHotLoaded": false,
+    "scope": "Installed in user tools and enabled in shared Codex MCP config;direct MCP client25-tool discovery/navigation/close verified. Current conversation tool list does not hot-load the newly added server. Client initializes/reloads MCP before native tools appear. No global config or credentials committed."
+  },
+  "safety": {
+    "stopped": true,
+    "sceneMatch": true,
+    "savesUnchanged": true,
+    "markerClear": true,
+    "scenes": [
+      {
+        "path": "Assets/Scenes/First Island/Main.unity",
+        "isLoaded": true,
+        "isActive": true,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Lighting.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Gameplay.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Environment.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Enemies.unity",
+        "isLoaded": true,
+        "isActive": false,
+        "isSubScene": false
+      }
+    ],
+    "height": 7.14000034,
+    "radius": 1.155,
+    "center": "(0.00, 3.57, 0.00)",
+    "matchLocomotionToMovement": true,
+    "walkSpeed": 3.36,
+    "runSpeed": 7.68,
+    "strikeDuration": 0.53,
+    "lungeDuration": 0.8,
+    "strikeDamage": 2.25,
+    "lungeDamage": 3.75,
+    "states": [
+      {
+        "name": "Idle",
+        "speed": 1,
+        "clip": "Armature|Idle"
+      },
+      {
+        "name": "Walk",
+        "speed": 0.8428571,
+        "clip": "Armature|Walk"
+      },
+      {
+        "name": "Run",
+        "speed": 0.799999952,
+        "clip": "Armature|Run"
+      },
+      {
+        "name": "Strike",
+        "speed": 1,
+        "clip": "Armature|Peck"
+      },
+      {
+        "name": "Lunge",
+        "speed": 1,
+        "clip": "Armature|Lunge"
+      },
+      {
+        "name": "Flinch",
+        "speed": 1,
+        "clip": "Armature|Flinch"
+      },
+      {
+        "name": "Knockdown",
+        "speed": 1,
+        "clip": "Armature|Knockdown"
+      },
+      {
+        "name": "Death",
+        "speed": 1,
+        "clip": "Armature|Death"
+      }
+    ],
+    "transitions": [
+      {
+        "state": "Idle",
+        "duration": 0.16,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      },
+      {
+        "state": "Walk",
+        "duration": 0.16,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      },
+      {
+        "state": "Run",
+        "duration": 0.16,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      },
+      {
+        "state": "Strike",
+        "duration": 0.1,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      },
+      {
+        "state": "Lunge",
+        "duration": 0.1,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      },
+      {
+        "state": "Flinch",
+        "duration": 0.06,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      },
+      {
+        "state": "Knockdown",
+        "duration": 0.06,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      },
+      {
+        "state": "Death",
+        "duration": 0.06,
+        "hasFixedDuration": true,
+        "canTransitionToSelf": false
+      }
+    ]
+  },
+  "sourceHashes": [
+    {
+      "path": "Assets/Game/Prefabs/Enemies/ChickenBro/Scripts/ChickenBroAI.cs",
+      "sha256": "075fe0b7a72954f5d98917fbc93d18076495234d68426c3df4e00ebbc1e213d4"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/ChickenBro/Scripts/ChickenBroEncounter.cs",
+      "sha256": "74a317a7cb88b499851eb03d9442ddb96e9e0222d1b23a2f873d9f77161d3753"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.prefab",
+      "sha256": "f5426b41aed8caba09c82ed8756e92697640d441674891bd820504a2a4ab18f8"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.controller",
+      "sha256": "4ba2bcc501b25462cf909555741c7101cbbded12642ad3b5146cf516d8280cbb"
+    }
+  ],
+  "limits": [
+    "Native CombatTest raised-floor and actual controller/physics/UI cases;not full first-island waves or long mixed-flock terrain acceptance.",
+    "Native2560x1440 GameView screenshots inspected;other aspect ratios/notches not visually qualified.",
+    "Locomotion state/parameter/stride/blend correction verified. No blanket subjective smoothness,perfect footIK,FPS or full boss victory claim.",
+    "Original tiny walking toe intersections from020 remain a separate precision-foot follow-up.",
+    "This Editor batch did not intentionally write PlayerPrefs;fresh saves/scene setup verified. No fresh pre-run100-value registry snapshot was taken,so no full preference-byte restoration claim.",
+    "Private config backup and setup logs remain in user profile. Two unrelated global config paths were observed different across snapshots;latest values were preserved rather than overwritten. No attribution to the requested Playwright entry is established."
+  ]
+}
