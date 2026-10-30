@@ -149,3 +149,8 @@ Before/after size+UI and finalWalk/Idle PNGs inspected. Silhouette and caption r
 ## 2026-10-29 — Batch027 — grass render continuity
 
 No character/enemy animation,rig,collision or original grass geometry edit. Grass native LODs now use reversible distance fades;forward/depth/shadow share the same URP clip. Wind behavior is preserved. Frozen isolated grass20-frame hold,rotation-return and dolly-return each produce0changedpixels;this is a render-control result,not a general wind/character animation smoothness claim. Actual4-style moving-camera images inspected;pixel smoke accepted. Preserve all026 duck size/gait/UI changes and remaining fine-foot-contact work.
+
+
+## 2026-10-30 — Batch028 — grass layout, not wind
+
+Grass retains its original complete mesh at all visible distances; camera movement no longer selects thinner blade layouts. Wind, source geometry/materials and actor animations/rigs/collisions remain unchanged. Frozen isolated hold/turn-return/dolly-return each0 changed pixels; old near/mid model thresholds also0. Do not infer general wind or character-animation smoothness from this. Four-style moving camera images and pixel screenshot inspected; full-game pixel invariance is not claimed.

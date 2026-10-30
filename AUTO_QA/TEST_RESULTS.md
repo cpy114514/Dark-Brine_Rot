@@ -463,3 +463,18 @@ Source compilation passes. Native save-safe scaled-sole placement and physics sy
 | Restoration |5scenes clean/stopped,11,298authoredNone/zero-width,0fixtures. Subsequenttests preservefresh post-user-stop savesbyteequal;buildsettings restored/duckalias sideeffect rolledback. Fullregistry equalitynotasserted. |
 
 Native screenshot videos encoded12fps are discrete pose evidence,not gameFPS. Whole-scene roundtrip has nonzero differences and does not qualify perfect world invariance;frozen isolated controls do. Reference Documentation/Grass-Stability-Batch027.md and Evidence/batch027/proof.json.
+
+
+## 2026-10-30 — Batch028 — constant grass acceptance
+
+| Coverage | Result |
+|---|---|
+| Old model switch bands | Same native projection/wind freeze: legacy fading max adjacent delta0.1754167; fixed original Near layout0 changed pixels in both bands(26 captures per policy). Empty positive23,193pixels. |
+| Frozen stability | Hold, ±18degree return and ±4m return each0 changed pixels. |
+| Native regressions |66 final=LOD31+core reload12+lifecycle12+scene6+partial cancellation5. Preparation9/30 overlap. Native cancellation383 entries. |
+| Actual policy/styles |11,298 patches each use one original complete renderer, two alternatives disabled;71,315 entries retained.4 styles×48 positions=192 captures,592 callbacks including warmup/empty; pixel2560×1440 scale0.1250007 inspected. |
+| Geometry observation | No-savable-player environment with authored Cappuccino temporarily excluded: ABA native triangle medians11,227,594/14,408,668/11,016,249; empty7. More geometry, baseline variation1.9%; not GPU time/FPS. Early moving-Boss/orphan-renderer trials rejected. |
+| Build | SameEditor17184,7 scenes,Windows64 MonoDevelopment:Succeeded65.32s/493warnings/4 existing606-plant scene messages; no new compile/shader error. Player not launched. |
+| Restoration | Actual original Editor MainMenu-only, clean/stopped,0 fixtures/marker clear. Post-user-stop saves unchanged; build flags/preloads/settings bytes and4 unrelated Plastic paths+duck material hashes unchanged. No full preference-byte claim. |
+
+Source shader/art/scene/animation assets unchanged. The old fading policy did not satisfy the reported constant-layout requirement; this batch replaces that policy. Native screenshot clips are discrete12fps evidence, not gameplay FPS. Documentation/Grass-Consistency-Batch028.md and Evidence/batch028/proof.json.
