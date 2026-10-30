@@ -1,0 +1,77 @@
+{
+  "qa": "QA-039",
+  "before": 1.8240625,
+  "after": 0.17062885802469135,
+  "maximumStepReductionPercent": 90.6456682254752,
+  "qualification": "Same camera/projection, frozen wind; native LOD size sweep, 13 samples per tier, 3 tiers, visible-empty control. Not a game FPS measurement.",
+  "nativeRegressionFinalChecks": 60,
+  "beforeLodChecks24OverlapFinal25": true,
+  "scenePilotFrames": 96,
+  "scenePilotCallbacks": 286,
+  "evidencePlaybackFps": 12,
+  "playbackIsMeasuredGameplayFps": false,
+  "additionalFrozenStabilityChecks": 3,
+  "productionGrassGroups": 11298,
+  "productionFoliage": 71315,
+  "productionFourStyleFrames": 192,
+  "productionFourStyleCallbacks": 576,
+  "productionProbeMaxStep": 0.17960841049382717,
+  "pixelSmoke": {
+    "active": true,
+    "scale": 0.1250007,
+    "height": 1440,
+    "nativeImage": true,
+    "grassMode": "CrossFade",
+    "savedPreferenceUntouched": true
+  },
+  "cleanup": {
+    "stopped": true,
+    "scenes": [
+      {
+        "path": "Assets/Scenes/First Island/Main.unity",
+        "isLoaded": true,
+        "isActive": true
+      },
+      {
+        "path": "Assets/Scenes/First Island/Lighting.unity",
+        "isLoaded": true,
+        "isActive": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Gameplay.unity",
+        "isLoaded": true,
+        "isActive": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Environment.unity",
+        "isLoaded": true,
+        "isActive": false
+      },
+      {
+        "path": "Assets/Scenes/First Island/Enemies.unity",
+        "isLoaded": true,
+        "isActive": false
+      }
+    ],
+    "dirty": false,
+    "grassGroups": 11298,
+    "authoredNone": 11298,
+    "ownedFixtures": 0,
+    "shaderErrors": 0,
+    "editorPid": 57472
+  },
+  "buildResult": "Succeeded",
+  "buildSeconds": 149.9658848,
+  "buildWarnings": 493,
+  "buildKnownMissingPlantMessages": 4,
+  "buildNewCompileShaderErrors": 0,
+  "saves": "Test runs preserve post-user-stop save and backup byte-for-byte. Initial live user session ended normally; its save is newer than initial snapshot and is not rolled back.",
+  "preferences": "Select(style,false), runtime pixel only; no fresh complete registry snapshot was made. Full preference byte equality is not asserted.",
+  "limits": [
+    "LOD transitions remain distance-dependent and use blue-noise dither. Natural wind and projection variation remain.",
+    "Paired 90.65% reduction belongs to frozen single-patch native LOD-size sweep, not overall moving-scene/FPS improvement.",
+    "Whole-scene roundtrip images are not bit-identical; wind/clouds/shadows/post-processing and bounded draw refresh are not isolated there.",
+    "The legacy 35m batched original-grass detail path was not the observed 11298 native grass-patch family and is not modified.",
+    "Native Editor gameplay images were tested; new Player was built but not launched."
+  ]
+}

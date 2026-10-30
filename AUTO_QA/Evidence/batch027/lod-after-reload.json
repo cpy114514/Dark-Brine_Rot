@@ -1,0 +1,107 @@
+{
+  "label": "lod-after-reload",
+  "passed": true,
+  "checks": 25,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Preparation assembly actually unloaded"
+    },
+    {
+      "ok": true,
+      "name": "Fade ownership scope 0"
+    },
+    {
+      "ok": true,
+      "name": "Only owned grass uses reversible distance fade 0"
+    },
+    {
+      "ok": true,
+      "name": "Native distances unchanged 0"
+    },
+    {
+      "ok": true,
+      "name": "Owned or authored fade widths correct 0"
+    },
+    {
+      "ok": true,
+      "name": "Fade ownership scope 1"
+    },
+    {
+      "ok": true,
+      "name": "Only owned grass uses reversible distance fade 1"
+    },
+    {
+      "ok": true,
+      "name": "Native distances unchanged 1"
+    },
+    {
+      "ok": true,
+      "name": "Owned or authored fade widths correct 1"
+    },
+    {
+      "ok": true,
+      "name": "Fade ownership scope 2"
+    },
+    {
+      "ok": true,
+      "name": "Only owned grass uses reversible distance fade 2"
+    },
+    {
+      "ok": true,
+      "name": "Native distances unchanged 2"
+    },
+    {
+      "ok": true,
+      "name": "Owned or authored fade widths correct 2"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 0 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 0 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 0 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 0 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original native mode 2 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Disable restores original widths 2 cycle1"
+    }
+  ]
+}

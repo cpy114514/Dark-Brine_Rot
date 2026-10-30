@@ -1,0 +1,36 @@
+{
+  "stopped": true,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "isLoaded": true,
+      "isActive": true
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "isLoaded": true,
+      "isActive": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "isLoaded": true,
+      "isActive": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "isLoaded": true,
+      "isActive": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "isLoaded": true,
+      "isActive": false
+    }
+  ],
+  "dirty": false,
+  "grassGroups": 11298,
+  "authoredNone": 11298,
+  "ownedFixtures": 0,
+  "shaderErrors": 0,
+  "editorPid": 57472
+}

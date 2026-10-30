@@ -144,3 +144,8 @@ Only optional binary profiling/phase labels changed;no animation/model/rig/contr
 RevisionLongLeggedDuck-controller-batch026;existing design,user-requestedPOLISH. Before native sampleframes0/4/10/20/29 stayedRun at slow/zero travel. Final measured planar speed selects actualWalk/Run/Idle,acceleration damping.12s,zeroSpeed/Motion0 from first stopping frame;actualIdle settles after blend. Controller locomotion blends.16s,Walk/Run rates.8428571/.8 compensate extra1.5× size. Attack/reaction rates/windows/rig/FBX unchanged;default chicken policy preserved.
 
 Before/after size+UI and finalWalk/Idle PNGs inspected. Silhouette and caption readability observed;continuous smoothness/weight/anticipation/impact/exact-foot stability are unscored/not fully observed. No perfectfootIK or human FINAL/APPROVED claim.31 native checks pass for targeted mechanics/layout;next actual island terrain,mixed enlarged flock and precise foot contact. See Documentation/Duck-UI-Batch026.md and Evidence/batch026.
+
+
+## 2026-10-29 — Batch027 — grass render continuity
+
+No character/enemy animation,rig,collision or original grass geometry edit. Grass native LODs now use reversible distance fades;forward/depth/shadow share the same URP clip. Wind behavior is preserved. Frozen isolated grass20-frame hold,rotation-return and dolly-return each produce0changedpixels;this is a render-control result,not a general wind/character animation smoothness claim. Actual4-style moving-camera images inspected;pixel smoke accepted. Preserve all026 duck size/gait/UI changes and remaining fine-foot-contact work.

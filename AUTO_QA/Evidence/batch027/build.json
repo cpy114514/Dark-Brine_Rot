@@ -1,0 +1,26 @@
+{
+  "result": "Succeeded",
+  "seconds": 149.9658848,
+  "bytes": 2729630875,
+  "warnings": 493,
+  "errors": 4,
+  "development": true,
+  "backend": "Mono2x",
+  "sameEditor": true,
+  "editorPid": 57472,
+  "scenes": [
+    "Assets/Scenes/Main Menu/MainMenu.unity",
+    "Assets/Scenes/First story/Story1.unity",
+    "Assets/Scenes/First Island/Main.unity",
+    "Assets/Scenes/First Island/Environment.unity",
+    "Assets/Scenes/First Island/Gameplay.unity",
+    "Assets/Scenes/First Island/Lighting.unity",
+    "Assets/Scenes/First Island/Enemies.unity"
+  ],
+  "errorDetails": [
+    "Problem detected while opening the Scene file: 'Assets/Scenes/First Island/Environment.unity'.\nCheck the following logs for more details.",
+    "Prefab instance problem: 'rostlinka_07c_ske (4109) (Missing Prefab with guid: 2bde5fdeb204bc6418608a5fe3993ad1)'. 234 instances are missing the same Prefab Asset with guid 2bde5fdeb204bc6418608a5fe3993ad1.",
+    "Prefab instance problem: 'rostlinka_07c_ske (5760) (Missing Prefab with guid: 8e67ad946c4264b479267ee1643fd2ce)'. 177 instances are missing the same Prefab Asset with guid 8e67ad946c4264b479267ee1643fd2ce.",
+    "Prefab instance problem: 'rostlinka_07c_ske (5659) (Missing Prefab with guid: ad3d230ef428f6049ab82c5136f00a47)'. 195 instances are missing the same Prefab Asset with guid ad3d230ef428f6049ab82c5136f00a47."
+  ]
+}
