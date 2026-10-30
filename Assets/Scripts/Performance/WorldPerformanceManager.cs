@@ -64,6 +64,13 @@ namespace Mavis
             public bool culled;
             public bool grass;
         }
+        [System.Serializable] sealed class GrassLodState
+        {
+            public int id;
+            public LODFadeMode mode;
+            public bool animated;
+            public float[] widths;
+        }
 #if UNITY_EDITOR
         // Native renderer overrides can outlive the managed batching graph. Keep
         // original instance IDs outside Unity's object serialization until recache.
@@ -77,11 +84,13 @@ namespace Mavis
         [System.Serializable] sealed class ReloadRenderers
         {
             public List<ReloadRenderer> items = new List<ReloadRenderer>();
+            public List<GrassLodState> lods = new List<GrassLodState>();
         }
         string ReloadKey => "Mavis.WorldPerformance.Reload." + GetInstanceID();
         void CaptureReloadRenderers()
         {
             var snapshot = new ReloadRenderers();
+            foreach (var state in grassLods.Values) snapshot.lods.Add(state);
             foreach (var item in foliage)
             {
                 if (!item.renderer) continue;
@@ -98,7 +107,11 @@ namespace Mavis
             string json = UnityEditor.SessionState.GetString(ReloadKey, "");
             if (string.IsNullOrEmpty(json)) return null;
             var result = new Dictionary<int, ReloadRenderer>();
-            foreach (var item in JsonUtility.FromJson<ReloadRenderers>(json).items) result[item.renderer] = item;
+            var snapshot = JsonUtility.FromJson<ReloadRenderers>(json);
+            if (snapshot.lods != null)
+                foreach (var state in snapshot.lods)
+                    RestoreGrassLod(UnityEditor.EditorUtility.EntityIdToObject(state.id) as LODGroup, state);
+            foreach (var item in snapshot.items) result[item.renderer] = item;
             return result;
         }
         static void RestoreReloadRenderer(ReloadRenderer item, MeshRenderer renderer)
@@ -114,6 +127,7 @@ namespace Mavis
         }
 #endif
         readonly List<Foliage> foliage = new List<Foliage>();
+        readonly Dictionary<LODGroup, GrassLodState> grassLods = new Dictionary<LODGroup, GrassLodState>();
         readonly List<FoliageCell> foliageCells = new List<FoliageCell>();
         Dictionary<(Mesh, Material, Vector2Int), GrassGroup> grassBatches = new Dictionary<(Mesh, Material, Vector2Int), GrassGroup>();
         Dictionary<(Mesh, Material, Vector2Int), GrassGroup> renderedGrassGroups = new Dictionary<(Mesh, Material, Vector2Int), GrassGroup>();
@@ -552,6 +566,7 @@ namespace Mavis
                     if (material == null || material.shader.name != "Mavis/FoliageWind") { item.compactWind = false; break; }
                 item.batchable = grass && SystemInfo.supportsInstancing && materials.Length == 1 && materials[0] != null && materials[0].enableInstancing &&
                     (materials[0].shader.name == "Mavis/FoliageWind" || materials[0].shader.name == "Universal Render Pipeline/Lit");
+                if (grass && !item.batchable) ConfigureGrassLod(renderer);
                 if (item.batchable)
                 {
                     item.drawMaterial=materials[0];
@@ -576,6 +591,47 @@ namespace Mavis
 #endif
             nextUpdate=0;
         }
+        void ConfigureGrassLod(MeshRenderer renderer)
+        {
+            // These authored multi-material patches use native LOD rendering.
+            // Their low mesh drops whole cards; a hard swap changed the meadow
+            // whenever the following camera crossed a threshold. Keep the same
+            // ranges/meshes, but blend over a reversible distance band, also at
+            // the final cull. Do not override tree or already-authored fades.
+            var group = renderer.GetComponentInParent<LODGroup>();
+            if (group == null || grassLods.ContainsKey(group) || group.fadeMode != LODFadeMode.None) return;
+            var levels = group.GetLODs();
+            if (levels.Length < 2) return;
+            foreach (var level in levels)
+                foreach (var part in level.renderers)
+                {
+                    if (part == null) return;
+                    var filter = part.GetComponent<MeshFilter>();
+                    if (filter == null || filter.sharedMesh == null || !filter.sharedMesh.name.StartsWith("VerifiedGrass")) return;
+                    foreach (var material in part.sharedMaterials)
+                        if (material == null || (material.shader.name != "Mavis/FoliageWind" &&
+                            material.shader.name != "Universal Render Pipeline/Lit")) return;
+                }
+            var state = new GrassLodState { id=group.GetInstanceID(),mode=group.fadeMode,
+                animated=group.animateCrossFading,widths=new float[levels.Length] };
+            for (int i=0;i<levels.Length;i++)
+            { state.widths[i]=levels[i].fadeTransitionWidth;levels[i].fadeTransitionWidth=.2f; }
+            grassLods.Add(group,state);
+            group.fadeMode=LODFadeMode.CrossFade;
+            group.animateCrossFading=false;
+            group.SetLODs(levels);
+        }
+        static void RestoreGrassLod(LODGroup group, GrassLodState state)
+        {
+            if (group == null) return;
+            var levels=group.GetLODs();
+            if (levels.Length == state.widths.Length)
+            {
+                for (int i=0;i<levels.Length;i++) levels[i].fadeTransitionWidth=state.widths[i];
+                group.SetLODs(levels);
+            }
+            group.fadeMode=state.mode;group.animateCrossFading=state.animated;
+        }
         static void RestoreRenderer(Foliage item)
         {
             if (item.renderer == null) return;
@@ -589,6 +645,8 @@ namespace Mavis
         {
             if (foliageRoutine != null) StopCoroutine(foliageRoutine);
             foliageRoutine = null; foliageRefreshing = false;
+            foreach (var pair in grassLods) RestoreGrassLod(pair.Key,pair.Value);
+            grassLods.Clear();
             foreach(var item in foliage)
             {
                 RestoreRenderer(item);

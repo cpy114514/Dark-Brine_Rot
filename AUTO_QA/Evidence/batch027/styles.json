@@ -1,0 +1,30 @@
+[
+  {
+    "label": "production-realistic",
+    "candidate": false,
+    "frames": 48,
+    "callbacks": 144,
+    "groups": 11298
+  },
+  {
+    "label": "production-dark-fairytale",
+    "candidate": false,
+    "frames": 48,
+    "callbacks": 144,
+    "groups": 11298
+  },
+  {
+    "label": "production-origami",
+    "candidate": false,
+    "frames": 48,
+    "callbacks": 144,
+    "groups": 11298
+  },
+  {
+    "label": "production-monochrome",
+    "candidate": false,
+    "frames": 48,
+    "callbacks": 144,
+    "groups": 11298
+  }
+]

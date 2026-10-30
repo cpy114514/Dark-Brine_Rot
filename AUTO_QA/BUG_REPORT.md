@@ -190,3 +190,10 @@ No new gameplay bug or safe production optimization confirmed. Actual native Pla
 QA-037 VERIFIED/FIXED:Chase mood emittedRun for walk-speed circling and zero movement. Duck-only measured planar travel now selects/damps locomotion,immediatezero prevents residual stepping;default chicken policy preserved. Native natural surround/chase,actual state settlement,reaction priority and sphere hit/dedup/range/cover regressions pass.
 
 QA-038 VERIFIED/FIXED:top-anchored wave label extended beyond card/screen and card overlappedBossHudPanel. Center label and lower top-center card;native2560×1440 containment/21.33px HUD gap and screenshots pass. User-requested duck grows another50% from4.76→7.14 vsSahur5.3007,matching capsule/reach/stride;originalFBX/clips/Strike/damage/timing preserved.31 final native checks;one baseline duration assertion was a rejected fixture assumption(.53/.8 actual,not.95/1.15). Documentation/Duck-UI-Batch026.md.
+
+
+## 2026-10-29 — Batch027 — QA-039 grass density popping
+
+VERIFIED/FIXED:11,298 added native grass groups hard-swapped23,097/7,799/1,948-triangle meshes and culling with None/zero fades. Camera following/orbiting crossed the same thresholds as walking. Recognized patch-only distance CrossFade0.2 plus correct forward/depth/shadow shader variants spreads those switches; source meshes/density/thresholds/wind unchanged. Paired frozen same-projection maximum step1.82406→0.17063(90.65% lower); production-policy probe0.17961 is a separate lighting case.60 native ownership/reload/lifecycle/scene/cancellation assertions and3 frozen image-stability controls pass.192 production camera captures across4styles,pixel smoke,all11,298 policies and7-scene Windows build accepted.
+
+Limits:normal wind/projection/distant detail still vary;dither/adjacent-tier overdraw exist. Whole-scene return images are not pixel-identical and do not isolate every effect. Separate35m legacy batched detail path is unchanged/suspected only if future evidence implicates it. No FPS claim. Known606 missing plants still produce4 build messages. Documentation/Grass-Stability-Batch027.md and Evidence/batch027/proof.json.

@@ -43,6 +43,9 @@ Shader "Mavis/FoliageWind"
         HLSLINCLUDE
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+            #if defined(LOD_FADE_CROSSFADE)
+                #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/LODCrossFade.hlsl"
+            #endif
 
             CBUFFER_START(UnityPerMaterial)
                 float4 _MainTex_ST;
@@ -108,6 +111,7 @@ Shader "Mavis/FoliageWind"
                 float3 positionWS : TEXCOORD2;
                 float3 viewDirWS  : TEXCOORD3;
                 float  squish     : TEXCOORD4;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             float3 ComputeWindOffset(float3 positionWS)
@@ -155,6 +159,7 @@ Shader "Mavis/FoliageWind"
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
                 Varyings OUT;
+                UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
                 float3 positionWS = TransformObjectToWorld(IN.positionOS.xyz);
                 positionWS += ComputeWindOffset(positionWS);
 
@@ -200,6 +205,10 @@ Shader "Mavis/FoliageWind"
 
             half4 frag(Varyings IN) : SV_Target
             {
+                UNITY_SETUP_INSTANCE_ID(IN);
+                #if defined(LOD_FADE_CROSSFADE)
+                    LODFadeCrossFade(IN.positionCS);
+                #endif
                 if (_ClipBelowSea > 0.5h && IN.positionWS.y < _MavisSeaLevel + _MavisBeachCeiling)
                     clip(-1);
                 half4 baseTex = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv);
@@ -257,6 +266,10 @@ Shader "Mavis/FoliageWind"
 
             half4 shadowFrag(Varyings IN) : SV_Target
             {
+                UNITY_SETUP_INSTANCE_ID(IN);
+                #if defined(LOD_FADE_CROSSFADE)
+                    LODFadeCrossFade(IN.positionCS);
+                #endif
                 if (_ClipBelowSea > 0.5h && IN.positionWS.y < _MavisSeaLevel + _MavisBeachCeiling)
                     clip(-1);
                 half opacity = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.uv).a * _BaseColor.a;
@@ -277,6 +290,7 @@ Shader "Mavis/FoliageWind"
             #pragma vertex vert
             #pragma multi_compile_instancing
             #pragma fragment frag
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
@@ -296,6 +310,7 @@ Shader "Mavis/FoliageWind"
             #pragma vertex vert
             #pragma multi_compile_instancing
             #pragma fragment shadowFrag
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
             ENDHLSL
         }
 
@@ -312,6 +327,7 @@ Shader "Mavis/FoliageWind"
             #pragma vertex shadowVert
             #pragma multi_compile_instancing
             #pragma fragment shadowFrag
+            #pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             ENDHLSL
         }

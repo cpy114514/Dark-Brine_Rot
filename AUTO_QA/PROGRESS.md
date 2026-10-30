@@ -283,3 +283,10 @@ Original5 scenes clean/stopped,fresh save+backup unchanged,owned marker cleared.
 ## Automation continuation status — 2026-10-29
 
 Native app update of dark-brine-rot-qa returned: automation does not exist and could not be updated;it may have been deleted manually. Do not claim hourly/quota-recovery continuation remains scheduled. Do not blindly recreate a possibly user-removed automation. Batch026 is fully checkpointed/synced;continue from its accepted source/evidence when a new execution is authorized. Existing local automation files,if present,are not proof of an active app schedule.
+
+
+## 2026-10-29 — Batch027 — user grass stability request
+
+Continuedee5d23d/cs211. Reproduced grass whole-patch density changes in user's paused first island. Native added cover uses11,298 hard-switch LODGroups;targeted runtime fade ownership and forward/depth/shadow shader support correct popping without scene/art/density/threshold edits. Fragment-only variant candidate rejected by pixels;both shader stages required. Paired frozen jump metric reduced90.65%;all3 hold/return image controls exact.60 native regressions,192 production captures/4styles,pixel smoke and automatic11,298-group policy pass.7-scene sameEditor Windows build succeeds149.97s,493warnings/4known606-plant messages,no new compile/shader error. NoFPS/full-scene-invariance claim.
+
+User's original Play stopped normally and its newer save was kept;subsequent tests preserve post-stop save+backup bytes.Original5scenes clean/stopped,authoredLODNone/0 restored,0fixtures. Build flags/settings restored;build-only duckMainTex alias guarded rollback returnsmaterialGit-clean. No fullprefbyte snapshot assertion. Checkpoint title:Smooth native grass LOD transitions during camera movement. Documentation/Grass-Stability-Batch027.md/Evidence/batch027. Next broader actual enlarged flock/UI/Boss/tutorial or new grass-location evidence;no unchanged matrix repetition. Missingautomation remains unscheduled;do not recreate it blindly.

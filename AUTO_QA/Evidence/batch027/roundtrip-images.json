@@ -1,0 +1,22 @@
+[
+  {
+    "name": "production-dark-fairytale",
+    "meanChannelDifference": 0.1309104938271605,
+    "maxChannelDifference": 188
+  },
+  {
+    "name": "production-monochrome",
+    "meanChannelDifference": 0.5711689814814814,
+    "maxChannelDifference": 135
+  },
+  {
+    "name": "production-origami",
+    "meanChannelDifference": 0.11294174382716049,
+    "maxChannelDifference": 143
+  },
+  {
+    "name": "production-realistic",
+    "meanChannelDifference": 1.235635931069959,
+    "maxChannelDifference": 209
+  }
+]

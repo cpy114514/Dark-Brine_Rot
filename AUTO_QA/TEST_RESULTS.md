@@ -448,3 +448,18 @@ Raw CPU profile/logs/backup/build remain private;public report archive has exact
 | Cleanup |Original5 scenes clean/stopped,saves byte-unchanged,owned marker clear;runtime camera/time/pipeline/pixel restored. FBX/meta/material/chicken prefab match baseline. No fresh100-registry-value restoration assertion. |
 
 Source compilation passes. Native save-safe scaled-sole placement and physics synchronization used. Evidence/batch026/proof.json qualifies raw baseline/accepted data;Documentation/Duck-UI-Batch026.md records limits. Global config/backups/auth remain private;browser output removed from project and redirected to user folder.
+
+
+## 2026-10-29 — Batch027 — grass rendering
+
+| Coverage | Result |
+|---|---|
+| Native isolated LOD controls |39 samples/case,visible-empty positive24,546 pixels;paired maximumadjacent delta1.8240625→0.17062886(90.65% reduction). Full-stage variant accepted;fragment-only candidate rejected. |
+| Production/frozen stability |Automatically configured native patchvisible-empty23,193;separate max0.17960841.20-frame hold/±18degree turn-return/±4m dolly-return:0changedpixels each. |
+| Native regressions |60 final assertions=LOD25+core actualreload12+lifecycle12+scene6+partialcancellation5. Preparation9/24 overlap,not added.Cancellation351entries. |
+| Actual island/styles |71,315foliage/all11,298patches configured.192capturedpositions/576rendercallbacks across4styles,representativePNGs inspected.Pilotbefore/candidate96captures/286callbacks separate. |
+| Pixel |Actual2560×1440 PNG,180-high scale0.1250007,active CrossFade;released/restored. |
+| Build |Windows64/MonoDevelopment/7scenes/sameEditor57472:Succeeded149.97s,493warnings/4existing606-plant scene messages,no newC#/shadererrors. Playernotlaunched. |
+| Restoration |5scenes clean/stopped,11,298authoredNone/zero-width,0fixtures. Subsequenttests preservefresh post-user-stop savesbyteequal;buildsettings restored/duckalias sideeffect rolledback. Fullregistry equalitynotasserted. |
+
+Native screenshot videos encoded12fps are discrete pose evidence,not gameFPS. Whole-scene roundtrip has nonzero differences and does not qualify perfect world invariance;frozen isolated controls do. Reference Documentation/Grass-Stability-Batch027.md and Evidence/batch027/proof.json.

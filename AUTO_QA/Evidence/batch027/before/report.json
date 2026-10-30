@@ -1,0 +1,88 @@
+{
+  "label": "before",
+  "candidate": false,
+  "qualified": true,
+  "visiblePixels": 24546,
+  "maximum": 1.8240625,
+  "changedMax": 16170,
+  "mode": "None",
+  "levels": [
+    {
+      "screenRelativeTransitionHeight": 0.5930171,
+      "fadeTransitionWidth": 0.0,
+      "triangles": 23097
+    },
+    {
+      "screenRelativeTransitionHeight": 0.2280835,
+      "fadeTransitionWidth": 0.0,
+      "triangles": 7799
+    },
+    {
+      "screenRelativeTransitionHeight": 0.09265892,
+      "fadeTransitionWidth": 0.0,
+      "triangles": 1948
+    }
+  ],
+  "rows": [
+    {
+      "tier": 0,
+      "threshold": 0.5930171,
+      "maxMeanPixelDelta": 0.42203703703703704,
+      "maxChangedPixels": 5316,
+      "differences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.42203703703703704
+      ]
+    },
+    {
+      "tier": 1,
+      "threshold": 0.2280835,
+      "maxMeanPixelDelta": 1.4580439814814814,
+      "maxChangedPixels": 16170,
+      "differences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.4580439814814814
+      ]
+    },
+    {
+      "tier": 2,
+      "threshold": 0.09265892,
+      "maxMeanPixelDelta": 1.8240625,
+      "maxChangedPixels": 14335,
+      "differences": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.8240625
+      ]
+    }
+  ]
+}

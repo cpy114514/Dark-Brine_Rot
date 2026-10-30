@@ -1,0 +1,33 @@
+{
+  "label": "production-stability",
+  "candidate": false,
+  "stabilityOnly": true,
+  "stability": {
+    "heldChangedPixels": 0,
+    "turnRoundtripChangedPixels": 0,
+    "moveRoundtripChangedPixels": 0
+  },
+  "qualified": true,
+  "visiblePixels": 23193,
+  "maximum": 0.0,
+  "changedMax": 0,
+  "mode": "CrossFade",
+  "levels": [
+    {
+      "screenRelativeTransitionHeight": 0.5930178,
+      "fadeTransitionWidth": 0.2,
+      "triangles": 23097
+    },
+    {
+      "screenRelativeTransitionHeight": 0.228083789,
+      "fadeTransitionWidth": 0.2,
+      "triangles": 7799
+    },
+    {
+      "screenRelativeTransitionHeight": 0.09265904,
+      "fadeTransitionWidth": 0.2,
+      "triangles": 1948
+    }
+  ],
+  "rows": []
+}
