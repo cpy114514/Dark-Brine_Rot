@@ -278,3 +278,8 @@ Continued314b6f1/cs209. Duck grows another50% to7.14 units,with capsule/reach/se
 OfficialPlaywrightMCP0.0.83 installed in user tools and enabled in Codex shared config,headlessisolatedChrome.25-tool discovery/public-page navigation/title/close pass. Current conversation did not hot-load new tool catalog;MCP client initialization/reload required. Config/private outputs/backups stay outside repo;no auth data committed.
 
 Original5 scenes clean/stopped,fresh save+backup unchanged,owned marker cleared. Runtime camera/time/pipeline/pixel restored;no full100-pref registry claim without fresh pre-run snapshot. Only4 owned production files plus docs/helper/evidence checkpointed. Checkpoint title:Enlarge duck and correct locomotion and wave banner layout. Next real-island larger-duck group/terrain,UI wave flow and precision feet;no unchanged performance matrix repetition.
+
+
+## Automation continuation status — 2026-10-29
+
+Native app update of dark-brine-rot-qa returned: automation does not exist and could not be updated;it may have been deleted manually. Do not claim hourly/quota-recovery continuation remains scheduled. Do not blindly recreate a possibly user-removed automation. Batch026 is fully checkpointed/synced;continue from its accepted source/evidence when a new execution is authorized. Existing local automation files,if present,are not proof of an active app schedule.
