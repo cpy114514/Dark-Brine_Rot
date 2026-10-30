@@ -53,13 +53,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 4.76
-  m_Radius: 0.77
+  m_Height: 7.1400003
+  m_Radius: 1.155
   m_SlopeLimit: 45
   m_StepOffset: 0.35
   m_SkinWidth: 0.05
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 2.38, z: 0}
+  m_Center: {x: 0, y: 3.5700002, z: 0}
 --- !u!114 &2235431228292788699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -97,15 +97,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.ChickenBroAI
   sightRange: 18
   giveUpRange: 28
-  meleeRange: 3.21
-  lungeMin: 4.3399997
-  lungeMax: 9.52
+  meleeRange: 4.815
+  lungeMin: 6.5099993
+  lungeMax: 14.280001
   walkSpeed: 3.36
   runSpeed: 7.68
   lungeSpeed: 14.4
   turnSpeed: 720
-  surroundDistance: 7
-  separationRadius: 2.59
+  surroundDistance: 10.5
+  separationRadius: 3.8849998
+  matchLocomotionToMovement: 1
   strikeDamage: 2.25
   lungeDamage: 3.75
   strikeDuration: 0.53
@@ -115,7 +116,7 @@ MonoBehaviour:
   strikeWindowEnd: 0.55
   lungeWindowStart: 0.32
   lungeWindowEnd: 0.62
-  attackRadius: 1.89
+  attackRadius: 2.835
   lightSlide: 5.2
   heavySlide: 10
   launchSlide: 14
@@ -134,15 +135,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 38c4147971605544db401887c5f4126c, type: 3}
       propertyPath: m_LocalScale.x
-      value: 4.338906
+      value: 6.508359
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38c4147971605544db401887c5f4126c, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4.338906
+      value: 6.508359
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38c4147971605544db401887c5f4126c, type: 3}
       propertyPath: m_LocalScale.z
-      value: 4.338906
+      value: 6.508359
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38c4147971605544db401887c5f4126c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -150,7 +151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38c4147971605544db401887c5f4126c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.05174968
+      value: -0.07762452
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 38c4147971605544db401887c5f4126c, type: 3}
       propertyPath: m_LocalPosition.z

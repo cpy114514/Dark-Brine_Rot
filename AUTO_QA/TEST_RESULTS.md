@@ -434,3 +434,17 @@ Initial3433-frame archive is discovery/GPU-unqualified;final2172-frame archive a
 | Safety | Fresh saves/100 pref types restored;5 scenes clean/stopped,timescale1,frameTimingfalse/build policy/preloads/backend/settings bytes restored;unrelated4 Plastic paths hash-identical. |
 
 Raw CPU profile/logs/backup/build remain private;public report archive has exact byte/SHA256 roundtrip. New native profile instrumentation is optional;no original asset/gameplay/animation or steadyFPS claim. Documentation/Performance-Batch025.md and Evidence/batch025/proof.json.
+
+
+## 2026-10-29 — Batch026 — duck/UI/browser acceptance
+
+| Coverage | Result |
+|---|---|
+| Baseline |5 verified failures:wave text/card containment,HUD overlap,size criterion,slowChase/zero movement gait. One additional false duration assertion rejected as fixture error(.53/.8 actual). |
+| Final native |PASS31 covering actualWalk/Run/Idle settlement/immediate stop,natural surround/chase,7 action/reaction priorities,default chicken policy,stride products/UI/size and sphere close/dedup/far/cover.16/26 intermediates overlap. |
+| Size / animation |4.76→7.14 capsule,1.155radius;Sahur scaled5.3007. Additional1.5×visual/collision/reach,Walk.8428571/Run.8,.16s locomotion blends. Original damage/travel speed/attack durations/windows/Strike unchanged. |
+| UI / visuals |Native2560×1440 before/after inspected;label inside card,Hud gap21.33px,caption noninteractive. FinalWalk/Idle PNGs inspected;not perfectfootIK/continuous smoothness/full island wave acceptance. |
+| Browser MCP |Installed/configuredofficial@playwright/mcp0.0.83;25 tools,realexample.com navigation/title and owned browser close pass. Current chat catalog not hot-loaded;client initialization/reload required. |
+| Cleanup |Original5 scenes clean/stopped,saves byte-unchanged,owned marker clear;runtime camera/time/pipeline/pixel restored. FBX/meta/material/chicken prefab match baseline. No fresh100-registry-value restoration assertion. |
+
+Source compilation passes. Native save-safe scaled-sole placement and physics synchronization used. Evidence/batch026/proof.json qualifies raw baseline/accepted data;Documentation/Duck-UI-Batch026.md records limits. Global config/backups/auth remain private;browser output removed from project and redirected to user folder.

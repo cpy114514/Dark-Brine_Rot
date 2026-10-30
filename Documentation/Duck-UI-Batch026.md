@@ -1,0 +1,33 @@
+# Duck size, locomotion, wave UI and browser setup — Batch026
+
+The latest user request is implemented:duck grows another50%,wave caption moves inside its card below the encounter HUD,and duck locomotion now follows actual travel rather than treating every Chase mood as running. Playwright MCP is installed/configured independently in the user profile and its real browser protocol probe passes.
+
+## Confirmed evidence and corrections
+
+Native baseline duck capsule4.76 scene units was shorter than Sahur's scaled5.30071354 capsule. Uniform visual scale increases1.5× to6.508359;capsule height7.14000034,radius1.155,centerY3.5700002. This is2.1× the original3.4-height duck after the prior1.4× revision. Visual offset,capsule,melee/lunge ranges,separation andsurround radius grow consistently. Health,damage,world travel speeds,attack windows,gravity and original spherical Strike body remain unchanged. No model/UV/bone/FBX clip overwritten.
+
+QA-037 reproduced:slow Chase emittedMotion2/Run at normalizedSpeed1,and zero horizontal travel also stayedRun. Shared Present() used only the AI mood;the no-slot circling branch travels at walk speed while stayingChase. A duck-only opt-in now records net horizontal displacement across both CharacterController.Move calls (motor.velocity alone reflects the later vertical move). Normalize byrunSpeed,damp acceleration over.12s and immediately select zero for no movement. Existing chicken policy defaultsfalse and passes native patrol/chase checks. Reactions/actions take priority over locomotion,includingIdle/cooldown with staleSpeed1.
+
+New duckWalk/Run controller rates0.8428571/0.799999952 compensate the extra1.5× limb scale,retaining the previous world-stride product. Idle/Walk/Run fixed blend durations grow.10→.16s;self transitions remain disabled. Attack/reaction rates and blends remain1/.10s and1/.06s;authored duck strike/lunge durations remain.53/.8s. An initial fixture assertion incorrectly assumed the shared AI defaults.95/1.15s;that failing row is rejected as test evidence of a game bug. No duration correction was applied to the game.
+
+QA-038 reproduced in native2560×1440 GameView:the wave text extended above both card and screen and the card overlapped actual BossHudPanel geometry. GameUITheme.Label anchors to its parent's top;this label needed a center anchor. The card now uses top-center pivot,reference1920×1080 offsetY-132,size740×64,and a centered700×48 label. Native accepted card y1178.67–1264,text1189.33–1253.33 and encounter HUD bottom1285.33 give a21.33px gap. Caption remains noninteractive and retains the existing wording/lifetime/wave logic.
+
+## Native acceptance and animation review
+
+31 final checks pass:card/text/HUD placement and noninteraction,size relative to scaled Sahur,actualWalk/Run/Idle state settlement,immediate stopping,stride products,no self restart,default chicken behavior,real surround/chase decisions,7 action/reaction priorities,and original sphere hit/repeat/far/cover controls. A close hit reduces100→98 after current mitigation;repeat cannot multiply damage,far target and cover stay protected. Character placement uses the scaled capsule sole and native collision synchronization. Source compiles successfully. Earlier16/26 intermediate sets overlap and are superseded,not added to31.
+
+Review revision:LongLeggedDuck-controller-batch026,existing authored duck design,user-requested targetedPOLISH,2026-10-29. Native sample frames0/4/10/20/29 are observation indices,not a constant-FPS movie. Before frames0–29 wrongly stayedRun during slow/stationary travel. An intermediate acceleration-damping candidate leftWalk at stopping frames0/4;final zero handling selectsMotion0/Speed0 from frame0 and settles in actualIdle after the existing blend. Walk/Run similarly settle in their actual state without a pending transition.
+
+Actual before/after size+UI and finalWalk/Idle GameView PNGs were inspected. Silhouette/size and caption readability are observed;continuous motion smoothness,weight,anticipation,impact and precision foot contact are not numerically scored from stills. No perfect-footIK or full-animation-release approval is claimed. This is bounded functional/state and rendered layout acceptance for the requested revision;full first-island waves,mixed enlarged flock/terrain and authored foot-contact polish remain next checks.
+
+## Playwright MCP
+
+Plugin discovery did not return a matching Playwright listing,so the requested official Microsoft server was installed directly:package@playwright/mcp0.0.83 in user tools,Node24.15.0,shared Codex MCP nameplaywright enabled,stdio,headlessChrome,isolated browser context. Automatic browser output goes to a private user folder rather than the Unity repository. The MCP client discovers25 tools,navigateshttps://example.com,findsExample Domain and closes the owned browser successfully. This verifies installed/configured/protocol-working separately from the current conversation's tool catalog,which did not hot-load the new server. The client must next initialize/reload MCP for native server tools to appear;no app restart was forced during work.
+
+A private global config backup and package lock are retained. No config/auth/user browser profile enters Git. Unrelated config differences observed across snapshots were preserved instead of blindly rolling back potentially concurrent settings;the exact requested Playwright entry was verified. A temporary project snapshot from the first smoke run was moved privately and its empty directory removed;future output is private. [Microsoft setup](https://github.com/microsoft/playwright-mcp),[Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
+
+## Preservation and checkpoint
+
+Same Editor only. Original5 scenes restored clean/stopped,fresh save+backup byte-identical and running marker clear. FBX/import metadata/material and chicken prefab match the Git baseline;original Strike code body matches the fresh source snapshot. Runtime pixel/pipeline/camera/time ownership restores. No standalone build/full FPS or full registry preference-restoration claim:this Editor batch did not intentionally write PlayerPrefs,and no fresh100-value pre-run registry snapshot was taken. Preserve user edits/unrelated Plastic checkouts and existing606 missing plants.
+
+Public evidence:AUTO_QA/Evidence/batch026/{proof,before-reproduction,accepted,final-native-state,browser-setup}.json plus5 native PNGs. Private snapshots/intermediate cases remain.codex/enemy026;do not overwrite or rerun unchanged. Checkpoint title:Enlarge duck and correct locomotion and wave banner layout. BaselineGit314b6f1/Plasticcs209;verify actual remotes before sync.

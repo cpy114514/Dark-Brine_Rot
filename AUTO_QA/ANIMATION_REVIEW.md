@@ -137,3 +137,10 @@ Native final full-recovery/half-a PNGs inspected:actual Sahur,terrain,grass and 
 ## 2026-10-29 — Batch025 — native CPU capture only
 
 Only optional binary profiling/phase labels changed;no animation/model/rig/controller/collision or normal camera behavior edit. Native paired frozen forest renders pass7 existing pixel controls,without new temporal-smoothness/whole combat/UI/precision foot acceptance. Raw CPU markers qualify timing,not animation appearance. Styles/pixel and chicken/duck repairs remain;small toe intersections remain open.
+
+
+## 2026-10-29 — Batch026 — targeted duck controller polish
+
+RevisionLongLeggedDuck-controller-batch026;existing design,user-requestedPOLISH. Before native sampleframes0/4/10/20/29 stayedRun at slow/zero travel. Final measured planar speed selects actualWalk/Run/Idle,acceleration damping.12s,zeroSpeed/Motion0 from first stopping frame;actualIdle settles after blend. Controller locomotion blends.16s,Walk/Run rates.8428571/.8 compensate extra1.5× size. Attack/reaction rates/windows/rig/FBX unchanged;default chicken policy preserved.
+
+Before/after size+UI and finalWalk/Idle PNGs inspected. Silhouette and caption readability observed;continuous smoothness/weight/anticipation/impact/exact-foot stability are unscored/not fully observed. No perfectfootIK or human FINAL/APPROVED claim.31 native checks pass for targeted mechanics/layout;next actual island terrain,mixed enlarged flock and precise foot contact. See Documentation/Duck-UI-Batch026.md and Evidence/batch026.

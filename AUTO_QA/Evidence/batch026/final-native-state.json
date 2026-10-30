@@ -1,0 +1,140 @@
+{
+  "stopped": true,
+  "sceneMatch": true,
+  "savesUnchanged": true,
+  "markerClear": true,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "isLoaded": true,
+      "isActive": true,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "isLoaded": true,
+      "isActive": false,
+      "isSubScene": false
+    }
+  ],
+  "height": 7.14000034,
+  "radius": 1.155,
+  "center": "(0.00, 3.57, 0.00)",
+  "matchLocomotionToMovement": true,
+  "walkSpeed": 3.36,
+  "runSpeed": 7.68,
+  "strikeDuration": 0.53,
+  "lungeDuration": 0.8,
+  "strikeDamage": 2.25,
+  "lungeDamage": 3.75,
+  "states": [
+    {
+      "name": "Idle",
+      "speed": 1.0,
+      "clip": "Armature|Idle"
+    },
+    {
+      "name": "Walk",
+      "speed": 0.8428571,
+      "clip": "Armature|Walk"
+    },
+    {
+      "name": "Run",
+      "speed": 0.799999952,
+      "clip": "Armature|Run"
+    },
+    {
+      "name": "Strike",
+      "speed": 1.0,
+      "clip": "Armature|Peck"
+    },
+    {
+      "name": "Lunge",
+      "speed": 1.0,
+      "clip": "Armature|Lunge"
+    },
+    {
+      "name": "Flinch",
+      "speed": 1.0,
+      "clip": "Armature|Flinch"
+    },
+    {
+      "name": "Knockdown",
+      "speed": 1.0,
+      "clip": "Armature|Knockdown"
+    },
+    {
+      "name": "Death",
+      "speed": 1.0,
+      "clip": "Armature|Death"
+    }
+  ],
+  "transitions": [
+    {
+      "state": "Idle",
+      "duration": 0.16,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    },
+    {
+      "state": "Walk",
+      "duration": 0.16,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    },
+    {
+      "state": "Run",
+      "duration": 0.16,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    },
+    {
+      "state": "Strike",
+      "duration": 0.1,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    },
+    {
+      "state": "Lunge",
+      "duration": 0.1,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    },
+    {
+      "state": "Flinch",
+      "duration": 0.06,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    },
+    {
+      "state": "Knockdown",
+      "duration": 0.06,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    },
+    {
+      "state": "Death",
+      "duration": 0.06,
+      "hasFixedDuration": true,
+      "canTransitionToSelf": false
+    }
+  ]
+}
