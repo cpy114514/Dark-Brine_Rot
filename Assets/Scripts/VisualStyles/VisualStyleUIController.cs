@@ -114,17 +114,19 @@ namespace Mavis.VisualStyles
             var presets = VisualStyleManager.Instance.Presets;
             for (int i = 0; i < presets.Count; i++)
             {
-                var preset = presets[i]; float x = (i - (presets.Count - 1) * .5f) * 350;
-                var card = Rect(gallery.transform, preset.id, new Vector2(342, 440), new Vector2(x, 75));
+                var preset = presets[i]; bool compact = presets.Count > 4;
+                float x = compact ? (i % 3 - 1) * 474 : (i - (presets.Count - 1) * .5f) * 350;
+                var size = compact ? new Vector2(456,230) : new Vector2(342,440);
+                var card = Rect(gallery.transform, preset.id, size, new Vector2(x, compact ? 200-(i/3)*250 : 75));
                 var border = card.gameObject.AddComponent<Image>(); border.color = GameUITheme.Gray(.32f); borders.Add(border);
                 var hover = card.gameObject.AddComponent<VisualStyleCardHover>();
                 hover.entered = () => border.color = VisualStyleManager.Instance.Current == preset ? parchment : GameUITheme.Gray(.58f);
                 hover.exited = Refresh;
-                var body = Rect(card, "Surface", new Vector2(338, 436), Vector2.zero); GameUITheme.Image(body, GameUITheme.Gray(.045f));
-                Picture(body, "Actual scene preview", preset.preview, new Vector2(320, 180), new Vector2(0, 110));
-                Label(body, preset.displayName, 22, new Vector2(0, -10), new Vector2(312, 34)).color = parchment;
-                Label(body, preset.description, 17, new Vector2(0, -78), new Vector2(304, 88)).color = GameUITheme.Secondary;
-                var button = Button(body, "SELECT", new Vector2(0, -174), new Vector2(306, 44), () => VisualStyleManager.Instance.Select(preset.id));
+                var body = Rect(card, "Surface", size-Vector2.one*4, Vector2.zero); GameUITheme.Image(body, GameUITheme.Gray(.045f));
+                Picture(body, "Actual scene preview", preset.preview, compact ? new Vector2(224,126) : new Vector2(320,180), compact ? new Vector2(-105,35) : new Vector2(0,110));
+                Label(body, preset.displayName, 22, compact ? new Vector2(124,75) : new Vector2(0,-10), compact ? new Vector2(190,32) : new Vector2(312,34)).color = parchment;
+                Label(body, preset.description, compact ? 16 : 17, compact ? new Vector2(124,12) : new Vector2(0,-78), compact ? new Vector2(188,90) : new Vector2(304,88)).color = GameUITheme.Secondary;
+                var button = Button(body, "SELECT", new Vector2(0,compact ? -83 : -174), compact ? new Vector2(420,38) : new Vector2(306,44), () => VisualStyleManager.Instance.Select(preset.id));
                 styleButtons.Add(button); captions.Add(button.GetComponentInChildren<Text>());
             }
             Button(gallery.transform, "COMPARE STYLES", new Vector2(0, -220), new Vector2(340, 54), () => ShowComparison(true));
@@ -155,7 +157,12 @@ namespace Mavis.VisualStyles
             var dropdown = go.GetComponent<Dropdown>(); dropdown.ClearOptions();
             var names = new List<string>(); foreach (var p in VisualStyleManager.Instance.Presets) names.Add(p.displayName);
             dropdown.AddOptions(names); dropdown.SetValueWithoutNotify(selected); dropdown.template.sizeDelta = new Vector2(0,180);
-            var item = dropdown.template.GetComponentInChildren<Toggle>(true); if (item) item.GetComponent<RectTransform>().sizeDelta = new Vector2(0,34); return dropdown;
+            var item = dropdown.template.GetComponentInChildren<Toggle>(true); if (item) item.GetComponent<RectTransform>().sizeDelta = new Vector2(0,34);
+            // Match the template content to the taller item. The factory's28px
+            // content with a34px item creates negative padding and clips the last row.
+            var scroll = dropdown.template.GetComponent<ScrollRect>();
+            if (scroll && scroll.content) scroll.content.sizeDelta = new Vector2(scroll.content.sizeDelta.x,34);
+            return dropdown;
         }
         void BuildComparison(RectTransform sheet)
         {
@@ -202,8 +209,10 @@ namespace Mavis.VisualStyles
             IntensitySlider.SetValueWithoutNotify(manager.Intensity);
             IntensitySlider.interactable = manager.Current && manager.Current.Stylized;
             var mode = manager.Current.Mode;
-            bool advanced = mode == VisualStyleMode.ColorComic || mode == VisualStyleMode.Monochrome;
-            var names = new[] { "Ink weight", "Tone contrast", "Screentone", "Shadow ink" };
+            bool advanced = (int)mode >= (int)VisualStyleMode.ColorComic;
+            var names = mode == VisualStyleMode.InkWash ? new[] { "Ink bleed", "Brush texture", "Paper grain", "Mist" } :
+                mode == VisualStyleMode.VanGogh ? new[] { "Brush size", "Swirl", "Impasto", "Color richness" } :
+                new[] { "Ink weight", "Tone contrast", "Screentone", "Shadow ink" };
             for (int i = 0; i < 4; i++)
             {
                 detailSliders[i].SetValueWithoutNotify(manager.Details[i]); detailSliders[i].interactable = advanced;

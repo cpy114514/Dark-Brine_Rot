@@ -1,3 +1,17 @@
+Late sync state: new independent Plastic cs218 and shared working-tree ChickenBroAI/ChickenBro prefab/LongLeggedDuck prefab awareness-range edits appeared after painting validation. Preserve and exclude them. They are not owned/tested by031. Git may intentionally remain dirty on those three paths after checkpoint.
+
+# Latest completed batch — 031 Ink Wash / Van Gogh
+
+Added requested Ink Wash(idink-wash/mode4) and Van Gogh(idvan-gogh/mode5), retaining Realistic/Dark/ColorComic/BWManga/pixel. New independently persisted normalized controls; six-card2×3gallery/36comparisonpairs; six matching native1280×720noonpreviews,existingpresetbytes/GUIDs preserved. Ink uses depthguarded washes/drybrush/paper/mist and lowlight remap;oil uses localrotated color/depthguardeddabs/impasto/bluegold,not replacementart. Initial absolute-coordinate interference rings rejected. Screenanchoredmarks/no timejitter,not surface-locked.
+
+142accepted nativechecks(47render/preferences+79UI+16transparent),day/night/MSAA4/pixel,48orbitpositions acrossnewstyles and realdomainreload/readyrecache/singlegrasslayout pass. ExistingDark/comicshaderbodiesidentical. QA-043fixed:dropdown28content/34item negativepadding clipslastrow4px(scroll0bottom920/viewport924);matching34content fullyshows6throw and actualToggle selectsVanGogh. Initial prematureShow-before-Start/staledetailtoggle harnessfailures rejected. Finalshader2keywordvariants0messages. Windows64MonoDevelopment7scenesSucceeded66.09s/493warnings/4known606plantmessages;binaryunlaunched/noFPSclaim. Documentation/Painting-Batch031.md/Evidence/batch031/proof.json. Checkpointtitle Add ink wash and Van Gogh painting styles;inspect actualgit/Plasticreceipt before syncing.
+
+NEXT:actualSahurcombat/Boss/tutorial readability with6stylesday/night,longerforesttraversal,qualified standalonecost ofcompletegrass+painting. Do not repeat static142 or inferanimation/FPSfromfrozenactor/orbit. Preserveoriginal4stylesandindependentpixel,completegrass028,largeduck/animation/waveUI026. No paper/film reintroduction,no grass thinning.
+
+Safety:sameEditor17184,5originalFirstIslandscenesclean/stopped,timeScale1,0fixtures,freshsave+backupunchanged;24protectedhashes/existingGUIDsmatch.981originalregistrykinds/values/keysetrestored.8temporarypaintingkeys/selectionoverride and1unusedfixtureledgercleaned;nativecampaigncacherestored. Buildflags/preloads/settings/duckaliascleanupalltrue. Private.codex/art031snapshots/candidates/buildimmutable;runningmarkerclearedonlyafterfinalsync.
+
+Plasticlocalbase212hasalreadypublished214–217patchesandusercheckouts;independent213unimported/untested. NEVERcmupdate/partialupdatehere;recoveryshelve5preserved. Syncownedmanifestvia scopedshelveset/server-side mergeonly,verifyremoteandkeepunrelatedsettings/Recovery/caches/secretsout.606missingplantsretained. Automationmissingunscheduled,no blind recreation.
+
 # Latest completed batch — 030 comic replacement
 
 User explicitly replaced Origami with Color Comic and movie grayscale with B&W Manga. Do NOT restore paper/film effects. Realistic/Dark, four cards/any-pair comparison and independent pixel remain. Comics use complete-depth contours, cel bands/printed dots, Manga ink whites/blacks/hatching after world transparents/postprocessing; native UI stays colored. Legacyorigami/monochrome IDs/numericmodes/GUIDs retained; independent Comic1 controls avoid old fold/film overrides. Four new matching native1280×720 noon previews at89.7673%. Midnight Color Comic crush fixed with low-luminance preservation.

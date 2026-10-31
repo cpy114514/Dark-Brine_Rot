@@ -1,0 +1,199 @@
+{
+  "passed": true,
+  "checks": 47,
+  "roundtripChangedPixels": {
+    "ink-wash": 2693,
+    "van-gogh": 1547
+  },
+  "roundtripPixels": 921600,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Comics request complete depth without incomplete normals"
+    },
+    {
+      "ok": true,
+      "name": "URP depth-copy resource available"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response ink-wash 0"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response ink-wash 1"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response ink-wash 2"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response ink-wash 3"
+    },
+    {
+      "ok": true,
+      "name": "Intensity visible response ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response van-gogh 0"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response van-gogh 1"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response van-gogh 2"
+    },
+    {
+      "ok": true,
+      "name": "Painting detail visible response van-gogh 3"
+    },
+    {
+      "ok": true,
+      "name": "Intensity visible response van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Independent persisted comic controls ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Native re-enable loads saved controls ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Independent persisted comic controls van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Native re-enable loads saved controls van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Saved painting selection reloads ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Saved painting selection reloads van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Six unique preset slots"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 0"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 1"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 2"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 3"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 4"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 5"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 6"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 7"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 8"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 9"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 10"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 11"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 12"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 13"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 14"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 15"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 16"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 17"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 18"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 19"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 20"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 21"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 22"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 23"
+    },
+    {
+      "ok": true,
+      "name": "Camera roundtrip no wholesale pattern reshuffle ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Camera roundtrip no wholesale pattern reshuffle van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Fixed complete grass layout preserved"
+    },
+    {
+      "ok": true,
+      "name": "Preview cannot overwrite user game"
+    }
+  ]
+}

@@ -1,5 +1,12 @@
 # Dark Brine_Rot automated QA
 
+## Batch031 — Ink Wash / Van Gogh additions and QA-043 dropdown clipping
+
+Added two user-requested independent painterly presets alongside the existing four. Native shader/camera/UI evidence validates ink wash, local oil dabs, six cards, saved controls and36 comparison pairs. Existing original presets and Dark/comic shader bodies unchanged.142 accepted checks(47 render/preferences+79 UI+16 transparency), native day/night/MSAA4/pixel, real reload recache and sameEditor seven-scene WindowsMono build pass.
+
+QA-043 VERIFIED/FIXED:legacy dropdown template content28 versus item34 produced negative padding. At bottom scroll sixth row bottom920px vs viewport924px, clipped4px. Native content height34 fixes it; final fully visible sixth item and actualToggle selection pass. Initial Show-before-Start and stale detail-toggle failures were rejected harness errors, not gameplay defects. Final oil prototype removes absolute-coordinate interference rings; ink low-light remap improves sampled night face. NoFPS or full battle-readability claim. Documentation/Painting-Batch031.md; Evidence/batch031/proof.json.
+
+
 ## Batch030 — requested Color Comic / B&W Manga replacement
 
 User explicitly replaced Origami with Color Comic and requested true black-and-white comic treatment. New ink contours, cel bands, screen-anchored dots and Manga hatching replace folds/film grayscale. Both process composed world after transparents/postprocessing, using complete opaque depth; UI retains native color. Legacy IDs/GUIDs/mode numbers persist; Comic1 controls have independent saved keys.

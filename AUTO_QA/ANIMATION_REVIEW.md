@@ -1,5 +1,10 @@
 # Animation review
 
+## Batch031 — native ink/oil visual review
+
+Actual six-card gallery, matching Ink Wash/Van Gogh comparison and noon/night/MSAA4/pixel images inspected. Ink wash has warm paper, dark/light ink and dry-brush/mist; oil uses local curved dabs/impasto and blue-gold color. First dense interference-ring prototype rejected. Both painting modes have24 captured orbit positions; roundtrip2,693/1,547 pixels>2 of921,600, not pixel invariance/gameFPS. Sahur pose frozen; no animation-smoothness or full encounter acceptance. All original geometry/UV/rig/clip/collider/material/scene bytes preserved; full grass layout and existing comics retained. Next actual action/encounter readability in six styles. Documentation/Painting-Batch031.md.
+
+
 ## Batch030 — comic rendering replaces paper and film modes
 
 Inspected actual matching Color Comic/B&W Manga noon views, midnight,4×MSAA, pixel, gallery and split comparison. Comic surfaces use contours/printed dots and Manga shadow hatching; full world/transparencies are processed, overlay red stays red. Frozen Sahur and24-position orbit validate appearance samples only; no smoother-animation/full-combat acceptance. Final roundtrip differs3,998/921,600 pixels>2, not perfect temporal invariance. Models/UVs/rigs/source clips/controllers/collision and complete grass layout unchanged. User's replacement direction supersedes prior requests to retain Origami. Next active encounter/tutorial readability in both comic modes. Documentation/Comic-Batch030.md.
