@@ -1,0 +1,99 @@
+{
+  "passed": true,
+  "originalBoneTransforms": true,
+  "bones": [
+    {
+      "name": "Armature",
+      "ok": true
+    },
+    {
+      "name": "Root",
+      "ok": true
+    },
+    {
+      "name": "Body",
+      "ok": true
+    },
+    {
+      "name": "Neck1",
+      "ok": true
+    },
+    {
+      "name": "Neck2",
+      "ok": true
+    },
+    {
+      "name": "Neck3",
+      "ok": true
+    },
+    {
+      "name": "Neck4",
+      "ok": true
+    },
+    {
+      "name": "Head",
+      "ok": true
+    },
+    {
+      "name": "ThighL",
+      "ok": true
+    },
+    {
+      "name": "ShinL",
+      "ok": true
+    },
+    {
+      "name": "FootL",
+      "ok": true
+    },
+    {
+      "name": "ToeL",
+      "ok": true
+    },
+    {
+      "name": "ThighR",
+      "ok": true
+    },
+    {
+      "name": "ShinR",
+      "ok": true
+    },
+    {
+      "name": "FootR",
+      "ok": true
+    },
+    {
+      "name": "ToeR",
+      "ok": true
+    },
+    {
+      "name": "WingL",
+      "ok": true
+    },
+    {
+      "name": "WingL2",
+      "ok": true
+    },
+    {
+      "name": "WingR",
+      "ok": true
+    },
+    {
+      "name": "WingR2",
+      "ok": true
+    },
+    {
+      "name": "Mesh_0",
+      "ok": true
+    }
+  ],
+  "arenaAssignedToUpdatedPrefab": true,
+  "playing": true,
+  "timeScale": 0.0,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/Combat Test/CombatTest.unity",
+      "dirty": false
+    }
+  ]
+}

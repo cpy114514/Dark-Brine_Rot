@@ -1,0 +1,381 @@
+{
+  "passed": 70,
+  "failed": 0,
+  "tests": [
+    {
+      "ok": true,
+      "name": "Original unchanged: BullyGoose.controller",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: BullyGoose.controller.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: BullyGoose.fbx",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: BullyGoose.fbx.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: BullyGoose.mat",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: BullyGoose.mat.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: BullyGoose.prefab.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Scripts.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Scripts/BullyGooseVoice.cs",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Scripts/BullyGooseVoice.cs.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901.png",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901.png.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901_metallic.png",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901_metallic.png.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901_normal.png",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901_normal.png.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901_roughness.png",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original unchanged: Textures/texture_pbr_20250901_roughness.png.meta",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Goose enlarged by 30%",
+      "detail": {
+        "height": 5.97999954,
+        "radius": 0.936
+      }
+    },
+    {
+      "ok": true,
+      "name": "Capsule sole remains at root",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Locomotion uses actual movement",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Movement speed preserved",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "All attack damage preserved",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Attack clocks preserved",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Hit windows preserved",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "One continuous idle/walk/run tree",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Stride rates remain below sewing-machine baseline",
+      "detail": [
+        {
+          "timeScale": 1.0,
+          "threshold": 0.0
+        },
+        {
+          "timeScale": 1.38381457,
+          "threshold": 0.4
+        },
+        {
+          "timeScale": 1.54002786,
+          "threshold": 1.0
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "AI retains movement ownership",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original action preserved: Strike",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original action preserved: Lunge",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original action preserved: Flinch",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original action preserved: Knockdown",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original action preserved: Death",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original action preserved: Alert",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Original action preserved: Wing",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Walk/run/idle phase continuity at 30Hz",
+      "detail": {
+        "maximumJump": 0.128335953,
+        "normalizedTime": 18.654417
+      }
+    },
+    {
+      "ok": true,
+      "name": "Native Strike enters at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Strike at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Lunge enters at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Lunge at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Flinch enters at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Flinch at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Knockdown enters at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Knockdown at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Death enters at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Death at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Alert enters at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Alert at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Wing enters at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Wing at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Stopped animation has full idle weight at 30Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Walk/run/idle phase continuity at 60Hz",
+      "detail": {
+        "maximumJump": 0.06416798,
+        "normalizedTime": 9.32720852
+      }
+    },
+    {
+      "ok": true,
+      "name": "Native Strike enters at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Strike at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Lunge enters at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Lunge at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Flinch enters at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Flinch at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Knockdown enters at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Knockdown at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Death enters at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Death at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Alert enters at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Alert at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native Wing enters at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Native recovery from Wing at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Stopped animation has full idle weight at 60Hz",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Actual AI stops feet when blocked in Patrol",
+      "detail": null
+    },
+    {
+      "ok": true,
+      "name": "Actual AI stops feet when blocked in Chase",
+      "detail": null
+    }
+  ],
+  "playing": true,
+  "timeScale": 0.0,
+  "fullLiveCombatTested": false
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "name": "IdlePolish034",
+    "length": 1.56666672,
+    "bones": [
+      {
+        "name": "Head",
+        "seam": 0.0,
+        "velocityJump": 0.0101616886
+      },
+      {
+        "name": "FootL",
+        "seam": 0.0,
+        "velocityJump": 0.00482940162
+      },
+      {
+        "name": "FootR",
+        "seam": 0.0,
+        "velocityJump": 0.00482940162
+      },
+      {
+        "name": "WingL2",
+        "seam": 0.0,
+        "velocityJump": 0.00266557932
+      }
+    ]
+  },
+  {
+    "name": "WalkPolish034",
+    "length": 0.533333361,
+    "bones": [
+      {
+        "name": "Head",
+        "seam": 0.0,
+        "velocityJump": 0.0663480163
+      },
+      {
+        "name": "FootL",
+        "seam": 0.0,
+        "velocityJump": 0.06492189
+      },
+      {
+        "name": "FootR",
+        "seam": 0.0,
+        "velocityJump": 0.126672924
+      },
+      {
+        "name": "WingL2",
+        "seam": 0.0,
+        "velocityJump": 0.0503856465
+      }
+    ]
+  },
+  {
+    "name": "RunPolish034",
+    "length": 0.400000036,
+    "bones": [
+      {
+        "name": "Head",
+        "seam": 0.0,
+        "velocityJump": 0.223807439
+      },
+      {
+        "name": "FootL",
+        "seam": 0.0,
+        "velocityJump": 0.189619169
+      },
+      {
+        "name": "FootR",
+        "seam": 0.0,
+        "velocityJump": 0.22694771
+      },
+      {
+        "name": "WingL2",
+        "seam": 0.0,
+        "velocityJump": 0.1277166
+      }
+    ]
+  }
+]

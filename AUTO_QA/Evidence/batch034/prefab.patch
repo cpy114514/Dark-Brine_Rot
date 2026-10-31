@@ -1,0 +1,107 @@
+--- before/BullyGoose.prefab
++++ after/BullyGoose.prefab
+@@ -55,13 +55,13 @@
+   m_ProvidesContacts: 0
+   m_Enabled: 1
+   serializedVersion: 3
+-  m_Height: 4.6
+-  m_Radius: 0.72
++  m_Height: 5.9799995
++  m_Radius: 0.936
+   m_SlopeLimit: 45
+-  m_StepOffset: 0.4
+-  m_SkinWidth: 0.06
++  m_StepOffset: 0.52
++  m_SkinWidth: 0.077999994
+   m_MinMoveDistance: 0.001
+-  m_Center: {x: 0, y: 2.3, z: 0}
++  m_Center: {x: 0, y: 2.9899998, z: 0}
+ --- !u!114 &5222583199828104740
+ MonoBehaviour:
+   m_ObjectHideFlags: 0
+@@ -99,16 +99,16 @@
+   m_EditorClassIdentifier: Assembly-CSharp::Mavis.ChickenBroAI
+   sightRange: 32
+   giveUpRange: 50
+-  meleeRange: 3.4
+-  lungeMin: 3.6
+-  lungeMax: 8.2
++  meleeRange: 4.42
++  lungeMin: 4.68
++  lungeMax: 10.659999
+   walkSpeed: 2
+   runSpeed: 5
+   lungeSpeed: 11
+   turnSpeed: 460
+-  surroundDistance: 5.5
+-  separationRadius: 2.1
+-  matchLocomotionToMovement: 0
++  surroundDistance: 7.1499996
++  separationRadius: 2.7299998
++  matchLocomotionToMovement: 1
+   strikeDamage: 4.8
+   lungeDamage: 8
+   strikeDuration: 0.5666667
+@@ -118,7 +118,7 @@
+   strikeWindowEnd: 0.58
+   lungeWindowStart: 0.26
+   lungeWindowEnd: 0.7
+-  attackRadius: 0.95
++  attackRadius: 1.2349999
+   lightSlide: 1.85
+   heavySlide: 3.7
+   launchSlide: 5.4
+@@ -128,13 +128,13 @@
+   removeAfterDeath: 4
+   courtesySeconds: 0.5
+   alertSeconds: 0.95
+-  peckReach: 1.35
++  peckReach: 1.755
+   wingDamage: 6
+-  wingRange: 2.15
++  wingRange: 2.795
+   wingDuration: 0.5
+   wingWindowStart: 0.42
+   wingWindowEnd: 0.66
+-  wingRadius: 1.55
++  wingRadius: 2.0149999
+   wingRecovery: 0.45
+   lungePush: 7
+   wingPush: 4
+@@ -259,15 +259,15 @@
+     m_Modifications:
+     - target: {fileID: -8679921383154817045, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_LocalScale.x
+-      value: 3.713499
++      value: 4.8275485
+       objectReference: {fileID: 0}
+     - target: {fileID: -8679921383154817045, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_LocalScale.y
+-      value: 3.713499
++      value: 4.8275485
+       objectReference: {fileID: 0}
+     - target: {fileID: -8679921383154817045, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_LocalScale.z
+-      value: 3.713499
++      value: 4.8275485
+       objectReference: {fileID: 0}
+     - target: {fileID: -8679921383154817045, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_LocalPosition.x
+@@ -275,7 +275,7 @@
+       objectReference: {fileID: 0}
+     - target: {fileID: -8679921383154817045, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_LocalPosition.y
+-      value: 0.28541565
++      value: 0.37104034
+       objectReference: {fileID: 0}
+     - target: {fileID: -8679921383154817045, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_LocalPosition.z
+@@ -508,7 +508,7 @@
+     - target: {fileID: 5866666021909216657, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_Controller
+       value: 
+-      objectReference: {fileID: 9100000, guid: 1310c035b0b281b4c9622d386125c033, type: 2}
++      objectReference: {fileID: 9100000, guid: 24cc1ea741977d347b4b0b73b2eeabf0, type: 2}
+     - target: {fileID: 5866666021909216657, guid: 9ce1b4ffb1d405146bf3eebaab04df25, type: 3}
+       propertyPath: m_CullingMode
+       value: 0

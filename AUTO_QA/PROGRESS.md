@@ -1,3 +1,7 @@
+## Batch034 complete — goose animation and size
+
+User requested existing goose animation polish/larger size. BullyGoose enlarged30% (4.6→5.98 capsule), synchronized reach/capsule/separation; movement speed/damage/hit timing preserved. Goose-only actual-movement presentation and continuous gait tree; corrected full-cycle stride calibration reduces run9→3.8501cycles/s. Three separate periodic loop revisions keep originals.70 native checks pass,21 original transforms and arena binding pass,180 qualified native Unity preview frames/6s. No build/FPS/full live combat claim. Existing paused CombatTest session retained, no scene/save/pref writes. New spawns receive revision. Precise feet/live turn/collision next. Original untracked goose baseline and8 unrelated modified paths preserved; scoped checkpoint records new owned assets and precise prefab/installer patches only. See Documentation/Goose-Polish-Batch034.md.
+
 # Progress
 
 ## Batch033 complete — integrate Unity Version Control and upload

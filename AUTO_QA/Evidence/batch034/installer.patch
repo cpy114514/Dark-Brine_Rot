@@ -1,0 +1,95 @@
+--- before/Tools/InstallBullyGoose.cs
++++ after/Tools/InstallBullyGoose.cs
+@@ -15,7 +15,8 @@
+     const string PrefabPath = Folder + "/BullyGoose.prefab";
+     const string EncounterPath = "Assets/Scenes/First Island/Enemies.unity";
+     const string ArenaPath = "Assets/Scenes/Combat Test/CombatTest.unity";
+-    const float TargetHeight = 4.6f;
++    const float SizeFactor = 1.3f;
++    const float TargetHeight = 4.6f * SizeFactor;
+     static string footReport = "";
+ 
+     public static string Apply()
+@@ -131,6 +132,9 @@
+ 
+     static AnimatorController BuildController()
+     {
++        // Keep the reviewed continuous gait and periodic clips on reinstall.
++        var polished = AssetDatabase.LoadAssetAtPath<AnimatorController>(Folder + "/Animations/Polish034/BullyGoosePolish034.controller");
++        if (polished) return polished;
+         if (AssetDatabase.LoadAssetAtPath<AnimatorController>(ControllerPath))
+             AssetDatabase.DeleteAsset(ControllerPath);
+         var controller = AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
+@@ -199,26 +203,27 @@
+             visual.transform.localPosition = new Vector3(0f, -renderer.bounds.min.y, 0f);
+             var capsule = root.AddComponent<CharacterController>();
+             capsule.height = Mathf.Max(1.2f, renderer.bounds.size.y);
+-            capsule.radius = 0.72f;
++            capsule.radius = 0.72f * SizeFactor;
+             capsule.center = new Vector3(0f, capsule.height * 0.5f, 0f);
+-            capsule.stepOffset = 0.4f;
++            capsule.stepOffset = 0.4f * SizeFactor;
+             capsule.slopeLimit = 45f;
+-            capsule.skinWidth = 0.06f;
++            capsule.skinWidth = 0.06f * SizeFactor;
+             var health = root.AddComponent<Health>();
+             health.maxHealth = 75f;
+             health.currentHealth = 75f;
+             var ai = root.AddComponent<ChickenBroAI>();
+             ai.sightRange = 32f;
+             ai.giveUpRange = 50f;
+-            ai.meleeRange = 3.4f;
+-            ai.lungeMin = 3.6f;
+-            ai.lungeMax = 8.2f;
++            ai.matchLocomotionToMovement = true;
++            ai.meleeRange = 3.4f * SizeFactor;
++            ai.lungeMin = 3.6f * SizeFactor;
++            ai.lungeMax = 8.2f * SizeFactor;
+             ai.walkSpeed = 2f;
+             ai.runSpeed = 5f;
+             ai.lungeSpeed = 11f;
+             ai.turnSpeed = 460f;
+-            ai.surroundDistance = 5.5f;
+-            ai.separationRadius = 2.1f;
++            ai.surroundDistance = 5.5f * SizeFactor;
++            ai.separationRadius = 2.1f * SizeFactor;
+             ai.strikeDamage = 4.8f;
+             ai.lungeDamage = 8f;
+             ai.strikeDuration = ClipLength(animator, "Peck", 0.6f);
+@@ -228,7 +233,7 @@
+             ai.strikeWindowEnd = 0.58f;
+             ai.lungeWindowStart = 0.26f;
+             ai.lungeWindowEnd = 0.7f;
+-            ai.attackRadius = 0.95f;
++            ai.attackRadius = 0.95f * SizeFactor;
+             ai.lightSlide = 1.85f;
+             ai.heavySlide = 3.7f;
+             ai.launchSlide = 5.4f;
+@@ -237,13 +242,13 @@
+             ai.knockdownSeconds = 0.9f;
+             ai.courtesySeconds = 0.5f;
+             ai.alertSeconds = 0.95f;
+-            ai.peckReach = 1.35f;
++            ai.peckReach = 1.35f * SizeFactor;
+             ai.wingDamage = 6f;
+-            ai.wingRange = 2.15f;
++            ai.wingRange = 2.15f * SizeFactor;
+             ai.wingDuration = ClipLength(animator, "Wing", 0.55f);
+             ai.wingWindowStart = 0.42f;
+             ai.wingWindowEnd = 0.66f;
+-            ai.wingRadius = 1.55f;
++            ai.wingRadius = 1.55f * SizeFactor;
+             ai.wingRecovery = 0.45f;
+             ai.lungePush = 7f;
+             ai.wingPush = 4f;
+@@ -285,8 +290,8 @@
+             float move = child.state.name == "Run" ? ai.runSpeed : child.state.name == "Walk" ? ai.walkSpeed : 0f;
+             if (move <= 0f) continue;
+             float travel = FootTravel(animator, clip);
+-            float playback = travel > 0.15f ? move * clip.length / travel : 1f;
+-            playback = Mathf.Clamp(playback, 0.6f, 3.6f);
++            float playback = travel > 0.15f ? move * clip.length / (2f * travel) : 1f;
++            playback = Mathf.Clamp(playback, 0.6f, 2f);
+             child.state.speed = playback;
+             report += child.state.name + "=" + playback.ToString("0.00") + "@" + travel.ToString("0.00") + " ";
+         }

@@ -1,3 +1,7 @@
+## Batch034 — existing goose polish revision
+
+Stage: targeted POLISH, agent review only. Existing long-neck/short-leg silhouette, rig, weights and original attacks preserved. New30% scale; run cadence9→3.8501cycles/s, walk6.75→2.5947. One idle/walk/run blend tree retains phase; actual blocked movement resolves idle. Periodic loop tangents reduce head/foot boundary velocity jumps without changing source durations/interior poses. Native manual-graph/baked-skin180-frame preview qualified by actual bone motion and differing pixels; representative frames inspected. Left original/right revised. First static skin film rejected. Precise foot planting, complete live combat/turning and human art approval not observed.21 original bone transforms restored/verified; no original art/embedded clip overwrite. Documentation/Goose-Polish-Batch034.md.
+
 # Animation review
 
 ## Batch033 — version synchronization

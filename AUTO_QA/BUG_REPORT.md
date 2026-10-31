@@ -1,3 +1,7 @@
+## Batch034 — QA-045 goose gait cadence and idle presentation — fixed
+
+Existing BullyGoose Walk/Run speed3.6 caused6.75/9cycles/s; full-cycle calibration counted only one foot excursion and actual-movement presentation was disabled. Separate AnyState gait states reset phase on speed changes. Goose-only continuous blend tree, corrected two-excursion stride calibration and actual-movement option fix these verified defects. Three periodic loop revisions reduce measured boundary velocity discontinuities; original clips/art unchanged. Requested30% size increase includes capsule and reach.70 native checks pass plus21 original transforms/arena binding and180 qualified native preview frames. Full live collision/combat/precise feet remain unverified. See Documentation/Goose-Polish-Batch034.md. Rejected static first film and temporary sampled-pose overrides are documented and corrected.
+
 # Dark Brine_Rot automated QA
 
 ## Batch033 — synchronization and QA-044 missing remote type

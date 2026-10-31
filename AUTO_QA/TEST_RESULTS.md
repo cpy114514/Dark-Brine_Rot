@@ -1,3 +1,7 @@
+## Batch034 — goose revision
+
+70 final native asset/controller/AI checks: PASS/0failed. Includes30/60Hz gait phase continuity,7 native actions+recoveries, full idle weight at stop, actual AI zero-movement Present, preserved damage/clocks/windows and original art hashes. Separate21 descendant bind transforms and live arena prefab binding: PASS.12 loop bone probes: zero positional seam; run head velocity jump1.952002→0.223807, walk0.586732→0.066348m/s.180-frame30Hz native manual-graph/baked-skin preview qualified: actual foot motion.339628/.446735m, differing rendered frames; left original/right revision. First180-frame static film REJECTED, not acceptance. Temporary sampled pose overrides removed and original nested transforms verified. Installer/helper compile pass. Same17184Editor/paused cleanCombatTest/timeScale0 retained; no full build/FPS/livecombat/save-byte baseline claim. Evidence/batch034; Documentation/Goose-Polish-Batch034.md.
+
 # Test results
 
 ## Batch033 — cloud/Git integration validation

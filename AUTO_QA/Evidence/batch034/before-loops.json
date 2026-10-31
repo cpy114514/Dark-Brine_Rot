@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Armature|Idle",
+    "length": 1.56666672,
+    "bones": [
+      {
+        "name": "Head",
+        "seam": 0.0,
+        "velocityJump": 0.0377813764
+      },
+      {
+        "name": "FootL",
+        "seam": 0.0,
+        "velocityJump": 0.020236101
+      },
+      {
+        "name": "FootR",
+        "seam": 0.0,
+        "velocityJump": 0.0202318765
+      },
+      {
+        "name": "WingL2",
+        "seam": 0.0,
+        "velocityJump": 0.00967627
+      }
+    ]
+  },
+  {
+    "name": "Armature|Walk",
+    "length": 0.533333361,
+    "bones": [
+      {
+        "name": "Head",
+        "seam": 0.0,
+        "velocityJump": 0.58673203
+      },
+      {
+        "name": "FootL",
+        "seam": 0.0,
+        "velocityJump": 0.54781723
+      },
+      {
+        "name": "FootR",
+        "seam": 0.0,
+        "velocityJump": 1.13113892
+      },
+      {
+        "name": "WingL2",
+        "seam": 0.0,
+        "velocityJump": 0.4034209
+      }
+    ]
+  },
+  {
+    "name": "Armature|Run",
+    "length": 0.400000036,
+    "bones": [
+      {
+        "name": "Head",
+        "seam": 0.0,
+        "velocityJump": 1.95200217
+      },
+      {
+        "name": "FootL",
+        "seam": 0.0,
+        "velocityJump": 1.74563742
+      },
+      {
+        "name": "FootR",
+        "seam": 0.0,
+        "velocityJump": 2.21641946
+      },
+      {
+        "name": "WingL2",
+        "seam": 0.0,
+        "velocityJump": 0.628067851
+      }
+    ]
+  }
+]

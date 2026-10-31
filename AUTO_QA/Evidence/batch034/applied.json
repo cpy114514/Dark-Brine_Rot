@@ -1,0 +1,11 @@
+{
+  "factor": 1.3,
+  "height": 5.97999954,
+  "walkRate": 1.38381457,
+  "runRate": 1.54002786,
+  "walkCyclesPerSecond": 2.59465218,
+  "runCyclesPerSecond": 3.85006928,
+  "matchLocomotionToMovement": true,
+  "controller": "Assets/Game/Prefabs/Enemies/BullyGoose/Animations/Polish034/BullyGoosePolish034.controller",
+  "originalModelUnchanged": true
+}
