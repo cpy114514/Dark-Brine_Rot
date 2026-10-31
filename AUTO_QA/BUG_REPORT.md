@@ -1,5 +1,12 @@
 # Dark Brine_Rot automated QA
 
+## Batch030 — requested Color Comic / B&W Manga replacement
+
+User explicitly replaced Origami with Color Comic and requested true black-and-white comic treatment. New ink contours, cel bands, screen-anchored dots and Manga hatching replace folds/film grayscale. Both process composed world after transparents/postprocessing, using complete opaque depth; UI retains native color. Legacy IDs/GUIDs/mode numbers persist; Comic1 controls have independent saved keys.
+
+QA-042 / caught and fixed before delivery: initial Color Comic curve crushed midnight face detail. Low-light blend/source-luminance floor fixes the sampled view (ROI mean15.52→23.06); no ambient-light/gameplay change.77 final native checks pass plus noon/night/MSAA4/pixel and seven-scene Windows build. Native shader warnings cleared by explicit initialized return; build493warnings/four existing606-plant messages. Build cleanup alias guard rejected native cache representation; completed-state inspected and exact original material hash restored, no lost user changes. Documentation/Comic-Batch030.md; Evidence/batch030/proof.json.
+
+
 ## Batch029 — QA-041 Origami bypasses terrain and foliage — VERIFIED/FIXED
 
 The active SSAO depth-normal prepass omits custom terrain/foliage lacking DepthNormals; Origami's far-depth guard returned original color. Native gray-geometry control confirms0/80,000 foreground gray pixels before vs80,000/80,000 with complete opaque depth. Origami-only private R32 copy via native URP CopyDepthPass fixes coverage without altering shared depth or original materials. World-derived normals, triangular fold shading and matte texture flattening replace weak/parallel-striped treatment.54 native checks pass; final4×MSAA/pixel/UI and seven-scene Windows build pass.493 warnings/four known606-plant messages persist. Surface treatment only: original silhouettes remain; no new FPS claim. Documentation/Origami-Batch029.md; Evidence/batch029/proof.json.

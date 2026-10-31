@@ -1,0 +1,72 @@
+{
+  "batch": 30,
+  "baselineGit": "8e0ac14",
+  "request": "Replace Origami with Color Comic and film monochrome with B&W Manga",
+  "nativeChecks": {
+    "renderAndControls": 40,
+    "ui": 27,
+    "transparency": 10,
+    "acceptedTotal": 77,
+    "passed": true
+  },
+  "stableIds": {
+    "origami": "Color Comic",
+    "monochrome": "B&W Manga"
+  },
+  "controls": [
+    "Ink weight",
+    "Tone contrast",
+    "Screentone",
+    "Shadow ink"
+  ],
+  "preferenceNamespace": "Comic1",
+  "rendering": {
+    "resolution": [
+      1280,
+      720
+    ],
+    "noonAndMidnight": true,
+    "styles": 4,
+    "poses": 2,
+    "msaa": 4,
+    "pixelInternal": [
+      320,
+      180
+    ],
+    "roundtripChangedPixels": 3998,
+    "roundtripPixels": 921600,
+    "motionPositions": 24,
+    "fpsMeasured": false,
+    "stageActorFrozen": true,
+    "finalShaderControlFlowInitializationFixPreservesArithmetic": true
+  },
+  "preservation": {
+    "editorPid": 17184,
+    "fiveCleanStoppedScenes": true,
+    "fixtures": 0,
+    "postUserStopSaveAndBackupUnchanged": true,
+    "protectedFileHashes": 14,
+    "protectedHashesMatch": true,
+    "existingPresetAndPreviewGUIDsRetained": true,
+    "originalPreferenceCount": 981,
+    "originalKindsValuesAndKeySetRestored": true,
+    "unusedFixtureLedgerKeysRemoved": 1,
+    "originalModelsUVsRigsClipsCollidersMaterialsScenesUnchanged": true
+  },
+  "build": {
+    "result": "Succeeded",
+    "seconds": 82.9469178,
+    "warnings": 493,
+    "errors": 4,
+    "errorsAreExisting606PlantMessages": true,
+    "binaryLaunched": false,
+    "cleanupGuardFailureRecoveredByExactHash": true
+  },
+  "limits": [
+    "No native standalone FPS/GPU/GC/device acceptance.",
+    "Screen-anchored halftones are intended; not object-anchored paper texture.",
+    "Frozen actor and sampled orbit do not establish full combat animation/readability acceptance.",
+    "No fresh Play or runtime domain-reload persistence test; native saved-control read/re-enable tested.",
+    "Do not add overlapping intermediate test results to accepted77."
+  ]
+}

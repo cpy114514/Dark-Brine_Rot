@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace Mavis.VisualStyles
 {
-    public enum VisualStyleMode { Realistic, DarkFairytale, Origami, Monochrome }
+    // Numeric values and legacy alias retain existing assets, saves and external tools.
+    public enum VisualStyleMode { Realistic = 0, DarkFairytale = 1, ColorComic = 2, Monochrome = 3, Origami = ColorComic }
 
     [CreateAssetMenu(menuName = "Dark Brine/Visual Style Preset")]
     public sealed class VisualStylePreset : ScriptableObject
@@ -18,7 +19,9 @@ namespace Mavis.VisualStyles
         // Existing V1 assets retain their original illustrated flag and tuning.
         public VisualStyleMode Mode => renderingMode == VisualStyleMode.Realistic && illustrated ? VisualStyleMode.DarkFairytale : renderingMode;
         public bool Stylized => Mode != VisualStyleMode.Realistic;
-        public PaperMaterialProfile paper;
+        public PaperMaterialProfile paper; // Retained legacy reference; comics do not use paper folds.
+        [Tooltip("Ink weight, tone contrast, screentone, shadow ink")]
+        public Vector4 comicDetails = new Vector4(.65f, .7f, .4f, .55f);
         public bool paperEnvironment = true;
         [Range(.7f, 1.6f)] public float monochromeContrast = 1.15f;
         [Range(0, .035f)] public float filmGrain = .006f;
@@ -30,7 +33,7 @@ namespace Mavis.VisualStyles
         {
             get
             {
-                if (Mode == VisualStyleMode.Origami) return paper ? new Vector4(paper.fiberStrength / .06f, paper.foldShading, paper.matte, paper.edgeHighlight) : new Vector4(.3f, .85f, .8f, .4f);
+                if (Mode == VisualStyleMode.ColorComic || Mode == VisualStyleMode.Monochrome) return comicDetails;
                 return new Vector4((monochromeContrast - .7f) / .9f, filmGrain / .035f, vignette / .4f, shadowIntensity);
             }
         }

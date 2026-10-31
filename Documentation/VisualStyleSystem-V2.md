@@ -1,12 +1,12 @@
-# Visual Style System V2
+# Visual Style System V2 — current comic styles (batch030)
 
-Implemented in Unity 6000.3.23f1 / URP 17.3.0. Extends the installed V1 feature and manager; no replacement gameplay or per-object material conversion.
+Implemented in Unity 6000.3.23f1 / URP17.3.0. Batch030 replaces Origami with **Color Comic**, and the previous monochrome film effect with **B&W Manga**, at the user’s request. Realistic and Dark Fairytale remain. See [Comic-Batch030.md](Comic-Batch030.md) for current evidence and limits. Older V2/batch029 acceptance below remains historical where identified.
 
 ## Player controls
 
-Open **Main Menu → Visual Style**, or **Settings → Graphics → Visual Style**. Select Realistic, Dark Fairytale, Origami or Monochrome. The selected card, Graphics value and persisted preference share one manager. Style changes require no scene reload.
+Open **Main Menu → Visual Style**, or **Settings → Graphics → Visual Style**. Select Realistic, Dark Fairytale, Color Comic or B&W Manga. The selected card, Graphics value and persisted preference share one manager. Style changes require no scene reload.
 
-Style Intensity retains the existing 40–100% range. Origami DETAILS exposes Paper texture, Fold shading, Matte surface and Paper edges. Monochrome DETAILS exposes Contrast, Film grain, Vignette and Shadow depth. Four normalized overrides are saved separately per style. Preset assets remain defaults and are not modified by the player. Bloom and dithering are optional preset parameters. Monochrome intensity adjusts its tonal curve while keeping the world gray.
+Style Intensity retains the existing40–100% range. Both comic modes expose Ink weight, Tone contrast, Screentone and Shadow ink. Normalized overrides are independent per style and saved separately. Their new Comic1 preference keys preserve old fold/film settings without treating them as new controls. Existing saved style IDs (`origami` / `monochrome`) and asset GUIDs remain compatible; these technical IDs are not displayed to players. B&W Manga always keeps the world grayscale, including at minimum intensity.
 
 COMPARE STYLES offers Left Style and Right Style, including the same style on both sides. The divider supports pointer dragging and Left/Right navigation. Both images retain the complete, identical framing under a reveal mask. Comparison uses stored screenshots and adds no scene cameras.
 
@@ -14,27 +14,26 @@ The existing Graphics Pixel Style option is independent. Its installed V2 implem
 
 ## Rendering
 
-- Realistic continues to enqueue no visual-style color pass. The existing Dark Fairytale opaque shader branch, tuning and environment path are preserved.
-- Origami uses world-position reconstruction, triangular world-projected paper cells, depth-guarded texture flattening, banded fold lighting, antialiased creases, footprint-faded fibers, matte tones, warm/sage color response and adjustable soft edges. Batch029 fixes incomplete depth coverage of custom terrain/foliage; see Origami-Batch029.md. It changes surface shading without changing silhouettes or geometry. The separate Paper Material Profile supplies reusable defaults, fold scale and normal quantization.
-- Existing ocean geometry, waves, foam and physics remain intact. An Origami-only fragment branch simplifies water bands/glints; sky/cloud branches add restrained layered shading. Switching away restores the original paths through runtime globals.
-- Monochrome runs after world postprocessing and transparents, using Rec.709 luminance, contrast/toe/shoulder response, adjustable shadow depth, fine stable grain, vignette, optional highlight bloom and dithering. Overlay UI is composited afterward. Dedicated UI-only cameras bypass the feature.
-- Both installed PC and Mobile renderers retain their single existing feature. Each stylized camera uses one transient RenderGraph color destination and one color transform. Dark requests camera depth and normals. Origami requests depth and copies the actual opaque depth once into a transient R32 texture because custom terrain/foliage are omitted from the SSAO depth-normal prepass; its normals are reconstructed from world-position derivatives. The copy does not replace URP shared depth and adds no scene geometry pass. There is no duplicated model or material per renderer.
-- Presets and one feature material are cached. Uniforms update when manager/preset/profile revision, quality or pixel state changes. Lowest quality reduces paper fibers and disables the optional four-tap film highlight bloom. Pixel rendering reduces fine grain and edge width.
-- Manager/UI OnEnable reconstructs transient managed bindings after Editor script reload without duplicating the manager/gallery. Original fog/ambient baselines are retained; user-selected styles and detail preferences survive a new Play session.
+- Realistic enqueues no color transform. Dark Fairytale keeps its original shader branch, depth/normal inputs, atmosphere and sky/water path.
+- Both comics process the composed world after transparents and postprocessing, before overlay UI. They share the batch029 private complete-opaque-depth copy, now used by both styles; the camera SSAO prepass alone omits custom terrain/foliage. Shared URP camera depth remains untouched. No extra scene geometry pass, material conversion or silhouette rewrite.
+- Color Comic uses depth/luminance ink contours, depth-guarded color smoothing, cel color bands, printed shadow dots and restrained warm/cool palette. A low-luminance floor retains night face/terrain information rather than collapsing it into the darkest band.
+- B&W Manga combines paper-white/ink-black tone zones, contours, regular halftone dots and diagonal shadow hatching. It is not a plain luminance filter or film-grain effect. Transparent water, sky and effects participate in the composed transform. Overlay UI and dedicated UI-only cameras retain their original colors/text.
+- Print cells are fixed to the rendered screen, antialiased and adjusted for the independent pixel target. They use no time/random-frame seed. This is screen-anchored print, not object-anchored texture; normal projection/wind/visibility still vary as the camera moves.
+- The two existing PC/Mobile renderer assets retain one feature each. One cached transform material and native CopyDepth material survive style switches. Comics add an R32 transient depth target and one fullscreen copy plus the color transform. Uniforms update on revision/quality/pixel changes. No new isolated GPU/FPS/GC claim; mobile-device/XR acceptance is outside batch030.
 
 ## Actual previews and UI
 
-The current four 1280×720 PNGs in Assets/Resources/VisualStyles/Previews are actual Unity batch029 renders of the same first-island Environment + Lighting setup, fixed noon, same camera and excluded Sahur pose, at intensity 89.7673%. Source GUIDs are retained. No authored scene was saved. See AUTO_QA/Evidence/batch029/gallery-final.json and Documentation/Origami-Batch029.md. The original V2 1600×900 / 85% Sahur/Nailong previews and their historical provenance remain in AUTO_QA/Evidence/visual-style-v2; the screenshots below show that original acceptance, not the current revised Origami.
+Current four1280×720 previews are native batch030 first-island renders, fixed noon, same frozen Sahur pose/framing, intensity89.7673%, existing preview GUIDs. All4 styles at2 views plus4×MSAA,320×180 pixel and midnight captures are recorded in AUTO_QA/Evidence/batch030. Source actors are save-excluded temporary clones. No authored scene was saved.
 
-![Native four-card gallery](../AUTO_QA/Evidence/visual-style-v2/gallery-native.png)
+![Current matching Color Comic / B&W Manga comparison](../AUTO_QA/Evidence/batch030/comparison-ui.png)
 
-![Arbitrary aligned comparison and dropdown](../AUTO_QA/Evidence/visual-style-v2/comparison-dropdown-native.png)
+The original V2 and batch029 previews remain archived with their reports; they do not represent the current replacement effects.
 
-The gallery shows planar facets/creases on the original character surfaces and layered turquoise water in Origami; Monochrome retains character and water detail with controlled gray tones. Native and pixel composited overlay captures retain a red proof indicator and crisp native text. The proof indicator belongs only to the external verification fixture and is not shipped in gameplay.
+## Current batch030 acceptance
 
-An early camera-space UI capture method produced misleading black or blurred UI and was rejected. Acceptance uses the actual composited Game view. The final verification helper now uses that method too; earlier camera-space images are excluded.
+77 native checks pass:40 rendering/control/cache/persistence/grass checks,27 actual gallery/comparison/UI checks and10 transparent-world checks. See [Comic-Batch030.md](Comic-Batch030.md) and AUTO_QA/Evidence/batch030/proof.json for final build/restoration and visual limitations. Native re-enable tests check saved controls; a fresh Play/domain-reload persistence test was not repeated in this batch.
 
-## Executed acceptance
+## Historical original V2 acceptance
 
 **141 scripted checks passed:** 93 gallery/settings/persistence/comparison/independent-resolution/enemy-animation/profile checks plus 48 native-input/rendering checks. Full check names and raw timings are in verification.json and rendering-verification.json under AUTO_QA/Evidence/visual-style-v2.
 
@@ -46,7 +45,7 @@ An early camera-space UI capture method produced misleading black or blurred UI 
 - An additional actual script-reload probe preserves Monochrome 85%, four working cards, open gallery, one manager and one gallery. A native dropdown pointer event selects Dark Fairytale. Native/pixel overlay captures were visually inspected.
 - Final source recompile is up to date. The visual transform shader has no compiler messages. Ocean/Sky have no shader errors but emit three warnings in unchanged SailingFoam, CloudDensity and ShadowDensity helpers. No model/rig/UV/animation/collider/prefab/scene asset edits. Original Realistic/Dark preset tuning is unchanged; their serialized schema only gains V2 fields and their previews are regenerated under the same GUIDs.
 
-## Performance findings
+## Historical original V2 performance findings
 
 | Style | CPU frame median (ms) | GPU frame median (ms) | Rendered samples |
 |---|---:|---:|---:|
@@ -55,7 +54,7 @@ An early camera-space UI capture method produced misleading black or blurred UI 
 | origami | 17.268 | 16.049 | 60 |
 | monochrome | 17.114 | 15.901 | 60 |
 
-Measured through FrameTimingManager on RTX 4060 / Direct3D12, 960×540, renderScale 1, with six active Chicken Bros, 60 actual camera renders per style. Editor frame medians were approximately 17.1–17.2 ms. These include Editor pacing, display synchronization, AI variance and the rest of the scene. They establish that this fixture rendered all modes successfully; small differences are **not isolated shader costs or a claimed FPS improvement**. Full first-island standalone/low-end/1080p performance and long moving-camera temporal stability still need a dedicated benchmark. No zero-allocation or memory-leak claim is made.
+These numbers belong to the original Origami/film effects, **not the current comic shaders**. Measured through FrameTimingManager on RTX 4060 / Direct3D12, 960×540, renderScale 1, with six active Chicken Bros, 60 actual camera renders per style. Editor frame medians were approximately 17.1–17.2 ms. These include Editor pacing, display synchronization, AI variance and the rest of the scene. They establish that this fixture rendered all modes successfully; small differences are **not isolated shader costs or a claimed FPS improvement**. Full first-island standalone/low-end/1080p performance and long moving-camera temporal stability still need a dedicated benchmark. No zero-allocation or memory-leak claim is made.
 
 ## Installation, safety and remaining work
 

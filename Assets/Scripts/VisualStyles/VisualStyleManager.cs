@@ -98,10 +98,11 @@ namespace Mavis.VisualStyles
         {
             if (!Current) return;
             Revision++;
-            // Transparent sky/water render after the opaque illustration pass, so shade them in place.
-            Shader.SetGlobalFloat("_EnvironmentMode", Current.Mode == VisualStyleMode.Origami && Current.paperEnvironment ? 2 : 0);
+            // Comics process the composed world after transparents/postprocessing.
+            // Only the unchanged Dark Fairytale branch shades sky/water in place.
+            Shader.SetGlobalFloat("_EnvironmentMode", 0);
             Shader.SetGlobalVector("_EnvironmentPaper", new Vector4(Details.x * .06f, Details.y, Details.z, Details.w));
-            bool environmentStyle = Current.Mode == VisualStyleMode.DarkFairytale || Current.Mode == VisualStyleMode.Origami && Current.paperEnvironment;
+            bool environmentStyle = Current.Mode == VisualStyleMode.DarkFairytale;
             Shader.SetGlobalVector("_EnvironmentStyle", new Vector4(environmentStyle ? Intensity : 0,
                 Current.saturation, Current.tonalBands, Current.paperGrain));
             Shader.SetGlobalColor("_EnvironmentShadow", Current.shadows);

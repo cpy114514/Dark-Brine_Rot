@@ -1,5 +1,12 @@
 # Progress
 
+## Batch030 complete — Color Comic and B&W Manga
+
+Replaces two effects per latest user direction, retaining Realistic/Dark and four-card/any-pair/pixel flows. Shared complete-depth/post-world transform now adds ink/cel bands/print dots and Manga blacks/whites/hatching. New English names/descriptions/controls, separate Comic1 saved controls, compatible legacy IDs/GUIDs/mode values. Midnight crush found/fixed; new four native previews at fixed noon.77 accepted checks(40 rendering/control,27 UI,10 transparency); earlier overlapping iterations excluded. Native shader initialization warning resolved without changing rendering arithmetic. SameEditor17184 seven-scene Mono Windows buildSucceeded82.95s/493warnings/four known606-plant messages; not launched/no FPS gain claim.
+
+Original live user session stopped normally; preserved fresh post-stop save+backup. Final5 scenes clean/stopped,timeScale1,0 fixtures,shader messages empty.14 protected hashes and existing preset/preview GUIDs match; all981 original project preference kinds/values/key set restored;8 temporary comic keys removed and one unused fixture campaign ledger removed after native cache restoration. Build-only material alias guard recovery verified exact bytes; no unrelated asset changes. Private .codex/comic030 immutable. Checkpoint title: Replace paper and film styles with color comics and manga. Inspect actual Git/Plastic receipt before sync; workspace stays212, no cm update. Documentation/Comic-Batch030.md and Evidence/batch030.
+
+
 ## Batch029 complete — Origami paper surface repair
 
 Resumed Git892c3fe/local Plastic212, preserving published214/215 and independent213. Fixed confirmed incomplete prepass-depth coverage, then replaced parallel stripes with triangular paper cells, matte tone/chroma flattening, world-anchored creases/fibers. Only two production code files and four derived native preview PNGs change; no models/materials/scene/gameplay edits.54 native checks pass, final noon four-style/two-pose, MSAA4, pixel and actual UI verified. SameEditor17184 seven-scene WindowsMono buildSucceeded91.20s/493warnings/four known606-plant messages; binary unlaunched, no FPS claim.

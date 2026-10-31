@@ -132,7 +132,7 @@ namespace Mavis.VisualStyles
             IntensitySlider = Slider(gallery.transform, "Style intensity", new Vector2(350, 34), new Vector2(115, -290));
             IntensitySlider.minValue = .4f; IntensitySlider.maxValue = 1;
             IntensitySlider.onValueChanged.AddListener(value => VisualStyleManager.Instance.SetIntensity(value));
-            Label(gallery.transform, "Reference captures use 85% intensity. Pixel Style is available in Graphics.", 16, new Vector2(0, -470), new Vector2(1050, 32)).color = GameUITheme.Secondary;
+            Label(gallery.transform, "Actual scene previews. Pixel Style is available separately in Graphics.", 16, new Vector2(0, -470), new Vector2(1050, 32)).color = GameUITheme.Secondary;
             detailsButton = Button(gallery.transform, "DETAILS", new Vector2(540, -290), new Vector2(220, 44), () => detailPanel.SetActive(!detailPanel.activeSelf));
             detailPanel = Rect(gallery.transform, "Style details", new Vector2(1400, 124), new Vector2(0, -395)).gameObject;
             for (int i = 0; i < 4; i++)
@@ -202,12 +202,12 @@ namespace Mavis.VisualStyles
             IntensitySlider.SetValueWithoutNotify(manager.Intensity);
             IntensitySlider.interactable = manager.Current && manager.Current.Stylized;
             var mode = manager.Current.Mode;
-            bool advanced = mode == VisualStyleMode.Origami || mode == VisualStyleMode.Monochrome;
-            var names = mode == VisualStyleMode.Origami ? new[] { "Paper texture", "Fold shading", "Matte surface", "Paper edges" } : new[] { "Contrast", "Film grain", "Vignette", "Shadow depth" };
+            bool advanced = mode == VisualStyleMode.ColorComic || mode == VisualStyleMode.Monochrome;
+            var names = new[] { "Ink weight", "Tone contrast", "Screentone", "Shadow ink" };
             for (int i = 0; i < 4; i++)
             {
                 detailSliders[i].SetValueWithoutNotify(manager.Details[i]); detailSliders[i].interactable = advanced;
-                detailLabels[i].text = names[i] + "  " + (mode == VisualStyleMode.Monochrome && i == 0 ? Mathf.Lerp(.7f,1.6f,manager.Details[i]).ToString("F2") + "x" : Mathf.RoundToInt(manager.Details[i]*100) + "%");
+                detailLabels[i].text = names[i] + "  " + (Mathf.RoundToInt(manager.Details[i]*100) + "%");
             }
             detailsButton.gameObject.SetActive(advanced);
             if (!advanced) detailPanel.SetActive(false);

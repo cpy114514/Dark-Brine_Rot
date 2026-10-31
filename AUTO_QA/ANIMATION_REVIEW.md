@@ -1,5 +1,10 @@
 # Animation review
 
+## Batch030 — comic rendering replaces paper and film modes
+
+Inspected actual matching Color Comic/B&W Manga noon views, midnight,4×MSAA, pixel, gallery and split comparison. Comic surfaces use contours/printed dots and Manga shadow hatching; full world/transparencies are processed, overlay red stays red. Frozen Sahur and24-position orbit validate appearance samples only; no smoother-animation/full-combat acceptance. Final roundtrip differs3,998/921,600 pixels>2, not perfect temporal invariance. Models/UVs/rigs/source clips/controllers/collision and complete grass layout unchanged. User's replacement direction supersedes prior requests to retain Origami. Next active encounter/tutorial readability in both comic modes. Documentation/Comic-Batch030.md.
+
+
 ## Batch029 — Origami appearance and world coverage
 
 Actual native before/after views confirm ground/grass now participate in paper shading and the original Sahur surface has triangular folded lighting with reduced photographic/glossy treatment. Four matching previews, actual gallery/comparison, MSAA4 and pixel views inspected.24 captured camera positions plus return are a visual sample, not game FPS or full animation acceptance. Actor pose was frozen; no claim of smoother animation/combat. Meshes/rigs/clips/controllers/collision and grass028 layout unchanged. Original silhouettes remain; true folded silhouettes need separate art scope. Next: active Sahur/Boss/tutorial readability under paper lighting. Documentation/Origami-Batch029.md.
