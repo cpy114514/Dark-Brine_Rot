@@ -1,5 +1,10 @@
 # Animation review
 
+## Batch032 — farther grass boundary
+
+Native sameusercamera before/after and freshPlay images showgrass covering formerlybare farstrip. Extended representativefade31–40→60–80m;fixedprojectionwinddisabledpatchconfirmsgradualnewfade.24sampledadvancing/turning/returnpositions and pixelinspected;notcontinuousgameFPS/streamlatency or perfectpixelstability. Noanimation/character/rig/clip/collider/materialchanges. Morecompletegrassinrangeaddsgeometry;noFPSgainclaim. Allsixstylespreserved. Documentation/Grass-Distance-Batch032.md.
+
+
 ## Batch031 — native ink/oil visual review
 
 Actual six-card gallery, matching Ink Wash/Van Gogh comparison and noon/night/MSAA4/pixel images inspected. Ink wash has warm paper, dark/light ink and dry-brush/mist; oil uses local curved dabs/impasto and blue-gold color. First dense interference-ring prototype rejected. Both painting modes have24 captured orbit positions; roundtrip2,693/1,547 pixels>2 of921,600, not pixel invariance/gameFPS. Sahur pose frozen; no animation-smoothness or full encounter acceptance. All original geometry/UV/rig/clip/collider/material/scene bytes preserved; full grass layout and existing comics retained. Next actual action/encounter readability in six styles. Documentation/Painting-Batch031.md.

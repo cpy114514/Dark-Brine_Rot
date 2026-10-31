@@ -1,5 +1,12 @@
 # Dark Brine_Rot automated QA
 
+## Batch032 — requested farther grass visibility — implemented/verified
+
+Actual userFOV60.4065/lodBias0.5 gave complete grass finalfade30.70–39.67m despite180m outercull. Halve only recognized family'sscreenheightcutoff and setfadebandcutoff/3:59.51–79.35m,fullNearlayout/densitypreserved.39nativeassertions(30policy+9fixedprojectionimages),freshPlay11298owned/0wrong,24movingcameraposes and pixelpass. Native50m patchpixels0→10032;70m4733then81m0;notFPS. SameEditor7scene WindowsMono buildSucceeded86.43s/493warnings/4known606plantmessages.
+
+SUSPECTED,notfixed:afterreal source reload,native11298newpoliciescorrect but managedownershipdictionary12 despite ready71326foliage. FreshPlay11298ownershipcorrect. Causeunattributed;do notclaimreload-lifecycleacceptance. InitialwronglodBias2baseline/absentregistrysamplelookuprejected. Documentation/Grass-Distance-Batch032.md/Evidence/batch032.
+
+
 ## Batch031 — Ink Wash / Van Gogh additions and QA-043 dropdown clipping
 
 Added two user-requested independent painterly presets alongside the existing four. Native shader/camera/UI evidence validates ink wash, local oil dabs, six cards, saved controls and36 comparison pairs. Existing original presets and Dark/comic shader bodies unchanged.142 accepted checks(47 render/preferences+79 UI+16 transparency), native day/night/MSAA4/pixel, real reload recache and sameEditor seven-scene WindowsMono build pass.

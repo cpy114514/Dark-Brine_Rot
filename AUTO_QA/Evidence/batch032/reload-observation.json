@@ -1,0 +1,20 @@
+{
+  "afterSourceDomainReload": {
+    "nativeGroups": 11298,
+    "nativeNewThresholdGroups": 11298,
+    "managerRegisteredGroups": 12,
+    "ready": true,
+    "foliage": 71326
+  },
+  "freshPlay": {
+    "freshPlay": true,
+    "groups": 11298,
+    "registered": 11298,
+    "wrongPolicy": 0,
+    "savable": false,
+    "styles": 6,
+    "ready": true
+  },
+  "classification": "Suspected Editor reload ownership issue; native policy correct, fresh Play ownership complete; original cause not established; not fixed by this distance-only patch.",
+  "initialBoundaryProbe": "Rejected: attempted lookup of unregistered sample; no production mutation, unique qualified take uses a registered sample."
+}

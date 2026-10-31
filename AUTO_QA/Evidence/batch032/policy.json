@@ -1,0 +1,126 @@
+{
+  "passed": true,
+  "checks": 30,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Recognized grass one complete layout cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Cull threshold halves cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Fade begins at75percent end distance cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Original Near mesh cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Unused layouts stay disabled cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Idempotent repeated ownership cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Restore membership and original enabled flags cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Restore original fade mode cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Restore all original thresholds and widths cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Recognized grass one complete layout cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Cull threshold halves cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Fade begins at75percent end distance cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Original Near mesh cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Unused layouts stay disabled cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Idempotent repeated ownership cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Restore membership and original enabled flags cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Restore original fade mode cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Restore all original thresholds and widths cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Unowned family/authored crossfade unchanged variant1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Unowned group not captured variant1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Unowned thresholds and widths unchanged variant1 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Unowned family/authored crossfade unchanged variant1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Unowned group not captured variant1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Unowned thresholds and widths unchanged variant1 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Unowned family/authored crossfade unchanged variant2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Unowned group not captured variant2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Unowned thresholds and widths unchanged variant2 cycle0"
+    },
+    {
+      "ok": true,
+      "name": "Unowned family/authored crossfade unchanged variant2 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Unowned group not captured variant2 cycle1"
+    },
+    {
+      "ok": true,
+      "name": "Unowned thresholds and widths unchanged variant2 cycle1"
+    }
+  ]
+}

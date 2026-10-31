@@ -1,5 +1,17 @@
 # Test results
 
+## Batch032 — grass visibility distance
+
+- PASS30nativepolicychecks:2cyclesrecognizedfamily/newcutoff/fade/Near/idempotence/exactrestoration;authoredCrossFade/unrelatedmeshexcluded.
+- PASS9nativefixedprojectionimageassertions:old41m0pixels,new50m10032/60m9752/70m4733/79m197,81m0;20mpositive10032. Equivalentdistances,sizeonlyLODprojectionfixed,windoffonlyownedmaterialcopies.
+- FreshPlayaudit:11298groups/11298registered/0wrongpolicy,6styles/excludedfixture. ActualuserFOV60.4065/lodBias0.5:fade30.70–39.67→59.51–79.35m. Matchingnativebefore/after/freshcameraand24movingposes/pixelaccepted. NoFPS/continuousstreamlatencyclaim;potentialrange-onlygeometryincreases.
+- Realreloadnativepolicycorrectbutdictionary12observationUNRESOLVED,notlifecycleacceptance. InitiallodBias2baselineandnullunregisteredlookuprejected;qualifiedrecordsusecorrectbiasandregisteredpatch.
+- Windows64MonoDevelopment7scenebuildSucceeded86.4284781s/493warnings/4existing606plantmessages;binarynotlaunched. Buildflags/preloads/settings/duckcleanupalltrue.
+- RESTORED5scenesclean/stopped/timeScale1/0fixtures,savesunchanged;26protectedhashes,982originalregistrykinds/values/keysetmatch;2unusedfixtureledgerscleaned. Originalart/geometry/density/rig/clip/collider/material/sceneand3unrelatedenemyeditsunchanged.
+
+39acceptedassertions,plusseparatenativefieldcounts/captures. Documentation/Grass-Distance-Batch032.md and Evidence/batch032/proof.json.
+
+
 ## Batch031 — two painting styles / six-card gallery
 
 - PASS47 accepted native render/preferences checks:8 slider endpoint responses,2 intensity responses,independent saved controls/native re-enable,savedselection restore,6unique presets,24cached-material switches,2orbitreturn bounds,fullNeargrass and excludedfixture. Earlier overlapping runs not added.

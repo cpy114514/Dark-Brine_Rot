@@ -1,0 +1,18 @@
+{
+  "stopped": true,
+  "scenes": 5,
+  "paths": [
+    "Assets/Scenes/First Island/Main.unity",
+    "Assets/Scenes/First Island/Lighting.unity",
+    "Assets/Scenes/First Island/Gameplay.unity",
+    "Assets/Scenes/First Island/Environment.unity",
+    "Assets/Scenes/First Island/Enemies.unity"
+  ],
+  "setupMatches": true,
+  "dirty": false,
+  "ownedFixtures": 0,
+  "savesUnchanged": true,
+  "timeScale": 1.0,
+  "shaderMessages": [],
+  "editorPid": 17184
+}

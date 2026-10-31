@@ -1,0 +1,55 @@
+{
+  "label": "before-qualified",
+  "groups": 11298,
+  "cutoff": 0.0926589444,
+  "width": 0.0298508722,
+  "estimatedEndMeters": 39.67431,
+  "estimatedFadeStartMeters": 30.70036,
+  "callbacks": 77,
+  "rows": [
+    {
+      "pose": "user",
+      "camera": "(368.744171, 12.1212826, 359.4233)",
+      "fov": 60.4064941,
+      "lodBias": 0.5,
+      "callbacks": 6,
+      "potentialFull": 89,
+      "potentialFading": 47,
+      "potentialCulled": 11162,
+      "potentialTrianglesIgnoringFrustum": 3141192.0
+    },
+    {
+      "pose": "forward",
+      "camera": "(360.439178, 11.5096235, 368.0635)",
+      "fov": 60.4064941,
+      "lodBias": 0.5,
+      "callbacks": 6,
+      "potentialFull": 107,
+      "potentialFading": 50,
+      "potentialCulled": 11141,
+      "potentialTrianglesIgnoringFrustum": 3626229.0
+    },
+    {
+      "pose": "turn",
+      "camera": "(368.744171, 12.1212826, 359.4233)",
+      "fov": 60.4064941,
+      "lodBias": 0.5,
+      "callbacks": 6,
+      "potentialFull": 89,
+      "potentialFading": 47,
+      "potentialCulled": 11162,
+      "potentialTrianglesIgnoringFrustum": 3141192.0
+    },
+    {
+      "pose": "return",
+      "camera": "(368.744171, 12.1212826, 359.4233)",
+      "fov": 60.4064941,
+      "lodBias": 0.5,
+      "callbacks": 6,
+      "potentialFull": 89,
+      "potentialFading": 47,
+      "potentialCulled": 11162,
+      "potentialTrianglesIgnoringFrustum": 3141192.0
+    }
+  ]
+}
