@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: monochrome
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.VisualStyles.VisualStylePreset
   id: monochrome
-  displayName: Monochrome
-  description: Experience the world through dramatic black-and-white cinematography.
+  displayName: B&W Manga
+  description: Black ink, paper whites, screentones and hatched shadows.
   preview: {fileID: 2800000, guid: 2568e0998711195469515371e37c1994, type: 3}
   illustrated: 1
   renderingMode: 3
   paper: {fileID: 0}
+  comicDetails: {x: 0.8, y: 0.65, z: 0.75, w: 0.7}
   paperEnvironment: 1
   monochromeContrast: 1.15
   filmGrain: 0.006

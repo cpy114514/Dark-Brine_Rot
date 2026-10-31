@@ -1,0 +1,60 @@
+{
+  "gallery-accepted-origami": {
+    "nonGrayPixels": 921583,
+    "visibleDifferenceGt8": 921599,
+    "pixels": 921600
+  },
+  "gallery-accepted-monochrome": {
+    "nonGrayPixels": 0,
+    "visibleDifferenceGt8": 753603,
+    "pixels": 921600
+  },
+  "night-accepted-origami": {
+    "nonGrayPixels": 921364,
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600
+  },
+  "night-accepted-monochrome": {
+    "nonGrayPixels": 0,
+    "visibleDifferenceGt8": 921505,
+    "pixels": 921600
+  },
+  "msaa-accepted-origami": {
+    "nonGrayPixels": 921590,
+    "visibleDifferenceGt8": 921598,
+    "pixels": 921600
+  },
+  "msaa-accepted-monochrome": {
+    "nonGrayPixels": 0,
+    "visibleDifferenceGt8": 751447,
+    "pixels": 921600
+  },
+  "pixel-accepted-origami": {
+    "nonGrayPixels": 921582,
+    "visibleDifferenceGt8": 921599,
+    "pixels": 921600
+  },
+  "pixel-accepted-monochrome": {
+    "nonGrayPixels": 0,
+    "visibleDifferenceGt8": 861585,
+    "pixels": 921600
+  },
+  "night-final-faceRoi": {
+    "rectangle": [
+      635,
+      205,
+      690,
+      380
+    ],
+    "meanRGB": 15.517887445887446
+  },
+  "night-accepted-faceRoi": {
+    "rectangle": [
+      635,
+      205,
+      690,
+      380
+    ],
+    "meanRGB": 23.063688311688313
+  }
+}

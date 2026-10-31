@@ -1,5 +1,16 @@
 # Test results
 
+## Batch030 — Color Comic / B&W Manga
+
+- PASS40 accepted native rendering/control tests: eight slider endpoint responses, both intensity responses, full-world Manga gray, independent persisted controls/native re-enable,20 cached-material switches, complete grass layout and excluded preview. Overlapping intermediate40-check runs are not added.
+- PASS27 native UI checks:4 cards/new names/controls,16 comparison pairs, native red overlay in both comic styles and updated reveal. PASS10 transparent-world checks: visible on/off contribution, color in Color Comic/Realistic, gray in Manga, complete-depth/after-post pass.
+- Accepted4 styles×2 views at noon/midnight, actualMSAA4 and320×180 pixel; native callbacks/positive-image controls preserved.24 orbit positions; return3,998/921,600 pixels>2, no measuredFPS claim. Final initialized-return rewrite is arithmetic-equivalent; native two shader-keyword variants compile with0messages.
+- SameEditor17184 Windows64Mono Development seven-scene buildSucceeded82.9469178s/493warnings/4 known606-plant messages; standalone unlaunched. Initial cleanup alias-representation guard rejected after successful build; actual completed/faulted/no-building state confirmed, exact material hash restored, helper corrected. No blind rerun.
+- RESTORED5 clean/stopped original scenes/timeScale1/0 fixtures; fresh save+backup unchanged,14 protected hashes/GUIDs match.981 original registry kinds/values/key set match after8 temporary control keys and one unused fixture ledger cleanup. No original model/UV/rig/clip/collider/material/scene edits.
+
+Evidence/batch030/proof.json, image-controls.json and Documentation/Comic-Batch030.md. No new standalone GPU/GC/FPS/device/full-combat or fresh-Play persistence acceptance.
+
+
 ## Batch029 — Origami depth, paper appearance and gallery
 
 - PASS30 native render/control checks: complete-depth resource, four detail sliders, intensity,20 cached-material switches, camera-return threshold, fixed full grass and excluded fixture.

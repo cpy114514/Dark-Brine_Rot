@@ -16,15 +16,16 @@ public static class VisualStyleSetupV2
         string path = "Assets/Resources/VisualStyles/Profiles/Paper.asset";
         var paper = AssetDatabase.LoadAssetAtPath<PaperMaterialProfile>(path);
         if (!paper) { paper = ScriptableObject.CreateInstance<PaperMaterialProfile>(); AssetDatabase.CreateAsset(paper, path); }
-        var origami = Create("origami", "Origami", "A colorful world crafted from folded paper.", VisualStyleMode.Origami);
+        var origami = Create("origami", "Color Comic", "Bold ink outlines, cel-shaded color and printed screentones.", VisualStyleMode.ColorComic);
         if (origami)
         {
-            origami.paper = paper; origami.outlinePixels = 1; origami.outlineStrength = .28f; origami.normalEdges = .12f;
+            origami.paper = paper; origami.comicDetails = new Vector4(.65f,.7f,.4f,.55f); origami.outlinePixels = 1.6f; origami.outlineStrength = .85f; origami.normalEdges = .12f;
             origami.shadows = new Color(.84f,.97f,.96f); origami.highlights = new Color(1.08f,1.02f,.88f);
             origami.atmosphereInfluence = .12f; origami.fogTint = new Color(.66f,.79f,.78f);
             EditorUtility.SetDirty(origami); AssetDatabase.SaveAssetIfDirty(origami);
         }
-        Create("monochrome", "Monochrome", "Experience the world through dramatic black-and-white cinematography.", VisualStyleMode.Monochrome);
+        var manga = Create("monochrome", "B&W Manga", "Black ink, paper whites, screentones and hatched shadows.", VisualStyleMode.Monochrome);
+        if (manga) { manga.comicDetails = new Vector4(.8f,.65f,.75f,.7f); EditorUtility.SetDirty(manga); AssetDatabase.SaveAssetIfDirty(manga); }
         foreach (string renderer in new[] { "Assets/Settings/PC_Renderer.asset", "Assets/Settings/Mobile_Renderer.asset" })
         {
             var data = AssetDatabase.LoadAssetAtPath<UniversalRendererData>(renderer);
