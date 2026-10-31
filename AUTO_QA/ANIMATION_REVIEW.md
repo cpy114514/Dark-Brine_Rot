@@ -1,5 +1,10 @@
 # Animation review
 
+## Batch033 — version synchronization
+
+External second-island assets/rigs/prefabs imported unchanged. Missing PigRoninBossVisual preventedcompilation;removedonlyunusedunresolvedinitialization. Noanimationreplacementcreated. AuthoredpigAnimatorhasHandsOnHips/BindTPose/RigCheck;driverremainsabsentandfullanimatedbossencounterunverified. NoPlayorvisualsmoothnessclaim. Existing6styles/grass/duckanimationpreserved. Nextreviewnewsecond-islandencounterswithvalidruntimeevidence.
+
+
 ## Batch032 — farther grass boundary
 
 Native sameusercamera before/after and freshPlay images showgrass covering formerlybare farstrip. Extended representativefade31–40→60–80m;fixedprojectionwinddisabledpatchconfirmsgradualnewfade.24sampledadvancing/turning/returnpositions and pixelinspected;notcontinuousgameFPS/streamlatency or perfectpixelstability. Noanimation/character/rig/clip/collider/materialchanges. Morecompletegrassinrangeaddsgeometry;noFPSgainclaim. Allsixstylespreserved. Documentation/Grass-Distance-Batch032.md.

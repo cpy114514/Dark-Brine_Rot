@@ -1,5 +1,10 @@
 # Dark Brine_Rot automated QA
 
+## Batch033 — synchronization and QA-044 missing remote type
+
+Imported externalPlasticcs213/cs218 into currentGit,includingsecond-islandcandy/marshmallow/dialogue/traversal/UI/gravitywristband/pigassets.191revisionfiles,oneautomaticChickenBroAIthree-waymergepreserveslocal28/46andduck34/52awareness. QA-044 VERIFIED/FIXED:remotePigRoninBoss referencedabsentPigRoninBossVisual(CS0246);onlyunusedfield/Get/Addinitialization,removedminimalunresolvedreferenceswithoutchangingactions/damage/timing. VisualdriverNOTrecovered,noinventedanimations;authored3poseclipsarenotfullbossfightacceptance.85nativechecks/8scenebuildpass. Documentation/Version-Sync-Batch033.md/Evidence/batch033.
+
+
 ## Batch032 — requested farther grass visibility — implemented/verified
 
 Actual userFOV60.4065/lodBias0.5 gave complete grass finalfade30.70–39.67m despite180m outercull. Halve only recognized family'sscreenheightcutoff and setfadebandcutoff/3:59.51–79.35m,fullNearlayout/densitypreserved.39nativeassertions(30policy+9fixedprojectionimages),freshPlay11298owned/0wrong,24movingcameraposes and pixelpass. Native50m patchpixels0→10032;70m4733then81m0;notFPS. SameEditor7scene WindowsMono buildSucceeded86.43s/493warnings/4known606plantmessages.

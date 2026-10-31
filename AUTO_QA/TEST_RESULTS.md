@@ -1,5 +1,14 @@
 # Test results
 
+## Batch033 — cloud/Git integration validation
+
+-191incomingexternalrevisionfiles;onequalifiedthree-wayChickenBroAImerge/no textualconflicts;localchicken28/46/duck34/52retained. Generatedsolution/twotoollogsexcluded,no credentials-patternmatchesintext.
+-ExpectedbeforefailureCS0246PigRoninBossVisualabsentfromrepository;minimalunusedinitialization/fieldremoved. FinalUnitycompilepasses. DriverNOTreconstructed;no animationplaythroughclaim.
+-PASS85nativeasset/settingschecks,8package-scriptGUIDsresolve. Original5cleanscenes/6stylesretained,SecondIslandenabledineightscenebuildlist.
+-Windows64MonoDevelopment8scenesSucceeded287.8864017s/493warnings/4existing606plantmessages;binarynotlaunched. Allbuildcleanupchecks=true.39protectedhashes/bothcurrentsavesmatch,noPlaystarted.
+-Only191candidatecomparisonexceptionisdocumentedPigRonincompilefix;originalart/UV/rig/clip/GUIDsuntouched. Cloudwriteusesisolatedpartialworkspace,nomainworkspaceupdate. Evidence/batch033/proof.json and Documentation/Version-Sync-Batch033.md.
+
+
 ## Batch032 — grass visibility distance
 
 - PASS30nativepolicychecks:2cyclesrecognizedfamily/newcutoff/fade/Near/idempotence/exactrestoration;authoredCrossFade/unrelatedmeshexcluded.

@@ -44,6 +44,7 @@ namespace Mavis
             if (canvasGroup != null)
                 canvasGroup.alpha = health != null && health.isActiveAndEnabled && health.currentHealth > 0f &&
                     movement != null && movement.isActiveAndEnabled &&
+                    !SecondIslandAwakening.BlocksInputFor(movement) &&
                     !global::PauseSettingsMenu.IsOpen && !SahurLoadoutUI.IsOpen && !IslandMapUI.BlocksInput && !PlayerDeathRespawn.IsOpen ? 1f : 0f;
             RefreshBars(false);
             RefreshHealing();

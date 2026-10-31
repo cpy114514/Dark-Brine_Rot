@@ -162,3 +162,6 @@ Assets/Generated/**/*.asset filter=lfs diff=lfs merge=lfs -text
 
 # The grass-populated environment exceeds GitHub's ordinary blob limit.
 "Assets/Scenes/First Island/Environment.unity" filter=lfs diff=lfs merge=lfs -text
+
+# Pig Ronin authored mesh assets follow the existing large Unity mesh LFS policy.
+Assets/Game/Prefabs/Characters/PigRonin/Models/*.asset filter=lfs diff=lfs merge=lfs -text

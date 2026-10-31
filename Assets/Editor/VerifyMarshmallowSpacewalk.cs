@@ -12,6 +12,7 @@ public sealed class MarshmallowStrideReview : MonoBehaviour
     public readonly List<object> frames=new List<object>();
     public readonly List<bool> leads=new List<bool>();
     public int captured, lastStride;
+    int firstCapturedStride;
     public float maxSplit, maxLandingFootPitch;
     public float maxAnkleFlex,maxAnkleTwist,maxToeFlex;
     public float maxTorsoLean;
@@ -19,6 +20,18 @@ public sealed class MarshmallowStrideReview : MonoBehaviour
     public float leadEarly,leadLate,trailEarly,trailLate,maxLandingPhaseJump;
     public int earlySamples,lateSamples,landingTransitions;
     public bool exclusive=true;
+    public int footSamples,footPenetrations,footCorrections;
+    public float worstFootPenetration,worstBeforeCorrection;
+    Vector3 leftSole,rightSole;
+    Vector3 fastLeft,fastRight;
+    long denseTicks,fastTicks;
+    int timingSamples;
+    long legacyTicks;
+    int legacySamples;
+    public float maxCacheError;
+    public double DenseSoleMilliseconds => timingSamples==0 ? 0 : denseTicks*1000.0/System.Diagnostics.Stopwatch.Frequency/timingSamples;
+    public double FastSoleMilliseconds => timingSamples==0 ? 0 : fastTicks*1000.0/System.Diagnostics.Stopwatch.Frequency/timingSamples;
+    public double LegacySoleMilliseconds => legacySamples==0 ? 0 : legacyTicks*1000.0/System.Diagnostics.Stopwatch.Frequency/legacySamples;
     ThirdPersonPlayerController motor;MarshmallowSpacewalk gait;Camera camera;
     readonly HashSet<string> shots=new HashSet<string>();
     const string Folder="Temp/MarshmallowSpacewalk/FootRepair/Review";
@@ -40,6 +53,34 @@ public sealed class MarshmallowStrideReview : MonoBehaviour
         if(gait.Strides!=lastStride){lastStride=gait.Strides;leads.Add(gait.LeftLeading);}
         var a=motor.CharacterAnimator;
         var left=a.GetBoneTransform(HumanBodyBones.LeftFoot);var right=a.GetBoneTransform(HumanBodyBones.RightFoot);
+        var traversal=GetComponent<MarshmallowTraversal>();
+        var experience=GetComponent<MarshmallowIslandExperience>();
+        string phase=PlaySecondIslandMarshmallow.Status;
+        if((phase.StartsWith("walk-") || phase.StartsWith("steer-") || phase.StartsWith("sprint-") ||
+            phase.StartsWith("release-") || phase.StartsWith("manual-jump-") || phase.StartsWith("stop-")) &&
+            !motor.IsDodging && !(GetComponent<Mavis.SahurAttack>()?.IsCombatMotionActive ?? false))
+        {
+            long started=System.Diagnostics.Stopwatch.GetTimestamp();
+            SahurSupportPose.MeasureSoles(a,ref leftSole,ref rightSole);
+            denseTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-started;
+            started=System.Diagnostics.Stopwatch.GetTimestamp();
+            SahurSupportPose.MeasureSolesFast(a,ref fastLeft,ref fastRight);
+            fastTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-started;timingSamples++;
+            if(timingSamples%15==0)
+            {
+                Vector3 nativeLeft=leftSole,nativeRight=rightSole;
+                started=System.Diagnostics.Stopwatch.GetTimestamp();
+                SahurSupportPose.MeasureSolesLegacy(a,ref nativeLeft,ref nativeRight);
+                legacyTicks+=System.Diagnostics.Stopwatch.GetTimestamp()-started;legacySamples++;
+                maxCacheError=Mathf.Max(maxCacheError,Mathf.Abs(left.TransformPoint(nativeLeft).y-left.TransformPoint(leftSole).y),
+                    Mathf.Abs(right.TransformPoint(nativeRight).y-right.TransformPoint(rightSole).y));
+            }
+            foreach(var point in new[]{left.TransformPoint(leftSole),right.TransformPoint(rightSole)})
+                if(experience.TryVisualSurface(point,out float ground))
+                {footSamples++;float penetration=ground-point.y;worstFootPenetration=Mathf.Max(worstFootPenetration,penetration);if(penetration>.08f)footPenetrations++;}
+            footCorrections+=traversal.CorrectedFeet;
+            worstBeforeCorrection=Mathf.Max(worstBeforeCorrection,traversal.FootPenetrationBefore);
+        }
         float split=Mathf.Abs(Vector3.Dot(left.position-right.position,transform.forward));
         float signedSplit=Vector3.Dot(left.position-right.position,transform.forward);
         var leadFoot=gait.LeftLeading?left:right;
@@ -82,7 +123,9 @@ public sealed class MarshmallowStrideReview : MonoBehaviour
         if((state.StartsWith("manual-jump") || state.StartsWith("air-flip")) && gait.Weight>.001f)exclusive=false;
         frames.Add(new {state,stride=gait.Strides,left=gait.LeftLeading,gait.Phase,gait.Weight,split,toePitch,
             hips=a.GetBoneTransform(HumanBodyBones.Hips).localPosition.ToString(),vertical=motor.VerticalSpeed});
-        if(!gait.Striding || gait.Weight<.99f || gait.Strides>2)return;
+        if(!gait.Striding || gait.Weight<.99f)return;
+        if(firstCapturedStride==0)firstCapturedStride=gait.Strides;
+        if(gait.Strides>firstCapturedStride+1)return;
         int bin=gait.Phase<.32f?0:gait.Phase<.58f?1:gait.Phase<.8f?2:3;
         string key=gait.Strides+"-"+bin;
         if(!shots.Add(key))return;
@@ -124,7 +167,9 @@ public static class VerifyMarshmallowSpacewalk
             File.WriteAllText("Temp/MarshmallowSpacewalk/FootRepair/Review/diagnostics.json",Newtonsoft.Json.JsonConvert.SerializeObject(new {
                 alternating,probe.exclusive,probe.maxSplit,probe.maxLandingFootPitch,probe.maxAnkleFlex,probe.maxAnkleTwist,
                 probe.maxToeFlex,probe.maxTorsoLean,probe.reachFrames,probe.correctReachFrames,probe.captured,
-                probe.earlySamples,probe.lateSamples,probe.leadEarly,probe.leadLate,probe.trailEarly,probe.trailLate,probe.maxLandingPhaseJump,probe.landingTransitions},Newtonsoft.Json.Formatting.Indented));
+                probe.earlySamples,probe.lateSamples,probe.leadEarly,probe.leadLate,probe.trailEarly,probe.trailLate,probe.maxLandingPhaseJump,probe.landingTransitions,
+                probe.footSamples,probe.footPenetrations,probe.footCorrections,probe.worstFootPenetration,probe.worstBeforeCorrection,
+                probe.DenseSoleMilliseconds,probe.FastSoleMilliseconds,probe.LegacySoleMilliseconds,probe.maxCacheError},Newtonsoft.Json.Formatting.Indented));
             File.WriteAllText("Temp/MarshmallowSpacewalk/FootRepair/Review/frames.json",Newtonsoft.Json.JsonConvert.SerializeObject(probe.frames,Newtonsoft.Json.Formatting.Indented));
             if(!alternating || !probe.exclusive || probe.maxSplit<1f || probe.captured<12 ||
                 probe.maxAnkleFlex>.4f || probe.maxAnkleTwist>.2f || probe.maxToeFlex>.2f ||

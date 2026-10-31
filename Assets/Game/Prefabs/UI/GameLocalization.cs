@@ -81,6 +81,12 @@ namespace Mavis
                 foreach (string alias in aliases) result[alias] = pair;
             }
             Add("DARK BRINE: ROT", "暗潮：抽象之岛"); Add("MAIN MENU","主菜单"); Add("FIRST ISLAND","第一座岛");
+            Add("Gravity Wristband", "重力手环");
+            Add("Marshmallows remaining: {0}", "剩余棉花糖：{0}");
+            Add("Gravity Wristband unlocked! Find it beyond the marshmallows.", "重力手环已出现！前往棉花糖据点后方拾取。");
+            Add("Gravity Wristband\nWalk up to collect", "重力手环\n靠近即可拾取");
+            Add("B  ·  Gravity: normal", "B  ·  重力：正常");
+            Add("B  ·  Gravity: low", "B  ·  重力：低");
             Add("01  /  FIRST ISLAND","01  /  第一座岛");
             Add("I / Esc to close","I / Esc 关闭");
             Add("CLICK TO SWITCH TERRAIN", "点击切换地形");
@@ -140,6 +146,7 @@ namespace Mavis
             Add("Health, stamina and healing packs restored · Collected gear kept","生命、体力与治疗包恢复 · 已拾取装备保留"); Add("RESPAWN  /  Enter","复活  / Enter","复活  /  Enter");
             Add("Locked on · Middle click to release","锁定 · 中键解除");
             Add("ISLAND MAP","岛屿地图"); Add("NORTH  N","北  N"); Add("LEGEND","地图图例"); Add("▲  Player / Facing","▲  玩家 / 朝向"); Add("◆  Island checkpoint","◆  岛上复活点"); Add("●  Karen Fairy","●  猪妖小仙人","●  Nailong", "●  奶龙");
+            Add("✦  Fairy","✦  仙子");
             Add("M / Esc to close · Game paused while viewing","M / Esc 关闭地图 · 查看时游戏暂停"); Add("BACK TO GAME","返回游戏");
             Add("Position\nX {0}   Z {1}\n\nMap width  {2} m","当前位置\nX {0}   Z {1}\n\n地图宽度  {2} 米","map.coordinates");
             Add("Head","头部"); Add("Body","身体"); Add("Legs","腿部"); Add("Feet","脚部"); Add("Weapon","武器"); Add("GEAR","装备");

@@ -95,8 +95,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eab3241f7e22b34c822e83c64a71a55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.ChickenBroAI
-  sightRange: 18
-  giveUpRange: 28
+  sightRange: 34
+  giveUpRange: 52
   meleeRange: 4.815
   lungeMin: 6.5099993
   lungeMax: 14.280001

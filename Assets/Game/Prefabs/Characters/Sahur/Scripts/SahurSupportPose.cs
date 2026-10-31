@@ -61,9 +61,16 @@ public static class SahurSupportPose
     public static void MeasureSoles(Animator animator,ref Vector3 leftSole,ref Vector3 rightSole)
     {
         using var measurement=new Unity.Profiling.ProfilerMarker("Sahur.MeasureSoles").Auto();
-        if(!MeasureCachedSoles(animator,ref leftSole,ref rightSole))MeasureSolesLegacy(animator,ref leftSole,ref rightSole);
+        if(!MeasureCachedSoles(animator,ref leftSole,ref rightSole,1))MeasureSolesLegacy(animator,ref leftSole,ref rightSole);
     }
-    static bool MeasureCachedSoles(Animator animator,ref Vector3 leftSole,ref Vector3 rightSole)
+    // Dense character meshes contain many near-identical sole vertices. The
+    // traversal needs an estimate each frame, while exact measurement remains
+    // available for other systems and offline validation.
+    public static void MeasureSolesFast(Animator animator,ref Vector3 leftSole,ref Vector3 rightSole)
+    {
+        if(!MeasureCachedSoles(animator,ref leftSole,ref rightSole,16))MeasureSolesLegacy(animator,ref leftSole,ref rightSole);
+    }
+    static bool MeasureCachedSoles(Animator animator,ref Vector3 leftSole,ref Vector3 rightSole,int stride)
     {
         var left=animator.GetBoneTransform(HumanBodyBones.LeftFoot);var right=animator.GetBoneTransform(HumanBodyBones.RightFoot);
         var leftToe=animator.GetBoneTransform(HumanBodyBones.LeftToes);var rightToe=animator.GetBoneTransform(HumanBodyBones.RightToes);
@@ -76,7 +83,7 @@ public static class SahurSupportPose
             // Larger/non-uniform scale still uses the native bake fallback.
             if(!data.compatible || (skin.transform.localScale-Vector3.one).sqrMagnitude>1e-10f)return false;
             for(int i=0;i<bones.Length;i++){if(bones[i]==null)return false;data.matrices[i]=bones[i].localToWorldMatrix*data.bind[i];}
-            for(int i=0;i<data.vertices.Length;i++)
+            for(int i=0;i<data.vertices.Length;i+=stride)
             {
                 var v=data.vertices[i];var w=v.weights;Vector3 point=Vector3.zero;
                 if(w.weight0>0)point+=data.matrices[w.boneIndex0].MultiplyPoint3x4(v.point)*w.weight0;
@@ -85,7 +92,7 @@ public static class SahurSupportPose
                 if(w.weight3>0)point+=data.matrices[w.boneIndex3].MultiplyPoint3x4(v.point)*w.weight3;
                 data.world[i]=point;if((v.sides&1)!=0)minLeft=Mathf.Min(minLeft,point.y);if((v.sides&2)!=0)minRight=Mathf.Min(minRight,point.y);
             }
-            for(int i=0;i<data.vertices.Length;i++)
+            for(int i=0;i<data.vertices.Length;i+=stride)
             {
                 var v=data.vertices[i];var point=data.world[i];
                 if((v.sides&1)!=0 && point.y<=minLeft+.005f){sumLeft+=point;countLeft++;}

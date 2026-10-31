@@ -59,7 +59,7 @@ namespace Mavis
         {
             if (open == PanelVisible) return false;
             if (open && consumedFrame == Time.frameCount) return false;
-            if (open && (PlayerDeathRespawn.IsOpen || PauseSettingsMenu.IsOpen || SahurLoadoutUI.IsOpen || (active != null && active != this))) return false;
+            if (open && (PlayerDeathRespawn.IsOpen || PauseSettingsMenu.IsOpen || SahurLoadoutUI.IsOpen || SecondIslandAwakening.BlocksInputFor(GetComponent<ThirdPersonPlayerController>()) || (active != null && active != this))) return false;
             if (open)
             {
                 if (root == null) Build();
@@ -98,6 +98,10 @@ namespace Mavis
         {
             foreach (var marker in markers) if (marker != null) { marker.gameObject.SetActive(false); Destroy(marker.gameObject); }
             markers.Clear(); targets.Clear();
+            if (gameObject.scene.path == "Assets/Scenes/Second Island.unity")
+                foreach (var fairy in FindObjectsByType<NealFairyHover>(FindObjectsSortMode.None))
+                    if (fairy.gameObject.scene == gameObject.scene)
+                        AddMarker(fairy.transform, "✦", new Color(1f, .88f, .98f));
             foreach (var point in FindObjectsByType<IslandRespawnPoint>(FindObjectsSortMode.None))
                 AddMarker(point.transform, "◆", GameUITheme.Foreground);
             foreach (var enemy in FindObjectsByType<NailongHealth>(FindObjectsSortMode.None))
@@ -131,7 +135,20 @@ namespace Mavis
                 if (visible && target.TryGetComponent<IslandSupplyCache>(out var cache))
                     markers[i].GetComponent<Text>().color = cache.IsAvailable ? new Color(1, .83f, .2f) : GameUITheme.Muted;
                 markers[i].gameObject.SetActive(visible);
-                if (visible) markers[i].anchoredPosition = MapGraphic.WorldToMap(target.position);
+                if (visible)
+                {
+                    Vector2 position = MapGraphic.WorldToMap(target.position);
+                    // Keep the nearby fairy visible beside the player arrow. The icon
+                    // returns to its actual projected position once they separate.
+                    if (target.GetComponent<NealFairyHover>() != null)
+                    {
+                        Vector2 separation = position - playerArrow.rectTransform.anchoredPosition;
+                        if (separation.sqrMagnitude < 28f * 28f)
+                            position = playerArrow.rectTransform.anchoredPosition +
+                                (separation.sqrMagnitude > .01f ? separation.normalized : Vector2.up) * 28f;
+                    }
+                    markers[i].anchoredPosition = position;
+                }
             }
             var rounded=new Vector3(Mathf.Round(transform.position.x),Mathf.Round(transform.position.z),Mathf.Round(MapGraphic.WorldSpan));
             if(rounded!=shownCoordinates || coordinateLanguage!=GameLocalization.Language)
@@ -193,6 +210,10 @@ namespace Mavis
             Label(root.transform, "LEGEND", 21, new Vector2(480, 335), new Vector2(330, 60), Color.white);
             GameUITheme.Rule(root.transform,new Vector2(480,292),new Vector2(290,1),GameUITheme.Muted);
             Label(root.transform, "▲  Player / Facing", 24, new Vector2(480, 245), new Vector2(330, 60), GameUITheme.Foreground);
+            if (gameObject.scene.path == "Assets/Scenes/Second Island.unity")
+                Label(root.transform, "✦  Fairy", 24, new Vector2(480, 165), new Vector2(330, 60), new Color(1f, .88f, .98f));
+            else
+            {
             Label(root.transform, "◆  Island checkpoint", 24, new Vector2(480, 165), new Vector2(330, 60), GameUITheme.Foreground);
             Label(root.transform, "C  Capri", 22, new Vector2(480, 105), new Vector2(330, 48), GameUITheme.Foreground);
             Label(root.transform, "N  Nailong", 22, new Vector2(480, 55), new Vector2(330, 48), GameUITheme.Foreground);
@@ -200,6 +221,7 @@ namespace Mavis
             Label(root.transform, "+  M4A1", 22, new Vector2(480, -45), new Vector2(330, 48), new Color(1, .83f, .2f));
             Label(root.transform, "R  Shore camp · HP / SP / ammo", 20, new Vector2(480, -95), new Vector2(330, 48), new Color(1, .83f, .2f));
             Label(root.transform, "▣ Ammo supply points", 22, new Vector2(480, -145), new Vector2(330, 48), new Color(1, .83f, .2f));
+            }
             coordinates = Label(root.transform, "", 18, new Vector2(480, -200), new Vector2(360, 120), GameUITheme.Secondary);
             Label(root.transform, "M / Esc to close · Game paused while viewing", 17, new Vector2(-165, -465), new Vector2(1100, 55), GameUITheme.Secondary);
             var close = Box(root.transform, "Close map", new Vector2(480, -325), new Vector2(290, 64), GameUITheme.Track);

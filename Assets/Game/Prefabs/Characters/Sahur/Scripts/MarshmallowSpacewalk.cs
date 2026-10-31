@@ -43,7 +43,7 @@ public sealed class MarshmallowSpacewalk : MonoBehaviour
     }
     public void BeginBound(float upwardSpeed)
     {
-        if(!isActiveAndEnabled || !traversal.Active)return;
+        if(!isActiveAndEnabled || !traversal.LowGravityActive)return;
         LeftLeading=!LeftLeading;Striding=true;Strides++;
         launchSpeed=Mathf.Max(1,upwardSpeed);Phase=airPhase=0;landed=false;
     }
@@ -68,7 +68,7 @@ public sealed class MarshmallowSpacewalk : MonoBehaviour
     void LateUpdate()
     {
         if(Time.deltaTime<=0 || PauseSettingsMenu.IsOpen)return;
-        if(!motor || !motor.enabled || !traversal.Active || !body.enabled || !leftStride || !rightStride || !Bind())
+        if(!motor || !motor.enabled || !traversal.LowGravityActive || !body.enabled || !leftStride || !rightStride || !Bind())
         { Weight=0;Striding=false;return; }
         bool blocked=motor.ExternalControlLock || motor.ExternalMovementLock || motor.Swimming || motor.IsDodging ||
             motor.Motion.Scripted || combat && combat.IsCombatMotionActive;

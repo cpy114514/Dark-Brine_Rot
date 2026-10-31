@@ -36,10 +36,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     [Range(0.01f, 0.16f)] public float rollExitBlend = 0.065f;
 
     [Header("Air flip")]
-    [Tooltip("Tap Dodge once anywhere in the jump to complete a forward flip. Releasing the key does not cancel it.")]
+    [Tooltip("Tap Dodge in the air to flip and descend quickly. Releasing the key does not cancel it.")]
     [Min(0.2f)] public float airFlipDuration = 0.43f;
-    [Tooltip("Extra upward height supplied by the air flip, added to any remaining jump momentum. Once per airborne cycle.")]
-    [Min(0.1f)] public float airFlipExtraHeight = 1.25f;
+    [Tooltip("Minimum downward speed when an airborne dodge begins.")]
+    [Min(1f)] public float airFlipFastFallSpeed = 16f;
+    // Retain the legacy serialized value in existing scenes and prefabs.
+    [HideInInspector] public float airFlipExtraHeight = 1.25f;
 
     [Header("Water contact")]
     [Tooltip("Spawn lightweight procedural droplets while the character is moving through the sea.")]
@@ -82,7 +84,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     CharacterController characterController;
     MarshmallowTraversal marshmallow;
-    bool SoftTraversal => marshmallow != null && marshmallow.Active;
+    bool SoftTraversal => marshmallow != null && marshmallow.LowGravityActive;
     float TraversalGravity => SoftTraversal ? marshmallow.gravity : gravity;
     float TraversalJumpHeight => SoftTraversal ? marshmallow.jumpHeight : jumpHeight;
     Animator animator;
@@ -131,6 +133,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     float rollCooldownTimer;
     float rollInheritedSpeed;
     float airFlipTimer;
+    float airFlipPlaybackDuration;
+    readonly RaycastHit[] airFlipGroundHits = new RaycastHit[16];
     bool airFlipUsed;
     Quaternion airFlipVisualSpin = Quaternion.identity;
     Vector3 planarVelocity;
@@ -603,22 +607,20 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             SetMotion(2, "Jump Start", .10f);
         }
 
-        // Latch a single press, including at the apex or while falling. The
-        // timer owns the whole flip; holding/releasing Ctrl cannot shorten it.
-        // Added lift both raises the jump and gives a late flip time to finish.
+        // One airborne dodge per flight. Cancel upward momentum immediately,
+        // while preserving an already faster fall and the normal collision path.
         if (acceptInput && !combatLocked && !isRolling && !grounded && !airFlipUsed &&
             airFlipTimer <= 0f && rollCooldownTimer <= 0f && dodgePressed &&
             (playerStamina == null || playerStamina.TrySpend(playerStamina.airFlipCost)))
         {
             airFlipUsed = true;
             if(SoftTraversal)marshmallow.CancelSpacewalk();
-            airFlipTimer = airFlipDuration;
-            rollCooldownTimer = airFlipDuration + rollCooldown;
+            verticalSpeed = Mathf.Min(verticalSpeed, -Mathf.Max(1f, airFlipFastFallSpeed));
+            airFlipPlaybackDuration = AirFlipDurationBeforeLanding(-verticalSpeed);
+            airFlipTimer = airFlipPlaybackDuration;
+            rollCooldownTimer = airFlipPlaybackDuration + rollCooldown;
             jumpBufferTimer = 0f;
-            float upwardSpeed = Mathf.Max(0f, verticalSpeed);
-            verticalSpeed = Mathf.Sqrt(upwardSpeed * upwardSpeed + 2f * TraversalGravity * airFlipExtraHeight);
-            // Even a deliberately small lift must leave time for one rotation.
-            verticalSpeed = Mathf.Max(verticalSpeed, TraversalGravity * (airFlipDuration + 0.08f) * 0.5f);
+            dodgeBufferUntil = -1f;
             SetMotion(7, "Air Flip", 0.06f);
         }
         // Preserve the second island's own low-gravity flight. In ordinary
@@ -990,7 +992,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     void LateUpdate()
     {
         UpdateAirFlipVisual();
-        if (SoftTraversal && Time.deltaTime > 0f && !PauseSettingsMenu.IsOpen) marshmallow.TickFeedback();
+        if (marshmallow != null && marshmallow.Active && Time.deltaTime > 0f && !PauseSettingsMenu.IsOpen) marshmallow.TickFeedback();
         if (marshmallow != null && Time.deltaTime > 0f && !PauseSettingsMenu.IsOpen)
             marshmallow.ApplyVisual(visualTransform, GetLowestFootOffset(), verticalSpeed,
                 !Swimming && !ExternalControlLock && !ExternalMovementLock && rollTimer <= 0f &&
@@ -1320,6 +1322,28 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         motionState = 0;
     }
 
+    float AirFlipDurationBeforeLanding(float downwardSpeed)
+    {
+        // Shorten the visual turn when the floor is close, so the character
+        // can recover upright without delaying the requested descent.
+        Bounds bounds = characterController.bounds;
+        Vector3 origin = new Vector3(bounds.center.x, bounds.min.y + .15f, bounds.center.z);
+        int count = Physics.RaycastNonAlloc(origin, Vector3.down, airFlipGroundHits,
+            downwardSpeed * airFlipDuration + TraversalGravity * airFlipDuration * airFlipDuration * .5f + .2f,
+            ~0, QueryTriggerInteraction.Ignore);
+        float distance = float.PositiveInfinity;
+        for (int i = 0; i < count; i++)
+        {
+            var hit = airFlipGroundHits[i];
+            if (hit.collider.transform.IsChildOf(transform) || Mavis.CombatBodyCollision.IsActor(hit.collider)) continue;
+            distance = Mathf.Min(distance, Mathf.Max(0f, hit.distance - .15f));
+        }
+        if (float.IsPositiveInfinity(distance)) return airFlipDuration;
+        float time = (Mathf.Sqrt(downwardSpeed * downwardSpeed + 2f * TraversalGravity * distance) - downwardSpeed) /
+                     Mathf.Max(.1f, TraversalGravity);
+        return Mathf.Clamp(time * .85f, .07f, Mathf.Max(.07f, airFlipDuration));
+    }
+
     void UpdateAirFlipVisual()
     {
         if (visualTransform == null) return;
@@ -1338,7 +1362,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         // without tilting or displacing the CharacterController and camera.
         if (airFlipTimer > 0f)
         {
-            float phase = Mathf.Clamp01(1f - airFlipTimer / Mathf.Max(0.2f, airFlipDuration));
+            float phase = Mathf.Clamp01(1f - airFlipTimer / Mathf.Max(.07f, airFlipPlaybackDuration));
             // Keep almost constant angular speed. A full SmoothStep stalls at
             // both ends and makes the middle of this short flip rush past.
             float spinPhase = Mathf.Lerp(phase, Mathf.SmoothStep(0f, 1f, phase), 0.18f);
