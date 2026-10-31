@@ -94,7 +94,7 @@ namespace Mavis
             if (active != this) return;
             RefreshVisibility();
             if (PauseSettingsMenu.IsOpen || IslandMapUI.BlocksInput || PlayerDeathRespawn.IsOpen ||
-                movement == null || !movement.enabled || Keyboard.current == null) return;
+                movement == null || !movement.enabled || SecondIslandAwakening.BlocksInputFor(movement) || Keyboard.current == null) return;
             var keys = Keyboard.current;
             if (keys.iKey.wasPressedThisFrame) SetOpen(!IsOpen);
             else if (IsOpen && keys.escapeKey.wasPressedThisFrame) { SetOpen(false); consumedFrame = Time.frameCount; }
@@ -117,6 +117,7 @@ namespace Mavis
         void RefreshVisibility()
         {
             bool gameplay = enabled && movement != null && movement.enabled && gameObject.activeInHierarchy &&
+                !SecondIslandAwakening.BlocksInputFor(movement) &&
                 (health == null || health.currentHealth > 0f) && !PauseSettingsMenu.IsOpen &&
                 !IslandMapUI.BlocksInput && !PlayerDeathRespawn.IsOpen && !IsOpen;
             if (hud != null) hud.gameObject.SetActive(gameplay && showEmptySkillHotbar);
@@ -250,6 +251,14 @@ namespace Mavis
                 equipButton.interactable=owned&&!wearing;
                 unequipText.text="Unequip";unequipButton.gameObject.SetActive(wearing);
             }
+            if(item && item.id=="second_island_gravity_wristband")
+            {
+                var gravity=GetComponent<GravityWristbandAbility>();
+                selectionStatus.text=owned ? (gravity && gravity.NormalGravity ? "Normal gravity active" : "Low gravity active") : "Locked";
+                details.text="Reward for defeating the marshmallows on the second island.\n\nAutomatically worn when collected. Close Gear and press B to switch between normal and low gravity.";
+                actionText.text=owned ? "Press B during play" : "Defeat the marshmallows";
+                equipButton.interactable=false;unequipButton.gameObject.SetActive(false);
+            }
             HighlightSelection();
         }
         void HighlightSelection()
@@ -326,7 +335,7 @@ namespace Mavis
 
         public void SetOpen(bool open)
         {
-            if (active != this || panel == null || open == IsOpen || (open && (PauseSettingsMenu.IsOpen || PlayerDeathRespawn.IsOpen || IslandMapUI.BlocksInput))) return;
+            if (active != this || panel == null || open == IsOpen || (open && (PauseSettingsMenu.IsOpen || PlayerDeathRespawn.IsOpen || IslandMapUI.BlocksInput || SecondIslandAwakening.BlocksInputFor(movement)))) return;
             IsOpen = open;
             panel.SetActive(open);
             consumedFrame = Time.frameCount;

@@ -29,6 +29,8 @@ public sealed class SecondIslandAwakening : MonoBehaviour
     bool cameraPoseInitialized;
     float animatorSpeed, groundY, originalRootY;
     bool ownsPose, capsuleWasEnabled;
+    bool dialogueShot;
+    Transform fairy;
     Vector3 originalPosition;
     Quaternion originalRotation;
     [System.Serializable]
@@ -44,6 +46,7 @@ public sealed class SecondIslandAwakening : MonoBehaviour
     public bool Playing => playing;
     public bool GettingUp { get; private set; }
     public float GetUpPhase { get; private set; }
+    public SecondIslandDialogue Dialogue { get; private set; }
     public static bool BlocksInputFor(ThirdPersonPlayerController player) =>
         active && active.playing && player && player.gameObject.scene == active.gameObject.scene;
 
@@ -148,6 +151,19 @@ public sealed class SecondIslandAwakening : MonoBehaviour
             player.RestoreSavedPose(standing,originalRotation);
             FinishPose();
         }
+        foreach(var root in gameObject.scene.GetRootGameObjects())
+        {
+            if(root.name=="Neal Fairy") { fairy=root.transform; break; }
+            var found=root.transform.Find("Neal Fairy");
+            if(found){fairy=found;break;}
+        }
+        dialogueShot=player && view;
+        Dialogue=gameObject.AddComponent<SecondIslandDialogue>();
+        yield return Dialogue.Play(transform);
+        dialogueShot=false;
+        if(player && view)player.ContinueCameraFromCurrentView(view,cameraVelocity);
+        // Keep the input lock through the frame that dismissed the last line.
+        yield return null;
         playing = false;
         Destroy(gameObject);
     }
@@ -221,11 +237,13 @@ public sealed class SecondIslandAwakening : MonoBehaviour
     }
     void LateUpdate()
     {
-        if (!ownsPose || !player || !animator || !view || !animator.isHuman) return;
+        if ((!ownsPose && !dialogueShot) || !player || !animator || !view || !animator.isHuman) return;
         var hips=animator.GetBoneTransform(HumanBodyBones.Hips);
         var head=animator.GetBoneTransform(HumanBodyBones.Head);
         if (!hips || !head) return;
         Vector3 focus=(hips.position+head.position)*.5f;
+        if(dialogueShot && fairy && fairy.gameObject.activeInHierarchy)
+            focus=Vector3.Lerp(focus,fairy.position+Vector3.up*Mathf.Abs(fairy.lossyScale.y)*.55f,.4f);
         Vector3 direction=(-player.transform.forward*4f+player.transform.right*9f+Vector3.up*4.5f).normalized;
         Vector3 at=focus+direction*11f;
         Quaternion look=Quaternion.LookRotation(focus-at,Vector3.up);

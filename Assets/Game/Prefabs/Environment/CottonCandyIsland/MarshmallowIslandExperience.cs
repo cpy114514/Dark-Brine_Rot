@@ -204,6 +204,39 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
         }
         return Mathf.Clamp(depth,0,.48f);
     }
+
+    // Match the vertex shader's current displacement at a collision hit. The
+    // physics mesh stays at rest while the rendered cotton compresses/rebounds.
+    public bool TryVisualSurface(Vector3 point, out float height)
+    {
+        height=0;
+        if (!initialized || !surface || !traversal.Active) return false;
+        var collision=surface.GetComponent<Collider>();
+        if (!collision || !collision.enabled) return false;
+        float originY=Mathf.Max(point.y,body.bounds.min.y)+2f;
+        if (!collision.Raycast(new Ray(new Vector3(point.x,originY,point.z),Vector3.down),out var hit,5f) ||
+            hit.normal.y < .3f || Mathf.Abs(hit.point.y-body.bounds.min.y)>2f) return false;
+        Vector3 p=hit.point;
+        Vector2 delta=new Vector2(p.x-support.x,p.z-support.z);
+        float response=-pressure*Mathf.Pow(2,-delta.sqrMagnitude*.28f)*Mathf.Clamp01(1-Mathf.Abs(p.y-support.y)/3.5f);
+        int count=ActiveImpressions>0 ? Mathf.Min(contactCursor,Capacity) : 0;
+        for(int i=0;i<count;i++)
+        {
+            float age=Time.time-contactData[i].x,lifetime=contactData[i].z,radius=contacts[i].w;
+            if(lifetime<=0 || radius<=0 || age<0 || age>lifetime)continue;
+            delta=new Vector2(p.x-contacts[i].x,p.z-contacts[i].z);
+            float d2=delta.sqrMagnitude;
+            float layer=Mathf.Clamp01(1-Mathf.Abs(p.y-contacts[i].y)/4);
+            float recovery=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(.12f,lifetime,age));
+            float bowl=Mathf.Pow(2,-d2/(radius*radius)*3);
+            float distance=Mathf.Sqrt(d2+.0001f);
+            float ring=Mathf.Pow(2,-Mathf.Pow((distance-age*5.2f)/.8f,2)*2)*Mathf.Pow(2,-age*2.8f);
+            response+=(-.30f*bowl*recovery+.095f*ring)*contactData[i].y*layer;
+        }
+        float normalWeight=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.15f,.75f,hit.normal.y));
+        height=p.y+Mathf.Clamp(response,-.48f,.12f)*normalWeight;
+        return true;
+    }
     void UploadSurface()
     {
         if (!surface) return;

@@ -12,6 +12,10 @@ namespace Mavis
         readonly List<Vector3> vertices = new List<Vector3>();
         readonly List<int> triangles = new List<int>();
         readonly List<int> submeshTriangles = new List<int>();
+        const int CandyGrid = 48;
+        readonly List<Vector3> candyPoints = new List<Vector3>();
+        readonly List<bool> candyHits = new List<bool>();
+        float candyMinHeight, candyMaxHeight;
         public Vector2 WorldCenter { get; private set; }
         public float WorldSpan { get; private set; } = 100f;
         float waterHeight;
@@ -30,6 +34,32 @@ namespace Mavis
                 islands.Add(island);
                 if (!found) { bounds = renderer.bounds; found = true; }
                 else bounds.Encapsulate(renderer.bounds);
+            }
+            candyPoints.Clear();
+            candyHits.Clear();
+            // The second island is an authored mesh rather than a ProceduralIsland.
+            // Sample its real collider from above to preserve its outline and relief.
+            var experience = FindFirstObjectByType<MarshmallowIslandExperience>();
+            if (!found && experience != null && experience.gameObject.scene.path == "Assets/Scenes/Second Island.unity" &&
+                experience.surface != null && experience.surface.TryGetComponent<Collider>(out var candyCollider))
+            {
+                Bounds candyBounds = candyCollider.bounds;
+                candyMinHeight = float.PositiveInfinity;
+                candyMaxHeight = float.NegativeInfinity;
+                for (int z = 0; z <= CandyGrid; z++)
+                for (int x = 0; x <= CandyGrid; x++)
+                {
+                    var origin = new Vector3(Mathf.Lerp(candyBounds.min.x, candyBounds.max.x, x / (float)CandyGrid),
+                        candyBounds.max.y + 1f, Mathf.Lerp(candyBounds.min.z, candyBounds.max.z, z / (float)CandyGrid));
+                    bool hit = candyCollider.Raycast(new Ray(origin, Vector3.down), out var sample, candyBounds.size.y + 2f);
+                    candyHits.Add(hit);
+                    candyPoints.Add(hit ? sample.point : origin);
+                    if (!hit) continue;
+                    candyMinHeight = Mathf.Min(candyMinHeight, sample.point.y);
+                    candyMaxHeight = Mathf.Max(candyMaxHeight, sample.point.y);
+                }
+                bounds = candyBounds;
+                found = true;
             }
             // Include an offshore player without changing the map's north-up orientation.
             bounds.Encapsulate(player);
@@ -76,6 +106,22 @@ namespace Mavis
                 }
                 for (int i = 0; i < triangles.Count; i += 3)
                     vh.AddTriangle(start + triangles[i], start + triangles[i + 1], start + triangles[i + 2]);
+            }
+            if (candyPoints.Count != (CandyGrid + 1) * (CandyGrid + 1)) return;
+            int candyStart = vh.currentVertCount;
+            for (int i = 0; i < candyPoints.Count; i++)
+            {
+                Vector3 world = candyPoints[i];
+                float elevation = Mathf.InverseLerp(candyMinHeight, candyMaxHeight, world.y);
+                Color terrain = Color.Lerp(new Color(.91f, .72f, .79f), new Color(.68f, .52f, .69f), elevation);
+                vh.AddVert(new Vector2((world.x - WorldCenter.x) * scaleX, (world.z - WorldCenter.y) * scaleY), terrain, Vector2.zero);
+            }
+            for (int z = 0; z < CandyGrid; z++)
+            for (int x = 0; x < CandyGrid; x++)
+            {
+                int a = z * (CandyGrid + 1) + x, b = a + 1, c = a + CandyGrid + 1, d = c + 1;
+                if (candyHits[a] && candyHits[c] && candyHits[b]) vh.AddTriangle(candyStart + a, candyStart + c, candyStart + b);
+                if (candyHits[b] && candyHits[c] && candyHits[d]) vh.AddTriangle(candyStart + b, candyStart + c, candyStart + d);
             }
         }
     }

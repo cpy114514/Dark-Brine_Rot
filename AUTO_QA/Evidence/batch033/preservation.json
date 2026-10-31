@@ -1,0 +1,10 @@
+{
+  "protectedHashes": 39,
+  "allProtectedMatch": true,
+  "bothCurrentSaveFilesUnchanged": true,
+  "noPlayUsed": true,
+  "originalScenesCleanStopped": true,
+  "incomingRevisionDifferencesOnlyQualifiedCompileFix": [
+    "Assets/Game/Prefabs/Characters/PigRonin/PigRoninBoss.cs"
+  ]
+}

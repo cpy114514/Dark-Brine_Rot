@@ -13,8 +13,8 @@ namespace Mavis
         public enum Mood { Idle, Patrol, Chase, Strike, Lunge, Flinch, Launch, Knockdown, Dead }
 
         [Header("Awareness")]
-        [Min(2f)] public float sightRange = 16f;
-        [Min(4f)] public float giveUpRange = 26f;
+        [Min(2f)] public float sightRange = 28f;
+        [Min(4f)] public float giveUpRange = 46f;
         [Min(.5f)] public float meleeRange = 1.7f;
         [Min(1f)] public float lungeMin = 2.2f;
         [Min(1f)] public float lungeMax = 4.2f;
@@ -51,6 +51,7 @@ namespace Mavis
         CharacterController motor;
         Health health;
         Animator animator;
+        MarshmallowEnemyVisual marshmallow;
         ChickenBroFlock flock;
         OceanWorld ocean;
         PlayerHealth player;
@@ -70,11 +71,13 @@ namespace Mavis
         public float ActionPhase { get; private set; }
         public bool HoldsAttack => Mode == Mood.Strike || Mode == Mood.Lunge;
         public bool IsAlive => health && !health.IsDead && Mode != Mood.Dead;
+        public float MovementMultiplier => marshmallow && marshmallow.IsAlert ? Mathf.Max(1f, marshmallow.alertSpeedMultiplier) : 1f;
 
         void Awake()
         {
             motor = GetComponent<CharacterController>();
             health = GetComponent<Health>();
+            marshmallow = GetComponent<MarshmallowEnemyVisual>();
             animator = GetComponentInChildren<Animator>();
             if (animator && !AnimatorHasClip(animator)) animator.enabled = false;
             path = new NavMeshPath();
@@ -208,6 +211,11 @@ namespace Mavis
             if (!IsAlive) return;
             Acquire();
             float distance = player ? Flat(player.transform.position) : float.PositiveInfinity;
+            if (marshmallow && !marshmallow.IsAlert && HoldsAttack)
+            {
+                flock?.ReleaseAttack(this);
+                Mode = Mood.Idle; ActionPhase = 0f;
+            }
             switch (Mode)
             {
                 case Mood.Launch:
@@ -230,11 +238,16 @@ namespace Mavis
 
         void Decide(float distance, float dt)
         {
-            bool seen = CanSee(distance);
-            if (!seen) lostSightAt = lostSightAt <= 0f ? Time.time : lostSightAt;
-            else lostSightAt = 0f;
-            bool engaged = seen || (player && lostSightAt > 0f && Time.time - lostSightAt < 2.5f && distance < giveUpRange);
-            if (!engaged || distance > giveUpRange)
+            bool engaged;
+            if (marshmallow) engaged = marshmallow.IsAlert && player;
+            else
+            {
+                bool seen = CanSee(distance);
+                if (!seen) lostSightAt = lostSightAt <= 0f ? Time.time : lostSightAt;
+                else lostSightAt = 0f;
+                engaged = (seen || (player && lostSightAt > 0f && Time.time - lostSightAt < 2.5f && distance < giveUpRange)) && distance <= giveUpRange;
+            }
+            if (!engaged)
             {
                 flock?.ReleaseAttack(this);
                 Roam(dt);
@@ -283,7 +296,7 @@ namespace Mavis
             Face(committed, dt);
             if (Mode == Mood.Lunge && ActionPhase >= windowStart && ActionPhase <= windowEnd)
             {
-                if (GroundAhead(committed)) motor.Move(committed * lungeSpeed * dt);
+                if (GroundAhead(committed)) motor.Move(committed * lungeSpeed * MovementMultiplier * dt);
             }
             if (ActionPhase >= windowStart && ActionPhase <= windowEnd) Strike();
             if (ActionPhase < 1f)
@@ -294,7 +307,7 @@ namespace Mavis
             }
             nextAttack = Time.time + attackCooldown;
             flock?.ReleaseAttack(this);
-            Mode = distance <= giveUpRange ? Mood.Chase : Mood.Idle;
+            Mode = marshmallow ? (marshmallow.IsAlert ? Mood.Chase : Mood.Idle) : (distance <= giveUpRange ? Mood.Chase : Mood.Idle);
         }
 
         void Strike()
@@ -342,6 +355,7 @@ namespace Mavis
 
         void MoveToward(Vector3 goal, float speed, float dt, bool walk)
         {
+            speed *= MovementMultiplier;
             Vector3 before = transform.position;
             locomotionSpeed = 0f;
             Vector3 direction = Steer(goal);

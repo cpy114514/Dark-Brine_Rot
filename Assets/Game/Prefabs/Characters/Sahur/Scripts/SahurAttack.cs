@@ -242,6 +242,7 @@ namespace Mavis
 
         readonly HashSet<IDamageable> hitThisSwing = new HashSet<IDamageable>();
         Collider[] nearbyColliders = new Collider[64];
+        Collider[] underfootColliders = new Collider[16];
         RaycastHit[] strikeObstacles = new RaycastHit[32];
         Vector3 previousWeaponA, previousWeaponB;
         Vector3 previousSecondA, previousSecondB;
@@ -1199,6 +1200,7 @@ namespace Mavis
             previousWeaponA = a; previousWeaponB = b; previousHitPhase = phase;
             hasWeaponSample = true;
             ScanComboArc();
+            ScanUnderfootMarshmallows();
         }
 
         void ScanCrossedWindow(float start,float end,float phase)
@@ -1212,6 +1214,7 @@ namespace Mavis
                 ScanInterpolatedWeapon(observedSecondA,observedSecondB,from,to);stickHitbox=first;
             }
             ScanComboArc();
+            ScanUnderfootMarshmallows();
         }
         void ScanInterpolatedWeapon(Vector3 oldA,Vector3 oldB,float from,float to)
         {
@@ -1248,6 +1251,29 @@ namespace Mavis
                 TryHit(nearbyColliders[i], false);
         }
         Vector3 StrikeOrigin => strikeController != null ? strikeController.bounds.center : transform.position;
+
+        void ScanUnderfootMarshmallows()
+        {
+            if (!strikeController || !strikeController.enabled || !controller ||
+                !controller.GetComponent<MarshmallowTraversal>() || !controller.GetComponent<MarshmallowTraversal>().Active) return;
+            // Small marshmallows can stand inside the gap beneath the weapon's
+            // sweep. Limit assistance to their colliders immediately at the
+            // feet and only run it during the existing damaging window.
+            var bounds = strikeController.bounds;
+            Vector3 foot = new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
+            float scale = StrikeScale;
+            int count;
+            while ((count = Physics.OverlapCapsuleNonAlloc(foot - Vector3.up * (.45f * scale),
+                foot + Vector3.up * (1.1f * scale), .65f * scale, underfootColliders,
+                hitMask, QueryTriggerInteraction.Collide)) == underfootColliders.Length)
+                System.Array.Resize(ref underfootColliders, underfootColliders.Length * 2);
+            for (int i = 0; i < count; i++)
+            {
+                var candidate = underfootColliders[i];
+                if (candidate && candidate.GetComponentInParent<MarshmallowEnemyHealth>())
+                    TryHit(candidate, false, true);
+            }
+        }
 
         void GetWeaponVolume(out Vector3 a, out Vector3 b, out float radius)
         {
@@ -1321,7 +1347,7 @@ namespace Mavis
         }
         public static float BalancedDamage(float amount, bool twinBlades) => amount * (twinBlades ? .8f : 1f);
 
-        void TryHit(Collider other, bool weaponContact)
+        void TryHit(Collider other, bool weaponContact, bool underfootContact = false)
         {
             if (ControlInputBlocked || !attacking || stickHitbox == null || !stickHitbox.enabled) return;
             if (other == null || other == stickHitbox || other.transform.IsChildOf(transform)) return;
@@ -1337,15 +1363,16 @@ namespace Mavis
             Vector3 direction = Vector3.ProjectOnPlane(other.bounds.center - StrikeOrigin, Vector3.up);
             // The jump chop lands ahead of Sahur. A guard blade or swept
             // transition must not turn it into a side/back attack.
-            if (IsJumpSlashActive && direction.sqrMagnitude > .0001f &&
+            if (IsJumpSlashActive && !underfootContact && direction.sqrMagnitude > .0001f &&
                 Vector3.Dot(transform.forward, direction.normalized) < .7071068f) return;
-            if (!weaponContact && !Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
+            if (!weaponContact && !underfootContact && !Physics.ComputePenetration(stickHitbox, stickHitbox.transform.position,
                     stickHitbox.transform.rotation, other, other.transform.position,
                     other.transform.rotation, out _, out _)) return;
             if (StrikeBlocked(other)) return;
             if (hitThisSwing.Add(target))
             {
                 Vector3 origin=stickHitbox.bounds.center;
+                if (underfootContact) origin=StrikeOrigin;
                 if(weaponContact)
                 {
                     Vector3 axis=queryWeaponB-queryWeaponA;

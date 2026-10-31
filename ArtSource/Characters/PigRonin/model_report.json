@@ -1,0 +1,15 @@
+{
+  "name": "Jade Pig Ronin",
+  "mesh_objects": 86,
+  "triangles": 103680,
+  "materials": 16,
+  "rigged": true,
+  "format": [
+    "blend",
+    "fbx",
+    "glb"
+  ],
+  "front": "Blender -Y, Unity +Z after FBX import",
+  "notes": "30-bone skinned model, T-pose bind and pose/test actions; no texture dependencies.",
+  "bones": 30
+}

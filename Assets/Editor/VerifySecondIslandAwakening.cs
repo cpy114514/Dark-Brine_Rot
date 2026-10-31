@@ -71,12 +71,15 @@ public static class VerifySecondIslandAwakening
             keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};
             InputSystem.onBeforeUpdate+=Inject;
             var start=player.transform.position; float initial=Time.time;
-            bool blockedEveryFrame=true, pauseVerified=false, sawGetUp=false; var shots=new HashSet<string>(); var samples=new List<object>();
+            bool blockedEveryFrame=true, pauseVerified=false, dialoguePauseVerified=false, menusBlocked=false, sawGetUp=false; var shots=new HashSet<string>(); var samples=new List<object>();
             float minHead=float.PositiveInfinity,maxHead=float.NegativeInfinity;var groundReview=new List<object>();
             Vector3 lastHips=Vector3.zero,lastCamera=Vector3.zero;bool sampled=false;
             float maxHipsStep=0,maxCameraStep=0;
+            int lastLine=-1;float lineStarted=0;var dialogueLines=new List<int>();
+            float deadline=Time.realtimeSinceStartup+35f;
             while (effect && effect.Playing)
             {
+                if(Time.realtimeSinceStartup>deadline)throw new Exception("Opening or dialogue stalled");
                 if (!pauseVerified && Time.time-initial>.8f)
                 {
                     var menu=UnityEngine.Object.FindFirstObjectByType<PauseSettingsMenu>();
@@ -96,6 +99,44 @@ public static class VerifySecondIslandAwakening
                 }
                 blockedEveryFrame &= player.ExternalControlLock;
                 float open=effect.Opening, opacity=effect.Opacity;
+                if(effect.Dialogue && effect.Dialogue.Active)
+                {
+                    int current=effect.Dialogue.CurrentLine;
+                    if(current!=lastLine)
+                    {
+                        lastLine=current;lineStarted=Time.time;dialogueLines.Add(current);
+                        var panel=GameObject.Find("Fairy conversation");
+                        if(!panel)throw new Exception("Dialogue panel is missing.");
+                        foreach(var text in panel.GetComponentsInChildren<UnityEngine.UI.Text>(true))
+                            if(System.Text.RegularExpressions.Regex.IsMatch(text.text ?? "", @"[\u3400-\u9fff]"))
+                                throw new Exception("Non-English dialogue text: "+text.text);
+                        var body=panel.transform.Find("English dialogue")?.GetComponent<UnityEngine.UI.Text>();
+                        if(!body || body.text!=SecondIslandDialogue.Lines[current].english)
+                            throw new Exception("English dialogue is missing or incorrect on line "+current);
+                        Canvas.ForceUpdateCanvases();
+                        if(body.preferredHeight>body.rectTransform.rect.height+1f)
+                            throw new Exception("English dialogue is clipped on line "+current);
+                        if(current==0 || current==1 || current==5 || current==7)ScreenCapture.CaptureScreenshot(Folder+"/dialogue-"+current+".png");
+                    }
+                    float age=Time.time-lineStarted;
+                    if(current==0 && age>.18f && !dialoguePauseVerified)
+                    {
+                        var map=player.GetComponent<Mavis.IslandMapUI>();var loadout=player.GetComponent<Mavis.SahurLoadoutUI>();
+                        bool mapOpened=map && map.SetOpen(true);
+                        if(loadout)loadout.SetOpen(true);
+                        menusBlocked=!mapOpened && !Mavis.SahurLoadoutUI.IsOpen;
+                        var menu=UnityEngine.Object.FindFirstObjectByType<PauseSettingsMenu>();menu.Open();
+                        try
+                        {
+                            await Task.Delay(300);
+                            dialoguePauseVerified=PauseSettingsMenu.IsOpen && !effect.GetComponent<Canvas>().enabled &&
+                                effect.Dialogue.Active && effect.Dialogue.CurrentLine==current;
+                        }
+                        finally {menu.Resume();}
+                    }
+                    keys=age>=.50f && age<.60f ? new[]{GameInputSettings.Get(GameInputSettings.Action.Forward),UnityEngine.InputSystem.Key.Enter} :
+                        new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};
+                }
                 var hips=player.CharacterAnimator.GetBoneTransform(HumanBodyBones.Hips);
                 if(hips && Camera.main)
                 {
@@ -129,9 +170,10 @@ public static class VerifySecondIslandAwakening
             await Task.Delay(900);
             float afterMovement=Vector3.ProjectOnPlane(player.transform.position-end,Vector3.up).magnitude;
             ScreenCapture.CaptureScreenshot(Folder+"/05-open.png");
-            if (!blockedEveryFrame || !unlocked || !pauseVerified || !sawGetUp || maxHead-minHead<1f || heldMovement>.2f || afterMovement<.3f || shots.Count<7)
+            if (!blockedEveryFrame || !unlocked || !pauseVerified || !dialoguePauseVerified || !menusBlocked || !sawGetUp || maxHead-minHead<1f || heldMovement>.2f || afterMovement<.3f || shots.Count<7 ||
+                dialogueLines.Count!=SecondIslandDialogue.Lines.Length)
                 throw new Exception($"Input or visuals failed: blocked={blockedEveryFrame}, unlocked={unlocked}, getUp={sawGetUp}, headRise={maxHead-minHead}, held={heldMovement}, after={afterMovement}, shots={shots.Count}");
-            Summary=new{blockedEveryFrame,unlocked,pauseVerified,sawGetUp,headRise=maxHead-minHead,heldMovement,afterMovement,maxHipsStep,maxCameraStep,groundReview,shots=shots.Count,duration=Time.time-initial};
+            Summary=new{blockedEveryFrame,unlocked,pauseVerified,dialoguePauseVerified,menusBlocked,sawGetUp,headRise=maxHead-minHead,heldMovement,afterMovement,maxHipsStep,maxCameraStep,groundReview,dialogueLines,shots=shots.Count,duration=Time.time-initial};
             File.WriteAllText(Folder+"/samples.json",Newtonsoft.Json.JsonConvert.SerializeObject(samples,Newtonsoft.Json.Formatting.Indented));
             Status="completed";
         }

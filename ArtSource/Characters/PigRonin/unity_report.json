@@ -1,0 +1,22 @@
+{
+  "rigged": true,
+  "avatar": "Generic",
+  "weightedBones": 30,
+  "sourceSkins": 86,
+  "renderers": 1,
+  "vertices": 57143,
+  "triangles": 103522,
+  "invalidWeights": 0,
+  "bindMatrixMismatch": 0.0,
+  "maxMergeError": 1.19840911E-06,
+  "poseChecks": {
+    "HandsOnHips": 7.633119E-07,
+    "BindTPose": 9.56261E-07,
+    "RigCheck": 1.19840911E-06
+  },
+  "clips": [
+    "BindTPose",
+    "HandsOnHips",
+    "RigCheck"
+  ]
+}

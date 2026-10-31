@@ -1,0 +1,35 @@
+{
+  "sourceChangesets": [
+    213,
+    218
+  ],
+  "cloudBaseBeforeSync": 220,
+  "incomingFilesApplied": 191,
+  "automaticThreeWayMerge": [
+    "Assets/Game/Prefabs/Enemies/ChickenBro/Scripts/ChickenBroAI.cs"
+  ],
+  "localAwarenessPreserved": {
+    "chicken": [
+      28,
+      46
+    ],
+    "duck": [
+      34,
+      52
+    ]
+  },
+  "excludedGeneratedFiles": {
+    "Dark Brine_Rot.slnx": "generated diagnostic/IDE file",
+    "ArtSource/Characters/PigRonin/build.log": "generated diagnostic/IDE file",
+    "ArtSource/Characters/PigRonin/rig_build.log": "generated diagnostic/IDE file"
+  },
+  "unresolvedContentConflicts": 0,
+  "verifiedNativeAssetAndSettingsChecks": 85,
+  "buildScenes": 8,
+  "buildSucceeded": true,
+  "buildWarnings": 493,
+  "buildKnownMissingPlantMessages": 4,
+  "noStandalonePlayOrEncounterAcceptance": true,
+  "originalWorkingCopyPlasticBase": 212,
+  "syncUsesIndependentPartialWorkspace": true
+}

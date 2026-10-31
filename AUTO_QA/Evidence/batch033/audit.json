@@ -1,0 +1,346 @@
+{
+  "passed": true,
+  "count": 85,
+  "checks": [
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/AuthorMarshmallowEnemies.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/AuthorSecondIslandCandy.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/CandyColliderTools.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/PlaceMarshmallowOutposts.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/SecondIslandFullReview.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/VerifyFastAirDodge.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/VerifyMarshmallowEnemies.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/VerifyMarshmallowEyes.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/VerifyNealFairyHover.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/NealFairy/NealFairyHover.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Resources/SahurSupport/SecondIslandSahurSoles.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Scripts/World/SecondIslandDialogue.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Blush.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Chocolate Eyes.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Eye Sparkle.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Lavender Marshmallow.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Lavender Marshmallow.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Lemon Marshmallow.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Lemon Marshmallow.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowEnemyHealth.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowEnemyVisual.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowHealthBars.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Mint Marshmallow.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Mint Marshmallow.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Rounded Marshmallow.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Sky Marshmallow.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Sky Marshmallow.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Strawberry Marshmallow.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Enemies/Marshmallow/Strawberry Marshmallow.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/CaneCreamBands.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/CaneRoseBands.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Lavender.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/LollipopSwirlBack.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/LollipopSwirlFront.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Mint.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Pastel Gumdrop Cluster.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Pastel Marshmallow Stack.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Peach.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Strawberry Swirl Lollipop.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Strawberry.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Striped Candy Cane.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Vanilla.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Environment/CandyDressing/Wafer.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/VerifyGravityWristband.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Editor/VerifyMarshmallowUnderfoot.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Items"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Resources/Equipment/GravityWristband.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Animations/PigRonin.controller"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Animations"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Ears_Rose.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Eyes_Cream.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Hakama_Fold.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Hakama_InkPlum.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Haori_DeepJade.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Haori_Jade.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Hardware_BrushedBrass.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Ink_Charcoal.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Nostrils_DeepRose.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Obi_BurntCopper.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Piping_Celadon.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Sandals_DarkWalnut.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Sandals_WovenStraw.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Scabbard_Oxblood.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Skin_WarmIvory.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials/Snout_DustyRose.mat"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Materials"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin.fbx"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin_Skinned.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin_Static.asset"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/Models"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/PigRonin.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/PigRonin_Static.prefab"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Characters/PigRonin/PigRoninBoss.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Items/GravityWristband/Gravity Wristband.glb"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Items/GravityWristband/GravityWristbandAbility.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Items/GravityWristband/GravityWristbandReward.cs"
+    },
+    {
+      "ok": true,
+      "name": "Imported native asset: Assets/Game/Prefabs/Items/GravityWristband"
+    },
+    {
+      "ok": true,
+      "name": "Chicken authored awareness preserved"
+    },
+    {
+      "ok": true,
+      "name": "Duck authored awareness preserved"
+    },
+    {
+      "ok": true,
+      "name": "Second Island included in8 enabled scenes"
+    },
+    {
+      "ok": true,
+      "name": "All6 visual styles retained"
+    },
+    {
+      "ok": true,
+      "name": "Original clean scene setup retained"
+    }
+  ]
+}

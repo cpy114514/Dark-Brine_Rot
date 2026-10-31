@@ -1,0 +1,6 @@
+{
+  "file": "Assets/Game/Prefabs/Characters/PigRonin/PigRoninBoss.cs",
+  "remoteCompileFailure": "CS0246 PigRoninBossVisual absent from repository",
+  "fix": "Remove unused field and unresolved runtime component creation. No action, damage, timing or authored Animator changes.",
+  "visualDriverRestored": false
+}

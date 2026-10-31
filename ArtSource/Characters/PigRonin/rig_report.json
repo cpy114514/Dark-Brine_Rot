@@ -1,0 +1,81 @@
+{
+  "bones": 30,
+  "bone_names": [
+    "Root",
+    "Hips",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "LeftEar",
+    "RightEar",
+    "LeftShoulder",
+    "LeftUpperArm",
+    "LeftLowerArm",
+    "LeftHand",
+    "LeftThumb",
+    "RightShoulder",
+    "RightUpperArm",
+    "RightLowerArm",
+    "RightHand",
+    "RightThumb",
+    "LeftUpperLeg",
+    "LeftLowerLeg",
+    "LeftFoot",
+    "LeftToes",
+    "RightUpperLeg",
+    "RightLowerLeg",
+    "RightFoot",
+    "RightToes",
+    "Tail1",
+    "Tail2",
+    "Tail3",
+    "Sword"
+  ],
+  "skinned_objects": 86,
+  "vertices": 52852,
+  "unweighted_vertices": 0,
+  "max_influences": 4,
+  "max_original_pose_error": 5.623090941939713e-07,
+  "bind_pose": "T pose",
+  "rebuilt_elbows": [
+    "L_Arm_HandOnHip",
+    "R_Arm_HandOnHip"
+  ],
+  "default_pose": "HandsOnHips",
+  "actions": [
+    "BindTPose",
+    "HandsOnHips",
+    "RigCheck"
+  ],
+  "deformation_checks": {
+    "Head": {
+      "max_motion": 0.2880388119163187,
+      "moved_vertices": 878
+    },
+    "LeftLowerArm": {
+      "max_motion": 0.2246155279574943,
+      "moved_vertices": 1536
+    },
+    "LeftLowerLeg": {
+      "max_motion": 0.12570062288168915,
+      "moved_vertices": 672
+    },
+    "LeftToes": {
+      "max_motion": 0.05972274139993525,
+      "moved_vertices": 149
+    },
+    "Sword": {
+      "max_motion": 0.3081511746782962,
+      "moved_vertices": 256
+    },
+    "LeftEar": {
+      "max_motion": 0.16147197042501282,
+      "moved_vertices": 202
+    },
+    "Tail2": {
+      "max_motion": 0.05509148213125922,
+      "moved_vertices": 1030
+    }
+  }
+}

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>Second Island's soft, low-gravity traversal. The player motor owns all movement.</summary>
-[DisallowMultipleComponent, RequireComponent(typeof(ThirdPersonPlayerController))]
+[DefaultExecutionOrder(1500), DisallowMultipleComponent, RequireComponent(typeof(ThirdPersonPlayerController))]
 public sealed class MarshmallowTraversal : MonoBehaviour
 {
     [Header("Moonlike lift (world metres)")]
@@ -14,12 +14,29 @@ public sealed class MarshmallowTraversal : MonoBehaviour
     [Range(0f, .2f)] public float landingSquash = .085f;
 
     public bool Active => isActiveAndEnabled && gameObject.scene.path == "Assets/Scenes/Second Island.unity";
+    public bool NormalGravity { get; private set; }
+    public bool LowGravityActive => Active && !NormalGravity;
+    public void SetNormalGravity(bool enabled)
+    {
+        if (NormalGravity == enabled) return;
+        NormalGravity = enabled; contactTime = 0f;
+        if (enabled) CancelSpacewalk();
+    }
     float contactTime, landingAge = 1f;
     Transform visual;
     Vector3 restScale;
     readonly RaycastHit[] footing = new RaycastHit[16];
     MarshmallowIslandExperience experience;
     MarshmallowSpacewalk spacewalk;
+    ThirdPersonPlayerController motor;
+    CharacterController body;
+    Mavis.SahurAttack combat;
+    Animator soleAnimator;
+    Vector3 leftSole, rightSole;
+    float soleLift;
+    public float FootPenetrationBefore { get; private set; }
+    public float FootPenetrationAfter { get; private set; }
+    public int CorrectedFeet { get; private set; }
     public void BeginSpacewalk(float speed)
     {
         if(!spacewalk)spacewalk=GetComponent<MarshmallowSpacewalk>();
@@ -103,6 +120,43 @@ public sealed class MarshmallowTraversal : MonoBehaviour
         if (Active && allowed && experience && experience.isActiveAndEnabled)
             position.y -= experience.VisualSink / Mathf.Max(.001f,Mathf.Abs(transform.lossyScale.y));
         visual.localPosition = position;
+    }
+
+    void LateUpdate()
+    {
+        FootPenetrationBefore=FootPenetrationAfter=0;CorrectedFeet=0;
+        if (!Active || Time.deltaTime<=0 || PauseSettingsMenu.IsOpen) { soleLift=0; return; }
+        if (!motor) motor=GetComponent<ThirdPersonPlayerController>();
+        if (!body) body=GetComponent<CharacterController>();
+        if (!combat) combat=GetComponent<Mavis.SahurAttack>();
+        if (!experience) experience=GetComponent<MarshmallowIslandExperience>();
+        if (!motor || !motor.enabled || !body || !body.enabled || !experience || !experience.Ready ||
+            motor.Swimming || motor.IsDodging || motor.ExternalControlLock || motor.ExternalMovementLock ||
+            motor.Motion.Scripted || combat && combat.IsCombatMotionActive) { soleLift=0; return; }
+        var animator=motor.CharacterAnimator;
+        if (!animator || !animator.isHuman) return;
+        if (soleAnimator!=animator) { soleAnimator=animator; SahurSupportPose.Prepare(animator); }
+        var left=animator.GetBoneTransform(HumanBodyBones.LeftFoot);
+        var right=animator.GetBoneTransform(HumanBodyBones.RightFoot);
+        if (!left || !right) return;
+        SahurSupportPose.MeasureSolesFast(animator,ref leftSole,ref rightSole);
+        float correction=Mathf.Max(FootCorrection(left.TransformPoint(leftSole)),FootCorrection(right.TransformPoint(rightSole)));
+        // Preserve the authored leg and ankle rotations. Lift immediately when
+        // needed, then ease down as the feet leave the surface or terrain falls.
+        soleLift=Mathf.Max(correction,Mathf.MoveTowards(soleLift,0,5f*Time.deltaTime));
+        if (soleLift>0 && visual) visual.position+=Vector3.up*soleLift;
+        FootPenetrationAfter=Mathf.Max(0,FootPenetrationBefore-soleLift);
+    }
+
+    float FootCorrection(Vector3 point)
+    {
+        if (!experience.TryVisualSurface(point,out float ground)) return 0;
+        // Leave room for the sparse sole estimate and shader interpolation.
+        float penetration=ground+.06f-point.y;
+        if (penetration<=0 || penetration>1.5f) return 0;
+        FootPenetrationBefore=Mathf.Max(FootPenetrationBefore,penetration);
+        CorrectedFeet++;
+        return penetration;
     }
 
     void OnDisable()

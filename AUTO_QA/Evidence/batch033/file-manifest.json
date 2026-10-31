@@ -1,0 +1,968 @@
+{
+  "incoming": [
+    {
+      "path": "Assets/Editor/VerifyMarshmallowSpacewalk.cs",
+      "method": "remote only",
+      "bytes": 14137
+    },
+    {
+      "path": "Assets/Editor/VerifySecondIslandAwakening.cs",
+      "method": "remote only",
+      "bytes": 11981
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/NealFairy/Neal Fairy.prefab",
+      "method": "remote only",
+      "bytes": 389418
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/NealFairy/\u4f7f\u7528\u8bf4\u660e.md",
+      "method": "remote only",
+      "bytes": 1191
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Scripts/MarshmallowTraversal.cs",
+      "method": "remote only",
+      "bytes": 8303
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Scripts/SahurSupportPose.cs",
+      "method": "remote only",
+      "bytes": 15355
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Scripts/ThirdPersonPlayerController.cs",
+      "method": "remote only",
+      "bytes": 93352
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/ChickenBro/Scripts/ChickenBroAI.cs",
+      "method": "automatic three-way preserving both",
+      "bytes": 24997
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CottonCandyIsland/MarshmallowIslandExperience.cs",
+      "method": "remote only",
+      "bytes": 17865
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/GameLocalization.cs",
+      "method": "remote only",
+      "bytes": 18443
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/IslandMapGraphic.cs",
+      "method": "remote only",
+      "bytes": 7171
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/IslandMapUI.cs",
+      "method": "remote only",
+      "bytes": 16126
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/PlayerVitalsHUD.cs",
+      "method": "remote only",
+      "bytes": 11808
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/SahurLoadoutUI.cs",
+      "method": "remote only",
+      "bytes": 33814
+    },
+    {
+      "path": "Assets/Scenes/Second Island.unity",
+      "method": "remote only",
+      "bytes": 1748283
+    },
+    {
+      "path": "Assets/Scripts/World/SecondIslandAwakening.cs",
+      "method": "remote only",
+      "bytes": 14263
+    },
+    {
+      "path": "ProjectSettings/EditorBuildSettings.asset",
+      "method": "remote only",
+      "bytes": 1258
+    },
+    {
+      "path": "Assets/Editor/AuthorMarshmallowEnemies.cs",
+      "method": "new remote revision",
+      "bytes": 11493
+    },
+    {
+      "path": "Assets/Editor/AuthorMarshmallowEnemies.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/AuthorSecondIslandCandy.cs",
+      "method": "new remote revision",
+      "bytes": 11869
+    },
+    {
+      "path": "Assets/Editor/AuthorSecondIslandCandy.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/CandyColliderTools.cs",
+      "method": "new remote revision",
+      "bytes": 7409
+    },
+    {
+      "path": "Assets/Editor/CandyColliderTools.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/PlaceMarshmallowOutposts.cs",
+      "method": "new remote revision",
+      "bytes": 6558
+    },
+    {
+      "path": "Assets/Editor/PlaceMarshmallowOutposts.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/SecondIslandFullReview.cs",
+      "method": "new remote revision",
+      "bytes": 10368
+    },
+    {
+      "path": "Assets/Editor/SecondIslandFullReview.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/VerifyFastAirDodge.cs",
+      "method": "new remote revision",
+      "bytes": 7366
+    },
+    {
+      "path": "Assets/Editor/VerifyFastAirDodge.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/VerifyMarshmallowEnemies.cs",
+      "method": "new remote revision",
+      "bytes": 10083
+    },
+    {
+      "path": "Assets/Editor/VerifyMarshmallowEnemies.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/VerifyMarshmallowEyes.cs",
+      "method": "new remote revision",
+      "bytes": 8830
+    },
+    {
+      "path": "Assets/Editor/VerifyMarshmallowEyes.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/VerifyNealFairyHover.cs",
+      "method": "new remote revision",
+      "bytes": 6229
+    },
+    {
+      "path": "Assets/Editor/VerifyNealFairyHover.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/NealFairy/NealFairyHover.cs",
+      "method": "new remote revision",
+      "bytes": 2929
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/NealFairy/NealFairyHover.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Resources/SahurSupport/SecondIslandSahurSoles.asset",
+      "method": "new remote revision",
+      "bytes": 3400264
+    },
+    {
+      "path": "Assets/Resources/SahurSupport/SecondIslandSahurSoles.asset.meta",
+      "method": "new remote revision",
+      "bytes": 189
+    },
+    {
+      "path": "Assets/Scripts/World/SecondIslandDialogue.cs",
+      "method": "new remote revision",
+      "bytes": 5288
+    },
+    {
+      "path": "Assets/Scripts/World/SecondIslandDialogue.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Blush.mat",
+      "method": "new remote revision",
+      "bytes": 3790
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Blush.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Chocolate Eyes.mat",
+      "method": "new remote revision",
+      "bytes": 3805
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Chocolate Eyes.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Eye Sparkle.mat",
+      "method": "new remote revision",
+      "bytes": 3785
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Eye Sparkle.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lavender Marshmallow.mat",
+      "method": "new remote revision",
+      "bytes": 3810
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lavender Marshmallow.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lavender Marshmallow.prefab",
+      "method": "new remote revision",
+      "bytes": 72537
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lavender Marshmallow.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lemon Marshmallow.mat",
+      "method": "new remote revision",
+      "bytes": 3803
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lemon Marshmallow.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lemon Marshmallow.prefab",
+      "method": "new remote revision",
+      "bytes": 72512
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Lemon Marshmallow.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowEnemyHealth.cs",
+      "method": "new remote revision",
+      "bytes": 776
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowEnemyHealth.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowEnemyVisual.cs",
+      "method": "new remote revision",
+      "bytes": 5803
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowEnemyVisual.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowHealthBars.cs",
+      "method": "new remote revision",
+      "bytes": 4726
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/MarshmallowHealthBars.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Mint Marshmallow.mat",
+      "method": "new remote revision",
+      "bytes": 3805
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Mint Marshmallow.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Mint Marshmallow.prefab",
+      "method": "new remote revision",
+      "bytes": 72533
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Mint Marshmallow.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Rounded Marshmallow.asset",
+      "method": "new remote revision",
+      "bytes": 39341
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Rounded Marshmallow.asset.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Sky Marshmallow.mat",
+      "method": "new remote revision",
+      "bytes": 3800
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Sky Marshmallow.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Sky Marshmallow.prefab",
+      "method": "new remote revision",
+      "bytes": 72527
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Sky Marshmallow.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Strawberry Marshmallow.mat",
+      "method": "new remote revision",
+      "bytes": 3807
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Strawberry Marshmallow.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Strawberry Marshmallow.prefab",
+      "method": "new remote revision",
+      "bytes": 72522
+    },
+    {
+      "path": "Assets/Game/Prefabs/Enemies/Marshmallow/Strawberry Marshmallow.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/CaneCreamBands.asset",
+      "method": "new remote revision",
+      "bytes": 65677
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/CaneCreamBands.asset.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/CaneRoseBands.asset",
+      "method": "new remote revision",
+      "bytes": 63370
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/CaneRoseBands.asset.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Lavender.mat",
+      "method": "new remote revision",
+      "bytes": 3799
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Lavender.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/LollipopSwirlBack.asset",
+      "method": "new remote revision",
+      "bytes": 107620
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/LollipopSwirlBack.asset.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/LollipopSwirlFront.asset",
+      "method": "new remote revision",
+      "bytes": 107619
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/LollipopSwirlFront.asset.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Mint.mat",
+      "method": "new remote revision",
+      "bytes": 3796
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Mint.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Pastel Gumdrop Cluster.prefab",
+      "method": "new remote revision",
+      "bytes": 11491
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Pastel Gumdrop Cluster.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Pastel Marshmallow Stack.prefab",
+      "method": "new remote revision",
+      "bytes": 11695
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Pastel Marshmallow Stack.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Peach.mat",
+      "method": "new remote revision",
+      "bytes": 3787
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Peach.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Strawberry Swirl Lollipop.prefab",
+      "method": "new remote revision",
+      "bytes": 16000
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Strawberry Swirl Lollipop.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Strawberry.mat",
+      "method": "new remote revision",
+      "bytes": 3802
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Strawberry.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Striped Candy Cane.prefab",
+      "method": "new remote revision",
+      "bytes": 22579
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Striped Candy Cane.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Vanilla.mat",
+      "method": "new remote revision",
+      "bytes": 3789
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Vanilla.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Wafer.mat",
+      "method": "new remote revision",
+      "bytes": 3797
+    },
+    {
+      "path": "Assets/Game/Prefabs/Environment/CandyDressing/Wafer.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Scripts/MarshmallowSpacewalk.cs",
+      "method": "remote only",
+      "bytes": 5464
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/Sahur/Scripts/SahurAttack.cs",
+      "method": "remote only",
+      "bytes": 78702
+    },
+    {
+      "path": "Assets/Editor/VerifyGravityWristband.cs",
+      "method": "new remote revision",
+      "bytes": 9334
+    },
+    {
+      "path": "Assets/Editor/VerifyGravityWristband.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Editor/VerifyMarshmallowUnderfoot.cs",
+      "method": "new remote revision",
+      "bytes": 6511
+    },
+    {
+      "path": "Assets/Editor/VerifyMarshmallowUnderfoot.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Resources/Equipment/GravityWristband.asset",
+      "method": "new remote revision",
+      "bytes": 634
+    },
+    {
+      "path": "Assets/Resources/Equipment/GravityWristband.asset.meta",
+      "method": "new remote revision",
+      "bytes": 189
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/build_pig_ronin.py",
+      "method": "new remote revision",
+      "bytes": 17730
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/model_report.json",
+      "method": "new remote revision",
+      "bytes": 343
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin.blend",
+      "method": "new remote revision",
+      "bytes": 2656927
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin.glb",
+      "method": "new remote revision",
+      "bytes": 3625068
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_Back.png",
+      "method": "new remote revision",
+      "bytes": 876514
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_BindTPose.png",
+      "method": "new remote revision",
+      "bytes": 1243903
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_Front.png",
+      "method": "new remote revision",
+      "bytes": 913649
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_Hero.png",
+      "method": "new remote revision",
+      "bytes": 1238604
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_RigCheck.png",
+      "method": "new remote revision",
+      "bytes": 1242163
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_Side.png",
+      "method": "new remote revision",
+      "bytes": 891791
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_Unity.png",
+      "method": "new remote revision",
+      "bytes": 380891
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_UnityRigCheck.png",
+      "method": "new remote revision",
+      "bytes": 388848
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_UnityTPose.png",
+      "method": "new remote revision",
+      "bytes": 386507
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/PigRonin_Unrigged.blend",
+      "method": "new remote revision",
+      "bytes": 3280820
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/README.md",
+      "method": "new remote revision",
+      "bytes": 3772
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/rig_pig_ronin.py",
+      "method": "new remote revision",
+      "bytes": 16904
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/rig_report.json",
+      "method": "new remote revision",
+      "bytes": 1649
+    },
+    {
+      "path": "ArtSource/Characters/PigRonin/unity_report.json",
+      "method": "new remote revision",
+      "bytes": 443
+    },
+    {
+      "path": "Tools/PigRonin/BuildPigRoninPrefab.cs",
+      "method": "new remote revision",
+      "bytes": 10239
+    },
+    {
+      "path": "Tools/PigRonin/BuildRiggedPigRoninPrefab.cs",
+      "method": "new remote revision",
+      "bytes": 12765
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Animations/PigRonin.controller",
+      "method": "new remote revision",
+      "bytes": 3652
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Animations/PigRonin.controller.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Animations.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Ears_Rose.mat",
+      "method": "new remote revision",
+      "bytes": 3831
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Ears_Rose.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Eyes_Cream.mat",
+      "method": "new remote revision",
+      "bytes": 3829
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Eyes_Cream.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Hakama_Fold.mat",
+      "method": "new remote revision",
+      "bytes": 3836
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Hakama_Fold.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Hakama_InkPlum.mat",
+      "method": "new remote revision",
+      "bytes": 3839
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Hakama_InkPlum.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Haori_DeepJade.mat",
+      "method": "new remote revision",
+      "bytes": 3838
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Haori_DeepJade.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Haori_Jade.mat",
+      "method": "new remote revision",
+      "bytes": 3834
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Haori_Jade.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Hardware_BrushedBrass.mat",
+      "method": "new remote revision",
+      "bytes": 3844
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Hardware_BrushedBrass.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Ink_Charcoal.mat",
+      "method": "new remote revision",
+      "bytes": 3836
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Ink_Charcoal.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Nostrils_DeepRose.mat",
+      "method": "new remote revision",
+      "bytes": 3844
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Nostrils_DeepRose.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Obi_BurntCopper.mat",
+      "method": "new remote revision",
+      "bytes": 3839
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Obi_BurntCopper.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Piping_Celadon.mat",
+      "method": "new remote revision",
+      "bytes": 3835
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Piping_Celadon.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Sandals_DarkWalnut.mat",
+      "method": "new remote revision",
+      "bytes": 3842
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Sandals_DarkWalnut.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Sandals_WovenStraw.mat",
+      "method": "new remote revision",
+      "bytes": 3840
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Sandals_WovenStraw.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Scabbard_Oxblood.mat",
+      "method": "new remote revision",
+      "bytes": 3837
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Scabbard_Oxblood.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Skin_WarmIvory.mat",
+      "method": "new remote revision",
+      "bytes": 3837
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Skin_WarmIvory.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Snout_DustyRose.mat",
+      "method": "new remote revision",
+      "bytes": 3835
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials/Snout_DustyRose.mat.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Materials.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin.fbx",
+      "method": "new remote revision",
+      "bytes": 6073660
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin.fbx.meta",
+      "method": "new remote revision",
+      "bytes": 8358
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin_Skinned.asset",
+      "method": "new remote revision",
+      "bytes": 9820750
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin_Skinned.asset.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin_Static.asset",
+      "method": "new remote revision",
+      "bytes": 7595024
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Models/PigRonin_Static.asset.meta",
+      "method": "new remote revision",
+      "bytes": 188
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/Models.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/PigRonin.prefab",
+      "method": "new remote revision",
+      "bytes": 37646
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/PigRonin.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/PigRonin_Static.prefab",
+      "method": "new remote revision",
+      "bytes": 4619
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/PigRonin_Static.prefab.meta",
+      "method": "new remote revision",
+      "bytes": 154
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/PigRoninBoss.cs",
+      "method": "new remote revision",
+      "bytes": 11480
+    },
+    {
+      "path": "Assets/Game/Prefabs/Characters/PigRonin/PigRoninBoss.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items/GravityWristband/Gravity Wristband.glb",
+      "method": "new remote revision",
+      "bytes": 7064960
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items/GravityWristband/Gravity Wristband.glb.meta",
+      "method": "new remote revision",
+      "bytes": 764
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items/GravityWristband/GravityWristbandAbility.cs",
+      "method": "new remote revision",
+      "bytes": 4614
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items/GravityWristband/GravityWristbandAbility.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items/GravityWristband/GravityWristbandReward.cs",
+      "method": "new remote revision",
+      "bytes": 12571
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items/GravityWristband/GravityWristbandReward.cs.meta",
+      "method": "new remote revision",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Prefabs/Items/GravityWristband.meta",
+      "method": "new remote revision",
+      "bytes": 172
+    }
+  ],
+  "localAwarenessPrefabs": [
+    "Assets/Game/Prefabs/Enemies/ChickenBro/ChickenBro.prefab",
+    "Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.prefab"
+  ],
+  "skipped": {
+    "Dark Brine_Rot.slnx": "generated diagnostic/IDE file",
+    "ArtSource/Characters/PigRonin/build.log": "generated diagnostic/IDE file",
+    "ArtSource/Characters/PigRonin/rig_build.log": "generated diagnostic/IDE file"
+  }
+}
