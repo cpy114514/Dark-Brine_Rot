@@ -1,5 +1,10 @@
 # Dark Brine_Rot automated QA
 
+## Batch029 — QA-041 Origami bypasses terrain and foliage — VERIFIED/FIXED
+
+The active SSAO depth-normal prepass omits custom terrain/foliage lacking DepthNormals; Origami's far-depth guard returned original color. Native gray-geometry control confirms0/80,000 foreground gray pixels before vs80,000/80,000 with complete opaque depth. Origami-only private R32 copy via native URP CopyDepthPass fixes coverage without altering shared depth or original materials. World-derived normals, triangular fold shading and matte texture flattening replace weak/parallel-striped treatment.54 native checks pass; final4×MSAA/pixel/UI and seven-scene Windows build pass.493 warnings/four known606-plant messages persist. Surface treatment only: original silhouettes remain; no new FPS claim. Documentation/Origami-Batch029.md; Evidence/batch029/proof.json.
+
+
 ## Baseline — 2026-10-28
 
 Unity 6000.3.23f1; one project Editor connected, stopped in the five First Island scenes. HEAD at entry: `dbf282d`. Numerous pre-existing uncommitted changes are listed in `Evidence/initial-worktree.txt`; preserve them and commit only QA-owned changes. No existing AUTO_QA records or applicable AGENTS.md found. Unity reports no current script compilation failure. Unity Test Runner discovers zero EditMode tests; existing regression scripts use explicit static entry points.

@@ -1,0 +1,43 @@
+{
+  "label": "qualified-depth-before",
+  "rows": [
+    {
+      "mode": "realistic",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiDepth029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673
+    },
+    {
+      "mode": "realistic",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiDepth029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673
+    },
+    {
+      "mode": "origami",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiDepth029",
+      "details": "(0.30, 0.85, 0.80, 0.40)",
+      "intensity": 0.897673
+    },
+    {
+      "mode": "origami",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiDepth029",
+      "details": "(0.30, 0.85, 0.80, 0.40)",
+      "intensity": 0.897673
+    }
+  ],
+  "callbacks": 135,
+  "shaderErrors": []
+}

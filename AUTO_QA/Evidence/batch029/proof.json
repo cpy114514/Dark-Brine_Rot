@@ -1,0 +1,105 @@
+{
+  "batch": 29,
+  "baselineGit": "892c3fe",
+  "nativeChecks": {
+    "renderAndControl": 30,
+    "galleryAndComparison": 24,
+    "total": 54,
+    "passed": true
+  },
+  "productionFiles": [
+    "Assets/Scripts/VisualStyles/VisualStyleRendererFeature.cs",
+    "Assets/Shaders/DarkFairytale.shader"
+  ],
+  "coverageDiagnostic": {
+    "realistic": {
+      "changedGt2": 115648,
+      "pixels": 921600,
+      "meanMaxChannelDelta": 2.88015625
+    },
+    "dark-fairytale": {
+      "changedGt2": 95901,
+      "pixels": 921600,
+      "meanMaxChannelDelta": 2.7241796875
+    },
+    "monochrome": {
+      "changedGt2": 94246,
+      "pixels": 921600,
+      "meanMaxChannelDelta": 1.8440852864583333
+    },
+    "origami": {
+      "changedGt2": 637727,
+      "pixels": 921600,
+      "meanMaxChannelDelta": 15.433704427083333
+    },
+    "qualified-depth-before": {
+      "foregroundRoi": [
+        50,
+        500,
+        450,
+        700
+      ],
+      "grayPixels": 0,
+      "pixels": 80000
+    },
+    "complete-depth-proof": {
+      "foregroundRoi": [
+        50,
+        500,
+        450,
+        700
+      ],
+      "grayPixels": 80000,
+      "pixels": 80000
+    },
+    "gallery-final": {
+      "visibleDifferenceGt8": 921556,
+      "pixels": 921600
+    },
+    "noon-final-msaa4": {
+      "visibleDifferenceGt8": 921600,
+      "pixels": 921600
+    },
+    "noon-final-pixel": {
+      "visibleDifferenceGt8": 921600,
+      "pixels": 921600
+    }
+  },
+  "rendering": {
+    "allStyles": 4,
+    "posesPerStyle": 2,
+    "finalFourStyleCallbacks": 264,
+    "msaa": 4,
+    "pixelInternal": [
+      320,
+      180
+    ],
+    "finalImages": [
+      1280,
+      720
+    ],
+    "fixedNoon": true,
+    "intensity": 0.897673,
+    "nativeCameraOrbitFrames": 24,
+    "orbitIsPerformanceMeasurement": false
+  },
+  "preservation": {
+    "protectedFileHashes": 16,
+    "unchanged": true,
+    "previewGuidsRetained": 4,
+    "originalPreferencesCount": 980,
+    "preferenceKindsValuesAndKeySetRestored": true,
+    "fixtureHealingLedgerKeysRemoved": 2,
+    "saveAndBackupUnchanged": true,
+    "authoredScenesSaved": false,
+    "geometryAndOriginalMaterialsChanged": false
+  },
+  "limits": [
+    "Surface shading only; original silhouettes remain.",
+    "No qualified new FPS/GPU/allocation measurement.",
+    "No full combat playthrough in batch029.",
+    "Camera-return threshold only rejects wholesale reshuffle; not pixel-identical temporal rendering.",
+    "Build succeeded with four pre-existing missing-plant messages and 493 warnings.",
+    "Standalone build was not launched."
+  ]
+}

@@ -1,5 +1,17 @@
 # Test results
 
+## Batch029 — Origami depth, paper appearance and gallery
+
+- PASS30 native render/control checks: complete-depth resource, four detail sliders, intensity,20 cached-material switches, camera-return threshold, fixed full grass and excluded fixture.
+- PASS24 native UI checks: four cards/controls,16 style pairs, original overlay red and updated Origami/Realistic reveal.
+- PASS coverage diagnostic: grass/ground ROI gray0/80,000→80,000/80,000. Final noon1280×720 four styles×two poses; final-source MSAA4 and320×180 pixel each two styles×two poses. Native callbacks/positive image controls retained.24 orbit captures are not measured FPS; return6,230/921,600 pixels differ by>2.
+- PASS native shader messages empty; sameEditor17184 Windows64Mono Development buildSucceeded91.19755s/493warnings/4 known missing606-plant messages. Standalone unlaunched; no new FPS/GPU/allocation result.
+- RESTORED5 clean stopped scenes/0 fixtures; both fresh save files,16 protected hashes/four preview GUIDs unchanged; all980 original preference kinds/values/key set match, two unused fixture ledgers removed after cache restoration. Rejected cleanup guard deleted nothing; build-only material alias restored through Unity.
+- Rejected initial water/unsettled/candidate-reset/depth-only and helper-error probes remain private. Final acceptance uses actual material/pass binding after pipeline warmup, original native images and nonempty controls. Original V2/previous-batch checks are not added to54.
+
+Evidence/batch029/proof.json and Documentation/Origami-Batch029.md contain limits and exact results.
+
+
 ## Batch 010 — expanded multi-system batch
 
 Validation uses current working tree with existing user prefab/player/scene edits. Three production files were clean at entry; only their QA changes are checkpointed.
