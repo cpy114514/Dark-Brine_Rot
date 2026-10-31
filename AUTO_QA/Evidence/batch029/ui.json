@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "checks": 24,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Four style cards retained"
+    },
+    {
+      "ok": true,
+      "name": "Four paper controls retained"
+    },
+    {
+      "ok": true,
+      "name": "Paper control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Paper control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Paper control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Paper control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Overlay red stays red outside paper processing"
+    },
+    {
+      "ok": true,
+      "name": "Origami/realistic reveal uses updated previews"
+    }
+  ]
+}

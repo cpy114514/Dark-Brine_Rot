@@ -1,0 +1,128 @@
+{
+  "passed": true,
+  "checks": 30,
+  "roundtripChangedPixels": 6230,
+  "roundtripPixels": 921600,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Paper requests depth without incomplete normals"
+    },
+    {
+      "ok": true,
+      "name": "URP depth-copy resource available"
+    },
+    {
+      "ok": true,
+      "name": "Detail slider has visible native response 0"
+    },
+    {
+      "ok": true,
+      "name": "Detail slider has visible native response 1"
+    },
+    {
+      "ok": true,
+      "name": "Detail slider has visible native response 2"
+    },
+    {
+      "ok": true,
+      "name": "Detail slider has visible native response 3"
+    },
+    {
+      "ok": true,
+      "name": "Intensity range has visible native response"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 0"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 1"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 2"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 3"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 4"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 5"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 6"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 7"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 8"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 9"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 10"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 11"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 12"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 13"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 14"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 15"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 16"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 17"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 18"
+    },
+    {
+      "ok": true,
+      "name": "Cached materials survive style switch 19"
+    },
+    {
+      "ok": true,
+      "name": "Camera roundtrip has no wholesale paper-layout reshuffle"
+    },
+    {
+      "ok": true,
+      "name": "Fixed complete grass layout preserved"
+    },
+    {
+      "ok": true,
+      "name": "Preview cannot overwrite user game"
+    }
+  ]
+}

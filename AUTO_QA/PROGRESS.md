@@ -1,5 +1,12 @@
 # Progress
 
+## Batch029 complete — Origami paper surface repair
+
+Resumed Git892c3fe/local Plastic212, preserving published214/215 and independent213. Fixed confirmed incomplete prepass-depth coverage, then replaced parallel stripes with triangular paper cells, matte tone/chroma flattening, world-anchored creases/fibers. Only two production code files and four derived native preview PNGs change; no models/materials/scene/gameplay edits.54 native checks pass, final noon four-style/two-pose, MSAA4, pixel and actual UI verified. SameEditor17184 seven-scene WindowsMono buildSucceeded91.20s/493warnings/four known606-plant messages; binary unlaunched, no FPS claim.
+
+Restored original five clean/stopped scenes, zero fixtures, fresh save+backup unchanged, all16 protected file hashes and four preview GUIDs match.980 original registry value kinds/values and key set match after removing two qualified unused fixture healing ledgers and restoring native cached campaign. Build-only duck MainTex alias restored natively. Private .codex/origami029 holds immutable snapshots/probes/build; rejected attempts documented. Source checkpoint title: Repair Origami world coverage and paper surface rendering. Use actual git/remote receipt before syncing; no cm update in this pending workspace. Details Documentation/Origami-Batch029.md and Evidence/batch029.
+
+
 ## 2026-10-28 — Batch 010 complete (expanded user-requested scope)
 
 - User explicitly requested larger batches covering more systems. Investigated aircraft ownership/death, projectile time/physics, blast/fire contracts, camera offsets, footprint function/performance qualification and two-weapon input integration; do not revert to ending after one tiny check.

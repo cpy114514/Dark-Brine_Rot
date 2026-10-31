@@ -1,0 +1,111 @@
+{
+  "label": "noon-before",
+  "rows": [
+    {
+      "mode": "realistic",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "realistic",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "dark-fairytale",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "dark-fairytale",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "origami",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.30, 0.85, 0.80, 0.40)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "origami",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.30, 0.85, 0.80, 0.40)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "monochrome",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "None",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "monochrome",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "None",
+      "effectiveShader": "Hidden/QA/OrigamiOriginal029",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    }
+  ],
+  "callbacks": 265,
+  "shaderErrors": []
+}

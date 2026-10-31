@@ -1,0 +1,59 @@
+{
+  "label": "noon-final-msaa4",
+  "rows": [
+    {
+      "mode": "realistic",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 4,
+      "pipelineMsaa": 4
+    },
+    {
+      "mode": "realistic",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "Depth, Normal",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.50, 0.17, 0.30, 0.45)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 4,
+      "pipelineMsaa": 4
+    },
+    {
+      "mode": "origami",
+      "pose": "player",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.30, 0.85, 0.80, 0.40)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 4,
+      "pipelineMsaa": 4
+    },
+    {
+      "mode": "origami",
+      "pose": "meadow",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.30, 0.85, 0.80, 0.40)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 4,
+      "pipelineMsaa": 4
+    }
+  ],
+  "callbacks": 135,
+  "shaderErrors": null
+}

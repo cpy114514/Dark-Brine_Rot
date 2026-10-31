@@ -1,5 +1,10 @@
 # Animation review
 
+## Batch029 — Origami appearance and world coverage
+
+Actual native before/after views confirm ground/grass now participate in paper shading and the original Sahur surface has triangular folded lighting with reduced photographic/glossy treatment. Four matching previews, actual gallery/comparison, MSAA4 and pixel views inspected.24 captured camera positions plus return are a visual sample, not game FPS or full animation acceptance. Actor pose was frozen; no claim of smoother animation/combat. Meshes/rigs/clips/controllers/collision and grass028 layout unchanged. Original silhouettes remain; true folded silhouettes need separate art scope. Next: active Sahur/Boss/tutorial readability under paper lighting. Documentation/Origami-Batch029.md.
+
+
 ## Baseline — 2026-10-28
 
 No new visual observations yet. Preserve current combat design and existing uncommitted V278 jump, V272/V273 blade, V274 momentum, V275 spin movement and V276 transitions. `Documentation/JumpStable-v278.md` records historical native verification and pending human artistic approval; do not relabel it as a current test or final approval.

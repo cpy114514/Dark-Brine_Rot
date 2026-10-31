@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.Universal.Internal;
+using UnityEngine.Experimental.Rendering;
 
 namespace Mavis.VisualStyles
 {
@@ -13,9 +15,11 @@ namespace Mavis.VisualStyles
         IllustrationPass pass;
         public override void Create()
         {
+            pass?.Dispose();
             CoreUtils.Destroy(material);
             if (illustrationShader) material = CoreUtils.CreateEngineMaterial(illustrationShader);
-            pass = new IllustrationPass { renderPassEvent = RenderPassEvent.BeforeRenderingTransparents };
+            var resources = GraphicsSettings.GetRenderPipelineSettings<UniversalRendererResources>();
+            pass = new IllustrationPass(resources?.copyDepthPS) { renderPassEvent = RenderPassEvent.BeforeRenderingTransparents };
         }
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
@@ -24,7 +28,7 @@ namespace Mavis.VisualStyles
             pass.Setup(material, VisualStyleManager.Instance.Current, VisualStyleManager.Instance.Intensity);
             renderer.EnqueuePass(pass);
         }
-        protected override void Dispose(bool disposing) { CoreUtils.Destroy(material); material = null; }
+        protected override void Dispose(bool disposing) { pass?.Dispose(); CoreUtils.Destroy(material); material = null; }
         sealed class IllustrationPass : ScriptableRenderPass
         {
             Material material;
@@ -33,7 +37,15 @@ namespace Mavis.VisualStyles
             VisualStylePreset appliedPreset;
             int appliedRevision = -1, presetRevision = -1, paperRevision = -1, quality = -1;
             bool pixel;
-            sealed class Data { public TextureHandle source; public Material material; }
+            bool paper;
+            readonly CopyDepthPass paperDepthCopy;
+            static readonly int PaperDepthId = Shader.PropertyToID("_PaperDepthTexture");
+            public IllustrationPass(Shader copyDepthShader)
+            {
+                if (copyDepthShader) paperDepthCopy = new CopyDepthPass(RenderPassEvent.BeforeRenderingTransparents, copyDepthShader, customPassName:"Origami.OpaqueDepth");
+            }
+            public void Dispose() { paperDepthCopy?.Dispose(); }
+            sealed class Data { public TextureHandle source, paperDepth; public Material material; public bool paper; }
             public void Setup(Material mat, VisualStylePreset preset, float intensity)
             {
                 var manager = VisualStyleManager.Instance;
@@ -43,8 +55,9 @@ namespace Mavis.VisualStyles
                 appliedPreset = preset; appliedRevision = manager.Revision; presetRevision = preset.Revision; paperRevision = nextPaperRevision; pixel = nextPixel; quality = nextQuality;
                 material = mat; requiresIntermediateTexture = true;
                 bool mono = preset.Mode == VisualStyleMode.Monochrome;
+                paper = preset.Mode == VisualStyleMode.Origami;
                 renderPassEvent = mono ? RenderPassEvent.AfterRenderingPostProcessing : RenderPassEvent.BeforeRenderingTransparents;
-                ConfigureInput(mono ? ScriptableRenderPassInput.None : ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Normal);
+                ConfigureInput(mono ? ScriptableRenderPassInput.None : paper ? ScriptableRenderPassInput.Depth : ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Normal);
                 passName = "Visual Style / " + preset.displayName;
                 mat.SetFloat("_StyleMode", (int)preset.Mode);
                 var details = VisualStyleManager.Instance.Details;
@@ -65,14 +78,37 @@ namespace Mavis.VisualStyles
                 var source = resources.activeColorTexture;
                 var desc = graph.GetTextureDesc(source); desc.name = "Visual style color"; desc.clearBuffer = false;
                 var destination = graph.CreateTexture(desc);
+                TextureHandle paperDepth = default;
+                if (paper)
+                {
+                    if (paperDepthCopy == null || !resources.activeDepthTexture.IsValid()) return;
+                    // The camera prepass omits custom terrain/foliage without a
+                    // DepthNormals pass. Copy the actual opaque depth instead;
+                    // do not replace URP's shared depth or add geometry passes.
+                    var depthDesc = graph.GetTextureDesc(source);
+                    depthDesc.name = "Origami complete opaque depth";
+                    depthDesc.colorFormat = GraphicsFormat.R32_SFloat;
+                    depthDesc.depthBufferBits = DepthBits.None;
+                    depthDesc.msaaSamples = MSAASamples.None;
+                    depthDesc.bindTextureMS = false;
+                    depthDesc.clearBuffer = false;
+                    paperDepth = graph.CreateTexture(depthDesc);
+                    paperDepthCopy.Render(graph, frame, paperDepth, resources.activeDepthTexture, false, "Origami / Complete opaque depth");
+                }
                 using (var builder = graph.AddRasterRenderPass<Data>(passName, out var data, sampler))
                 {
                     data.source = source; data.material = material;
+                    data.paper = paper; data.paperDepth = paperDepth;
                     builder.UseTexture(source, AccessFlags.Read);
                     if (resources.cameraDepthTexture.IsValid()) builder.UseTexture(resources.cameraDepthTexture, AccessFlags.Read);
                     if (resources.cameraNormalsTexture.IsValid()) builder.UseTexture(resources.cameraNormalsTexture, AccessFlags.Read);
+                    if (paper) { builder.UseTexture(paperDepth, AccessFlags.Read); builder.AllowGlobalStateModification(true); }
                     builder.SetRenderAttachment(destination, 0, AccessFlags.Write);
-                    builder.SetRenderFunc((Data d, RasterGraphContext context) => Blitter.BlitTexture(context.cmd, d.source, new Vector4(1, 1, 0, 0), d.material, 0));
+                    builder.SetRenderFunc((Data d, RasterGraphContext context) =>
+                    {
+                        if (d.paper) context.cmd.SetGlobalTexture(PaperDepthId, d.paperDepth);
+                        Blitter.BlitTexture(context.cmd, d.source, new Vector4(1, 1, 0, 0), d.material, 0);
+                    });
                 }
                 resources.cameraColor = destination;
             }

@@ -1,0 +1,54 @@
+{
+  "realistic": {
+    "changedGt2": 115648,
+    "pixels": 921600,
+    "meanMaxChannelDelta": 2.88015625
+  },
+  "dark-fairytale": {
+    "changedGt2": 95901,
+    "pixels": 921600,
+    "meanMaxChannelDelta": 2.7241796875
+  },
+  "monochrome": {
+    "changedGt2": 94246,
+    "pixels": 921600,
+    "meanMaxChannelDelta": 1.8440852864583333
+  },
+  "origami": {
+    "changedGt2": 637727,
+    "pixels": 921600,
+    "meanMaxChannelDelta": 15.433704427083333
+  },
+  "qualified-depth-before": {
+    "foregroundRoi": [
+      50,
+      500,
+      450,
+      700
+    ],
+    "grayPixels": 0,
+    "pixels": 80000
+  },
+  "complete-depth-proof": {
+    "foregroundRoi": [
+      50,
+      500,
+      450,
+      700
+    ],
+    "grayPixels": 80000,
+    "pixels": 80000
+  },
+  "gallery-final": {
+    "visibleDifferenceGt8": 921556,
+    "pixels": 921600
+  },
+  "noon-final-msaa4": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600
+  },
+  "noon-final-pixel": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600
+  }
+}
