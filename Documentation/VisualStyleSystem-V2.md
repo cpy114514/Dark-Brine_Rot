@@ -1,35 +1,44 @@
-# Visual Style System V2 — current comic styles (batch030)
+# Visual Style System V2 — six styles (batch031)
 
-Implemented in Unity 6000.3.23f1 / URP17.3.0. Batch030 replaces Origami with **Color Comic**, and the previous monochrome film effect with **B&W Manga**, at the user’s request. Realistic and Dark Fairytale remain. See [Comic-Batch030.md](Comic-Batch030.md) for current evidence and limits. Older V2/batch029 acceptance below remains historical where identified.
+Implemented in Unity 6000.3.23f1 / URP17.3.0. Batch030 replaces Origami with **Color Comic**, and the previous monochrome film effect with **B&W Manga**, at the user’s request. Batch031 additionally installs Ink Wash and Van Gogh without replacing the four existing choices; see [Painting-Batch031.md](Painting-Batch031.md). Realistic and Dark Fairytale remain. See [Comic-Batch030.md](Comic-Batch030.md) for current evidence and limits. Older V2/batch029 acceptance below remains historical where identified.
 
 ## Player controls
 
-Open **Main Menu → Visual Style**, or **Settings → Graphics → Visual Style**. Select Realistic, Dark Fairytale, Color Comic or B&W Manga. The selected card, Graphics value and persisted preference share one manager. Style changes require no scene reload.
+Open **Main Menu → Visual Style**, or **Settings → Graphics → Visual Style**. Select Realistic, Dark Fairytale, Color Comic, B&W Manga, Ink Wash or Van Gogh. The selected card, Graphics value and persisted preference share one manager. Style changes require no scene reload.
 
 Style Intensity retains the existing40–100% range. Both comic modes expose Ink weight, Tone contrast, Screentone and Shadow ink. Normalized overrides are independent per style and saved separately. Their new Comic1 preference keys preserve old fold/film settings without treating them as new controls. Existing saved style IDs (`origami` / `monochrome`) and asset GUIDs remain compatible; these technical IDs are not displayed to players. B&W Manga always keeps the world grayscale, including at minimum intensity.
 
-COMPARE STYLES offers Left Style and Right Style, including the same style on both sides. The divider supports pointer dragging and Left/Right navigation. Both images retain the complete, identical framing under a reveal mask. Comparison uses stored screenshots and adds no scene cameras.
+The gallery uses two rows of three cards. Ink Wash controls are Ink bleed, Brush texture, Paper grain and Mist; Van Gogh controls are Brush size, Swirl, Impasto and Color richness. Each new style saves its own normalized controls and selection.
+
+COMPARE STYLES offers all six choices on both sides, including the same style on both sides (36 ordered pairs). The divider supports pointer dragging and Left/Right navigation. Both images retain the complete, identical framing under a reveal mask. Comparison uses stored screenshots and adds no scene cameras.
 
 The existing Graphics Pixel Style option is independent. Its installed V2 implementation internally targets 320×180, despite the older Pixel360 class/option identifier; this task preserves that existing behavior. World rendering and non-text UI can be pixelated; UI text retains native resolution and normal colors.
 
 ## Rendering
 
 - Realistic enqueues no color transform. Dark Fairytale keeps its original shader branch, depth/normal inputs, atmosphere and sky/water path.
-- Both comics process the composed world after transparents and postprocessing, before overlay UI. They share the batch029 private complete-opaque-depth copy, now used by both styles; the camera SSAO prepass alone omits custom terrain/foliage. Shared URP camera depth remains untouched. No extra scene geometry pass, material conversion or silhouette rewrite.
+- Comics and the new painting styles process the composed world after transparents and postprocessing, before overlay UI. They share the batch029 private complete-opaque-depth copy, now used by both styles; the camera SSAO prepass alone omits custom terrain/foliage. Shared URP camera depth remains untouched. No extra scene geometry pass, material conversion or silhouette rewrite.
 - Color Comic uses depth/luminance ink contours, depth-guarded color smoothing, cel color bands, printed shadow dots and restrained warm/cool palette. A low-luminance floor retains night face/terrain information rather than collapsing it into the darkest band.
 - B&W Manga combines paper-white/ink-black tone zones, contours, regular halftone dots and diagonal shadow hatching. It is not a plain luminance filter or film-grain effect. Transparent water, sky and effects participate in the composed transform. Overlay UI and dedicated UI-only cameras retain their original colors/text.
 - Print cells are fixed to the rendered screen, antialiased and adjusted for the independent pixel target. They use no time/random-frame seed. This is screen-anchored print, not object-anchored texture; normal projection/wind/visibility still vary as the camera moves.
+- Ink Wash adds depth-guarded wet ink, dry brush, paper grain and mist; Van Gogh adds local rotated color/depth-guarded brush dabs, blue/gold color and impasto ridges. Both use screen-anchored marks without time jitter.
 - The two existing PC/Mobile renderer assets retain one feature each. One cached transform material and native CopyDepth material survive style switches. Comics add an R32 transient depth target and one fullscreen copy plus the color transform. Uniforms update on revision/quality/pixel changes. No new isolated GPU/FPS/GC claim; mobile-device/XR acceptance is outside batch030.
 
 ## Actual previews and UI
 
-Current four1280×720 previews are native batch030 first-island renders, fixed noon, same frozen Sahur pose/framing, intensity89.7673%, existing preview GUIDs. All4 styles at2 views plus4×MSAA,320×180 pixel and midnight captures are recorded in AUTO_QA/Evidence/batch030. Source actors are save-excluded temporary clones. No authored scene was saved.
+Current six1280×720 previews are native batch031 first-island renders, fixed noon, same frozen Sahur pose/framing, intensity89.7673%, existing preview GUIDs. All six styles at two views and both new painting styles at4×MSAA,320×180 pixel and midnight are recorded in AUTO_QA/Evidence/batch031. Source actors are save-excluded temporary clones. No authored scene was saved.
 
-![Current matching Color Comic / B&W Manga comparison](../AUTO_QA/Evidence/batch030/comparison-ui.png)
+![Current six-card gallery](../AUTO_QA/Evidence/batch031/gallery-ui.png)
+
+![Current Ink Wash / Van Gogh comparison](../AUTO_QA/Evidence/batch031/comparison-ui.png)
 
 The original V2 and batch029 previews remain archived with their reports; they do not represent the current replacement effects.
 
-## Current batch030 acceptance
+## Current batch031 acceptance
+
+142 native checks pass:47 rendering/preferences,79 UI and16 transparent-world. Six cards,36 comparison pairs, full sixth dropdown row and native selection pass. SameEditor WindowsMono buildSucceeded66.09s/493warnings/four known missing-plant messages; shader messages empty. Original state restored. See [Painting-Batch031.md](Painting-Batch031.md) and AUTO_QA/Evidence/batch031/proof.json; no new standalone FPS claim.
+
+## Historical batch030 acceptance
 
 77 native checks pass:40 rendering/control/cache/persistence/grass checks,27 actual gallery/comparison/UI checks and10 transparent-world checks. See [Comic-Batch030.md](Comic-Batch030.md) and AUTO_QA/Evidence/batch030/proof.json for final build/restoration and visual limitations. Native re-enable tests check saved controls; a fresh Play/domain-reload persistence test was not repeated in this batch.
 

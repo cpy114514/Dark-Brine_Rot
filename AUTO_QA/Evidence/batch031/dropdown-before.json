@@ -1,0 +1,40 @@
+{
+  "rows": [
+    {
+      "requested": 0.0,
+      "actual": 0.0,
+      "choices": 6,
+      "lastName": "Item 5: Van Gogh",
+      "contentRect": "(x:-176.50, y:-198.00, width:353.00, height:198.00)",
+      "contentPosition": "(0.00, 18.00)",
+      "lastBottom": 920.0,
+      "lastTop": 965.3334,
+      "viewBottom": 924.0,
+      "viewTop": 1164.0
+    },
+    {
+      "requested": 1.0,
+      "actual": 1.0,
+      "choices": 6,
+      "lastName": "Item 5: Van Gogh",
+      "contentRect": "(x:-176.50, y:-198.00, width:353.00, height:198.00)",
+      "contentPosition": "(0.00, 0.00)",
+      "lastBottom": 896.0,
+      "lastTop": 941.3334,
+      "viewBottom": 924.0,
+      "viewTop": 1164.0
+    },
+    {
+      "requested": 0.0,
+      "actual": 0.0,
+      "choices": 6,
+      "lastName": "Item 5: Van Gogh",
+      "contentRect": "(x:-176.50, y:-198.00, width:353.00, height:198.00)",
+      "contentPosition": "(0.00, 18.00)",
+      "lastBottom": 920.0,
+      "lastTop": 965.3334,
+      "viewBottom": 924.0,
+      "viewTop": 1164.0
+    }
+  ]
+}

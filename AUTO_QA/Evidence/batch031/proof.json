@@ -1,0 +1,83 @@
+{
+  "batch": 31,
+  "baselineGit": "d679135",
+  "request": "Add Ink Wash and Van Gogh alongside four existing styles",
+  "newStyleIds": [
+    "ink-wash",
+    "van-gogh"
+  ],
+  "nativeChecks": {
+    "renderAndPreferences": 47,
+    "galleryAndComparison": 79,
+    "transparentWorld": 16,
+    "acceptedTotal": 142,
+    "passed": true
+  },
+  "nativeRendering": {
+    "output": [
+      1280,
+      720
+    ],
+    "fixedNoonAndMidnight": true,
+    "intensity": 0.897673,
+    "galleryStyles": 6,
+    "galleryPosesPerStyle": 2,
+    "msaaTargetAndPipeline": 4,
+    "pixelWorld": [
+      320,
+      180
+    ],
+    "orbitPositionsPerNewStyle": 24,
+    "roundtripPixels": 921600,
+    "roundtripChangedGt2": {
+      "ink-wash": 2693,
+      "van-gogh": 1547
+    },
+    "positiveImageControlsPassed": true,
+    "measuredFPS": false
+  },
+  "uiFix": {
+    "templateContent": 28,
+    "itemHeight": 34,
+    "oldSixthRowClipPixels": 4,
+    "fixedContentHeight": 34,
+    "actualToggleSelectedSixth": true,
+    "comparisonPairs": 36,
+    "cardsOverlap": false
+  },
+  "preservation": {
+    "editorPid": 17184,
+    "originalScenes": 5,
+    "stoppedClean": true,
+    "fixtures": 0,
+    "freshSaveAndBackupUnchanged": true,
+    "protectedHashes": 24,
+    "existingPresetAndPreviewGUIDsRetained": true,
+    "originalPreferenceCount": 981,
+    "originalKindsValuesKeySetRestored": true,
+    "fixtureHealingLedgerKeysRemoved": 1,
+    "modelsUVsRigsClipsCollidersOriginalMaterialsScenesChanged": false,
+    "existingShaderBranchesIdentical": [
+      "Dark Fairytale",
+      "Color Comic",
+      "B&W Manga"
+    ]
+  },
+  "build": {
+    "result": "Succeeded",
+    "seconds": 66.0871678,
+    "warnings": 493,
+    "errors": 4,
+    "errorsAreKnown606PlantMessages": true,
+    "binaryLaunched": false,
+    "flagsPreloadsSettingsAndDuckAliasRestored": true
+  },
+  "limitations": [
+    "Screen-anchored painting; moving geometry changes projection; orbit checks do not prove pixel invariance.",
+    "Actor pose frozen; no active encounter/animation acceptance.",
+    "No native standalone GPU/FPS/GC/device/XR qualification.",
+    "Van Gogh is a procedural painterly interpretation on original models, not hand-painted replacement art.",
+    "Saved controls/selection and native re-enable verified; no new fresh-Play persistence run.",
+    "Prior overlapping test iterations not added to142."
+  ]
+}

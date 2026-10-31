@@ -36,6 +36,109 @@ Shader "Hidden/DarkBrine/DarkFairytale"
                 float aa = max(fwidth(distance)*.65,.025);
                 return (1-smoothstep(radius-aa,radius+aa,distance))*step(.001,coverage);
             }
+            float ArtNoise(float2 p)
+            {
+                float2 cell=floor(p), f=frac(p);f=f*f*(3-2*f);
+                return lerp(lerp(Hash(cell),Hash(cell+float2(1,0)),f.x),lerp(Hash(cell+float2(0,1)),Hash(cell+1),f.x),f.y);
+            }
+            half3 PaintSample(float2 uv,float2 offset,float depth,half3 center)
+            {
+                float2 at=saturate(uv+offset);
+                float other=ComicDepth(at);
+                float same=1-smoothstep(.04+depth*.002,.18+depth*.01,abs(other-depth));
+                return lerp(center,SAMPLE_TEXTURE2D_X(_BlitTexture,sampler_LinearClamp,at).rgb,same);
+            }
+            half4 InkWashColor(half4 source,float2 uv)
+            {
+                float depth=ComicDepth(uv);
+                float pixelScale=max(.65,_ScaledScreenParams.y/1080);
+                float radius=_InkSettings.y>.5?1:lerp(1,4.5,_Comic.x)*pixelScale;
+                float2 stepUV=radius/_ScaledScreenParams.xy;
+                half3 right=PaintSample(uv,float2(stepUV.x,0),depth,source.rgb);
+                half3 left=PaintSample(uv,float2(-stepUV.x,0),depth,source.rgb);
+                half3 up=PaintSample(uv,float2(0,stepUV.y),depth,source.rgb);
+                half3 down=PaintSample(uv,float2(0,-stepUV.y),depth,source.rgb);
+                half3 wet=(source.rgb*2+right+left+up+down)/6;
+                float luminance=saturate(Luma(lerp(source.rgb,wet,.85*_Comic.x)));
+                float value=lerp(sqrt(luminance),pow(max(.0001,luminance),.28),1-smoothstep(.03,.18,luminance));
+                float gradient=abs(Luma(right)-Luma(left))+abs(Luma(up)-Luma(down));
+                float4 neighbors=float4(ComicDepth(uv+float2(stepUV.x,0)),ComicDepth(uv-float2(stepUV.x,0)),ComicDepth(uv+float2(0,stepUV.y)),ComicDepth(uv-float2(0,stepUV.y)));
+                float curvature=(abs(neighbors.x+neighbors.y-2*depth)+abs(neighbors.z+neighbors.w-2*depth))/max(.4,depth);
+                float boundary=max(smoothstep(.04,.25,curvature),smoothstep(.05,.3,gradient)*.4);
+                float2 pixel=uv*_ScaledScreenParams.xy;
+                float brush=ArtNoise(pixel/float2(13,3));
+                float bloom=ArtNoise(pixel/32);
+                float wash=pow(saturate(1-value*1.05),.8)*1.35;
+                wash=lerp(wash,floor(wash*5+.5)/5,.4);
+                wash*=lerp(1,.65+.6*brush,_Comic.y);
+                wash+=boundary*lerp(.16,.42,_Comic.x)*(.65+.35*bloom);
+                float mist=smoothstep(35,190,depth)*_Comic.w;
+                wash*=1-mist*.6;
+                float sky=smoothstep(.52,.8,uv.y)*step(_ProjectionParams.z*.98,depth);
+                wash*=1-sky*.82;
+                half3 paper=half3(.96,.938,.88);
+                half3 ink=half3(.035,.052,.06);
+                half3 color=lerp(paper,ink,saturate(wash));
+                float grain=ArtNoise(pixel*.7)-.5;
+                color+=grain*_Comic.z*(_InkSettings.y>.5?.003:.025);
+                return half4(lerp(source.rgb,color,_Style.x),source.a);
+            }
+            half3 OilPalette(half3 paint)
+            {
+                float lum=max(.0001,Luma(paint)), rich=_Comic.w;
+                half3 color=lerp(lum.xxx,paint,lerp(.92,1.4,rich));
+                float blue=saturate((paint.b-paint.r)*4);
+                float green=saturate((paint.g-max(paint.r,paint.b))*5);
+                color=lerp(color,lum*half3(.45,.7,1.55),blue*rich*.65);
+                color=lerp(color,lum*half3(1.45,1.22,.40),green*rich*.55);
+                return color*lerp(half3(.88,.86,1.07),half3(1.12,1.04,.86),sqrt(saturate(lum)));
+            }
+            half4 VanGoghColor(half4 source,float2 uv)
+            {
+                float depth=ComicDepth(uv);
+                float2 resolution=_ScaledScreenParams.xy, pixel=uv*resolution;
+                float size=_InkSettings.y>.5?lerp(1.2,2.8,_Comic.x):lerp(4,18,_Comic.x)*max(.65,resolution.y/1080);
+                float spacing=size*1.35;
+                float2 grid=floor(pixel/spacing);
+                half3 total=OilPalette(source.rgb)*.12;
+                float sum=.12;
+                // Local dabs rotate about their own centers. Rotating absolute
+                // pixel coordinates produced dense interference rings in the rejected prototype.
+                [unroll]for(int y=-1;y<=1;y++)
+                [unroll]for(int x=-1;x<=1;x++)
+                {
+                    float2 cell=grid+float2(x,y);
+                    float seed=Hash(cell), seed2=Hash(cell+17.7);
+                    float2 center=(cell+.5+float2(seed-.5,seed2-.5)*.7)*spacing;
+                    float2 at=saturate(center/resolution);
+                    float2 whorl=(at-float2(.72,.74))*float2(resolution.x/resolution.y,1);
+                    float polar=atan2(whorl.y,whorl.x), radial=length(whorl);
+                    float sky=step(_ProjectionParams.z*.98,depth)*smoothstep(.5,.72,uv.y);
+                    float angle=lerp(.25+(ArtNoise(at*9)-.5)*1.8,polar+1.5708,_Comic.y*sky);
+                    angle+=(seed2-.5)*.45;
+                    float2 direction=float2(cos(angle),sin(angle)), side=float2(-direction.y,direction.x);
+                    float2 local=pixel-center;
+                    float along=dot(local,direction)/(size*2.1), across=dot(local,side)/(size*.65);
+                    float shape=along*along+across*across;
+                    float weight=pow(saturate(1-shape),2);
+                    half3 dab=PaintSample(uv,at-uv,depth,source.rgb);
+                    // Color-range rejection protects eyes and small face marks
+                    // while broad, similar-color areas keep the coarse dabs.
+                    float similar=1-smoothstep(.06,.28,length(dab-source.rgb));
+                    dab=lerp(source.rgb,dab,similar*.9);
+                    half3 paint=OilPalette(dab);
+                    float groove=sin(across*8+seed*6.2831853)*.5+.5;
+                    paint*=1+(groove-.5)*.28*_Comic.z+(seed-.5)*.35*_Comic.z;
+                    paint+=half3(.035,.028,.013)*groove*_Comic.z*sqrt(saturate(Luma(dab)));
+                    float curl=sin(radial*20-polar*2+ArtNoise(at*6))*.5+.5;
+                    paint+=half3(.65,.5,.16)*pow(curl,3)*sky*_Comic.y*.14*sqrt(saturate(Luma(dab)));
+                    total+=paint*weight;sum+=weight;
+                }
+                half3 color=total/sum;
+                half3 result=lerp(source.rgb,max(0,color),_Style.x);
+                result*=max(1,Luma(source.rgb)*.78/max(.0001,Luma(result)));
+                return half4(result,source.a);
+            }
             half4 ComicColor(half4 source,float2 uv)
             {
                 bool manga = _StyleMode>2.5;
@@ -106,6 +209,8 @@ Shader "Hidden/DarkBrine/DarkFairytale"
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
                 float2 uv=input.texcoord;
                 half4 source=SAMPLE_TEXTURE2D_X(_BlitTexture,sampler_LinearClamp,uv);
+                if (_StyleMode > 4.5) return VanGoghColor(source,uv);
+                if (_StyleMode > 3.5) return InkWashColor(source,uv);
                 if (_StyleMode > 1.5) return ComicColor(source,uv);
                 float rawDepth=SampleSceneDepth(uv);
                 float depth=LinearEyeDepth(rawDepth,_ZBufferParams);

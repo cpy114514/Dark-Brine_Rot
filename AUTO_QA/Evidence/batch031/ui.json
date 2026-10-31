@@ -1,0 +1,322 @@
+{
+  "passed": true,
+  "checks": 79,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Six style cards available"
+    },
+    {
+      "ok": true,
+      "name": "Four style-specific painting controls"
+    },
+    {
+      "ok": true,
+      "name": "Existing and new card titles visible"
+    },
+    {
+      "ok": true,
+      "name": "Legacy effect labels removed"
+    },
+    {
+      "ok": true,
+      "name": "Comic control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Comic control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Comic control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Comic control normalized range"
+    },
+    {
+      "ok": true,
+      "name": "Card inside screen realistic"
+    },
+    {
+      "ok": true,
+      "name": "Native preview bound realistic"
+    },
+    {
+      "ok": true,
+      "name": "Card inside screen dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Native preview bound dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Card inside screen origami"
+    },
+    {
+      "ok": true,
+      "name": "Native preview bound origami"
+    },
+    {
+      "ok": true,
+      "name": "Card inside screen monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Native preview bound monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Card inside screen ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Native preview bound ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Card inside screen van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Native preview bound van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 0 / 1"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 0 / 2"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 0 / 3"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 0 / 4"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 0 / 5"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 1 / 2"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 1 / 3"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 1 / 4"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 1 / 5"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 2 / 3"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 2 / 4"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 2 / 5"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 3 / 4"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 3 / 5"
+    },
+    {
+      "ok": true,
+      "name": "Cards do not overlap 4 / 5"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair realistic / van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair dark-fairytale / van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair origami / van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair monochrome / van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair ink-wash / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair ink-wash / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair ink-wash / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair ink-wash / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair ink-wash / ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair ink-wash / van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair van-gogh / realistic"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair van-gogh / dark-fairytale"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair van-gogh / origami"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair van-gogh / monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair van-gogh / ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Matching preview pair van-gogh / van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Overlay red stays red outside paper processing"
+    },
+    {
+      "ok": true,
+      "name": "Ink-specific controls visible"
+    },
+    {
+      "ok": true,
+      "name": "Oil-specific controls visible"
+    },
+    {
+      "ok": true,
+      "name": "Manga overlay red remains red"
+    },
+    {
+      "ok": true,
+      "name": "Sixth dropdown entry scrolls into view"
+    },
+    {
+      "ok": true,
+      "name": "Sixth dropdown entry starts unselected"
+    },
+    {
+      "ok": true,
+      "name": "Native sixth-item toggle selects Van Gogh"
+    },
+    {
+      "ok": true,
+      "name": "Ink/Van Gogh reveal uses matching previews"
+    }
+  ]
+}

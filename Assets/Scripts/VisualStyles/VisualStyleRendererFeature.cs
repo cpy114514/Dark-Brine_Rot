@@ -53,8 +53,7 @@ namespace Mavis.VisualStyles
                 if (material == mat && appliedPreset == preset && appliedRevision == manager.Revision && presetRevision == preset.Revision && pixel == nextPixel && quality == nextQuality) return;
                 appliedPreset = preset; appliedRevision = manager.Revision; presetRevision = preset.Revision; pixel = nextPixel; quality = nextQuality;
                 material = mat; requiresIntermediateTexture = true;
-                bool mono = preset.Mode == VisualStyleMode.Monochrome;
-                comic = preset.Mode == VisualStyleMode.ColorComic || mono;
+                comic = (int)preset.Mode >= (int)VisualStyleMode.ColorComic;
                 renderPassEvent = comic ? RenderPassEvent.AfterRenderingPostProcessing : RenderPassEvent.BeforeRenderingTransparents;
                 ConfigureInput(comic ? ScriptableRenderPassInput.Depth : ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Normal);
                 passName = "Visual Style / " + preset.displayName;

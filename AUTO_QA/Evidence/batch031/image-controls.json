@@ -1,0 +1,47 @@
+{
+  "gallery-accepted-ink-wash": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 139.60812680844907
+  },
+  "gallery-accepted-van-gogh": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 119.59857855902777
+  },
+  "night-accepted-ink-wash": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 86.1511277488426
+  },
+  "night-accepted-van-gogh": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 33.289173177083335
+  },
+  "msaa-accepted-ink-wash": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 139.73577690972223
+  },
+  "msaa-accepted-van-gogh": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 119.96038266782408
+  },
+  "pixel-accepted-ink-wash": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 136.8678732638889
+  },
+  "pixel-accepted-van-gogh": {
+    "visibleDifferenceGt8": 921600,
+    "pixels": 921600,
+    "meanRGB": 120.7706492332176
+  },
+  "unchangedShaderBranches": [
+    "Color Comic",
+    "B&W Manga",
+    "Dark Fairytale"
+  ]
+}

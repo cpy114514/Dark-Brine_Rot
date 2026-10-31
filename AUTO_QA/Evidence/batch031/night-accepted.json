@@ -1,0 +1,67 @@
+{
+  "label": "night-accepted",
+  "rows": [
+    {
+      "mode": "ink-wash",
+      "pose": "player",
+      "cameraPosition": "(258.993774, 41.8899841, 510.696625)",
+      "cameraRotation": "(-0.02348056, 0.9394955, -0.06577863, -0.3353655)",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.65, 0.60, 0.35, 0.50)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "ink-wash",
+      "pose": "meadow",
+      "cameraPosition": "(266.8973, 42.9872665, 482.519623)",
+      "cameraRotation": "(-0.113556989, 0.454448819, -0.05853899, -0.8815636)",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.65, 0.60, 0.35, 0.50)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "van-gogh",
+      "pose": "player",
+      "cameraPosition": "(258.993774, 41.8899841, 510.696625)",
+      "cameraRotation": "(-0.02348056, 0.9394955, -0.06577863, -0.3353655)",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.58, 0.70, 0.60, 0.65)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    },
+    {
+      "mode": "van-gogh",
+      "pose": "meadow",
+      "cameraPosition": "(266.8973, 42.9872665, 482.519623)",
+      "cameraRotation": "(-0.113556989, 0.454448819, -0.05853899, -0.8815636)",
+      "callbacks": 6,
+      "input": "Depth",
+      "effectiveShader": "Hidden/DarkBrine/DarkFairytale",
+      "details": "(0.58, 0.70, 0.60, 0.65)",
+      "intensity": 0.897673,
+      "pixel": false,
+      "renderScale": 1.0,
+      "targetMsaa": 1,
+      "pipelineMsaa": 1
+    }
+  ],
+  "callbacks": 141,
+  "shaderErrors": null
+}

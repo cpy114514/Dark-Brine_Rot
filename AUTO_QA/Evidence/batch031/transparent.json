@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "checks": 16,
+  "rows": [
+    {
+      "ok": true,
+      "name": "Transparent probe correct color policy realistic"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe visibly contributes realistic"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe correct color policy origami"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe visibly contributes origami"
+    },
+    {
+      "ok": true,
+      "name": "Composed world pass and complete depth origami"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe correct color policy monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe visibly contributes monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Manga includes transparent world in grayscale"
+    },
+    {
+      "ok": true,
+      "name": "Composed world pass and complete depth monochrome"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe correct color policy ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe visibly contributes ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Composed world pass and complete depth ink-wash"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe correct color policy van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Transparent probe visibly contributes van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Composed world pass and complete depth van-gogh"
+    },
+    {
+      "ok": true,
+      "name": "Probe remains excluded from user saves"
+    }
+  ]
+}

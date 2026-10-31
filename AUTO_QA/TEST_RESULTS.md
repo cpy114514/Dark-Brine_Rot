@@ -1,5 +1,17 @@
 # Test results
 
+## Batch031 — two painting styles / six-card gallery
+
+- PASS47 accepted native render/preferences checks:8 slider endpoint responses,2 intensity responses,independent saved controls/native re-enable,savedselection restore,6unique presets,24cached-material switches,2orbitreturn bounds,fullNeargrass and excludedfixture. Earlier overlapping runs not added.
+- PASS79 nativeUI checks:6cards/previews,screenbounds/nooverlap,36pairs,style-specificlabels/overlayred,scrolledsixthentry fully visible and actualToggle selectsVanGogh. BeforeQA-043:lastbottom920<viewport924 atscroll0; aftermatching34content/item passes. PrematureDropdown.Show before nativeStart and stale detail-toggle were harness failures, rejected.
+- PASS16 transparency: cyan alpha probe visible/off controls and expected painting/comic color policy, complete-depth/afterworld transform. Native6style×2view noon plusnewstyles×2view midnight,actualMSAA4/320×180pixel and48orbitpositions. Returns2,693ink/1,547oil of921,600pixels>2, no FPS/perfecttemporal claim.
+- Actualdomainreload:6styles/excludedfixture retained;foliagerecache awaitedready,singlegrasslayout preserved. Final2normalkeywordshader variants0messages. ExistingDark/comic shader bodies identical to prior checkpoint.
+- SameEditor17184 Windows64MonoDevelopment7scenesSucceeded66.0871678s/493warnings/4existing606plantmessages. Binarynotlaunched;buildflags/preloads/settings/duckmaterialcleanupalltrue.
+- RESTORED5originalclean/stoppedscenes,timeScale1,0fixtures,savesunchanged;24protectedhashes/existingGUIDsmatch.981originalregistrykinds/values/keysetmatch;8temporarypaintingkeys/selectionoverride and1unusedfixtureledgercleaned. Nooriginalmodel/UV/rig/clip/collider/material/sceneedit. No standaloneGPU/GC/FPS/device/fullcombat/freshPlaypersistenceclaim.
+
+Evidence/batch031/proof.json and Documentation/Painting-Batch031.md.
+
+
 ## Batch030 — Color Comic / B&W Manga
 
 - PASS40 accepted native rendering/control tests: eight slider endpoint responses, both intensity responses, full-world Manga gray, independent persisted controls/native re-enable,20 cached-material switches, complete grass layout and excluded preview. Overlapping intermediate40-check runs are not added.
