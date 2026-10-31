@@ -1,0 +1,72 @@
+{
+  "batch": 32,
+  "baselineGit": "5267fe0",
+  "request": "Render full grass farther away and soften obvious loading",
+  "productionSourceFiles": 1,
+  "nativeAssertions": {
+    "policy": 30,
+    "boundaryImages": 9,
+    "acceptedTotal": 39,
+    "passed": true
+  },
+  "nativePlayerProjection": {
+    "fov": 60.4064941,
+    "lodBias": 0.5,
+    "oldStartMeters": 30.70036,
+    "oldEndMeters": 39.67431,
+    "newStartMeters": 59.5114632,
+    "newEndMeters": 79.34862,
+    "nativeGroups": 11298,
+    "freshPlayOwnershipCount": 11298,
+    "freshPlayWrongPolicyCount": 0
+  },
+  "rendering": {
+    "nativeOutput": [
+      1280,
+      720
+    ],
+    "movementSamples": 24,
+    "movementPathMeters": 16,
+    "sampledCameraYawDegrees": 12,
+    "pixelWorld": [
+      320,
+      180
+    ],
+    "existingStyles": 6,
+    "completeGrassLayoutPreserved": true,
+    "measuredFPS": false,
+    "potentialRangeOnlyGroupsBefore": 136,
+    "potentialRangeOnlyGroupsAfter": 319,
+    "potentialTrianglesIgnoringFrustumBefore": 3141192,
+    "potentialTrianglesIgnoringFrustumAfter": 7367943
+  },
+  "restoration": {
+    "editorPid": 17184,
+    "originalScenes": 5,
+    "cleanStopped": true,
+    "fixtures": 0,
+    "timeScale": 1,
+    "saveAndBackupUnchanged": true,
+    "originalRegistryKindsValuesAndKeySetMatch": 982,
+    "unusedFixtureLedgersRemoved": 2,
+    "protectedHashesMatch": 26,
+    "unrelatedEnemyChangesPreserved": true,
+    "originalAssetsAndScenesNotEdited": true
+  },
+  "build": {
+    "result": "Succeeded",
+    "seconds": 86.42847809999999,
+    "warnings": 493,
+    "errors": 4,
+    "errorsAreKnown606PlantMessages": true,
+    "binaryLaunched": false,
+    "flagsPreloadsSettingsDuckCleanupPassed": true
+  },
+  "limitations": [
+    "Distances depend on LOD bias, FOV, scale and the retained180m outer cull.",
+    "More grass increases work; no native FPS/GPU/GC cost qualification.",
+    "Sampled camera movement is not a full player gameplay or asynchronous streaming latency test.",
+    "Editor source-reload dictionary had12 entries despite correct11298 native policies; suspected ownership issue, not fixed. Fresh Play registers all groups.",
+    "Rejected lodBias2 baseline and absent-registry sample lookup remain private."
+  ]
+}

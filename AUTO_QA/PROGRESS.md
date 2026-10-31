@@ -1,5 +1,12 @@
 # Progress
 
+## Batch032 complete — extend full grass rendering distance
+
+Userwantedfarthergrassandlessobviousloading. CapturedactualplayerprojectionFOV60.4065/lodBias0.5;39.67mnativeLODendwaslimiting,not180moutercull. Oneproductionmethodhalvesrecognizedcutoffandwidensfinaldistanceband:59.51–79.35m. OriginalcompleteNearlayout/density/treequalityuntouched.39nativeassertionspass,20fixedprojectiondistancecontrols,freshPlay11298owned/0wrong,24nativecameraposes,pixel. Range-onlypotentialgroups136→319/triangleestimate3.14M→7.37M,notGPUsubmissions/FPS. Reloadownershipdictionary12observationflaggedsuspected/unfixed;freshPlaycorrect.
+
+SameEditor17184 Windows64Mono7scenebuildSucceeded86.43s/493warnings/4known606plantmessages;unlaunchedbinary. Allbuildcleanuptrue;5originalscenesclean/stopped/timeScale1/0fixtures,save+backupunchanged,26protectedhashesand982registrykinds/values/keysetmatch.2unusedfixtureledgerscleanedaftercampaigncacherestore. Existing3enemyawarenessedits,externalPlasticworkandall6stylespreserved. Private.codex/grass032immutable. Checkpointtitle Extend complete grass visibility and soften far boundary. Documentation/Grass-Distance-Batch032.md/Evidence/batch032. No cmupdate inpending212workspace.
+
+
 ## Batch031 complete — add Ink Wash and Van Gogh
 
 Appended numericmodes4/5 and independent presets, controls, saved selection and native previews; no replacement of existing4styles. Two-row six-card gallery/36 comparison pairs. QA-043 fixes sixth dropdown clipping from28-content/34-item negative padding. First ring-pattern oil shader and prematureShow/stale-panel harness attempts rejected; final local brush dabs and qualified nativeUI pass.142 accepted checks(47 rendering/preferences,79 UI,16 transparency), day/night/MSAA4/pixel. Real UI source domain reload retains excluded fixture and6styles; awaited foliage recache/singlelayout before more rendering. Shader variants0messages.

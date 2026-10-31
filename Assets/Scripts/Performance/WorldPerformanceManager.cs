@@ -648,8 +648,11 @@ namespace Mavis
             grassLods.Add(group,state);
             group.fadeMode=LODFadeMode.CrossFade;
             group.animateCrossFading=false;
-            float cutoff=levels[levels.Length-1].screenRelativeTransitionHeight;
-            float band=(levels[levels.Length-2].screenRelativeTransitionHeight-cutoff)*.2f;
+            // Extend only this verified grass family's final visibility by2x.
+            // At the user's lodBias0.5/FOV60 this moves the end from~40m to~80m,
+            // with a gradual60–80m fade. Tree/quality settings remain authored.
+            float cutoff=levels[levels.Length-1].screenRelativeTransitionHeight*.5f;
+            float band=cutoff/3f;
             group.SetLODs(new[]{new LOD(cutoff,levels[0].renderers){fadeTransitionWidth=band/Mathf.Max(.001f,1-cutoff)}});
         }
         static void RestoreGrassLod(LODGroup group, GrassLodState state)
