@@ -5,7 +5,7 @@ using UnityEngine.UI;
 namespace Mavis
 {
     /// <summary>Tracks literal labels without overwriting dynamic numbers or user-authored content.</summary>
-    [DisallowMultipleComponent, DefaultExecutionOrder(2000)]
+    [DisallowMultipleComponent, DefaultExecutionOrder(31000)]
     public sealed class LocalizedGameText : MonoBehaviour
     {
         Text legacy;
@@ -34,6 +34,7 @@ namespace Mavis
                 tmp.font = GameLocalization.TMPFont;
             }
             GameLocalization.Changed += LanguageChanged;
+            GameControls.Changed += LanguageChanged;
             Refresh();
         }
         void LateUpdate() { ReadAndRefresh(); }
@@ -51,9 +52,12 @@ namespace Mavis
         void Refresh()
         {
             output = GameLocalization.Text(source);
+            // Keyboard rebinding cells continue to describe the keyboard binding.
+            bool keyboardCell=GetComponentInParent<PauseSettingsMenu>()!=null&&System.Enum.TryParse<UnityEngine.InputSystem.Key>(source,out _);
+            if(!keyboardCell)output=GameControls.AdaptPrompt(output);
             if (tmp) { if(tmp.text != output) tmp.text = output; }
             else if (legacy && legacy.text != output) legacy.text = output;
         }
-        void OnDestroy() { GameLocalization.Changed -= LanguageChanged; }
+        void OnDestroy() { GameLocalization.Changed -= LanguageChanged; GameControls.Changed -= LanguageChanged; }
     }
 }

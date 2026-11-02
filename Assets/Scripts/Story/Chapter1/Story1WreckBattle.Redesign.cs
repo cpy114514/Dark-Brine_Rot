@@ -335,8 +335,21 @@ public sealed partial class Story1WreckBattle
         var facing=Quaternion.LookRotation(redForward);
         if(RedesignStage==OpeningStage.Pursuit)facing=Quaternion.Slerp(redPursuitEntryRotation,facing,REase(redesignTime,0,.35f));
         player.transform.SetPositionAndRotation(at,facing);redGraph.Evaluate(0);
-        player.transform.position+=Vector3.up*(RedWater(at)+.22f-dip-RedHead.y);
+        // Keep the look-back in the spine/neck chain instead of twisting the
+        // head alone through 100 degrees. Apply it before waterline fitting.
+        if(RedesignStage==OpeningStage.Pursuit)
+            RedLook(-68*REase(seconds,1.55f,2.05f)*(1-REase(seconds,3.05f,3.65f)));
+        player.transform.position+=Vector3.up*(RedWater(at)+.48f-dip-RedHead.y);
         if(redStow!=null){redStow.CinematicTraversal=true;redStow.CinematicStowWeight=1;redStow.RefreshPose();}
+    }
+    void RedLook(float degrees)
+    {
+        var chest=redAnimator.GetBoneTransform(HumanBodyBones.Chest);
+        var neck=redAnimator.GetBoneTransform(HumanBodyBones.Neck);
+        var head=redAnimator.GetBoneTransform(HumanBodyBones.Head);
+        if(chest!=null)chest.rotation=Quaternion.AngleAxis(degrees*.18f,Vector3.up)*chest.rotation;
+        if(neck!=null)neck.rotation=Quaternion.AngleAxis(degrees*.27f,Vector3.up)*neck.rotation;
+        if(head!=null)head.rotation=Quaternion.AngleAxis(degrees*(neck!=null?.55f:.82f),Vector3.up)*head.rotation;
     }
     void RedShark(string clip,float seconds,Vector3 nose,Vector3 forward)
     {
@@ -418,11 +431,10 @@ public sealed partial class Story1WreckBattle
     }
     void RedShot(int shot,Vector3 position,Vector3 focus,float fov=50)
     {
-        var camera=sequence.storyCamera;camera.fieldOfView=fov;
-        position=RedClearCamera(shot,position,focus);
         RedesignShot=shot;redCameraPosition=position;redCameraLook=focus;redCameraFov=fov;
+        redCameraRequestedFrame=Time.frameCount;
+        redCameraHeroAtRequest=redAnimator!=null?RedChest:player.transform.position;
         if(lastShot!=shot){RedEvent("Shot "+shot);lastShot=shot;}
-        camera.transform.SetPositionAndRotation(position,Quaternion.LookRotation(focus-position,Vector3.up)*RedShakeRotation());
     }
     void RedHeroShot(int shot,Vector3 offset,float fov=48)
     {
@@ -520,15 +532,15 @@ public sealed partial class Story1WreckBattle
             CinematicLetterbox.Set(this,false);RedGate(Lesson.Move);
         }
     }
-    string RedKeys()=>string.Join(" / ",new[]{GameInputSettings.Action.Forward,GameInputSettings.Action.Left,GameInputSettings.Action.Back,GameInputSettings.Action.Right}.Select(a=>GameInputSettings.Get(a).ToString()));
+    string RedKeys()=>GameControls.MovementPrompt;
     bool RedLocomotionLesson=>CurrentLesson==Lesson.Move||CurrentLesson==Lesson.Sprint||CurrentLesson==Lesson.Swim;
-    string RedLessonMessage(Lesson lesson)=>lesson==Lesson.Move?RedKeys()+"  Move   |   Hold "+GameInputSettings.Get(GameInputSettings.Action.Sprint)+" to sprint":
-        lesson==Lesson.Sprint?"Hold "+GameInputSettings.Get(GameInputSettings.Action.Sprint)+" + "+RedKeys()+"  Sprint on the wreckage":
-        lesson==Lesson.Special?"E  Special skill — throw and recall your club":
-        lesson==Lesson.Attack?"Left Mouse  Attack the approaching shark":
-        lesson==Lesson.Dodge?GameInputSettings.Get(GameInputSettings.Action.Dodge)+"  Dodge the bite":
-        lesson==Lesson.ChargeHold?"Hold Right Mouse  Charge":lesson==Lesson.ChargeRelease?"Release Right Mouse  Heavy attack":
-        lesson==Lesson.Jump?GameInputSettings.Get(GameInputSettings.Action.Jump)+"  Jump into the water before the wreck breaks":RedKeys()+"  Swim forward to escape the shark";
+    string RedLessonMessage(Lesson lesson)=>lesson==Lesson.Move?RedKeys()+"  Move":
+        lesson==Lesson.Sprint?"Hold "+GameControls.Token(GameInputSettings.Action.Sprint)+" + "+RedKeys()+"  Sprint on the wreckage":
+        lesson==Lesson.Special?GameControls.Token(GameControls.Command.Special)+"  Special skill — throw and recall your club":
+        lesson==Lesson.Attack?GameControls.Token(GameControls.Command.Attack)+"  Attack the approaching shark":
+        lesson==Lesson.Dodge?GameControls.Token(GameInputSettings.Action.Dodge)+"  Dodge the bite":
+        lesson==Lesson.ChargeHold?"Hold "+GameControls.Token(GameControls.Command.Charge)+"  Charge":lesson==Lesson.ChargeRelease?"Release "+GameControls.Token(GameControls.Command.Charge)+"  Heavy attack":
+        lesson==Lesson.Jump?GameControls.Token(GameInputSettings.Action.Jump)+"  Jump into the water before the wreck breaks":RedKeys()+"  Swim forward to escape the shark";
     void RedGate(Lesson lesson)
     {
         CurrentLesson=lesson;TutorialWaiting=true;lessonExecuting=false;lessonTime=holdTime=0;
@@ -540,8 +552,7 @@ public sealed partial class Story1WreckBattle
         controls.rectTransform.anchoredPosition=Vector2.zero;controls.rectTransform.sizeDelta=new Vector2(1400,100);
         RedesignBeat="Tutorial: "+message;RedEvent("Gate "+lesson);
     }
-    Vector2 RedMoveIntent=>new Vector2((GameInputSettings.Pressed(GameInputSettings.Action.Right)?1:0)-(GameInputSettings.Pressed(GameInputSettings.Action.Left)?1:0),
-        (GameInputSettings.Pressed(GameInputSettings.Action.Forward)?1:0)-(GameInputSettings.Pressed(GameInputSettings.Action.Back)?1:0));
+    Vector2 RedMoveIntent=>GameControls.Move;
     bool RedMoveInput()=>RedMoveIntent.sqrMagnitude>.01f;
     bool RedMeasureMovement()
     {
@@ -574,7 +585,7 @@ public sealed partial class Story1WreckBattle
         }
         // The director itself can be suspended by an overlay. A release consumed there
         // requires a fresh charge, rather than an unexplained automatic strike on return.
-        if(CurrentLesson==Lesson.ChargeRelease&&Mouse.current!=null&&!Mouse.current.rightButton.isPressed&&!Mouse.current.rightButton.wasReleasedThisFrame)
+        if(CurrentLesson==Lesson.ChargeRelease&&!GameControls.Held(GameControls.Command.Charge)&&!GameControls.Up(GameControls.Command.Charge))
         {holdTime=0;CurrentLesson=Lesson.ChargeHold;}
         controls.text=RedLessonMessage(CurrentLesson); // Bindings may have changed in the settings overlay.
         if(CurrentLesson==Lesson.Move||CurrentLesson==Lesson.Sprint||CurrentLesson==Lesson.Attack||CurrentLesson==Lesson.Dodge||CurrentLesson==Lesson.Special)
@@ -585,19 +596,19 @@ public sealed partial class Story1WreckBattle
         }
         bool accepted=CurrentLesson==Lesson.Sprint?RedMoveInput()&&GameInputSettings.Pressed(GameInputSettings.Action.Sprint):
             CurrentLesson==Lesson.Move||CurrentLesson==Lesson.Swim?RedMoveInput():
-            CurrentLesson==Lesson.Special?Keyboard.current!=null&&Keyboard.current.eKey.wasPressedThisFrame:
-            CurrentLesson==Lesson.Attack?Mouse.current!=null&&Mouse.current.leftButton.wasPressedThisFrame:
+            CurrentLesson==Lesson.Special?GameControls.Down(GameControls.Command.Special):
+            CurrentLesson==Lesson.Attack?GameControls.Down(GameControls.Command.Attack):
             CurrentLesson==Lesson.Dodge?GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge):
             CurrentLesson==Lesson.Jump?GameInputSettings.PressedThisFrame(GameInputSettings.Action.Jump):
-            CurrentLesson==Lesson.ChargeHold?Mouse.current!=null&&Mouse.current.rightButton.isPressed:
-            CurrentLesson==Lesson.ChargeRelease&&Mouse.current!=null&&Mouse.current.rightButton.wasReleasedThisFrame;
+            CurrentLesson==Lesson.ChargeHold?GameControls.Held(GameControls.Command.Charge):
+            CurrentLesson==Lesson.ChargeRelease&&GameControls.Up(GameControls.Command.Charge);
         if(CurrentLesson==Lesson.ChargeHold)
         {
             holdTime=accepted?holdTime+Time.unscaledDeltaTime:0;
             RedGameplayChargeOnBoard(Mathf.SmoothStep(0,1,Mathf.Clamp01(holdTime/redGameplayFullCharge))*redGameplayHoldPhase,redesignTime,holdTime/.1f);
             RedKeepTutorialSharkClear();
-            controls.text="Hold Right Mouse  Charge  "+Mathf.RoundToInt(Mathf.Clamp01(holdTime/redGameplayFullCharge)*100)+"%";
-            if(holdTime>=redGameplayFullCharge){CurrentLesson=Lesson.ChargeRelease;controls.text="Release Right Mouse  Heavy attack";RedEvent("Charge ready");}
+            controls.text="Hold "+GameControls.Token(GameControls.Command.Charge)+"  Charge  "+Mathf.RoundToInt(Mathf.Clamp01(holdTime/redGameplayFullCharge)*100)+"%";
+            if(holdTime>=redGameplayFullCharge){CurrentLesson=Lesson.ChargeRelease;controls.text="Release "+GameControls.Token(GameControls.Command.Charge)+"  Heavy attack";RedEvent("Charge ready");}
             return;
         }
         if(accepted)RedAcceptLesson();
@@ -757,15 +768,10 @@ public sealed partial class Story1WreckBattle
         Vector3 chaseLine=at;
         if(t<4)at-=redRight*(3.2f*Mathf.Sin(Mathf.PI*R01(t,1.7f,3.5f)));
         else if(t<7.5f)at+=redForward*(3*Mathf.Sin(Mathf.PI*R01(t,4.7f,6.5f)));
-        float dip=t<4?Mathf.Sin(Mathf.PI*R01(t,2,3.5f))*1.7f:t<7?Mathf.Sin(Mathf.PI*R01(t,5.1f,6.7f))*1.4f:0;
+        float dip=t<4?Mathf.Sin(Mathf.PI*R01(t,2,3.5f))*.55f:t<7?Mathf.Sin(Mathf.PI*R01(t,5.1f,6.7f))*.45f:0;
         // One complete action owns each frame. Sampling Swim before Climb on
         // every climbing frame restarted its crossfade forever at zero weight.
         if(t<9)RedSwim(at,t,dip);
-        if(t>=1.6f&&t<3.6f)
-        {
-            var head=redAnimator.GetBoneTransform(HumanBodyBones.Head);
-            head.rotation=Quaternion.AngleAxis(-100*REase(t,1.6f,2.1f)*(1-REase(t,3.1f,3.6f)),Vector3.up)*head.rotation;
-        }
         Vector3 nose=at-redForward*18; nose.y=RedWater(nose)-1;
         string sharkPose="Swim";float poseTime=t;Vector3 facing=redForward;
         if(t<4)
@@ -773,20 +779,22 @@ public sealed partial class Story1WreckBattle
             RedesignBeat="First bite: a desperate look back";
             float u=R01(t,1.7f,3.5f);nose=chaseLine+redForward*Mathf.Lerp(-18,5,u)+redRight*3;nose.y=RedWater(nose)+Mathf.Sin(u*Mathf.PI)*6;
             sharkPose="Bite_Lunge";poseTime=u*1.3f;
-            if(t<1.8f)RedHeroShot(20,new Vector3(4,1,5),48);
-            else if(t<2.5f)RedHeroShot(21,new Vector3(2,1,4),65);
-            // A swimmer at wave height vanished from the old low side view
-            // while the passing body filled the lens.
-            else RedTwoShot(22,16,9,.55f,56);
+            // Hold the look-back, then reveal the miss in one stable two-shot.
+            // The intervening 65-degree close-up showed only a submerged hat.
+            if(t<2.1f)
+            {
+                Vector3 look=Vector3.Lerp(RedChest,RedHead,.8f);
+                RedShot(20,look+redRight*4+redForward*5+Vector3.up*2.6f,look,50);
+            }
+            else RedTwoShot(22,14,8,.65f,54,false,.22f);
         }
         else if(t<7.5f)
         {
             RedesignBeat="Second bite: ambush from the side";
             float u=R01(t,4.7f,6.5f);nose=chaseLine+redRight*Mathf.Lerp(18,-7,u)-redForward*3;nose.y=RedWater(nose)+Mathf.Sin(u*Mathf.PI)*5;facing=-redRight;
             sharkPose="Bite_Lunge";poseTime=u*1.3f;
-            if(t<5.2f)RedShot(23,at-redRight*3+redForward*5+Vector3.up*(RedWater(at)-at.y+2.2f),RedHead,48);
-            // The old lens sat on the ambush's own exit side, inside the body's path.
-            else RedTwoShot(24,14,10,.45f,58);
+            // Keep both threat and escape readable throughout the second bite.
+            RedTwoShot(24,14,10,.45f,56,false,.25f);
         }
         else
         {
@@ -794,9 +802,18 @@ public sealed partial class Story1WreckBattle
             float climb=R01(t,9,12);
             if(t>=9)
             {
+                if(!redClimbEntered)
+                {
+                    redClimbEntered=true;
+                    redClimbEntryFeetHeight=player.transform.position.y+player.LowestFootWorldOffset;
+                }
                 RedPose("PLAYER_Climb_v241",climb*RedClip("PLAYER_Climb_v241").length);
                 Vector3 support=Vector3.Lerp(approach,redEnd,REase(climb,.42f,1));
                 support.y=Mathf.Lerp(RedWater(approach)-redHeroHeight*.65f,redEnd.y,REase(climb,0,.65f));
+                // Carry the actual swimming height into the existing climb.
+                // Its low initial support point otherwise drops the head below
+                // water in the first frame while the outgoing swim is still visible.
+                support.y=Mathf.Lerp(redClimbEntryFeetHeight,support.y,REase(climb,0,.22f));
                 // The retained v241 import shares the guard/swim forward axis;
                 // keep the root continuous across both ends of the climb.
                 RedFeet(support,Quaternion.LookRotation(redForward));
@@ -810,8 +827,8 @@ public sealed partial class Story1WreckBattle
             // beside the plank like a rock while Sahur stands up.
             float miss=Mathf.Max(0,t-11.5f);nose+=-redForward*(miss*4)-Vector3.up*(miss*miss*6);
             sharkPose="Bite_Lunge";poseTime=u*1.3f;
-            Vector3 focus=Vector3.Lerp(RedChest,RedHead,.65f);
-            RedShot(25,edge+redForward*11+Vector3.up*2.2f,focus+Vector3.up*.8f,59);
+            Vector3 focus=Vector3.Lerp(RedChest,RedHead,.9f);
+            RedShot(25,edge+redForward*10+Vector3.up*4,focus,54);
         }
         RedFilmShark(sharkPose,poseTime,nose,facing,t<4?0:t<7.5f?1:2,t<1?1.2f:.9f);
         if(t>=12.4f)
@@ -841,8 +858,8 @@ public sealed partial class Story1WreckBattle
         // fitted head 4 m into the sea before the hit can register. Slow down
         // just ahead of it so the blow and the head's drop read across frames.
         float sinceTail=redTailHit?t-redTailHitTime:-1;
-        RedSetRate(t>=5.25f&&t<5.37f?.12f:redOverheadHit&&t>=5.37f&&t<5.5f?.3f:
-            sinceTail>=0&&sinceTail<.05f?.08f:sinceTail>=0&&sinceTail<.42f?.34f:1);
+        RedSetRate(t>=5.25f&&t<5.37f?.22f:redOverheadHit&&t>=5.37f&&t<5.5f?.65f:
+            sinceTail>=0&&sinceTail<.025f?.2f:sinceTail>=0&&sinceTail<.22f?.6f:1);
         if(t<3)
         {
             RedesignBeat="Catch a breath. Draw the stick.";RedOnBoard(t<1.7f?"CH1_SahurGuard_v050":"CH1_SahurRetrieve_v214",t<1.7f?t:t-1.7f);
@@ -854,7 +871,9 @@ public sealed partial class Story1WreckBattle
         {
             RedesignBeat="Charged club counter";RedGameplayFilmCounter(t,5.3f);
             float u=R01(t,3.4f,5.3f);Vector3 target=RedWeaponPoint;
-            face=Vector3.Slerp((-redForward+Vector3.up*.55f).normalized,-redForward,REase(t,5.4f,6.8f));
+            // A steeper rising snout leaves the broad jaw behind the board edge
+            // rather than letting native deck separation push the blow away.
+            face=Vector3.Slerp((-redForward+Vector3.up*.85f).normalized,-redForward,REase(t,5.4f,6.8f));
             nose=Vector3.Lerp(feet+redForward*17-Vector3.up*3,target,u*u);
             // Keep swimming until the lunge starts rather than freezing on its first frame.
             sharkPose=t<3.4f?"Swim":"Bite_Lunge";sharkTime=t<3.4f?t:u*.52f;
@@ -870,7 +889,8 @@ public sealed partial class Story1WreckBattle
         else if(t<10)
         {
             RedesignBeat="The shark disappears. Sahur searches.";RedOnBoard("CH1_SahurGuard_v050",t);
-            player.transform.rotation=Quaternion.LookRotation(redForward)*Quaternion.Euler(0,Mathf.Sin((t-6.8f)*2)*35,0);
+            // Search with the upper body while the soles retain their support.
+            RedLook(Mathf.Sin((t-6.8f)*2)*38*REase(t,6.8f,7.1f)*(1-REase(t,9.65f,10)));
             float u=R01(t,6.8f,10);nose=feet+redForward*(Mathf.Cos(u*Mathf.PI)*16)+redRight*(Mathf.Sin(u*Mathf.PI)*20);nose.y=RedWater(nose)-30;
             // Linear opposite-facing vectors cross zero and flip the whole
             // shark by 180 degrees. Turn continuously while fully submerged.
@@ -902,14 +922,14 @@ public sealed partial class Story1WreckBattle
                 // Keep the approved board-height side view on the actual prone
                 // torso, rather than an empty standing point above the board.
                 Vector3 focus=Vector3.Lerp(RedChest,RedHead,.3f);
-                RedShot(34,focus-redRight*6+redForward*4+Vector3.up*7,focus,60);
+                RedShot(34,focus+redRight*8+redForward*3+Vector3.up*3.8f,focus,54);
             }
         }
         else if(t<15.5f)
         {
             RedesignBeat="Get up and wind up the throw";
             RedOnBoard("CH1_SahurGetUp_v215",t-13,Quaternion.Slerp(Quaternion.LookRotation(-redForward),Quaternion.LookRotation(redForward),REase(t,14.9f,15.5f)));
-            RedHeroShot(35,new Vector3(10,3,-10),52);
+            RedHeroShot(35,new Vector3(10,3.8f,2),52);
             float retreat=REase(t,14.1f,15.5f);
             nose=feet+redForward*Mathf.Lerp(13,18,REase(t,13,15.5f))+redRight*Mathf.Lerp(85,3,retreat);
             // Keep the full-width animal outboard until it has dived. Turning
@@ -949,13 +969,16 @@ public sealed partial class Story1WreckBattle
                 if(t>=17.8f){redProjectile.GetComponent<Renderer>().enabled=false;Destroy(redProjectile.gameObject);redProjectile=null;RedShowStick(true);RedEvent("Stick caught");}
             }
             else if(t<18)RedHeroShot(37,new Vector3(7,2,-6),49);
-            // Profile two-shot: the stunned head shake reads against the hero
-            // who caused it, instead of a frame-filling close-up of grey skin.
+            // Keep the two-shot near the shark's eye line. Looking down across
+            // a yawing head projects its level brow into an exaggerated diagonal.
             if(t>=18)
             {
                 sharkPose="CH1_SharkHeadShake_v214";sharkTime=t-18;
                 Vector3 chest=RedChest,toward=Vector3.ProjectOnPlane(nose-chest,Vector3.up).normalized;
-                RedShot(38,chest+toward*8+Vector3.Cross(Vector3.up,toward)*16+Vector3.up*3.5f,Vector3.Lerp(chest,nose,.5f),55);
+                Vector3 focus=Vector3.Lerp(chest,nose,.5f)+Vector3.up*1.2f;
+                Vector3 lens=chest+toward*8+Vector3.Cross(Vector3.up,toward)*16;
+                lens.y=focus.y+.35f;
+                RedShot(38,lens,focus,55);
             }
         }
         else if(!redTailHit)
@@ -964,10 +987,15 @@ public sealed partial class Story1WreckBattle
             nose=feet+redForward*Mathf.Lerp(14,4,REase(t,19.5f,21.2f))+Vector3.up*3;
             sharkPose="CH1_SharkFeintTail_v214";sharkTime=t<21.2f?Mathf.Lerp(0,1.25f,R01(t,19.5f,21.2f)):Mathf.Lerp(1.25f,1.58f,R01(t,21.2f,21.65f));
             Vector3 chest=RedChest;
-            // Over-the-shoulder feint, then a raised rear three-quarter that
-            // keeps the shark and the tail's sweep in frame before contact.
-            if(t<20.65f)RedShot(39,chest-redForward*6+redRight*6+Vector3.up*1.8f,Vector3.Lerp(chest,nose,.7f),50);
-            else RedShot(40,chest-redForward*11+redRight*5+Vector3.up*3.5f,chest+redForward*3.5f,54);
+            // The same low eye line carries through the feint and tail turn;
+            // maintain the shoulder view without making the face look rolled.
+            if(t<20.65f)
+            {
+                Vector3 focus=Vector3.Lerp(chest,nose,.55f)+Vector3.up*.6f;
+                Vector3 lens=chest-redForward*6+redRight*7;lens.y=focus.y+.35f;
+                RedShot(39,lens,focus,54);
+            }
+            else RedShot(40,chest-redForward*10+redRight*8+Vector3.up*.35f,chest+redForward*3.5f,58);
         }
         else
         {
@@ -1046,6 +1074,8 @@ public sealed partial class Story1WreckBattle
         {redOverheadHit=true;RedesignContacts++;redCounterCarry=shark.position-redCounterAuthored;redCounterHitTime=t;}
     }
     Vector3 redCounterAuthored,redCounterCarry;
+    bool redClimbEntered;
+    float redClimbEntryFeetHeight;
     float redCounterHitTime;
     void RedShowStick(bool visible)
     {
@@ -1151,7 +1181,7 @@ public sealed class Story1OpeningDirector : MonoBehaviour
     void LateUpdate()
     {
         if(owner==null||!owner.enabled)return;
-        owner.RedesignTick();owner.RedesignPrepareLesson(Time.deltaTime);owner.RedResolveOpeningSolids();owner.RedConfirmTutorialStrike();owner.RedRecordResolvedFilmPose();
+        owner.RedesignTick();owner.RedesignPrepareLesson(Time.deltaTime);owner.RedResolveOpeningSolids();owner.RedConfirmTutorialStrike();owner.RedRecordResolvedFilmPose();owner.RedFinalizeFilmCamera();
     }
 }
 

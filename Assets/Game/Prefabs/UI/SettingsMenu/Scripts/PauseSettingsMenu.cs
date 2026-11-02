@@ -252,15 +252,15 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     {
         if (consumedFrame == Time.frameCount || (IsOpen && active != this)) return;
         if (Mavis.VisualStyles.VisualStyleUIController.BlocksParentInput || SahurLoadoutUI.BlocksInput) return;
-        if (Keyboard.current == null) return;
         if (pendingKey != null)
         {
-            if (Keyboard.current.escapeKey.wasPressedThisFrame)
+            if (GameControls.Down(GameControls.Command.Cancel))
             {
                 pendingKey = null;
                 Refresh();
                 return;
             }
+            if(Keyboard.current==null)return;
             foreach (KeyControl control in Keyboard.current.allKeys)
             {
                 if (!control.wasPressedThisFrame) continue;
@@ -271,7 +271,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             }
             return;
         }
-        if (!Keyboard.current.escapeKey.wasPressedThisFrame) return;
+        if (!GameControls.Down(GameControls.Command.Pause)&&!(IsOpen&&GameControls.Down(GameControls.Command.Cancel))) return;
         consumedFrame = Time.frameCount;
         if (!IsOpen)
         {
@@ -291,6 +291,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     public void Open()
     {
         if (IsOpen || !isActiveAndEnabled) return;
+        GameControls.ConsumeMenuInput();
         active = this;
         IsOpen = true;
         previousTimeScale = Time.timeScale;
@@ -311,6 +312,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     public void Resume()
     {
         if (active != this) return;
+        GameControls.ConsumeMenuInput();
         pendingKey = null;
         draft = saved;
         IsOpen = false;

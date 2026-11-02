@@ -375,7 +375,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.ChickenBroEncounter
   prefab: {fileID: 4799430938750925070, guid: 643d624b44a6f8b4cbaafab6195044a1, type: 3}
   duck: {fileID: 4633341426401108092, guid: bc14c279968fce54b982680d2294fc83, type: 3}
+  goose: {fileID: 4740578137762529895, guid: a298bea76c357ea4c99a3797cd076a27, type: 3}
   duckRatio: 0.3
+  goosePerWave: 1
   waveCounts: 040000000600000008000000
   maxAlive: 8
   maxSimultaneousAttackers: 2

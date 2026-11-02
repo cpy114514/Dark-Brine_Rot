@@ -1,0 +1,108 @@
+{
+  "nativeRegressionGroups": 19,
+  "importedAssets": true,
+  "combatGuidanceShaders": true,
+  "eightBuildScenes": true,
+  "duplicateGuids": 0,
+  "orphanMeta": 0,
+  "build": {
+    "result": "Succeeded",
+    "seconds": 34.3033569,
+    "bytes": 2793696279,
+    "warnings": 2,
+    "errors": 0,
+    "development": false,
+    "backend": "Mono2x",
+    "scenes": [
+      "Assets/Scenes/Main Menu/MainMenu.unity",
+      "Assets/Scenes/First story/Story1.unity",
+      "Assets/Scenes/First Island/Main.unity",
+      "Assets/Scenes/First Island/Environment.unity",
+      "Assets/Scenes/First Island/Gameplay.unity",
+      "Assets/Scenes/First Island/Lighting.unity",
+      "Assets/Scenes/First Island/Enemies.unity",
+      "Assets/Scenes/Second Island/Second Island.unity"
+    ]
+  },
+  "knownSourceIssue": {
+    "missingPlantPrefabs": 3,
+    "affectedInstances": 606,
+    "firstCleanSceneBuildMessages": 4
+  },
+  "firstStandaloneIsland": {
+    "status": "completed",
+    "editor": false,
+    "developmentBuild": false,
+    "errors": 0,
+    "scene": "Assets/Scenes/First Island/Main.unity",
+    "renderProofs": [
+      {
+        "phase": "coast",
+        "width": 1920,
+        "height": 1080,
+        "changedPixels": 2072432
+      },
+      {
+        "phase": "forest",
+        "width": 1920,
+        "height": 1080,
+        "changedPixels": 2072934
+      },
+      {
+        "phase": "boss",
+        "width": 1920,
+        "height": 1080,
+        "changedPixels": 2073143
+      }
+    ]
+  },
+  "healingPromptRegression": {
+    "passed": true,
+    "resolvedText": "H  HEAL  3/3"
+  },
+  "humanSaveBytesRestored": true,
+  "limitations": [
+    "Smoke test, not a complete campaign playthrough",
+    "No physical gamepad or cross-hardware certification"
+  ],
+  "finalStandalone": {
+    "mainMenuRendered": true,
+    "legacySecondIslandContinue": true,
+    "saveRestorationLogged": true,
+    "correctedHealingHudRendered": true,
+    "runtimeExceptionsInLog": 0,
+    "actualAttackInputObserved": true,
+    "island": {
+      "status": "completed",
+      "editor": false,
+      "developmentBuild": false,
+      "errors": 0,
+      "scene": "Assets/Scenes/First Island/Main.unity",
+      "renderProofs": [
+        {
+          "phase": "coast",
+          "width": 1920,
+          "height": 1080,
+          "changedPixels": 2073454
+        },
+        {
+          "phase": "forest",
+          "width": 1920,
+          "height": 1080,
+          "changedPixels": 2071614
+        },
+        {
+          "phase": "boss",
+          "width": 1920,
+          "height": 1080,
+          "changedPixels": 2073162
+        }
+      ]
+    },
+    "routeFrames": {
+      "coast": 239,
+      "forest": 234,
+      "boss": 196
+    }
+  }
+}

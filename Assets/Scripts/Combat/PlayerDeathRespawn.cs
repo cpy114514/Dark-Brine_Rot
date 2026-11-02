@@ -74,7 +74,7 @@ namespace Mavis
         {
             if (!IsDead && health.currentHealth <= 0f) Die();
             if (IsDead && overlay && !overlay.activeSelf && !(GetComponent<SahurRifleAnimation>()?.DeathAnimationPlaying ?? false)) overlay.SetActive(true);
-            if (IsDead && Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) Respawn();
+            if (IsDead && GameControls.Down(GameControls.Command.Confirm)) Respawn();
         }
         void Disable(Behaviour component)
         {
@@ -117,6 +117,7 @@ namespace Mavis
         public bool Respawn()
         {
             if (!IsDead) return false;
+            GameControls.ConsumeMenuInput();
             FindCheckpoint();
             var capsule = GetComponent<CharacterController>();
             Vector3 position = initialPosition;

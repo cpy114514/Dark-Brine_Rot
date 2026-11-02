@@ -87,6 +87,7 @@ public sealed class SecondIslandDialogue : MonoBehaviour
         english=Label(panel.transform,"English dialogue",30,TextAnchor.MiddleLeft,new Vector2(0,1),Vector2.one,new Vector2(36,-155),new Vector2(-36,-55));
         hint=Label(panel.transform,"Continue",16,TextAnchor.MiddleRight,Vector2.zero,new Vector2(1,0),new Vector2(36,9),new Vector2(-36,39));
         hint.color=new Color(.72f,.68f,.77f);
+        Mavis.LocalizedGameText.Bind(hint);
     }
     void OnDestroy() { Active=false; if(panel)Destroy(panel); }
 }

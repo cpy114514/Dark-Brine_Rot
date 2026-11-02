@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 namespace Mavis
 {
     [DisallowMultipleComponent]
-    public sealed class WeaknessGlasses : MonoBehaviour
+    public sealed class WeaknessGlasses : MonoBehaviour, ICooldownTarget
     {
         public const string ItemPath="Equipment/Nailong/WeaknessGlasses";
         public const string DisplayName="Weakness Glasses";
@@ -12,6 +12,14 @@ namespace Mavis
         float activeUntil,readyAt; EquipmentInventory inventory; EquipmentItem item; GameObject worn; GUIStyle hudStyle;
         public float ActiveRemaining=>Mathf.Max(0,activeUntil-Time.time);
         public float CooldownRemaining=>Mathf.Max(0,readyAt-Time.time);
+        public string CooldownDisplayName=>DisplayName;
+        public bool CooldownTargetOwned=>Owned;
+        public bool CanReduceCooldown=>Owned && CooldownRemaining>0;
+        public bool ReduceCooldown(float seconds)
+        {
+            if(seconds<=0 || !CanReduceCooldown)return false;
+            readyAt=Mathf.Max(Time.time,readyAt-seconds);return true;
+        }
         public bool IsActive=>Equipped && ActiveRemaining>0 && GetComponent<PlayerHealth>()?.currentHealth>0;
         static readonly System.Collections.Generic.HashSet<WeaknessGlasses> wearers=new System.Collections.Generic.HashSet<WeaknessGlasses>();
         public static bool AnyActive {get{foreach(var wearer in wearers)if(wearer && wearer.isActiveAndEnabled && wearer.IsActive)return true;return false;}}
@@ -53,7 +61,7 @@ namespace Mavis
         void Update()
         {
             if(Equipped && !worn)FitWornModel();
-            if(Keyboard.current!=null && Keyboard.current.gKey.wasPressedThisFrame && Cursor.lockState==CursorLockMode.Locked)Activate();
+            if(GameControls.Down(GameControls.Command.Glasses) && Cursor.lockState==CursorLockMode.Locked)Activate();
         }
         void OnDisable()=>wearers.Remove(this);
         void OnGUI()

@@ -48,15 +48,13 @@ namespace Mavis
         void Update()
         {
             if (PlayerDeathRespawn.IsOpen) { if (PanelVisible) SetOpen(false); return; }
-            if (Keyboard.current != null)
-            {
-                if (Keyboard.current.mKey.wasPressedThisFrame) SetOpen(!PanelVisible);
-                else if (PanelVisible && Keyboard.current.escapeKey.wasPressedThisFrame) SetOpen(false);
-            }
+            if (GameControls.Down(GameControls.Command.Map)) SetOpen(!PanelVisible);
+            else if (PanelVisible && GameControls.Down(GameControls.Command.Cancel)) SetOpen(false);
             if (PanelVisible) RefreshMarkers();
         }
         public bool SetOpen(bool open)
         {
+            GameControls.ConsumeMenuInput();
             if (open == PanelVisible) return false;
             if (open && consumedFrame == Time.frameCount) return false;
             if (open && (PlayerDeathRespawn.IsOpen || PauseSettingsMenu.IsOpen || SahurLoadoutUI.IsOpen || SecondIslandAwakening.BlocksInputFor(GetComponent<ThirdPersonPlayerController>()) || (active != null && active != this))) return false;
@@ -98,10 +96,17 @@ namespace Mavis
         {
             foreach (var marker in markers) if (marker != null) { marker.gameObject.SetActive(false); Destroy(marker.gameObject); }
             markers.Clear(); targets.Clear();
-            if (gameObject.scene.path == "Assets/Scenes/Second Island.unity")
+            if (gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity")
+            {
                 foreach (var fairy in FindObjectsByType<NealFairyHover>(FindObjectsSortMode.None))
                     if (fairy.gameObject.scene == gameObject.scene)
                         AddMarker(fairy.transform, "✦", new Color(1f, .88f, .98f));
+                var reward=FindFirstObjectByType<GravityWristbandReward>();
+                if(reward && reward.enemyRoot)
+                    for(int i=0;i<reward.CampCount;i++)if(reward.CampMapAnchor(i))AddMarker(reward.CampMapAnchor(i),"●",new Color(1f,.7f,.25f),18);
+                var objective=GetComponent<SecondIslandObjectives>();
+                if(objective && objective.CurrentTarget)AddMarker(objective.CurrentTarget,"◆",new Color(.45f,1f,.92f));
+            }
             foreach (var point in FindObjectsByType<IslandRespawnPoint>(FindObjectsSortMode.None))
                 AddMarker(point.transform, "◆", GameUITheme.Foreground);
             foreach (var enemy in FindObjectsByType<NailongHealth>(FindObjectsSortMode.None))
@@ -116,9 +121,9 @@ namespace Mavis
                 AddMarker(cache.transform, cache.supportsMelee ? "R" : "▣", new Color(1, .83f, .2f));
             playerArrow.transform.SetAsLastSibling();
         }
-        void AddMarker(Transform target, string symbol, Color color)
+        void AddMarker(Transform target, string symbol, Color color, int size=28)
         {
-            var label = Label(MapGraphic.transform, symbol, 28, Vector2.zero, new Vector2(42, 42), color);
+            var label = Label(MapGraphic.transform, symbol, size, Vector2.zero, new Vector2(42, 42), color);
             GameUITheme.OutlineSymbol(label);
             targets.Add(target); markers.Add(label.rectTransform);
         }
@@ -126,6 +131,7 @@ namespace Mavis
         {
             playerArrow.rectTransform.anchoredPosition = MapGraphic.WorldToMap(transform.position);
             playerArrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -transform.eulerAngles.y);
+            var wristband=gameObject.scene.path=="Assets/Scenes/Second Island/Second Island.unity" ? FindFirstObjectByType<GravityWristbandReward>() : null;
             for (int i = 0; i < targets.Count; i++)
             {
                 var target = targets[i];
@@ -134,6 +140,8 @@ namespace Mavis
                 if (visible && target.TryGetComponent<Health>(out var generic)) visible = !generic.IsDead;
                 if (visible && target.TryGetComponent<IslandSupplyCache>(out var cache))
                     markers[i].GetComponent<Text>().color = cache.IsAvailable ? new Color(1, .83f, .2f) : GameUITheme.Muted;
+                if (visible && wristband && target.name=="Camp map anchor" && target.parent && target.parent.parent==wristband.enemyRoot)
+                    markers[i].GetComponent<Text>().color = wristband.CampCleared(target.parent.GetSiblingIndex()) ? GameUITheme.Muted : new Color(1f,.7f,.25f);
                 markers[i].gameObject.SetActive(visible);
                 if (visible)
                 {
@@ -210,8 +218,12 @@ namespace Mavis
             Label(root.transform, "LEGEND", 21, new Vector2(480, 335), new Vector2(330, 60), Color.white);
             GameUITheme.Rule(root.transform,new Vector2(480,292),new Vector2(290,1),GameUITheme.Muted);
             Label(root.transform, "▲  Player / Facing", 24, new Vector2(480, 245), new Vector2(330, 60), GameUITheme.Foreground);
-            if (gameObject.scene.path == "Assets/Scenes/Second Island.unity")
+            if (gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity")
+            {
                 Label(root.transform, "✦  Fairy", 24, new Vector2(480, 165), new Vector2(330, 60), new Color(1f, .88f, .98f));
+                Label(root.transform, "●  Camp · grey when cleared", 20, new Vector2(480, 105), new Vector2(350, 48), new Color(1f,.7f,.25f));
+                Label(root.transform, "◆  Current objective", 22, new Vector2(480, 55), new Vector2(330, 48), new Color(.45f,1f,.92f));
+            }
             else
             {
             Label(root.transform, "◆  Island checkpoint", 24, new Vector2(480, 165), new Vector2(330, 60), GameUITheme.Foreground);

@@ -148,7 +148,7 @@ public sealed class Story1WreckRider : MonoBehaviour
             standingBoard.ContainsFootprint(feet) && Mathf.Abs(standingBoard.BoardingPoint(feet).y-feet.y)<1.1f && player.VerticalSpeed<=1.5f;
         bool ascending=player.VerticalSpeed>1.5f;
         if(!ascending)foreach(var board in boards)if(board!=null && board.Supports(feet) && DryEnough(board,feet)){player.OnFloatingWreckDeck=true;break;}
-        bool accept = Keyboard.current != null && Cursor.lockState == CursorLockMode.Locked &&
+        bool accept = GameControls.HasDevice && Cursor.lockState == CursorLockMode.Locked &&
             !player.ExternalControlLock && !SahurLoadoutUI.BlocksInput && !PlayerDeathRespawn.BlocksInput && !IslandMapUI.IsOpen;
         if (IsClimbing) { Hint = GameLocalization.Text("Climbing onto the board..."); return; }
         var support = ascending ? null : Support();

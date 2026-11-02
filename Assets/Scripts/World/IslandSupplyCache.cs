@@ -67,7 +67,7 @@ namespace Mavis
         {
             if (!player && Time.unscaledTime >= searchAt)
             { searchAt = Time.unscaledTime + 1; player = FindFirstObjectByType<ThirdPersonPlayerController>(); }
-            if (player && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame && Cursor.lockState == CursorLockMode.Locked)
+            if (player && GameControls.Down(GameControls.Command.Interact) && Cursor.lockState == CursorLockMode.Locked)
                 TryRefill(player);
         }
         void OnGUI()
@@ -85,7 +85,7 @@ namespace Mavis
                 ("Find the M4A1 first; this cache will remain available");
             if (!string.IsNullOrEmpty(Feedback))
                 hint = Feedback + (Remaining > 0 ? "\nRestocking: " + Mathf.CeilToInt(Remaining) + " s" : "");
-            GUI.Box(new Rect(Screen.width * .5f - 300, Screen.height - 180, 600, supportsMelee || !string.IsNullOrEmpty(Feedback) ? 100 : 72), DisplayName + "\n" + hint, style);
+            GUI.Box(new Rect(Screen.width * .5f - 300, Screen.height - 180, 600, supportsMelee || !string.IsNullOrEmpty(Feedback) ? 100 : 72), DisplayName + "\n" + GameControls.AdaptPrompt(hint), style);
         }
     }
 }

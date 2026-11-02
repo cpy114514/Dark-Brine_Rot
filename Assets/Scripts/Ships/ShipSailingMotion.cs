@@ -69,8 +69,7 @@ public sealed class ShipSailingMotion : MonoBehaviour
 
     void Update()
     {
-        float helm = (GameInputSettings.Pressed(GameInputSettings.Action.Right) ? 1f : 0f) -
-                     (GameInputSettings.Pressed(GameInputSettings.Action.Left) ? 1f : 0f);
+        float helm = GameControls.Move.x;
         Simulate(Time.deltaTime, helm, GameInputSettings.Pressed(GameInputSettings.Action.Forward),
             GameInputSettings.Pressed(GameInputSettings.Action.Back));
     }

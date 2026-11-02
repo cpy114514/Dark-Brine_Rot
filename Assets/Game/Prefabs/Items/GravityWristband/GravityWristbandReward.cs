@@ -17,6 +17,17 @@ public sealed class GravityWristbandReward : MonoBehaviour
     public bool Unlocked => Total>0 && Defeated==Total;
     public bool Collected => inventory && item && inventory.Count(item)>0;
     readonly HashSet<int> defeated=new HashSet<int>();
+    readonly HashSet<string> defeatedKeys=new HashSet<string>();
+    readonly Dictionary<int,string> enemyKeys=new Dictionary<int,string>();
+    readonly Dictionary<int,int> enemyCamps=new Dictionary<int,int>();
+    int[] campRemaining;
+    Transform[] campMapAnchors;
+    Transform[] campSigns;
+    Text[] campSignText;
+    public int CampCount => campRemaining?.Length ?? 0;
+    public int ClearedCamps { get { int count=0; if(campRemaining!=null)foreach(int remaining in campRemaining)if(remaining==0)count++;return count; } }
+    public bool CampCleared(int index) => campRemaining!=null && index>=0 && index<campRemaining.Length && campRemaining[index]==0;
+    public Transform CampMapAnchor(int index) => campMapAnchors!=null && index>=0 && index<campMapAnchors.Length ? campMapAnchors[index] : null;
     readonly Dictionary<MarshmallowEnemyHealth,UnityAction> listeners=new Dictionary<MarshmallowEnemyHealth,UnityAction>();
     EquipmentInventory inventory;
     ThirdPersonPlayerController player;
@@ -42,15 +53,73 @@ public sealed class GravityWristbandReward : MonoBehaviour
         ability=player.GetComponent<GravityWristbandAbility>();if(!ability)ability=player.gameObject.AddComponent<GravityWristbandAbility>();
         ability.Initialize(item);
         var enemies=enemyRoot.GetComponentsInChildren<MarshmallowEnemyHealth>(true);Total=enemies.Length;
+        campRemaining=new int[enemyRoot.childCount];
+        var campCenters=new Vector3[campRemaining.Length];
+        var campSizes=new int[campRemaining.Length];
         foreach(var enemy in enemies)
         {
             var captured=enemy;int id=enemy.GetInstanceID();
-            UnityAction onDeath=()=>{if(defeated.Add(id) && Unlocked)Reveal();};
+            enemyKeys[id]=StableKey(enemy.transform);
+            var camp=enemy.transform;while(camp.parent && camp.parent!=enemyRoot)camp=camp.parent;
+            int campIndex=camp.parent==enemyRoot ? camp.GetSiblingIndex() : -1;
+            enemyCamps[id]=campIndex;if(campIndex>=0 && campIndex<campRemaining.Length){campRemaining[campIndex]++;campSizes[campIndex]++;campCenters[campIndex]+=enemy.transform.position;}
+            UnityAction onDeath=()=>RecordDefeat(id, true);
             listeners.Add(captured,onDeath);enemy.OnDeath.AddListener(onDeath);
-            if(enemy.IsDead)defeated.Add(id);
+            if(enemy.IsDead)RecordDefeat(id, false);
+        }
+        campMapAnchors=new Transform[campRemaining.Length];
+        campSigns=new Transform[campRemaining.Length];campSignText=new Text[campRemaining.Length];
+        Color[] campColors={new Color(1f,.73f,.79f),new Color(.7f,.9f,1f),new Color(.73f,1f,.83f),new Color(1f,.9f,.62f),new Color(.88f,.76f,1f),new Color(1f,.78f,.63f),new Color(.79f,.98f,.66f)};
+        for(int i=0;i<campMapAnchors.Length;i++)
+        {
+            var anchor=new GameObject("Camp map anchor").transform;anchor.SetParent(enemyRoot.GetChild(i),false);
+            if(campSizes[i]>0)anchor.position=campCenters[i]/campSizes[i];
+            campMapAnchors[i]=anchor;
+            SkyboardReward.Label(anchor,"CANDY CAMP "+(i+1));
+            var sign=anchor.Find("Pickup label");campSigns[i]=sign;
+            if(sign)
+            {
+                sign.name="Candy camp landmark";sign.localPosition=Vector3.up*5f;sign.localScale=Vector3.one*.018f;
+                var text=sign.GetComponentInChildren<Text>();campSignText[i]=text;
+                if(text){text.fontSize=32;text.color=campColors[i%campColors.Length];}
+                sign.gameObject.SetActive(false);
+            }
         }
         BuildPresentation();
         if(Unlocked && !Collected)Reveal();else presentation.SetActive(false);
+    }
+    string StableKey(Transform item)
+    {
+        string key="";
+        while(item && item!=enemyRoot){key="/"+item.GetSiblingIndex()+key;item=item.parent;}
+        return key;
+    }
+    void RecordDefeat(int id,bool notify)
+    {
+        if(!defeated.Add(id))return;
+        if(enemyKeys.TryGetValue(id,out string key))defeatedKeys.Add(key);
+        if(enemyCamps.TryGetValue(id,out int camp) && camp>=0 && camp<campRemaining.Length)
+        {
+            campRemaining[camp]=Mathf.Max(0,campRemaining[camp]-1);
+            if(campRemaining[camp]==0 && campSignText!=null && camp<campSignText.Length && campSignText[camp])
+                campSignText[camp].text="CANDY CAMP "+(camp+1)+"\nCLEARED";
+            if(notify && campRemaining[camp]==0 && message)
+            { message.text="CAMP CLEARED  ·  "+ClearedCamps+" / "+CampCount;message.gameObject.SetActive(true);announcedUntil=Time.unscaledTime+5f; }
+        }
+        if(notify){if(Unlocked)Reveal();GameSaveManager.RequestAutosave();}
+    }
+    public List<string> CaptureDefeated() => new List<string>(defeatedKeys);
+    public void RestoreDefeated(List<string> keys)
+    {
+        if(keys==null)return;
+        var restored=new HashSet<string>(keys);
+        foreach(var pair in listeners)
+        {
+            var enemy=pair.Key;if(!enemy)continue;int id=enemy.GetInstanceID();
+            if(!enemyKeys.TryGetValue(id,out var key) || !restored.Contains(key))continue;
+            RecordDefeat(id,false);enemy.currentHealth=0;enemy.gameObject.SetActive(false);
+        }
+        if(Unlocked && !Collected)Reveal();
     }
     void BuildPresentation()
     {
@@ -102,11 +171,23 @@ public sealed class GravityWristbandReward : MonoBehaviour
     {
         if(Collected || !presentation)return;
         presentation.SetActive(true);announcedUntil=Time.unscaledTime+8f;
+        if(message)message.text=GameLocalization.Text("Gravity Wristband unlocked! Find it beyond the marshmallows.");
         if(message)message.gameObject.SetActive(true);
     }
     void Update()
     {
         if(!presentation || !player || !inventory)return;
+        if(!viewer)viewer=Camera.main;
+        if(campSigns!=null && viewer)
+            for(int i=0;i<campSigns.Length;i++)
+            {
+                var sign=campSigns[i];if(!sign)continue;
+                float distance=Vector3.ProjectOnPlane(sign.position-player.transform.position,Vector3.up).sqrMagnitude;
+                // Once the player is inside a camp, keep its label out of combat view.
+                bool nearby=distance>18f*18f && distance<75f*75f && !GameUITheme.ModalOpen && !SecondIslandAwakening.BlocksInputFor(player);
+                if(sign.gameObject.activeSelf!=nearby)sign.gameObject.SetActive(nearby);
+                if(nearby)sign.rotation=viewer.transform.rotation;
+            }
         UpdateEnemyHud();
         if(message && message.gameObject.activeSelf && Time.unscaledTime>=announcedUntil)message.gameObject.SetActive(false);
         if(!Unlocked || Collected){if(presentation.activeSelf)presentation.SetActive(false);if(guidance)guidance.gameObject.SetActive(false);return;}
@@ -128,7 +209,7 @@ public sealed class GravityWristbandReward : MonoBehaviour
         Vector3 feet=player.transform.position;if(body)feet.y=body.bounds.min.y;
         Vector3 delta=feet-transform.position;
         if(Mathf.Abs(delta.y)<=3 && new Vector2(delta.x,delta.z).sqrMagnitude<=pickupRadius*pickupRadius && inventory.Collect(item))
-        {presentation.SetActive(false);ability.Initialize(item);}
+        {presentation.SetActive(false);ability.Initialize(item);GameSaveManager.RequestAutosave();}
     }
     void UpdateEnemyHud()
     {

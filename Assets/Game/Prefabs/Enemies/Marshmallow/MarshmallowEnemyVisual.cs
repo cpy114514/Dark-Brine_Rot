@@ -71,6 +71,11 @@ public sealed class MarshmallowEnemyVisual : MonoBehaviour
             IsAlert = false;
             return;
         }
+        if (SecondIslandStartProtection.Protects(player))
+        {
+            IsAlert = false;
+            return;
+        }
         if (Time.deltaTime <= 0f || PauseSettingsMenu.IsOpen) return;
         float radius = Mathf.Max(0f, IsAlert ? chaseStopRadius : redEyeRadius);
         IsAlert = (player.transform.position - transform.position).sqrMagnitude <= radius * radius;

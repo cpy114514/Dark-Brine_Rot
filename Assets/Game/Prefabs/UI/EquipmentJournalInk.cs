@@ -7,7 +7,7 @@ namespace Mavis
     [RequireComponent(typeof(CanvasRenderer))]
     public sealed class EquipmentJournalInk : MaskableGraphic
     {
-        public enum Drawing { Border, Rule, Stick, Blades, Glasses, Head, Coat, Trousers, Boots, Skill, Rifle }
+        public enum Drawing { Border, Rule, Stick, Blades, Glasses, Head, Coat, Trousers, Boots, Skill, Rifle, Board, Scroll }
         Drawing drawing;
         public void SetDrawing(Drawing value) { drawing = value; SetVerticesDirty(); }
         protected override void OnPopulateMesh(VertexHelper vh)
@@ -31,6 +31,16 @@ namespace Mavis
             r = new Rect(r.center-new Vector2(side,side)*.5f,new Vector2(side,side));
             switch(drawing)
             {
+                case Drawing.Board:
+                    Path(vh,r,2,.08f,.45f,.1f,.56f,.25f,.62f,.74f,.62f,.9f,.56f,.92f,.45f,.8f,.39f,.2f,.39f,.08f,.45f);
+                    Path(vh,r,1.5f,.2f,.37f,.22f,.3f,.31f,.3f,.33f,.37f);Path(vh,r,1.5f,.68f,.37f,.7f,.3f,.79f,.3f,.81f,.37f);
+                    break;
+                case Drawing.Scroll:
+                    Path(vh,r,1.8f,.18f,.26f,.18f,.74f,.72f,.74f,.72f,.26f,.18f,.26f);
+                    Path(vh,r,1.8f,.18f,.74f,.1f,.75f,.08f,.69f,.1f,.61f,.18f,.61f);
+                    Path(vh,r,1.8f,.72f,.74f,.8f,.75f,.82f,.69f,.8f,.61f,.72f,.61f);
+                    Path(vh,r,1,.3f,.62f,.6f,.62f);Path(vh,r,1,.3f,.5f,.6f,.5f);Path(vh,r,1,.3f,.38f,.52f,.38f);
+                    break;
                 case Drawing.Rifle:
                     Path(vh,r,1.7f,.04f,.58f,.22f,.58f,.24f,.64f,.63f,.64f,.66f,.6f,.94f,.58f,.94f,.44f,.84f,.44f,.69f,.5f,.62f,.49f,.68f,.3f,.59f,.29f,.53f,.48f,.47f,.48f,.43f,.27f,.32f,.29f,.36f,.5f,.24f,.51f,.22f,.55f,.04f,.55f,.04f,.58f);
                     Path(vh,r,1.2f,.47f,.64f,.49f,.74f,.66f,.74f,.68f,.65f);

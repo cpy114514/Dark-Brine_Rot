@@ -27,6 +27,7 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     bool stowed;
 
     public bool IsStowed => stowed;
+    public bool SkyboardStow { get; set; }
     public bool Climbing { get; set; }
     public bool CinematicTraversal { get; set; }
     // Negative uses normal swimming ownership. A cinematic may blend between
@@ -73,8 +74,8 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
     public void RefreshPose()
     {
         if (controller == null || stick == null || mesh == null) return;
-        float blend=CinematicStowWeight>=0?Mathf.Clamp01(CinematicStowWeight):1;
-        bool swimming = CinematicStowWeight>=0?blend>0:CinematicTraversal || controller.enabled && (controller.Swimming || Climbing);
+        float blend=SkyboardStow?1:CinematicStowWeight>=0?Mathf.Clamp01(CinematicStowWeight):1;
+        bool swimming = SkyboardStow || (CinematicStowWeight>=0?blend>0:CinematicTraversal || controller.enabled && (controller.Swimming || Climbing));
         if (!swimming) { RestoreGrip(); return; }
         animator = attack != null ? attack.animator : GetComponentInChildren<Animator>();
         if (animator == null || !animator.isHuman) return;
@@ -110,7 +111,9 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
         // Give the shaft a stable roll as well as its diagonal direction.
         stick.rotation = Quaternion.LookRotation(front, shaft) *
             Quaternion.Inverse(Quaternion.LookRotation(shaftFront, shaftAxis));
-        Vector3 centre = chest.position - front * (backOffset+bodyClearance) + up * heightOffset;
+        // The upright skating pose needs a closer fit than the swimming pose.
+        float clearance = SkyboardStow ? .36f : backOffset + bodyClearance;
+        Vector3 centre = chest.position - front * clearance + up * heightOffset;
         stick.position = centre - stick.TransformVector(mesh.bounds.center);
         if(blend<1)
         {
@@ -154,5 +157,5 @@ public sealed class SahurSwimmingWeapon : MonoBehaviour
         stowed = false;
     }
 
-    void OnDisable() { CinematicStowWeight=-1;RestoreGrip(); }
+    void OnDisable() { SkyboardStow=false;CinematicStowWeight=-1;RestoreGrip(); }
 }

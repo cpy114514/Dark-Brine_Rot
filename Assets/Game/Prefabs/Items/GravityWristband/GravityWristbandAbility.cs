@@ -32,13 +32,13 @@ public sealed class GravityWristbandAbility : MonoBehaviour
         if(hud)hud.SetActive(!GameUITheme.ModalOpen && movement && movement.enabled && !(health && health.currentHealth<=0));
         if(!movement || !movement.enabled || movement.ExternalControlLock || movement.ExternalMovementLock ||
             health && health.currentHealth<=0 || GameUITheme.ModalOpen || Time.timeScale<=0 ||
-            Cursor.lockState!=CursorLockMode.Locked || Keyboard.current==null)return;
-        if(Keyboard.current.bKey.wasPressedThisFrame)SetNormalGravity(!NormalGravity);
+            Cursor.lockState!=CursorLockMode.Locked)return;
+        if(GameControls.Down(GameControls.Command.Gravity))SetNormalGravity(!NormalGravity);
     }
     public bool SetNormalGravity(bool value)
     {
         if(!Owned || !traversal || !traversal.Active)return false;
-        traversal.SetNormalGravity(value);RefreshStatus();return true;
+        traversal.SetNormalGravity(value);RefreshStatus();GameSaveManager.RequestAutosave();return true;
     }
     void Refresh()
     {
@@ -57,6 +57,7 @@ public sealed class GravityWristbandAbility : MonoBehaviour
             status=text.GetComponent<Text>();status.font=GameLocalization.Font ? GameLocalization.Font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             status.fontSize=20;status.alignment=TextAnchor.MiddleCenter;status.color=Color.white;status.raycastTarget=false;
             GameLocalization.Changed+=RefreshStatus;
+            LocalizedGameText.Bind(status);
         }
         RefreshStatus();
     }

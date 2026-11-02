@@ -22,7 +22,7 @@ public static class PacingExplorationRegression
         {
             var movement = actor.AddComponent<ThirdPersonPlayerController>();
             var stamina = actor.AddComponent<PlayerStamina>();
-            Close(stamina.SprintCost(1, 4), .6f, "Exploration sprint cost");
+            Close(stamina.SprintCost(1, 4), 4, "Exploration sprint cost");
             stamina.NotifyCombat();
             Close(stamina.SprintCost(1, 4), 4, "Combat sprint cost");
             Close(stamina.ActiveRegenerationRate, 22, "Combat regeneration rate");
@@ -47,7 +47,8 @@ public static class PacingExplorationRegression
             var rifle = actor.AddComponent<SahurRifleCombat>();
             Check(rifle.ReserveRounds == 90, "Starting reserve incorrect.");
             var item = Resources.Load<EquipmentItem>(SahurWeaponLoadout.M4ItemPath);
-            inventory.Collect(item); Set(loadout, "inventory", inventory); Set(loadout, "rifleItem", item);
+            // This fixture exercises supplies for an existing rifle owner, independently of boss unlocks.
+            inventory.RestoreStack(item, 1); Set(loadout, "inventory", inventory); Set(loadout, "rifleItem", item);
             var cache = box.AddComponent<IslandSupplyCache>();
             box.AddComponent<WorldSaveIdentity>().id = "pacing-cache-" + Guid.NewGuid().ToString("N");
             rifle.RestoreAmmo(0, 0); Physics.SyncTransforms();

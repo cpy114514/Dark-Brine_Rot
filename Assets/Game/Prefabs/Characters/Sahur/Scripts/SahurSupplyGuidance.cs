@@ -193,7 +193,7 @@ namespace Mavis
                 string reminder = kind == GuidanceKind.Recovery ?
                     (Target is IslandSupplyCache camp && !camp.IsAvailable ? GameLocalization.Format("supply.recoveryRestock", Mathf.CeilToInt(camp.Remaining)) :
                         GameLocalization.Text(nearbyRecovery ? "supply.recoveryNearby" : "supply.recovery")) + "\n" +
-                    (healing && healing.Remaining > 0 ? GameLocalization.Format("supply.healOption", GameInputSettings.Get(GameInputSettings.Action.Heal), healing.Remaining) :
+                    (healing && healing.Remaining > 0 ? GameLocalization.Format("supply.healOption", GameControls.Token(GameInputSettings.Action.Heal), healing.Remaining) :
                         GameLocalization.Text("supply.noPacks")) :
                     kind == GuidanceKind.Gun ? GameLocalization.Text("supply.pickupGun") :
                     GameLocalization.Format(Target ? "supply.lowAmmo" : "supply.noAmmo", total);

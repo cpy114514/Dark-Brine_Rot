@@ -90,10 +90,10 @@ namespace Mavis
                 }
                 return;
             }
-            if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame && TryReload()) return;
+            if (GameControls.Down(GameControls.Command.Reload) && TryReload()) return;
             if (Cursor.lockState != CursorLockMode.Locked) return;
             if (Rounds <= 0) { TryReload(); return; }
-            if (Mouse.current != null && Mouse.current.leftButton.isPressed) TryFire();
+            if (GameControls.Held(GameControls.Command.Attack)) TryFire();
         }
         public bool TryReload()
         {
@@ -271,7 +271,7 @@ namespace Mavis
         void RefreshHud()
         {
             if (!hud) return;
-            bool visible = loadout && loadout.UsesRifle && health && health.currentHealth > 0 && movement && movement.enabled && !movement.Swimming && !PauseSettingsMenu.IsOpen && !SahurLoadoutUI.BlocksInput;
+            bool visible = loadout && loadout.UsesRifle && !loadout.SkyboardStowed && health && health.currentHealth > 0 && movement && movement.enabled && !movement.Swimming && !PauseSettingsMenu.IsOpen && !SahurLoadoutUI.BlocksInput;
             if (hud.activeSelf != visible) hud.SetActive(visible);
             if (!visible) return;
             bool hit = Time.time < hitUntil;

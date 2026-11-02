@@ -26,20 +26,20 @@ public static class GameInputSettings
     public static void Set(Action action, Key key)
     {
         Load();
+        if(Current[(int)action]==key)return;
         Current[(int)action] = key;
         PlayerPrefs.SetInt("DarkBrine.Settings.Key." + action, (int)key);
+        GameControls.NotifyBindingsChanged();
     }
 
     public static bool Pressed(Action action)
     {
-        var keyboard = Keyboard.current;
-        return keyboard != null && keyboard[Get(action)].isPressed;
+        return GameControls.LegacyHeld(action);
     }
 
     public static bool PressedThisFrame(Action action)
     {
-        var keyboard = Keyboard.current;
-        return keyboard != null && keyboard[Get(action)].wasPressedThisFrame;
+        return GameControls.LegacyDown(action);
     }
 
     static void Load()

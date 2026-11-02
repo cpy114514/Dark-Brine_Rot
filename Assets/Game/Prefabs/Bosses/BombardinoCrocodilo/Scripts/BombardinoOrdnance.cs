@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Mavis
 {
-    public sealed class BombardinoOrdnance : MonoBehaviour
+    public sealed partial class BombardinoOrdnance : MonoBehaviour
     {
         public enum Kind { Bomb, Missile, Fire }
         public Kind Payload { get; private set; }
@@ -23,6 +23,7 @@ namespace Mavis
 
         public void Launch(BombardinoBoss source,Kind kind,Vector3 direction,Transform victim,Vector3 point,float amount,float blastRadius)
         {
+            PerfectDodgeThreats.Register(this);
             owner=source;owner.RegisterOrdnance(this);Payload=kind;target=victim;aim=point;damage=amount;radius=blastRadius;
             velocity=direction.normalized*(kind==Kind.Missile?12f:2f);
             if(kind!=Kind.Fire)BossAttackWarning.For(gameObject).Circle(point,blastRadius,6f);

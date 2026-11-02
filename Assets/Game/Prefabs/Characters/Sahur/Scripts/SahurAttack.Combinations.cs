@@ -28,7 +28,7 @@ namespace Mavis
         static readonly int BladeSpinHash=Animator.StringToHash("Base Layer.Blade Spin");
         static readonly int BladeGuardHash=Animator.StringToHash("Base Layer.Blade Guard");
 
-        bool ChordHeld => Mouse.current!=null && Mouse.current.leftButton.isPressed && Mouse.current.rightButton.isPressed;
+        bool ChordHeld => GameControls.Held(GameControls.Command.Attack) && GameControls.Held(GameControls.Command.Charge);
         bool SpecialAllowed => !CinematicHandoffPending && animator && isActiveAndEnabled &&
             Cursor.lockState==CursorLockMode.Locked && !PauseSettingsMenu.IsOpen && !SahurLoadoutUI.BlocksInput &&
             Time.timeScale>0 && (!controller || controller.enabled && controller.CanUseGroundAttack &&

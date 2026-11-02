@@ -1,0 +1,9 @@
+{
+  "officialDocumentation": "https://docs.unity3d.com/Packages/com.unity.visualeffectgraph@17.3/manual/create-effects-with-six-way-lighting.html",
+  "downloadFolder": "https://drive.google.com/drive/folders/1_oh0UkAOW6hISqouCXjYwKQ0lkoj0CIF",
+  "licenseFinding": "Documentation says CC0, but downloaded LICENCE.md states Unity Companion License / Unity Package Distribution License. Preserve the actual notice and use only with this Unity game. Do not label CC0.",
+  "originalSha256": {
+    "GroundExplosion_N.tga": "dc1360fdba9a3d20fc0ce6395b5336d11ae134a93182144ee3867e7425091fd2",
+    "GroundExplosion_P.tga": "e043d35996e49b90b2748fd4deb77c1ace5cae3823b43d232075f261a645816b"
+  }
+}

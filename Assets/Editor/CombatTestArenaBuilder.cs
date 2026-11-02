@@ -67,6 +67,7 @@ public static class CombatTestArenaBuilder
         arena.bombardino = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Bosses/BombardinoCrocodilo/BombardinoCrocodilo.prefab");
         arena.chicken = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Enemies/ChickenBro/ChickenBro.prefab");
         arena.duck = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Enemies/LongLeggedDuck/LongLeggedDuck.prefab");
+        arena.goose = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/Enemies/BullyGoose/BullyGoose.prefab");
         EditorSceneManager.SaveScene(scene, ScenePath);
         if (!dirty) EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
         return ScenePath;
@@ -85,6 +86,7 @@ public static class CombatTestArenaBuilder
                 " bombardino=" + (arena.bombardino ? arena.bombardino.name : "missing") +
                 " chicken=" + (arena.chicken ? arena.chicken.name : "missing") +
                 " duck=" + (arena.duck ? arena.duck.name : "missing") +
+                " goose=" + (arena.goose ? arena.goose.name : "missing") +
                 " player=" + (arena.player ? arena.player.name : "missing");
         }
         return "arena component missing";

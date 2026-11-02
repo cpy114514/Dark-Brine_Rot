@@ -8,9 +8,9 @@ namespace Mavis
     [DisallowMultipleComponent]
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(Health))]
-    public sealed class ChickenBroAI : MonoBehaviour, ICombatHitResolver
+    public sealed partial class ChickenBroAI : MonoBehaviour, ICombatHitResolver
     {
-        public enum Mood { Idle, Patrol, Chase, Strike, Lunge, Flinch, Launch, Knockdown, Dead }
+        public enum Mood { Idle, Patrol, Chase, Strike, Lunge, Flinch, Launch, Knockdown, Dead, Alert, Wing }
 
         [Header("Awareness")]
         [Min(2f)] public float sightRange = 28f;
@@ -47,6 +47,20 @@ namespace Mavis
         [Min(.2f)] public float knockdownSeconds = .85f;
         [Min(0f)] public float removeAfterDeath = 4f;
         [Min(0f)] public float courtesySeconds = .4f;
+        [Header("Elite options")]
+        [Min(0f)] public float alertSeconds;
+        [Min(0f)] public float peckReach;
+        [Min(0f)] public float wingDamage;
+        [Min(0f)] public float wingRange;
+        [Min(.2f)] public float wingDuration = .7f;
+        [Range(0f, 1f)] public float wingWindowStart = .42f;
+        [Range(0f, 1f)] public float wingWindowEnd = .66f;
+        [Min(.2f)] public float wingRadius = 1.2f;
+        [Min(0f)] public float wingRecovery;
+        [Min(0f)] public float lungePush;
+        [Min(0f)] public float wingPush;
+        public bool attackPriority;
+        public bool shoveSmallerEnemies;
 
         CharacterController motor;
         Health health;
@@ -59,22 +73,24 @@ namespace Mavis
         readonly Collider[] overlaps = new Collider[16];
         readonly RaycastHit[] casts = new RaycastHit[16];
         readonly HashSet<PlayerHealth> struck = new HashSet<PlayerHealth>();
+        readonly HashSet<ChickenBroAI> shoved = new HashSet<ChickenBroAI>();
         Vector3 home, patrol, knock, committed;
         float verticalSpeed = -2f, actionTime, nextAttack, nextPath, nextPatrol, nextAcquire, lostSightAt, removeAt = -1f, repathStride, locomotionSpeed;
         int corner;
-        bool hasPath, returningHome, reclaiming, subscribed, animatorReady;
+        bool hasPath, returningHome, reclaiming, subscribed, animatorReady, announced;
         static readonly float[] AvoidAngles = { 0f, 28f, -28f, 56f, -56f, 84f, -84f };
         static readonly int SpeedHash = Animator.StringToHash("Speed");
         static readonly int MotionHash = Animator.StringToHash("Motion");
 
         public Mood Mode { get; private set; } = Mood.Idle;
         public float ActionPhase { get; private set; }
-        public bool HoldsAttack => Mode == Mood.Strike || Mode == Mood.Lunge;
+        public bool HoldsAttack => Mode == Mood.Strike || Mode == Mood.Lunge || Mode == Mood.Wing;
         public bool IsAlive => health && !health.IsDead && Mode != Mood.Dead;
         public float MovementMultiplier => marshmallow && marshmallow.IsAlert ? Mathf.Max(1f, marshmallow.alertSpeedMultiplier) : 1f;
 
         void Awake()
         {
+            PerfectDodgeThreats.Register(this);
             motor = GetComponent<CharacterController>();
             health = GetComponent<Health>();
             marshmallow = GetComponent<MarshmallowEnemyVisual>();
@@ -131,6 +147,7 @@ namespace Mavis
             nextPath = 0f;
             nextPatrol = 0f;
             returningHome = false;
+            announced = false;
             hasPath = false;
             reclaiming = false;
             removeAt = -1f;
@@ -225,8 +242,15 @@ namespace Mavis
                     Integrate(dt);
                     if (Recovered()) Mode = Mood.Idle;
                     break;
+                case Mood.Alert:
+                    actionTime += dt;
+                    if (player) Face(FlatDirection(player.transform.position), dt);
+                    Integrate(dt);
+                    if (actionTime >= alertSeconds) Mode = Mood.Chase;
+                    break;
                 case Mood.Strike:
                 case Mood.Lunge:
+                case Mood.Wing:
                     TickAttack(dt, distance);
                     break;
                 default:
@@ -253,6 +277,15 @@ namespace Mavis
                 Roam(dt);
                 return;
             }
+            if (alertSeconds > 0f && !announced)
+            {
+                announced = true;
+                flock?.ReleaseAttack(this);
+                Mode = Mood.Alert;
+                actionTime = 0f;
+                committed = FlatDirection(player.transform.position);
+                return;
+            }
             Vector3 target = player.transform.position;
             bool token = flock == null || flock.TryAttack(this);
             if (!token)
@@ -262,6 +295,7 @@ namespace Mavis
                 Mode = Mood.Chase;
                 return;
             }
+            if (wingDamage > 0f && distance <= wingRange && Time.time >= nextAttack && Random.value < .55f && TryBegin(Mood.Wing)) return;
             if (distance <= meleeRange && TryBegin(Mood.Strike)) return;
             if (distance >= lungeMin && distance <= lungeMax && Time.time >= nextAttack && Random.value < .45f && TryBegin(Mood.Lunge)) return;
             if (distance > meleeRange) MoveToward(target, runSpeed, dt, false);
@@ -279,6 +313,7 @@ namespace Mavis
             Mode = attack;
             actionTime = 0f;
             struck.Clear();
+            shoved.Clear();
             committed = FlatDirection(player ? player.transform.position : transform.position + transform.forward);
             Face(committed, 1f);
             return true;
@@ -287,10 +322,10 @@ namespace Mavis
         void TickAttack(float dt, float distance)
         {
             actionTime += dt;
-            float duration = Mode == Mood.Lunge ? lungeDuration : strikeDuration;
+            float duration = Mode == Mood.Lunge ? lungeDuration : Mode == Mood.Wing ? wingDuration : strikeDuration;
             ActionPhase = Mathf.Clamp01(actionTime / Mathf.Max(.01f, duration));
-            float windowStart = Mode == Mood.Lunge ? lungeWindowStart : strikeWindowStart;
-            float windowEnd = Mode == Mood.Lunge ? lungeWindowEnd : strikeWindowEnd;
+            float windowStart = Mode == Mood.Lunge ? lungeWindowStart : Mode == Mood.Wing ? wingWindowStart : strikeWindowStart;
+            float windowEnd = Mode == Mood.Lunge ? lungeWindowEnd : Mode == Mood.Wing ? wingWindowEnd : strikeWindowEnd;
             if (ActionPhase < windowStart && player)
                 committed = Vector3.Slerp(committed, FlatDirection(player.transform.position), 1f - Mathf.Exp(-8f * dt)).normalized;
             Face(committed, dt);
@@ -305,26 +340,69 @@ namespace Mavis
                 motor.Move(Vector3.up * verticalSpeed * dt + Separation() * dt);
                 return;
             }
-            nextAttack = Time.time + attackCooldown;
+            nextAttack = Time.time + attackCooldown + (Mode == Mood.Wing ? wingRecovery : 0f);
             flock?.ReleaseAttack(this);
             Mode = marshmallow ? (marshmallow.IsAlert ? Mood.Chase : Mood.Idle) : (distance <= giveUpRange ? Mood.Chase : Mood.Idle);
         }
 
         void Strike()
         {
-            Vector3 origin = transform.position + Vector3.up * (motor.height * .55f) + committed * (motor.radius + .35f);
-            int count = Physics.OverlapSphereNonAlloc(origin, attackRadius, overlaps, ~0, QueryTriggerInteraction.Ignore);
+            if (marshmallow && SecondIslandStartProtection.Protects(player)) return;
+            float height = .55f;
+            float forward = motor.radius + .35f + (Mode == Mood.Strike ? peckReach : 0f);
+            float radius = attackRadius;
+            if (Mode == Mood.Wing)
+            {
+                height = .42f;
+                forward = motor.radius + .25f;
+                radius = wingRadius;
+            }
+            Vector3 origin = transform.position + Vector3.up * (motor.height * height) + committed * forward;
+            int count = Physics.OverlapSphereNonAlloc(origin, radius, overlaps, ~0, QueryTriggerInteraction.Ignore);
             for (int i = 0; i < count; i++)
             {
                 var hit = overlaps[i];
                 if (!hit || hit.transform.IsChildOf(transform)) continue;
                 var victim = hit.GetComponentInParent<PlayerHealth>();
-                if (!victim || !struck.Add(victim)) continue;
-                Vector3 point = hit.ClosestPoint(origin);
-                if (Blocked(origin, point)) continue;
-                float amount = Mode == Mood.Lunge ? lungeDamage : strikeDamage;
-                victim.ApplyMeleeDamage(amount, point, transform.position);
+                if (victim && struck.Add(victim))
+                {
+                    Vector3 point = hit.ClosestPoint(origin);
+                    if (!Blocked(origin, point))
+                    {
+                        float amount = Mode == Mood.Lunge ? lungeDamage : Mode == Mood.Wing ? wingDamage : strikeDamage;
+                        victim.ApplyMeleeDamage(amount, point, transform.position);
+                        float push = Mode == Mood.Lunge ? lungePush : Mode == Mood.Wing ? wingPush : 0f;
+                        if (push > 0f) victim.GetComponent<ThirdPersonPlayerController>()?.ApplyCombatPush(committed, push, .28f);
+                    }
+                }
+                if (shoveSmallerEnemies && Mode == Mood.Lunge)
+                {
+                    var other = hit.GetComponentInParent<ChickenBroAI>();
+                    if (other && other != this && shoved.Add(other)) other.ShoveAside(committed, 5f);
+                }
             }
+        }
+
+        public void YieldAttack()
+        {
+            if (attackPriority || !HoldsAttack || ActionPhase > .25f) return;
+            nextAttack = Time.time + .35f;
+            ActionPhase = 0f;
+            Mode = player ? Mood.Chase : Mood.Idle;
+            flock?.ReleaseAttack(this);
+        }
+
+        public void ShoveAside(Vector3 direction, float speed)
+        {
+            if (!IsAlive || attackPriority) return;
+            if (Mode == Mood.Launch || Mode == Mood.Knockdown || Mode == Mood.Dead) return;
+            direction.y = 0f;
+            if (direction.sqrMagnitude < .01f) return;
+            knock = direction.normalized * Mathf.Max(1f, speed);
+            actionTime = 0f;
+            ActionPhase = 0f;
+            Mode = Mood.Flinch;
+            flock?.ReleaseAttack(this);
         }
 
         void Roam(float dt)
@@ -479,7 +557,8 @@ namespace Mavis
             }
             else animator.SetFloat(SpeedHash, speed);
             animator.SetInteger(MotionHash, Mode == Mood.Dead ? 7 : Mode == Mood.Knockdown || Mode == Mood.Launch ? 6 :
-                Mode == Mood.Flinch ? 5 : Mode == Mood.Lunge ? 4 : Mode == Mood.Strike ? 3 : speed > .7f ? 2 : speed > .1f ? 1 : 0);
+                Mode == Mood.Flinch ? 5 : Mode == Mood.Lunge ? 4 : Mode == Mood.Strike ? 3 :
+                Mode == Mood.Wing ? 9 : Mode == Mood.Alert ? 8 : speed > .7f ? 2 : speed > .1f ? 1 : 0);
         }
 
         void Acquire()

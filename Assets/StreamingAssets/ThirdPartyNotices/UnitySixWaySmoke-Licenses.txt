@@ -1,0 +1,585 @@
+Unity six-way lighting textures - copyright 2023 Unity Technologies
+
+6-way lighting textures copyright © 2023 Unity Technologies
+
+Source assets of the files in this folder are licensed under the Unity Companion License (see https://unity3d.com/legal/licenses/unity_companion_license); 
+otherwise licensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License ).
+
+Unless expressly provided otherwise, the software under this license is made available strictly on an “AS IS” BASIS WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. Please review the license for details on these and other terms and conditions
+
+
+
+Source: https://unity.com/legal/licenses/unity-companion-license
+Unity Companion License ("License")
+Games
+Industry
+Resources
+Community
+Learning
+Support
+Pricing
+Develop
+Unity Engine
+Build 2D and 3D games for any platform
+Collaboration
+Collaborate and iterate quickly with your team
+Download Unity
+Plans and pricing
+Deploy
+Multiplatform
+Discover 25+ platforms Unity supports
+LiveOps
+Post-launch insights and live game ops
+Grow
+User acquisition
+Get discovered and acquire mobile users
+In-App Purchase
+Manage IAP across stores and D2C
+Monetization
+Connect players with the right games
+Advertise with Unity
+Monetize with Unity
+Use cases
+Mobile Games
+Build & grow mobile hits with Unity
+Indie Games
+Ship big games with small teams
+XR Games
+Launch XR games across platforms
+Multiplayer Games
+Simplify multiplayer game development
+Use cases
+3D collaboration
+Build and review 3D projects in real time
+Immersive training
+Train in immersive environments
+Robotics
+Deploy robotics systems faster
+Human Machine Interfaces (HMI)
+Develop interactive 3D embedded systems
+Industries
+Manufacturing
+Achieve operational excellence
+Retail
+Transform in-store experiences into online ones
+Automotive
+Boost innovation and in-car experiences
+See all industries
+Technical library
+Documentation
+Official user manuals and API references
+Developer tools
+Release versions and issue tracker
+Roadmap
+Review upcoming features
+Glossary
+Library of technical terms
+Insights
+Case studies
+Real-world success stories
+Best practice guides
+Expert tips and tricks
+Demos
+Demos, samples, and building blocks
+All resources
+What's new
+Blog
+Updates, information, and technical tips
+News
+News, stories, and press center
+Community Hub
+Discussions
+Discuss, problem-solve, and connect
+Events
+Global and local events
+Community stories
+Made with Unity
+Showcasing Unity creators
+Livestreams
+Join devs, creators, and insiders
+Unity Awards
+Celebrating Unity creators worldwide
+For every level
+Unity Learn
+Master Unity skills for free
+Professional training
+Level up your team with Unity trainers
+New to Unity
+Getting started
+Kickstart your learning
+Unity Essential Pathways
+New to Unity? Start your journey
+How-to Guides
+Actionable tips and best practices
+Education
+For students
+Kickstart your career
+For educators
+Supercharge your teaching
+Education Grant License
+Bring Unity’s power to your institution
+Certifications
+Prove your Unity mastery
+Support options
+Get help
+Helping you succeed with Unity
+Success plans
+Reach your goals faster with expert support
+FAQ
+Answers to common questions
+Contact us
+Connect with our team
+Download Unity
+Get started
+Games
+Develop
+Unity Engine
+Collaboration
+Download Unity
+Plans and pricing
+Deploy
+Multiplatform
+LiveOps
+Grow
+User acquisition
+In-App Purchase
+Monetization
+Advertise with Unity
+Monetize with Unity
+Use cases
+Mobile Games
+Indie Games
+XR Games
+Multiplayer Games
+Games
+Industry
+Use cases
+3D collaboration
+Immersive training
+Robotics
+Human Machine Interfaces (HMI)
+Industries
+Manufacturing
+Retail
+Automotive
+See all industries
+Industry
+Resources
+Technical library
+Documentation
+Developer tools
+Roadmap
+Glossary
+Insights
+Case studies
+Best practice guides
+Demos
+All resources
+What's new
+Blog
+News
+Resources
+Community
+Community Hub
+Discussions
+Events
+Community stories
+Made with Unity
+Livestreams
+Unity Awards
+Community
+Learning
+For every level
+Unity Learn
+Professional training
+New to Unity
+Getting started
+Unity Essential Pathways
+How-to Guides
+Education
+For students
+For educators
+Education Grant License
+Certifications
+Learn
+Support
+Support options
+Get help
+Success plans
+FAQ
+Contact us
+Support
+Pricing
+Download Unity
+Get started
+Unity Companion License ("License")
+v1.4
+Unity Technologies SF (“Unity”) grants to you a worldwide, non-exclusive, no-charge, and royalty-free copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, and distribute the work of authorship that accompanies this License (“Work”), subject to the following terms and conditions:
+1. Unity Companion Use. Exercise of the license granted herein is permitted as long as it is in connection with the authoring and/or distribution of applications, software, or other content under a valid Unity content authoring and rendering engine software license (“Engine License”). That means, for example, as long as you authored content using the Work under an Engine License, you may distribute the Work in connection with that content as you see fit under this License. No other exercise of the license granted herein is permitted, and in no event may the Work be used for competitive analysis or to develop a competing product or service.
+2. No Modification of Engine License. Neither this License nor any exercise of the license granted herein modifies the Engine License in any way.
+3. Ownership; Derivative Works.
+3.1 You own your content. In this License, “derivative works” means derivatives of the Work itself--works derived only from the Work by you under this License (for example, modifying the code of the Work itself to improve its efficacy); “derivative works” of the Work do not include, for example, games, apps, or content that you create with the Work. You keep all right, title, and interest in your own content.
+3.2 Unity owns its content. While you keep all right, title, and interest to your own content per the above, as between Unity and you, Unity will own all right, title, and interest to all intellectual property rights (including patent, trademark, and copyright) in the Work and derivative works of the Work, and you hereby assign and agree to assign all such rights in those derivative works to Unity. Should assignment be invalid for any reason, you grant to Unity an irrevocable, perpetual, worldwide, non-exclusive, no-charge, and royalty-free license (with the right to grant sublicenses) under those intellectual property rights to those derivative works. You also agree to waive or refrain from asserting any author’s right, moral rights, or like rights to the extent necessary to permit exploitation as contemplated under this License.
+3.3 Your right to use derivative works. You will always have the right to use derivative works of the Work you create, consonant with this License.
+4. Trademarks. You are not granted any right or license under this License to use any trademarks, service marks, trade names, products names, or branding of Unity or its affiliates (“Trademarks”). Descriptive uses of Trademarks are permitted; see, for example, Unity’s Trademark Guidelines at
+https://unity.com/legal/branding_trademarks
+.
+5. Notices & Third-Party Rights. This License, including the copyright notice associated with the Work, must be provided in all substantial portions of the Work and derivative works thereof (or, if that is impracticable, in any other location where such notices are customarily placed). Further, if the Work is accompanied by a Unity “third-party notices” or similar file, you acknowledge and agree that software or content identified in that file is governed by those separate license terms.
+6. DISCLAIMER, LIMITATION OF LIABILITY. THE Work AND ANY DERIVATIVE WORKS THEREOF IS PROVIDED ON AN "AS IS" BASIS, AND IS PROVIDED WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND/OR NON-INFRINGEMENT. IN NO EVENT SHALL ANY COPYRIGHT HOLDER OR AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES (WHETHER DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL, INCLUDING PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, LOSS OF USE, DATA, OR PROFITS, AND BUSINESS INTERRUPTION), OR OTHER LIABILITY WHATSOEVER, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM OR OUT OF, OR IN CONNECTION WITH, THE Work OR ANY DERIVATIVE WORKS THEREOF OR THE USE OF OR OTHER DEALINGS IN SAME, EVEN WHERE ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+7. USE IS ACCEPTANCE and License Versions. Your access to and use of the Work constitutes your acceptance of this License and its terms and conditions. This License may be modified or updated; upon any such modification or update, you will comply with the terms of the updated License for any use of any of the Work under the updated License.
+8. Use in Compliance with Law and Termination. Your exercise of the license granted herein will at all times be in compliance with applicable law and will not infringe any proprietary rights (including intellectual property rights); this License will terminate immediately (i) on any breach by you of this License; and (ii) if you commence any form of patent litigation, including a cross-claim or counterclaim, against anyone wherein you allege that the Work constitutes direct or secondary/indirect patent infringement.
+9. Severability. If any provision of this License is held to be unenforceable or invalid, that provision will be enforced to the maximum extent possible and the other provisions will remain in full force and effect.
+10. Governing Law and Venue. This License is governed by and construed in accordance with the laws of the United States and the state of California, except for its conflict of laws rules; the United Nations Convention on Contracts for the International Sale of Goods will not apply. You and Unity agree to submit to the personal and exclusive jurisdiction of and venue in the state and federal courts located in San Francisco County, California concerning any dispute arising out of this License.
+(10.29.2024)
+change log
+Language
+English
+日本語
+Français
+Português
+中文
+Español
+Русский
+한국어
+Tiếng Việt
+Social
+Currency
+USD
+Purchase
+Products
+Unity Ads
+Unity Asset Store
+Resellers
+Education
+Students
+Educators
+Institutions
+Certification
+Learn
+Skills Development Program
+Download
+Unity Hub
+Download Archive
+Beta Program
+Unity Labs
+Labs
+Publications
+Resources
+Learn platform
+Community
+Documentation
+Unity QA
+FAQ
+Services Status
+Case Studies
+Made with Unity
+Unity
+Our Company
+Newsletter
+Blog
+Events
+Careers
+Help
+Press
+Partners
+Investors
+Affiliates
+Security
+Social Impact
+Inclusion & Diversity
+Contact us
+Copyright © 2026 Unity Technologies
+Legal
+Privacy Policy
+Cookies
+Do Not Sell or Share My Personal Information
+"Unity", Unity logos, and other Unity trademarks are trademarks or registered trademarks of Unity Technologies or its affiliates in the U.S. and elsewhere (
+more info here
+). Other names or brands are trademarks of their respective owners.
+
+Source: https://unity.com/legal/licenses/unity-package-distribution-license
+Unity Package Distribution License ("License")
+Games
+Industry
+Resources
+Community
+Learning
+Support
+Pricing
+Develop
+Unity Engine
+Build 2D and 3D games for any platform
+Collaboration
+Collaborate and iterate quickly with your team
+Download Unity
+Plans and pricing
+Deploy
+Multiplatform
+Discover 25+ platforms Unity supports
+LiveOps
+Post-launch insights and live game ops
+Grow
+User acquisition
+Get discovered and acquire mobile users
+In-App Purchase
+Manage IAP across stores and D2C
+Monetization
+Connect players with the right games
+Advertise with Unity
+Monetize with Unity
+Use cases
+Mobile Games
+Build & grow mobile hits with Unity
+Indie Games
+Ship big games with small teams
+XR Games
+Launch XR games across platforms
+Multiplayer Games
+Simplify multiplayer game development
+Use cases
+3D collaboration
+Build and review 3D projects in real time
+Immersive training
+Train in immersive environments
+Robotics
+Deploy robotics systems faster
+Human Machine Interfaces (HMI)
+Develop interactive 3D embedded systems
+Industries
+Manufacturing
+Achieve operational excellence
+Retail
+Transform in-store experiences into online ones
+Automotive
+Boost innovation and in-car experiences
+See all industries
+Technical library
+Documentation
+Official user manuals and API references
+Developer tools
+Release versions and issue tracker
+Roadmap
+Review upcoming features
+Glossary
+Library of technical terms
+Insights
+Case studies
+Real-world success stories
+Best practice guides
+Expert tips and tricks
+Demos
+Demos, samples, and building blocks
+All resources
+What's new
+Blog
+Updates, information, and technical tips
+News
+News, stories, and press center
+Community Hub
+Discussions
+Discuss, problem-solve, and connect
+Events
+Global and local events
+Community stories
+Made with Unity
+Showcasing Unity creators
+Livestreams
+Join devs, creators, and insiders
+Unity Awards
+Celebrating Unity creators worldwide
+For every level
+Unity Learn
+Master Unity skills for free
+Professional training
+Level up your team with Unity trainers
+New to Unity
+Getting started
+Kickstart your learning
+Unity Essential Pathways
+New to Unity? Start your journey
+How-to Guides
+Actionable tips and best practices
+Education
+For students
+Kickstart your career
+For educators
+Supercharge your teaching
+Education Grant License
+Bring Unity’s power to your institution
+Certifications
+Prove your Unity mastery
+Support options
+Get help
+Helping you succeed with Unity
+Success plans
+Reach your goals faster with expert support
+FAQ
+Answers to common questions
+Contact us
+Connect with our team
+Download Unity
+Get started
+Games
+Develop
+Unity Engine
+Collaboration
+Download Unity
+Plans and pricing
+Deploy
+Multiplatform
+LiveOps
+Grow
+User acquisition
+In-App Purchase
+Monetization
+Advertise with Unity
+Monetize with Unity
+Use cases
+Mobile Games
+Indie Games
+XR Games
+Multiplayer Games
+Games
+Industry
+Use cases
+3D collaboration
+Immersive training
+Robotics
+Human Machine Interfaces (HMI)
+Industries
+Manufacturing
+Retail
+Automotive
+See all industries
+Industry
+Resources
+Technical library
+Documentation
+Developer tools
+Roadmap
+Glossary
+Insights
+Case studies
+Best practice guides
+Demos
+All resources
+What's new
+Blog
+News
+Resources
+Community
+Community Hub
+Discussions
+Events
+Community stories
+Made with Unity
+Livestreams
+Unity Awards
+Community
+Learning
+For every level
+Unity Learn
+Professional training
+New to Unity
+Getting started
+Unity Essential Pathways
+How-to Guides
+Education
+For students
+For educators
+Education Grant License
+Certifications
+Learn
+Support
+Support options
+Get help
+Success plans
+FAQ
+Contact us
+Support
+Pricing
+Download Unity
+Get started
+Unity Package Distribution License ("License")
+v2.1
+Unity Technologies SF (“Unity”) grants to you a worldwide, non-exclusive, non-sublicensable, and royalty-free license to test, to use, to run, to compile, to link, and to distribute works of authorship associated with this License (“Work”), subject to the following terms and conditions:
+(Certain Defined Terms in Section 9)
+1. Distribution for Project Content Only. Exercise of the distribution license granted under this License is limited to distribution of the Work as binaries integrated with your Project Content, solely to third parties to whom you license or sell your Project Content or who provide you with Third Party Services, as you are permitted to distribute the runtime portion of the Unity Engine and under those terms.
+2. Third-Party Software. If the Work is accompanied by a “third-party notices” or similar notice, you acknowledge and agree that software or content so identified is governed by those separate license terms.
+3. No Trademark License. You are not granted any right or license under this License to use any trademarks, service marks, trade names, products names, or branding of Unity or its affiliates (“Trademarks”); certain uses of Trademarks are permitted under Unity’s Trademark Guidelines at
+https://unity.com/legal/branding_trademarks
+or its successor site.
+4. DISCLAIMER, LIMITATION OF LIABILITY. THE WORK IS PROVIDED ON AN "AS IS" AND “AS AVAILABLE” BASIS, AND IS PROVIDED WITHOUT WARRANTY OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND/OR NONINFRINGEMENT. IN NO EVENT SHALL ANY COPYRIGHT HOLDER OR AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES (WHETHER DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL, INCLUDING PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES, LOSS OF USE, DATA, OR PROFITS, AND BUSINESS INTERRUPTION), OR OTHER LIABILITY WHATSOEVER, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM OR OUT OF, OR IN CONNECTION WITH, THE WORK OR ANY DERIVATIVE WORKS THEREOF OR THE USE OF OR OTHER DEALINGS IN SAME, EVEN WHERE ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+5. USE IS ACCEPTANCE and License Versions. Your access to and use of the Work constitutes your acceptance of this License and its terms and conditions. This License may be modified or updated; upon any such modification or update, you will comply with the terms of the updated License for any use of any of the Work under the updated License.
+6. Use in Compliance with Law and Termination. Your exercise of the license granted under this License will at all times be in compliance with applicable law and will not infringe any proprietary rights (including intellectual property rights); this License will terminate immediately (i) on any breach by you of this License; and (ii) if you commence any form of patent litigation, including a cross-claim or counterclaim, against anyone wherein you allege that the Work or its use constitutes direct or secondary/indirect patent infringement.
+7. Severability. If any provision of this License is held to be unenforceable or invalid, that provision will be enforced to the maximum extent possible and the other provisions will remain in full force and effect.
+8. Governing Law and Venue. The governing law of this License will be the substantive laws of the State of California without regard to its conflicts of law principles. The United Nations Convention on Contracts for the International Sale of Goods will not apply. You and Unity irrevocably submit to the sole and exclusive jurisdiction of the Superior Court of the State of California, County of San Francisco or the United States District Court of the Northern District of California in San Francisco. You and Unity irrevocably consent to the exercise of personal jurisdiction over each other by such courts and waives any right to plead, claim or allege that California is an inconvenient forum. Notwithstanding the foregoing, Unity may seek temporary, preliminary or other expedited or provisional injunctive relief (but not money damages) from any court of competent jurisdiction under this License regardless of your place of residency or principal place of business.
+9. Definitions.
+“Project Content” means works of authorship that you develop with the Unity Engine under a valid license.
+“Third Party Service” means any service offered to Unity developers.
+“Unity Engine” means Unity’s content authoring and rendering engine software.
+(21.07.2023)
+Language
+English
+日本語
+Français
+Português
+中文
+Español
+Русский
+한국어
+Tiếng Việt
+Social
+Currency
+USD
+Purchase
+Products
+Unity Ads
+Unity Asset Store
+Resellers
+Education
+Students
+Educators
+Institutions
+Certification
+Learn
+Skills Development Program
+Download
+Unity Hub
+Download Archive
+Beta Program
+Unity Labs
+Labs
+Publications
+Resources
+Learn platform
+Community
+Documentation
+Unity QA
+FAQ
+Services Status
+Case Studies
+Made with Unity
+Unity
+Our Company
+Newsletter
+Blog
+Events
+Careers
+Help
+Press
+Partners
+Investors
+Affiliates
+Security
+Social Impact
+Inclusion & Diversity
+Contact us
+Copyright © 2026 Unity Technologies
+Legal
+Privacy Policy
+Cookies
+Do Not Sell or Share My Personal Information
+"Unity", Unity logos, and other Unity trademarks are trademarks or registered trademarks of Unity Technologies or its affiliates in the U.S. and elsewhere (
+more info here
+). Other names or brands are trademarks of their respective owners.

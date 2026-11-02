@@ -14,6 +14,7 @@ namespace Mavis
         public Transform HeldRifle => rifle ? rifle.transform : null;
         SahurRifleAnimation rifleAnimation;
         public bool UsesRifle => CurrentWeapon == Weapon.M4A1;
+        public bool SkyboardStowed { get; private set; }
         public bool HasM4A1 => inventory && rifleItem && inventory.Count(rifleItem)>0;
         public bool UsesTwinBlades => CurrentWeapon == Weapon.CapriTwinBlades;
         public bool HasTwinBlades => inventory && twinBlades && inventory.Count(twinBlades) > 0;
@@ -72,8 +73,17 @@ namespace Mavis
             if (UsesRifle && !RifleUnlocked) TryEquip(Weapon.Stick);
             if (restoredWeapon.HasValue) TryEquip(restoredWeapon.Value);
             if (!initialized || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
-                Cursor.lockState != CursorLockMode.Locked || Keyboard.current == null) return;
+                Cursor.lockState != CursorLockMode.Locked) return;
             var keys = Keyboard.current;
+            if(GameControls.Down(GameControls.Command.NextWeapon))
+            {
+                for(int step=1;step<=3;step++)
+                {
+                    var candidate=(Weapon)(((int)CurrentWeapon+step)%3);
+                    if(Owns(candidate)&&TryEquip(candidate))break;
+                }
+            }
+            if(keys==null)return;
             if (keys.digit1Key.wasPressedThisFrame || keys.numpad1Key.wasPressedThisFrame) TryEquip(Weapon.Stick);
             else if (keys.digit2Key.wasPressedThisFrame || keys.numpad2Key.wasPressedThisFrame) TryEquip(Weapon.CapriTwinBlades);
             else if (keys.digit3Key.wasPressedThisFrame || keys.numpad3Key.wasPressedThisFrame) TryEquip(Weapon.M4A1);
@@ -83,7 +93,7 @@ namespace Mavis
         {
             Initialize();
             if (weapon == Weapon.M4A1 && !RifleUnlocked) return false;
-            if (!initialized || !enabled || !gameObject.activeInHierarchy || (health && health.currentHealth <= 0) ||
+            if (!initialized || !enabled || !gameObject.activeInHierarchy || SkyboardStowed || (health && health.currentHealth <= 0) ||
                 PauseSettingsMenu.IsOpen || (SahurLoadoutUI.BlocksInput && !(fromMenu && SahurLoadoutUI.IsOpen)) ||
                 (movement && (!movement.enabled || movement.Swimming || movement.ExternalControlLock)) ||
                 (GetComponent<SahurBoomerang>()?.IsBusy ?? false)) return false;
@@ -195,13 +205,18 @@ namespace Mavis
         void LateUpdate()
         {
             if (!UsesTwinBlades && !UsesRifle) return;
-            bool visible = movement && movement.enabled && !movement.Swimming && !(GetComponent<SahurSwimmingWeapon>()?.Climbing ?? false) && (!health || health.currentHealth > 0);
+            bool visible = !SkyboardStowed && movement && movement.enabled && !movement.Swimming && !(GetComponent<SahurSwimmingWeapon>()?.Climbing ?? false) && (!health || health.currentHealth > 0);
             if (left) left.SetActive(visible && UsesTwinBlades);
             if (right) right.SetActive(visible && UsesTwinBlades);
-            if(rifle)rifle.SetActive(UsesRifle && (visible || (rifleAnimation && rifleAnimation.DeathPoseActive)));
+            if(rifle)rifle.SetActive(UsesRifle && !SkyboardStowed && (visible || (rifleAnimation && rifleAnimation.DeathPoseActive)));
             if(UsesRifle && attack.enabled)attack.enabled=false;
             // Swimming may restore the original stick's grip; it stays hidden with blades selected.
             if (stickRenderers != null) foreach (var r in stickRenderers) if (r) r.enabled = false;
+        }
+        public void SetSkyboardStowed(bool stowed)
+        {
+            SkyboardStowed = stowed;
+            LateUpdate();
         }
         void OnDestroy()
         {

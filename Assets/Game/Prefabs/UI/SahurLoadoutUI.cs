@@ -10,7 +10,7 @@ namespace Mavis
     [DisallowMultipleComponent, DefaultExecutionOrder(-120)]
     public sealed class SahurLoadoutUI : MonoBehaviour
     {
-        public enum EquipmentSlot { Head, Body, Legs, Feet, Weapon }
+        public enum EquipmentSlot { Head, Body, Legs, Feet, Weapon, Tools }
         public static bool IsOpen { get; private set; }
         public static bool BlocksInput => IsOpen || IslandMapUI.BlocksInput || PlayerDeathRespawn.BlocksInput || consumedFrame == Time.frameCount;
         static int consumedFrame = -1;
@@ -18,15 +18,15 @@ namespace Mavis
         public int SelectedSkill { get; private set; }
         public int EditingSkill { get; private set; }
         public bool PanelVisible => panel != null && panel.activeSelf;
-        public int EquipmentSlotCount => 5;
+        public int EquipmentSlotCount => 6;
         public int SkillSlotCount => 4;
         [Tooltip("Keep disabled while there are no usable skills; the four assignment slots remain in the I menu.")]
         public bool showEmptySkillHotbar;
 
-        readonly string[] equipmentNames = { "Head", "Body", "Legs", "Feet", "Weapon" };
+        readonly string[] equipmentNames = { "Head", "Body", "Legs", "Feet", "Weapon", "Tools" };
         readonly Image[] hotbarFrames = new Image[4];
         readonly Image[] skillFrames = new Image[4];
-        readonly Text[] equipmentLabels = new Text[5];
+        readonly Text[] equipmentLabels = new Text[6];
         EquipmentInventory inventory;
         SahurWeaponLoadout weapons;
         Text weaponHint;
@@ -34,10 +34,12 @@ namespace Mavis
         GameObject itemBrowser, skillChoices;
         Text categoryTitle, itemTitle, actionText, unequipText, selectionStatus;
         Button equipButton, unequipButton;
-        readonly Image[] categoryFrames=new Image[5];
+        readonly Image[] categoryFrames=new Image[6];
         readonly System.Collections.Generic.List<GameObject> itemRows=new System.Collections.Generic.List<GameObject>();
         int selectedWeapon=-1;
         EquipmentItem selectedItem;
+        ICooldownTarget selectedCooldownTarget;
+        bool choosingScrollTarget;
         Text pickupNotice;
         float noticeUntil;
         int editingEquipment = -1;
@@ -78,6 +80,7 @@ namespace Mavis
             RefreshLanguage();
             panel.SetActive(false);
             GameLocalization.Changed += RefreshLanguage;
+            GameControls.Changed += RefreshLanguage;
             RefreshVisibility();
         }
 
@@ -94,12 +97,18 @@ namespace Mavis
             if (active != this) return;
             RefreshVisibility();
             if (PauseSettingsMenu.IsOpen || IslandMapUI.BlocksInput || PlayerDeathRespawn.IsOpen ||
-                movement == null || !movement.enabled || SecondIslandAwakening.BlocksInputFor(movement) || Keyboard.current == null) return;
+                movement == null || !movement.enabled || SecondIslandAwakening.BlocksInputFor(movement)) return;
             var keys = Keyboard.current;
-            if (keys.iKey.wasPressedThisFrame) SetOpen(!IsOpen);
-            else if (IsOpen && keys.escapeKey.wasPressedThisFrame) { SetOpen(false); consumedFrame = Time.frameCount; }
+            if (GameControls.Down(GameControls.Command.Gear)) SetOpen(!IsOpen);
+            else if (IsOpen && GameControls.Down(GameControls.Command.Cancel)) { SetOpen(false); consumedFrame = Time.frameCount; }
+            if(keys==null)return;
             if (IsOpen)
             {
+                if (editingEquipment == (int)EquipmentSlot.Tools)
+                {
+                    if ((keys.digit4Key.wasPressedThisFrame || keys.numpad4Key.wasPressedThisFrame) && equipButton && equipButton.interactable) EquipSelection();
+                    return;
+                }
                 if (editingEquipment == (int)EquipmentSlot.Weapon)
                 {
                     if (keys.digit1Key.wasPressedThisFrame || keys.numpad1Key.wasPressedThisFrame) weapons?.TryEquip(SahurWeaponLoadout.Weapon.Stick, true);
@@ -129,7 +138,7 @@ namespace Mavis
             if (pickupNotice != null) pickupNotice.gameObject.SetActive(gameplay && Time.unscaledTime < noticeUntil);
             if (weaponHint != null)
             {
-                weaponHint.gameObject.SetActive(gameplay && !BossHudPanel.HasActiveEncounter);
+                weaponHint.gameObject.SetActive(gameplay && !BossHudPanel.HasActiveEncounter && !(weapons && weapons.SkyboardStowed));
 
             }
         }
@@ -147,6 +156,7 @@ namespace Mavis
             if (index < 0 || index >= 4 || details == null) return;
             EditingSkill = index;
             editingEquipment = -1;
+            choosingScrollTarget = false; selectedCooldownTarget = null;
             if(itemBrowser)itemBrowser.SetActive(false);
             if(skillChoices)skillChoices.SetActive(true);
             if(categoryTitle)categoryTitle.text="Skill slots";
@@ -155,7 +165,7 @@ namespace Mavis
             if(actionText){actionText.text="No skills available";equipButton.interactable=false;}
             if(unequipButton)unequipButton.gameObject.SetActive(false);
             if(selectionStatus)selectionStatus.text="Select a slot for details";
-            for(int i=0;i<5;i++)if(categoryFrames[i])SetSelected(categoryFrames[i].GetComponent<Button>(),false);
+            for(int i=0;i<categoryFrames.Length;i++)if(categoryFrames[i])SetSelected(categoryFrames[i].GetComponent<Button>(),false);
             for (int i = 0; i < 4; i++) SetSelected(skillFrames[i].GetComponent<Button>(), i == index);
             details.text = GameLocalization.Format("skill.details", index + 1);
         }
@@ -163,12 +173,13 @@ namespace Mavis
         public void SelectEquipment(EquipmentSlot slot)
         {
             int index = (int)slot;
-            if (index < 0 || index >= 5 || details == null) return;
+            if (index < 0 || index >= equipmentNames.Length || details == null) return;
             editingEquipment = index;
+            choosingScrollTarget = false; selectedCooldownTarget = null;
             itemContent.anchoredPosition=Vector2.zero;
             if(itemBrowser)itemBrowser.SetActive(true);if(skillChoices)skillChoices.SetActive(false);
-            if(categoryTitle)categoryTitle.text=equipmentNames[index]+"Gear";
-            for(int i=0;i<5;i++)SetSelected(categoryFrames[i].GetComponent<Button>(),i==index);
+            if(categoryTitle)categoryTitle.text=slot==EquipmentSlot.Tools?"Tools":equipmentNames[index]+" Gear";
+            for(int i=0;i<categoryFrames.Length;i++)SetSelected(categoryFrames[i].GetComponent<Button>(),i==index);
             foreach(var row in itemRows){row.SetActive(false);Destroy(row);}itemRows.Clear();
             int count=0;
             if(slot==EquipmentSlot.Weapon)
@@ -192,7 +203,7 @@ namespace Mavis
                 if(slot==EquipmentSlot.Head && first==null)
                     AddItemRow(WeaknessGlasses.DisplayName,"Locked - Defeat Nailong",count++,()=>InspectItem(Resources.Load<EquipmentItem>(WeaknessGlasses.ItemPath)));
                 InspectItem(retainsSelection?selectedItem:first);
-                if(count==0)itemRows.Add(Label(itemContent,"No gear collected yet\nExplore the island and collect boss drops",new Vector2(0,-80),new Vector2(290,110),18,Pencil,new Vector2(.5f,1)).gameObject);
+                if(count==0)itemRows.Add(Label(itemContent,slot==EquipmentSlot.Tools?"No tools collected yet\nExplore to find tools and scrolls":"No gear collected yet\nExplore the island and collect boss drops",new Vector2(0,-80),new Vector2(290,110),18,Pencil,new Vector2(.5f,1)).gameObject);
             }
             itemContent.sizeDelta=new Vector2(0,Mathf.Max(430,count*104));
         }
@@ -215,10 +226,11 @@ namespace Mavis
             bool equipped=owned && weapons!=null && index==(int)weapons.CurrentWeapon;
             itemTitle.text=SahurWeaponLoadout.DisplayName((SahurWeaponLoadout.Weapon)index);
             selectionStatus.text=equipped?"Currently equipped":owned?"Unlocked · Ready to equip":"Locked";
-            details.text=index==0?"Wooden club\n\nLMB: three-hit combo\nHold RMB: charged strike (also while moving)\nHold LMB + RMB: two-handed spin\nJump + LMB: overhead chop\nE: throw and recall\n\nWeak points take 1.5x damage.":"Capri twin blades\n\nLMB: twin-blade combo\nHold RMB: X charge while moving; release to rush and cut outward\nPartial charge: lower damage, longer rush (up to 20m)\nFull charge (2.6s): maximum damage, 16m rush\nHold LMB + RMB: spin attack\n"+GameInputSettings.Get(GameInputSettings.Action.Guard).ToString()+": hold to block all frontal attacks\n\nInvulnerable during rush travel. Walls stop the rush.\nGuarding and spinning consume stamina.";
+            details.text=index==0?"Wooden club\n\nLMB: three-hit combo\nHold RMB: charged strike (also while moving)\nHold LMB + RMB: two-handed spin\nJump + LMB: overhead chop\nE: throw and recall\n\nWeak points take 1.5x damage.":"Capri twin blades\n\nLMB: twin-blade combo\nHold RMB: X charge while moving; release to rush and cut outward\nPartial charge: lower damage, longer rush (up to 20m)\nFull charge (2.6s): maximum damage, 16m rush\nHold LMB + RMB: spin attack\n"+GameControls.Token(GameInputSettings.Action.Guard)+": hold to block all frontal attacks\n\nInvulnerable during rush travel. Walls stop the rush.\nGuarding and spinning consume stamina.";
             if(index==2)details.text="M4A1: ranged and anti-air support.\n\nLMB: automatic fire\nHold RMB: aim and zoom while standing or walking\nSprint: carry and fire; aiming is disabled\n30-round magazine - R: reload\nGround damage falls with distance.\nAttack the aircraft's engines during its counter window.\nSupply camps: up to 45 rounds, 45s restock.";
             actionText.text=equipped?"Equipped":owned?"Equip this weapon":index==2?"Collect on the island to unlock":"Defeat Capri to unlock";
-            equipButton.interactable=owned&&!equipped;unequipButton.gameObject.SetActive(false);
+            equipButton.interactable=owned&&!equipped && !(weapons && weapons.SkyboardStowed);unequipButton.gameObject.SetActive(false);
+            if (owned && !equipped && weapons && weapons.SkyboardStowed) actionText.text="Put away the skyboard to switch weapons";
             if(rifleLocked)
             {
                 selectionStatus.text="Locked";
@@ -230,6 +242,7 @@ namespace Mavis
         }
         void InspectItem(EquipmentItem item)
         {
+            choosingScrollTarget=false;selectedCooldownTarget=null;
             selectedItem=item;selectedWeapon=-1;
             var glasses=GetComponent<WeaknessGlasses>();bool isGlasses=item&&item.id=="nailong_weakness_glasses";
             var worn=GetComponent<SahurWearableEquipment>();bool wearable=SahurWearableEquipment.CanWear(item);
@@ -259,6 +272,58 @@ namespace Mavis
                 actionText.text=owned ? "Press B during play" : "Defeat the marshmallows";
                 equipButton.interactable=false;unequipButton.gameObject.SetActive(false);
             }
+            if (item && item.id == "skyboard")
+            {
+                if (specimen) specimen.SetDrawing(EquipmentJournalInk.Drawing.Board);
+                var board = FindFirstObjectByType<SkyboardReward>();
+                selectionStatus.text = !owned ? "Not collected" : board && board.Flying ? "Flying" : board && board.Landing ? "Landing" : board && board.CooldownRemaining > 0 ? "Cooldown: " + CooldownTime(board.CooldownRemaining) : board ? "Ready" : "Unavailable here";
+                details.text = "A flying skateboard found at the end of the marshmallow course.\n\nUse to fly for 60 seconds.\nWASD: move  |  Space: rise\nCtrl: descend  |  F: dismount\n\nWhen time runs out, Sahur falls.\nCooldown: 15 minutes after flight.";
+                actionText.text = "Use Skyboard";
+                equipButton.interactable = owned && board && !board.Flying && !board.Landing && board.CooldownRemaining <= 0 && movement && !movement.ExternalMovementLock;
+                unequipButton.gameObject.SetActive(false);
+            }
+            if (item && item.id == "speed_scroll")
+            {
+                if (specimen) specimen.SetDrawing(EquipmentJournalInk.Drawing.Scroll);
+                selectionStatus.text = owned ? "Available: " + inventory.Count(item) : "None left";
+                details.text = "Choose a collected item to reduce its remaining cooldown by up to 20 minutes.\n\nThe Skyboard's 15-minute cooldown is fully cleared by one scroll. A scroll is consumed only when the selected item is cooling down.";
+                actionText.text = "Use (4)";
+                equipButton.interactable = owned;
+                unequipButton.gameObject.SetActive(false);
+            }
+            HighlightSelection();
+        }
+        static string CooldownTime(float seconds)
+        {
+            int value = Mathf.CeilToInt(seconds); return (value / 60).ToString("00") + ":" + (value % 60).ToString("00");
+        }
+        void BeginScrollTargetSelection()
+        {
+            choosingScrollTarget = true; selectedCooldownTarget = null;
+            categoryTitle.text = "Choose a cooldown";
+            foreach (var row in itemRows) { row.SetActive(false); Destroy(row); } itemRows.Clear();
+            int count = 0;
+            foreach (var behaviour in FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None))
+            {
+                if (!(behaviour is ICooldownTarget target) || !target.CooldownTargetOwned) continue;
+                if (!(behaviour is SkyboardReward) && behaviour.gameObject != gameObject) continue;
+                var candidate = target;
+                AddItemRow(candidate.CooldownDisplayName, candidate.CanReduceCooldown ? "Cooldown " + CooldownTime(candidate.CooldownRemaining) : "No reducible cooldown", count++, () => InspectCooldownTarget(candidate));
+            }
+            if (count == 0) itemRows.Add(Label(itemContent, "No eligible items collected yet", new Vector2(0,-80), new Vector2(290,110),18,Pencil,new Vector2(.5f,1)).gameObject);
+            itemContent.sizeDelta = new Vector2(0, Mathf.Max(430, count * 104));
+            itemTitle.text = "Choose a tool"; selectionStatus.text = "Select the item to receive the scroll";
+            details.text = "Choose an owned item with an active cooldown. The scroll will not be consumed for an item that is ready.";
+            actionText.text = "Select an item"; equipButton.interactable = false;
+            unequipText.text = "Back to Tools"; unequipButton.gameObject.SetActive(true);
+        }
+        void InspectCooldownTarget(ICooldownTarget target)
+        {
+            selectedCooldownTarget = target;
+            itemTitle.text = target.CooldownDisplayName;
+            selectionStatus.text = target.CanReduceCooldown ? "Cooldown: " + CooldownTime(target.CooldownRemaining) : "No reducible cooldown";
+            details.text = target.CanReduceCooldown ? "Use one Speed Scroll on this item to remove up to 20 minutes of remaining cooldown." : "This item is ready or currently in use. Choose an item with an active cooldown.";
+            actionText.text = "Use Scroll (4)"; equipButton.interactable = target.CanReduceCooldown;
             HighlightSelection();
         }
         void HighlightSelection()
@@ -287,12 +352,29 @@ namespace Mavis
         public void EquipSelection()
         {
             if(!IsOpen)return;
+            if (choosingScrollTarget)
+            {
+                if (SpeedScroll.TryUse(inventory, selectedCooldownTarget))
+                {
+                    SelectEquipment(EquipmentSlot.Tools);
+                    selectionStatus.text = "Cooldown reduced by up to 20 minutes";
+                }
+                else if (selectedCooldownTarget != null) InspectCooldownTarget(selectedCooldownTarget);
+                return;
+            }
+            if (selectedItem && selectedItem.id == "speed_scroll") { BeginScrollTargetSelection(); return; }
+            if (selectedItem && selectedItem.id == "skyboard")
+            {
+                var board = FindFirstObjectByType<SkyboardReward>();
+                if (board && equipButton.interactable) { SetOpen(false); board.TryStartFlight(); }
+                return;
+            }
             if(selectedWeapon>=0)weapons?.TryEquip((SahurWeaponLoadout.Weapon)selectedWeapon,true);
             else if(selectedItem&&selectedItem.id=="nailong_weakness_glasses")GetComponent<WeaknessGlasses>()?.Equip();
             else if(selectedItem)GetComponent<SahurWearableEquipment>()?.Equip(selectedItem);
             RefreshLanguage();
         }
-        public void UnequipSelection(){if(!IsOpen)return;if(selectedItem&&selectedItem.id!="nailong_weakness_glasses")GetComponent<SahurWearableEquipment>()?.Unequip(selectedItem.slot);else GetComponent<WeaknessGlasses>()?.Unequip();RefreshLanguage();}
+        public void UnequipSelection(){if(!IsOpen)return;if(choosingScrollTarget){SelectEquipment(EquipmentSlot.Tools);return;}if(selectedItem&&selectedItem.id!="nailong_weakness_glasses")GetComponent<SahurWearableEquipment>()?.Unequip(selectedItem.slot);else GetComponent<WeaknessGlasses>()?.Unequip();RefreshLanguage();}
 
         void OnCollected(EquipmentItem item)
         {
@@ -312,7 +394,7 @@ namespace Mavis
                 var names = recentPickups.ConvertAll(item => item ? item.LocalizedName : "");
                 pickupNotice.text = GameLocalization.Format("gear.pickup", string.Join(GameLocalization.Language == GameLanguage.English ? ", " : ", ", names));
             }
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < equipmentNames.Length; i++)
             {
                 int count = 0;
                 if (inventory != null) foreach (var pair in inventory.Items) if ((int)pair.Key.slot == i) count += pair.Value;
@@ -328,6 +410,7 @@ namespace Mavis
                 weaponHint.text=(weapons.WeaponMissing?GameLocalization.Text("Weapon lost"):GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName)+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+(weapons.HasStick?"":" · "+GameLocalization.Text("Weapon lost"))+
                     "\n[2] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.CapriTwinBlades)+(weapons.HasTwinBlades?"":" · "+locked)+
                     "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(!weapons.RifleUnlocked?" · "+locked:weapons.HasM4A1?"":" · "+missing);
+                if(GameControls.UsingGamepad)weaponHint.text=GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName+"\n["+GameControls.Prompt(GameControls.Command.NextWeapon)+"] Cycle weapon";
             }
             if (editingEquipment >= 0) SelectEquipment((EquipmentSlot)editingEquipment);
             else SelectSkillForAssignment(EditingSkill);
@@ -337,6 +420,7 @@ namespace Mavis
         {
             if (active != this || panel == null || open == IsOpen || (open && (PauseSettingsMenu.IsOpen || PlayerDeathRespawn.IsOpen || IslandMapUI.BlocksInput || SecondIslandAwakening.BlocksInputFor(movement)))) return;
             IsOpen = open;
+            GameControls.ConsumeMenuInput();
             panel.SetActive(open);
             consumedFrame = Time.frameCount;
             if (open)
@@ -407,7 +491,7 @@ namespace Mavis
             note.alignment=TextAnchor.MiddleLeft;
             Button(window,"Close ×",new Vector2(458,-391),new Vector2(150,42),()=>SetOpen(false));
             Label(window,"Gear slots",new Vector2(-516,229),new Vector2(210,30),17,Pencil);
-            for(int i=0;i<5;i++)
+            for(int i=0;i<equipmentNames.Length;i++)
             {
                 int index=i;
                 equipmentLabels[i]=Button(window,equipmentNames[i]+"     Empty",new Vector2(-516,164-i*76),new Vector2(214,64),()=>SelectEquipment((EquipmentSlot)index));
@@ -452,6 +536,7 @@ namespace Mavis
                 case 1:return EquipmentJournalInk.Drawing.Coat;
                 case 2:return EquipmentJournalInk.Drawing.Trousers;
                 case 3:return EquipmentJournalInk.Drawing.Boots;
+                case 5:return EquipmentJournalInk.Drawing.Scroll;
                 default:return EquipmentJournalInk.Drawing.Stick;
             }
         }
@@ -497,7 +582,7 @@ namespace Mavis
             var button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = image;
             Pen(rect,EquipmentJournalInk.Drawing.Border,Vector2.zero,size-new Vector2(3,3),new Color(Ink.r,Ink.g,Ink.b,.4f));
             SetSelected(button,false);
-            var navigation = button.navigation; navigation.mode = Navigation.Mode.None; button.navigation = navigation;
+            var navigation = button.navigation; navigation.mode = Navigation.Mode.Automatic; button.navigation = navigation;
             button.onClick.AddListener(action);
             return Label(rect, title, Vector2.zero, size - new Vector2(20, 6), 20, Ink);
         }
@@ -513,6 +598,7 @@ namespace Mavis
         void OnDestroy()
         {
             GameLocalization.Changed -= RefreshLanguage;
+            GameControls.Changed -= RefreshLanguage;
             if (inventory != null) inventory.Collected -= OnCollected;
             if (weapons != null) weapons.Changed -= RefreshLanguage;
             if (active == this) { SetOpen(false); active = null; IsOpen = false; consumedFrame = -1; }

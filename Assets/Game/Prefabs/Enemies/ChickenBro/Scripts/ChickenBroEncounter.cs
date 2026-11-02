@@ -5,13 +5,15 @@ using UnityEngine.UI;
 
 namespace Mavis
 {
-    /// <summary>Three short waves after Cappuccino. Mostly Chicken Bros, with long-legged ducks mixed in.</summary>
+    /// <summary>Three short waves after Cappuccino. Chicken Bros, long-legged ducks, and one bully goose per wave when assigned.</summary>
     [DisallowMultipleComponent]
     public sealed class ChickenBroEncounter : MonoBehaviour
     {
         public ChickenBroAI prefab;
         public ChickenBroAI duck;
+        public ChickenBroAI goose;
         [Range(0f, 1f)] public float duckRatio = 0.3f;
+        [Min(0)] public int goosePerWave;
         public int[] waveCounts = { 4, 6, 8 };
         [Min(1)] public int maxAlive = 8;
         [Min(1)] public int maxSimultaneousAttackers = 2;
@@ -32,7 +34,7 @@ namespace Mavis
         Text caption;
         GameObject captionRoot;
         float nextWatch, nextWaveAt, captionUntil;
-        int wave = -1, spawned, ducks;
+        int wave = -1, spawned, ducks, geese;
         bool anchored, started, baking, finished;
         public static ChickenBroEncounter Active { get; private set; }
         public int Alive => flock == null ? 0 : flock.Members.Count;
@@ -114,8 +116,9 @@ namespace Mavis
             wave = 0;
             spawned = 0;
             ducks = 0;
+            geese = 0;
             SpawnBudget();
-            Say("Wave 1  ·  The flock is closing in.", 4f);
+            Say(goose ? "Wave 1  ·  A bully goose leads the flock." : "Wave 1  ·  The flock is closing in.", 4f);
         }
 
         void Bake()
@@ -147,22 +150,29 @@ namespace Mavis
             wave++;
             spawned = 0;
             ducks = 0;
+            geese = 0;
             nextWaveAt = 0f;
             SpawnBudget();
-            Say(wave == 1 ? "Wave 2  ·  Chicken Bros and long-legged ducks arrive." : "Wave 3  ·  The flock closes in.", 3.5f);
+            string next = wave == 1
+                ? (goose ? "Wave 2  ·  Another bully goose joins the flock." : "Wave 2  ·  Chicken Bros and long-legged ducks arrive.")
+                : (goose ? "Wave 3  ·  The flock closes in around a bully goose." : "Wave 3  ·  The flock closes in.");
+            Say(next, 3.5f);
         }
 
         void SpawnBudget()
         {
             while (spawned < waveCounts[wave] && Alive < maxAlive)
             {
-                bool asDuck = duck && ducks < Mathf.Round((spawned + 1) * duckRatio);
-                var chosen = asDuck ? duck : prefab;
+                bool asGoose = goose && geese < goosePerWave;
+                int regularIndex = spawned - geese;
+                bool asDuck = !asGoose && duck && ducks < Mathf.Round((regularIndex + 1) * duckRatio);
+                var chosen = asGoose ? goose : asDuck ? duck : prefab;
                 if (!chosen) break;
                 Vector3 at = Ring(spawned, waveCounts[wave]);
                 var bro = Instantiate(chosen);
                 bro.Activate(at, Quaternion.LookRotation(FlatDirection(at, player ? player.transform.position : transform.position), Vector3.up), flock);
-                if (asDuck) ducks++;
+                if (asGoose) geese++;
+                else if (asDuck) ducks++;
                 spawned++;
             }
         }

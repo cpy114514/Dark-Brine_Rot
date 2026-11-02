@@ -14,6 +14,7 @@ namespace Mavis
         public static void PrewarmImpacts()
         {
             if(!Application.isPlaying)return;
+            if(BrineVfxWorld.Get())return;
             impacts.RemoveAll(p=>p==null);
             if(impacts.Count>0)return;
             CreateImpact(false);CreateImpact(false);CreateImpact(true);CreateImpact(true);
@@ -56,6 +57,14 @@ namespace Mavis
         public static void Burst(Vector3 point, Vector3 normal, Color tint, int count, float spread, bool hot = false)
         {
             count = NaturalParticleEffects.BurstBudget(point,count); if (count == 0) return;
+            // Authored boss cues keep their timing; dust shares the same lit
+            // spatial volume as melee, rather than emitting billboard clouds.
+            var world=Application.isPlaying?BrineVfxWorld.Get():null;
+            if(world&&!hot)
+            {
+                world.Emit(0,point,normal,Mathf.Clamp(spread*.5f,.5f,2),Mathf.Clamp01(tint.a),false,ambientDust:true);
+                return;
+            }
             BossImpactEmitter emitter=null;
             for(int i=impacts.Count-1;i>=0;i--)
             {

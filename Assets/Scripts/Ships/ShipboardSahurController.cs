@@ -121,20 +121,20 @@ public sealed class ShipboardSahurController : MonoBehaviour
 
         Keyboard keyboard = Keyboard.current;
         Mouse mouse = Mouse.current;
-        if (keyboard == null || PauseSettingsMenu.IsOpen)
+        if (!GameControls.HasDevice || PauseSettingsMenu.IsOpen)
         {
             if (activeLadder != null) PlaceLadderFeet();
             return;
         }
 
-        if (keyboard.vKey.wasPressedThisFrame)
+        if (GameControls.Down(GameControls.Command.CameraView))
         {
             wideView = !wideView;
             if (shipCamera != null) shipCamera.enabled = wideView;
             if (!wideView) cameraInitialized = false;
         }
 
-        if (!wideView && mouse != null)
+        if (!wideView && mouse != null && !GameControls.UsingGamepad)
         {
             if (mouse.leftButton.isPressed)
             {
@@ -145,11 +145,12 @@ public sealed class ShipboardSahurController : MonoBehaviour
             cameraDistance = Mathf.Clamp(cameraDistance - mouse.scroll.ReadValue().y * zoomSensitivity, 3.5f, 16f);
         }
 
-        Vector2 input = Vector2.zero;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Forward)) input.y += 1f;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Back)) input.y -= 1f;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Right)) input.x += 1f;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Left)) input.x -= 1f;
+        if(!wideView&&GameControls.UsingGamepad)
+        {
+            Vector2 delta=GameControls.LookDelta(mouseSensitivity,Time.deltaTime);
+            yaw+=delta.x;pitch=Mathf.Clamp(pitch-delta.y,-35f,70f);
+        }
+        Vector2 input = GameControls.Move;
         input = Vector2.ClampMagnitude(input, 1f);
 
         Vector3 forward = Quaternion.Euler(0f, yaw, 0f) * Vector3.forward;
@@ -267,8 +268,7 @@ public sealed class ShipboardSahurController : MonoBehaviour
 
     void UpdateLadder()
     {
-        float input = (GameInputSettings.Pressed(GameInputSettings.Action.Forward) ? 1f : 0f) -
-                      (GameInputSettings.Pressed(GameInputSettings.Action.Back) ? 1f : 0f);
+        float input = GameControls.Move.y;
         ladderDistance = Mathf.Clamp(ladderDistance +
             input * ladderDirection * activeLadder.climbSpeed * Time.deltaTime,
             0f, activeLadder.Length);

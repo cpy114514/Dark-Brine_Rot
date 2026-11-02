@@ -56,10 +56,9 @@ public sealed partial class Story1WreckBattle
         MovePlanks(deltaTime);
         // The player can move while choosing; the shark must not punish a loading error.
         playerHealth.GrantProtection(2);
-        var keys=Keyboard.current;
-        if(keys==null || SahurLoadoutUI.BlocksInput || IslandMapUI.BlocksInput || PlayerDeathRespawn.IsOpen)return;
-        if(keys.rKey.wasPressedThisFrame)RetryFinale();
-        else if(keys.enterKey.wasPressedThisFrame)ContinueAfterFinaleFailure();
+        if(SahurLoadoutUI.BlocksInput || IslandMapUI.BlocksInput || PlayerDeathRespawn.IsOpen)return;
+        if(GameControls.Down(GameControls.Command.Reload))RetryFinale();
+        else if(GameControls.Down(GameControls.Command.Confirm))ContinueAfterFinaleFailure();
     }
 
     public bool RetryFinale()

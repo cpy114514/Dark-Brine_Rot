@@ -16,10 +16,37 @@ public sealed partial class Story1WreckBattle
     static readonly float[] RedClearBearings = { 0, .25f, -.25f, .5f, -.5f, .75f, -.75f, 1, -1 };
     static readonly float[] RedClearPursuitLifts = { 0, .75f, 1.5f };
     static readonly float[] RedClearDuelLifts = { 0, 1.5f, 3, 5 };
-    static readonly float[] RedClearClimbLifts = { 0 };
+    static readonly float[] RedClearClimbLifts = { 0, .75f, 1.5f };
     static readonly float[] RedClearRanges = { 1, .86f, 1.12f };
-    static readonly float[] RedClearClimbRanges = { 1 };
+    static readonly float[] RedClearClimbRanges = { 1, .86f, 1.12f };
     static readonly float[] RedClearProneRanges = { 1, .85f, 1.2f };
+    static readonly float[] RedClearProneLifts = { 0, .75f, 1.5f };
+    static readonly float[] RedClearCloseLifts = { 0, .75f, 1.5f, 3, 5 };
+
+    int redCameraRequestedFrame=-1,redPairRequestedFrame=-1;
+    Vector3 redCameraHeroAtRequest;
+    float redPairDistance,redPairLift,redPairSide,redPairLean;
+    bool redPairLocked;
+
+    // Contact solving can still translate the animal after the director samples
+    // its action. Compose only once that final posed skin and hero are known.
+    internal void RedFinalizeFilmCamera()
+    {
+        if(redCameraRequestedFrame!=Time.frameCount||sequence==null||sequence.storyCamera==null)return;
+        Vector3 position=redCameraPosition,focus=redCameraLook;
+        if(redPairRequestedFrame==Time.frameCount)
+            RedResolveTwoShot(out position,out focus);
+        else if(RedesignStage==OpeningStage.Pursuit||RedesignStage==OpeningStage.Duel)
+        {
+            Vector3 correction=RedChest-redCameraHeroAtRequest;
+            focus+=correction;
+            // The climb lens belongs to the real board edge, not to the swimmer.
+            if(RedesignShot!=25)position+=correction;
+        }
+        var camera=sequence.storyCamera;camera.fieldOfView=redCameraFov;
+        position=RedClearCamera(RedesignShot,position,focus);
+        camera.transform.SetPositionAndRotation(position,Quaternion.LookRotation(focus-position,Vector3.up)*RedShakeRotation());
+    }
 
     // Director shots set an absolute pose after CombatCameraShake runs, so
     // cinematic impacts own a rotation-only shake that cannot move the lens into wood.
@@ -60,20 +87,40 @@ public sealed partial class Story1WreckBattle
     Vector3 redTwoShotDirection;
     void RedTwoShot(int shot, float distance, float lift, float side, float fov, bool locked = false, float lean = .45f)
     {
+        redPairRequestedFrame=Time.frameCount;
+        redPairDistance=distance;redPairLift=lift;redPairSide=side;redPairLean=lean;redPairLocked=locked;
+        RedShot(shot,RedChest,RedChest,fov);
+    }
+    void RedResolveTwoShot(out Vector3 at,out Vector3 focus)
+    {
+        int shot=RedesignShot;
         Vector3 hero = RedChest, nose = sharkAnimator.NoseWorldPoint;
         Vector3 toShark = Vector3.ProjectOnPlane(nose - hero, Vector3.up);
         Vector3 wanted = toShark.sqrMagnitude > 1 ? toShark.normalized : redForward;
         if (redTwoShot != shot) { redTwoShot = shot; redTwoShotDirection = wanted; }
-        else if (!locked)
+        else if (!redPairLocked)
             redTwoShotDirection = Vector3.Slerp(redTwoShotDirection, wanted, 1 - Mathf.Exp(-Mathf.Max(0, Time.deltaTime) / .7f)).normalized;
         Vector3 across = Vector3.Cross(Vector3.up, redTwoShotDirection);
-        Vector3 at = hero - redTwoShotDirection * distance + across * (distance * side) + Vector3.up * lift;
+        at = hero - redTwoShotDirection * redPairDistance + across * (redPairDistance * redPairSide) + Vector3.up * redPairLift;
         // A distant animal should pull the composition, not empty Sahur's side of it.
-        RedShot(shot, at, hero + Vector3.ClampMagnitude(nose - hero, 18) * lean, fov);
+        focus = hero + Vector3.ClampMagnitude(nose - hero, 18) * redPairLean;
     }
 
     /// <summary>Weighted real-wood obstruction of the returned camera; zero is clear.</summary>
     public float RedesignCameraWoodObstruction { get; private set; }
+    public bool RedesignCameraSharkObstruction { get; private set; }
+
+    float RedCameraOcclusion(Vector3 at,Vector3 focus)=>RedCameraObstruction(at,focus)+(RedCameraBlockedByShark(at)?8:0);
+    bool RedCameraBlockedByShark(Vector3 at)
+    {
+        // Test only shots that must see Sahur past the passing animal. A
+        // deliberate close-up of the thrown club's target keeps its own framing.
+        if(RedesignStage!=OpeningStage.Pursuit||RedesignShot!=20&&RedesignShot!=22&&RedesignShot!=24&&RedesignShot!=25)return false;
+        var skin=RedContactSkin();if(skin==null)return false;
+        var tree=RedSolidIndex(skin);var inverse=skin.transform.worldToLocalMatrix;
+        float scale=Mathf.Max(.001f,Mathf.Abs(skin.transform.lossyScale.x));
+        return tree.CapsuleGapUpTo(inverse.MultiplyPoint3x4(at),inverse.MultiplyPoint3x4(RedHead),.04f/scale,.02f/scale)<.02f/scale;
+    }
 
     /// <summary>
     /// Keep the authored reveal, choose a nearby clear angle at the cut, and
@@ -86,6 +133,7 @@ public sealed partial class Story1WreckBattle
         {
             redClearShot = int.MinValue;
             RedesignCameraWoodObstruction = 0;
+            RedesignCameraSharkObstruction = false;
             return wanted;
         }
 
@@ -108,16 +156,18 @@ public sealed partial class Story1WreckBattle
         }
 
         Vector3 current = RedCameraCandidate(wanted, focus, redClearOffset);
-        float obstruction = RedCameraObstruction(current, focus);
+        float obstruction = RedCameraOcclusion(current, focus);
         float dt = Mathf.Max(0, Time.deltaTime);
         redClearBlockedSeconds = obstruction > .1f ? redClearBlockedSeconds + dt : 0;
         // Hysteresis prevents wave/debris motion from switching sides every
         // frame. An already clear shot never drifts back towards its old angle.
-        if (!cut && redClearBlockedSeconds > .22f && Time.time - redClearLastSearch > .45f)
+        float blockedGrace=RedesignStage==OpeningStage.Pursuit?.08f:.22f;
+        float searchInterval=RedesignStage==OpeningStage.Pursuit?.2f:.45f;
+        if (!cut && redClearBlockedSeconds > blockedGrace && Time.time - redClearLastSearch > searchInterval)
         {
             Vector3 alternative = RedChooseClearCamera(shot, wanted, focus);
             Vector3 point = RedCameraCandidate(wanted, focus, alternative);
-            if (RedCameraObstruction(point, focus) + .35f < obstruction)
+            if (RedCameraOcclusion(point, focus) + .35f < obstruction)
                 redClearTarget = alternative;
             redClearLastSearch = Time.time;
         }
@@ -132,6 +182,7 @@ public sealed partial class Story1WreckBattle
         // fragment must be resolved in this rendered frame.
         current=RedKeepLensOutOfWood(current,focus);
         RedesignCameraWoodObstruction = RedCameraObstruction(current, focus);
+        RedesignCameraSharkObstruction = RedCameraBlockedByShark(current);
         return current;
     }
 
@@ -208,8 +259,8 @@ public sealed partial class Story1WreckBattle
         bool climb = shot == 25;
         // Close surprise/reveal shots remain on their authored side. In
         // particular, the climb stays frontal and at board height.
-        float bearing = climb ? 15 : shot == 20 || shot == 21 || shot == 33 || shot == 39 ? 7.5f : 32;
-        var lifts = climb ? RedClearClimbLifts : RedesignStage == OpeningStage.Pursuit ? RedClearPursuitLifts : RedClearDuelLifts;
+        float bearing = climb ? 20 : shot==20 ? 90 : shot == 21 || shot == 33 || shot == 39 ? 7.5f : shot==22||shot==24 ? 48 : 32;
+        var lifts = climb ? RedClearClimbLifts : shot==20 ? RedClearCloseLifts : shot==34 ? RedClearProneLifts : RedesignStage == OpeningStage.Pursuit ? RedClearPursuitLifts : RedClearDuelLifts;
         // The prone subject is much lower than the standing focus. A closer
         // clear view can look past foreground wreckage without hiding it.
         var ranges = climb ? RedClearClimbRanges : shot == 34 ? RedClearProneRanges : RedClearRanges;
@@ -225,7 +276,7 @@ public sealed partial class Story1WreckBattle
             // exists, farther compositions need no more native mesh queries.
             if (composition >= bestCost) continue;
             Vector3 candidate = RedCameraCandidate(wanted, focus, offset);
-            float blocked = RedCameraObstruction(candidate, focus);
+            float blocked = RedCameraOcclusion(candidate, focus);
             float cost = blocked * 20 + composition;
             if (cost < bestCost) { bestCost = cost; best = offset; }
             if (blocked == 0 && composition == 0) return best;
@@ -238,7 +289,7 @@ public sealed partial class Story1WreckBattle
         Vector3 delta = wanted - focus;
         Vector3 planar = Quaternion.AngleAxis(offset.x, Vector3.up) * Vector3.ProjectOnPlane(delta, Vector3.up) * offset.z;
         Vector3 at = focus + planar + Vector3.up * (delta.y + offset.y);
-        if (RedesignStage == OpeningStage.Pursuit || RedesignStage == OpeningStage.Duel && (redClearShot == 34 || redClearShot == 44))
+        if (RedesignStage == OpeningStage.Pursuit || RedesignStage == OpeningStage.Duel)
         {
             // Sample the current displaced ocean at the actual lens and its
             // near surroundings, not at Sahur or at the board's centre.

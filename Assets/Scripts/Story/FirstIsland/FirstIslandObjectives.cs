@@ -57,6 +57,29 @@ namespace Mavis
         bool pendingSave;
         public int Stage => progress.stage;
         public string RecommendedBossId => progress.bossId;
+        // The world-space guide reads the same progression as the objective
+        // card. Resolving a visual target never advances or saves a quest.
+        public bool TryGetGuidanceTarget(out Vector3 point,out string id)
+        {
+            point=default;id=null;
+            if(arrival&&!arrival.IsAwake)return false;
+            if(arrival&&!arrival.HasStick)
+            {
+                if(!arrival.lostStickPoint)return false;
+                point=arrival.lostStickPoint.position;id="arrival-stick";return true;
+            }
+            if(progress.stage<2||DefeatedBossCount==3)return false;
+            BossFlow target=null;float distance=float.PositiveInfinity;
+            foreach(var flow in flows)
+            {
+                if(flow.progress.defeated||flow.Dead||!flow.identity||!flow.identity.gameObject.activeInHierarchy||
+                    GameWorldProgress.IsDefeated(flow.progress.bossId)||!FirstIslandBossProgression.IsUnlocked(flow.progress.kind))continue;
+                float candidate=FlatDistanceSquared(transform.position,flow.identity.transform.position);
+                if(candidate<distance){distance=candidate;target=flow;}
+            }
+            if(target==null||target.Fighting)return false;
+            point=target.identity.transform.position;id=target.progress.bossId;return true;
+        }
         public int DefeatedBossCount
         {
             get
@@ -91,6 +114,7 @@ namespace Mavis
         }
         void Start()
         {
+            if(!GetComponent<MainQuestGuidance>())gameObject.AddComponent<MainQuestGuidance>();
             player = GetComponent<ThirdPersonPlayerController>(); arrival = GetComponent<FirstIslandArrival>();
             inventory = GetComponent<EquipmentInventory>(); attack = GetComponent<SahurAttack>();
             rifle = GetComponent<SahurRifleCombat>();
@@ -220,9 +244,9 @@ namespace Mavis
             switch (progress.combatLesson)
             {
                 case 0: return "1 / 4 · Lock on\nFace a nearby enemy; middle-click to lock on.\nMiddle-click again to release. Approach when ready.";
-                case 1: return "2 / 4 · Dodge\nPress " + GameInputSettings.Get(GameInputSettings.Action.Dodge) + " with a direction to dodge.\nDodging costs stamina; let the SP bar recover.";
+                case 1: return "2 / 4 · Dodge\nPress " + GameControls.Token(GameInputSettings.Action.Dodge) + " with a direction to dodge.\nDodging costs stamina; let the SP bar recover.";
                 case 2: return "3 / 4 · Charged strike\nHold right mouse for 0.5s, then release.\nUse a melee weapon; save SP for dodging.";
-                default: return "4 / 4 · Healing\nPress " + GameInputSettings.Get(GameInputSettings.Action.Heal) + " to try a healing pack (3 per life; refilled on respawn).\nFull health uses none. Shore camp also restores HP/SP.";
+                default: return "4 / 4 · Healing\nPress " + GameControls.Token(GameInputSettings.Action.Heal) + " to try a healing pack (3 per life; refilled on respawn).\nFull health uses none. Shore camp also restores HP/SP.";
             }
         }
         bool NearLockedBoss()

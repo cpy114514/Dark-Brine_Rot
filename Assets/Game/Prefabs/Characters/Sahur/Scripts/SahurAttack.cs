@@ -154,7 +154,7 @@ namespace Mavis
         // Full-body spins retain their authored pose and hit-stop, while the capsule travels.
         public bool CanTranslateDuringCombat => CanMoveDuringCombat || IsTwinBladeSpinActive ||
             IsJumpSlashRecovering && controller != null && controller.CanUseGroundAttack;
-        public bool UsesAnimationRootMotion => attacking && !IsSpinning && !IsTwinBladeSpinActive && !(UsesTwinBlades && IsHeavyAttackActive) && !IsJumpSlashActive && !usesRightArmHeavy && !usesUpperBodyLight;
+        public bool UsesAnimationRootMotion => attacking && !IsPerfectCounterActive && !IsSpinning && !IsTwinBladeSpinActive && !(UsesTwinBlades && IsHeavyAttackActive) && !IsJumpSlashActive && !usesRightArmHeavy && !usesUpperBodyLight;
         public bool SafeForCinematic => !IsSpinning && !IsGuarding && (!IsCombatMotionActive || (attacking && !charging && CurrentAttackPhase>=CurrentWindowEnd+.04f));
         public float CurrentAttackPhase
         {
@@ -174,7 +174,7 @@ namespace Mavis
                 return current.fullPathHash==AttackAnimationHash ? current.normalizedTime : 0;
             }
         }
-        Vector2 CurrentDamageWindow => IsJumpSlashActive ? (airComboStep == 0 ? comboOneHitWindow : airComboStep == 1 ? comboTwoHitWindow : UsesTwinBlades ? jumpSlashHitWindow : jumpChopHitWindow) :
+        Vector2 CurrentDamageWindow => IsPerfectCounterActive ? new Vector2(.30f,.65f) : IsJumpSlashActive ? (airComboStep == 0 ? comboOneHitWindow : airComboStep == 1 ? comboTwoHitWindow : UsesTwinBlades ? jumpSlashHitWindow : jumpChopHitWindow) :
             comboStep==0 ? comboOneHitWindow : comboStep==1 ? comboTwoHitWindow : comboStep==2 ? comboThreeHitWindow :
             IsHeavyAttackActive ? UsesTwinBlades ? TwinBladeRushWindow : new Vector2(heavySwingWindowStart,heavySwingWindowEnd) :
             new Vector2(swingWindowStart,swingWindowEnd);
@@ -352,6 +352,9 @@ namespace Mavis
 
         void Update()
         {
+            UpdatePerfectCounter();
+            if(GameControls.InputInterrupted&&charging)CancelCharge();
+            if(GameControls.Down(GameControls.Command.Attack))TriggerAttack();
             if(UpdateCombinations()){chargeInputUntil=-1;return;}
             // Check before animation progress, charge release or damage. The
             // movement controller also checks so script order cannot delay it.
@@ -398,16 +401,15 @@ namespace Mavis
             UpdateAttackProgress();
             UpdateAirLegLayer();
             UpdateLightPlayback();
-            var mouse = Mouse.current;
             bool gameHasFocus = Cursor.lockState == CursorLockMode.Locked;
-            if (charging && (!gameHasFocus || mouse == null ||
+            if (charging && (!gameHasFocus || !GameControls.HasDevice ||
                              (controller != null && !controller.CanMaintainGroundCharge)))
                 CancelCharge();
-            else if (charging && !mouse.rightButton.isPressed)
+            else if (charging && !GameControls.Held(GameControls.Command.Charge))
                 ReleaseCharge();
             if (charging) UpdateChargePose();
-            else if (!CinematicHandoffPending && !charging && !attacking && mouse != null && gameHasFocus &&
-                     mouse.rightButton.isPressed && Time.time <= chargeInputUntil && Time.time - lastFireTime >= cooldown &&
+            else if (!CinematicHandoffPending && !charging && !attacking && gameHasFocus &&
+                     GameControls.Held(GameControls.Command.Charge) && Time.time <= chargeInputUntil && Time.time - lastFireTime >= cooldown &&
                      (controller == null || controller.CanUseGroundAttack || controller.CanMaintainGroundCharge))
             {
                 StartCharge();
@@ -428,8 +430,7 @@ namespace Mavis
 
         void BufferChargeInput()
         {
-            var mouse=Mouse.current;
-            if(mouse==null || !mouse.rightButton.isPressed || Cursor.lockState!=CursorLockMode.Locked ||
+            if(!GameControls.Held(GameControls.Command.Charge) || Cursor.lockState!=CursorLockMode.Locked ||
                 PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
                 controller!=null&&(!controller.enabled||controller.ExternalControlLock||controller.ExternalMovementLock||controller.Swimming))
                 chargeInputUntil=-1;
@@ -438,7 +439,7 @@ namespace Mavis
             // the press buffer; honor the still-held button once grounded.
             // Airborne, swimming, dodge and external-control gates still own
             // eligibility, and a released button clears the intention above.
-            else if(mouse.rightButton.wasPressedThisFrame || !charging &&
+            else if(GameControls.Down(GameControls.Command.Charge) || !charging &&
                 (controller==null || controller.CanMaintainGroundCharge || controller.CanUseGroundAttack))
                 chargeInputUntil=Time.time+Feel.inputBuffer;
         }
@@ -459,12 +460,13 @@ namespace Mavis
             UpdateHitbox();
             if(impactFeedback && impactFeedback.Visuals && stickHitbox)
             {
-                GetWeaponVolume(out var trailA,out var trailB,out _);
-                impactFeedback.Visuals.Sample(trailA,trailB,attacking && trailActive,Feel.trailLifetime);
+                impactFeedback.Visuals.SetAttack(IsSpinning?CombatHitKind.Spin:IsJumpSlashActive?CombatHitKind.JumpSlash:
+                    IsHeavyAttackActive?CombatHitKind.ChargedHeavy:comboStep==2?CombatHitKind.ComboFinisher:
+                    comboStep==1?CombatHitKind.ComboTwo:CombatHitKind.ComboOne,charging,ChargeElapsed/EffectiveFullChargeTime);
+                impactFeedback.Visuals.QueueWeapon(stickHitbox,attacking && trailActive,Feel.trailLifetime);
                 if(secondBlade is CapsuleCollider otherBlade)
                 {
-                    Story1CapsuleContact.Segment(otherBlade,out var otherA,out var otherB,out _);
-                    impactFeedback.Visuals.Sample(otherA,otherB,attacking && trailActive,Feel.trailLifetime,1);
+                    impactFeedback.Visuals.QueueWeapon(otherBlade,attacking && trailActive,Feel.trailLifetime,1);
                 }
             }
         }
@@ -487,6 +489,7 @@ namespace Mavis
             // SendMessages and action callbacks can both arrive in one frame.
             if (lastAttackInputFrame == Time.frameCount) return;
             lastAttackInputFrame = Time.frameCount;
+            if(controller&&controller.PerfectCounterInput(this))return;
 
             if (attacking)
             {

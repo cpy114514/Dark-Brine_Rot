@@ -22,7 +22,7 @@ namespace Mavis
             public Bounds bounds;
             public ShadowCastingMode shadows;
             public ShadowCastingMode currentShadows;
-            public bool forced, occlusion, grass, duplicate, legacy;
+            public bool forced, occlusion, grass, duplicate, legacy, receiveShadows;
             public bool batchable;
             public bool renderOff;
             public Material drawMaterial;
@@ -82,7 +82,7 @@ namespace Mavis
         {
             public int renderer, filter, mesh;
             public int[] materials;
-            public bool forced, occlusion;
+            public bool forced, occlusion, receiveShadows, hasReceiveShadows;
             public ShadowCastingMode shadows;
         }
         [System.Serializable] sealed class ReloadRenderers
@@ -102,7 +102,8 @@ namespace Mavis
                 for (int i = 0; i < materials.Length; i++) materials[i] = item.materials[i] ? item.materials[i].GetInstanceID() : 0;
                 snapshot.items.Add(new ReloadRenderer { renderer = item.renderer.GetInstanceID(),
                     filter = item.filter ? item.filter.GetInstanceID() : 0, mesh = item.original ? item.original.GetInstanceID() : 0,
-                    materials = materials, forced = item.forced, occlusion = item.occlusion, shadows = item.shadows });
+                    materials = materials, forced = item.forced, occlusion = item.occlusion, shadows = item.shadows,
+                    receiveShadows=item.receiveShadows, hasReceiveShadows=true });
             }
             UnityEditor.SessionState.SetString(ReloadKey, JsonUtility.ToJson(snapshot));
         }
@@ -139,6 +140,7 @@ namespace Mavis
             renderer.forceRenderingOff = item.forced;
             renderer.allowOcclusionWhenDynamic = item.occlusion;
             renderer.shadowCastingMode = item.shadows;
+            if(item.hasReceiveShadows)renderer.receiveShadows=item.receiveShadows;
             renderer.sharedMaterials = materials;
             var filter = UnityEditor.EditorUtility.EntityIdToObject(item.filter) as MeshFilter;
             if (filter) filter.sharedMesh = UnityEditor.EditorUtility.EntityIdToObject(item.mesh) as Mesh;
@@ -154,7 +156,7 @@ namespace Mavis
         readonly Dictionary<Mesh, Mesh> renderMeshes = new Dictionary<Mesh, Mesh>();
         List<GrassBatch> activeGrassBatches = new List<GrassBatch>();
         List<GrassBatch> pendingGrassBatches = new List<GrassBatch>();
-        GrassBatch visibleGrass;
+        GrassBatch visibleGrass,shadowGrass;
         readonly Plane[] grassPlanes = new Plane[6];
         readonly Vector3[] grassPlaneAbsoluteNormals = new Vector3[6];
         static readonly int GrassAnchorId = Shader.PropertyToID("_MavisWindAnchorY");
@@ -185,6 +187,32 @@ namespace Mavis
         Camera[] grassCameras = new Camera[4];
         int submittedGrassBatches;
         public bool IsReady => cacheRoutine == null && !foliageRefreshing && foliage.Count > 0;
+        // Retire unresolved blades before the CPU's conservative residency edge.
+        public const float GrassFadeStart = 140f, GrassFadeEnd = 176f, GrassResidentDistance = 190f;
+        static readonly int GrassFadeRangeId = Shader.PropertyToID("_MavisGrassFadeRange");
+        public const float GrassShadowFadeStart=24f,GrassShadowFadeEnd=36f,GrassShadowResidentDistance=44f;
+        static readonly int GrassShadowRangeId=Shader.PropertyToID("_MavisGrassShadowRange");
+#if UNITY_EDITOR
+        [UnityEditor.InitializeOnLoadMethod]
+        static void RegisterGrassPreviewCleanup()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged -= ClearGrassPreview;
+            UnityEditor.EditorApplication.playModeStateChanged += ClearGrassPreview;
+            if (!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+                ClearGrassGlobals();
+        }
+        static void ClearGrassPreview(UnityEditor.PlayModeStateChange state)
+        {
+            // The Editor restores shader globals after runtime OnDisable.
+            if (state == UnityEditor.PlayModeStateChange.EnteredEditMode)
+                ClearGrassGlobals();
+        }
+#endif
+        static void ClearGrassGlobals()
+        {
+            Shader.SetGlobalVector(GrassFadeRangeId,Vector4.zero);
+            Shader.SetGlobalVector(GrassShadowRangeId,Vector4.zero);
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         static void Install()
@@ -208,8 +236,11 @@ namespace Mavis
         void OnEnable()
         {
             if (!Application.isPlaying) return;
+            Shader.SetGlobalVector(GrassFadeRangeId,new Vector4(GrassFadeStart,GrassFadeEnd,1f/(GrassFadeEnd-GrassFadeStart),1));
+            Shader.SetGlobalVector(GrassShadowRangeId,new Vector4(GrassShadowFadeStart,GrassShadowFadeEnd,1f/(GrassShadowFadeEnd-GrassShadowFadeStart),1));
             // Draw graphs and mesh maps are managed state; recreate them after reload.
             if (visibleGrass == null) visibleGrass = new GrassBatch();
+            if (shadowGrass == null) shadowGrass = new GrassBatch();
             var submission = GetComponent<GrassRenderSubmission>();
             if (submission == null) submission = gameObject.AddComponent<GrassRenderSubmission>();
             submission.owner = this;
@@ -300,6 +331,7 @@ namespace Mavis
                     grassPadding.Add(batch.material, scale);
                 }
                 float padding = scale.x * batch.maximumResponse + scale.y;
+                SubmitGrassShadows(batch,camera,padding);
                 int classification = GrassFrustum(batch.bounds, padding);
                 if (classification < 0) continue;
                 if (classification > 0) { SubmitGrass(batch, camera); continue; }
@@ -351,8 +383,28 @@ namespace Mavis
                 Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.matrices, batch.count, batch.properties,
                     ShadowCastingMode.Off, true, 0, camera, LightProbeUsage.Off);
         }
+        void SubmitGrassShadows(GrassBatch batch,Camera camera,float padding)
+        {
+            if(QualitySettings.shadows==ShadowQuality.Disable||QualitySettings.shadowDistance<=0||
+                SquaredDistance(camera.transform.position,batch.bounds)>GrassShadowResidentDistance*GrassShadowResidentDistance)return;
+            var shadow=shadowGrass;shadow.count=0;
+            float range=GrassShadowResidentDistance+padding;
+            for(int i=0;i<batch.count;i++)
+            {
+                if(SquaredDistance(camera.transform.position,batch.occupants[i].bounds)>range*range)continue;
+                int index=shadow.count++;shadow.matrices[index]=batch.matrices[i];shadow.anchors[index]=batch.anchors[i];
+                shadow.heights[index]=batch.heights[i];shadow.responses[index]=batch.responses[i];shadow.stiffness[index]=batch.stiffness[i];
+            }
+            if(shadow.count==0)return;
+            SetGrassProperties(shadow);
+            // Off-screen blades may still cast into the view. Select the small
+            // shadow set independently of the camera's visible-blade frustum.
+            Graphics.DrawMeshInstanced(batch.mesh,0,batch.material,shadow.matrices,shadow.count,shadow.properties,
+                ShadowCastingMode.ShadowsOnly,false,0,camera,LightProbeUsage.Off);
+        }
         static void SetGrassProperties(GrassBatch batch)
         {
+            batch.properties.SetFloat("_ClipBelowSea",1f);
             batch.properties.SetFloatArray(GrassAnchorId, batch.anchors);
             batch.properties.SetFloatArray(GrassHeightId, batch.heights);
             batch.properties.SetFloatArray(GrassResponseId, batch.responses);
@@ -370,7 +422,7 @@ namespace Mavis
             {
             // Terrain textures carry the distant meadow. Drawing individual
             // blades across the entire island overwhelms even instanced batches.
-            const float grassDistance = 180f;
+            const float grassDistance = GrassResidentDistance;
             foreach (var batch in pendingGrassBatches) batch.count = 0;
             foreach (var group in grassBatches.Values) group.cursor = 0;
             pendingGrassBatches.Clear();
@@ -407,8 +459,12 @@ namespace Mavis
                 if (item.filter == null) continue;
                 if (item.grass)
                 {
-                    Mesh desired = item.detail != null && item.detail.far != null && squared > 35f * 35f
-                        ? item.detail.far : item.original;
+                    var casting=!item.batchable&&squared<GrassShadowResidentDistance*GrassShadowResidentDistance?ShadowCastingMode.TwoSided:ShadowCastingMode.Off;
+                    if(item.currentShadows!=casting){item.renderer.shadowCastingMode=casting;item.currentShadows=casting;}
+                    // Fix the legacy layer to one economical layout at ALL
+                    // distances. VerifiedGrass keeps its complete original Near
+                    // layout separately; approaching must not change either layer.
+                    Mesh desired = item.detail != null && item.detail.far != null ? item.detail.far : item.original;
                     if (item.compactWind && renderMeshes.TryGetValue(desired, out var compact)) desired = compact;
                     if (item.currentMesh != desired)
                     { item.filter.sharedMesh = desired; item.currentMesh = desired; }
@@ -540,7 +596,7 @@ namespace Mavis
                 if (!grass && detail == null && !duplicate && !legacy) continue;
                 var item = new Foliage { renderer=renderer,filter=filter,original=mesh,currentMesh=mesh,detail=detail,grass=grass,
                     duplicate=duplicate,legacy=legacy,bounds=renderer.bounds,materials=renderer.sharedMaterials,
-                    shadows=renderer.shadowCastingMode,currentShadows=renderer.shadowCastingMode,forced=renderer.forceRenderingOff,renderOff=renderer.forceRenderingOff,occlusion=renderer.allowOcclusionWhenDynamic,
+                    shadows=renderer.shadowCastingMode,currentShadows=renderer.shadowCastingMode,receiveShadows=renderer.receiveShadows,forced=renderer.forceRenderingOff,renderOff=renderer.forceRenderingOff,occlusion=renderer.allowOcclusionWhenDynamic,
                     staticTransform=renderer.gameObject.isStatic,staticMatrix=renderer.localToWorldMatrix,
                     batchCell=new Vector2Int(Mathf.FloorToInt(renderer.bounds.center.x / 32f),Mathf.FloorToInt(renderer.bounds.center.z / 32f)) };
                 foliage.Add(item);
@@ -563,7 +619,7 @@ namespace Mavis
                 }
                 cell.items.Add(item);
                 renderer.allowOcclusionWhenDynamic = true;
-                if (grass) { renderer.shadowCastingMode = ShadowCastingMode.Off; item.currentShadows = ShadowCastingMode.Off; }
+                if (grass) { renderer.shadowCastingMode = ShadowCastingMode.Off; item.currentShadows = ShadowCastingMode.Off;renderer.receiveShadows=true; }
                 var materials = (Material[])item.materials.Clone();
                 bool changed = false;
                 for (int i=0;i<materials.Length;i++)
@@ -618,6 +674,7 @@ namespace Mavis
             if (group == null || grassLods.ContainsKey(group) || group.fadeMode != LODFadeMode.None) return;
             var levels = group.GetLODs();
             if (levels.Length != 3) return;
+            bool spatialCoverage = true;
             foreach (var level in levels)
                 foreach (var part in level.renderers)
                 {
@@ -625,8 +682,11 @@ namespace Mavis
                     var filter = part.GetComponent<MeshFilter>();
                     if (filter == null || filter.sharedMesh == null || !filter.sharedMesh.name.StartsWith("VerifiedGrass")) return;
                     foreach (var material in part.sharedMaterials)
+                    {
                         if (material == null || (material.shader.name != "Mavis/FoliageWind" &&
                             material.shader.name != "Universal Render Pipeline/Lit")) return;
+                        if (material.shader.name != "Mavis/FoliageWind") spatialCoverage = false;
+                    }
                 }
             var state = new GrassLodState { id=group.GetInstanceID(),mode=group.fadeMode,
                 animated=group.animateCrossFading,widths=new float[levels.Length],
@@ -646,14 +706,19 @@ namespace Mavis
             }
             state.renderers=parts.ToArray();state.enabled=enabled.ToArray();
             grassLods.Add(group,state);
-            group.fadeMode=LODFadeMode.CrossFade;
             group.animateCrossFading=false;
-            // Extend only this verified grass family's final visibility by2x.
-            // At the user's lodBias0.5/FOV60 this moves the end from~40m to~80m,
-            // with a gradual60–80m fade. Tree/quality settings remain authored.
-            float cutoff=levels[levels.Length-1].screenRelativeTransitionHeight*.5f;
-            float band=cutoff/3f;
-            group.SetLODs(new[]{new LOD(cutoff,levels[0].renderers){fadeTransitionWidth=band/Mathf.Max(.001f,1-cutoff)}});
+            if (!spatialCoverage)
+            {
+                // Preserve the previous native fade for Lit materials, which do
+                // not implement the wind shader's spatial coverage function.
+                float cutoff=levels[levels.Length-1].screenRelativeTransitionHeight*.5f;
+                group.fadeMode=LODFadeMode.CrossFade;
+                group.SetLODs(new[]{new LOD(cutoff,levels[0].renderers){fadeTransitionWidth=(cutoff/3f)/(1-cutoff)}});
+                return;
+            }
+            group.fadeMode=LODFadeMode.None;
+            // No screen-height/FOV/lodBias-driven whole-patch density wipe.
+            group.SetLODs(new[]{new LOD(0,levels[0].renderers){fadeTransitionWidth=0}});
         }
         static void RestoreGrassLod(LODGroup group, GrassLodState state)
         {
@@ -680,6 +745,7 @@ namespace Mavis
             item.renderer.forceRenderingOff = item.forced;
             item.renderer.allowOcclusionWhenDynamic = item.occlusion;
             item.renderer.shadowCastingMode = item.shadows;
+            item.renderer.receiveShadows=item.receiveShadows;
             item.renderer.sharedMaterials = item.materials;
             if (item.filter != null) item.filter.sharedMesh = item.original;
         }
@@ -706,6 +772,7 @@ namespace Mavis
         }
         void OnDisable()
         {
+            ClearGrassGlobals();
 #if UNITY_EDITOR
             UnityEditor.AssemblyReloadEvents.beforeAssemblyReload -= CaptureReloadRenderers;
 #endif

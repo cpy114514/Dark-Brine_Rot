@@ -21,6 +21,7 @@ namespace Mavis
         Text healingLabel, healingFeedback, hpValue;
         int shownHp=-1, shownMaxHp=-1;
         int shownPacks = -1;
+        int shownControls=-1;
         GameLanguage shownLanguage;
         UnityEngine.InputSystem.Key shownHealKey;
         CanvasGroup canvasGroup;
@@ -137,10 +138,11 @@ namespace Mavis
             if(healingLabel==null)return;
             int remaining=HealingPackSupply.Remaining;
             var key=GameInputSettings.Get(GameInputSettings.Action.Heal);
-            if(remaining!=shownPacks||GameLocalization.Language!=shownLanguage||key!=shownHealKey)
+            if(remaining!=shownPacks||GameLocalization.Language!=shownLanguage||key!=shownHealKey||shownControls!=GameControls.Revision)
             {
                 shownPacks=remaining;shownLanguage=GameLocalization.Language;shownHealKey=key;
-                healingLabel.text=GameLocalization.Format("healing.count",key.ToString().ToUpperInvariant(),remaining,HealingPackSupply.Total);
+                shownControls=GameControls.Revision;
+                healingLabel.text=GameLocalization.Format("healing.count",GameControls.Prompt(GameInputSettings.Action.Heal),remaining,HealingPackSupply.Total);
                 healingLabel.color=remaining>0?GameUITheme.Foreground:GameUITheme.Secondary;
             }
             string message=healing!=null?healing.Feedback:"";

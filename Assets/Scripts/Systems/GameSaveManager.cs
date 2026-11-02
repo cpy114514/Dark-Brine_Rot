@@ -6,17 +6,21 @@ using UnityEngine.SceneManagement;
 
 namespace Mavis
 {
-    /// <summary>Stores the current first-island player state between game sessions.</summary>
+    /// <summary>Stores the current player and island state between game sessions.</summary>
     public sealed class GameSaveManager : MonoBehaviour
     {
         const int SaveVersion = 2;
         const string SaveFileName = "dark-brine-rot-save.json";
         const string GameplaySceneName = "Gameplay";
+        const string SecondIslandScenePath = "Assets/Scenes/Second Island/Second Island.unity";
+        const string FirstIslandScenePath = "Assets/Scenes/First Island/Main.unity";
 
         static GameSaveManager instance;
         SaveData pendingSave;
         bool restorePending;
         bool restoreRoutineRunning;
+        bool autosavePending;
+        float nextAutosave, lastAutosave = -10f;
 
         [Serializable]
         sealed class SaveData
@@ -42,20 +46,32 @@ namespace Mavis
             public bool hasRifleAmmo;
             public int rifleMagazine, rifleReserve;
             public GameWorldProgress.Snapshot world;
+            public string scenePath;
         }
 
-        static string SavePath => Path.Combine(Application.persistentDataPath, SaveFileName);
+#if UNITY_EDITOR
+        // Editor verification can use an isolated file without touching a player's save.
+        static string editorSavePath;
+#endif
+        static string SavePath =>
+#if UNITY_EDITOR
+            !string.IsNullOrEmpty(editorSavePath) ? editorSavePath :
+#endif
+            Path.Combine(Application.persistentDataPath, SaveFileName);
 
         public static bool HasSave => TryReadSave(out _);
         public static bool IsContinuePending => instance != null && instance.restorePending;
+        public static string ContinueScenePath => instance != null && instance.pendingSave != null && instance.pendingSave.scenePath == SecondIslandScenePath ? SecondIslandScenePath : FirstIslandScenePath;
         public static bool HasSavableGame => CanSavePlayer(FindFirstObjectByType<ThirdPersonPlayerController>());
 
         static bool CanSavePlayer(ThirdPersonPlayerController player)
         {
-            if (player == null || player.gameObject.scene.name != GameplaySceneName ||
+            if (player == null || (player.gameObject.scene.name != GameplaySceneName && player.gameObject.scene.path != SecondIslandScenePath) ||
                 player.GetComponent<GameSaveExcluded>() != null) return false;
             var health = player.GetComponent<PlayerHealth>();
-            if (IsContinuePending || AdditiveSceneBootstrap.IsLoading || !player.enabled || player.ExternalControlLock || player.ExternalMovementLock ||
+            var board = player.gameObject.scene.path == SecondIslandScenePath ? FindFirstObjectByType<SkyboardReward>() : null;
+            bool savingFlight = board && board.Flying;
+            if (IsContinuePending || AdditiveSceneBootstrap.IsLoading || !player.enabled || player.ExternalControlLock || (player.ExternalMovementLock && !savingFlight) ||
                 (health != null && health.currentHealth <= 0f) || PlayerDeathRespawn.IsOpen) return false;
             var arrival = player.GetComponent<FirstIslandArrival>();
             return arrival == null || arrival.IsAwake;
@@ -148,6 +164,7 @@ namespace Mavis
                 var data = new SaveData
                 {
                     version = SaveVersion,
+                    scenePath = player.gameObject.scene.path == SecondIslandScenePath ? SecondIslandScenePath : FirstIslandScenePath,
                     playerPosition = player.transform.position,
                     playerRotation = player.transform.rotation,
                     savedAtUtcTicks = DateTime.UtcNow.Ticks,
@@ -220,6 +237,24 @@ namespace Mavis
             }
         }
 
+        public static void RequestAutosave()
+        {
+            if (!Application.isPlaying || IsContinuePending) return;
+            var manager = EnsureManager();
+            if (!manager.autosavePending)
+            {
+                manager.autosavePending = true;
+                manager.nextAutosave = Mathf.Max(Time.unscaledTime + 1f, manager.lastAutosave + 10f);
+            }
+        }
+
+        void Update()
+        {
+            if (!autosavePending || Time.unscaledTime < nextAutosave) return;
+            nextAutosave = Time.unscaledTime + 2f;
+            if (SaveCurrentGame()) { autosavePending = false; lastAutosave = Time.unscaledTime; }
+        }
+
         void OnApplicationPause(bool paused)
         {
             if (paused)
@@ -234,7 +269,7 @@ namespace Mavis
 
         void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (restorePending && !restoreRoutineRunning && scene.name == GameplaySceneName)
+            if (restorePending && !restoreRoutineRunning && (scene.name == GameplaySceneName || scene.path == SecondIslandScenePath))
                 StartCoroutine(RestoreAfterSceneStarts());
         }
 
@@ -269,6 +304,7 @@ namespace Mavis
                 SaveData data = pendingSave;
                 GameWorldProgress.Restore(data.world, player);
                 player.RestoreSavedPose(data.playerPosition, data.playerRotation);
+                player.GetComponent<SecondIslandSaveState>()?.RestoreCoursePosition();
                 player.GetComponent<WeaknessGlasses>()?.Restore(data.ownsWeaknessGlasses,data.weaknessGlassesEquipped,data.weaknessActiveRemaining,data.weaknessCooldownRemaining);
                 var arrival = player.GetComponent<FirstIslandArrival>();
                 if (arrival != null)
@@ -288,6 +324,8 @@ namespace Mavis
 
                 if (data.hasRifleAmmo)
                     player.GetComponent<SahurRifleCombat>()?.RestoreAmmo(data.rifleMagazine, data.rifleReserve);
+
+                player.GetComponent<SecondIslandSaveState>()?.RestoreFlight();
 
                 Debug.Log("[Save] Saved game progress restored.");
             }
@@ -317,6 +355,7 @@ namespace Mavis
             try
             {
                 data = JsonUtility.FromJson<SaveData>(File.ReadAllText(path));
+                if (data != null && data.scenePath == "Assets/Scenes/Second Island.unity") data.scenePath = SecondIslandScenePath;
                 if (data == null || data.version < 1 || data.version > SaveVersion ||
                     !IsFinite(data.playerPosition.x) || !IsFinite(data.playerPosition.y) ||
                     !IsFinite(data.playerPosition.z) ||

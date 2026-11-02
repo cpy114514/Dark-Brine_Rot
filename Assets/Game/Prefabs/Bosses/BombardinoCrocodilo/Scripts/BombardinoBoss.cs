@@ -6,7 +6,7 @@ using Unity.Profiling;
 namespace Mavis
 {
     [DisallowMultipleComponent,RequireComponent(typeof(Health))]
-    public sealed class BombardinoBoss : MonoBehaviour
+    public sealed partial class BombardinoBoss : MonoBehaviour
     {
         public enum State { Patrol, Telegraph, Attack, Exposed, Returning, Dead, Circling }
         public enum AttackKind { HighBombing, SpeedRun, Missiles, FlameRun, MissileSalvo, CrossBombing }
@@ -28,6 +28,7 @@ namespace Mavis
         public AttackKind CurrentAttack { get; private set; }
         public bool FightActive { get; private set; }
         public bool IsDead=>health!=null&&health.IsDead;
+        public bool AbductionActive { get; private set; }
         public static int PhaseForHealth(float ratio)=>ratio<=.5f?2:1;
         public int FightPhase=>health!=null?PhaseForHealth(health.Ratio):1;
         public bool Enraged=>FightPhase==2;
@@ -91,7 +92,7 @@ namespace Mavis
         }
         public Vector3 FlameContact => Ground(transform.position);
 
-        void Awake()=>Initialize();
+        void Awake(){PerfectDodgeThreats.Register(this);Initialize();}
         public void Initialize()
         {
             if(initialized)return;initialized=true;health=GetComponent<Health>();
@@ -169,6 +170,7 @@ namespace Mavis
             }
             if(CurrentState==State.Dead)
             {
+                if(AbductionActive)return;
                 if(!crashed){transform.position+=Vector3.down*Mathf.Min(35,age*13)*dt;
                     if(visual!=null)visual.localRotation=visualRest*Quaternion.Euler(age*43,0,age*90);
                     if(transform.position.y<=deathGround+1){transform.position=new Vector3(transform.position.x,deathGround+1,transform.position.z);Explosion(transform.position,5);crashed=true;age=0;}}
@@ -521,7 +523,15 @@ namespace Mavis
             var fx=go.AddComponent<BombardinoBlastFX>();fx.Initialize(radius);effects.RemoveAll(e=>e==null);effects.Add(go);
             if(audioSource!=null){var clip=Resources.Load<AudioClip>("StoryBattle/Audio/TidalHit");if(clip!=null)audioSource.PlayOneShot(clip,.6f);}
         }
-        void OnDeath(){if(CurrentState==State.Dead)return;FightActive=false;SetState(State.Dead);deathGround=Ground(transform.position).y;ClearHazards();foreach(var c in GetComponentsInChildren<Collider>())c.enabled=false;onDefeated.Invoke();}
+        void OnDeath()
+        {
+            if(CurrentState==State.Dead)return;
+            bool snatch=targetHealth!=null&&targetHealth.currentHealth>0f;
+            FightActive=false;SetState(State.Dead);deathGround=Ground(transform.position).y;ClearHazards();
+            foreach(var c in GetComponentsInChildren<Collider>())c.enabled=false;onDefeated.Invoke();
+            if(snatch&&BombardinoAbduction.TryBegin(this))AbductionActive=true;
+        }
+        public void ReleaseAbduction()=>AbductionActive=false;
         void ClearHazards(){fireImpacts.Clear();ClearMarkers();foreach(var p in ordnance)if(p!=null)Release(p.gameObject);ordnance.Clear();foreach(var e in effects)if(e!=null)Release(e);effects.Clear();}
         void OnDisable(){ClearHazards();if(audioSource!=null)audioSource.Stop();}
         void OnDestroy(){ClearHazards();if(warningMaterial!=null)Release(warningMaterial);foreach(var pair in ignoredPlayerPairs)if(pair.body!=null&&pair.player!=null)Physics.IgnoreCollision(pair.body,pair.player,false);if(health!=null){health.OnDamaged?.RemoveListener(OnHit);health.OnDeath?.RemoveListener(OnDeath);}}

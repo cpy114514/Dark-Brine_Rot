@@ -69,7 +69,7 @@ public sealed class MainMenuController : MonoBehaviour
             return;
         }
 
-        StartGame(GameScenePath);
+        StartGame(GameSaveManager.ContinueScenePath);
     }
 
     void StartGame(string scenePath)

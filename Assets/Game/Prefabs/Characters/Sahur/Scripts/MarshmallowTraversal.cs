@@ -13,7 +13,7 @@ public sealed class MarshmallowTraversal : MonoBehaviour
     [Range(.1f, 1f)] public float airControl = .45f;
     [Range(0f, .2f)] public float landingSquash = .085f;
 
-    public bool Active => isActiveAndEnabled && gameObject.scene.path == "Assets/Scenes/Second Island.unity";
+    public bool Active => isActiveAndEnabled && (gameObject.scene.name == "Second Island" || gameObject.scene.path == "Assets/Scenes/Second Island.unity");
     public bool NormalGravity { get; private set; }
     public bool LowGravityActive => Active && !NormalGravity;
     public void SetNormalGravity(bool enabled)

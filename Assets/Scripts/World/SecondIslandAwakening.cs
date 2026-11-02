@@ -8,7 +8,7 @@ using Mavis;
 [DefaultExecutionOrder(500)]
 public sealed class SecondIslandAwakening : MonoBehaviour
 {
-    const string ScenePath = "Assets/Scenes/Second Island.unity";
+    const string ScenePath = "Assets/Scenes/Second Island/Second Island.unity";
     static SecondIslandAwakening active;
     static readonly int OpeningId = Shader.PropertyToID("_Opening");
     static readonly int OpacityId = Shader.PropertyToID("_Opacity");
@@ -65,7 +65,7 @@ public sealed class SecondIslandAwakening : MonoBehaviour
     static void SceneLoaded(Scene scene, LoadSceneMode mode) => CreateFor(scene);
     static void CreateFor(Scene scene)
     {
-        if (!scene.isLoaded || scene.path != ScenePath || active) return;
+        if (!scene.isLoaded || scene.path != ScenePath || active || BombardinoAbduction.Playing || GameSaveManager.IsContinuePending) return;
         var shader = Resources.Load<Shader>("SecondIslandAwakening/Eyelids");
         if (!shader || !shader.isSupported)
         {

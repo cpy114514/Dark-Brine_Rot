@@ -63,7 +63,7 @@ namespace Mavis.VisualStyles
         {
             if (!IsOpen) return;
             if (!owner) { Close(); return; }
-            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+            if (GameControls.Down(GameControls.Command.Cancel))
             { if (comparisonView.activeSelf) ShowComparison(false); else Close(); closedFrame = Time.frameCount; }
         }
         void OnDestroy() { VisualStyleManager.Changed -= Refresh; if (instance == this) instance = null; }

@@ -14,6 +14,7 @@ namespace Mavis
         public GameObject bombardino;
         public GameObject chicken;
         public GameObject duck;
+        public GameObject goose;
         public ThirdPersonPlayerController player;
         readonly List<GameObject> spawned = new List<GameObject>(16);
         Text hint;
@@ -49,6 +50,7 @@ namespace Mavis
             if (keys.f7Key.wasPressedThisFrame) SpawnOne(bombardino, 22f);
             if (keys.f8Key.wasPressedThisFrame) SpawnOne(chicken, 7f);
             if (keys.f9Key.wasPressedThisFrame) SpawnChickens(6);
+            if (keys.f4Key.wasPressedThisFrame) SpawnOne(goose, 8f);
             if (keys.f12Key.wasPressedThisFrame) SpawnOne(duck, 7f);
             if (keys.f10Key.wasPressedThisFrame) ClearSpawned();
             if (keys.f11Key.wasPressedThisFrame) Heal();
@@ -116,12 +118,12 @@ namespace Mavis
             view.renderMode = RenderMode.ScreenSpaceOverlay;
             view.sortingOrder = 30;
             GameUITheme.Scale(view);
-            var card = GameUITheme.Rect(canvas.transform, "Card", new Vector2(0f, 1f), new Vector2(460, 196));
+            var card = GameUITheme.Rect(canvas.transform, "Card", new Vector2(0f, 1f), new Vector2(460, 220));
             card.pivot = new Vector2(0f, 1f);
             card.anchoredPosition = new Vector2(18f, -18f);
             GameUITheme.Image(card, new Color(.04f, .05f, .05f, .82f));
-            hint = GameUITheme.Label(card, "Hint", 18, new Vector2(16f, -90f), new Vector2(428, 176), TextAnchor.UpperLeft);
-            hint.text = "Combat test\nF5 Cappuccino   F6 Nailong\nF7 Bombardino   F8 Chicken Bro\nF9 Six chickens   F12 Long-legged Duck\nF10 Clear   F11 Heal\n1 Stick   2 Twin blades   3 M4A1";
+            hint = GameUITheme.Label(card, "Hint", 18, new Vector2(16f, -100f), new Vector2(428, 200), TextAnchor.UpperLeft);
+            hint.text = "Combat test\nF5 Cappuccino   F6 Nailong\nF7 Bombardino   F8 Chicken Bro\nF9 Six chickens   F12 Long-legged Duck\nF4 Bully Goose\nF10 Clear   F11 Heal\n1 Stick   2 Twin blades   3 M4A1";
         }
     }
 }

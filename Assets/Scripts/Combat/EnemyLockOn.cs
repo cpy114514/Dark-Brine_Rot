@@ -32,7 +32,7 @@ namespace Mavis
             if ((health != null && health.currentHealth <= 0f) || (movement != null && movement.Swimming)) { Clear(); return; }
             if (SahurLoadoutUI.BlocksInput || PauseSettingsMenu.IsOpen) { if (hud != null) hud.SetActive(false); return; }
             Validate(Time.deltaTime);
-            if (Mouse.current != null && Mouse.current.middleButton.wasPressedThisFrame && Cursor.lockState == CursorLockMode.Locked)
+            if (GameControls.Down(GameControls.Command.LockOn) && Cursor.lockState == CursorLockMode.Locked)
                 Toggle(Camera.main);
             RefreshMarker();
         }

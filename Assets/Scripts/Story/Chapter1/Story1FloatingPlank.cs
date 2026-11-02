@@ -143,12 +143,10 @@ public sealed class Story1FloatingPlank : MonoBehaviour
     void Update()
     {
         if (!initialized || PauseSettingsMenu.IsOpen || Time.deltaTime <= 0f) return;
-        bool accept = ControlsActive && Keyboard.current != null && Cursor.lockState == CursorLockMode.Locked &&
+        bool accept = ControlsActive && GameControls.HasDevice && Cursor.lockState == CursorLockMode.Locked &&
             !player.ExternalControlLock && !Mavis.SahurLoadoutUI.BlocksInput && !Mavis.PlayerDeathRespawn.BlocksInput;
-        float throttle = accept ? (GameInputSettings.Pressed(GameInputSettings.Action.Forward) ? 1f : 0f) -
-            (GameInputSettings.Pressed(GameInputSettings.Action.Back) ? 1f : 0f) : 0f;
-        float steer = accept ? (GameInputSettings.Pressed(GameInputSettings.Action.Right) ? 1f : 0f) -
-            (GameInputSettings.Pressed(GameInputSettings.Action.Left) ? 1f : 0f) : 0f;
+        float throttle = accept ? GameControls.Move.y : 0f;
+        float steer = accept ? GameControls.Move.x : 0f;
         Simulate(Time.deltaTime, Time.time, throttle, steer);
     }
 

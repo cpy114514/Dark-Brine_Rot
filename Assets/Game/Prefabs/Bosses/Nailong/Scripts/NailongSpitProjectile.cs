@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 namespace Mavis
 {
     /// <summary>One non-homing ballistic glob. Cosmetic beads never deal damage.</summary>
-    public sealed class NailongSpitProjectile : MonoBehaviour
+    public sealed partial class NailongSpitProjectile : MonoBehaviour
     {
         const float Lifetime = 4f, SplashSeconds = .32f;
         readonly RaycastHit[] hits = new RaycastHit[64];
@@ -46,6 +46,7 @@ namespace Mavis
         public void Launch(Transform source, Transform target, Vector3 initialVelocity, float amount, float radius = .11f, float acceleration = 18f)
         {
             owner = source; intendedTarget = target;
+            PerfectDodgeThreats.Register(this);
             velocity = launchVelocity = initialVelocity; launchPoint = transform.position;
             damage = amount; collisionRadius = Mathf.Max(.01f, radius); gravity = Mathf.Max(1f, acceleration);
             age = splashAge = 0; resolved = false;

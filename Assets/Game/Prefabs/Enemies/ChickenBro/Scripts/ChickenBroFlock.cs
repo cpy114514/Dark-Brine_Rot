@@ -44,7 +44,21 @@ namespace Mavis
             for (int i = 0; i < expired.Count; i++) attackers.Remove(expired[i]);
             if (!bro) return false;
             if (attackers.Contains(bro)) return true;
-            if (attackers.Count >= maxAttackers) return false;
+            if (attackers.Count >= maxAttackers)
+            {
+                if (!bro.attackPriority) return false;
+                ChickenBroAI weaker = null;
+                for (int i = 0; i < attackers.Count; i++)
+                {
+                    var candidate = attackers[i];
+                    if (!candidate || candidate.attackPriority || candidate.ActionPhase > .25f) continue;
+                    weaker = candidate;
+                    break;
+                }
+                if (!weaker) return false;
+                weaker.YieldAttack();
+                attackers.Remove(weaker);
+            }
             attackers.Add(bro);
             return true;
         }

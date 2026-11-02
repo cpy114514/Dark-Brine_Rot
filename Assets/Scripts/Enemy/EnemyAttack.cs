@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Mavis
 {
-    public class EnemyAttack : MonoBehaviour
+    public partial class EnemyAttack : MonoBehaviour
     {
         [Header("Hitbox")]
         [Tooltip("Trigger collider covering the attack arc; auto-disabled outside the attack window.")]
@@ -34,6 +34,7 @@ namespace Mavis
 
         void Awake()
         {
+            PerfectDodgeThreats.Register(this);
             if (attackHitbox != null) attackHitbox.enabled = false;
             if (animator == null) animator = GetComponentInChildren<Animator>();
         }

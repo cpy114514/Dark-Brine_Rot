@@ -5,7 +5,7 @@ namespace Mavis
 {
     // Chases Sahur and drives Nailong's combat actions.
     [RequireComponent(typeof(NailongHealth), typeof(NailongAttack), typeof(NailongAttackMotion))]
-    public sealed class NailongAI : MonoBehaviour
+    public sealed partial class NailongAI : MonoBehaviour
     {
         public enum State { Idle, Chase, Attack, Dead, Staggered, Recover, Returning }
         enum AttackPattern { None, Slap, CryingBurst, ShamelessCharge, UnreasonableTantrum, ClawFlurry, Roar, ScoldingSpit, GroundSlam, Rampage }
@@ -185,6 +185,7 @@ namespace Mavis
 
         void Awake()
         {
+            PerfectDodgeThreats.Register(this);
             spitCount = 1;
             if(GetComponent<BossWeaknessSetup>()==null)gameObject.AddComponent<BossWeaknessSetup>();
             attackWindup=Mathf.Max(.65f,attackWindup);flurryWindup=Mathf.Max(.7f,flurryWindup);

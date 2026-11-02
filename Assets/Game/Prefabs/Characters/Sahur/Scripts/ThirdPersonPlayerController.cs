@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>Third-person controller for a model placed on the procedural ocean.</summary>
 [RequireComponent(typeof(CharacterController))]
-public sealed class ThirdPersonPlayerController : MonoBehaviour
+public sealed partial class ThirdPersonPlayerController : MonoBehaviour
 {
     [Header("Movement")]
     [Min(0.1f)] public float moveSpeed = 7f;
@@ -84,6 +84,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     CharacterController characterController;
     MarshmallowTraversal marshmallow;
+    public void BindMarshmallowTraversal() => marshmallow = GetComponent<MarshmallowTraversal>();
     bool SoftTraversal => marshmallow != null && marshmallow.LowGravityActive;
     float TraversalGravity => SoftTraversal ? marshmallow.gravity : gravity;
     float TraversalJumpHeight => SoftTraversal ? marshmallow.jumpHeight : jumpHeight;
@@ -101,6 +102,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     Mavis.SahurWeaponLoadout rifleLoadout;
     Mavis.SahurRifleCombat rifleCombat;
     float rifleCameraShoulder;
+    PigRoninBoss cameraRonin;
+    float nextRoninCameraSearch, roninCameraBlend;
     float rifleAimZoomBlend;
     float rifleRestFov = -1f;
     float rifleAppliedFov = -1f;
@@ -127,9 +130,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool IsDodging => rollTimer > 0f;
     // A bounded middle portion of the dodge is protected; startup and recovery remain vulnerable.
     public bool DodgeInvulnerable => enabled && gameObject.activeInHierarchy && !ExternalControlLock &&
-        rollTimer > 0f && rollDuration > 0f &&
-        1f - rollTimer / rollDuration >= Mavis.CombatFeelProfile.Default.dodgeProtectionStart &&
-        1f - rollTimer / rollDuration <= Mavis.CombatFeelProfile.Default.dodgeProtectionEnd;
+        rollTimer > 0f && ActiveDodgeDuration > 0f && (perfectStep ||
+        1f - rollTimer / ActiveDodgeDuration >= Mavis.CombatFeelProfile.Default.dodgeProtectionStart &&
+        1f - rollTimer / ActiveDodgeDuration <= Mavis.CombatFeelProfile.Default.dodgeProtectionEnd);
     float rollCooldownTimer;
     float rollInheritedSpeed;
     float airFlipTimer;
@@ -138,6 +141,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     bool airFlipUsed;
     Quaternion airFlipVisualSpin = Quaternion.identity;
     Vector3 planarVelocity;
+    Vector3 combatPush;
+    float combatPushUntil;
+    float combatPushDuration;
     Vector3 platformCarryVelocity;
     Vector3 rollDirection;
     bool cameraInitialized;
@@ -164,7 +170,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool IsSprinting { get; private set; }
     public bool RifleAimRequested => rifleLoadout && rifleLoadout.UsesRifle && !IsSprinting &&
         !(RequestedMoveDirection.sqrMagnitude > .01f && GameInputSettings.Pressed(GameInputSettings.Action.Sprint)) &&
-        Mouse.current != null && Mouse.current.rightButton.isPressed && Cursor.lockState == CursorLockMode.Locked &&
+        GameControls.Held(GameControls.Command.Charge) && Cursor.lockState == CursorLockMode.Locked &&
         !PauseSettingsMenu.IsOpen && !Mavis.SahurLoadoutUI.BlocksInput && RifleLocomotionAllowed;
     public Vector3 WorldVelocity => planarVelocity+platformCarryVelocity+Vector3.up*verticalSpeed;
     public Vector3 RequestedMoveDirection
@@ -172,8 +178,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         get
         {
             if(ExternalControlLock || Cursor.lockState!=CursorLockMode.Locked)return Vector3.zero;
-            float z=(GameInputSettings.Pressed(GameInputSettings.Action.Forward)?1:0)-(GameInputSettings.Pressed(GameInputSettings.Action.Back)?1:0);
-            float x=(GameInputSettings.Pressed(GameInputSettings.Action.Right)?1:0)-(GameInputSettings.Pressed(GameInputSettings.Action.Left)?1:0);
+            Vector2 intent=GameControls.Move;float z=intent.y,x=intent.x;
             return Quaternion.Euler(0,yaw,0)*Vector3.ClampMagnitude(new Vector3(x,0,z),1);
         }
     }
@@ -194,6 +199,15 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     public bool KeepCameraAboveWater { get; set; }
 
     // Leave a moving deck through the usual jump, stamina and gravity code.
+    public void ApplyCombatPush(Vector3 direction, float speed, float seconds)
+    {
+        direction.y = 0f;
+        if (direction.sqrMagnitude < .0001f || speed <= 0f || seconds <= 0f) return;
+        combatPush = direction.normalized * speed;
+        combatPushDuration = seconds;
+        combatPushUntil = Time.time + seconds;
+    }
+
     public void LeaveMovingPlatform(Vector3 velocity, bool jumping = false)
     {
         platformCarryVelocity = Vector3.ProjectOnPlane(velocity, Vector3.up);
@@ -294,6 +308,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
     {
         if (Application.isPlaying && gameObject.scene.path == "Assets/Scenes/First Island/Gameplay.unity" &&
             GetComponent<Mavis.FirstIslandObjectives>() == null) gameObject.AddComponent<Mavis.FirstIslandObjectives>();
+        if (Application.isPlaying && gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity" &&
+            GetComponent<SecondIslandObjectives>() == null) gameObject.AddComponent<SecondIslandObjectives>();
+        if (Application.isPlaying && gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity" &&
+            GetComponent<SecondIslandSaveState>() == null) gameObject.AddComponent<SecondIslandSaveState>();
         // Shared enemy attacks and targeting identify the player root.
         if(CompareTag("Untagged"))gameObject.tag="Player";
         if(GetComponent<Mavis.WeaknessGlasses>()==null)gameObject.AddComponent<Mavis.WeaknessGlasses>();
@@ -392,8 +410,9 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
 
     void Update()
     {
+        RefreshPerfectCounter();
         IsSprinting = false;
-        if (characterController == null || Keyboard.current == null || Mouse.current == null)
+        if (characterController == null)
             return;
 
         if (Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput)
@@ -401,14 +420,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (swimmingOcean == null) swimmingOcean = FindFirstObjectByType<OceanWorld>();
         if (swimmingOcean != null) seaLevel = swimmingOcean.oceanHeight;
         swimExitJumpTimer = Mathf.Max(0f, swimExitJumpTimer - Time.deltaTime);
-        if (Mouse.current.leftButton.wasPressedThisFrame && Cursor.lockState != CursorLockMode.Locked)
+        if (GameControls.Down(GameControls.Command.Attack) && Cursor.lockState != CursorLockMode.Locked)
             LockCursor();
         bool acceptInput = Cursor.lockState == CursorLockMode.Locked && !ExternalControlLock;
 
-        Vector2 look = acceptInput ? Mouse.current.delta.ReadValue() * mouseSensitivity * RifleAimLookScale() : Vector2.zero;
+        Vector2 look = acceptInput ? GameControls.LookDelta(mouseSensitivity,Time.deltaTime) * RifleAimLookScale() : Vector2.zero;
         yaw += look.x;
         pitch = Mathf.Clamp(pitch + (invertLookY ? look.y : -look.y), minPitch, maxPitch);
-        if (acceptInput)
+        if (acceptInput && Mouse.current!=null && !GameControls.UsingGamepad)
         cameraDistance = Mathf.Clamp(cameraDistance - Mouse.current.scroll.ReadValue().y * 0.004f, 2.5f, 11f);
 
         // Mounted controls leave camera input available while the platform owns movement.
@@ -436,11 +455,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         // Keep mounted camera/animation handling above, but never move an inactive controller.
         if (!characterController.enabled || !characterController.gameObject.activeInHierarchy) return;
 
-        Vector3 input = Vector3.zero;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Forward)) input.z += 1f;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Back)) input.z -= 1f;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Right)) input.x += 1f;
-        if (GameInputSettings.Pressed(GameInputSettings.Action.Left)) input.x -= 1f;
+        Vector2 moveInput=GameControls.Move;
+        Vector3 input = new Vector3(moveInput.x,0,moveInput.y);
         if (input.sqrMagnitude > 1f)
             input.Normalize();
         if (!acceptInput) input = Vector3.zero;
@@ -547,17 +563,18 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             // Carry the current movement speed into a directional dodge, but
             // never turn leftover braking momentum into a stationary boost.
             rollInheritedSpeed = GetRollInheritedSpeed(planarVelocity, desiredVelocity);
-            rollTimer = rollDuration;
+            TryStartPerfectDodge();
+            rollTimer = ActiveDodgeDuration;
             DodgesPerformed++;
             dodgeBufferUntil = -1;
             Mavis.GameplayAudio.Play(Mavis.GameplayAudio.Cue.Dodge, transform.position);
             recoveringAttackFacing = false;
-            rollCooldownTimer = rollDuration + rollCooldown;
+            rollCooldownTimer = ActiveDodgeDuration + rollCooldown;
             planarVelocity = rollDirection * (rollSpeed + rollInheritedSpeed);
             isRolling = true;
             jumpBufferTimer = 0f;
             transform.rotation = Quaternion.LookRotation(rollDirection, Vector3.up);
-            SetMotion(1, "Roll", 0.075f);
+            SetMotion(1, perfectStep ? "Perfect Step" : "Roll", perfectStep ? .04f : .075f);
         }
 
         coyoteTimer = grounded ? coyoteTime : Mathf.Max(0f, coyoteTimer - Time.deltaTime);
@@ -645,9 +662,10 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         {
             // Roll uses code-driven movement so the same animation works for
             // forward, backward, left and right input without root-motion drift.
+            float previousRollTimer=rollTimer;
             rollTimer = Mathf.Max(0f, rollTimer - Time.deltaTime);
-            float phase = 1f - rollTimer / rollDuration;
-            float exitPhase = Mathf.Clamp(rollAnimationExitPhase, 0.75f, 0.98f);
+            float phase = 1f - rollTimer / ActiveDodgeDuration;
+            float exitPhase = perfectStep ? 1 : Mathf.Clamp(rollAnimationExitPhase, 0.75f, 0.98f);
             // Never blend into the new input direction while the model is still
             // visibly rolling. That was the source of the sideways skating.
             float brakePhase = Mathf.InverseLerp(0.42f, exitPhase, phase);
@@ -659,6 +677,14 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             float inheritedRate = inheritedTarget > rollInheritedSpeed ? acceleration : deceleration;
             rollInheritedSpeed = Mathf.MoveTowards(rollInheritedSpeed, inheritedTarget, inheritedRate * Time.deltaTime);
             planarVelocity = rollDirection * (rollInheritedSpeed + rollSpeed * rollWeight);
+            if(perfectStep)
+            {
+                // Integrate the same 2m ease curve at every frame rate. World
+                // collision remains owned by the existing CharacterController.
+                float now=Mathf.Clamp01(phase),before=Mathf.Clamp01(1-previousRollTimer/ActiveDodgeDuration);
+                float a=1-Mathf.Pow(1-before,2),b=1-Mathf.Pow(1-now,2);
+                planarVelocity=rollDirection*(perfectStepDistance*(b-a)/Mathf.Max(.00001f,Time.deltaTime));
+            }
 
             // The imported 44-frame clip pauses in its recovery pose. Fade out
             // just before that tail, and hand both animation and movement over
@@ -668,7 +694,8 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             {
                 rollTimer = 0f;
                 rollInheritedSpeed = 0f;
-                planarVelocity = desiredVelocity;
+                if(perfectStep&&perfectAttacker)perfectCounterUntil=Time.time+perfectCounterWindow;
+                if(!perfectStep)planarVelocity = desiredVelocity;
             }
         }
         else
@@ -684,12 +711,22 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
                 planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity, rate * Time.deltaTime);
             }
         }
+        if (Time.time < combatPushUntil)
+        {
+            float fade = Mathf.Clamp01((combatPushUntil - Time.time) / Mathf.Max(.05f, combatPushDuration));
+            planarVelocity += combatPush * fade;
+        }
         float downwardSpeedBeforeMove = verticalSpeed;
         if (!attackRootMotion)
         {
             Vector3 movementDelta = (planarVelocity + platformCarryVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement;
             if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
+            Vector3 beforeMove = transform.position;
             CollisionFlags collisions = characterController.Move(movementDelta);
+            Vector3 ownTravel = Vector3.ProjectOnPlane(transform.position - beforeMove - platformCarryVelocity * Time.deltaTime, Vector3.up);
+            if (playerStamina != null && !sprinting && !movementLocked && !isRolling && moveDirection.sqrMagnitude > .01f &&
+                Vector3.Dot(ownTravel, moveDirection) > .001f * Time.deltaTime)
+                playerStamina.TickWalk(Time.deltaTime);
             if ((collisions & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
                 verticalSpeed = 0f;
             if ((collisions & CollisionFlags.Below) != 0 && verticalSpeed < 0f)
@@ -1026,6 +1063,12 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
         if (ExternalCameraFocus != null) focus = ExternalCameraFocus.position + Vector3.up * .25f;
         float followDistance = cameraDistance;
         if (SoftTraversal) followDistance += marshmallow.CameraPullback;
+        if (gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity" && !cameraRonin && Time.time >= nextRoninCameraSearch)
+        { nextRoninCameraSearch=Time.time+2f; cameraRonin=FindFirstObjectByType<PigRoninBoss>(); }
+        bool closeRonin=cameraRonin && cameraRonin.FightActive && !Swimming && !ExternalControlLock && !ExternalCameraFocus &&
+            Vector3.Distance(transform.position,cameraRonin.transform.position)<12f;
+        roninCameraBlend=Mathf.Lerp(roninCameraBlend,closeRonin?1f:0f,1f-Mathf.Exp(-5f*Time.deltaTime));
+        followDistance=Mathf.Lerp(followDistance,Mathf.Max(followDistance,8.5f),roninCameraBlend);
         if (enemyLock != null && enemyLock.IsLocked && !Mavis.SahurLoadoutUI.BlocksInput && !PauseSettingsMenu.IsOpen)
         {
             Vector3 toward = enemyLock.AimPoint - focus;
@@ -1042,7 +1085,7 @@ public sealed class ThirdPersonPlayerController : MonoBehaviour
             }
         }
         bool shoulderView = rifleLoadout && rifleLoadout.UsesRifle && !Swimming && !ExternalControlLock && !ExternalCameraFocus;
-        float shoulderTarget = shoulderView ? (RifleAimRequested ? 1.6f : .8f) * Mathf.Abs(transform.lossyScale.y) / 3f : 0;
+        float shoulderTarget = shoulderView ? (RifleAimRequested ? 1.6f : .8f) * Mathf.Abs(transform.lossyScale.y) / 3f : 2.4f*roninCameraBlend;
         rifleCameraShoulder = Mathf.Lerp(rifleCameraShoulder, shoulderTarget, 1f - Mathf.Exp(-12f * Time.deltaTime));
         if (rifleCameraShoulder > .001f)
         {

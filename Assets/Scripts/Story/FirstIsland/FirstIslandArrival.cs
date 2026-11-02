@@ -237,7 +237,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         if (!IsAwake || hint == null) return;
         hint.text = HasStick ? (recoveredAt >= 0 && Time.time - recoveredAt < 3 ? "You recovered your stick." : "") :
             CanPickUp ? "F  Pick up the stick" : "Your stick washed away. Find it along the beach.";
-        if (CanPickUp && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame && Cursor.lockState == CursorLockMode.Locked) TryPickUp();
+        if (CanPickUp && GameControls.Down(GameControls.Command.Interact) && Cursor.lockState == CursorLockMode.Locked) TryPickUp();
     }
 
     public bool TryPickUp()

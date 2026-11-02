@@ -5,7 +5,7 @@ namespace Mavis
     /// <summary>Terrain-following combat for Capri, including islands without a baked NavMesh.</summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Health), typeof(CappuccinoEnemy), typeof(CharacterController))]
-    public sealed class CappuccinoAI : MonoBehaviour
+    public sealed partial class CappuccinoAI : MonoBehaviour
     {
         public enum State { Idle, Chase, Attack, Recover, Retreat, Dead, Windup, Orbit, Staggered, Returning }
         public enum AttackKind { TwinSlash, DashThrust, Whirlwind }
@@ -83,6 +83,7 @@ namespace Mavis
 
         void Awake()
         {
+            PerfectDodgeThreats.Register(this);
             if(GetComponent<BossWeaknessSetup>()==null)gameObject.AddComponent<BossWeaknessSetup>();
             BossCombatVfx.PrewarmImpacts();
             health = GetComponent<Health>();

@@ -82,7 +82,7 @@ public sealed class ShipFollowCamera : MonoBehaviour
     {
         if (PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput) return;
         Mouse mouse = Mouse.current;
-        if (mouse != null)
+        if (mouse != null && !GameControls.UsingGamepad)
         {
             // Clicking the Game view recaptures the cursor after focus loss.
             if (mouseFreeLook && Cursor.lockState != CursorLockMode.Locked && mouse.leftButton.wasPressedThisFrame)
@@ -109,6 +109,12 @@ public sealed class ShipFollowCamera : MonoBehaviour
         }
 
         Keyboard keyboard = Keyboard.current;
+        if(GameControls.UsingGamepad)
+        {
+            Vector2 delta=GameControls.LookDelta(.12f,Time.deltaTime);
+            orbitYaw-=delta.x;orbitPitch-=delta.y;
+            if(GameControls.Down(GameControls.Command.Reload))ResetView();
+        }
         if (keyboard != null)
         {
             if (keyboard.rKey.wasPressedThisFrame)

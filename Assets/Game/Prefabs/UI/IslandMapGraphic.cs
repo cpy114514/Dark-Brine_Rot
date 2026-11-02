@@ -40,7 +40,7 @@ namespace Mavis
             // The second island is an authored mesh rather than a ProceduralIsland.
             // Sample its real collider from above to preserve its outline and relief.
             var experience = FindFirstObjectByType<MarshmallowIslandExperience>();
-            if (!found && experience != null && experience.gameObject.scene.path == "Assets/Scenes/Second Island.unity" &&
+            if (!found && experience != null && experience.gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity" &&
                 experience.surface != null && experience.surface.TryGetComponent<Collider>(out var candyCollider))
             {
                 Bounds candyBounds = candyCollider.bounds;
@@ -60,11 +60,23 @@ namespace Mavis
                 }
                 bounds = candyBounds;
                 found = true;
+                // The authored island mesh extends far beyond the playable
+                // camps. Frame actual destinations so nearby icons remain legible.
+                var reward=FindFirstObjectByType<GravityWristbandReward>();
+                if(reward && reward.CampCount>0)
+                {
+                    bounds=new Bounds(player,Vector3.zero);
+                    for(int i=0;i<reward.CampCount;i++)if(reward.CampMapAnchor(i))bounds.Encapsulate(reward.CampMapAnchor(i).position);
+                    bounds.Encapsulate(reward.transform.position);
+                    var board=FindFirstObjectByType<SkyboardReward>();
+                    if(board)foreach(Transform row in board.transform)if(row.name.StartsWith("Row ") && row.childCount>0){bounds.Encapsulate(row.GetChild(0).position);break;}
+                    var boss=FindFirstObjectByType<PigRoninBoss>();if(boss)bounds.Encapsulate(boss.transform.position);
+                }
             }
             // Include an offshore player without changing the map's north-up orientation.
             bounds.Encapsulate(player);
             WorldCenter = new Vector2(bounds.center.x, bounds.center.z);
-            WorldSpan = Mathf.Max(100f, Mathf.Max(bounds.size.x, bounds.size.z) * 1.15f);
+            WorldSpan = Mathf.Max(candyPoints.Count>0 ? 450f : 100f, Mathf.Max(bounds.size.x, bounds.size.z) * (candyPoints.Count>0 ? 1.25f : 1.15f));
             var ocean = FindFirstObjectByType<OceanWorld>();
             waterHeight = ocean != null ? ocean.oceanHeight : 0f;
             SetVerticesDirty();

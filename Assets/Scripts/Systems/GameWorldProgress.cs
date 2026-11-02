@@ -19,6 +19,7 @@ namespace Mavis
             public List<Drop> drops = new List<Drop>();
             public string checkpoint;
             public FirstIslandObjectives.Progress tutorial;
+            public SecondIslandSaveState.Progress secondIsland;
         }
         static readonly Dictionary<string, int> changes = new Dictionary<string, int>();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -41,6 +42,7 @@ namespace Mavis
         {
             var result = new Snapshot();
             result.tutorial = player.GetComponent<FirstIslandObjectives>()?.Capture();
+            result.secondIsland = player.GetComponent<SecondIslandSaveState>()?.Capture();
             foreach (var cache in UnityEngine.Object.FindObjectsByType<IslandSupplyCache>(FindObjectsSortMode.None))
                 Record(cache, -Mathf.CeilToInt(cache.Remaining) - 1);
             foreach (var pair in changes) result.changes.Add(new Entry { id = pair.Key, value = pair.Value });
@@ -83,6 +85,7 @@ namespace Mavis
                         inventory.RestoreStack(item, stack.count);
             }
             player.GetComponent<SahurWearableEquipment>()?.Restore(snapshot.wornItems);
+            player.GetComponent<SecondIslandSaveState>()?.Restore(snapshot.secondIsland);
             foreach (var identity in UnityEngine.Object.FindObjectsByType<WorldSaveIdentity>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             {
                 if (Key(identity) == null) continue;

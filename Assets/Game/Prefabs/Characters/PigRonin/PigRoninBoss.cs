@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 /// <summary>Second-island ronin: readable sword attacks with movement and recovery windows.</summary>
 [DisallowMultipleComponent, RequireComponent(typeof(Health),typeof(CharacterController))]
-public sealed class PigRoninBoss : MonoBehaviour
+public sealed partial class PigRoninBoss : MonoBehaviour
 {
     public enum State { Idle, Chase, Windup, Attack, Recover, Staggered, Return, Dead }
     public enum AttackKind { TwinSlash, Overhead, Dash, Spin }
@@ -36,13 +36,16 @@ public sealed class PigRoninBoss : MonoBehaviour
 
     void Awake()
     {
+        PerfectDodgeThreats.Register(this);
         health=GetComponent<Health>();motor=GetComponent<CharacterController>();
         health.OnDamaged ??= new UnityEvent<float>();health.OnDeath ??= new UnityEvent();
         health.OnDamaged.AddListener(OnDamaged);health.OnDeath.AddListener(OnDeath);
         CombatBodyCollision.Ensure(gameObject);
         var impact=GetComponent<CombatImpactResponse>();if(!impact)impact=gameObject.AddComponent<CombatImpactResponse>();
         impact.unflinching=true;impact.knockbackMultiplier=0;
-        // The model/Animator is authored on the prefab; no external visual driver is required here.
+        // Older scene instances can lack the visual component even though their
+        // combat state machine is present. Always bind the rig to that state.
+        if(!GetComponent<PigRoninBossVisual>())gameObject.AddComponent<PigRoninBossVisual>();
         hud=new BossHudPanel(transform,"Pig Ronin Boss HUD");home=transform.position;
     }
     void Start()
@@ -74,7 +77,7 @@ public sealed class PigRoninBoss : MonoBehaviour
             case State.Idle:
             case State.Chase:
                 if(toward.sqrMagnitude>.01f)Face(toward,dt);
-                if(distance>4.2f)Move(toward.normalized*chaseSpeed,dt);else Move(Vector3.zero,dt);
+                if(distance>4.8f)Move(toward.normalized*chaseSpeed,dt);else Move(Vector3.zero,dt);
                 CurrentState=State.Chase;
                 if(timer<=0 && distance<17f)
                 {
@@ -109,7 +112,12 @@ public sealed class PigRoninBoss : MonoBehaviour
         DamageWindowActive=CurrentAttack==AttackKind.TwinSlash ? phase>=.18f && phase<=.73f :
             CurrentAttack==AttackKind.Overhead ? phase>=.48f && phase<=.62f :
             CurrentAttack==AttackKind.Dash ? phase>=.08f && phase<=.8f : phase>=.22f && phase<=.74f;
-        if(CurrentAttack==AttackKind.Dash && phase<=.80f && GroundAhead(committed))Move(committed*dashSpeed,dt);
+        if(CurrentAttack==AttackKind.Dash && phase<=.80f && GroundAhead(committed))
+        {
+            float ahead=target ? Vector3.Dot(target.transform.position-transform.position,committed) : 0;
+            float speed=Mathf.Min(dashSpeed,Mathf.Max(0,ahead-3.2f)/Mathf.Max(dt,.001f));
+            Move(committed*speed,dt);
+        }
         else Move(Vector3.zero,dt);
         if(CurrentAttack==AttackKind.TwinSlash)
         {
@@ -189,6 +197,7 @@ public sealed class PigRoninBoss : MonoBehaviour
     {
         if(dead)return;dead=true;FightActive=false;DamageWindowActive=false;CurrentState=State.Dead;victoryAt=Time.time;
         if(motor)motor.enabled=false;
+        if(gameObject.scene.path=="Assets/Scenes/Second Island/Second Island.unity")GameSaveManager.RequestAutosave();
     }
     void LateUpdate()
     {

@@ -81,6 +81,8 @@ Shader "Mavis/FoliageWind"
             // Grass renderers set _ClipBelowSea. FoliageInteractionSystem fills the sand band.
             float _MavisSeaLevel;
             float _MavisBeachCeiling;
+            float4 _MavisGrassFadeRange; // start/end/inverse span/enabled
+            float4 _MavisGrassShadowRange;
 
             // Global player state for foliage squish (xyz = world pos, w = radius)
             float4 _MavisPlayerPos;
@@ -109,7 +111,7 @@ Shader "Mavis/FoliageWind"
                 float2 uv         : TEXCOORD0;
                 float3 normalWS   : TEXCOORD1;
                 float3 positionWS : TEXCOORD2;
-                float3 viewDirWS  : TEXCOORD3;
+                float3 restPositionWS : TEXCOORD3;
                 float  squish     : TEXCOORD4;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
@@ -199,13 +201,28 @@ Shader "Mavis/FoliageWind"
                 OUT.positionCS = TransformWorldToHClip(positionWS);
                 OUT.normalWS   = TransformObjectToWorldNormal(IN.normalOS);
                 OUT.uv         = TRANSFORM_TEX(IN.uv, _MainTex);
-                OUT.viewDirWS  = GetWorldSpaceViewDir(positionWS);
+                OUT.restPositionWS = originalWS;
                 return OUT;
+            }
+
+            void GrassDistanceCoverage(float3 restWS)
+            {
+                if (_ClipBelowSea < .5h || _MavisGrassFadeRange.w < .5) return;
+                float3 delta = restWS - _WorldSpaceCameraPos;
+                float squared = dot(delta,delta);
+                if (squared <= _MavisGrassFadeRange.x * _MavisGrassFadeRange.x) return;
+                float visibility = 1-smoothstep(_MavisGrassFadeRange.x,_MavisGrassFadeRange.y,sqrt(squared));
+                // Stable rest-space cells follow blades through wind/bending.
+                // No screen-space stipple swimming or whole-patch density wipe.
+                float2 cell = floor(restWS.xz * 3.0);
+                float noise = frac(sin(dot(cell,float2(127.1,311.7))) * 43758.5453);
+                clip(visibility-noise-.00001);
             }
 
             half4 frag(Varyings IN) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
+                GrassDistanceCoverage(IN.restPositionWS);
                 #if defined(LOD_FADE_CROSSFADE)
                     LODFadeCrossFade(IN.positionCS);
                 #endif
@@ -267,6 +284,7 @@ Shader "Mavis/FoliageWind"
             half4 shadowFrag(Varyings IN) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
+                GrassDistanceCoverage(IN.restPositionWS);
                 #if defined(LOD_FADE_CROSSFADE)
                     LODFadeCrossFade(IN.positionCS);
                 #endif
@@ -277,6 +295,19 @@ Shader "Mavis/FoliageWind"
                     opacity *= SAMPLE_TEXTURE2D(_AlphaMap, sampler_AlphaMap, IN.uv).r;
                 clip(opacity - _Cutoff);
                 return 0;
+            }
+            half4 grassShadowFrag(Varyings IN) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(IN);
+                if(_ClipBelowSea>.5h && _MavisGrassShadowRange.w>.5)
+                {
+                    float distance=length(IN.restPositionWS-_WorldSpaceCameraPos);
+                    float coverage=1-smoothstep(_MavisGrassShadowRange.x,_MavisGrassShadowRange.y,distance);
+                    float2 cell=floor(IN.restPositionWS.xz*9);
+                    float noise=frac(sin(dot(cell,float2(127.1,311.7)))*43758.5453);
+                    clip(coverage-noise-.00001);
+                }
+                return shadowFrag(IN);
             }
         ENDHLSL
 
@@ -326,7 +357,7 @@ Shader "Mavis/FoliageWind"
             #pragma target 4.5
             #pragma vertex shadowVert
             #pragma multi_compile_instancing
-            #pragma fragment shadowFrag
+            #pragma fragment grassShadowFrag
             #pragma multi_compile _ LOD_FADE_CROSSFADE
             #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
             ENDHLSL

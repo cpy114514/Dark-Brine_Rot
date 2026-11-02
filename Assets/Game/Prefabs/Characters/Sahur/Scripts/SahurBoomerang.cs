@@ -62,7 +62,7 @@ namespace Mavis
 
         void Update()
         {
-            if (!PauseSettingsMenu.IsOpen && !SahurLoadoutUI.BlocksInput && Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame &&
+            if (!PauseSettingsMenu.IsOpen && !SahurLoadoutUI.BlocksInput && GameControls.Down(GameControls.Command.Special) &&
                 Cursor.lockState == CursorLockMode.Locked)
             {
                 if (IsFlying) returning = true;

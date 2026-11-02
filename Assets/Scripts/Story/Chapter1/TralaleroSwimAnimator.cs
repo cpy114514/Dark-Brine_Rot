@@ -200,6 +200,8 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
     string committedAction;
     float transitionClock;
     bool hasCommittedPose;
+    Transform[] cinematicUprightBones;
+    Vector3[] cinematicForwardAxes,cinematicUpAxes;
     /// <summary>
     /// Commit only the actual rendered timeline pose, after hypothetical route
     /// samples. Those samples must remain exact and never start visual blends.
@@ -230,10 +232,50 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
                 bone.localPosition=Vector3.Lerp(transitionPositions[i],bone.localPosition,weight);
                 bone.localRotation=Quaternion.Slerp(transitionRotations[i],bone.localRotation,weight);
             }
-            committedPositions[i]=bone.localPosition;committedRotations[i]=bone.localRotation;
+        }
+        StabilizeSurfaceCinematicRoll(action);
+        for(int i=0;i<cinematicBones.Length;i++)
+        {
+            committedPositions[i]=cinematicBones[i].localPosition;committedRotations[i]=cinematicBones[i].localRotation;
         }
         if(!hasCommittedPose)transitionClock=clock-.18f;
         committedAction=action;hasCommittedPose=true;
+    }
+    void StabilizeSurfaceCinematicRoll(string action)
+    {
+        // Breaches and heavy airborne strikes retain their authored bank.
+        if(action.Contains("Breach")||action.Contains("LeapCrush")||action.Contains("Ship_Smash")||action.Contains("Threat"))return;
+        if(cinematicUprightBones==null)
+        {
+            cinematicUprightBones=new Transform[2];cinematicForwardAxes=new Vector3[2];cinematicUpAxes=new Vector3[2];
+            var skin=VisualRenderer as SkinnedMeshRenderer;if(!skin)return;
+            var rest=animationSet.rigPrefab.GetComponentInChildren<SkinnedMeshRenderer>();
+            Vector3 meshForward=rest.transform.InverseTransformDirection(animationSet.rigPrefab.transform.forward);
+            Vector3 meshUp=rest.transform.InverseTransformDirection(animationSet.rigPrefab.transform.up);
+            var bind=skin.sharedMesh.bindposes;
+            for(int i=0;i<2;i++)
+            {
+                int index=System.Array.FindIndex(skin.bones,b=>b.name==(i==0?"Body":"Head"));if(index<0)continue;
+                cinematicUprightBones[i]=skin.bones[index];
+                cinematicForwardAxes[i]=bind[index].MultiplyVector(meshForward).normalized;
+                cinematicUpAxes[i]=bind[index].MultiplyVector(meshUp).normalized;
+            }
+        }
+        // A pitched torso plus local yaw can roll the visible head even with
+        // zero root bank. Stabilize the anatomical frame, body before head,
+        // without changing its forward direction, nod or turn. Soft compression
+        // preserves banks up to 2 degrees and smoothly approaches 4 degrees.
+        for(int i=0;i<2;i++)
+        {
+            var bone=cinematicUprightBones[i];if(!bone)continue;
+            Vector3 forward=bone.rotation*cinematicForwardAxes[i];
+            Vector3 level=Vector3.ProjectOnPlane(Vector3.up,forward);
+            if(level.sqrMagnitude<.04f)continue;
+            float roll=Vector3.SignedAngle(level,Vector3.ProjectOnPlane(bone.rotation*cinematicUpAxes[i],forward),forward);
+            float excess=Mathf.Abs(roll)-2;if(excess<=0)continue;
+            float retained=Mathf.Sign(roll)*(2+excess/(1+excess*.5f));
+            bone.rotation=Quaternion.AngleAxis(retained-roll,forward)*bone.rotation;
+        }
     }
     /// <summary>
     /// Refresh after solid solving. A blocked stroke can retain an earlier

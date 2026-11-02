@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Mavis
 {
     [DefaultExecutionOrder(510)]
-    public sealed class NailongGroundSlam : MonoBehaviour
+    public sealed partial class NailongGroundSlam : MonoBehaviour
     {
         const int Segments=64;
         const int TubeSegments=12;
@@ -72,6 +72,7 @@ namespace Mavis
 
         public void Initialize(NailongAttack source,float reach,int count=3,float spacing=1f,float duration=2.4f,float ringWidth=.4f,bool presentationOnly=false)
         {
+            PerfectDodgeThreats.Register(this);
             owner=source;ownerHealth=source.GetComponent<NailongHealth>();radius=Mathf.Max(1,reach);
             visualOnly=presentationOnly;
             interval=Mathf.Max(.4f,spacing);travelSeconds=Mathf.Max(.6f,duration);width=Mathf.Max(.1f,ringWidth);
