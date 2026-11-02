@@ -1,6 +1,7 @@
 # Dark Brine_Rot
 
-A third-person action game with Tung Tung Tung Sahur as main character.
+It's a first person perspective game play as Sahur and explore the islands. The story starts from a strange ocean where you may find you are in trouble. By the game process, you can travel around the island and find out different treasures and bosses. Beat them to get new weapons or tools! By using different attack combos or different special technique, you may find out the own fighting style for you. Your mission is to stay alive, beating boss and investigate what's happening here. Is it just a normal adventure or it's all because a conspiracy? 
+Remember to use your map and different kinds tools, they may help you a lot when you are investigating the islands. Don't wait! Start playing now.
 
 ## Click here to play
 
