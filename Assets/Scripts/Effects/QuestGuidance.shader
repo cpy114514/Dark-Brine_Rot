@@ -24,8 +24,8 @@ Shader "DarkBrine/Quest Guiding Thread"
                 float flow=frac(i.uv.x*.11-_Clock*.32);
                 float head=exp(-pow((flow-.45)*10,2));
                 float detail=.7+.3*sin(i.uv.x*3.7-_Clock*3);
-                float alpha=i.color.a*_Fade*(.42+head*.58)*detail;
-                half3 color=i.color.rgb*(.72+head*.95);
+                float alpha=i.color.a*_Fade*(.74+head*.26)*detail;
+                half3 color=i.color.rgb*(1.05+head*.65);
                 color=MixFog(color,i.fog);return half4(color*alpha,alpha);
             }
             ENDHLSL

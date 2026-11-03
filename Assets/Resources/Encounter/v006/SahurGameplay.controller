@@ -431,7 +431,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Wreck Climb
-  m_Speed: 1
+  m_Speed: 1.0000001
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -443,7 +443,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -623603649343465320, guid: 61f5023d85b53054c8e427068d99a625, type: 3}
+  m_Motion: {fileID: -623603649343465320, guid: 96f1281a4779942479be6943b8436047, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

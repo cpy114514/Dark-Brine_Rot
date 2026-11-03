@@ -1,366 +1,265 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Mavis
 {
-    /// <summary>
-    /// After Bombardino is wrecked on the first island, it snatches Sahur,
-    /// climbs away, then drops him out of the sky over the second island.
-    /// </summary>
-    [DisallowMultipleComponent, DefaultExecutionOrder(800)]
+    /// <summary>Continuous grab, carry and fall into the existing island awakening.</summary>
+    [DisallowMultipleComponent,DefaultExecutionOrder(19000)]
     public sealed class BombardinoAbduction : MonoBehaviour
     {
-        const string FlatScene = "Assets/Scenes/Second Island.unity";
-        const string NestedScene = "Assets/Scenes/Second Island/Second Island.unity";
-        public static bool Playing { get; private set; }
-        BombardinoBoss boss;
-        ThirdPersonPlayerController player;
-        CharacterController capsule;
-        Transform anchor;
-        Camera view;
-        Vector3 cameraVelocity, bellyLocal, playerHome;
-        Quaternion visualRest, playerHomeRotation;
-        bool carried, sceneReady, restored;
-        Scene destination;
-        Vector3 islandScale = Vector3.one;
-
-        public static bool TryBegin(BombardinoBoss boss)
+        const string Destination="Assets/Scenes/Second Island/Second Island.unity";
+        public static bool Playing {get;private set;}
+        public string Phase {get;private set;}="approach";
+        public float GripError=>pose!=null?pose.GripError:0;
+        BombardinoBoss boss;ThirdPersonPlayerController player;
+        CharacterController capsule;SahurAttack attack;SahurAbductionPose pose;
+        Camera view;Transform bellyFrame;Image cover;GameObject fadeRoot;
+        Vector3 bellyLocal,cameraVelocity,home,landing,facing,carryFrom;
+        Quaternion homeRotation,visualRest;
+        float bodyHeight,carryAge,gripWeight,fallPhase;
+        BombardinoCaptureClaws claws;
+        bool carried,falling,sceneReady,restored,attackEnabled,playerEnabled,capsuleEnabled,oldControl,oldMovement;
+        Scene destination;SahurWeaponLoadout.Weapon selectedWeapon;
+        bool Armed=>Time.timeScale>0&&!PauseSettingsMenu.IsOpen;
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]static void Reset()=>Playing=false;
+        public static bool TryBegin(BombardinoBoss source)
         {
-            if (!Application.isPlaying || Playing || !boss) return false;
-            if (!boss.gameObject.scene.path.StartsWith("Assets/Scenes/First Island/")) return false;
-            var body = boss.target ? boss.target.GetComponent<ThirdPersonPlayerController>() : null;
-            if (!body || !body.isActiveAndEnabled) return false;
-            var run = boss.gameObject.AddComponent<BombardinoAbduction>();
-            run.boss = boss;
-            run.player = body;
-            return true;
+            if(!Application.isPlaying||Playing||!source||!source.gameObject.scene.path.StartsWith("Assets/Scenes/First Island/"))return false;
+            var body=source.target?source.target.GetComponent<ThirdPersonPlayerController>():null;
+            if(!body||!body.isActiveAndEnabled||!Application.CanStreamedLevelBeLoaded(Destination))return false;
+            Playing=true;var run=source.gameObject.AddComponent<BombardinoAbduction>();run.boss=source;run.player=body;return true;
         }
-
         IEnumerator Start()
         {
-            Playing = true;
-            capsule = player.GetComponent<CharacterController>();
-            playerHome = player.transform.position;
-            playerHomeRotation = player.transform.rotation;
-            bellyLocal = boss.transform.InverseTransformPoint(Belly(boss));
-            visualRest = boss.visual ? boss.visual.localRotation : Quaternion.identity;
-            var motion = player.Motion ? player.Motion : player.gameObject.AddComponent<SahurMotionContext>();
-            motion.Claim(this, SahurControlState.Cinematic);
-            player.ExternalControlLock = true;
-            player.ExternalMovementLock = true;
-            if (capsule) capsule.enabled = false;
-            player.enabled = false;
-            CinematicLetterbox.Set(this, true);
-            view = Camera.main;
-            boss.Explosion(boss.transform.position, 3.5f);
-
-            Vector3 forward = Flat(boss.transform.forward);
-            if (forward.sqrMagnitude < .01f) forward = Vector3.forward;
-            Quaternion face = Quaternion.LookRotation(forward, Vector3.up);
-            Vector3 bellyTarget = player.transform.position + Vector3.up * (Hang() + .8f);
-            yield return MoveBoss(boss.transform.position, RootForBelly(bellyTarget, face), forward, 1.7f, -18f);
-            AttachUnderBelly();
-            Vector3 away = Flat(boss.transform.forward);
-            if (away.sqrMagnitude < .01f) away = forward;
-            Vector3 climb = boss.transform.position + away * 96f + Vector3.up * 52f;
-            yield return MoveBoss(boss.transform.position, climb, away, 3.7f, 16f);
-
-            string scenePath = ScenePath();
-            if (string.IsNullOrEmpty(scenePath)) { RestoreInPlace(); yield break; }
-            DontDestroyOnLoad(boss.gameObject);
-            SceneManager.sceneLoaded += SceneArrived;
-            if (!SceneLoadingScreen.Load(scenePath))
+            home=player.transform.position;homeRotation=player.transform.rotation;
+            facing=Vector3.ProjectOnPlane(boss.transform.forward,Vector3.up).normalized;if(facing.sqrMagnitude<.01f)facing=player.transform.forward;
+            visualRest=boss.visual?boss.visual.localRotation:Quaternion.identity;
+            bellyFrame=boss.visual?boss.visual:boss.transform;bellyLocal=bellyFrame.InverseTransformPoint(Belly());
+            claws=new BombardinoCaptureClaws(bellyFrame);
+            LockPlayer();view=Camera.main;MakeCover();CinematicLetterbox.Set(this,true);
+            boss.Explosion(boss.transform.position,3.5f);
+            var face=Quaternion.LookRotation(facing);
+            pose.Sample(0,0);
+            yield return FlyTo(RootForBelly(pose.Shoulders+Vector3.up*(pose.ArmReach*.8f),face),face,1.65f,-9);
+            Phase="grasp";carryFrom=player.transform.position;carried=true;carryAge=0;
+            yield return HoldTime(.55f);
+            Phase="climb";
+            yield return FlyTo(boss.transform.position+facing*90+Vector3.up*48,face,3.4f,12);
+            Phase="transit";yield return Fade(1,.32f);
+            DontDestroyOnLoad(boss.gameObject);player.transform.SetParent(boss.transform,true);
+            SceneManager.sceneLoaded+=SceneArrived;
+            if(!SceneLoadingScreen.Load(Destination)){Abort();yield break;}
+            float deadline=Time.realtimeSinceStartup+90;
+            while(!sceneReady&&Time.realtimeSinceStartup<deadline)yield return null;
+            if(!sceneReady){Abort();yield break;}
+            while(SceneLoadingScreen.IsLoading)yield return null;
+            yield return null;if(!player){Abort();yield break;}
+            FindLanding();face=Quaternion.LookRotation(facing);view=Camera.main;cameraVelocity=Vector3.zero;
+            Phase="island-pass";carryAge=1;gripWeight=1;
+            Vector3 release=landing+Vector3.up*(bodyHeight*5.5f)-facing*bodyHeight*2.4f;
+            boss.transform.SetPositionAndRotation(RootForBelly(release,face),face);
+            Bank(-5);ApplyCarry();FrameCamera(true);
+            yield return Fade(0,.3f);
+            yield return FlyTo(boss.transform.position+facing*bodyHeight*2,face,.8f,-5);
+            Phase="release";carried=false;falling=true;player.transform.SetParent(null,true);
+            Vector3 start=player.transform.position,course=boss.transform.position;Quaternion from=player.transform.rotation;
+            const float seconds=1.65f;float elapsed=0;
+            Vector3 velocity=facing*bodyHeight*1.35f+Vector3.up*bodyHeight*.25f;
+            Vector3 acceleration=(landing-start-velocity*seconds)*(2/(seconds*seconds));
+            while(elapsed<seconds)
             {
-                SceneManager.sceneLoaded -= SceneArrived;
-                RestoreInPlace();
-                yield break;
-            }
-            float deadline = Time.realtimeSinceStartup + 45f;
-            while (!sceneReady && Time.realtimeSinceStartup < deadline) yield return null;
-            if (!sceneReady) { SceneManager.sceneLoaded -= SceneArrived; RestoreInPlace(); yield break; }
-            while (SceneLoadingScreen.IsLoading) yield return null;
-            yield return null;
-            view = Camera.main;
-            CinematicLetterbox.Set(this, true);
-            yield return ThrowOntoIsland();
-            Finish();
-        }
-
-        void SceneArrived(Scene scene, LoadSceneMode mode)
-        {
-            if (scene.name != "Second Island") return;
-            SceneManager.sceneLoaded -= SceneArrived;
-            destination = scene;
-            ThirdPersonPlayerController resident = null;
-            foreach (var other in FindObjectsByType<ThirdPersonPlayerController>(FindObjectsSortMode.None))
-            {
-                if (!other || other == player) continue;
-                if (other.gameObject.scene == scene) resident = other;
-            }
-            SceneManager.MoveGameObjectToScene(boss.gameObject, scene);
-            if (resident) AdoptIslandBody(resident);
-            sceneReady = true;
-        }
-
-        void AdoptIslandBody(ThirdPersonPlayerController resident)
-        {
-            var travel = resident.GetComponent<MarshmallowTraversal>();
-            var experience = resident.GetComponent<MarshmallowIslandExperience>();
-            if (travel && !player.GetComponent<MarshmallowTraversal>())
-            {
-                var copy = player.gameObject.AddComponent<MarshmallowTraversal>();
-                copy.gravity = travel.gravity;
-                copy.jumpHeight = travel.jumpHeight;
-                copy.walkingBoundHeight = travel.walkingBoundHeight;
-                copy.sprintingBoundHeight = travel.sprintingBoundHeight;
-                copy.groundCompressionTime = travel.groundCompressionTime;
-                copy.airControl = travel.airControl;
-                copy.landingSquash = travel.landingSquash;
-            }
-            if (experience && !player.GetComponent<MarshmallowIslandExperience>())
-            {
-                var copy = player.gameObject.AddComponent<MarshmallowIslandExperience>();
-                copy.surface = experience.surface;
-                copy.fluffMaterial = experience.fluffMaterial;
-                copy.standingDepression = experience.standingDepression;
-                copy.impressionLifetime = experience.impressionLifetime;
-                copy.soundVolume = experience.soundVolume;
-                copy.cameraSpring = experience.cameraSpring;
-                copy.ambientFloss = experience.ambientFloss;
-            }
-            var strides = resident.GetComponent<MarshmallowSpacewalk>();
-            if (strides && !player.GetComponent<MarshmallowSpacewalk>())
-            {
-                var copy = player.gameObject.AddComponent<MarshmallowSpacewalk>();
-                copy.leftStride = strides.leftStride;
-                copy.rightStride = strides.rightStride;
-                copy.blendTime = strides.blendTime;
-            }
-            var residentBody = resident.GetComponent<CharacterController>();
-            if (capsule && residentBody)
-            {
-                capsule.height = residentBody.height;
-                capsule.radius = residentBody.radius;
-                capsule.center = residentBody.center;
-                capsule.stepOffset = residentBody.stepOffset;
-                capsule.slopeLimit = residentBody.slopeLimit;
-            }
-            islandScale = resident.transform.lossyScale;
-            ApplyIslandScale();
-            player.BindMarshmallowTraversal();
-            resident.gameObject.SetActive(false);
-        }
-
-        void ApplyIslandScale()
-        {
-            if (!player || islandScale.sqrMagnitude < .01f) return;
-            Vector3 parentScale = player.transform.parent ? player.transform.parent.lossyScale : Vector3.one;
-            player.transform.localScale = new Vector3(
-                islandScale.x / Mathf.Max(.001f, parentScale.x),
-                islandScale.y / Mathf.Max(.001f, parentScale.y),
-                islandScale.z / Mathf.Max(.001f, parentScale.z));
-        }
-
-        IEnumerator ThrowOntoIsland()
-        {
-            Transform spawn = null;
-            var transforms = FindObjectsByType<Transform>(FindObjectsSortMode.None);
-            for (int i = 0; i < transforms.Length; i++)
-                if (transforms[i] && transforms[i].name == "Sahur Spawn Point" && transforms[i].gameObject.scene == destination)
-                { spawn = transforms[i]; break; }
-            Vector3 ground = spawn ? spawn.position : player.transform.position;
-            Vector3 probe = ground + Vector3.up * 40f;
-            var hits = Physics.RaycastAll(probe, Vector3.down, 120f, ~0, QueryTriggerInteraction.Ignore);
-            float nearest = float.PositiveInfinity;
-            for (int i = 0; i < hits.Length; i++)
-            {
-                var hit = hits[i];
-                if (!hit.collider || hit.collider.transform.IsChildOf(boss.transform) || hit.collider.transform.IsChildOf(player.transform)) continue;
-                if (hit.distance < nearest) { nearest = hit.distance; ground = hit.point; }
-            }
-            Vector3 facing = spawn ? Flat(spawn.forward) : Vector3.forward;
-            if (facing.sqrMagnitude < .01f) facing = Vector3.forward;
-            Quaternion face = Quaternion.LookRotation(facing, Vector3.up);
-            Vector3 releaseBelly = ground + Vector3.up * 36f - facing * 16f;
-            boss.transform.SetPositionAndRotation(RootForBelly(releaseBelly, face), face);
-            if (anchor) anchor.rotation = boss.transform.rotation;
-            view = Camera.main;
-            Vector3 pass = boss.transform.position + facing * 18f;
-            yield return MoveBoss(boss.transform.position, pass, facing, 1.2f, -10f);
-
-            Vector3 thrownFrom = player.transform.position;
-            Quaternion thrownRot = player.transform.rotation;
-            player.transform.SetParent(null, true);
-            carried = false;
-            Vector3 landing = ground + facing * 11f;
-            if (capsule)
-            {
-                float sole = (capsule.center.y - capsule.height * .5f) * Mathf.Abs(player.transform.lossyScale.y);
-                landing.y = ground.y - sole + .25f;
-            }
-            else landing.y = ground.y + 1.7f;
-            Quaternion upright = Quaternion.LookRotation(facing, Vector3.up);
-            Vector3 planeStart = boss.transform.position;
-            Vector3 planeEnd = planeStart + facing * 74f + Vector3.up * 30f;
-            float duration = 1.5f, elapsed = 0f;
-            while (elapsed < duration)
-            {
-                if (Time.timeScale > 0f && !PauseSettingsMenu.IsOpen)
+                if(Armed)
                 {
-                    float u = Mathf.Clamp01(elapsed / duration);
-                    float drop = u * u;
-                    var point = Vector3.Lerp(thrownFrom, landing, drop);
-                    player.transform.SetPositionAndRotation(point, Quaternion.Slerp(thrownRot, upright, Mathf.SmoothStep(0f, 1f, u)));
-                    float fly = Mathf.SmoothStep(0f, 1f, u);
-                    Vector3 course = planeEnd - planeStart;
-                    boss.transform.SetPositionAndRotation(Vector3.Lerp(planeStart, planeEnd, fly), Quaternion.LookRotation(course.normalized, Vector3.up));
-                    Bank(20f);
-                    elapsed += Time.deltaTime;
+                    fallPhase=Mathf.Clamp01(elapsed/seconds);
+                    player.transform.SetPositionAndRotation(start+velocity*elapsed+acceleration*(.5f*elapsed*elapsed),
+                        Quaternion.Slerp(from,face*Quaternion.Euler(-36,0,14),Mathf.SmoothStep(0,1,fallPhase)));
+                    boss.transform.position=course+facing*(elapsed*bodyHeight*7)+Vector3.up*(elapsed*elapsed*bodyHeight*1.7f);Bank(14);
+                    elapsed+=Time.deltaTime;
                 }
-                FrameCamera(player.transform.position, facing);
                 yield return null;
             }
-            player.transform.SetPositionAndRotation(landing, upright);
+            player.transform.position=landing;falling=false;Phase="impact";pose.Sample(.82f);SeatImpact();
+            BrineVfxWorld.Get()?.Ground(landing,Mathf.Clamp(bodyHeight*.48f,1,3),.7f);
+            yield return Fade(1,.12f);yield return HoldTime(.28f);
+            Phase="awakening";Finish();
         }
-
-        Vector3 RootForBelly(Vector3 bellyWorld, Quaternion rotation)
+        void LockPlayer()
         {
-            Vector3 offset = Vector3.Scale(bellyLocal, boss.transform.lossyScale);
-            return bellyWorld - rotation * offset;
+            player.PrepareRuntime();capsule=player.GetComponent<CharacterController>();attack=player.GetComponent<SahurAttack>();
+            playerEnabled=player.enabled;capsuleEnabled=capsule&&capsule.enabled;attackEnabled=attack&&attack.enabled;
+            oldControl=player.ExternalControlLock;oldMovement=player.ExternalMovementLock;
+            player.GetComponent<CombatLocalHitStop>()?.Release();player.GetComponent<CombatImpactVisuals>()?.ClearTrail();
+            if(attack)attack.enabled=false;
+            player.Motion.Claim(this,SahurControlState.Cinematic);player.ExternalControlLock=true;player.ExternalMovementLock=true;player.enabled=false;
+            if(capsule)capsule.enabled=false;
+            bodyHeight=capsule?capsule.height*Mathf.Abs(player.transform.lossyScale.y):4;
+            selectedWeapon=player.GetComponent<SahurWeaponLoadout>()?player.GetComponent<SahurWeaponLoadout>().CurrentWeapon:SahurWeaponLoadout.Weapon.Stick;
+            var stow=player.GetComponent<SahurSwimmingWeapon>();if(stow){stow.CinematicTraversal=true;stow.CinematicStowWeight=1;}
+            player.GetComponent<SahurWeaponLoadout>()?.SetSkyboardStowed(true);
+            pose=new SahurAbductionPose(player);
         }
-
-        void AttachUnderBelly()
+        void UnlockPlayer()
         {
-            if (!anchor)
+            if(!player)return;pose?.Dispose();pose=null;
+            player.Motion?.Release(this);player.ExternalControlLock=oldControl;player.ExternalMovementLock=oldMovement;
+            player.enabled=playerEnabled;if(capsule)capsule.enabled=capsuleEnabled;if(attack)attack.enabled=attackEnabled;
+            var stow=player.GetComponent<SahurSwimmingWeapon>();if(stow){stow.CinematicTraversal=false;stow.CinematicStowWeight=-1;}
+            player.GetComponent<SahurWeaponLoadout>()?.SetSkyboardStowed(false);
+        }
+        void SceneArrived(Scene scene,LoadSceneMode mode)
+        {
+            if(scene.path!=Destination)return;SceneManager.sceneLoaded-=SceneArrived;destination=scene;
+            ThirdPersonPlayerController resident=null;
+            foreach(var root in scene.GetRootGameObjects())foreach(var body in root.GetComponentsInChildren<ThirdPersonPlayerController>(true))if(body!=player)resident=body;
+            if(!resident)return;
+            var previous=player;var oldInventory=previous.GetComponent<EquipmentInventory>();var inventory=resident.GetComponent<EquipmentInventory>();
+            if(oldInventory&&inventory){inventory.ClearForRestore();foreach(var pair in oldInventory.Items)inventory.RestoreStack(pair.Key,pair.Value);}
+            var worn=previous.GetComponent<SahurWearableEquipment>();var destinationWorn=resident.GetComponent<SahurWearableEquipment>();
+            if(worn&&destinationWorn)foreach(var item in worn.EquippedItems)destinationWorn.Equip(item);
+            var oldHealth=previous.GetComponent<PlayerHealth>();var health=resident.GetComponent<PlayerHealth>();if(health&&oldHealth)health.currentHealth=Mathf.Clamp(oldHealth.currentHealth,1,health.maxHealth);
+            var oldStamina=previous.GetComponent<PlayerStamina>();var stamina=resident.GetComponent<PlayerStamina>();if(stamina&&oldStamina)stamina.currentStamina=Mathf.Clamp(oldStamina.currentStamina,0,stamina.maxStamina);
+            var glasses=previous.GetComponent<WeaknessGlasses>();if(glasses)resident.GetComponent<WeaknessGlasses>()?.Restore(glasses.Owned,glasses.Equipped,glasses.ActiveRemaining,glasses.CooldownRemaining);
+            var savedWeapon=selectedWeapon;
+            var loadout=previous.GetComponent<SahurWeaponLoadout>();if(loadout)resident.GetComponent<SahurWeaponLoadout>()?.Restore(loadout.HasTwinBlades,savedWeapon,loadout.HasM4A1);
+            var rifle=previous.GetComponent<SahurRifleCombat>();if(rifle)resident.GetComponent<SahurRifleCombat>()?.RestoreAmmo(rifle.Rounds,rifle.ReserveRounds);
+            bool excluded=previous.GetComponent<GameSaveExcluded>();UnlockPlayer();previous.gameObject.SetActive(false);Destroy(previous.gameObject);
+            player=resident;if(excluded&&!player.GetComponent<GameSaveExcluded>())player.gameObject.AddComponent<GameSaveExcluded>();
+            home=resident.transform.position;homeRotation=resident.transform.rotation;
+            LockPlayer();selectedWeapon=savedWeapon;player.transform.SetParent(boss.transform,true);SceneManager.MoveGameObjectToScene(boss.gameObject,scene);sceneReady=true;
+        }
+        void FindLanding()
+        {
+            landing=home;facing=Vector3.ProjectOnPlane(homeRotation*Vector3.forward,Vector3.up).normalized;if(facing.sqrMagnitude<.01f)facing=Vector3.forward;
+            if(Surface(home,out var hit))
             {
-                anchor = new GameObject("Grab").transform;
-                anchor.SetParent(boss.transform, false);
+                float sole=capsule?(capsule.center.y-capsule.height*.5f)*Mathf.Abs(player.transform.lossyScale.y):0;
+                landing.y=hit.point.y-sole+.06f;
             }
-            anchor.localPosition = bellyLocal + Vector3.down * (Hang() * .62f);
-            anchor.localRotation = Quaternion.identity;
-            player.transform.SetParent(anchor, true);
-            player.transform.localPosition = Vector3.zero;
-            player.transform.localRotation = Quaternion.Euler(74f, 0f, 8f);
-            carried = true;
         }
-
-        float Hang() => capsule ? Mathf.Max(1.8f, capsule.height * Mathf.Abs(player.transform.lossyScale.y) * .55f) : 2.4f;
-
-        IEnumerator MoveBoss(Vector3 from, Vector3 to, Vector3 facing, float seconds, float pitch)
+        bool Surface(Vector3 point,out RaycastHit best)
         {
-            float elapsed = 0f;
-            while (elapsed < seconds)
+            best=default;float nearest=float.MaxValue;
+            foreach(var h in Physics.RaycastAll(point+Vector3.up*40,Vector3.down,120,~0,QueryTriggerInteraction.Ignore))
             {
-                if (Time.timeScale > 0f && !PauseSettingsMenu.IsOpen)
+                if(h.normal.y<.55f||h.distance>=nearest||h.collider.transform.IsChildOf(boss.transform)||h.collider.transform.IsChildOf(player.transform))continue;
+                best=h;nearest=h.distance;
+            }
+            return nearest<float.MaxValue;
+        }
+        void LateUpdate()
+        {
+            if(restored||!player||pose==null)return;
+            player.GetComponent<PlayerHealth>()?.GrantProtection(.5f);
+            if(carried){if(Armed){carryAge+=Time.deltaTime;gripWeight=Mathf.SmoothStep(0,1,Mathf.Clamp01(carryAge/.4f));}ApplyCarry();}
+            else if(falling)pose.Sample(Mathf.Lerp(.27f,.82f,fallPhase));
+            else if(Phase=="impact")pose.Sample(.82f);
+            else pose.Sample(0,0);
+            if(!carried&&claws!=null&&falling)claws.Sample(1-Mathf.Clamp01(fallPhase*5));
+            FrameCamera(false);
+        }
+        void ApplyCarry()
+        {
+            if(!player||pose==null)return;
+            Vector3 grip=bellyFrame.TransformPoint(bellyLocal)-Vector3.up*bodyHeight*.012f;Vector3 right=bellyFrame.right;
+            // Imported aircraft visual axes can face backwards relative to the
+            // flight root. Preserve anatomical left/right through that conversion.
+            if(Vector3.Dot(right,player.transform.right)<0)right=-right;
+            float sway=Mathf.Sin(carryAge*3.1f)*Mathf.Exp(-carryAge*.6f)*7;
+            player.transform.rotation=Quaternion.LookRotation(facing)*Quaternion.Euler(8+(1-Mathf.Exp(-carryAge*2))*9,0,sway);
+            pose.Sample(.2f+Mathf.Sin(carryAge*1.6f)*.025f,Phase=="grasp"?gripWeight:1);
+            Vector3 desired=grip-Vector3.up*(pose.ArmReach*.74f)-(pose.Shoulders-player.transform.position)-facing*(bodyHeight*.02f);
+            player.transform.position=Phase=="grasp"?Vector3.Lerp(carryFrom,desired,gripWeight):desired;
+            pose.Hold(grip,right,bodyHeight*.12f,gripWeight);
+            claws?.Hold(grip,right,bodyHeight*.12f,gripWeight);
+        }
+        IEnumerator FlyTo(Vector3 target,Quaternion face,float seconds,float bank)
+        {
+            Vector3 from=boss.transform.position;Quaternion rotation=boss.transform.rotation;float elapsed=0;
+            while(elapsed<seconds)
+            {
+                if(Armed)
                 {
-                    float u = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / Mathf.Max(.01f, seconds)));
-                    Vector3 point = Vector3.Lerp(from, to, u);
-                    Vector3 course = to - from;
-                    if (course.sqrMagnitude < .01f) course = facing;
-                    boss.transform.SetPositionAndRotation(point, Quaternion.LookRotation(course.normalized, Vector3.up));
-                    Bank(pitch);
-                    if (anchor && carried) anchor.localRotation = Quaternion.identity;
-                    elapsed += Time.deltaTime;
+                    float u=Mathf.Clamp01(elapsed/seconds),t=u*u*u*(u*(u*6-15)+10);
+                    boss.transform.SetPositionAndRotation(Vector3.Lerp(from,target,t),Quaternion.Slerp(rotation,face,Mathf.SmoothStep(0,1,u)));
+                    Bank(bank*Mathf.Sin(u*Mathf.PI));elapsed+=Time.deltaTime;
                 }
-                Vector3 look = carried && player ? player.transform.position : boss.transform.position;
-                FrameCamera(look, Flat(courseOr(facing)));
                 yield return null;
             }
+            boss.transform.SetPositionAndRotation(target,face);Bank(0);
         }
-
-        Vector3 courseOr(Vector3 facing) => facing.sqrMagnitude > .01f ? facing : boss.transform.forward;
-
-        void Bank(float pitch)
+        void Bank(float angle){if(boss.visual)boss.visual.localRotation=visualRest*Quaternion.Euler(-angle,0,Mathf.Sin(carryAge*1.7f)*2);}
+        Vector3 RootForBelly(Vector3 target,Quaternion rotation)
         {
-            if (!boss.visual) return;
-            boss.visual.localRotation = visualRest * Quaternion.Euler(pitch, 0f, Mathf.Sin(Time.time * 1.7f) * 7f);
+            Quaternion previous=boss.transform.rotation;boss.transform.rotation=rotation;
+            Vector3 offset=bellyFrame.TransformPoint(bellyLocal)-boss.transform.position;boss.transform.rotation=previous;return target-offset;
         }
-
-        void FrameCamera(Vector3 focus, Vector3 forward)
+        Vector3 Belly()
         {
-            if (!view) view = Camera.main;
-            if (!view) return;
-            forward = Flat(forward);
-            if (forward.sqrMagnitude < .01f) forward = Vector3.forward;
-            Vector3 right = Vector3.Cross(Vector3.up, forward).normalized;
-            Vector3 desired = focus - forward * 16f + Vector3.up * 7.5f + right * 5.5f;
-            view.transform.position = Vector3.SmoothDamp(view.transform.position, desired, ref cameraVelocity, .16f);
-            Vector3 at = focus + Vector3.up * 1.1f;
-            if ((at - view.transform.position).sqrMagnitude > .01f)
-                view.transform.rotation = Quaternion.Slerp(view.transform.rotation, Quaternion.LookRotation(at - view.transform.position, Vector3.up), 1f - Mathf.Exp(-8f * Time.deltaTime));
+            Bounds bounds=default;bool first=true;
+            foreach(var r in bellyFrame.GetComponentsInChildren<Renderer>())if(r is MeshRenderer||r is SkinnedMeshRenderer){if(first){bounds=r.bounds;first=false;}else bounds.Encapsulate(r.bounds);}
+            return first?boss.transform.position:new Vector3(bounds.center.x,bounds.min.y,bounds.center.z);
         }
-
+        void FrameCamera(bool snap)
+        {
+            if(!view)view=Camera.main;if(!view||!player)return;
+            Vector3 focus=pose!=null?pose.Hips+Vector3.up*bodyHeight*.20f:player.transform.position;
+            // Keep the person framed during the dive; the aircraft enters the
+            // shot from above instead of pulling the lens up to empty sky.
+            Vector3 desired=focus+(-facing*2.3f+Vector3.Cross(Vector3.up,facing)*1.9f+Vector3.up*.72f)*bodyHeight;
+            if(snap)view.transform.position=desired;
+            else if(Armed)view.transform.position=Vector3.SmoothDamp(view.transform.position,desired,ref cameraVelocity,.20f,Mathf.Infinity,Time.deltaTime);
+            if((focus-view.transform.position).sqrMagnitude>.01f)view.transform.rotation=Quaternion.LookRotation(focus-view.transform.position);
+        }
+        void MakeCover()
+        {
+            fadeRoot=new GameObject("Abduction transition cover",typeof(RectTransform),typeof(Canvas));fadeRoot.transform.SetParent(transform,false);
+            var canvas=fadeRoot.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=32758;
+            var go=new GameObject("Black",typeof(RectTransform),typeof(Image));go.transform.SetParent(fadeRoot.transform,false);
+            var rect=go.GetComponent<RectTransform>();rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
+            cover=go.GetComponent<Image>();cover.color=Color.clear;cover.raycastTarget=false;
+        }
+        void SeatImpact()
+        {
+            if(!Surface(landing,out var ground))return;
+            var mesh=new Mesh();float lowest=float.MaxValue;
+            try
+            {
+                foreach(var skin in player.GetComponentsInChildren<SkinnedMeshRenderer>())if(skin.enabled)
+                {
+                    skin.BakeMesh(mesh,false);
+                    foreach(var vertex in mesh.vertices)lowest=Mathf.Min(lowest,skin.transform.TransformPoint(vertex).y);
+                }
+                float correction=ground.point.y+.035f-lowest;
+                if(lowest<float.MaxValue&&Mathf.Abs(correction)<bodyHeight*1.5f)player.transform.position+=Vector3.up*correction;
+            }
+            finally{Destroy(mesh);}
+        }
+        void Update(){if(fadeRoot)fadeRoot.GetComponent<Canvas>().enabled=!PauseSettingsMenu.IsOpen;}
+        IEnumerator Fade(float alpha,float duration)
+        {
+            float from=cover?cover.color.a:0,elapsed=0;
+            while(elapsed<duration){if(Armed){if(cover)cover.color=new Color(0,0,0,Mathf.SmoothStep(from,alpha,elapsed/duration));elapsed+=Time.deltaTime;}yield return null;}
+            if(cover)cover.color=new Color(0,0,0,alpha);
+        }
+        IEnumerator HoldTime(float seconds){float t=0;while(t<seconds){if(Armed)t+=Time.deltaTime;yield return null;}}
         void Finish()
         {
-            if (restored) return;
-            restored = true;
-            Playing = false;
-            if (player)
-            {
-                player.transform.SetParent(null, true);
-                ApplyIslandScale();
-                if (destination.IsValid()) SceneManager.MoveGameObjectToScene(player.gameObject, destination);
-                if (capsule) capsule.enabled = true;
-                player.ExternalControlLock = false;
-                player.ExternalMovementLock = false;
-                player.enabled = true;
-                view = view ? view : Camera.main;
-                if (view) player.ContinueCameraFromCurrentView(view, cameraVelocity);
-                player.Motion?.Release(this);
-            }
-            CinematicLetterbox.Set(this, false);
-            if (boss) Destroy(boss.gameObject);
+            player.transform.SetParent(null,true);player.RestoreSavedPose(landing,homeRotation);UnlockPlayer();Playing=false;
+            bool started=SecondIslandAwakening.BeginAfterAbduction(player);
+            if(!started&&view)player.ContinueCameraFromCurrentView(view,cameraVelocity);
+            restored=true;CinematicLetterbox.Set(this,false);Destroy(boss.gameObject);
         }
-
-        void RestoreInPlace()
+        void Abort()
         {
-            if (restored) return;
-            restored = true;
-            Playing = false;
-            if (player)
-            {
-                player.transform.SetParent(null, true);
-                player.transform.SetPositionAndRotation(playerHome, playerHomeRotation);
-                if (capsule) capsule.enabled = true;
-                player.ExternalControlLock = false;
-                player.ExternalMovementLock = false;
-                player.enabled = true;
-                player.Motion?.Release(this);
-            }
-            CinematicLetterbox.Set(this, false);
-            if (boss) boss.ReleaseAbduction();
+            if(restored)return;restored=true;Playing=false;SceneManager.sceneLoaded-=SceneArrived;
+            claws?.Dispose();claws=null;
+            if(player){player.transform.SetParent(null,true);player.transform.SetPositionAndRotation(home,homeRotation);UnlockPlayer();if(view)player.ContinueCameraFromCurrentView(view,cameraVelocity);}
+            if(boss){boss.ReleaseAbduction();if(boss.visual)boss.visual.localRotation=visualRest;}
+            CinematicLetterbox.Set(this,false);if(fadeRoot)Destroy(fadeRoot);
         }
-
-        void OnDestroy()
-        {
-            SceneManager.sceneLoaded -= SceneArrived;
-            if (!restored && player && !player.enabled)
-                RestoreInPlace();
-            Playing = false;
-        }
-
-        static string ScenePath()
-        {
-            if (Application.CanStreamedLevelBeLoaded(FlatScene)) return FlatScene;
-            if (Application.CanStreamedLevelBeLoaded(NestedScene)) return NestedScene;
-            return null;
-        }
-
-        static Vector3 Belly(BombardinoBoss boss)
-        {
-            var renderers = boss.GetComponentsInChildren<Renderer>();
-            if (renderers == null || renderers.Length == 0) return boss.transform.position;
-            Bounds bounds = renderers[0].bounds;
-            for (int i = 1; i < renderers.Length; i++)
-                if (renderers[i]) bounds.Encapsulate(renderers[i].bounds);
-            return new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
-        }
-
-        static Vector3 Flat(Vector3 value)
-        {
-            value.y = 0f;
-            return value.sqrMagnitude > .0001f ? value.normalized : Vector3.zero;
-        }
+        void OnDisable(){if(!restored){StopAllCoroutines();Abort();}}
+        void OnDestroy(){SceneManager.sceneLoaded-=SceneArrived;if(!restored)Abort();pose?.Dispose();claws?.Dispose();Playing=false;}
     }
 }

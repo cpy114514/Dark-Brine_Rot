@@ -180,6 +180,9 @@ public sealed class OpeningTailReview : MonoBehaviour
         if(battle.RedesignStage==Story1WreckBattle.OpeningStage.Duel&&t>24&&!tail){Finish("Tail strike never registered");return;}
         if(battle.RedesignStage==Story1WreckBattle.OpeningStage.Duel&&tail&&t-(float)Field("redTailHitTime")>8){Finish("Airborne exit never reached water");return;}
         if(frame>replayFps*(includeHelm?180:140))Finish("Full opening timed out");
+        if(battle.RedesignStage==Story1WreckBattle.OpeningStage.Tutorial&&!battle.TutorialWaiting&&
+            battle.CurrentLesson==Story1WreckBattle.Lesson.ChargeRelease&&(float)Field("lessonTime")>6&&battle.RedesignTutorialConfirmedHits<2)
+            Finish("Charged tutorial contact did not resolve");
     }
     void Finish(string error)
     {
@@ -274,6 +277,9 @@ public sealed class OpeningTailReview : MonoBehaviour
             Transform chest=animator?animator.GetBoneTransform(HumanBodyBones.Chest):null;
             Transform lf=animator?animator.GetBoneTransform(HumanBodyBones.LeftFoot):null;
             Transform rf=animator?animator.GetBoneTransform(HumanBodyBones.RightFoot):null;
+            Transform arm=animator?animator.GetBoneTransform(HumanBodyBones.RightUpperArm):null;
+            Transform forearm=animator?animator.GetBoneTransform(HumanBodyBones.RightLowerArm):null;
+            Transform hand=animator?animator.GetBoneTransform(HumanBodyBones.RightHand):null;
             var hv=head?view.WorldToViewportPoint(head.position):Vector3.zero;
             var cv=chest?view.WorldToViewportPoint(chest.position):Vector3.zero;
             var sharkFacing=ReviewSharkFacing(view);
@@ -282,6 +288,10 @@ public sealed class OpeningTailReview : MonoBehaviour
                 nose=swim?swim.NoseWorldPoint.ToString("F2"):null,body=swim&&swim.VisualRenderer?swim.VisualRenderer.bounds.center.ToString("F2"):null,
                 extent=swim&&swim.VisualRenderer?swim.VisualRenderer.bounds.extents.ToString("F2"):null,cam=view.transform.position.ToString("F2"),look=view.transform.forward.ToString("F3"),
                 rot=sequence.swimmer.transform.eulerAngles.ToString("F2"),sharkFacing=V(sharkFacing),heroPush=battle.RedesignSolidHeroPush.ToString("F3"),woodPush=battle.RedesignSolidWoodPush.ToString("F3"),
+                heroForward=V(sequence.sahur.transform.forward),headPosition=V(head?head.position:Vector3.zero),chestPosition=V(chest?chest.position:Vector3.zero),
+                tailPosition=V(swim?swim.TailWorldPoint:Vector3.zero),tailView=V(swim?view.WorldToViewportPoint(swim.TailWorldPoint):Vector3.zero),
+                rightUpperArmRotation=Q(arm?arm.localRotation:Quaternion.identity),rightLowerArmRotation=Q(forearm?forearm.localRotation:Quaternion.identity),rightHandRotation=Q(hand?hand.localRotation:Quaternion.identity),
+                sampledClip=((AnimationClip)Field("redClip"))?.name,walkControl=battle.RedesignWalkControlSeconds,walkMinimum=battle.RedesignWalkMinimumSeconds,
                 headView=V(hv),chestView=V(cv),headWater=head&&water?head.position.y-water.SampleSurfaceHeight(head.position,Time.time):999,
                 chestWater=chest&&water?chest.position.y-water.SampleSurfaceHeight(chest.position,Time.time):999,
                 lensWater=water?view.transform.position.y-water.SampleSurfaceHeight(view.transform.position,Time.time):999,

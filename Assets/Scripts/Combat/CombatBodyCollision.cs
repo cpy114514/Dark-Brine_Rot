@@ -10,12 +10,15 @@ namespace Mavis
     {
         static readonly List<CombatBodyCollision> actors = new List<CombatBodyCollision>();
         readonly List<(Collider a, Collider b)> changedPairs = new List<(Collider, Collider)>();
+        readonly List<(Collider a, Collider b)> rushPairs = new List<(Collider, Collider)>();
         Collider[] anatomy;
         Collider motor;
         Collider[] solids = Array.Empty<Collider>();
         ThirdPersonPlayerController player;
         PlayerHealth playerHealth;
         Health health;
+        ChickenBroAI chicken;
+        SahurTwinBladeMotion rush;
         static readonly Unity.Profiling.ProfilerMarker ContactMarker = new Unity.Profiling.ProfilerMarker("Combat.ResolveBodyContact");
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -44,6 +47,7 @@ namespace Mavis
             player = GetComponent<ThirdPersonPlayerController>();
             playerHealth = GetComponent<PlayerHealth>();
             health = GetComponent<Health>();
+            chicken = GetComponent<ChickenBroAI>();
             motor = GetComponent<CharacterController>();
             if (!motor || !motor.enabled)
             {
@@ -69,7 +73,43 @@ namespace Mavis
             }
         }
 
-        void LateUpdate() => ResolveActorContacts();
+        void LateUpdate()
+        {
+            if(player)
+            {
+                if(!rush)rush=GetComponent<SahurTwinBladeMotion>();
+                RefreshRushContacts(rush&&rush.IsDamageImmune);
+            }
+            ResolveActorContacts();
+        }
+
+        // Ignore only the movement capsules of small flock enemies. IgnoreCollision
+        // leaves them in weapon overlap/sweep queries and does not affect walls.
+        void RefreshRushContacts(bool traversing)
+        {
+            if(traversing&&motor&&motor.enabled)
+            {
+                foreach(var other in actors)
+                {
+                    if(!other||!other.chicken||!other.isActiveAndEnabled)continue;
+                    foreach(var solid in other.solids)
+                    {
+                        if(!solid||!solid.enabled||solid.isTrigger||!solid.gameObject.activeInHierarchy||Physics.GetIgnoreCollision(motor,solid))continue;
+                        Physics.IgnoreCollision(motor,solid,true);rushPairs.Add((motor,solid));
+                    }
+                }
+            }
+            for(int i=rushPairs.Count-1;i>=0;i--)
+            {
+                var pair=rushPairs[i];
+                if(pair.a&&pair.b&&pair.a.enabled&&pair.b.enabled&&pair.b.gameObject.activeInHierarchy&&
+                    (traversing||WorldBounds(pair.a).Intersects(WorldBounds(pair.b))))continue;
+                if(pair.a&&pair.b)Physics.IgnoreCollision(pair.a,pair.b,false);
+                rushPairs.RemoveAt(i);
+            }
+            // If the rush ends inside a bird, retain only that existing pair until
+            // separation, avoiding a depenetration pop back into the flock.
+        }
 
         // A rotated or directly moved boss can enter a controller after that
         // controller's Move has already finished. Resolve only stable body
@@ -183,6 +223,8 @@ namespace Mavis
 
         void OnDisable()
         {
+            foreach(var pair in rushPairs)if(pair.a&&pair.b)Physics.IgnoreCollision(pair.a,pair.b,false);
+            rushPairs.Clear();
             foreach(var actor in actors) if(actor) actor.ReleaseContacts(transform);
             actors.Remove(this);
         }

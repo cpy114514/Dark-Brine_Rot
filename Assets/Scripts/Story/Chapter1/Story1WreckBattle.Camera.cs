@@ -44,6 +44,13 @@ public sealed partial class Story1WreckBattle
             if(RedesignShot!=25)position+=correction;
         }
         var camera=sequence.storyCamera;camera.fieldOfView=redCameraFov;
+        if(RedesignStage==OpeningStage.Pursuit&&RedesignShot==24)
+        {
+            // Frame the resolved trailing nose and swimmer together. The old
+            // forward-biased focus cropped the shark off the side of the shot.
+            focus=Vector3.Lerp(RedHead,sharkAnimator.NoseWorldPoint,.45f);
+            position=RedHead+redRight*19-redForward*10+Vector3.up*8;
+        }
         position=RedClearCamera(RedesignShot,position,focus);
         camera.transform.SetPositionAndRotation(position,Quaternion.LookRotation(focus-position,Vector3.up)*RedShakeRotation());
     }

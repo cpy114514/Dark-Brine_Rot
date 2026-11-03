@@ -13,7 +13,6 @@ namespace Mavis
         [Min(0f)] public float regenerationDelay = 0.4f;
 
         [Header("Movement costs")]
-        [Min(0f)] public float walkDrainPerSecond = 1f;
         [Min(0f)] public float sprintDrainPerSecond = 4f;
         [Min(0f)] public float sprintRestartThreshold = 4f;
         [Min(0f)] public float jumpCost = 4f;
@@ -100,15 +99,6 @@ namespace Mavis
         public bool TickSprint(float deltaTime)
         {
             return TickSprint(deltaTime, sprintDrainPerSecond);
-        }
-
-        /// <summary>Walking costs less than sprinting, but also delays recovery.</summary>
-        public void TickWalk(float deltaTime)
-        {
-            if (deltaTime <= 0f || walkDrainPerSecond <= 0f) return;
-            currentStamina = Mathf.Max(0f, currentStamina - walkDrainPerSecond * deltaTime);
-            // Keep recovery paused even at zero until movement stops.
-            nextRegenerationTime = Time.time + ActiveRegenerationDelay;
         }
 
         public bool TickSprint(float deltaTime, float drainPerSecond)

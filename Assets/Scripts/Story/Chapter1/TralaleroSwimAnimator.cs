@@ -263,17 +263,34 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
         }
         // A pitched torso plus local yaw can roll the visible head even with
         // zero root bank. Stabilize the anatomical frame, body before head,
-        // without changing its forward direction, nod or turn. Soft compression
-        // preserves banks up to 2 degrees and smoothly approaches 4 degrees.
+        // while retaining the root's actual lunge direction. Surface actions
+        // retain a little motion and smoothly approach one degree of roll.
         for(int i=0;i<2;i++)
         {
             var bone=cinematicUprightBones[i];if(!bone)continue;
             Vector3 forward=bone.rotation*cinematicForwardAxes[i];
+            // A locally pitched torso plus head yaw makes the front half look
+            // twisted even when its roll is near zero. Bound that secondary
+            // surface motion in the root frame; authored root lunges remain.
+            if(action=="Swim"||action.EndsWith("|Swim",System.StringComparison.Ordinal))
+            {
+                var frame=i==0?transform.rotation:Quaternion.LookRotation(
+                    cinematicUprightBones[0].rotation*cinematicForwardAxes[0],Vector3.up);
+                Vector3 local=Quaternion.Inverse(frame)*forward;
+                float yaw=Mathf.Atan2(local.x,local.z)*Mathf.Rad2Deg;
+                float pitch=Mathf.Atan2(local.y,new Vector2(local.x,local.z).magnitude)*Mathf.Rad2Deg;
+                float yawLimit=i==0?6:12,pitchLimit=i==0?6:10;
+                float boundedYaw=yawLimit*(float)System.Math.Tanh(yaw/yawLimit);
+                float boundedPitch=pitchLimit*(float)System.Math.Tanh(pitch/pitchLimit);
+                Vector3 stable=frame*(Quaternion.Euler(-boundedPitch,boundedYaw,0)*Vector3.forward);
+                bone.rotation=Quaternion.FromToRotation(forward,stable)*bone.rotation;
+                forward=stable;
+            }
             Vector3 level=Vector3.ProjectOnPlane(Vector3.up,forward);
             if(level.sqrMagnitude<.04f)continue;
             float roll=Vector3.SignedAngle(level,Vector3.ProjectOnPlane(bone.rotation*cinematicUpAxes[i],forward),forward);
-            float excess=Mathf.Abs(roll)-2;if(excess<=0)continue;
-            float retained=Mathf.Sign(roll)*(2+excess/(1+excess*.5f));
+            float excess=Mathf.Abs(roll)-.5f;if(excess<=0)continue;
+            float retained=Mathf.Sign(roll)*(.5f+excess/(1+excess*2));
             bone.rotation=Quaternion.AngleAxis(retained-roll,forward)*bone.rotation;
         }
     }
@@ -345,6 +362,7 @@ public sealed class TralaleroSwimAnimator : MonoBehaviour
             float effort=Mathf.Clamp01((tailBeatFrequency-7)/5);
             rigAnimator.SetFloat("SwimEffort",effort,.2f,Time.deltaTime);
             rigAnimator.speed=Time.time<actionUntil ? 1 : Mathf.Clamp(tailBeatFrequency/7,.7f,1.6f);
+            if(Time.time>=actionUntil)StabilizeSurfaceCinematicRoll("Swim");
             return;
         }
         if (animatedMesh == null)

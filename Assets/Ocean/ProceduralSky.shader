@@ -212,10 +212,26 @@ Shader "DarkBrine/Procedural Sky"
                 // Stable angular stars and an opposite-side moon fade in through blue hour.
                 float3 starCell = floor(rayDirection * 420.0);
                 float starHash = Hash31(starCell + 17.31);
-                float starPoint = smoothstep(0.99855, 0.99992, starHash);
+                float3 starLocal = frac(rayDirection * 420.0) - 0.5;
+                float starPoint = step(0.9978, starHash) * (1.0 - smoothstep(0.07, 0.30, length(starLocal)));
                 float twinkle = 0.72 + 0.28 * sin(_Time.y * (0.45 + starHash) + starHash * 75.0);
                 float starVisibility = saturate(_NightFactor) * smoothstep(0.025, 0.18, rayDirection.y);
-                sky += float3(0.55, 0.70, 1.0) * starPoint * twinkle * starVisibility * 1.65;
+                sky += float3(0.72, 0.82, 1.0) * starPoint * twinkle * starVisibility * 2.2;
+
+                // A short streak crosses one deterministic region of the sky
+                // occasionally; its direction is fixed in sky space per event.
+                float eventIndex = floor(_Time.y / 38.0);
+                float eventTime = frac(_Time.y / 38.0) * 38.0;
+                float eventFade = smoothstep(1.0, 1.3, eventTime) * (1.0 - smoothstep(2.1, 2.5, eventTime));
+                float azimuth = Hash31(float3(eventIndex, 4.1, 7.3)) * 6.2831853;
+                float3 meteorStart = normalize(float3(cos(azimuth), 0.8, sin(azimuth)));
+                float3 meteorSide = normalize(cross(float3(0, 1, 0), meteorStart));
+                float3 meteorHead = normalize(meteorStart + meteorSide * ((eventTime - 1.0) * 0.13));
+                float along = dot(rayDirection - meteorHead, meteorSide);
+                float3 nearest = normalize(meteorHead + meteorSide * clamp(along, -0.14, 0.0));
+                float width = length(rayDirection - nearest);
+                float streak = (1.0 - smoothstep(0.001, 0.004, width)) * saturate(1.0 + along / 0.14);
+                sky += float3(1.0, 0.88, 0.72) * streak * eventFade * starVisibility * 3.0;
 
                 float3 moonDirection = normalize(_MoonDirection.xyz);
                 if (dot(moonDirection, moonDirection) < 0.01)

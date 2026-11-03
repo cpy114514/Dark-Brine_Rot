@@ -36,6 +36,7 @@ namespace Mavis
             for(int i=0;i<count;i++)
                 if(!hits[i].transform.IsChildOf(transform) && !CombatBodyCollision.IsActor(hits[i].collider) && hits[i].normal.y>.6f && hits[i].distance<nearest)
                 {nearest=hits[i].distance;anchor.y=hits[i].point.y;}
+            PickupLightBeam.Attach(gameObject, anchor);
             var marker=new GameObject("M4A1 loot marker",typeof(LineRenderer));marker.transform.SetParent(transform,false);
             ring=marker.GetComponent<LineRenderer>();ring.useWorldSpace=true;ring.loop=true;ring.positionCount=40;ring.widthMultiplier=.055f;
             ring.shadowCastingMode=UnityEngine.Rendering.ShadowCastingMode.Off;ring.receiveShadows=false;

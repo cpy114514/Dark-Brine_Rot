@@ -256,17 +256,17 @@ public sealed class DayNightCycle : MonoBehaviour
             new Color(1f, 0.58f, 0.23f, 1f), dailyPalette);
         Color lowSunColor = Color.Lerp(daySun, warmSun, 0.72f);
         sun.color = Color.Lerp(Color.Lerp(nightSun, daySun, daylight), lowSunColor, twilight);
-        float moonlight = Mathf.Lerp(0.008f, fullMoonLightIntensity, MoonIllumination) * night;
+        float moonlight = Mathf.Lerp(0.08f, Mathf.Max(0.08f, fullMoonLightIntensity), MoonIllumination) * night;
         sun.intensity = Mathf.Lerp(moonlight, noonIntensity, daylight);
         sun.shadows = daylight > 0.16f ? originalShadows : LightShadows.None;
         sun.shadowStrength = Mathf.Lerp(0.15f, 1f, SmoothThreshold(daylight, 0.02f, 0.25f)) * (1f - twilight * 0.38f);
 
         Color daySky = new Color(0.41f, 0.68f, 0.89f, 1f);
-        Color nightSky = new Color(0.008f, 0.018f, 0.055f, 1f);
+        Color nightSky = new Color(0.018f, 0.035f, 0.085f, 1f);
         Color goldenSky = Color.Lerp(new Color(0.53f, 0.30f, 0.58f, 1f),
             new Color(0.76f, 0.31f, 0.25f, 1f), dailyPalette);
         Color dayHorizon = new Color(0.72f, 0.85f, 0.96f, 1f);
-        Color nightHorizon = new Color(0.025f, 0.052f, 0.12f, 1f);
+        Color nightHorizon = new Color(0.045f, 0.075f, 0.15f, 1f);
         Color goldenHorizon = Color.Lerp(new Color(1f, 0.52f, 0.39f, 1f),
             new Color(1f, 0.39f, 0.17f, 1f), dailyPalette);
         Color dayCloud = new Color(0.96f, 0.98f, 1f, 1f);
@@ -294,10 +294,10 @@ public sealed class DayNightCycle : MonoBehaviour
         }
 
         RenderSettings.ambientMode = AmbientMode.Trilight;
-        RenderSettings.ambientSkyColor = Color.Lerp(new Color(0.20f, 0.28f, 0.44f), new Color(0.53f, 0.65f, 0.76f), daylight);
-        RenderSettings.ambientEquatorColor = Color.Lerp(new Color(0.12f, 0.16f, 0.25f), new Color(0.40f, 0.46f, 0.50f), daylight);
-        RenderSettings.ambientGroundColor = Color.Lerp(new Color(0.055f, 0.065f, 0.10f), new Color(0.20f, 0.18f, 0.15f), daylight);
-        RenderSettings.ambientIntensity = Mathf.Lerp(0.18f + moonlight * 0.55f, 1f, daylight);
+        RenderSettings.ambientSkyColor = Color.Lerp(new Color(0.28f, 0.36f, 0.52f), new Color(0.53f, 0.65f, 0.76f), daylight);
+        RenderSettings.ambientEquatorColor = Color.Lerp(new Color(0.18f, 0.23f, 0.32f), new Color(0.40f, 0.46f, 0.50f), daylight);
+        RenderSettings.ambientGroundColor = Color.Lerp(new Color(0.09f, 0.105f, 0.15f), new Color(0.20f, 0.18f, 0.15f), daylight);
+        RenderSettings.ambientIntensity = Mathf.Lerp(0.30f + moonlight * 0.55f, 1f, daylight);
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Linear;
         RenderSettings.fogStartDistance = 900f;

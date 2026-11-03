@@ -58,6 +58,7 @@ namespace Mavis
             beaconMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color"));
             beaconMaterial.color = new Color(1f, .73f, .2f);
             beacon.GetComponent<Renderer>().sharedMaterial = beaconMaterial;
+            PickupLightBeam.Attach(gameObject, anchor);
         }
 
         void Update()
@@ -99,5 +100,52 @@ namespace Mavis
         }
 
         void OnDestroy() { if (beaconMaterial != null) Destroy(beaconMaterial); }
+    }
+
+    /// <summary>A restrained vertical beacon owned by a world pickup.</summary>
+    public sealed class PickupLightBeam : MonoBehaviour
+    {
+        LineRenderer beam;
+        MaterialPropertyBlock properties;
+        Vector3 position;
+
+        public static void Attach(GameObject owner, Vector3 worldPosition)
+        {
+            if (!owner || owner.GetComponent<PickupLightBeam>()) return;
+            var component = owner.AddComponent<PickupLightBeam>();
+            component.Initialize(worldPosition);
+        }
+
+        void Initialize(Vector3 worldPosition)
+        {
+            var material = Resources.Load<Material>("Guidance/QuestThread");
+            if (!material) { enabled = false; return; }
+            position = worldPosition;
+            var go = new GameObject("Pickup light beam", typeof(LineRenderer));
+            go.transform.SetParent(transform, false);
+            beam = go.GetComponent<LineRenderer>();
+            beam.useWorldSpace = true; beam.positionCount = 2;
+            beam.SetPosition(0, position + Vector3.up * .12f);
+            beam.SetPosition(1, position + Vector3.up * 6f);
+            beam.widthCurve = new AnimationCurve(new Keyframe(0, .20f), new Keyframe(1, .025f));
+            beam.sharedMaterial = material;
+            beam.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            beam.receiveShadows = false;
+            var gradient = new Gradient();
+            gradient.SetKeys(new[] { new GradientColorKey(new Color(1f, .79f, .38f), 0),
+                                     new GradientColorKey(new Color(1f, .94f, .72f), 1) },
+                             new[] { new GradientAlphaKey(.58f, 0), new GradientAlphaKey(.35f, .35f),
+                                     new GradientAlphaKey(0, 1) });
+            beam.colorGradient = gradient;
+            properties = new MaterialPropertyBlock();
+        }
+
+        void LateUpdate()
+        {
+            if (!beam) return;
+            properties.SetFloat("_Fade", 1f);
+            properties.SetFloat("_Clock", Time.time);
+            beam.SetPropertyBlock(properties);
+        }
     }
 }
