@@ -14,6 +14,32 @@ public sealed partial class Story1WreckBattle
     float redGameplayHoldPhase,redGameplayFullCharge,redGameplayContactPhase,redGameplayContactSeconds;
     float redGameplayChargePhase;
     readonly float[] redGameplayReleaseTimes=new float[257];
+    Transform[] redChargeHandoffBones;
+    Quaternion[] redChargeHandoffRotations;
+    float redChargeHandoffAt=-100;
+    void RedCaptureChargeHandoff()
+    {
+        if(redChargeHandoffBones==null)
+        {
+            var bones=new[]{HumanBodyBones.Spine,HumanBodyBones.Chest,HumanBodyBones.UpperChest,
+                HumanBodyBones.Neck,HumanBodyBones.Head,HumanBodyBones.LeftShoulder,HumanBodyBones.RightShoulder,
+                HumanBodyBones.LeftUpperArm,HumanBodyBones.RightUpperArm,HumanBodyBones.LeftLowerArm,
+                HumanBodyBones.RightLowerArm,HumanBodyBones.LeftHand,HumanBodyBones.RightHand};
+            redChargeHandoffBones=Array.ConvertAll(bones,b=>redAnimator.GetBoneTransform(b));
+            redChargeHandoffRotations=new Quaternion[bones.Length];
+        }
+        for(int i=0;i<redChargeHandoffBones.Length;i++)
+            if(redChargeHandoffBones[i])redChargeHandoffRotations[i]=redChargeHandoffBones[i].localRotation;
+        redChargeHandoffAt=Time.time;
+    }
+    void RedApplyChargeHandoff()
+    {
+        float blend=Mathf.SmoothStep(0,1,Mathf.Clamp01((Time.time-redChargeHandoffAt)/.12f));
+        if(blend>=1||redChargeHandoffBones==null)return;
+        for(int i=0;i<redChargeHandoffBones.Length;i++)
+            if(redChargeHandoffBones[i])redChargeHandoffBones[i].localRotation=
+                Quaternion.Slerp(redChargeHandoffRotations[i],redChargeHandoffBones[i].localRotation,blend);
+    }
 
     void RedCreateGameplayChargeLayer()
     {
@@ -66,7 +92,7 @@ public sealed partial class Story1WreckBattle
         redGameplayChargePose.SetTime(redGameplayChargePhase*redGameplayChargeClip.length);
         redGameplayChargeLayers.SetInputWeight(1,Mathf.Clamp01(weight));
         redSamplingGameplayCharge=true;
-        try{RedOnBoard("CH1_SahurGuard_v050",seconds);}
+        try{RedOnBoard("CH1_SahurGuard_v050",seconds);RedApplyChargeHandoff();}
         finally{redSamplingGameplayCharge=false;}
     }
     void RedGameplayFilmCounter(float seconds,float contactAt)

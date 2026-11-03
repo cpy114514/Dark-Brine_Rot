@@ -63,6 +63,14 @@ public sealed class SecondIslandAwakening : MonoBehaviour
         for (int i=0;i<SceneManager.sceneCount;i++) CreateFor(SceneManager.GetSceneAt(i));
     }
     static void SceneLoaded(Scene scene, LoadSceneMode mode) => CreateFor(scene);
+    // sceneLoaded skips the opening during a carry. Start it after landing.
+    public static bool BeginAfterAbduction(ThirdPersonPlayerController arriving)
+    {
+        if(!arriving||arriving.gameObject.scene.path!=ScenePath)return false;
+        if(active)return active.playing;
+        CreateFor(arriving.gameObject.scene);
+        return active&&active.playing;
+    }
     static void CreateFor(Scene scene)
     {
         if (!scene.isLoaded || scene.path != ScenePath || active || BombardinoAbduction.Playing || GameSaveManager.IsContinuePending) return;

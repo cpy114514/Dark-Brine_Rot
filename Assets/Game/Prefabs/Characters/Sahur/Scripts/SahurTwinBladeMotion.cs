@@ -38,6 +38,9 @@ namespace Mavis
             if (PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || Time.deltaTime <= 0) return;
             if (RushAllowed)
             {
+                // Confirmed contacts freeze the rush's translation as well as
+                // its attack pose. Do not consume travel while the clock is held.
+                if(CombatLocalHitStop.Active(gameObject))return;
                 if (!rushing)
                 {
                     rushing = true; lastRushProgress = 0; rushDirection=transform.forward;
@@ -45,7 +48,8 @@ namespace Mavis
                 }
                 float progress = Mathf.SmoothStep(0,1,Mathf.InverseLerp(RushWindow.x,RushWindow.y,attack.HeavyAttackPhase));
                 float distance = Mathf.Max(0,progress-lastRushProgress) * CurrentRushDistance;
-                // The physical controller limits the rush against walls and enemy bodies.
+                // Scenery and bosses still block; flock body pairs are leased
+                // by CombatBodyCollision only for the active rush interval.
                 if (distance > 0 && movement.CanUseGroundAttack)
                 {
                     if(lastRushProgress<=0)

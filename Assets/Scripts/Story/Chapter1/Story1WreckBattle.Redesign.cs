@@ -65,7 +65,7 @@ public sealed partial class Story1WreckBattle
     Vector3 redEdgeLocal,redStanceLocal,redLeftSole,redRightSole;
     bool redHasStance,redDiagnosticMovement;
     float redMoveDistance;
-    [SerializeField, Range(4f,20f)] float walkingTutorialSeconds=4f;
+    const float walkingTutorialSeconds=1.5f;
     float redWalkControlSeconds;
     float redSprintControlSeconds,redTutorialIdleClock;
     public float RedesignWalkControlSeconds=>redWalkControlSeconds;
@@ -94,7 +94,7 @@ public sealed partial class Story1WreckBattle
     {
         return new[] { "CH1_SahurStickIdle_v247", "CH1_SahurGuard_v050", "CH1_SahurSlash_v006", "CH1_SahurOverhead_v215", "CH1_SahurProneDodge_v215",
             "CH1_SahurGetUp_v215", "CH1_SahurStow_v214", "CH1_SahurRetrieve_v214", "CH1_SahurAirHit_v214",
-            "PLAYER_Climb_v241", "PLAYER_Walk_v241", "PLAYER_Fall_v006", "PLAYER_JumpAir_v006", "PLAYER_PursuitSwim_v210", "PLAYER_Throw_v064",
+            "PLAYER_Climb_v241", "PLAYER_Walk_v241", "PLAYER_Fall_v006", "PLAYER_JumpStart_v006", "PLAYER_JumpAir_v006", "PLAYER_PursuitSwim_v210", "PLAYER_Throw_v064",
             "CH1_SharkLeapCrush_v214", "CH1_SharkHeadShake_v214", "CH1_SharkFeintTail_v214" }
             .Where(name => Story1EncounterClipCache.Find(name) == null)
             .Concat(Resources.Load<AvatarMask>("Encounter/v242/SahurGameplayChargeRightArm")!=null?Array.Empty<string>():new[]{"Gameplay club charge mask"}).ToArray();
@@ -251,6 +251,8 @@ public sealed partial class Story1WreckBattle
                 name=="PLAYER_Throw_v064"?.12f:
                 name=="PLAYER_PursuitSwim_v210"?.28f:
                 name=="PLAYER_Climb_v241"?.18f:0;
+            if(blend&&redClip!=null&&name=="PLAYER_JumpStart_v006")duration=.24f;
+            if(blend&&redClip!=null&&name=="PLAYER_JumpAir_v006")duration=.12f;
             var old=redPose;redMixer.DisconnectInput(0);
             redPose=AnimationClipPlayable.Create(redGraph,clip);redPose.SetSpeed(0);
             redMixer.ConnectInput(0,redPose,0);redMixer.SetInputWeight(0,1);
@@ -337,8 +339,7 @@ public sealed partial class Story1WreckBattle
         player.transform.SetPositionAndRotation(at,facing);redGraph.Evaluate(0);
         // Keep the look-back in the spine/neck chain instead of twisting the
         // head alone through 100 degrees. Apply it before waterline fitting.
-        if(RedesignStage==OpeningStage.Pursuit)
-            RedLook(-68*REase(seconds,1.55f,2.05f)*(1-REase(seconds,3.05f,3.65f)));
+        // The chase stays on one swimming line; no scripted dodge or look-back twist.
         player.transform.position+=Vector3.up*(RedWater(at)+.48f-dip-RedHead.y);
         if(redStow!=null){redStow.CinematicTraversal=true;redStow.CinematicStowWeight=1;redStow.RefreshPose();}
     }
@@ -594,6 +595,15 @@ public sealed partial class Story1WreckBattle
             RedOnBoard("Rig|Idle_Loop",redTutorialIdleClock);
             RedKeepTutorialSharkClear();
         }
+        if(CurrentLesson==Lesson.Jump)RedJumpReady();
+        if(CurrentLesson==Lesson.ChargeRelease)
+        {
+            // The Animator can re-evaluate its base pose between manual ticks.
+            // Reassert the actual fully-held layered pose before capturing the
+            // release, including the very frame on which the button comes up.
+            RedGameplayChargeOnBoard(redGameplayHoldPhase,redesignTime);
+            RedKeepTutorialSharkClear();
+        }
         bool accepted=CurrentLesson==Lesson.Sprint?RedMoveInput()&&GameInputSettings.Pressed(GameInputSettings.Action.Sprint):
             CurrentLesson==Lesson.Move||CurrentLesson==Lesson.Swim?RedMoveInput():
             CurrentLesson==Lesson.Special?GameControls.Down(GameControls.Command.Special):
@@ -616,6 +626,7 @@ public sealed partial class Story1WreckBattle
     void RedAcceptLesson()
     {
         if(!TutorialWaiting||RedInputBlocked)return;
+        if(CurrentLesson==Lesson.ChargeRelease)RedCaptureChargeHandoff();
         ReleaseRedesignPause();TutorialWaiting=false;lessonExecuting=true;lessonTime=0;lessonImpact=false;
         RedEvent("Accepted "+CurrentLesson);controls.text="";
         if(RedLocomotionLesson)
@@ -686,7 +697,7 @@ public sealed partial class Story1WreckBattle
             if(CurrentLesson==Lesson.Swim&&player.Swimming&&RedMoveInput())redSwimControlSeconds+=dt;
             if(CurrentLesson==Lesson.Move && rider!=null && rider.WalkingTutorialActive)redWalkControlSeconds+=dt;
             if(CurrentLesson==Lesson.Sprint&&moved&&player.IsSprinting)redSprintControlSeconds+=dt;
-            bool complete=CurrentLesson==Lesson.Swim?moved&&redMoveDistance>=8&&redSwimControlSeconds>=6:
+            bool complete=CurrentLesson==Lesson.Swim?moved&&redMoveDistance>=6&&redSwimControlSeconds>=2.5f:
                 CurrentLesson==Lesson.Sprint?redSprintControlSeconds>=1: moved&&redWalkControlSeconds>=walkingTutorialSeconds;
             controls.text=RedLessonMessage(CurrentLesson);
             if(redDiagnosticMovement || complete)
@@ -726,7 +737,8 @@ public sealed partial class Story1WreckBattle
             RedPrepareTutorialStrike(lessonTime,CurrentLesson==Lesson.ChargeHold);
         else if(CurrentLesson==Lesson.Jump)
         {
-            RedOnBoard("CH1_SahurStow_v214",lessonTime);
+            if(lessonTime<1.3f)RedOnBoard("CH1_SahurStow_v214",lessonTime);
+            else RedJumpReady();
             if(redStow!=null){redStow.CinematicStowWeight=REase(lessonTime,.45f,.95f);redStow.CinematicTraversal=lessonTime>=.9f;}
             Vector3 nose=feet-redForward*5;nose.y=RedWater(nose)-Mathf.Lerp(5,.5f,REase(lessonTime,1,2.3f));
             RedFilmShark("Swim",lessonTime,nose,redForward,20,1f);
@@ -740,6 +752,14 @@ public sealed partial class Story1WreckBattle
             RedHeroShot(11,new Vector3(11,5,-12),55);
             if(lessonTime>=2.5f)RedGate(Lesson.Jump);
         }
+    }
+    void RedJumpReady()
+    {
+        // Hold the existing authored compression before take-off, not the
+        // upright last frame of putting the club away.
+        var jump=RedClip("PLAYER_JumpStart_v006");
+        RedOnBoard("PLAYER_JumpStart_v006",jump.length*.55f);
+        if(redStow!=null){redStow.CinematicTraversal=true;redStow.CinematicStowWeight=1;redStow.RefreshPose();}
     }
     void RedBeginPursuit()
     {
@@ -765,72 +785,40 @@ public sealed partial class Story1WreckBattle
         float t=redesignTime;RedSetRate(1);redEnd=RedBoardPoint(redCombatBoard);
         Vector3 edge=redCombatBoard.transform.TransformPoint(redEdgeLocal);
         Vector3 approach=edge-redForward*2.5f;Vector3 at=Vector3.Lerp(redStart,approach,REase(t,0,9));
-        Vector3 chaseLine=at;
-        if(t<4)at-=redRight*(3.2f*Mathf.Sin(Mathf.PI*R01(t,1.7f,3.5f)));
-        else if(t<7.5f)at+=redForward*(3*Mathf.Sin(Mathf.PI*R01(t,4.7f,6.5f)));
-        float dip=t<4?Mathf.Sin(Mathf.PI*R01(t,2,3.5f))*.55f:t<7?Mathf.Sin(Mathf.PI*R01(t,5.1f,6.7f))*.45f:0;
-        // One complete action owns each frame. Sampling Swim before Climb on
-        // every climbing frame restarted its crossfade forever at zero weight.
-        if(t<9)RedSwim(at,t,dip);
-        Vector3 nose=at-redForward*18; nose.y=RedWater(nose)-1;
-        string sharkPose="Swim";float poseTime=t;Vector3 facing=redForward;
-        if(t<4)
+        // A single pursuit line: the shark stays behind, then Sahur climbs.
+        if(t<9)RedSwim(at,t);
+        Vector3 nose=at-redForward*19; nose.y=RedWater(nose)+.8f;
+        if(t<9)
         {
-            RedesignBeat="First bite: a desperate look back";
-            float u=R01(t,1.7f,3.5f);nose=chaseLine+redForward*Mathf.Lerp(-18,5,u)+redRight*3;nose.y=RedWater(nose)+Mathf.Sin(u*Mathf.PI)*6;
-            sharkPose="Bite_Lunge";poseTime=u*1.3f;
-            // Hold the look-back, then reveal the miss in one stable two-shot.
-            // The intervening 65-degree close-up showed only a submerged hat.
-            if(t<2.1f)
-            {
-                Vector3 look=Vector3.Lerp(RedChest,RedHead,.8f);
-                RedShot(20,look+redRight*4+redForward*5+Vector3.up*2.6f,look,50);
-            }
-            else RedTwoShot(22,14,8,.65f,54,false,.22f);
-        }
-        else if(t<7.5f)
-        {
-            RedesignBeat="Second bite: ambush from the side";
-            float u=R01(t,4.7f,6.5f);nose=chaseLine+redRight*Mathf.Lerp(18,-7,u)-redForward*3;nose.y=RedWater(nose)+Mathf.Sin(u*Mathf.PI)*5;facing=-redRight;
-            sharkPose="Bite_Lunge";poseTime=u*1.3f;
-            // Keep both threat and escape readable throughout the second bite.
-            RedTwoShot(24,14,10,.45f,56,false,.25f);
+            RedesignBeat="The shark follows. Reach the plank.";
+            Vector3 focus=Vector3.Lerp(RedHead,nose,.22f);
+            RedShot(24,at+redRight*14-redForward*11+Vector3.up*7,focus,58);
         }
         else
         {
-            RedesignBeat="Third bite: scramble onto the plank";
+            RedesignBeat="Scramble onto the plank";
             float climb=R01(t,9,12);
-            if(t>=9)
+            if(!redClimbEntered)
             {
-                if(!redClimbEntered)
-                {
-                    redClimbEntered=true;
-                    redClimbEntryFeetHeight=player.transform.position.y+player.LowestFootWorldOffset;
-                }
-                RedPose("PLAYER_Climb_v241",climb*RedClip("PLAYER_Climb_v241").length);
-                Vector3 support=Vector3.Lerp(approach,redEnd,REase(climb,.42f,1));
-                support.y=Mathf.Lerp(RedWater(approach)-redHeroHeight*.65f,redEnd.y,REase(climb,0,.65f));
-                // Carry the actual swimming height into the existing climb.
-                // Its low initial support point otherwise drops the head below
-                // water in the first frame while the outgoing swim is still visible.
-                support.y=Mathf.Lerp(redClimbEntryFeetHeight,support.y,REase(climb,0,.22f));
-                // The retained v241 import shares the guard/swim forward axis;
-                // keep the root continuous across both ends of the climb.
-                RedFeet(support,Quaternion.LookRotation(redForward));
-                float grip=REase(climb,0,.12f)*(1-REase(climb,.62f,.84f));
-                SahurSupportPose.Hand(redAnimator,true,edge-redRight*.45f,grip);
-                SahurSupportPose.Hand(redAnimator,false,edge+redRight*.45f,grip);
-                if(climb>.68f)RedSolidSupport();
+                redClimbEntered=true;
+                redClimbEntryFeetHeight=player.transform.position.y+player.LowestFootWorldOffset;
             }
-            float u=R01(t,9,11.5f);nose=approach-redForward*Mathf.Lerp(16,1,u);nose.y=RedWater(nose)+Mathf.Sin(u*Mathf.PI)*3;
-            // After the missed snap, back off and sink rather than resting
-            // beside the plank like a rock while Sahur stands up.
-            float miss=Mathf.Max(0,t-11.5f);nose+=-redForward*(miss*4)-Vector3.up*(miss*miss*6);
-            sharkPose="Bite_Lunge";poseTime=u*1.3f;
-            Vector3 focus=Vector3.Lerp(RedChest,RedHead,.9f);
+            RedPose("PLAYER_Climb_v241",climb*RedClip("PLAYER_Climb_v241").length);
+            Vector3 support=Vector3.Lerp(approach,redEnd,REase(climb,.42f,1));
+            support.y=Mathf.Lerp(RedWater(approach)-redHeroHeight*.65f,redEnd.y,REase(climb,0,.65f));
+            support.y=Mathf.Lerp(redClimbEntryFeetHeight,support.y,REase(climb,0,.22f));
+            RedFeet(support,Quaternion.LookRotation(redForward));
+            float grip=REase(climb,0,.12f)*(1-REase(climb,.62f,.84f));
+            SahurSupportPose.Hand(redAnimator,true,edge-redRight*.45f,grip);
+            SahurSupportPose.Hand(redAnimator,false,edge+redRight*.45f,grip);
+            if(climb>.68f)RedSolidSupport();
+            // Stop out in the water rather than driving a bite through the board.
+            nose=approach-redForward*(19+5*REase(climb,.25f,1));
+            nose.y=RedWater(nose)-6*REase(climb,.2f,1);
+            Vector3 focus=Vector3.Lerp(RedChest,RedHead,.8f);
             RedShot(25,edge+redForward*10+Vector3.up*4,focus,54);
         }
-        RedFilmShark(sharkPose,poseTime,nose,facing,t<4?0:t<7.5f?1:2,t<1?1.2f:.9f);
+        RedFilmShark("Swim",t,nose,redForward,30,1.2f);
         if(t>=12.4f)
         {
             RedesignStage=OpeningStage.Duel;redesignTime=0;redForward=-redForward;redRight=Vector3.Cross(Vector3.up,redForward);

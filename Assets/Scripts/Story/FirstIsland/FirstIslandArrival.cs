@@ -284,6 +284,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         looseStick.transform.position = lostStickPoint.position - looseStick.transform.TransformVector(sourceMesh.sharedMesh.bounds.center);
         var renderer = looseStick.GetComponent<Renderer>();
         looseStick.transform.position += Vector3.up * (lostStickPoint.position.y + .07f - renderer.bounds.min.y);
+        PickupLightBeam.Attach(looseStick, lostStickPoint.position);
     }
 
     void BuildUI()

@@ -721,12 +721,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         {
             Vector3 movementDelta = (planarVelocity + platformCarryVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement;
             if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
-            Vector3 beforeMove = transform.position;
             CollisionFlags collisions = characterController.Move(movementDelta);
-            Vector3 ownTravel = Vector3.ProjectOnPlane(transform.position - beforeMove - platformCarryVelocity * Time.deltaTime, Vector3.up);
-            if (playerStamina != null && !sprinting && !movementLocked && !isRolling && moveDirection.sqrMagnitude > .01f &&
-                Vector3.Dot(ownTravel, moveDirection) > .001f * Time.deltaTime)
-                playerStamina.TickWalk(Time.deltaTime);
             if ((collisions & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
                 verticalSpeed = 0f;
             if ((collisions & CollisionFlags.Below) != 0 && verticalSpeed < 0f)
