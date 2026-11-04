@@ -32,4 +32,5 @@ We used AI for coding
 
 <img width="1350" height="670" alt="image" src="https://github.com/user-attachments/assets/88dc2cef-e9bc-47ba-b9df-0e8d895925f8" />
 <img width="1090" height="518" alt="image" src="https://github.com/user-attachments/assets/ad455d9d-0f90-4fe8-a7b4-ecc43c6faf36" />
+<img width="1707" height="960" alt="image" src="https://github.com/user-attachments/assets/12431631-87a7-439a-8a98-40157e2a5547" />
 
