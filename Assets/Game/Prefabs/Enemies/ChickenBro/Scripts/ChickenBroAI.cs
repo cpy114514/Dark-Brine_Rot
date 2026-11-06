@@ -84,6 +84,7 @@ namespace Mavis
 
         public Mood Mode { get; private set; } = Mood.Idle;
         public float ActionPhase { get; private set; }
+        internal float DeathVerticalSpeed => verticalSpeed;
         public bool HoldsAttack => Mode == Mood.Strike || Mode == Mood.Lunge || Mode == Mood.Wing;
         public bool IsAlive => health && !health.IsDead && Mode != Mood.Dead;
         public float MovementMultiplier => marshmallow && marshmallow.IsAlert ? Mathf.Max(1f, marshmallow.alertSpeedMultiplier) : 1f;
@@ -204,6 +205,7 @@ namespace Mavis
 
         void CarryDeath(Vector3 direction, bool hard)
         {
+            var death=GetComponent<EnemyDeathPresentation>();if(death)death.ApplyImpulse(direction,hard);
             knock = direction * (hard ? launchSlide : lightSlide);
             if (hard) verticalSpeed = Mathf.Max(verticalSpeed, launchHop * .65f);
         }

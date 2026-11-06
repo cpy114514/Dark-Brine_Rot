@@ -44,6 +44,8 @@ public static class VerifyMarshmallowHopRecovery
             if (!EditorApplication.isPlaying) throw new Exception("Enter play mode first.");
             var opening = UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();
             if (opening) UnityEngine.Object.DestroyImmediate(opening.gameObject);
+            var guide = UnityEngine.Object.FindFirstObjectByType<MarshmallowChallengeGuide>();
+            if (guide) guide.enabled = false;
             var enemies = GameObject.Find("Marshmallow Friends - Second Island"); if (enemies) enemies.SetActive(false);
             var boss = UnityEngine.Object.FindFirstObjectByType<PigRoninBoss>(); if (boss) boss.gameObject.SetActive(false);
             var root = GameObject.Find("Marshmallow Hop Challenge - 33");
@@ -103,7 +105,17 @@ public static class VerifyMarshmallowHopRecovery
             await Fall(5, 1);
             await Place(15); await Fall(15, 10);
             await Place(22); await Fall(22, 17);
-            Result += "all falls returned to a moving platform with health preserved";
+            recovery.RestoreChallengeProgress(0, 0, 0, false, 0);
+            await Place(1); await Fall(1, 1);
+            await Place(9); await Fall(9, 1);
+            await Place(9); await Fall(9, 1);
+            await Place(9); await Fall(9, 7);
+            if (!recovery.AssistanceActive || recovery.ConsecutiveFalls != 3 || recovery.RescueRow != 7)
+                throw new Exception("Repeated falls did not activate the rescue checkpoint.");
+            await Place(12);
+            if (recovery.AssistanceActive || recovery.ConsecutiveFalls != 0)
+                throw new Exception("Assistance did not finish after three rows of new progress.");
+            Result += "safety net, fall rules, repeat-fall rescue and recovery after new progress passed";
             Status = "passed";
         }
         catch (Exception e) { Status = "failed"; Result += "FAILED: " + e; }

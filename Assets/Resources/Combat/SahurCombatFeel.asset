@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SahurCombatFeel
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.CombatFeelProfile
   normal:
-    stop: 0.055
+    stop: 0.045
     cameraStrength: 0.065
     cameraDuration: 0.13
     vfx: 1.05
@@ -27,14 +27,14 @@ MonoBehaviour:
     reaction: 1.1
     knockback: 0.13
   finisher:
-    stop: 0.11
+    stop: 0.085
     cameraStrength: 0.095
     cameraDuration: 0.18
     vfx: 1.3
     reaction: 1.7
     knockback: 0.45
   heavy:
-    stop: 0.095
+    stop: 0.08
     cameraStrength: 0.1
     cameraDuration: 0.19
     vfx: 1.4
@@ -69,7 +69,7 @@ MonoBehaviour:
   receivedHitClip: {fileID: 7400000, guid: 51702e312b3878648bd9f4b5351a3e9b, type: 2}
   receivedReactionSeconds: 0.36
   receivedReactionWeight: 0.85
-  inputBuffer: 0.22
+  inputBuffer: 0.26
   comboTransition: 0.07
   comboRecoveryChain: 0.9
   lightDodgeCancel: 0.9
@@ -116,7 +116,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 0.88
-      value: 0.85
+      value: 1.05
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -168,12 +168,65 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  useControlTuning: 1
+  controlPreset: 0
+  balanced:
+    acceleration: 1.1
+    braking: 1.25
+    redirect: 1.65
+    airAcceleration: 0.8
+    airBraking: 0.72
+    turning: 1.16
+    animationAcceleration: 0.045
+    animationBraking: 0.06
+    dodgeDuration: 0.82
+    lightCancel: 0.74
+    heavyCancel: 0.64
+    comboChain: 0.8
+    movingLanding: 0.12
+    cameraFollow: 1.15
+    cameraRelease: 10
+    manualLookGrace: 0.4
+  responsive:
+    acceleration: 1.25
+    braking: 1.5
+    redirect: 1.85
+    airAcceleration: 0.95
+    airBraking: 0.85
+    turning: 1.35
+    animationAcceleration: 0.035
+    animationBraking: 0.045
+    dodgeDuration: 0.75
+    lightCancel: 0.7
+    heavyCancel: 0.62
+    comboChain: 0.76
+    movingLanding: 0.1
+    cameraFollow: 1.35
+    cameraRelease: 12
+    manualLookGrace: 0.4
+  weighty:
+    acceleration: 1
+    braking: 1.1
+    redirect: 1.45
+    airAcceleration: 0.7
+    airBraking: 0.65
+    turning: 1.05
+    animationAcceleration: 0.055
+    animationBraking: 0.07
+    dodgeDuration: 0.9
+    lightCancel: 0.8
+    heavyCancel: 0.7
+    comboChain: 0.86
+    movingLanding: 0.15
+    cameraFollow: 1
+    cameraRelease: 8
+    manualLookGrace: 0.4
   cameraMotion: 1
   impactBrightness: 0.8
   contact:
   - {fileID: 8300000, guid: 72cf45299c8084640bd760eb5999b3e0, type: 3}
   wood:
-  - {fileID: 8300000, guid: 72cf45299c8084640bd760eb5999b3e0, type: 3}
+  - {fileID: 8300000, guid: c8a7c6b4b5e2f4a449d9c9903c6e0b8b, type: 3}
   metal:
   - {fileID: 8300000, guid: 5e9b34c0ae4af584dbe21d963120ba99, type: 3}
   flesh:

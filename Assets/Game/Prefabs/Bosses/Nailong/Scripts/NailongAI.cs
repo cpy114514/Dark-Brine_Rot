@@ -808,6 +808,7 @@ namespace Mavis
             if (attackMotion != null) attackMotion.Stop();
             effects?.Cancel();
             if (agent != null && agent.enabled) agent.enabled = false;
+            phaseAnimation?.Stop();
             Play("Death");
             foreach (Collider collider in GetComponentsInChildren<Collider>())
                 collider.enabled = false;

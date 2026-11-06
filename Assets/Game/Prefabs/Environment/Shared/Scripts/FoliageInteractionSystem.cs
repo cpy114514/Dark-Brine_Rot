@@ -27,7 +27,6 @@ namespace Mavis
         Coroutine indexRoutine;
         bool beachClipReady, indexReady;
         AudioSource rustle;
-        AudioClip rustleClip;
         static Vector2Int Cell(Vector3 p) { return new Vector2Int(Mathf.FloorToInt(p.x / 10f), Mathf.FloorToInt(p.z / 10f)); }
 
         void OnEnable() { if(!AdditiveSceneBootstrap.IsLoading)RebuildGrassIndex(); nextScan = 0f; }
@@ -173,7 +172,7 @@ namespace Mavis
             Shader.SetGlobalInt("_MavisFoliageBodyCount", count);
             if (rustle)
             {
-                if (!rustle.isPlaying && soundVolume > 0f) rustle.Play();
+                if (rustle.clip && !rustle.isPlaying && soundVolume > 0f) rustle.Play();
                 rustle.volume = Mathf.Lerp(rustle.volume, soundVolume, 1f - Mathf.Exp(-dt * 8f));
             }
         }
@@ -205,15 +204,13 @@ namespace Mavis
             if (rustle) return;
             var holder = new GameObject("Foliage rustle"); holder.transform.SetParent(transform, false);
             rustle = holder.AddComponent<AudioSource>(); rustle.loop = true; rustle.spatialBlend = 1f; rustle.minDistance = 2f; rustle.maxDistance = 12f; rustle.volume = 0f;
-            const int samples = 22050; var noise = new float[samples]; var random = new System.Random(9271); float filtered = 0f;
-            for (int i=0;i<samples;i++) { filtered = Mathf.Lerp(filtered,(float)random.NextDouble()*2f-1f,.3f); noise[i] = filtered * Mathf.Sin(Mathf.PI*i/(samples-1)); }
-            rustleClip = AudioClip.Create("Soft grass rustle", samples, 1, 22050, false); rustleClip.SetData(noise,0); rustle.clip = rustleClip; rustle.Play();
+            rustle.playOnAwake = false;
+            rustle.clip = GameplayAudio.LoadClip("GrassRustle");
         }
         void OnDisable() { if(indexRoutine!=null)StopCoroutine(indexRoutine);indexRoutine=null; Shader.SetGlobalInt("_MavisFoliageBodyCount", 0); trails.Clear(); bodies.Clear(); if (rustle) rustle.Stop(); }
         void OnDestroy()
         {
             if (rustle) Destroy(rustle.gameObject);
-            if (rustleClip) Destroy(rustleClip);
         }
     }
 }

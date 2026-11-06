@@ -52,6 +52,9 @@ namespace Mavis
         Vector3 home, committed, heading;
         readonly BossTargetPrediction prediction = new BossTargetPrediction();
         Quaternion visualRest;
+        Quaternion crashStart,crashContact;
+        Renderer[] wreckRenderers;
+        float crashSpeed;
         float clock, age, acquireAt, shotAt, deathGround, nextMarkerAt;
         bool markersDirty;
 #if UNITY_EDITOR
@@ -171,9 +174,19 @@ namespace Mavis
             if(CurrentState==State.Dead)
             {
                 if(AbductionActive)return;
-                if(!crashed){transform.position+=Vector3.down*Mathf.Min(35,age*13)*dt;
-                    if(visual!=null)visual.localRotation=visualRest*Quaternion.Euler(age*43,0,age*90);
-                    if(transform.position.y<=deathGround+1){transform.position=new Vector3(transform.position.x,deathGround+1,transform.position.z);Explosion(transform.position,5);crashed=true;age=0;}}
+                if(!crashed)
+                {
+                    crashSpeed=Mathf.Min(32,crashSpeed+18*dt);
+                    transform.position+=(transform.forward*(6*Mathf.Exp(-age*1.4f))+Vector3.down*crashSpeed)*dt;
+                    if(visual)visual.localRotation=Quaternion.Slerp(crashStart,visualRest*Quaternion.Euler(32,0,22),Mathf.SmoothStep(0,1,Mathf.Clamp01(age/1.1f)));
+                    float gap=WreckGroundGap();
+                    if(gap<=.04f){transform.position+=Vector3.up*(.04f-gap);Explosion(Ground(transform.position)+Vector3.up*.15f,5);crashed=true;age=0;crashContact=visual?visual.localRotation:Quaternion.identity;}
+                }
+                else
+                {
+                    if(visual)visual.localRotation=Quaternion.Slerp(crashContact,visualRest*Quaternion.Euler(7,0,12),Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.65f)));
+                    float gap=WreckGroundGap();transform.position+=Vector3.up*(.04f-gap);
+                }
                 if(crashed&&age>3&&Application.isPlaying)Destroy(gameObject);return;
             }
             if(FightActive && FightPhase>announcedPhase && CurrentState!=State.Attack)
@@ -528,10 +541,25 @@ namespace Mavis
             if(CurrentState==State.Dead)return;
             bool snatch=targetHealth!=null&&targetHealth.currentHealth>0f;
             FightActive=false;SetState(State.Dead);deathGround=Ground(transform.position).y;ClearHazards();
+            crashStart=visual?visual.localRotation:Quaternion.identity;crashSpeed=0;crashed=false;
+            wreckRenderers=visual?visual.GetComponentsInChildren<Renderer>():GetComponentsInChildren<Renderer>();
             foreach(var c in GetComponentsInChildren<Collider>())c.enabled=false;onDefeated.Invoke();
             if(snatch&&BombardinoAbduction.TryBegin(this))AbductionActive=true;
         }
         public void ReleaseAbduction()=>AbductionActive=false;
+        float WreckGroundGap()
+        {
+            float lowest=float.PositiveInfinity;
+            if(wreckRenderers!=null)foreach(var renderer in wreckRenderers)
+            {
+                if(!renderer||!renderer.enabled||renderer is ParticleSystemRenderer)continue;
+                var filter=renderer.GetComponent<MeshFilter>();var shape=filter?EnemyDeathPresentation.Shape(filter.sharedMesh):null;
+                if(shape!=null)
+                    foreach(var sample in shape.points){var p=renderer.transform.TransformPoint(sample.vertex);lowest=Mathf.Min(lowest,p.y-Ground(p).y);}
+                else lowest=Mathf.Min(lowest,renderer.bounds.min.y-Ground(renderer.bounds.center).y);
+            }
+            return float.IsPositiveInfinity(lowest)?transform.position.y-deathGround-1:lowest;
+        }
         void ClearHazards(){fireImpacts.Clear();ClearMarkers();foreach(var p in ordnance)if(p!=null)Release(p.gameObject);ordnance.Clear();foreach(var e in effects)if(e!=null)Release(e);effects.Clear();}
         void OnDisable(){ClearHazards();if(audioSource!=null)audioSource.Stop();}
         void OnDestroy(){ClearHazards();if(warningMaterial!=null)Release(warningMaterial);foreach(var pair in ignoredPlayerPairs)if(pair.body!=null&&pair.player!=null)Physics.IgnoreCollision(pair.body,pair.player,false);if(health!=null){health.OnDamaged?.RemoveListener(OnHit);health.OnDeath?.RemoveListener(OnDeath);}}

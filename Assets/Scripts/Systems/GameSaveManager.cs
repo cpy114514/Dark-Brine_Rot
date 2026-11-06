@@ -155,6 +155,7 @@ namespace Mavis
 
         public static bool SaveCurrentGame()
         {
+            using var activity=RuntimeStallDiagnostics.Measure("save capture and atomic disk commit");
             ThirdPersonPlayerController player = FindFirstObjectByType<ThirdPersonPlayerController>();
             if (!CanSavePlayer(player)) return false;
             var arrival = player.GetComponent<FirstIslandArrival>();

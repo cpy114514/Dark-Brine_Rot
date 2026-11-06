@@ -38,6 +38,8 @@ public static class VerifyMarshmallowHopChallenge
             if (!EditorApplication.isPlaying) throw new Exception("Enter play mode first.");
             var opening = UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();
             if (opening) UnityEngine.Object.DestroyImmediate(opening.gameObject);
+            var guide = UnityEngine.Object.FindFirstObjectByType<MarshmallowChallengeGuide>();
+            if (guide) guide.enabled = false;
             var enemies = GameObject.Find("Marshmallow Friends - Second Island"); if (enemies) enemies.SetActive(false);
             var boss = UnityEngine.Object.FindFirstObjectByType<PigRoninBoss>(); if (boss) boss.gameObject.SetActive(false);
             var root = GameObject.Find("Marshmallow Hop Challenge - 33");
@@ -95,7 +97,7 @@ public static class VerifyMarshmallowHopChallenge
             pressed = Array.Empty<Key>();
             if (!entered) throw new Exception($"Could not jump from the island to the first row: player={player.transform.position}, feet={body.bounds.min.y:F2}, target={first.bounds.center}, top={first.bounds.max.y:F2}.");
             await Wait(.22f);
-            if (recovery && (recovery.CurrentRow != 1 || recovery.RecoveryArmed))
+            if (recovery && (recovery.CurrentRow != 1 || !recovery.RecoveryArmed))
                 throw new Exception($"Starting row was tracked incorrectly: row={recovery.CurrentRow}, armed={recovery.RecoveryArmed}.");
             Result = $"33 pieces in 1/2 rows; {(normalGravity ? "normal" : "low")} gravity; {(leftBranch ? "left" : "right")} branch; island to 1; ";
 

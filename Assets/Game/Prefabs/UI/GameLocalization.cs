@@ -125,6 +125,7 @@ namespace Mavis
             Add("HEALING PACK", "治疗包");
             Add("{0}  HEAL  {1}/{2}", "{0}  治疗包  {1}/{2}", "healing.count");
             Add("Healing pack: +{0} HP", "使用治疗包：+{0} HP", "healing.used");
+            Add("Healing pack picked up (+{0})", "已拾取治疗包（+{0}）", "healing.pickup");
             Add("Health is full", "生命值已满", "healing.full");
             Add("No healing packs remaining", "治疗包已用完", "healing.empty");
             Add("LOOK SENSITIVITY","鼠标灵敏度"); Add("Mouse camera speed","鼠标转动镜头的速度"); Add("INVERT VERTICAL LOOK","反转垂直视角"); Add("Reverse vertical mouse look","反转鼠标上下移动方向");

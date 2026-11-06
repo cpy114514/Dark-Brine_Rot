@@ -11,6 +11,8 @@ public sealed partial class ThirdPersonPlayerController
     public int PerfectDodgesPerformed { get; private set; }
     public Transform PerfectDodgeAttacker=>perfectAttacker;
     bool perfectStep,perfectCounterBuffered;
+    Quaternion perfectStepFacing;
+    static readonly int PerfectStepX=Animator.StringToHash("PerfectStepX"),PerfectStepY=Animator.StringToHash("PerfectStepY");
     float perfectCounterUntil=-1;
     readonly long[] consumedPerfectStrikes=new long[32];
     int consumedPerfectIndex;
@@ -18,16 +20,22 @@ public sealed partial class ThirdPersonPlayerController
     SahurWeaponLoadout perfectLoadout;
     bool perfectBlades;
     PerfectDodgeEcho perfectEcho;
-    float ActiveDodgeDuration=>perfectStep?perfectStepDuration:rollDuration;
+    float sampledRollDuration;
+    float ConfiguredRollDuration=>rollDuration*(TunedControls?Response.dodgeDuration:1f);
+    float ActiveDodgeDuration=>perfectStep?perfectStepDuration:sampledRollDuration>0?sampledRollDuration:ConfiguredRollDuration;
     bool TryStartPerfectDodge()
     {
         perfectStep=false;ClearPerfectCounter();var health=GetComponent<PlayerHealth>();
         if(!health||health.currentHealth<=0||health.NarrativeDamageOwner||!animator||
            !animator.HasState(0,Animator.StringToHash("Base Layer.Perfect Step")))return false;
         if(!PerfectDodgeThreats.Find(health,perfectDodgeWindow,consumedPerfectStrikes,out var threat))return false;
+        perfectStepFacing=transform.rotation;
+        Vector3 localStep=Quaternion.Inverse(perfectStepFacing)*rollDirection;
+        animator.SetFloat(PerfectStepX,localStep.x);animator.SetFloat(PerfectStepY,localStep.z);
         perfectStep=true;perfectAttacker=threat.attacker;consumedPerfectStrikes[consumedPerfectIndex++%32]=threat.stamp;
         perfectCounterUntil=Time.time+perfectStepDuration+perfectCounterWindow;
         perfectLoadout=GetComponent<SahurWeaponLoadout>();perfectBlades=combat&&combat.UsesTwinBlades;PerfectDodgesPerformed++;
+        if(!GetComponent<SahurPerfectStepSupport>())gameObject.AddComponent<SahurPerfectStepSupport>();
         if(!perfectEcho)perfectEcho=GetComponent<PerfectDodgeEcho>()??gameObject.AddComponent<PerfectDodgeEcho>();
         perfectEcho.Begin();return true;
     }

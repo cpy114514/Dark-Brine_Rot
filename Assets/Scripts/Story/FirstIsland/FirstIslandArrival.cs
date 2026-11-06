@@ -187,8 +187,9 @@ public sealed class FirstIslandArrival : MonoBehaviour
             FocusCamera(heading);
             yield return null;
         }
-        player.RestoreSavedPose(standing, standingRotation);
+        player.FinishCinematicPose(standing, standingRotation);
         IsGettingUp = false; HasLanded = IsAwake = true; ReleaseCinematic();
+        if(arrivalCamera)player.ContinueCameraFromCurrentView(arrivalCamera);
         hint.text = "Your stick washed away. Find it along the beach.";
         blackout.color = Color.clear;
     }

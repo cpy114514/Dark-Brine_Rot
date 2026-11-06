@@ -13,6 +13,7 @@ using UnityEngine.UI;
 public sealed class PauseSettingsMenu : MonoBehaviour
 {
     const string Prefix = "DarkBrine.Settings.";
+    const string RecommendedDefaultsKey = Prefix + "RecommendedDefaultsV1";
     static readonly int[] FrameLimits = { 30, 60, 120, 144, -1 };
     static readonly int[] ShadowResolutions = { 1024, 2048, 4096 };
     static readonly string[] SectionNames =
@@ -470,21 +471,26 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         for (int i = 0; i < savedKeys.Length; i++)
             GameInputSettings.Set((GameInputSettings.Action)i, savedKeys[i]);
 
-        PlayerPrefs.SetFloat(Prefix + "MasterVolume", saved.masterVolume);
-        PlayerPrefs.SetFloat(Prefix + "Sensitivity", saved.sensitivity);
-        PlayerPrefs.SetFloat(Prefix + "FieldOfView", saved.fieldOfView);
-        PlayerPrefs.SetFloat(Prefix + "CameraDistance", saved.cameraDistance);
-        Put("InvertY", saved.invertY);
-        Put("Fullscreen", saved.fullscreen);
-        Put("VSync", saved.vsync);
-        PlayerPrefs.SetInt(Prefix + "ResolutionWidth", resolutions[saved.resolutionIndex].width);
-        PlayerPrefs.SetInt(Prefix + "ResolutionHeight", resolutions[saved.resolutionIndex].height);
-        PlayerPrefs.SetInt(Prefix + "FrameLimit", FrameLimits[saved.frameLimitIndex]);
-        SaveGraphicsPreferences(saved);
-        PlayerPrefs.SetInt(Prefix + "Difficulty", saved.difficulty);
+        SavePreferences(saved);
         PlayerPrefs.Save();
         footerHint.text = "SETTINGS SAVED";
         Refresh();
+    }
+
+    void SavePreferences(Settings s)
+    {
+        PlayerPrefs.SetFloat(Prefix + "MasterVolume", s.masterVolume);
+        PlayerPrefs.SetFloat(Prefix + "Sensitivity", s.sensitivity);
+        PlayerPrefs.SetFloat(Prefix + "FieldOfView", s.fieldOfView);
+        PlayerPrefs.SetFloat(Prefix + "CameraDistance", s.cameraDistance);
+        Put("InvertY", s.invertY);
+        Put("Fullscreen", s.fullscreen);
+        Put("VSync", s.vsync);
+        PlayerPrefs.SetInt(Prefix + "ResolutionWidth", resolutions[s.resolutionIndex].width);
+        PlayerPrefs.SetInt(Prefix + "ResolutionHeight", resolutions[s.resolutionIndex].height);
+        PlayerPrefs.SetInt(Prefix + "FrameLimit", FrameLimits[s.frameLimitIndex]);
+        SaveGraphicsPreferences(s);
+        PlayerPrefs.SetInt(Prefix + "Difficulty", s.difficulty);
     }
 
     void RestoreDefaults()
@@ -506,21 +512,22 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             sensitivity = 0.12f,
             fieldOfView = Camera.main != null ? Camera.main.fieldOfView : 60f,
             cameraDistance = player != null ? player.cameraDistance : 4.2f,
-            // Low-cost defaults, not visibility cuts. UI retains native resolution;
-            // keep nearby contact shadows, color grading, and inexpensive FXAA.
-            renderScale = 0.85f,
-            shadowDistance = 180f,
-            lodBias = 1f,
+            // Spend the rendering budget on distant scenery. UI stays native;
+            // lower pixel/texture/shadow costs while retaining FXAA and color grading.
+            renderScale = 0.75f,
+            shadowDistance = 60f,
+            lodBias = 1.5f,
             invertY = false,
             fullscreen = Screen.fullScreen,
-            vsync = true,
+            // VSync overrides targetFrameRate on desktop; use the 60 FPS cap by default.
+            vsync = false,
             postProcessing = true,
             shadows = true,
             bloom = false,
             vignette = false,
             motionBlur = false,
             resolutionIndex = FindResolution(Screen.width, Screen.height),
-            textureMipmapLimit = 1,
+            textureMipmapLimit = 2,
             frameLimitIndex = 1,
             antialiasing = (int)AntialiasingMode.FastApproximateAntialiasing,
             shadowResolutionIndex = 0,
@@ -531,44 +538,15 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     Settings ReadSettings()
     {
-        // Migrate graphics once for existing installations. Audio, controls,
-        // display mode, language, difficulty, and subsequent graphics choices survive.
-        if (PlayerPrefs.GetInt(Prefix + "LowGraphicsDefaultV1", 0) == 0)
-        {
-            SaveGraphicsPreferences(factoryDefaults);
-            PlayerPrefs.SetInt(Prefix + "LowGraphicsDefaultV1", 1);
-            PlayerPrefs.Save();
-        }
+        // Read existing preferences before first-run initialization so older installs
+        // retain custom settings even when they have no initialization marker yet.
         Settings s = factoryDefaults;
         s.masterVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(Prefix + "MasterVolume", s.masterVolume));
         s.sensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "Sensitivity", s.sensitivity), 0.03f, 0.5f);
         s.fieldOfView = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "FieldOfView", s.fieldOfView), 50f, 90f);
         s.cameraDistance = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "CameraDistance", s.cameraDistance), 2.5f, 11f);
         s.renderScale = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "RenderScale", s.renderScale), 0.6f, 1.2f);
-        float storedShadowDistance = PlayerPrefs.GetFloat(Prefix + "ShadowDistance", s.shadowDistance);
-        if (PlayerPrefs.GetInt(Prefix + "ShadowDistanceV2", 0) == 0)
-        {
-            // The old 50 m default was saved by earlier menu versions. Let
-            // that default follow the new URP asset without overriding a
-            // player's deliberate non-default distance.
-            if (PlayerPrefs.HasKey(Prefix + "ShadowDistance") &&
-                Mathf.Approximately(storedShadowDistance, 50f) && factoryDefaults.shadowDistance > 50f)
-                storedShadowDistance = factoryDefaults.shadowDistance;
-            PlayerPrefs.SetFloat(Prefix + "ShadowDistance", storedShadowDistance);
-            PlayerPrefs.SetInt(Prefix + "ShadowDistanceV2", 1);
-            PlayerPrefs.Save();
-        }
-        if (PlayerPrefs.GetInt(Prefix + "ShadowDistanceV3", 0) == 0)
-        {
-            // Upgrade earlier factory defaults, but retain a deliberate custom range.
-            if (Mathf.Approximately(storedShadowDistance, 180f) ||
-                Mathf.Approximately(storedShadowDistance, 50f))
-                storedShadowDistance = factoryDefaults.shadowDistance;
-            PlayerPrefs.SetFloat(Prefix + "ShadowDistance", storedShadowDistance);
-            PlayerPrefs.SetInt(Prefix + "ShadowDistanceV3", 1);
-            PlayerPrefs.Save();
-        }
-        s.shadowDistance = Mathf.Clamp(storedShadowDistance, 15f, 800f);
+        s.shadowDistance = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "ShadowDistance", s.shadowDistance), 15f, 800f);
         s.lodBias = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "LodBias", s.lodBias), 0.5f, 3f);
         s.invertY = Get("InvertY", s.invertY);
         s.fullscreen = Get("Fullscreen", s.fullscreen);
@@ -591,6 +569,13 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         if (s.shadowResolutionIndex < 0) s.shadowResolutionIndex = factoryDefaults.shadowResolutionIndex;
         s.anisotropicFiltering = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "AnisotropicFiltering", s.anisotropicFiltering), 0, 2);
         s.difficulty = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Difficulty", 1), 0, 2);
+        if (PlayerPrefs.GetInt(RecommendedDefaultsKey, 0) == 0)
+        {
+            // Awake applies this resolved configuration immediately, before the menu is opened.
+            SavePreferences(s);
+            PlayerPrefs.SetInt(RecommendedDefaultsKey, 1);
+            PlayerPrefs.Save();
+        }
         return s;
     }
 
@@ -670,10 +655,13 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     {
         Pixel360Rendering.ReleaseCurrent();
         GameAudioPolicy.ApplyMasterVolume(s.masterVolume);
-        if (Camera.main != null)
+        var camera = Camera.main;
+        // The title scene's presentation camera is not tagged MainCamera.
+        if (camera == null && mainMenuSettingsOnly) camera = FindFirstObjectByType<Camera>();
+        if (camera != null)
         {
-            Camera.main.fieldOfView = s.fieldOfView;
-            var urp = Camera.main.GetComponent<UniversalAdditionalCameraData>();
+            camera.fieldOfView = s.fieldOfView;
+            var urp = camera.GetUniversalAdditionalCameraData();
             if (urp != null)
             {
                 urp.antialiasing = (AntialiasingMode)s.antialiasing;

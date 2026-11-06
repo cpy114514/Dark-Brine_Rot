@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Saltwind sedge",
+    "uncanny": false,
+    "nearTriangles": 688,
+    "farTriangles": 112
+  },
+  {
+    "name": "Low fescue",
+    "uncanny": false,
+    "nearTriangles": 700,
+    "farTriangles": 96
+  },
+  {
+    "name": "Broadleaf woodrush",
+    "uncanny": false,
+    "nearTriangles": 396,
+    "farTriangles": 80
+  },
+  {
+    "name": "Hart tongue fern",
+    "uncanny": false,
+    "nearTriangles": 396,
+    "farTriangles": 80
+  },
+  {
+    "name": "Bracken fern",
+    "uncanny": false,
+    "nearTriangles": 4096,
+    "farTriangles": 736
+  },
+  {
+    "name": "Coastal sage shrub",
+    "uncanny": false,
+    "nearTriangles": 3456,
+    "farTriangles": 334
+  },
+  {
+    "name": "Woodland hazel shrub",
+    "uncanny": false,
+    "nearTriangles": 3456,
+    "farTriangles": 334
+  },
+  {
+    "name": "Rowan sapling",
+    "uncanny": false,
+    "nearTriangles": 3888,
+    "farTriangles": 334
+  },
+  {
+    "name": "Wind bent alder sapling",
+    "uncanny": false,
+    "nearTriangles": 3888,
+    "farTriangles": 334
+  },
+  {
+    "name": "Ochre meadow flower",
+    "uncanny": false,
+    "nearTriangles": 1764,
+    "farTriangles": 330
+  },
+  {
+    "name": "Heather bell flower",
+    "uncanny": false,
+    "nearTriangles": 1428,
+    "farTriangles": 258
+  },
+  {
+    "name": "Ivory woodland flower",
+    "uncanny": false,
+    "nearTriangles": 1428,
+    "farTriangles": 258
+  },
+  {
+    "name": "Chestnut fungi",
+    "uncanny": false,
+    "nearTriangles": 3456,
+    "farTriangles": 300
+  },
+  {
+    "name": "Cushion moss",
+    "uncanny": false,
+    "nearTriangles": 680,
+    "farTriangles": 108
+  },
+  {
+    "name": "Copper leaf litter",
+    "uncanny": false,
+    "nearTriangles": 380,
+    "farTriangles": 108
+  },
+  {
+    "name": "Fallen twigs",
+    "uncanny": false,
+    "nearTriangles": 190,
+    "farTriangles": 48
+  },
+  {
+    "name": "Ink frond fern",
+    "uncanny": true,
+    "nearTriangles": 4096,
+    "farTriangles": 736
+  },
+  {
+    "name": "Tidal lantern fungi",
+    "uncanny": true,
+    "nearTriangles": 3456,
+    "farTriangles": 300
+  },
+  {
+    "name": "Coiled brine vine",
+    "uncanny": true,
+    "nearTriangles": 3040,
+    "farTriangles": 376
+  },
+  {
+    "name": "Dusky seedpod",
+    "uncanny": true,
+    "nearTriangles": 2208,
+    "farTriangles": 684
+  }
+]

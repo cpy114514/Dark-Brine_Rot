@@ -45,6 +45,44 @@ namespace Mavis
         [Range(.04f,.18f)] public float trailLifetime = .095f;
         public AnimationCurve lightSpeed = new AnimationCurve(new Keyframe(0,1.08f),new Keyframe(.35f,1.05f),new Keyframe(.53f,1.6f),new Keyframe(.7f,1.8f),new Keyframe(.88f,.85f),new Keyframe(1,1));
         public AnimationCurve heavySpeed = new AnimationCurve(new Keyframe(0,.8f),new Keyframe(.6f,1.9f),new Keyframe(1,2.45f));
+        public enum ControlPreset { Balanced, Responsive, Weighty }
+        [Serializable]
+        public sealed class ControlResponse
+        {
+            [Header("Multipliers on the actual player / scene configuration")]
+            [Range(.5f,2f)] public float acceleration = 1.1f;
+            [Range(.5f,2f)] public float braking = 1.25f;
+            [Range(1f,3f)] public float redirect = 1.65f;
+            [Range(.2f,1.5f)] public float airAcceleration = .8f;
+            [Range(.2f,1.5f)] public float airBraking = .72f;
+            [Range(.5f,2f)] public float turning = 1.16f;
+            [Range(.02f,.15f)] public float animationAcceleration = .045f;
+            [Range(.02f,.15f)] public float animationBraking = .06f;
+            [Header("Commitment and recovery (never before the damage window ends)")]
+            [Range(.65f,1f)] public float dodgeDuration = .82f;
+            [Range(.6f,.95f)] public float lightCancel = .74f;
+            [Range(.5f,.95f)] public float heavyCancel = .64f;
+            [Range(.65f,.95f)] public float comboChain = .80f;
+            [Range(.08f,.25f)] public float movingLanding = .12f;
+            [Header("Camera: translation smooths separately from player look")]
+            [Range(.5f,2f)] public float cameraFollow = 1.15f;
+            [Range(4f,25f)] public float cameraRelease = 10f;
+            [Range(.1f,.7f)] public float manualLookGrace = .4f;
+        }
+        [Header("Sahur control experiments — Balanced recommended")]
+        public bool useControlTuning = true;
+        public ControlPreset controlPreset = ControlPreset.Balanced;
+        public ControlResponse balanced = new ControlResponse();
+        public ControlResponse responsive = new ControlResponse { acceleration=1.25f,braking=1.5f,redirect=1.85f,
+            airAcceleration=.95f,airBraking=.85f,turning=1.35f,animationAcceleration=.035f,animationBraking=.045f,
+            dodgeDuration=.75f,lightCancel=.70f,heavyCancel=.62f,comboChain=.76f,movingLanding=.10f,cameraFollow=1.35f,cameraRelease=12f };
+        public ControlResponse weighty = new ControlResponse { acceleration=1f,braking=1.1f,redirect=1.45f,
+            airAcceleration=.7f,airBraking=.65f,turning=1.05f,animationAcceleration=.055f,animationBraking=.07f,
+            dodgeDuration=.9f,lightCancel=.80f,heavyCancel=.70f,comboChain=.86f,movingLanding=.15f,cameraFollow=1f,cameraRelease=8f };
+        public ControlResponse Controls => controlPreset==ControlPreset.Responsive ? responsive : controlPreset==ControlPreset.Weighty ? weighty : balanced;
+        public float LightCancelPhase => useControlTuning ? Controls.lightCancel : lightDodgeCancel;
+        public float HeavyCancelPhase => useControlTuning ? Controls.heavyCancel : heavyDodgeCancel;
+        public float ComboChainPhase => useControlTuning ? Controls.comboChain : comboRecoveryChain;
         [Header("Accessibility")]
         [Range(0,1)] public float cameraMotion = 1;
         [Range(0,1)] public float impactBrightness = .8f;

@@ -276,10 +276,13 @@ namespace Mavis
             {
                 if (specimen) specimen.SetDrawing(EquipmentJournalInk.Drawing.Board);
                 var board = FindFirstObjectByType<SkyboardReward>();
+                var village = FindFirstObjectByType<FriendlyMarshmallowVillage>();
+                bool inGrove=village && village.InGrove;
                 selectionStatus.text = !owned ? "Not collected" : board && board.Flying ? "Flying" : board && board.Landing ? "Landing" : board && board.CooldownRemaining > 0 ? "Cooldown: " + CooldownTime(board.CooldownRemaining) : board ? "Ready" : "Unavailable here";
                 details.text = "A flying skateboard found at the end of the marshmallow course.\n\nUse to fly for 60 seconds.\nWASD: move  |  Space: rise\nCtrl: descend  |  F: dismount\n\nWhen time runs out, Sahur falls.\nCooldown: 15 minutes after flight.";
                 actionText.text = "Use Skyboard";
-                equipButton.interactable = owned && board && !board.Flying && !board.Landing && board.CooldownRemaining <= 0 && movement && !movement.ExternalMovementLock;
+                if(inGrove){selectionStatus.text="Unavailable in Starlight Grove";actionText.text="Leave the grove to use";}
+                equipButton.interactable = owned && board && !board.Flying && !board.Landing && board.CooldownRemaining <= 0 && movement && !movement.ExternalMovementLock && !inGrove;
                 unequipButton.gameObject.SetActive(false);
             }
             if (item && item.id == "speed_scroll")
@@ -418,7 +421,7 @@ namespace Mavis
 
         public void SetOpen(bool open)
         {
-            if (active != this || panel == null || open == IsOpen || (open && (PauseSettingsMenu.IsOpen || PlayerDeathRespawn.IsOpen || IslandMapUI.BlocksInput || SecondIslandAwakening.BlocksInputFor(movement)))) return;
+            if (active != this || panel == null || open == IsOpen || (open && (CandyHuntQuest.StyleSelectorOpen || PauseSettingsMenu.IsOpen || PlayerDeathRespawn.IsOpen || IslandMapUI.BlocksInput || SecondIslandAwakening.BlocksInputFor(movement)))) return;
             IsOpen = open;
             GameControls.ConsumeMenuInput();
             panel.SetActive(open);

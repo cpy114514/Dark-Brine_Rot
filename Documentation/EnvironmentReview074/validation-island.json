@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "instances": 7998,
+  "invalidGeometry": 0,
+  "badNormals": 0,
+  "uninstanced": 0,
+  "missing": 0,
+  "protectedRoots": 0,
+  "outsideBounds": 0,
+  "floatingRoots": 0,
+  "roots": 337329,
+  "maxGap": 0.0,
+  "minGap": -0.179328918,
+  "colliders": 39,
+  "newColliders": 0,
+  "shaderErrors": [],
+  "ready": true
+}

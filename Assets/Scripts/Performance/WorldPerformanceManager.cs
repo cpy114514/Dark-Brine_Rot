@@ -188,7 +188,8 @@ namespace Mavis
         int submittedGrassBatches;
         public bool IsReady => cacheRoutine == null && !foliageRefreshing && foliage.Count > 0;
         // Retire unresolved blades before the CPU's conservative residency edge.
-        public const float GrassFadeStart = 140f, GrassFadeEnd = 176f, GrassResidentDistance = 190f;
+        public const float GrassFadeStart = 200f, GrassFadeEnd = 240f, GrassResidentDistance = 260f;
+        public const float LegacyFoliageResidentDistance = 350f, FoliageResidentDistance = 750f;
         static readonly int GrassFadeRangeId = Shader.PropertyToID("_MavisGrassFadeRange");
         public const float GrassShadowFadeStart=24f,GrassShadowFadeEnd=36f,GrassShadowResidentDistance=44f;
         static readonly int GrassShadowRangeId=Shader.PropertyToID("_MavisGrassShadowRange");
@@ -449,7 +450,7 @@ namespace Mavis
                 { yield return null; deadline = Time.realtimeSinceStartupAsDouble + RefreshBudget(); }
                 // Distance to bounds keeps large patches visible until their nearest edge is far away.
                 float squared = SquaredDistance(cameraPosition, item.bounds);
-                float cutoff = item.grass ? grassDistance : item.legacy ? 260f : 550f;
+                float cutoff = item.grass ? grassDistance : item.legacy ? LegacyFoliageResidentDistance : FoliageResidentDistance;
                 bool hidden = item.forced || item.duplicate || squared > cutoff * cutoff;
                 bool forced = hidden || item.batchable;
                 if (item.renderOff != forced && item.renderer != null)
@@ -614,7 +615,7 @@ namespace Mavis
                 }
                 else
                 {
-                    cell = new FoliageCell { bounds = item.bounds, cutoff = legacy ? 260f : 550f };
+                    cell = new FoliageCell { bounds = item.bounds, cutoff = legacy ? LegacyFoliageResidentDistance : FoliageResidentDistance };
                     foliageCells.Add(cell);
                 }
                 cell.items.Add(item);

@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
+using System.Collections.Generic;
 
 /// <summary>The two finish rewards and Sahur's temporary, controllable skyboard.</summary>
 [DefaultExecutionOrder(250), DisallowMultipleComponent]
@@ -56,10 +57,16 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
     EquipmentItem boardItem, scrollItem;
     BoxCollider boardPlatform, scrollPlatform;
     GameObject boardReward, scrollReward, riddenBoard;
-    Material thrusterMaterial;
+    Material thrusterMaterial, candyBoardMaterial;
+    Texture2D candyBoardTexture;
     Renderer[] riddenRenderers;
     Renderer islandSurface;
     Collider islandCollider;
+    readonly List<Collider> courseColliders = new List<Collider>();
+    Bounds courseRegion;
+    GameObject boardProbeObject;
+    BoxCollider boardProbe;
+    Vector3 boardProbeCenter;
     bool scrollsCollected;
     Animator riderAnimator;
     PlayableGraph riderGraph;
@@ -93,9 +100,22 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         boardPlatform = last.GetChild(0).GetComponentInChildren<BoxCollider>();
         scrollPlatform = last.GetChild(1).GetComponentInChildren<BoxCollider>();
         if (!boardPlatform || !scrollPlatform) { enabled = false; return; }
+        foreach (Transform row in transform)
+            if (row.name.StartsWith("Row "))
+                foreach (Transform platform in row)
+                    foreach (var collider in platform.GetComponentsInChildren<Collider>(true))
+                        if (collider is BoxCollider || collider is CapsuleCollider) courseColliders.Add(collider);
+        if(courseColliders.Count>0)
+        {
+            courseRegion=courseColliders[0].bounds;
+            foreach(var collider in courseColliders)courseRegion.Encapsulate(collider.bounds);
+            courseRegion.Expand(24f);
+        }
         boardReward = new GameObject("Skyboard pickup");
         var board = MakeVisual(skateboardModel, boardReward.transform, 2.6f, skateboardMaterial);
         CenterVisual(board, Vector3.zero);
+        var boardPickupCollider=boardReward.AddComponent<BoxCollider>();
+        boardPickupCollider.isTrigger=true;boardPickupCollider.size=new Vector3(2.8f,1.1f,2.8f);
         Label(boardReward.transform, "Skyboard\nWalk up to collect");
         scrollReward = new GameObject("Ten speed scrolls");
         for (int i = 0; i < 10; i++)
@@ -103,6 +123,8 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
             var visual = MakeVisual(scrollModel, scrollReward.transform, .55f, null);
             CenterVisual(visual, new Vector3((i % 5 - 2) * .48f, (i % 2) * .08f, (i / 5 - .5f) * .65f));
         }
+        var scrollPickupCollider=scrollReward.AddComponent<BoxCollider>();
+        scrollPickupCollider.isTrigger=true;scrollPickupCollider.size=new Vector3(3.3f,1.1f,1.8f);
         Label(scrollReward.transform, "10 Speed Scrolls\nEach removes 20 minutes of cooldown");
         if (Owned) boardReward.SetActive(false);
     }
@@ -164,7 +186,12 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
                 GameSaveManager.RequestAutosave();
                 GameplayAudio.Play(GameplayAudio.Cue.Pickup, player.transform.position, true);
             }
-            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame) TryStartFlight();
+            if (!CandyHuntQuest.InteractionConsumedThisFrame && Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+            {
+                var residents=FindFirstObjectByType<FriendlyMarshmallowVillage>();
+                var melody=FindFirstObjectByType<CandyMelodyGarden>();
+                if((!residents || !residents.ReservesInteraction) && (!melody || !melody.ReservesInteraction))TryStartFlight();
+            }
         }
         if (Flying && InputAllowed)
         {
@@ -225,6 +252,8 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
     }
     public bool TryStartFlight()
     {
+        var village=FindFirstObjectByType<FriendlyMarshmallowVillage>();
+        if(village && village.InGrove)return false;
         if (!Owned || Flying || Landing || CooldownRemaining > 0 || !player || !body || !body.enabled || !islandSurface || player.ExternalMovementLock) return false;
         Flying = true; FlightRemaining = flightSeconds; player.ExternalMovementLock = true;
         weaponLoadout = player.GetComponent<SahurWeaponLoadout>();
@@ -238,11 +267,23 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         GetComponent<MarshmallowHopRecovery>()?.ClearTracking();
         riddenBoard = new GameObject("Sahur skyboard");
         var visual = MakeVisual(skateboardModel, riddenBoard.transform, 3.4f, skateboardMaterial);
+        var candyHunt=FindFirstObjectByType<CandyHuntQuest>();
+        if(candyHunt && candyHunt.RewardClaimed && candyHunt.SelectedStyle<CandySkyboardStyles.Names.Length-1 && skateboardMaterial)
+        {
+            candyBoardMaterial=new Material(skateboardMaterial) { name="Candy-colour Skyboard" };
+            candyBoardTexture=CandySkyboardStyles.CreateTexture(candyHunt.SelectedStyle);
+            if(candyBoardMaterial.HasProperty("_BaseMap"))candyBoardMaterial.SetTexture("_BaseMap",candyBoardTexture);
+            if(candyBoardMaterial.HasProperty("_MainTex"))candyBoardMaterial.SetTexture("_MainTex",candyBoardTexture);
+            if(candyBoardMaterial.HasProperty("_BaseColor"))candyBoardMaterial.SetColor("_BaseColor",Color.white);
+            else candyBoardMaterial.color=Color.white;
+            foreach(var renderer in visual.GetComponentsInChildren<Renderer>())renderer.sharedMaterial=candyBoardMaterial;
+        }
         // Give both soles enough room across the imported narrow deck.
         visual.transform.localScale = Vector3.Scale(visual.transform.localScale, new Vector3(1, 1, 1.6f));
         CenterVisual(visual, Vector3.zero);
         BuildThrusters();
         riddenRenderers = riddenBoard.GetComponentsInChildren<Renderer>();
+        BuildBoardProbe();
         DeckHeight = body.bounds.min.y;
         StartRiderAnimation();
         GameSaveManager.RequestAutosave();
@@ -315,6 +356,9 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         RefreshFlightHud();
         if (riddenBoard) Destroy(riddenBoard);
         if (thrusterMaterial) Destroy(thrusterMaterial);
+        if (candyBoardMaterial) Destroy(candyBoardMaterial); if(candyBoardTexture) Destroy(candyBoardTexture);
+        if (boardProbeObject) Destroy(boardProbeObject);
+        boardProbe = null;
         riddenRenderers = null;
     }
     void LateUpdate()
@@ -353,8 +397,79 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         var b = riddenRenderers[0].bounds;
         for (int i = 1; i < riddenRenderers.Length; i++) b.Encapsulate(riddenRenderers[i].bounds);
         riddenBoard.transform.position += new Vector3(center.x - b.center.x, DeckHeight - b.max.y, center.z - b.center.z);
+        KeepBoardAbovePlatforms();
+        ResolveBoardPlatformIntersections();
         KeepBoardAboveIsland();
         if (stickStow && stickStow.SkyboardStow) stickStow.RefreshPose();
+    }
+    void KeepBoardAbovePlatforms()
+    {
+        if(!Flying || !body || !body.enabled || !riddenBoard || riddenRenderers==null || riddenRenderers.Length==0)return;
+        var boardBounds=BoardBounds();
+        if(courseColliders.Count==0 || !courseRegion.Intersects(boardBounds))return;
+        float lift=0f;
+        foreach(var other in courseColliders)
+        {
+            if(!(other is BoxCollider) || !other.enabled || !other.gameObject.activeInHierarchy)continue;
+            var top=other.bounds;
+            if(boardBounds.max.x<top.min.x || boardBounds.min.x>top.max.x ||
+               boardBounds.max.z<top.min.z || boardBounds.min.z>top.max.z)continue;
+            // If the rider is approaching from above, keep the board on top.
+            // A rider below the marshmallow is instead pushed out at its side.
+            if(body.bounds.min.y<top.max.y-.5f || boardBounds.min.y>=top.max.y+.06f)continue;
+            var marshmallow=other.GetComponentInParent<CapsuleCollider>();
+            if(marshmallow && boardBounds.max.y<marshmallow.bounds.min.y)continue;
+            lift=Mathf.Max(lift,top.max.y+.06f-boardBounds.min.y);
+        }
+        if(lift<=.001f)return;
+        float before=player.transform.position.y;
+        body.Move(Vector3.up*lift);
+        float moved=player.transform.position.y-before;
+        if(moved>0){riddenBoard.transform.position+=Vector3.up*moved;DeckHeight+=moved;}
+    }
+    void BuildBoardProbe()
+    {
+        // Keep the enabled query shape away from the level. ComputePenetration
+        // accepts an explicit pose, so the probe cannot trigger game objects.
+        var bounds=BoardBounds();
+        boardProbeCenter=riddenBoard.transform.InverseTransformPoint(bounds.center);
+        boardProbeObject=new GameObject("Skyboard collision query");
+        boardProbeObject.transform.position=new Vector3(50000,-50000,50000);
+        boardProbeObject.layer=2;
+        boardProbe=boardProbeObject.AddComponent<BoxCollider>();
+        boardProbe.isTrigger=true;
+        boardProbe.size=Vector3.Max(bounds.size-Vector3.one*.03f,Vector3.one*.05f);
+    }
+    void ResolveBoardPlatformIntersections()
+    {
+        if(!Flying || !boardProbe || !body || !body.enabled || !riddenBoard || riddenRenderers==null || riddenRenderers.Length==0)return;
+        if(courseColliders.Count==0 || !courseRegion.Intersects(BoardBounds()))return;
+        for(int pass=0;pass<3;pass++)
+        {
+            bool corrected=false;
+            var bounds=BoardBounds();bounds.Expand(.1f);
+            foreach(var other in courseColliders)
+            {
+                if(!other || !other.enabled || !other.gameObject.activeInHierarchy || !bounds.Intersects(other.bounds))continue;
+                Vector3 probePosition=riddenBoard.transform.TransformPoint(boardProbeCenter);
+                if(!Physics.ComputePenetration(boardProbe,probePosition,riddenBoard.transform.rotation,
+                    other,other.transform.position,other.transform.rotation,out var direction,out var distance) || distance<.001f)continue;
+                Vector3 before=player.transform.position;
+                body.Move(direction*(distance+.025f));
+                Vector3 moved=player.transform.position-before;
+                if(moved.sqrMagnitude<.000001f)continue;
+                riddenBoard.transform.position+=moved;DeckHeight+=moved.y;
+                bounds=BoardBounds();bounds.Expand(.1f);
+                corrected=true;
+            }
+            if(!corrected)break;
+        }
+    }
+    Bounds BoardBounds()
+    {
+        var bounds=riddenRenderers[0].bounds;
+        for(int i=1;i<riddenRenderers.Length;i++)if(riddenRenderers[i])bounds.Encapsulate(riddenRenderers[i].bounds);
+        return bounds;
     }
     void KeepBoardAboveIsland()
     {
@@ -385,7 +500,7 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         StopRiderAnimation();
         RestoreWeapons();
         if (flightHud) Destroy(flightHud);
-        if (riddenBoard) Destroy(riddenBoard); if (thrusterMaterial) Destroy(thrusterMaterial); if (boardReward) Destroy(boardReward); if (scrollReward) Destroy(scrollReward);
+        if (riddenBoard) Destroy(riddenBoard); if (thrusterMaterial) Destroy(thrusterMaterial); if (candyBoardMaterial) Destroy(candyBoardMaterial); if(candyBoardTexture) Destroy(candyBoardTexture); if (boardProbeObject) Destroy(boardProbeObject); if (boardReward) Destroy(boardReward); if (scrollReward) Destroy(scrollReward);
     }
     void RestoreWeapons()
     {

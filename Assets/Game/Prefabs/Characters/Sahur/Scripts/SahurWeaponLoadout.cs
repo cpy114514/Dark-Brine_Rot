@@ -72,7 +72,7 @@ namespace Mavis
             if (!initialized) Initialize();
             if (UsesRifle && !RifleUnlocked) TryEquip(Weapon.Stick);
             if (restoredWeapon.HasValue) TryEquip(restoredWeapon.Value);
-            if (!initialized || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
+            if (!initialized || CandyHuntQuest.StyleSelectorOpen || CandyHuntQuest.InteractionConsumedThisFrame || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput ||
                 Cursor.lockState != CursorLockMode.Locked) return;
             var keys = Keyboard.current;
             if(GameControls.Down(GameControls.Command.NextWeapon))

@@ -156,7 +156,7 @@ public sealed class SecondIslandAwakening : MonoBehaviour
                 yield return null;
             }
             var standing=player.transform.position; standing.y=targetY;
-            player.RestoreSavedPose(standing,originalRotation);
+            player.FinishCinematicPose(standing,originalRotation);
             FinishPose();
         }
         foreach(var root in gameObject.scene.GetRootGameObjects())

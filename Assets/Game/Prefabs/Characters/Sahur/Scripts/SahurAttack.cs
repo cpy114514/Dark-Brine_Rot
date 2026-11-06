@@ -35,14 +35,14 @@ namespace Mavis
         public bool TryConsumeDodgeCancel(bool pressed, bool canConsume)
         {
             if(CinematicHandoffPending || !isActiveAndEnabled || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)return false;
-            if(pressed && IsCombatMotionActive)dodgeBufferedUntil=Time.unscaledTime+Feel.inputBuffer;
-            if(canConsume && Time.unscaledTime<=dodgeBufferedUntil && (IsGuarding || IsSpinning && Time.time-specialStartedAt>=spinStartup))
+            if(pressed && IsCombatMotionActive){dodgeBufferedUntil=Time.time+Feel.inputBuffer;controller?.TraceControl("Dodge","Buffered for a legal cancel window");}
+            if(canConsume && Time.time<=dodgeBufferedUntil && (IsGuarding || IsSpinning && Time.time-specialStartedAt>=spinStartup))
             {EndCombination();dodgeBufferedUntil=-1;return true;}
-            if(!canConsume || Time.unscaledTime>dodgeBufferedUntil || (localStop && localStop.IsStopped))return false;
+            if(!canConsume || Time.time>dodgeBufferedUntil || (localStop && localStop.IsStopped))return false;
             if(!IsCombatMotionActive){dodgeBufferedUntil=-1;return true;}
             float phase=CurrentAttackPhase;
-            if(!charging && (!attacking || phase<Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.heavyDodgeCancel:Feel.lightDodgeCancel)))return false;
-            CancelForMovement();dodgeBufferedUntil=-1;return true;
+            if(!charging && (!attacking || phase<Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.HeavyCancelPhase:Feel.LightCancelPhase)))return false;
+            controller?.TraceControl("Dodge","Attack cancel accepted");CancelForMovement();dodgeBufferedUntil=-1;return true;
         }
         const string ChargeUpperBodyLayer = "Charge Upper Body";
         const string LightUpperBodyLayer = "Light Attack Upper Body";
@@ -100,7 +100,7 @@ namespace Mavis
         [Min(0.05f)] public float twinBladeRaiseTime = .9f;
         [Tooltip("Fade the held X pose into the existing rush or locomotion before the damaging cut starts.")]
         [Range(.04f,.14f)] public float twinBladePoseReleaseBlend = .12f;
-        bool fadingTwinBladeCharge;
+        bool fadingChargePose;
         public static readonly Vector2 TwinBladeRushWindow = new Vector2(.20f, .56f);
         public float EffectiveFullChargeTime => UsesTwinBlades ? Mathf.Max(twinBladeMinimumCharge, twinBladeFullCharge) : Mathf.Max(.2f, fullChargeTime);
         public bool ChargeReady => charging && (!UsesTwinBlades || ChargeElapsed >= twinBladeReleaseThreshold);
@@ -148,7 +148,7 @@ namespace Mavis
         public bool IsJumpSlashRecovering => IsJumpSlashActive && jumpSlashRecovering;
         public bool IsTwinBladeSpinActive => UsesTwinBlades && (IsSpinning || IsGroundComboActive && comboStep == 2);
         public bool CanDodgeCancel => attacking && !charging && !(localStop && localStop.IsStopped) &&
-            CurrentAttackPhase >= Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.heavyDodgeCancel:Feel.lightDodgeCancel);
+            CurrentAttackPhase >= Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.HeavyCancelPhase:Feel.LightCancelPhase);
         public bool TryDodgeCancel() => CanDodgeCancel && TryConsumeDodgeCancel(true);
         public bool CanMoveDuringCombat => charging || usesUpperBodyLight || (IsHeavyAttackActive && (usesRightArmHeavy || usesBladeRecovery));
         // Full-body spins retain their authored pose and hit-stop, while the capsule travels.
@@ -352,6 +352,12 @@ namespace Mavis
 
         void Update()
         {
+            // Buffers use the same clock as the authored action. A local contact
+            // freeze pauses the remaining buffer, never renews a released press.
+            if(localStop && localStop.IsStopped && Time.deltaTime>0 && Time.time<=dodgeBufferedUntil)
+                dodgeBufferedUntil+=Time.deltaTime;
+            if(PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput || ControlInputBlocked)
+                dodgeBufferedUntil=-1;
             UpdatePerfectCounter();
             if(GameControls.InputInterrupted&&charging)CancelCharge();
             if(GameControls.Down(GameControls.Command.Attack))TriggerAttack();
@@ -513,12 +519,20 @@ namespace Mavis
                     float inputPhase=lightLayerHandoffFrame==Time.frameCount?lightLayerHandoffPhase:state.normalizedTime;
                     if ((state.fullPathHash == AttackAnimationHash || lightLayerHandoffFrame==Time.frameCount) &&
                         inputPhase >= 0 && inputPhase <= comboQueueClose)
-                    { comboContinueQueued = true; comboInputExpiresAt=Time.unscaledTime+Feel.inputBuffer; }
+                    { comboContinueQueued = true; comboInputExpiresAt=Time.time+Feel.inputBuffer; }
                 }
                 else
                 {
                     attackQueued=true;queueExpiresAt=Time.time+Feel.inputBuffer;
                 }
+                return;
+            }
+            // Preserve a fresh attack press only near the real dodge handoff.
+            // Perfect-step counter buffering above keeps its original rules.
+            if(controller!=null && controller.IsDodging)
+            {
+                if(controller.DodgeTimeRemaining<=Feel.inputBuffer)
+                {attackQueued=true;queueExpiresAt=Time.time+Feel.inputBuffer;controller.TraceControl("Attack","Buffered for dodge recovery");}
                 return;
             }
             // Input callbacks can precede the movement update that launches the
@@ -656,7 +670,7 @@ namespace Mavis
             controller?.BeginAttackFacing();
             charging = true;
             ReleasedCharge01 = 0;
-            fadingTwinBladeCharge = false;
+            fadingChargePose = false;
             chargeStartedAt = Time.time;
             if (stickHitbox != null) stickHitbox.enabled = false;
             // The single-hand windup develops throughout the full charge.
@@ -691,16 +705,16 @@ namespace Mavis
 
         void CancelCharge()
         {
-            // Keep the last evaluated X pose while its layer fades. Clearing its
-            // phase/weight immediately exposes the idle arms in a single frame.
-            fadingTwinBladeCharge = UsesTwinBlades && usesUpperBodyCharge && animator && chargeLayerIndex > 0 &&
+            // Both weapons retain their evaluated charge pose through the layer fade.
+            // Clearing its phase or weight exposes idle arms in a single frame.
+            fadingChargePose = usesUpperBodyCharge && animator && chargeLayerIndex > 0 &&
                 animator.GetLayerWeight(chargeLayerIndex) > 0f;
             charging = false;
             chargeInputUntil = -1;
             controller?.EndAttackFacing();
-            if (animator != null && !fadingTwinBladeCharge) animator.SetFloat(chargeTimeHash, 0f);
+            if (animator != null && !fadingChargePose) animator.SetFloat(chargeTimeHash, 0f);
             if (stickHitbox != null) stickHitbox.enabled = false;
-            if (usesUpperBodyCharge && animator != null && chargeLayerIndex >= 0 && !fadingTwinBladeCharge)
+            if (usesUpperBodyCharge && animator != null && chargeLayerIndex >= 0 && !fadingChargePose)
                 animator.SetLayerWeight(chargeLayerIndex, 0f);
             else if (!usesUpperBodyCharge && animator != null)
                 animator.CrossFadeInFixedTime("Locomotion", 0.14f, 0, 0f);
@@ -720,6 +734,11 @@ namespace Mavis
                 SahurLoadoutUI.BlocksInput || Cursor.lockState != CursorLockMode.Locked ||
                 (controller != null && (!controller.enabled || controller.ExternalControlLock || controller.ExternalMovementLock)))
                 return false;
+            // Full-body attacks keep their contact arc. A held movement intent
+            // resumes on recovery, rather than needing a second direction press.
+            if(attacking && (!CanDodgeCancel || comboContinueQueued || GameControls.Down(GameControls.Command.Attack)))return false;
+            if(attacking && controller!=null && controller.RequestedMoveDirection.sqrMagnitude>.01f)
+            {controller.TraceControl("Move","Attack recovery accepted");CancelForMovement();return true;}
             // A new direction press cancels even when opposing keys give zero
             // net movement. Holding a key from before the attack is allowed.
             if (!GameInputSettings.PressedThisFrame(GameInputSettings.Action.Forward) &&
@@ -755,7 +774,7 @@ namespace Mavis
             ClearAirLegLayer();
             if(usesBladeRecovery && animator && bladeRecoveryLayer>0)animator.SetLayerWeight(bladeRecoveryLayer,0);
             usesBladeRecovery=false;
-            fadingTwinBladeCharge = false;
+            fadingChargePose = false;
             ResetCombinations();
             localStop?.Release();
             impactFeedback?.Visuals?.ClearTrail();
@@ -804,11 +823,11 @@ namespace Mavis
             if (animator != null)
             {
                 // Swimming/story ownership must never inherit an outgoing charge layer.
-                if (fadingTwinBladeCharge && chargeLayerIndex > 0)
+                if (fadingChargePose && chargeLayerIndex > 0)
                 {
                     animator.SetLayerWeight(chargeLayerIndex, 0f);
                     animator.SetFloat(chargeTimeHash, 0f);
-                    fadingTwinBladeCharge = false;
+                    fadingChargePose = false;
                 }
                 animator.ResetTrigger(attackTrigger);
                 int layer = animator.GetLayerIndex(ChargeUpperBodyLayer);
@@ -832,21 +851,21 @@ namespace Mavis
             }
             // Both windup and release belong to the right-arm layer. The base
             // keeps the idle/walk/run pose instead of taking over the whole body.
-            if (IsHeavyAttackActive && !usesRightArmHeavy && !fadingTwinBladeCharge && animator.GetLayerWeight(chargeLayerIndex) > 0f)
+            if (IsHeavyAttackActive && !usesRightArmHeavy && !fadingChargePose && animator.GetLayerWeight(chargeLayerIndex) > 0f)
                 animator.SetFloat(chargeTimeHash, HeavyAttackPhase);
             if (lightLayerIndex>0)
                 animator.SetLayerWeight(lightLayerIndex,Mathf.MoveTowards(animator.GetLayerWeight(lightLayerIndex),
                     usesUpperBodyLight ? 1f : 0f,Time.deltaTime/ChargeLayerFadeOut));
             bool ownsArm = charging || (IsHeavyAttackActive && usesRightArmHeavy);
             float target = ownsArm ? 1f : 0f;
-            float duration = ownsArm ? ChargeLayerFadeIn : fadingTwinBladeCharge ? twinBladePoseReleaseBlend : ChargeLayerFadeOut;
+            float duration = ownsArm ? ChargeLayerFadeIn : fadingChargePose ? twinBladePoseReleaseBlend : ChargeLayerFadeOut;
             float weight = Mathf.MoveTowards(animator.GetLayerWeight(chargeLayerIndex),
                 target, Time.deltaTime / duration);
             animator.SetLayerWeight(chargeLayerIndex, weight);
             if (!charging && weight <= 0f)
             {
                 animator.SetFloat(chargeTimeHash, 0f);
-                fadingTwinBladeCharge = false;
+                fadingChargePose = false;
             }
         }
 
@@ -912,14 +931,15 @@ namespace Mavis
         {
             jumpSlashRecovering = false;
             stamina?.NotifyCombat();
+            controller?.TraceControl("Attack","Action started");
             controller?.BeginAttackFacing();
             animator.ResetTrigger(attackTrigger);
             activeAttackHash = stateHash;
             usesRightArmHeavy = !UsesTwinBlades && stateHash == heavyStateHash && chargeClip != null && usesUpperBodyCharge &&
                 chargeLayerIndex > 0 && animator.HasState(chargeLayerIndex, rightArmHeavyStateHash);
-            fadingTwinBladeCharge = UsesTwinBlades && stateHash == heavyStateHash && usesUpperBodyCharge &&
+            fadingChargePose = UsesTwinBlades && stateHash == heavyStateHash && usesUpperBodyCharge &&
                 chargeLayerIndex > 0 && animator.GetLayerWeight(chargeLayerIndex) > 0f;
-            if (!usesRightArmHeavy && !fadingTwinBladeCharge && chargeLayerIndex > 0)
+            if (!usesRightArmHeavy && !fadingChargePose && chargeLayerIndex > 0)
                 animator.SetLayerWeight(chargeLayerIndex, 0f);
             if (!usesUpperBodyLight && lightLayerIndex > 0)
                 animator.SetLayerWeight(lightLayerIndex, 0f);
@@ -1047,10 +1067,10 @@ namespace Mavis
             // into. Waiting until .98 can lose the race to the automatic exit
             // at 1.0 on a slow frame and briefly blend through Locomotion.
             Vector2 comboWindow = comboStep == 0 ? comboOneHitWindow : comboTwoHitWindow;
-            float chainPoint = Mathf.Min(comboChainPoint, Mathf.Max(comboWindow.y+.025f,Feel.comboRecoveryChain));
+            float chainPoint = Mathf.Min(comboChainPoint, Mathf.Max(comboWindow.y+.025f,Feel.ComboChainPhase));
             // Early taps are a short input buffer, not an attack queued a whole second ahead.
             // Once entered in the authored queue interval, retain it through recovery/hit-stop.
-            if(comboContinueQueued && current.normalizedTime<comboQueueOpen && Time.unscaledTime>comboInputExpiresAt)
+            if(comboContinueQueued && current.normalizedTime<comboQueueOpen && Time.time>comboInputExpiresAt)
                 comboContinueQueued=false;
             if (comboStep >= 0 && comboStep < 2 && comboContinueQueued && inActiveAttack &&
                 current.normalizedTime >= chainPoint)
@@ -1394,7 +1414,7 @@ namespace Mavis
             ClearAirLegLayer();
             if(usesBladeRecovery && animator && bladeRecoveryLayer>0)animator.SetLayerWeight(bladeRecoveryLayer,0);
             usesBladeRecovery=false;
-            fadingTwinBladeCharge = false;
+            fadingChargePose = false;
             ResetCombinations();chordLatched=false;
             dodgeBufferedUntil=-1;
             localStop?.Release();

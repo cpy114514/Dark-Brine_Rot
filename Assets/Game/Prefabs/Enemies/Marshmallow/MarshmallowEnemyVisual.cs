@@ -84,6 +84,8 @@ public sealed class MarshmallowEnemyVisual : MonoBehaviour
     {
         if (!brain || !visual || PauseSettingsMenu.IsOpen) return;
         var mode = brain.Mode;
+        if(mode==ChickenBroAI.Mood.Dead&&EnemyDeathPresentation.OwnsFallback(gameObject))
+        {UpdateEyes(mode);return;}
         bool moving = mode == ChickenBroAI.Mood.Patrol || mode == ChickenBroAI.Mood.Chase;
         float clock = Time.time * (mode == ChickenBroAI.Mood.Chase ? 9f : 6f) + phase;
         float step = moving ? Mathf.Sin(clock) : 0f;

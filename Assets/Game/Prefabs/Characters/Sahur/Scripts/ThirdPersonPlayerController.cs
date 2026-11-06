@@ -153,6 +153,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     int motionState;
     float airborneTime;
     float landingTimer;
+    float landingImpactSpeed;
     float splashTimer;
     float underwaterBubbleTimer;
     float underwaterBlend;
@@ -223,7 +224,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     public void NotifyPlatformLanding()
     {
         platformCarryVelocity=Vector3.zero;airborneTime=0;verticalSpeed=-groundStickSpeed;
-        landingTimer=.42f;SetMotion(4,"Land",.06f);
+        landingImpactSpeed=0;landingTimer=.42f;SetMotion(4,"Land",.06f);
     }
     ParticleSystem waterRipples;
     ParticleSystem waterDroplets;
@@ -268,7 +269,13 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     public bool CanUseAirAttack => characterController != null && rollTimer <= 0f && airFlipTimer <= 0f &&
                                    (verticalSpeed > 0f || !IsGroundedOrOnSea()) && !IsSwimming();
 
-    public void RestoreSavedPose(Vector3 position, Quaternion rotation)
+    public void RestoreSavedPose(Vector3 position, Quaternion rotation) => RestorePose(position,rotation,false);
+
+    // A completed story blend already has a valid idle pose. Keep its phase
+    // instead of restarting that same idle on the control-handoff frame.
+    public void FinishCinematicPose(Vector3 position, Quaternion rotation) => RestorePose(position,rotation,true);
+
+    void RestorePose(Vector3 position, Quaternion rotation,bool preserveLocomotionPose)
     {
         enemyLock?.Clear();
         if (marshmallow != null) marshmallow.CancelSpacewalk();
@@ -292,15 +299,22 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         rollTimer = 0f;
         dodgeBufferUntil = -1;
         rollCooldownTimer = 0f;
-        airFlipTimer = 0f;
+        airFlipTimer = 0f;airFlipUsed=false;
         cameraInitialized = false;
         continuingCinematicCamera=false;cinematicCameraVelocity=Vector3.zero;
         wasSwimming = FastSwimming = wasAtSeaSurface = false;
         swimExitJumpTimer = swimRippleTimer = 0f;
-        airborneTime = landingTimer = 0f;
+        airborneTime = landingTimer = landingImpactSpeed = 0f;
         // Loading or respawning on land must not retain a previous swimming state.
         motionState = 0;
-        if (animator != null) animator.CrossFadeInFixedTime("Locomotion", .10f, 0, 0f);
+        if (animator != null)
+        {
+            bool alreadyLocomotion=animator.GetCurrentAnimatorStateInfo(0).fullPathHash==LocomotionId ||
+                animator.IsInTransition(0)&&animator.GetNextAnimatorStateInfo(0).fullPathHash==LocomotionId;
+            if(!preserveLocomotionPose || !alreadyLocomotion)
+                animator.CrossFadeInFixedTime("Locomotion", .10f, 0, 0f);
+            if(preserveLocomotionPose)animator.SetFloat(SpeedId,0);
+        }
         playerStamina?.StopSprinting();
     }
 
@@ -416,7 +430,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             return;
 
         if (Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.BlocksInput)
-            return;
+        { dodgeBufferUntil=-1; jumpBufferTimer=0; return; }
         if (swimmingOcean == null) swimmingOcean = FindFirstObjectByType<OceanWorld>();
         if (swimmingOcean != null) seaLevel = swimmingOcean.oceanHeight;
         swimExitJumpTimer = Mathf.Max(0f, swimExitJumpTimer - Time.deltaTime);
@@ -425,6 +439,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         bool acceptInput = Cursor.lockState == CursorLockMode.Locked && !ExternalControlLock;
 
         Vector2 look = acceptInput ? GameControls.LookDelta(mouseSensitivity,Time.deltaTime) * RifleAimLookScale() : Vector2.zero;
+        if(TunedControls && look.sqrMagnitude>.0001f)manualCameraLookUntil=Time.time+Response.manualLookGrace;
         yaw += look.x;
         pitch = Mathf.Clamp(pitch + (invertLookY ? look.y : -look.y), minPitch, maxPitch);
         if (acceptInput && Mouse.current!=null && !GameControls.UsingGamepad)
@@ -479,12 +494,17 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         Motion.Locomotion(IsSwimming(),IsGroundedOrOnSea());
         if (!acceptInput) dodgeBufferUntil = -1;
         else if (GameInputSettings.PressedThisFrame(GameInputSettings.Action.Dodge)) dodgeBufferUntil = Time.time + Mavis.CombatFeelProfile.Default.inputBuffer;
-        bool dodgeReady = verticalSpeed <= 0 && IsGroundedOrOnSea() && rollCooldownTimer <= 0 &&
+        // Root-authored grounded cuts can leave a tiny capsule/floor gap for
+        // one frame. Reuse the existing bounded footing probe, so a ground
+        // dodge does not turn into an instantly-landed air flip.
+        bool dodgeGrounded=verticalSpeed<=0 && (IsGroundedOrOnSea() ||
+            combat!=null && combat.IsCombatMotionActive && HasChargeFooting());
+        bool dodgeReady = dodgeGrounded && rollCooldownTimer <= 0 &&
                           (playerStamina == null || playerStamina.CanSpend(playerStamina.rollCost));
         // Authored attack steps can briefly lift both feet. Retain the press
         // through recovery and allow the existing once-per-jump flip, instead
         // of silently discarding Ctrl until the character lands.
-        bool airDodgeReady = !(verticalSpeed<=0 && IsGroundedOrOnSea()) && !airFlipUsed && airFlipTimer<=0 && rollCooldownTimer<=0 &&
+        bool airDodgeReady = !dodgeGrounded && !airFlipUsed && airFlipTimer<=0 && rollCooldownTimer<=0 &&
                             (playerStamina==null || playerStamina.CanSpend(playerStamina.airFlipCost));
         // Combat owns this press's lifetime; passing the movement buffer here
         // would renew its deadline every frame after the key was released.
@@ -543,7 +563,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         if (swimmingOcean != null && IsAtSeaSurface() && waterDepth > 0f && !exitedSwimming)
             desiredVelocity *= Mathf.Lerp(1f, wadingSpeedMultiplier, Mathf.Clamp01(waterDepth / swimStartDepth));
 
-        bool grounded = verticalSpeed <= 0f && IsGroundedOrOnSea();
+        bool grounded = verticalSpeed <= 0f && (IsGroundedOrOnSea() || combatDodge && dodgeGrounded);
         if(grounded && coyoteTimer<=0)platformCarryVelocity=Vector3.zero;
         bool isRolling = rollTimer > 0f;
         bool dodgePressed = WalkingTutorialConstraint == null && acceptInput && !combatLocked && (combatDodge || Time.time <= dodgeBufferUntil);
@@ -564,21 +584,24 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             // never turn leftover braking momentum into a stationary boost.
             rollInheritedSpeed = GetRollInheritedSpeed(planarVelocity, desiredVelocity);
             TryStartPerfectDodge();
+            sampledRollDuration=ConfiguredRollDuration;
+            ConfigureDodgePlayback();
+            TraceControl("Dodge","Action started");
             rollTimer = ActiveDodgeDuration;
             DodgesPerformed++;
             dodgeBufferUntil = -1;
             Mavis.GameplayAudio.Play(Mavis.GameplayAudio.Cue.Dodge, transform.position);
             recoveringAttackFacing = false;
-            rollCooldownTimer = ActiveDodgeDuration + rollCooldown;
+            rollCooldownTimer = ActiveDodgeDuration*(perfectStep?1:Mathf.Clamp(rollAnimationExitPhase,.75f,.98f)) + rollCooldown;
             planarVelocity = rollDirection * (rollSpeed + rollInheritedSpeed);
             isRolling = true;
             jumpBufferTimer = 0f;
-            transform.rotation = Quaternion.LookRotation(rollDirection, Vector3.up);
+            transform.rotation = perfectStep?perfectStepFacing:Quaternion.LookRotation(rollDirection, Vector3.up);
             SetMotion(1, perfectStep ? "Perfect Step" : "Roll", perfectStep ? .04f : .075f);
         }
 
         coyoteTimer = grounded ? coyoteTime : Mathf.Max(0f, coyoteTimer - Time.deltaTime);
-        if (jumpPressed && !isRolling)
+        if (jumpPressed && (!isRolling || DodgeTimeRemaining<=jumpBufferTime))
             jumpBufferTimer = jumpBufferTime;
         else
             jumpBufferTimer = Mathf.Max(0f, jumpBufferTimer - Time.deltaTime);
@@ -604,6 +627,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
                 jumpBufferTimer = 0f;
                 grounded = false;
                 airborneTime = 0f;
+                TraceControl("Jump","Action started");
                 SetMotion(2, "Jump Start", 0.10f);
             }
         }
@@ -676,13 +700,13 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             float inheritedTarget = desiredVelocity.magnitude;
             float inheritedRate = inheritedTarget > rollInheritedSpeed ? acceleration : deceleration;
             rollInheritedSpeed = Mathf.MoveTowards(rollInheritedSpeed, inheritedTarget, inheritedRate * Time.deltaTime);
-            planarVelocity = rollDirection * (rollInheritedSpeed + rollSpeed * rollWeight);
+            planarVelocity = rollDirection * (rollInheritedSpeed + rollSpeed * (perfectStep?1f:rollDuration/ActiveDodgeDuration) * rollWeight);
             if(perfectStep)
             {
                 // Integrate the same 2m ease curve at every frame rate. World
                 // collision remains owned by the existing CharacterController.
                 float now=Mathf.Clamp01(phase),before=Mathf.Clamp01(1-previousRollTimer/ActiveDodgeDuration);
-                float a=1-Mathf.Pow(1-before,2),b=1-Mathf.Pow(1-now,2);
+                float a=Mathf.SmoothStep(0,1,before),b=Mathf.SmoothStep(0,1,now);
                 planarVelocity=rollDirection*(perfectStepDistance*(b-a)/Mathf.Max(.00001f,Time.deltaTime));
             }
 
@@ -695,7 +719,8 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
                 rollTimer = 0f;
                 rollInheritedSpeed = 0f;
                 if(perfectStep&&perfectAttacker)perfectCounterUntil=Time.time+perfectCounterWindow;
-                if(!perfectStep)planarVelocity = desiredVelocity;
+                if(!perfectStep)planarVelocity = TunedControls ? Vector3.MoveTowards(rollDirection*rollInheritedSpeed,
+                    desiredVelocity,acceleration*Response.acceleration*Response.redirect*Time.deltaTime) : desiredVelocity;
             }
         }
         else
@@ -706,9 +731,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             // external control restore normal braking; gravity/collision stay live.
             else if (grounded || combat == null || !combat.IsJumpSlashActive || ExternalControlLock)
             {
-                float rate = desiredVelocity.sqrMagnitude > planarVelocity.sqrMagnitude ? acceleration : deceleration;
-                if (SoftTraversal && !grounded) rate *= marshmallow.airControl;
-                planarVelocity = Vector3.MoveTowards(planarVelocity, desiredVelocity, rate * Time.deltaTime);
+                planarVelocity = AdvanceLocomotion(desiredVelocity, grounded, Time.deltaTime);
             }
         }
         if (Time.time < combatPushUntil)
@@ -717,11 +740,20 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             planarVelocity += combatPush * fade;
         }
         float downwardSpeedBeforeMove = verticalSpeed;
+        Vector3 movementStart=transform.position;
         if (!attackRootMotion)
         {
             Vector3 movementDelta = (planarVelocity + platformCarryVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement;
             if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
+            Vector3 beforeMove=transform.position;
             CollisionFlags collisions = characterController.Move(movementDelta);
+            if(playerStamina && acceptInput && !movementLocked && !sprinting && !isRolling && airFlipTimer<=0f &&
+                moveDirection.sqrMagnitude>.01f && groundMoveSpeed>.01f && Time.deltaTime>0f)
+            {
+                Vector3 travel=Vector3.ProjectOnPlane(transform.position-beforeMove,Vector3.up);
+                float directed=Mathf.Max(0f,Vector3.Dot(travel,moveDirection.normalized));
+                playerStamina.TickWalking(Time.deltaTime,directed/(groundMoveSpeed*Time.deltaTime));
+            }
             if ((collisions & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
                 verticalSpeed = 0f;
             if ((collisions & CollisionFlags.Below) != 0 && verticalSpeed < 0f)
@@ -752,10 +784,18 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         {
             if (SoftTraversal) marshmallow.Land(Mathf.Max(0f,-downwardSpeedBeforeMove));
             landingTimer = 0.42f;
+            landingImpactSpeed=Mathf.Max(0,-downwardSpeedBeforeMove);
             SetMotion(4, "Land", 0.09f);
         }
+        float actualPlanarSpeed=attackRootMotion ? planarVelocity.magnitude :
+            Vector3.ProjectOnPlane((transform.position-movementStart)/Mathf.Max(.0001f,Time.deltaTime),Vector3.up).magnitude;
         if (motionState == 4)
         {
+            // Moving landings keep the contact compression but give the legs
+            // back before a planted recovery can skate several metres.
+            if(onGround && !movementLocked && desiredVelocity.sqrMagnitude>.01f && actualPlanarSpeed>moveSpeed*.15f)
+                landingTimer=Mathf.Min(landingTimer,Mathf.Lerp(TunedControls?Response.movingLanding:.14f,
+                    TunedControls?Response.movingLanding+.08f:.24f,Mathf.InverseLerp(14,24,landingImpactSpeed)));
             landingTimer -= Time.deltaTime;
             if (landingTimer <= 0f) SetMotion(0, "Locomotion", 0.12f);
         }
@@ -764,22 +804,31 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         {
             // rollTimer is now authoritative: it avoids retaining the stale
             // pre-update isRolling value on the frame that the roll finishes.
-            animator.SetFloat(SpeedId, rollTimer > 0f ? 0f : planarVelocity.magnitude, 0.12f, Time.deltaTime);
+            float animationSpeed=rollTimer>0 ? 0 : actualPlanarSpeed;
+            float damping=animationSpeed>animator.GetFloat(SpeedId) ? (TunedControls ? Response.animationAcceleration : .065f) : (TunedControls ? Response.animationBraking : .085f);
+            animator.SetFloat(SpeedId,animationSpeed,damping,Time.deltaTime);
+            UpdateLockFootwork();
+            if(animationSpeed<.03f && animator.GetFloat(SpeedId)<.05f)animator.SetFloat(SpeedId,0);
         }
 
         if (!rifleLoadout) rifleLoadout = GetComponent<Mavis.SahurWeaponLoadout>();
         if (!rifleCombat) rifleCombat = GetComponent<Mavis.SahurRifleCombat>();
         bool rifleFacing = rifleLoadout && rifleLoadout.UsesRifle && RifleLocomotionAllowed &&
             (!IsSprinting || rifleCombat && rifleCombat.FirePoseActive);
-        if (!movementLocked && !recoveringAttackFacing && rifleFacing)
+        // A short sidestep displaces the capsule without turning away from the
+        // fight. Ordinary rolls retain their original direction-facing behavior.
+        if(perfectStep && isRolling)transform.rotation=perfectStepFacing;
+        else if (!movementLocked && !recoveringAttackFacing && (rifleFacing ||
+            TunedControls && enemyLock && enemyLock.IsLocked && !IsSprinting && rollTimer<=0 && onGround))
         {
             Quaternion aim = enemyLock && enemyLock.IsLocked ? enemyLock.FacingRotation() : Quaternion.Euler(0, yaw, 0);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, aim, turnSpeedDegrees * Time.deltaTime);
         }
         else if (!movementLocked && !recoveringAttackFacing && planarVelocity.sqrMagnitude > 0.01f)
         {
-            Quaternion desired = Quaternion.LookRotation(new Vector3(planarVelocity.x, 0f, planarVelocity.z), Vector3.up);
-            float turnRate = isRolling ? turnSpeedDegrees * 1.8f : turnSpeedDegrees;
+            Vector3 facingIntent=TunedControls && !isRolling && moveDirection.sqrMagnitude>.01f ? moveDirection : planarVelocity;
+            Quaternion desired = Quaternion.LookRotation(new Vector3(facingIntent.x, 0f, facingIntent.z), Vector3.up);
+            float turnRate = isRolling ? turnSpeedDegrees * 1.8f : turnSpeedDegrees * (TunedControls ? Response.turning : 1f);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, turnRate * Time.deltaTime);
         }
         if (armCombatMovementAllowed && hasAttackFacing)
@@ -1023,6 +1072,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
 
     void LateUpdate()
     {
+        SampleControlDiagnostics();
         UpdateAirFlipVisual();
         if (marshmallow != null && marshmallow.Active && Time.deltaTime > 0f && !PauseSettingsMenu.IsOpen) marshmallow.TickFeedback();
         if (marshmallow != null && Time.deltaTime > 0f && !PauseSettingsMenu.IsOpen)
@@ -1048,7 +1098,8 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             return;
 
         Quaternion cameraRotation = Quaternion.Euler(pitch, yaw, 0f);
-        Vector3 focus = transform.position + Vector3.up * (visualBaseOffset + cameraHeight);
+        // The calibrated offset is local; use its existing world-space accessor.
+        Vector3 focus = transform.position + Vector3.up * ((TunedControls?GetLowestFootOffset():visualBaseOffset) + cameraHeight);
         if (SoftTraversal) focus.y += marshmallow.CameraOffset;
         if (Swimming && animator != null && animator.isHuman)
         {
@@ -1070,13 +1121,17 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             if (toward.sqrMagnitude > .01f)
             {
                 var desiredRotation = Quaternion.LookRotation(toward).eulerAngles;
-                float blend = 1f - Mathf.Exp(-8f * Time.deltaTime);
+                float blend = TunedControls && Time.time<manualCameraLookUntil ? 0 : 1f - Mathf.Exp(-8f * Time.deltaTime);
                 yaw = Mathf.LerpAngle(yaw, desiredRotation.y, blend);
                 float targetPitch = Mathf.DeltaAngle(0f, desiredRotation.x);
                 pitch = Mathf.Lerp(pitch, Mathf.Clamp(targetPitch, minPitch, maxPitch), blend);
                 cameraRotation = Quaternion.Euler(pitch, yaw, 0f);
-                focus = Vector3.Lerp(focus, enemyLock.AimPoint, .25f);
-                followDistance = Mathf.Clamp(Mathf.Max(cameraDistance, toward.magnitude * .45f + 2f), cameraDistance, 12f);
+                Vector3 lockFocus=Vector3.Lerp(focus,enemyLock.AimPoint,.25f);
+                float focusAdvance=TunedControls?Mathf.Max(0,Vector3.Dot(lockFocus-focus,cameraRotation*Vector3.forward)):0;
+                focus=lockFocus;
+                // Framing both actors must not move the lens several metres
+                // closer to Sahur merely because its focus moved toward the foe.
+                followDistance = Mathf.Clamp(Mathf.Max(cameraDistance+focusAdvance, toward.magnitude * .45f + 2f), cameraDistance, 12f);
             }
         }
         bool shoulderView = rifleLoadout && rifleLoadout.UsesRifle && !Swimming && !ExternalControlLock && !ExternalCameraFocus;
@@ -1124,6 +1179,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         {
             playerCamera.transform.SetPositionAndRotation(desiredPosition, cameraRotation);
             cameraInitialized = true;
+            smoothControlFocus=focus;controlCameraDistance=closest;controlFollowValid=true;
             UpdateUnderwaterPresentation(IsCameraUnderwater());
             enemyLock?.RefreshMarker();
             ApplyRifleAimZoom();
@@ -1135,6 +1191,11 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         // spending several frames inside the wall while the camera catches up.
         bool cinematicHandoff=continuingCinematicCamera;
         Vector3 followPosition=Vector3.Lerp(playerCamera.transform.position,desiredPosition,smoothFactor);
+        bool directControlCamera=TunedControls&&!continuingCinematicCamera&&!Swimming&&!SoftTraversal&&
+            !ExternalControlLock&&!ExternalMovementLock&&!ExternalCameraFocus&&!KeepCameraAboveWater;
+        if(directControlCamera)
+            followPosition=FollowControlCamera(focus,cameraRotation,closest);
+        else controlFollowValid=false;
         if(continuingCinematicCamera)
         {
             // Carry the cinematic's velocity into normal follow, then restore
@@ -1157,7 +1218,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             continuingCinematicCamera=false;
         playerCamera.transform.SetPositionAndRotation(
             followPosition,
-            Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
+            directControlCamera ? cameraRotation : Quaternion.Slerp(playerCamera.transform.rotation, cameraRotation, smoothFactor));
         UpdateUnderwaterPresentation(IsCameraUnderwater());
         enemyLock?.RefreshMarker();
         ApplyRifleAimZoom();
@@ -1342,7 +1403,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         int hash = Animator.StringToHash("Base Layer." + destination);
         if (!animator.HasState(0, hash)) return false;
         motionState = grounded ? moving ? 0 : 4 : 3;
-        if (grounded && !moving) landingTimer = .42f;
+        if (grounded && !moving){landingTimer=.42f;landingImpactSpeed=Mathf.Max(0,-verticalSpeed);}
         animator.CrossFadeInFixedTime(hash, Mathf.Max(.05f, blend), 0, 0f);
         return true;
     }

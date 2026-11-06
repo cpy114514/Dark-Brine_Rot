@@ -27,6 +27,8 @@ namespace Mavis
         CappuccinoUltimate ultimate;
         Vector3 restPosition;
         Quaternion restRotation;
+        Vector3 deathStartPosition;
+        Quaternion deathStartRotation;
         float deathTime = -1f;
         float modelHeight;
         float nextAttackTime;
@@ -131,6 +133,7 @@ namespace Mavis
         {
             if (deathTime >= 0f) return;
             deathTime = Time.time;
+            if(visual){deathStartPosition=visual.localPosition;deathStartRotation=visual.localRotation;}
             GetComponent<CappuccinoWeaponLoot>()?.Drop();
             if (bodyRenderers != null) foreach (var renderer in bodyRenderers)
                 if (renderer && renderer.name == "Katana") renderer.enabled = false;
@@ -143,7 +146,7 @@ namespace Mavis
                 motionRig?.SetDeathGrounding();
             }
             onDefeated.Invoke();
-            float fallDuration = deathClip != null ? deathClip.length + 0.65f : deathDuration;
+            float fallDuration = deathClip != null ? deathClip.length + 1.8f : deathDuration + 1.8f;
             if (removeAfterDeath > 0f) Destroy(gameObject, Mathf.Max(removeAfterDeath, fallDuration));
         }
 
@@ -154,10 +157,12 @@ namespace Mavis
             if (visual == null) return;
             if (deathTime >= 0f)
             {
+                if(EnemyDeathPresentation.OwnsFallback(gameObject))return;
                 if (animator != null && deathClip != null)
                 {
-                    visual.localPosition = restPosition;
-                    visual.localRotation = restRotation;
+                    float entry=Mathf.SmoothStep(0,1,Mathf.Clamp01((Time.time-deathTime)/.18f));
+                    visual.localPosition = Vector3.Lerp(deathStartPosition,restPosition,entry);
+                    visual.localRotation = Quaternion.Slerp(deathStartRotation,restRotation,entry);
                     return;
                 }
                 float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((Time.time - deathTime) / deathDuration));

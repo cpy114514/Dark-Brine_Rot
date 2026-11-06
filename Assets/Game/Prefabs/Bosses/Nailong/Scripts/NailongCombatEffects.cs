@@ -54,9 +54,9 @@ namespace Mavis
             voice.maxDistance = 35f;
             voice.volume = 0.55f;
             voice.playOnAwake = false;
-            roarClip = MakeSound("Nailong Roar", 0.75f, 85f, 0.3f);
-            scoldClip = MakeSound("Nailong Cartoon Grumbling", 0.8f, 220f, 0.08f);
-            spitClip = MakeSound("Nailong Spit", 0.12f, 420f, 0.7f);
+            roarClip = GameplayAudio.LoadClip("NailongRoar");
+            scoldClip = GameplayAudio.LoadClip("NailongScold");
+            spitClip = GameplayAudio.LoadClip("NailongSpit");
         }
 
         public static bool SceneColourAvailable
@@ -107,29 +107,11 @@ namespace Mavis
             Spit(queuedTarget, queuedSpeed, queuedDamage); queuedTarget = null;
         }
 
-        static AudioClip MakeSound(string name, float seconds, float frequency, float noiseMix)
-        {
-            const int sampleRate = 22050;
-            float[] samples = new float[Mathf.CeilToInt(seconds * sampleRate)];
-            var random = new System.Random(41);
-            for (int i = 0; i < samples.Length; i++)
-            {
-                float t = i / (float)sampleRate;
-                float envelope = Mathf.Sin(Mathf.PI * i / samples.Length);
-                float syllable = 0.45f + 0.55f * Mathf.Abs(Mathf.Sin(t * 24f));
-                float tone = Mathf.Sin(t * frequency * Mathf.PI * 2f + Mathf.Sin(t * 32f) * 2f);
-                samples[i] = (tone * (1f - noiseMix) + ((float)random.NextDouble() * 2f - 1f) * noiseMix) * envelope * syllable * 0.55f;
-            }
-            var clip = AudioClip.Create(name, samples.Length, 1, sampleRate, false);
-            clip.SetData(samples, 0);
-            return clip;
-        }
-
-        public void ShowTaunt(float seconds) { if(voice != null) voice.PlayOneShot(scoldClip); }
+        public void ShowTaunt(float seconds) { if(voice && scoldClip) voice.PlayOneShot(scoldClip); }
         public void HideTaunt() { }
         public void Roar(float radius)
         {
-            if(voice != null) voice.PlayOneShot(roarClip);
+            if(voice && roarClip) voice.PlayOneShot(roarClip);
             if(attack != null)CreateVoice(attack,radius,1,1,.7f,.65f,false,attack.damage*(ai?ai.roarDamageMultiplier:.7f),ai?ai.roarPushDistance:0,false);
         }
         public void GroundSlam(NailongAttack source,float radius,int pulseCount=3,float interval=1f,float travelSeconds=2.4f,float width=.4f,bool visualOnly=false)
@@ -171,7 +153,7 @@ namespace Mavis
             projectile.transform.SetPositionAndRotation(mouth, Quaternion.LookRotation(velocity));
             projectile.gameObject.SetActive(true);
             projectile.Launch(transform, target, velocity, damage, spitRadius * size, flightGravity);
-            if(voice != null) voice.PlayOneShot(spitClip, 0.5f);
+            if(voice && spitClip) voice.PlayOneShot(spitClip, 0.5f);
             return projectile;
         }
 
@@ -206,9 +188,6 @@ namespace Mavis
             foreach (var projectile in projectiles) if (projectile != null) Destroy(projectile.gameObject);
             projectiles.Clear();
             if (salivaMaterial != null) Destroy(salivaMaterial);
-            if (roarClip != null) Destroy(roarClip);
-            if (scoldClip != null) Destroy(scoldClip);
-            if (spitClip != null) Destroy(spitClip);
         }
     }
 }

@@ -35,7 +35,9 @@ public sealed class MarshmallowHopMotion : MonoBehaviour
     int finishIndex = -1;
     ThirdPersonPlayerController player;
     CharacterController body;
+    MarshmallowHopRecovery recovery;
     float elapsed, nextPlayerLookup;
+    float speedFactor = .8f;
     System.Random random;
     public int PlatformCount => platforms.Count;
     public int LastSupportIndex { get; private set; } = -1;
@@ -43,6 +45,7 @@ public sealed class MarshmallowHopMotion : MonoBehaviour
 
     void Awake()
     {
+        recovery = GetComponent<MarshmallowHopRecovery>();
         random = new System.Random(seed);
         foreach (Transform row in transform)
         {
@@ -104,7 +107,11 @@ public sealed class MarshmallowHopMotion : MonoBehaviour
             body = player ? player.GetComponent<CharacterController>() : null;
         }
         int support = FindSupport();
-        elapsed += dt;
+        // Keep the motion continuous when assistance starts or stops, including
+        // a swap already in progress.
+        float desiredSpeed = recovery && recovery.AssistanceActive ? .4f : .8f;
+        speedFactor = Mathf.MoveTowards(speedFactor, desiredSpeed, dt * .35f);
+        elapsed += dt * speedFactor;
         float t = elapsed * movementRate;
         float ramp = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / Mathf.Max(.1f, rampSeconds)));
         for (int i = 0; i < pairs.Count; i++)

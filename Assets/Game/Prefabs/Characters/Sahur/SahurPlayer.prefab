@@ -2493,6 +2493,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf8759fa360fd64191a20c076474284, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonPlayerController
+  useControlPreset: 1
+  perfectDodgeWindow: 0.28
+  perfectStepDuration: 0.28
+  perfectStepDistance: 2
+  perfectCounterWindow: 0.45
   moveSpeed: 9.6
   sprintMultiplier: 1.75
   rotationSpeed: 14
@@ -3293,6 +3298,7 @@ MonoBehaviour:
   rollAnimationExitPhase: 0.9
   rollExitBlend: 0.11
   airFlipDuration: 0.43
+  airFlipFastFallSpeed: 16
   airFlipExtraHeight: 1.25
   waterSplashes: 1
   splashMinSpeed: 2.3
@@ -3319,6 +3325,7 @@ MonoBehaviour:
   invertLookY: 0
   minPitch: -55
   maxPitch: 78
+  rifleAimMagnification: 1.45
 --- !u!95 &1828505122080772680
 Animator:
   serializedVersion: 7
@@ -3380,6 +3387,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8058a45c49ccfdc44bed1b1bc35860cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.SahurAttack
+  jumpChopHitWindow: {x: 0.34, y: 0.67}
+  spinStaminaPerSecond: 9
+  spinEntryCost: 4
+  spinDamageMultiplier: 0.8
+  spinStartup: 0.18
+  specialBlend: 0.16
+  frontalGuardArc: 180
+  guardEntrySeconds: 0.16
+  guardHitCost: 12
+  guardDrainPerSecond: 2
   animator: {fileID: 1828505122080772680}
   attackTrigger: Attack
   chargeState: Charge Windup
@@ -3387,6 +3404,7 @@ MonoBehaviour:
   chargeTimeParameter: ChargePhase
   chargeClip: {fileID: 7400000, guid: 06d79df34e813924caac71cb2de074a2, type: 2}
   chargedStrikeClip: {fileID: 0}
+  feel: {fileID: 11400000, guid: a56bd21b399fd2d4c8bd2d2e1c5f6f82, type: 2}
   chargePoseTime: 0.18
   comboOneState: Combo 1
   comboTwoState: Combo 2
@@ -3420,6 +3438,12 @@ MonoBehaviour:
   heavySwingWindowEnd: 0.43
   cooldown: 0.5
   fullChargeTime: 1.8
+  twinBladeMinimumCharge: 1.2
+  twinBladeFullCharge: 2.6
+  twinBladeReleaseThreshold: 0.1
+  twinBladeEarlyDamageMultiplier: 0.65
+  twinBladeRaiseTime: 0.9
+  twinBladePoseReleaseBlend: 0.12
   chargeWindupTime: 0.48
   maxChargePosePhase: 0.28
   minChargeDamageMultiplier: 1.25
@@ -3594,6 +3618,8 @@ MonoBehaviour:
   lightAttackCost: 3
   jumpSlashCost: 5
   chargedAttackCost: 10
+  combatRegenerationPerSecond: 22
+  combatRegenerationDelay: 0.85
 --- !u!114 &5080858521627766709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3608,6 +3634,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SahurSwimmingWeapon
   stick: {fileID: 332009883791112351}
   backOffset: 0.55
+  bodyClearance: 0.12
+  drawSideOffset: 0.6
+  drawForwardOffset: 0.6
   heightOffset: 0.04
   diagonalAngle: 22
 --- !u!114 &4829387997127292071

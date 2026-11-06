@@ -1,0 +1,110 @@
+{
+  "whole": true,
+  "accepted": 7998,
+  "rejectedSlope": 120,
+  "rejectedProtection": 1087,
+  "rejectedObstacles": 1206,
+  "treeIndex": 81,
+  "species": [
+    {
+      "name": "Saltwind sedge",
+      "uncanny": false,
+      "count": 567
+    },
+    {
+      "name": "Low fescue",
+      "uncanny": false,
+      "count": 1413
+    },
+    {
+      "name": "Broadleaf woodrush",
+      "uncanny": false,
+      "count": 696
+    },
+    {
+      "name": "Hart tongue fern",
+      "uncanny": false,
+      "count": 91
+    },
+    {
+      "name": "Bracken fern",
+      "uncanny": false,
+      "count": 327
+    },
+    {
+      "name": "Coastal sage shrub",
+      "uncanny": false,
+      "count": 310
+    },
+    {
+      "name": "Woodland hazel shrub",
+      "uncanny": false,
+      "count": 55
+    },
+    {
+      "name": "Rowan sapling",
+      "uncanny": false,
+      "count": 24
+    },
+    {
+      "name": "Wind bent alder sapling",
+      "uncanny": false,
+      "count": 18
+    },
+    {
+      "name": "Ochre meadow flower",
+      "uncanny": false,
+      "count": 958
+    },
+    {
+      "name": "Heather bell flower",
+      "uncanny": false,
+      "count": 909
+    },
+    {
+      "name": "Ivory woodland flower",
+      "uncanny": false,
+      "count": 641
+    },
+    {
+      "name": "Chestnut fungi",
+      "uncanny": false,
+      "count": 102
+    },
+    {
+      "name": "Cushion moss",
+      "uncanny": false,
+      "count": 171
+    },
+    {
+      "name": "Copper leaf litter",
+      "uncanny": false,
+      "count": 158
+    },
+    {
+      "name": "Fallen twigs",
+      "uncanny": false,
+      "count": 96
+    },
+    {
+      "name": "Ink frond fern",
+      "uncanny": true,
+      "count": 367
+    },
+    {
+      "name": "Tidal lantern fungi",
+      "uncanny": true,
+      "count": 384
+    },
+    {
+      "name": "Coiled brine vine",
+      "uncanny": true,
+      "count": 341
+    },
+    {
+      "name": "Dusky seedpod",
+      "uncanny": true,
+      "count": 370
+    }
+  ]
+}

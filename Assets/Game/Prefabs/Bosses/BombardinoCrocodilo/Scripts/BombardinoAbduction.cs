@@ -36,8 +36,8 @@ namespace Mavis
             home=player.transform.position;homeRotation=player.transform.rotation;
             facing=Vector3.ProjectOnPlane(boss.transform.forward,Vector3.up).normalized;if(facing.sqrMagnitude<.01f)facing=player.transform.forward;
             visualRest=boss.visual?boss.visual.localRotation:Quaternion.identity;
-            bellyFrame=boss.visual?boss.visual:boss.transform;bellyLocal=bellyFrame.InverseTransformPoint(Belly());
-            claws=new BombardinoCaptureClaws(bellyFrame);
+            bellyFrame=boss.visual?boss.visual:boss.transform;
+            claws=new BombardinoCaptureClaws(bellyFrame);bellyLocal=claws.GripLocal;
             LockPlayer();view=Camera.main;MakeCover();CinematicLetterbox.Set(this,true);
             boss.Explosion(boss.transform.position,3.5f);
             var face=Quaternion.LookRotation(facing);
@@ -162,7 +162,7 @@ namespace Mavis
         void ApplyCarry()
         {
             if(!player||pose==null)return;
-            Vector3 grip=bellyFrame.TransformPoint(bellyLocal)-Vector3.up*bodyHeight*.012f;Vector3 right=bellyFrame.right;
+            Vector3 grip=bellyFrame.TransformPoint(bellyLocal);Vector3 right=bellyFrame.right;
             // Imported aircraft visual axes can face backwards relative to the
             // flight root. Preserve anatomical left/right through that conversion.
             if(Vector3.Dot(right,player.transform.right)<0)right=-right;
@@ -194,12 +194,6 @@ namespace Mavis
         {
             Quaternion previous=boss.transform.rotation;boss.transform.rotation=rotation;
             Vector3 offset=bellyFrame.TransformPoint(bellyLocal)-boss.transform.position;boss.transform.rotation=previous;return target-offset;
-        }
-        Vector3 Belly()
-        {
-            Bounds bounds=default;bool first=true;
-            foreach(var r in bellyFrame.GetComponentsInChildren<Renderer>())if(r is MeshRenderer||r is SkinnedMeshRenderer){if(first){bounds=r.bounds;first=false;}else bounds.Encapsulate(r.bounds);}
-            return first?boss.transform.position:new Vector3(bounds.center.x,bounds.min.y,bounds.center.z);
         }
         void FrameCamera(bool snap)
         {

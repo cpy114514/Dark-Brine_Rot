@@ -37,6 +37,7 @@ namespace Mavis
 
         void LateUpdate()
         {
+            if(EnemyDeathPresentation.OwnsFallback(gameObject))return;
             if (animator && animator.isActiveAndEnabled && animator.GetCurrentAnimatorClipInfo(0).Length > 0) return;
             float phase = body ? body.ActionPhase : 0f;
             float t = Time.time;

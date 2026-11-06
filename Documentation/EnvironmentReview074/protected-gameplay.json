@@ -1,0 +1,158 @@
+{
+  "clearings": [
+    {
+      "reason": "Cappuccino combat space",
+      "x": 239.0,
+      "z": 498.0,
+      "radius": 29.0
+    },
+    {
+      "reason": "Bombardino combat space",
+      "x": 109.0,
+      "z": 636.0,
+      "radius": 42.0
+    },
+    {
+      "reason": "Nailong combat space",
+      "x": 18.0,
+      "z": 868.0,
+      "radius": 36.0
+    },
+    {
+      "reason": "Shore supply and sightline",
+      "x": 269.0,
+      "z": 405.0,
+      "radius": 9.0
+    },
+    {
+      "reason": "Ridge supply",
+      "x": 215.0,
+      "z": 545.0,
+      "radius": 9.0
+    },
+    {
+      "reason": "North supply",
+      "x": 50.0,
+      "z": 765.0,
+      "radius": 9.0
+    },
+    {
+      "reason": "Respawn",
+      "x": 16.5,
+      "z": 593.6,
+      "radius": 12.0
+    },
+    {
+      "reason": "Authored player start",
+      "x": 279.0,
+      "z": 357.0,
+      "radius": 12.0
+    },
+    {
+      "reason": "Chicken flock runtime arena (derived from PlaceInland)",
+      "x": 174.280777,
+      "z": 524.979,
+      "radius": 45.0
+    },
+    {
+      "reason": "Arrival recovery",
+      "x": 340.935974,
+      "z": 302.102234,
+      "radius": 10.0
+    },
+    {
+      "reason": "Story stick pickup",
+      "x": 311.532227,
+      "z": 296.093933,
+      "radius": 10.0
+    },
+    {
+      "reason": "Trigger: Sahur Stick",
+      "x": 280.5994,
+      "z": 358.1779,
+      "radius": 3.0
+    },
+    {
+      "reason": "Trigger: Stick Hitbox",
+      "x": 280.299072,
+      "z": 357.7119,
+      "radius": 3.0
+    },
+    {
+      "reason": "Trigger: NailongHitbox",
+      "x": 16.120615,
+      "z": 868.684,
+      "radius": 3.0
+    }
+  ],
+  "corridors": [
+    {
+      "reason": "Shore camp to ridge supply",
+      "halfWidth": 4.5,
+      "points": [
+        [
+          307.0,
+          319.0
+        ],
+        [
+          279.0,
+          357.0
+        ],
+        [
+          269.0,
+          405.0
+        ],
+        [
+          269.0,
+          415.0
+        ],
+        [
+          252.0,
+          454.0
+        ],
+        [
+          230.0,
+          515.0
+        ],
+        [
+          215.0,
+          545.0
+        ]
+      ]
+    },
+    {
+      "reason": "Ridge to lookout / boss approach",
+      "halfWidth": 5.0,
+      "points": [
+        [
+          215.0,
+          545.0
+        ],
+        [
+          190.0,
+          580.0
+        ],
+        [
+          155.0,
+          619.0
+        ],
+        [
+          109.0,
+          636.0
+        ],
+        [
+          73.0,
+          699.0
+        ],
+        [
+          50.0,
+          765.0
+        ],
+        [
+          18.0,
+          868.0
+        ]
+      ]
+    }
+  ]
+}

@@ -13,6 +13,7 @@ namespace Mavis
         [Min(0f)] public float regenerationDelay = 0.4f;
 
         [Header("Movement costs")]
+        [Min(0f)] public float walkDrainPerSecond = 1.5f;
         [Min(0f)] public float sprintDrainPerSecond = 4f;
         [Min(0f)] public float sprintRestartThreshold = 4f;
         [Min(0f)] public float jumpCost = 4f;
@@ -40,6 +41,16 @@ namespace Mavis
             nextRegenerationTime = Mathf.Max(nextRegenerationTime, Time.time + combatRegenerationDelay);
         }
         public float SprintCost(float deltaTime, float rate) => Mathf.Max(0f, rate) * Mathf.Max(0f, deltaTime);
+
+        /// <summary>Walking drains only for actual player-directed travel, even outside combat.</summary>
+        public void TickWalking(float deltaTime, float movementFraction)
+        {
+            float duration=Mathf.Max(0f,deltaTime)*Mathf.Clamp01(movementFraction);
+            if(duration<=0f || walkDrainPerSecond<=0f)return;
+            currentStamina=Mathf.Max(0f,currentStamina-walkDrainPerSecond*duration);
+            // At zero SP, continued walking delays regeneration until Sahur stops.
+            nextRegenerationTime=Time.time+ActiveRegenerationDelay;
+        }
 
         float nextRegenerationTime;
         bool sprinting;

@@ -31,8 +31,9 @@ namespace Mavis
         CameraOverrideOption worldDepth,worldColor;
         Vector3 shownCoordinates=new Vector3(float.NaN,float.NaN,float.NaN);
         GameLanguage coordinateLanguage;
-        readonly List<RectTransform> markers = new List<RectTransform>();
+        readonly List<Text> markers = new List<Text>();
         readonly List<Transform> targets = new List<Transform>();
+        GravityWristbandReward wristband;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() { active = null; consumedFrame = -1; }
@@ -57,7 +58,7 @@ namespace Mavis
             GameControls.ConsumeMenuInput();
             if (open == PanelVisible) return false;
             if (open && consumedFrame == Time.frameCount) return false;
-            if (open && (PlayerDeathRespawn.IsOpen || PauseSettingsMenu.IsOpen || SahurLoadoutUI.IsOpen || SecondIslandAwakening.BlocksInputFor(GetComponent<ThirdPersonPlayerController>()) || (active != null && active != this))) return false;
+            if (open && (CandyHuntQuest.StyleSelectorOpen || PlayerDeathRespawn.IsOpen || PauseSettingsMenu.IsOpen || SahurLoadoutUI.IsOpen || SecondIslandAwakening.BlocksInputFor(GetComponent<ThirdPersonPlayerController>()) || (active != null && active != this))) return false;
             if (open)
             {
                 if (root == null) Build();
@@ -96,16 +97,32 @@ namespace Mavis
         {
             foreach (var marker in markers) if (marker != null) { marker.gameObject.SetActive(false); Destroy(marker.gameObject); }
             markers.Clear(); targets.Clear();
+            wristband = null;
             if (gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity")
             {
                 foreach (var fairy in FindObjectsByType<NealFairyHover>(FindObjectsSortMode.None))
                     if (fairy.gameObject.scene == gameObject.scene)
-                        AddMarker(fairy.transform, "✦", new Color(1f, .88f, .98f));
+                    {
+                        var quest=fairy.GetComponentInParent<CandyHuntQuest>();
+                        if(quest && quest.fairy==fairy.transform && !quest.Started)
+                            AddMarker(fairy.transform,"!",new Color(1f,.86f,.53f),30);
+                        else AddMarker(fairy.transform, "✦", new Color(1f, .88f, .98f));
+                    }
+                var cottage=FindFirstObjectByType<CandyHouseMarker>();
+                if(cottage && cottage.gameObject.scene==gameObject.scene)
+                    AddMarker(cottage.transform,"H",new Color(1f,.67f,.78f),26);
+                var rally=FindFirstObjectByType<SkyboardRingRally>();
+                if(rally && rally.StartMarker)AddMarker(rally.StartMarker,"S",new Color(1f,.85f,.35f),26);
+                var melody=FindFirstObjectByType<CandyMelodyGarden>();
+                if(melody && melody.MapAnchor)AddMarker(melody.MapAnchor,"♪",new Color(.69f,1f,.82f),30);
                 var reward=FindFirstObjectByType<GravityWristbandReward>();
+                wristband=reward;
                 if(reward && reward.enemyRoot)
                     for(int i=0;i<reward.CampCount;i++)if(reward.CampMapAnchor(i))AddMarker(reward.CampMapAnchor(i),"●",new Color(1f,.7f,.25f),18);
                 var objective=GetComponent<SecondIslandObjectives>();
                 if(objective && objective.CurrentTarget)AddMarker(objective.CurrentTarget,"◆",new Color(.45f,1f,.92f));
+                var hunt=FindFirstObjectByType<CandyHuntQuest>();
+                if(hunt && hunt.NextTarget)AddMarker(hunt.NextTarget,"●",new Color(1f,.42f,.7f),24);
             }
             foreach (var point in FindObjectsByType<IslandRespawnPoint>(FindObjectsSortMode.None))
                 AddMarker(point.transform, "◆", GameUITheme.Foreground);
@@ -115,6 +132,8 @@ namespace Mavis
                 if (enemy.GetComponent<Health>() && !enemy.GetComponent<Health>().IsDead) AddMarker(enemy.transform, "C", GameUITheme.Foreground);
             foreach (var enemy in FindObjectsByType<BombardinoBoss>(FindObjectsSortMode.None))
                 if (!enemy.IsDead) AddMarker(enemy.transform, "B", GameUITheme.Foreground);
+            var flock=ChickenBroEncounter.Active;
+            if(flock && flock.RequiredOnIsland && flock.TryGetGuidanceTarget(out _))AddMarker(flock.transform,"F",new Color(1f,.7f,.25f));
             foreach (var gun in FindObjectsByType<PlacedEquipmentPickup>(FindObjectsSortMode.None))
                 if (gun.isActiveAndEnabled && !gun.IsCollected) AddMarker(gun.transform, "+", new Color(1, .83f, .2f));
             foreach (var cache in FindObjectsByType<IslandSupplyCache>(FindObjectsSortMode.None))
@@ -125,13 +144,12 @@ namespace Mavis
         {
             var label = Label(MapGraphic.transform, symbol, size, Vector2.zero, new Vector2(42, 42), color);
             GameUITheme.OutlineSymbol(label);
-            targets.Add(target); markers.Add(label.rectTransform);
+            targets.Add(target); markers.Add(label);
         }
         void RefreshMarkers()
         {
             playerArrow.rectTransform.anchoredPosition = MapGraphic.WorldToMap(transform.position);
             playerArrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -transform.eulerAngles.y);
-            var wristband=gameObject.scene.path=="Assets/Scenes/Second Island/Second Island.unity" ? FindFirstObjectByType<GravityWristbandReward>() : null;
             for (int i = 0; i < targets.Count; i++)
             {
                 var target = targets[i];
@@ -139,23 +157,23 @@ namespace Mavis
                 if (visible && target.TryGetComponent<NailongHealth>(out var health)) visible = !health.IsDead;
                 if (visible && target.TryGetComponent<Health>(out var generic)) visible = !generic.IsDead;
                 if (visible && target.TryGetComponent<IslandSupplyCache>(out var cache))
-                    markers[i].GetComponent<Text>().color = cache.IsAvailable ? new Color(1, .83f, .2f) : GameUITheme.Muted;
+                    markers[i].color = cache.IsAvailable ? new Color(1, .83f, .2f) : GameUITheme.Muted;
                 if (visible && wristband && target.name=="Camp map anchor" && target.parent && target.parent.parent==wristband.enemyRoot)
-                    markers[i].GetComponent<Text>().color = wristband.CampCleared(target.parent.GetSiblingIndex()) ? GameUITheme.Muted : new Color(1f,.7f,.25f);
+                    markers[i].color = wristband.CampCleared(target.parent.GetSiblingIndex()) ? GameUITheme.Muted : new Color(1f,.7f,.25f);
                 markers[i].gameObject.SetActive(visible);
                 if (visible)
                 {
                     Vector2 position = MapGraphic.WorldToMap(target.position);
-                    // Keep the nearby fairy visible beside the player arrow. The icon
+                    // Keep nearby landmarks visible beside the player arrow. The icon
                     // returns to its actual projected position once they separate.
-                    if (target.GetComponent<NealFairyHover>() != null)
+                    if (target.GetComponent<NealFairyHover>() != null || target.GetComponent<CandyHouseMarker>() != null || target.GetComponent<CandyMelodyGarden>() != null || target.name=="Skyboard rally start sign")
                     {
                         Vector2 separation = position - playerArrow.rectTransform.anchoredPosition;
                         if (separation.sqrMagnitude < 28f * 28f)
                             position = playerArrow.rectTransform.anchoredPosition +
                                 (separation.sqrMagnitude > .01f ? separation.normalized : Vector2.up) * 28f;
                     }
-                    markers[i].anchoredPosition = position;
+                    markers[i].rectTransform.anchoredPosition = position;
                 }
             }
             var rounded=new Vector3(Mathf.Round(transform.position.x),Mathf.Round(transform.position.z),Mathf.Round(MapGraphic.WorldSpan));
@@ -220,9 +238,14 @@ namespace Mavis
             Label(root.transform, "▲  Player / Facing", 24, new Vector2(480, 245), new Vector2(330, 60), GameUITheme.Foreground);
             if (gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity")
             {
-                Label(root.transform, "✦  Fairy", 24, new Vector2(480, 165), new Vector2(330, 60), new Color(1f, .88f, .98f));
-                Label(root.transform, "●  Camp · grey when cleared", 20, new Vector2(480, 105), new Vector2(350, 48), new Color(1f,.7f,.25f));
-                Label(root.transform, "◆  Current objective", 22, new Vector2(480, 55), new Vector2(330, 48), new Color(.45f,1f,.92f));
+                Label(root.transform, "✦  Fairy", 24, new Vector2(480, 165), new Vector2(330, 40), new Color(1f, .88f, .98f));
+                Label(root.transform, "!  Candy hunt", 22, new Vector2(480, 125), new Vector2(330, 40), new Color(1f,.86f,.53f));
+                Label(root.transform, "H  Candy house", 22, new Vector2(480, 85), new Vector2(330, 40), new Color(1f,.67f,.78f));
+                Label(root.transform, "●  Camp · grey when cleared", 20, new Vector2(480, 45), new Vector2(350, 40), new Color(1f,.7f,.25f));
+                Label(root.transform, "◆  Current objective", 22, new Vector2(480, 5), new Vector2(330, 40), new Color(.45f,1f,.92f));
+                Label(root.transform, "●  Candy clue", 22, new Vector2(480, -35), new Vector2(330, 40), new Color(1f,.42f,.7f));
+                Label(root.transform, "S  Skyboard rally", 22, new Vector2(480, -75), new Vector2(330, 40), new Color(1f,.85f,.35f));
+                Label(root.transform, "♪  Melody garden", 22, new Vector2(480, -115), new Vector2(330, 40), new Color(.69f,1f,.82f));
             }
             else
             {

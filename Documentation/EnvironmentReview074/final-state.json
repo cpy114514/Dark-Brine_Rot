@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "playing": false,
+  "scenes": [
+    {
+      "path": "Assets/Scenes/First Island/Main.unity",
+      "isDirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Lighting.unity",
+      "isDirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Gameplay.unity",
+      "isDirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Environment.unity",
+      "isDirty": false
+    },
+    {
+      "path": "Assets/Scenes/First Island/Enemies.unity",
+      "isDirty": false
+    }
+  ],
+  "ecology": 7998,
+  "grass": 185170,
+  "shaderErrors": [],
+  "saveOverride": null
+}

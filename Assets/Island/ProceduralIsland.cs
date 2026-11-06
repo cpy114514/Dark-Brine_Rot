@@ -481,6 +481,15 @@ public class ProceduralIsland : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        // A generated Mesh is a native allocation; destroying its GameObject
+        // does not release it. Keep it on disable for reuse, release on unload.
+        if (islandMesh == null) return;
+        if (Application.isPlaying) Destroy(islandMesh); else DestroyImmediate(islandMesh);
+        islandMesh = null;
+    }
+
     private static float SmoothStep(float edge0, float edge1, float value)
     {
         var t = Mathf.Clamp01((value - edge0) / (edge1 - edge0));

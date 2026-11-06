@@ -107,12 +107,7 @@ namespace Mavis
             {
                 audioSource=gameObject.AddComponent<AudioSource>();audioSource.playOnAwake=false;
                 audioSource.spatialBlend=1;audioSource.minDistance=5;audioSource.maxDistance=50;
-                if(ping==null)
-                {
-                    var samples=new float[3308];
-                    for(int i=0;i<samples.Length;i++){float t=i/22050f;float envelope=Mathf.Sin(Mathf.PI*i/samples.Length)*Mathf.Exp(-t*22);samples[i]=Mathf.Sin(Mathf.PI*2*(1050*t-1100*t*t))*.3f*envelope;}
-                    ping=AudioClip.Create("Nailong sonar ping",samples.Length,1,22050,false);ping.SetData(samples,0);
-                }
+                if(!ping)ping=GameplayAudio.LoadClip("NailongSonar");
             }
             if(!visualOnly&&!fromMouth)BossCombatVfx.Burst(transform.position,Vector3.up,new Color(.5f,.5f,.46f,.5f),12,2);
         }
@@ -168,7 +163,7 @@ namespace Mavis
                         p.forward=Vector3.RotateTowards(owner.transform.forward,wanted,35*Mathf.Deg2Rad,0).normalized;
                         p.renderer.transform.SetPositionAndRotation(p.origin,Quaternion.LookRotation(p.forward,Vector3.up));
                     }
-                    if(audioSource)audioSource.PlayOneShot(ping,.45f);
+                    if(audioSource && ping)audioSource.PlayOneShot(ping,.45f);
                 }
                 float edge=radius*Mathf.Clamp01(elapsed/travelSeconds),previous=radius*Mathf.Clamp01((before-start)/travelSeconds);
                 if(!visualOnly){if(fromMouth)CheckVoiceCrossings(p,previous,edge,before,start,dt);else CheckCrossings(p,previous,edge,before,start,dt);}

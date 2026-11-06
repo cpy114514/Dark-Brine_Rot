@@ -12,14 +12,36 @@ public sealed class MarshmallowHopRecovery : MonoBehaviour
     ThirdPersonPlayerController player;
     CharacterController body;
     PlayerHealth health;
+    Collider islandGround;
     BoxCollider lastPlatform;
-    Transform rulesSign;
     float nextLookup, nextScan, safeGroundSince = -1, ignoreUntil;
     bool armed;
+    int highestRow, consecutiveFalls, assistUntilRow, starMask;
+    public bool AssistanceActive { get; private set; }
+    public int HighestRow => highestRow;
+    public int ConsecutiveFalls => consecutiveFalls;
+    public int AssistUntilRow => assistUntilRow;
+    public int StarMask => starMask;
+    public int RescueRow => Mathf.Max(1, highestRow - 2);
+    public int StarCount
+    {
+        get { int count=0; for(int i=0;i<5;i++) if((starMask & (1 << i)) != 0) count++; return count; }
+    }
+    public static readonly int[] StarRows = { 5, 10, 15, 20, 22 };
+    // Paired rows put the star on only one branch, making it optional.
+    public static readonly int[] StarSides = { 0, 1, 0, 0, 1 };
     public int CurrentRow { get; private set; }
     public int LastRespawnRow { get; private set; }
     public int RespawnCount { get; private set; }
     public bool RecoveryArmed => armed;
+    public void RestoreChallengeProgress(int best, int falls, int stars, bool assist, int untilRow)
+    {
+        highestRow = Mathf.Clamp(best, 0, rows.Count);
+        consecutiveFalls = Mathf.Max(0, falls);
+        starMask = stars & 31;
+        AssistanceActive = assist && highestRow > 0 && highestRow < rows.Count;
+        assistUntilRow = AssistanceActive ? Mathf.Clamp(untilRow, highestRow, rows.Count) : 0;
+    }
     public int SaveRow
     {
         get
@@ -59,24 +81,11 @@ public sealed class MarshmallowHopRecovery : MonoBehaviour
 
     void Start()
     {
-        if (rows.Count>0 && rows[0].Length>0 && rows[0][0])
-        {
-            var parent=rows[0][0].transform;
-            SkyboardReward.Label(parent, "MOVING MARSHMALLOWS\nPlatforms move and swap · low gravity helps\nRows 3-9: return to start\nRow 10+: return 5 rows");
-            rulesSign=parent.Find("Pickup label");
-            if(rulesSign)
-            {
-                Vector3 scale=parent.lossyScale;
-                rulesSign.localScale=new Vector3(.012f/Mathf.Max(.001f,Mathf.Abs(scale.x)),.012f/Mathf.Max(.001f,Mathf.Abs(scale.y)),.012f/Mathf.Max(.001f,Mathf.Abs(scale.z)));
-                rulesSign.localPosition=Vector3.up*(2.3f/Mathf.Max(.001f,Mathf.Abs(scale.y)));
-                var label=rulesSign.GetComponentInChildren<UnityEngine.UI.Text>();if(label)label.fontSize=20;
-            }
-        }
+        if (!GetComponent<MarshmallowHopPresentation>()) gameObject.AddComponent<MarshmallowHopPresentation>();
     }
 
     void Update()
     {
-        if(rulesSign && Camera.main)rulesSign.rotation=Camera.main.transform.rotation;
         if (Time.deltaTime <= 0 || PauseSettingsMenu.IsOpen || Time.time < ignoreUntil) return;
         if ((!player || !body || !health) && Time.time >= nextLookup)
         {
@@ -84,16 +93,36 @@ public sealed class MarshmallowHopRecovery : MonoBehaviour
             player = FindFirstObjectByType<ThirdPersonPlayerController>();
             body = player ? player.GetComponent<CharacterController>() : null;
             health = player ? player.GetComponent<PlayerHealth>() : null;
+            var experience = player ? player.GetComponent<MarshmallowIslandExperience>() : null;
+            islandGround = experience && experience.surface ? experience.surface.GetComponent<Collider>() : null;
         }
         if (!player || !body || !body.enabled || !health || health.currentHealth <= 0 ||
             player.ExternalControlLock || player.ExternalMovementLock || PlayerDeathRespawn.IsOpen) return;
         if (rows.Count == 0) return;
 
         float feet = body.bounds.min.y;
+        // Walking back onto the island is an exit, not a missed jump.
+        bool onIsland = armed && body.isGrounded && islandGround &&
+            islandGround.Raycast(new Ray(new Vector3(body.bounds.center.x, feet + .16f, body.bounds.center.z), Vector3.down), out _, .32f);
+        if (onIsland)
+        {
+            if (safeGroundSince < 0) safeGroundSince = Time.time;
+            if (Time.time - safeGroundSince >= safeGroundExitDelay) ClearTracking();
+            return;
+        }
         if (armed && lastPlatform && (feet < lastPlatform.bounds.max.y - fallDepth ||
             body.isGrounded && feet < lastPlatform.bounds.max.y - 1.5f))
         {
-            ReturnToRow(CurrentRow >= 10 ? CurrentRow - 5 : 1);
+            consecutiveFalls++;
+            if (consecutiveFalls >= 3 && !AssistanceActive)
+            {
+                AssistanceActive = true;
+                assistUntilRow = Mathf.Min(rows.Count, highestRow + 3);
+            }
+            int normalRow = CurrentRow >= 10 ? CurrentRow - 5 : 1;
+            ReturnToRow(AssistanceActive ? Mathf.Max(normalRow, RescueRow) : normalRow);
+            GetComponent<MarshmallowHopPresentation>()?.ShowFall(LastRespawnRow, AssistanceActive);
+            GameSaveManager.RequestAutosave();
             return;
         }
         if (Time.time < nextScan) return;
@@ -105,7 +134,22 @@ public sealed class MarshmallowHopRecovery : MonoBehaviour
                 GameSaveManager.RequestAutosave();
             CurrentRow = rowNumber;
             lastPlatform = standing;
-            if (rowNumber >= 3) armed = true;
+            armed = true;
+            if (rowNumber > highestRow)
+            {
+                highestRow = rowNumber;
+                if (!AssistanceActive) consecutiveFalls = 0;
+                if (AssistanceActive && rowNumber >= assistUntilRow)
+                { AssistanceActive = false; consecutiveFalls = 0; assistUntilRow = 0; }
+            }
+            for (int i=0;i<StarRows.Length;i++)
+                if (rowNumber == StarRows[i] && (starMask & (1 << i)) == 0 &&
+                    rows[rowNumber-1].Length > StarSides[i] && standing == rows[rowNumber-1][StarSides[i]])
+                {
+                    starMask |= 1 << i;
+                    GetComponent<MarshmallowHopPresentation>()?.ShowStar(StarCount);
+                    GameSaveManager.RequestAutosave();
+                }
             safeGroundSince = -1;
         }
         else if (armed && body.isGrounded && lastPlatform && feet >= lastPlatform.bounds.max.y - 1.5f)
@@ -160,8 +204,8 @@ public sealed class MarshmallowHopRecovery : MonoBehaviour
         CurrentRow = LastRespawnRow = rowNumber;
         RespawnCount++;
         lastPlatform = destination;
-        // A checkpoint behind row 3 remains protected on subsequent falls.
-        armed = rowNumber != 1;
+        // Even the first two jumps get a safety net after recovery.
+        armed = true;
         safeGroundSince = -1;
         ignoreUntil = Time.time + .5f;
     }

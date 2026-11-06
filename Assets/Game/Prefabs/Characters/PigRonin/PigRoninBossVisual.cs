@@ -23,6 +23,18 @@ public sealed class PigRoninBossVisual : MonoBehaviour
     float deathTime = -1;
     public bool HasBlade => blade != null;
 
+    // Preserve the actual last combat pose. The weapon keeps following the hand
+    // while the shared death presentation owns the collapse and ground contact.
+    public void BeginDeathPose()
+    {
+        if(blade&&hand)
+        {
+            var grip=blade.Find("Gripping hand");if(grip)grip.SetParent(hand,true);
+            var prop=blade.gameObject.AddComponent<Mavis.EnemyDeathProp>();prop.Drop(transform);
+        }
+        enabled=false;
+    }
+
     void Awake()
     {
         boss = GetComponent<PigRoninBoss>();

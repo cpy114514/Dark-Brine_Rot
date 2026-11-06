@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "instances": 185170,
+  "sampledRoots": 283608,
+  "floating": 0,
+  "beach": 0,
+  "missing": 0,
+  "outside": 0,
+  "maxRootGap": -0.01738739,
+  "minRootGap": -0.09514618,
+  "ready": true,
+  "nearTriangles": 180,
+  "mediumTriangles": 60,
+  "farTriangles": 20
+}

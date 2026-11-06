@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -27,17 +28,30 @@ namespace Mavis
 
         ChickenBroFlock flock;
         NavMeshSurface surface;
+        NavMeshData navigation;
+        Coroutine preparation;
         CappuccinoAI cappuccino;
         ProceduralIsland island;
         ThirdPersonPlayerController player;
         WorldSaveIdentity identity;
         Text caption;
         GameObject captionRoot;
-        float nextWatch, nextWaveAt, captionUntil;
+        float nextWatch, nextWaveAt, captionUntil, nextSpawnAt;
         int wave = -1, spawned, ducks, geese;
-        bool anchored, started, baking, finished;
+        bool anchored, started, baking, navigationReady, finished;
         public static ChickenBroEncounter Active { get; private set; }
         public int Alive => flock == null ? 0 : flock.Members.Count;
+        public bool Started => started;
+        public bool NavigationReady => navigationReady;
+        public bool Completed => GameWorldProgress.IsDefeated(identity != null ? (Component)identity : this);
+        public bool RequiredOnIsland => gameObject.scene.path.StartsWith("Assets/Scenes/First Island/");
+        public bool TryGetGuidanceTarget(out Vector3 point)
+        {
+            point=transform.position;
+            if(!isActiveAndEnabled || finished || Completed || !CapriDefeated())return false;
+            if(!anchored && !PlaceInland())return false;
+            point=transform.position;return true;
+        }
 
         void Awake()
         {
@@ -52,6 +66,14 @@ namespace Mavis
             if (Active == this) Active = null;
             if (captionRoot) Destroy(captionRoot);
             flock?.Close();
+            if(navigation){NavMeshBuilder.Cancel(navigation);if(surface)surface.RemoveData();Destroy(navigation);}
+        }
+        void OnDisable()
+        {
+            if(preparation==null)return;
+            StopCoroutine(preparation);preparation=null;
+            if(navigation){NavMeshBuilder.Cancel(navigation);if(surface){surface.RemoveData();surface.navMeshData=null;}Destroy(navigation);navigation=null;}
+            baking=navigationReady=false;
         }
 
         void Update()
@@ -62,8 +84,11 @@ namespace Mavis
             nextWatch = Time.unscaledTime + .25f;
             if (GameWorldProgress.IsDefeated(identity != null ? (Component)identity : this)) { Finish(false); return; }
             if (GameSaveManager.IsContinuePending || AdditiveSceneBootstrap.IsLoading) return;
-            if (!CapriDefeated()) return;
+            // Resolve and prepare the site while the preceding boss still exists.
+            // Building navigation must not block the first combat frame.
             if (!anchored && !PlaceInland()) return;
+            if(!baking)preparation=StartCoroutine(PrepareNavigation());
+            if (!CapriDefeated() || !navigationReady) return;
             if (!player) player = FindFirstObjectByType<ThirdPersonPlayerController>();
             if (!player || player.Swimming || player.ExternalControlLock) return;
             if (Flat(player.transform.position) > triggerRadius) return;
@@ -83,6 +108,7 @@ namespace Mavis
 
         bool PlaceInland()
         {
+            if (!cappuccino)cappuccino=FindFirstObjectByType<CappuccinoAI>(FindObjectsInactive.Include);
             if (!cappuccino) return false;
             if (!island)
                 foreach (var candidate in FindObjectsByType<ProceduralIsland>(FindObjectsSortMode.None))
@@ -112,7 +138,6 @@ namespace Mavis
             started = true;
             flock.maxAttackers = maxSimultaneousAttackers;
             flock.Open();
-            Bake();
             wave = 0;
             spawned = 0;
             ducks = 0;
@@ -121,17 +146,25 @@ namespace Mavis
             Say(goose ? "Wave 1  ·  A bully goose leads the flock." : "Wave 1  ·  The flock is closing in.", 4f);
         }
 
-        void Bake()
+        IEnumerator PrepareNavigation()
         {
-            if (baking) return;
+            if (baking) yield break;
             baking = true;
+            yield return null;
             surface = gameObject.GetComponent<NavMeshSurface>();
             if (!surface) surface = gameObject.AddComponent<NavMeshSurface>();
             surface.collectObjects = CollectObjects.Volume;
             surface.center = Vector3.up * 8f;
             surface.size = new Vector3(arenaSize, 36f, arenaSize);
             surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-            surface.BuildNavMesh();
+            navigation=new NavMeshData(surface.agentTypeID){name="Chicken Bro arena navigation"};
+            navigation.position=transform.position;navigation.rotation=transform.rotation;
+            surface.navMeshData=navigation;
+            AsyncOperation operation;
+            using(RuntimeStallDiagnostics.Measure("flock navigation source collection"))operation=surface.UpdateNavMesh(navigation);
+            if(operation!=null)yield return operation;
+            if(surface && isActiveAndEnabled)surface.AddData();
+            navigationReady=true;preparation=null;
         }
 
         void RunWaves()
@@ -161,19 +194,25 @@ namespace Mavis
 
         void SpawnBudget()
         {
-            while (spawned < waveCounts[wave] && Alive < maxAlive)
+            if(Time.deltaTime<=0 || PauseSettingsMenu.IsOpen)return;
+            // Space model/Animator/physics initialization over rendered frames.
+            if (spawned < waveCounts[wave] && Alive < maxAlive && Time.unscaledTime>=nextSpawnAt)
             {
                 bool asGoose = goose && geese < goosePerWave;
                 int regularIndex = spawned - geese;
                 bool asDuck = !asGoose && duck && ducks < Mathf.Round((regularIndex + 1) * duckRatio);
                 var chosen = asGoose ? goose : asDuck ? duck : prefab;
-                if (!chosen) break;
+                if (!chosen) return;
                 Vector3 at = Ring(spawned, waveCounts[wave]);
-                var bro = Instantiate(chosen);
-                bro.Activate(at, Quaternion.LookRotation(FlatDirection(at, player ? player.transform.position : transform.position), Vector3.up), flock);
+                using(RuntimeStallDiagnostics.Measure("flock member initialization"))
+                {
+                    var bro = Instantiate(chosen);
+                    bro.Activate(at, Quaternion.LookRotation(FlatDirection(at, player ? player.transform.position : transform.position), Vector3.up), flock);
+                }
                 if (asGoose) geese++;
                 else if (asDuck) ducks++;
                 spawned++;
+                nextSpawnAt=Time.unscaledTime+.06f;
             }
         }
 

@@ -20,11 +20,14 @@ namespace Mavis
         readonly Vector3[] vertices=new Vector3[Points*Strands*Ring],normals=new Vector3[Points*Strands*Ring];
         readonly Vector2[] uv=new Vector2[Points*Strands*Ring];readonly Color[] colors=new Color[Points*Strands*Ring];
         readonly int[] indices=new int[(Points-1)*Strands*Ring*6];
+        readonly Vector2[] ringDirections=new Vector2[Ring];
         MaterialPropertyBlock properties;
         NavMeshPath navPath;
         FirstIslandObjectives objectives;ThirdPersonPlayerController motor;SahurAttack attack;CharacterController capsule;
         Mesh mesh;MeshRenderer renderer;Transform root;Coroutine job;
         Vector3 gridOrigin,lastStart,lastGoal;string targetId;float nextPath,fade,waterLevel;int routeCount;
+        float routeFade=1;
+        bool replacingRoute;
         public bool Visible=>renderer&&renderer.enabled&&fade>.01f;
         public int RoutePointCount=>routeCount;
         public Vector3 TargetPosition{get;private set;}
@@ -54,6 +57,13 @@ namespace Mavis
                 int a=(strand*Points+p)*Ring+r,b=(strand*Points+p)*Ring+(r+1)%Ring,c=a+Ring,d=b+Ring;
                 indices[cursor++]=a;indices[cursor++]=b;indices[cursor++]=c;indices[cursor++]=b;indices[cursor++]=d;indices[cursor++]=c;
             }
+            for(int r=0;r<Ring;r++)
+            {
+                float angle=r*Mathf.PI*2/Ring;
+                ringDirections[r]=new Vector2(Mathf.Cos(angle),Mathf.Sin(angle));
+            }
+            // The tube topology is fixed. Keep its native index buffer between draws.
+            mesh.vertices=vertices;mesh.triangles=indices;
         }
         bool Blocked=>!motor||!motor.enabled||motor.ExternalControlLock||Time.timeScale<=0||PauseSettingsMenu.IsOpen||
             SahurLoadoutUI.BlocksInput||IslandMapUI.IsOpen||PlayerDeathRespawn.IsOpen||BossHudPanel.HasActiveEncounter||
@@ -68,12 +78,31 @@ namespace Mavis
             {
                 TargetPosition=goal;
                 bool changed=id!=targetId;
-                if(changed){targetId=id;routeCount=0;nextPath=0;if(job!=null){StopCoroutine(job);job=null;}}
-                if(job==null&&Time.unscaledTime>=nextPath&&(routeCount<2||(transform.position-lastStart).sqrMagnitude>9||(goal-lastGoal).sqrMagnitude>9))
+                if(changed){targetId=id;routeCount=0;nextPath=0;routeFade=1;replacingRoute=false;if(job!=null){StopCoroutine(job);job=null;}}
+                if(job==null&&Time.unscaledTime>=nextPath&&NeedsRoute(transform.position,goal))
                 {lastStart=transform.position;lastGoal=goal;nextPath=Time.unscaledTime+1.5f;job=StartCoroutine(Solve(lastStart,goal));}
             }
             fade=Mathf.MoveTowards(fade,available&&routeCount>1?1:0,Time.unscaledDeltaTime/(available?.65f:.22f));
+            if(!replacingRoute)routeFade=Mathf.MoveTowards(routeFade,1,Time.unscaledDeltaTime/.3f);
             renderer.enabled=fade>.001f&&routeCount>1;if(renderer.enabled)Draw();
+        }
+        // Walking along an existing world-space route must not rebuild its grid.
+        // Replan only after a meaningful lateral deviation or destination move.
+        bool NeedsRoute(Vector3 position,Vector3 goal)=>routeCount<2||
+            FlatDistance(goal,lastGoal)>6||DistanceToRouteSquared(position,out _)>36;
+        float DistanceToRouteSquared(Vector3 position,out float progress)
+        {
+            float best=float.PositiveInfinity;progress=0;
+            for(int i=1;i<routeCount;i++)
+            {
+                Vector3 delta=route[i]-route[i-1],offset=position-route[i-1];
+                delta.y=offset.y=0;
+                float t=delta.sqrMagnitude>.0001f?Mathf.Clamp01(Vector3.Dot(offset,delta)/delta.sqrMagnitude):0;
+                float distance=(offset-delta*t).sqrMagnitude;
+                if(distance>=best)continue;
+                best=distance;progress=Mathf.Lerp(lengths[i-1],lengths[i],t);
+            }
+            return best;
         }
         bool Surface(Vector3 point,out Vector3 result,out Collider floor)
         {
@@ -196,7 +225,15 @@ namespace Mavis
                     }
                     chain[i]=p;if(i%8==0)yield return null;
                 }
+                // A real reroute fades through one line, rather than snapping the
+                // entire visible path sideways or drawing two competing routes.
+                if(routeCount>1)
+                {
+                    replacingRoute=true;
+                    while(routeFade>0){routeFade=Mathf.MoveTowards(routeFade,0,Time.unscaledDeltaTime/.18f);yield return null;}
+                }
                 System.Array.Copy(chain,route,count);routeCount=count;lengths[0]=0;
+                replacingRoute=false;
                 for(int i=1;i<count;i++)lengths[i]=lengths[i-1]+Vector3.Distance(route[i-1],route[i]);
                 SolvedRoutes++;
             }
@@ -234,10 +271,10 @@ namespace Mavis
         void Draw()
         {
             Matrix4x4 worldToLocal=root.worldToLocalMatrix;
-            float now=Time.time;int nearest=0;float best=float.PositiveInfinity;
-            for(int i=0;i<routeCount;i++){float d=Vector3.ProjectOnPlane(route[i]-transform.position,Vector3.up).sqrMagnitude;if(d<best){best=d;nearest=i;}}
+            float now=Time.time;
+            float best=DistanceToRouteSquared(transform.position,out float start);
             if(best>100){renderer.enabled=false;return;}
-            float start=lengths[nearest],height=capsule?Mathf.Clamp(capsule.height*Mathf.Abs(transform.lossyScale.y)*.65f,2.2f,3.8f):2.2f;
+            float height=capsule?Mathf.Clamp(capsule.height*Mathf.Abs(transform.lossyScale.y)*.65f,2.2f,3.8f):2.2f;
             for(int strand=0;strand<Strands;strand++)for(int i=0;i<Points;i++)
             {
                 int p=Mathf.Min(i,routeCount-1);Vector3 tangent=route[Mathf.Min(routeCount-1,p+1)]-route[Mathf.Max(0,p-1)];tangent.y=0;
@@ -245,24 +282,23 @@ namespace Mavis
                 float d=lengths[p]-start;
                 float envelope=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.3f,1.5f,d));
                 if(i>=routeCount||d<0)envelope=0;
-                float sway=d*.48f-now*.35f;
-                Vector3 centre=route[p]+Vector3.up*(height+Mathf.Sin(d*.23f-now*.6f)*.12f)+
-                    (side*Mathf.Sin(sway)+Vector3.up*Mathf.Cos(sway))*.015f;
+                // Geometry stays anchored to the terrain; only shader highlights flow.
+                Vector3 centre=route[p]+Vector3.up*height;
                 for(int r=0;r<Ring;r++)
                 {
-                    int k=(strand*Points+i)*Ring+r;float a=r*Mathf.PI*2/Ring;
-                    Vector3 normal=side*Mathf.Cos(a)+Vector3.up*Mathf.Sin(a);float radius=.055f;
+                    int k=(strand*Points+i)*Ring+r;
+                    Vector3 normal=side*ringDirections[r].x+Vector3.up*ringDirections[r].y;float radius=.055f;
                     vertices[k]=worldToLocal.MultiplyPoint3x4(centre+normal*radius);normals[k]=worldToLocal.MultiplyVector(normal).normalized;
                     uv[k]=new Vector2(lengths[p],r/(float)Ring);
                     colors[k]=new Color(1,1,1,envelope);
                 }
             }
-            mesh.Clear();mesh.vertices=vertices;mesh.normals=normals;mesh.uv=uv;mesh.colors=colors;mesh.triangles=indices;mesh.RecalculateBounds();
-            properties.SetFloat("_Clock",now);properties.SetFloat("_Fade",fade);renderer.SetPropertyBlock(properties);
+            mesh.vertices=vertices;mesh.normals=normals;mesh.uv=uv;mesh.colors=colors;mesh.RecalculateBounds();
+            properties.SetFloat("_Clock",now);properties.SetFloat("_Fade",fade*routeFade);renderer.SetPropertyBlock(properties);
         }
         void OnDisable()
         {
-            if(job!=null)StopCoroutine(job);job=null;routeCount=0;fade=0;if(renderer)renderer.enabled=false;
+            if(job!=null)StopCoroutine(job);job=null;routeCount=0;fade=0;routeFade=1;replacingRoute=false;if(renderer)renderer.enabled=false;
 #if UNITY_EDITOR
             UnityEditor.AssemblyReloadEvents.beforeAssemblyReload-=BeforeReload;
 #endif

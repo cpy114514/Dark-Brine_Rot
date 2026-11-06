@@ -1,12 +1,8 @@
 # Story battle audio
 
-Original synthesized sounds made for Dark Brine. No third-party samples or melodies.
+Original sound effects for Dark Brine. EncounterStart combines a wave swell,
+splintering wood and a low impact. TidalHit combines a water strike with a
+spray tail. StickHit and Guard also serve as melee contact and metal layers.
 
-- EncounterStart: 2.4-second sea rush, rising fifths and wooden drum impact.
-- StickHit: short wood strike and swing noise.
-- TidalHit: low impact with a longer water-noise tail.
-- Guard: short pitched shield chime.
-
-Mono PCM WAV, 22050 Hz, 16-bit. Sources are loaded by StoryBattlePresentation as
-2D one-shot clips. PauseSettingsMenu pauses their AudioSource with the battle.
-Reproducible generator: ProjectRepairBackups/BattlePolish-20261003/GenerateAudio.py.
+The clips are mono 44.1 kHz PCM WAV. The source for this set and the other
+gameplay cues is Tools/GenerateGameplayAudio.py.

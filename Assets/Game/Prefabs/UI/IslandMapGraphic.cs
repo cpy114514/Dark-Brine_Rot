@@ -71,6 +71,15 @@ namespace Mavis
                     var board=FindFirstObjectByType<SkyboardReward>();
                     if(board)foreach(Transform row in board.transform)if(row.name.StartsWith("Row ") && row.childCount>0){bounds.Encapsulate(row.GetChild(0).position);break;}
                     var boss=FindFirstObjectByType<PigRoninBoss>();if(boss)bounds.Encapsulate(boss.transform.position);
+                    var hunt=FindFirstObjectByType<CandyHuntQuest>();
+                    if(hunt && hunt.fairy)bounds.Encapsulate(hunt.fairy.position);
+                    if(hunt && hunt.NextTarget)bounds.Encapsulate(hunt.NextTarget.position);
+                    var cottage=FindFirstObjectByType<CandyHouseMarker>();
+                    if(cottage)bounds.Encapsulate(cottage.transform.position);
+                    var rally=FindFirstObjectByType<SkyboardRingRally>();
+                    if(rally && rally.StartMarker)bounds.Encapsulate(rally.StartMarker.position);
+                    var melody=FindFirstObjectByType<CandyMelodyGarden>();
+                    if(melody && melody.MapAnchor)bounds.Encapsulate(melody.MapAnchor.position);
                 }
             }
             // Include an offshore player without changing the map's north-up orientation.

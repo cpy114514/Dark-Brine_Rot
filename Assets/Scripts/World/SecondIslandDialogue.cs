@@ -26,28 +26,32 @@ public sealed class SecondIslandDialogue : MonoBehaviour
     };
     public bool Active { get; private set; }
     public int CurrentLine { get; private set; } = -1;
-    public string CurrentSpeaker => CurrentLine<0 ? "" : Lines[CurrentLine].fairy ? "Fairy" : "Sahur";
+    Line[] currentLines = Lines;
+    public string CurrentSpeaker => CurrentLine<0 ? "" : currentLines[CurrentLine].fairy ? "Fairy" : "Sahur";
     GameObject panel;
     Text speaker, english, hint;
 
-    public IEnumerator Play(Transform canvas)
+    public IEnumerator Play(Transform canvas) => Play(canvas, Lines);
+
+    public IEnumerator Play(Transform canvas, Line[] conversation, string fairyName = "FAIRY")
     {
+        currentLines = conversation;
         Build(canvas);
         Active=true;
-        for (int index=0; index<Lines.Length; index++)
+        for (int index=0; index<currentLines.Length; index++)
         {
             CurrentLine=index;
-            var line=Lines[index];
-            speaker.text=line.fairy ? "FAIRY" : "SAHUR";
+            var line=currentLines[index];
+            speaker.text=line.fairy ? fairyName : "SAHUR";
             speaker.color=line.fairy ? new Color(.66f,.94f,.9f) : new Color(1f,.82f,.68f);
             english.text=line.english;
-            hint.text=index==Lines.Length-1 ? "SPACE / CLICK  FINISH" : "SPACE / CLICK  CONTINUE";
+            hint.text=index==currentLines.Length-1 ? "SPACE / CLICK  FINISH" : "SPACE / CLICK  CONTINUE";
             // Require a fresh press after the line is visible; an input used to
             // leave an earlier screen must never skip the first sentence.
             float ready=0;
             while (true)
             {
-                if (Time.timeScale>0 && !PauseSettingsMenu.IsOpen)
+                if (Time.timeScale>0 && !GameUITheme.ModalOpen)
                 {
                     ready+=Time.deltaTime;
                     if (ready>=.15f && AdvancePressed()) break;

@@ -69,6 +69,8 @@ namespace Mavis
                 point=arrival.lostStickPoint.position;id="arrival-stick";return true;
             }
             if(progress.stage<2||DefeatedBossCount==3)return false;
+            if(FirstIslandBossProgression.FlockPending && ChickenBroEncounter.Active.TryGetGuidanceTarget(out point))
+            {id=ChickenBroEncounter.Active.completionId;return !ChickenBroEncounter.Active.Started;}
             BossFlow target=null;float distance=float.PositiveInfinity;
             foreach(var flow in flows)
             {
@@ -171,7 +173,8 @@ namespace Mavis
                 if (candidate < distance) { distance = candidate; nearest = flow; }
             }
             // Recommend only the next unlocked, living encounter.
-            progress.bossId = nearest == null ? null : nearest.progress.bossId;
+            progress.bossId = FirstIslandBossProgression.FlockPending && ChickenBroEncounter.Active.TryGetGuidanceTarget(out _) ?
+                ChickenBroEncounter.Active.completionId : nearest == null ? null : nearest.progress.bossId;
         }
         void QueueSave()
         {
@@ -259,6 +262,7 @@ namespace Mavis
         }
         string NextBossName()
         {
+            if(FirstIslandBossProgression.IsDefeated(BossKind.Capri) && FirstIslandBossProgression.FlockPending)return "Chicken Bro flock";
             for (int kind = 0; kind < 3; kind++)
                 if (!progress.bosses.Exists(b => (int)b.kind == kind && b.defeated)) return BossName((BossKind)kind, true);
             return "All three defeated";
@@ -275,10 +279,14 @@ namespace Mavis
                 if (nearest.identity) text.Append(" · ").Append(Bearing(nearest.identity.transform.position - transform.position, en));
                 text.Append('\n');
             }
+            else if(FirstIslandBossProgression.FlockPending && ChickenBroEncounter.Active.TryGetGuidanceTarget(out var flockPoint))
+                text.Append("Next: Chicken Bro flock · ").Append(Mathf.RoundToInt(Mathf.Sqrt(FlatDistanceSquared(transform.position,flockPoint)))).Append(" m\n");
             else text.Append(en ? (DefeatedBossCount == 3 ? "All three defeated\n" : "Finding nearby bosses...\n") :
                 (DefeatedBossCount == 3 ? "All three defeated\n" : "Finding nearby bosses...\n"));
             for (int kind = 0; kind < 3; kind++)
             {
+                if(kind==1 && ChickenBroEncounter.Active && ChickenBroEncounter.Active.RequiredOnIsland)
+                    text.Append("Chicken Bro flock · ").Append(ChickenBroEncounter.Active.Completed ? "Defeated" : FirstIslandBossProgression.IsDefeated(BossKind.Capri) ? "Available" : "Locked — defeat Cappuccino").Append('\n');
                 var flow = flows.Find(f => (int)f.progress.kind == kind);
                 var saved = flow == null ? progress.bosses.Find(b => (int)b.kind == kind) : flow.progress;
                 text.Append(BossName((BossKind)kind, en)).Append(" · ");

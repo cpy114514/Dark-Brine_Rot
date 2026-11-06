@@ -97,16 +97,47 @@ public sealed class GravityWristbandReward : MonoBehaviour
     void RecordDefeat(int id,bool notify)
     {
         if(!defeated.Add(id))return;
+        string reward="";
         if(enemyKeys.TryGetValue(id,out string key))defeatedKeys.Add(key);
         if(enemyCamps.TryGetValue(id,out int camp) && camp>=0 && camp<campRemaining.Length)
         {
             campRemaining[camp]=Mathf.Max(0,campRemaining[camp]-1);
             if(campRemaining[camp]==0 && campSignText!=null && camp<campSignText.Length && campSignText[camp])
                 campSignText[camp].text="CANDY CAMP "+(camp+1)+"\nCLEARED";
-            if(notify && campRemaining[camp]==0 && message)
-            { message.text="CAMP CLEARED  ·  "+ClearedCamps+" / "+CampCount;message.gameObject.SetActive(true);announcedUntil=Time.unscaledTime+5f; }
+            if(notify && campRemaining[camp]==0)
+            {
+                reward=RestoreAfterCamp();
+                if(message)
+                {
+                    message.text="CAMP CLEARED  ·  "+ClearedCamps+" / "+CampCount+reward;
+                    message.gameObject.SetActive(true);announcedUntil=Time.unscaledTime+5f;
+                }
+            }
         }
-        if(notify){if(Unlocked)Reveal();GameSaveManager.RequestAutosave();}
+        if(notify)
+        {
+            if(Unlocked)
+            {
+                Reveal();
+                if(message && !string.IsNullOrEmpty(reward))message.text="WRISTBAND UNLOCKED!"+reward;
+            }
+            GameSaveManager.RequestAutosave();
+        }
+    }
+    string RestoreAfterCamp()
+    {
+        if(!player)return "";
+        var health=player.GetComponent<PlayerHealth>();
+        if(!health || health.currentHealth<=0)return "";
+        var stamina=player.GetComponent<PlayerStamina>();
+        float oldHealth=health.currentHealth,oldStamina=stamina?stamina.currentStamina:0f;
+        health.currentHealth=Mathf.Min(health.maxHealth,health.currentHealth+health.maxHealth*.1f);
+        if(stamina)stamina.currentStamina=Mathf.Min(stamina.maxStamina,stamina.currentStamina+15f);
+        int restoredHealth=Mathf.RoundToInt(health.currentHealth-oldHealth);
+        int restoredStamina=stamina?Mathf.RoundToInt(stamina.currentStamina-oldStamina):0;
+        if(restoredHealth==0 && restoredStamina==0)return "";
+        return (restoredHealth>0 ? "  ·  +"+restoredHealth+" HP" : "")+
+            (restoredStamina>0 ? "  ·  +"+restoredStamina+" SP" : "");
     }
     public List<string> CaptureDefeated() => new List<string>(defeatedKeys);
     public void RestoreDefeated(List<string> keys)
@@ -124,6 +155,8 @@ public sealed class GravityWristbandReward : MonoBehaviour
     void BuildPresentation()
     {
         presentation=new GameObject("Unlocked gravity wristband");presentation.transform.SetParent(transform,false);
+        var pickupCollider=presentation.AddComponent<SphereCollider>();
+        pickupCollider.isTrigger=true;pickupCollider.center=new Vector3(0,1.7f,0);pickupCollider.radius=1.25f;
         display=Instantiate(model,presentation.transform);display.name="Gravity wristband display";
         display.transform.localPosition=new Vector3(0,1.7f,0);display.transform.localScale=Vector3.one*1.8f;
         foreach(var c in display.GetComponentsInChildren<Collider>())c.enabled=false;

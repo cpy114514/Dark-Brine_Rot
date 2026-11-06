@@ -81,7 +81,7 @@ public sealed class SecondIslandObjectives : MonoBehaviour
         if (roninHealth && roninHealth.IsDead) roninDefeated = true;
         if (!FinishedCourse && recovery && rows.Count > 0 && recovery.CurrentRow >= rows.Count)
         { FinishedCourse = true; GameSaveManager.RequestAutosave(); }
-        bool show = player.enabled && (!health || health.currentHealth > 0) && !GameUITheme.ModalOpen &&
+        bool show = player.enabled && !player.ExternalControlLock && (!health || health.currentHealth > 0) && !GameUITheme.ModalOpen &&
             !SecondIslandAwakening.BlocksInputFor(player);
         if (panel.activeSelf != show) panel.SetActive(show);
         if (!show || Time.unscaledTime < nextRefresh) return;

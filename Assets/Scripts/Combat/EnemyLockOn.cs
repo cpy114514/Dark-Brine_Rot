@@ -29,7 +29,7 @@ namespace Mavis
         void Awake() { movement = GetComponent<ThirdPersonPlayerController>(); health = GetComponent<PlayerHealth>(); }
         void Update()
         {
-            if ((health != null && health.currentHealth <= 0f) || (movement != null && movement.Swimming)) { Clear(); return; }
+            if ((health != null && health.currentHealth <= 0f) || (movement != null && (movement.Swimming || movement.ExternalControlLock || movement.ExternalMovementLock || movement.Motion && movement.Motion.Scripted))) { Clear(); return; }
             if (SahurLoadoutUI.BlocksInput || PauseSettingsMenu.IsOpen) { if (hud != null) hud.SetActive(false); return; }
             Validate(Time.deltaTime);
             if (GameControls.Down(GameControls.Command.LockOn) && Cursor.lockState == CursorLockMode.Locked)

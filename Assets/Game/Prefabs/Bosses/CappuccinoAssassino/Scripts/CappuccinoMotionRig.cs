@@ -38,6 +38,7 @@ namespace Mavis
         Quaternion[] mirroredReferences;
         Transform sourceHips;
         Vector3 rigRestPosition;
+        Quaternion rigRestRotation;
         float floorHeight;
         CappuccinoAI boss;
         Health health;
@@ -62,6 +63,7 @@ namespace Mavis
             }
             sourceHips = motionAnimator.GetBoneTransform(HumanBodyBones.Hips);
             rigRestPosition = rigRoot.localPosition;
+            rigRestRotation = rigRoot.localRotation;
             boss = GetComponentInParent<CappuccinoAI>();
             health = GetComponentInParent<Health>();
             floorHeight = visualFrame.position.y;
@@ -74,9 +76,11 @@ namespace Mavis
 
         public void ApplyPose()
         {
+            if(health&&health.IsDead&&(Time.timeScale<=0||PauseSettingsMenu.IsOpen)&&health.GetComponent<EnemyDeathPresentation>() is EnemyDeathPresentation corpse&&corpse.IsPlaying)return;
             if (sourceBones == null) Initialize();
             if (sourceBones == null) return;
             rigRoot.localPosition = rigRestPosition;
+            if(health&&health.IsDead)rigRoot.localRotation=rigRestRotation;
             var sourceFrame = motionAnimator.transform;
             bool mirrored = mirroredReferences != null && motionAnimator.GetCurrentAnimatorStateInfo(0).IsName("AttackMirrored");
             Vector3 hipOffset = sourceFrame.InverseTransformPoint(sourceHips.position) - sourceReferenceHipPosition;
@@ -119,6 +123,9 @@ namespace Mavis
                 if (boss.CurrentState == CappuccinoAI.State.Idle || boss.CurrentState == CappuccinoAI.State.Recover)
                     rigRoot.localPosition += Vector3.up * (Mathf.Sin(Time.time * 3f) * .008f);
             }
+            // Prone contact is solved from the posed body by the death presenter.
+            // Standing sole / sword constraints otherwise hoist and twist the corpse.
+            if(health&&health.IsDead&&health.GetComponent<EnemyDeathPresentation>() is EnemyDeathPresentation death&&death.IsPlaying)return;
             // The cup is much wider than a human torso. Keep its fitted body above the floor during the fall.
             floorHeight = visualFrame.position.y;
             Vector3 normal = groundNormal.sqrMagnitude > 0.5f ? groundNormal.normalized : Vector3.up;

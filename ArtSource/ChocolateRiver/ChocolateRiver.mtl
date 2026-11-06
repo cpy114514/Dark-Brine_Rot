@@ -1,0 +1,22 @@
+# Blender 5.2.1 LTS MTL File: 'None'
+# www.blender.org
+
+newmtl Caramel_chocolate_ribbons
+Ns 518.400024
+Ka 1.000000 1.000000 1.000000
+Kd 0.370000 0.150000 0.052000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.460000
+d 1.000000
+illum 2
+
+newmtl Pure_milk_chocolate_-_no_textures
+Ns 562.500000
+Ka 1.000000 1.000000 1.000000
+Kd 0.180000 0.055000 0.022000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.460000
+d 1.000000
+illum 2

@@ -1,6 +1,8 @@
 using Mavis;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 /// <summary>Second-island ronin: readable sword attacks with movement and recovery windows.</summary>
 [DisallowMultipleComponent, RequireComponent(typeof(Health),typeof(CharacterController))]
@@ -29,7 +31,10 @@ public sealed partial class PigRoninBoss : MonoBehaviour
     PlayerHealth target;
     BossHudPanel hud;
     Vector3 home, committed;
-    float vertical, timer, previousPhase, poise, lastHit, victoryAt;
+    float vertical, timer, previousPhase, poise, lastHit, victoryAt, nextStaggerAt, blockedTime;
+    int sidestepDirection=1;
+    Volume clarityVolume;
+    VolumeProfile clarityProfile;
     int sequence, hitMask;
     bool dead;
     readonly RaycastHit[] casts=new RaycastHit[32];
@@ -43,6 +48,9 @@ public sealed partial class PigRoninBoss : MonoBehaviour
         CombatBodyCollision.Ensure(gameObject);
         var impact=GetComponent<CombatImpactResponse>();if(!impact)impact=gameObject.AddComponent<CombatImpactResponse>();
         impact.unflinching=true;impact.knockbackMultiplier=0;
+        // The rig is posed procedurally; repeatedly freezing its bones on
+        // rapid hits can make an otherwise active boss appear motionless.
+        impact.stopMultiplier=0;
         // Older scene instances can lack the visual component even though their
         // combat state machine is present. Always bind the rig to that state.
         if(!GetComponent<PigRoninBossVisual>())gameObject.AddComponent<PigRoninBossVisual>();
@@ -77,7 +85,16 @@ public sealed partial class PigRoninBoss : MonoBehaviour
             case State.Idle:
             case State.Chase:
                 if(toward.sqrMagnitude>.01f)Face(toward,dt);
-                if(distance>4.8f)Move(toward.normalized*chaseSpeed,dt);else Move(Vector3.zero,dt);
+                if(distance>4.8f)
+                {
+                    var direction=toward.normalized;
+                    if(blockedTime>.8f)direction=(direction*.35f+Vector3.Cross(Vector3.up,direction)*sidestepDirection).normalized;
+                    var before=transform.position;Move(direction*chaseSpeed,dt);
+                    float moved=Vector3.ProjectOnPlane(transform.position-before,Vector3.up).magnitude;
+                    blockedTime=moved<chaseSpeed*dt*.18f ? blockedTime+dt : Mathf.Max(0,blockedTime-dt*2);
+                    if(blockedTime>2.5f){sidestepDirection=-sidestepDirection;blockedTime=.9f;}
+                }
+                else {blockedTime=0;Move(Vector3.zero,dt);}
                 CurrentState=State.Chase;
                 if(timer<=0 && distance<17f)
                 {
@@ -191,7 +208,14 @@ public sealed partial class PigRoninBoss : MonoBehaviour
         if(health.IsDead)return;
         if(!FightActive){target=FindFirstObjectByType<PlayerHealth>();if(target && target.currentHealth>0){FightActive=true;CurrentState=State.Chase;timer=.2f;}}
         if(Time.time-lastHit>4f)poise=0;lastHit=Time.time;poise+=damage;
-        if(poise>=poiseThreshold){poise=0;CurrentState=State.Staggered;timer=staggerDuration;DamageWindowActive=false;}
+        if(poise>=poiseThreshold && Time.time>=nextStaggerAt)
+        {
+            poise=0;CurrentState=State.Staggered;timer=staggerDuration;DamageWindowActive=false;
+            // A recovery window prevents rapid attacks from indefinitely
+            // restarting stagger and locking the encounter in place.
+            nextStaggerAt=Time.time+staggerDuration+1.5f;
+        }
+        else if(Time.time<nextStaggerAt)poise=0;
     }
     void OnDeath()
     {
@@ -201,14 +225,30 @@ public sealed partial class PigRoninBoss : MonoBehaviour
     }
     void LateUpdate()
     {
+        UpdateClarity();
         if(hud==null || !health)return;
         var camera=Camera.main;bool visible=camera && (FightActive || dead && Time.time-victoryAt<3f);
         hud.Refresh(visible,camera?(transform.position-camera.transform.position).sqrMagnitude:float.PositiveInfinity,
             health.Ratio,health.currentHealth,health.maxHealth,"PIG RONIN",Time.deltaTime);
     }
+    void UpdateClarity()
+    {
+        if(FightActive && !clarityVolume)
+        {
+            // Keep the fight readable even if the player's global profile has
+            // motion blur enabled. This override does not edit their settings.
+            var go=new GameObject("Pig Ronin combat clarity");go.transform.SetParent(transform,false);
+            clarityVolume=go.AddComponent<Volume>();clarityVolume.isGlobal=true;clarityVolume.priority=10000;
+            clarityProfile=ScriptableObject.CreateInstance<VolumeProfile>();
+            var blur=clarityProfile.Add<MotionBlur>(true);blur.intensity.Override(0);
+            var focus=clarityProfile.Add<DepthOfField>(true);focus.mode.Override(DepthOfFieldMode.Off);
+            clarityVolume.profile=clarityProfile;
+        }
+        if(clarityVolume)clarityVolume.enabled=FightActive;
+    }
     public static float WindupDuration(AttackKind kind)=>kind==AttackKind.TwinSlash?.65f:kind==AttackKind.Overhead?.9f:kind==AttackKind.Dash?.85f:1f;
     public static float AttackDuration(AttackKind kind)=>kind==AttackKind.TwinSlash?1.2f:kind==AttackKind.Overhead?.8f:kind==AttackKind.Dash?.85f:1.05f;
     public static float RecoveryDuration(AttackKind kind)=>kind==AttackKind.TwinSlash?.7f:kind==AttackKind.Overhead?1.05f:kind==AttackKind.Dash?.85f:1f;
-    void OnDisable(){hud?.Hide();}
-    void OnDestroy(){if(health){health.OnDamaged.RemoveListener(OnDamaged);health.OnDeath.RemoveListener(OnDeath);}hud?.Dispose();}
+    void OnDisable(){hud?.Hide();if(clarityVolume)clarityVolume.enabled=false;}
+    void OnDestroy(){if(health){health.OnDamaged.RemoveListener(OnDamaged);health.OnDeath.RemoveListener(OnDeath);}hud?.Dispose();if(clarityProfile)Destroy(clarityProfile);}
 }

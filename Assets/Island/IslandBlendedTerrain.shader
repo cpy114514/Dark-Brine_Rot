@@ -163,6 +163,11 @@ Shader "DarkBrine/Island Blended Terrain"
                 half grassPatch = smoothstep(0.33, 0.68, broadPatch * 0.55 + detailPatch * 0.45);
                 half sandPatch = smoothstep(0.30, 0.72, PatchNoise(p * 0.041 + 47.1));
                 half3 grass = lerp(sparse, leafy, grassPatch * 0.70h);
+                // Match the instanced grass cards: rebuild the ground hue from its
+                // luma as well, otherwise the painted terrain stays a much brighter,
+                // more saturated green and the 3D tufts look pasted onto it.
+                half grassLuma = dot(grass, half3(0.299h, 0.587h, 0.114h));
+                grass = lerp(grass, grassLuma * half3(0.64h, 0.90h, 0.56h), 0.62h);
                 half3 sand = lerp(coast, paleSand, sandPatch * 0.55h);
                 // Two noise scales and a warped coordinate give irregular, stable patches,
                 // not stripes, grid cells, or a pattern that swims as the camera moves.
@@ -184,9 +189,13 @@ Shader "DarkBrine/Island Blended Terrain"
                 }
 
                 half forestBlend = smoothstep(0.26, 0.43, zone);
-                half grassBlend = smoothstep(0.40, 0.62, zone);
+                // Widen the grass/dirt ramp so the biome edge reads as a soft
+                // transition instead of a painted line across the hillside.
+                // Noise on the ramp keeps the grass edge ragged instead of a painted
+                // contour that follows the elevation band exactly.
+                half grassBlend = smoothstep(0.28, 0.66, zone + (detailPatch - 0.5h) * 0.10h);
                 float shoreHeight = input.positionWS.y - _SeaLevel + macro * 0.75;
-                half shoreBlend = 1.0h - smoothstep(1.5, 7.0, shoreHeight);
+                half shoreBlend = 1.0h - smoothstep(1.4, 4.6, shoreHeight);
                 half3 albedo = lerp(rock, dry, smoothstep(0.17, 0.36, zone));
                 albedo = lerp(albedo, forest, forestBlend);
                 albedo = lerp(albedo, grass, grassBlend);
@@ -221,7 +230,7 @@ Shader "DarkBrine/Island Blended Terrain"
 
                 half3 surfaceNormal = normalize(input.normalWS);
                 half slopeRock = (1.0h - smoothstep(0.68h, 0.92h, surfaceNormal.y)) * 0.70h;
-                half exposedSoil = smoothstep(0.60, 0.79, detailPatch) * 0.22h;
+                half exposedSoil = smoothstep(0.50, 0.90, detailPatch) * 0.14h;
                 albedo = lerp(albedo, dry, exposedSoil * (1.0h - shoreBlend) * (1.0h - slopeRock));
                 albedo = lerp(albedo, rock, slopeRock);
                 half wetSand = (1.0h - smoothstep(0.3h, 2.8h, shoreHeight)) * (1.0h - slopeRock);

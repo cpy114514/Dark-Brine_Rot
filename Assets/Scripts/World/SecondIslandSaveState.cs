@@ -10,9 +10,9 @@ public sealed class SecondIslandSaveState : MonoBehaviour
     [Serializable] public sealed class Progress
     {
         public List<string> defeatedEnemies = new List<string>();
-        public bool roninDefeated, finishedCourse, collectedScrolls, normalGravity, courseArmed, flying;
-        public float boardCooldown, flightRemaining;
-        public int courseRow;
+        public bool roninDefeated, finishedCourse, collectedScrolls, normalGravity, courseArmed, flying, courseAssist, candyHuntStarted, secretGroveUnlocked, secretGroveRested, secretDoorInspected, secretSmallLightOwned, skyboardRallyReward, melodyGardenReward, candyHuntRewardClaimed;
+        public float boardCooldown, flightRemaining, skyboardRallyBest;
+        public int courseRow, courseBestRow, courseFalls, courseStars, courseAssistUntil, candyHuntMask, cottageHealingPacks, candyHuntSelectedStyle;
     }
     int restoredRow;
     bool restoredArmed;
@@ -25,6 +25,12 @@ public sealed class SecondIslandSaveState : MonoBehaviour
         var objective=GetComponent<SecondIslandObjectives>();
         var traversal=GetComponent<MarshmallowTraversal>();
         var boss=FindFirstObjectByType<PigRoninBoss>();
+        var course=board ? board.GetComponent<MarshmallowHopRecovery>() : null;
+        var candyHunt=FindFirstObjectByType<CandyHuntQuest>();
+        var cottage=FindFirstObjectByType<CandyHouseMarker>();
+        var residents=FindFirstObjectByType<FriendlyMarshmallowVillage>();
+        var rally=FindFirstObjectByType<SkyboardRingRally>();
+        var melody=FindFirstObjectByType<CandyMelodyGarden>();
         return new Progress {
             defeatedEnemies=wristband ? wristband.CaptureDefeated() : new List<string>(),
             roninDefeated=(objective && objective.RoninDefeated) || (boss && boss.GetComponent<Health>().IsDead),
@@ -33,8 +39,25 @@ public sealed class SecondIslandSaveState : MonoBehaviour
             boardCooldown=board ? board.CooldownRemaining : 0,
             flying=board && board.Flying,
             flightRemaining=board && board.Flying ? board.FlightRemaining : 0,
-            courseRow=board && board.GetComponent<MarshmallowHopRecovery>() ? board.GetComponent<MarshmallowHopRecovery>().SaveRow : 0,
-            courseArmed=board && board.GetComponent<MarshmallowHopRecovery>() && board.GetComponent<MarshmallowHopRecovery>().RecoveryArmed,
+            courseRow=course ? course.SaveRow : 0,
+            courseArmed=course && course.RecoveryArmed,
+            courseBestRow=course ? course.HighestRow : 0,
+            courseFalls=course ? course.ConsecutiveFalls : 0,
+            courseStars=course ? course.StarMask : 0,
+            courseAssist=course && course.AssistanceActive,
+            courseAssistUntil=course ? course.AssistUntilRow : 0,
+            candyHuntStarted=candyHunt && candyHunt.Started,
+            candyHuntMask=candyHunt ? candyHunt.CollectedMask : 0,
+            candyHuntRewardClaimed=candyHunt && candyHunt.RewardClaimed,
+            candyHuntSelectedStyle=candyHunt ? candyHunt.SelectedStyle : 0,
+            cottageHealingPacks=cottage ? cottage.CollectedHealingPacks : 0,
+            secretGroveUnlocked=residents && residents.Unlocked,
+            secretGroveRested=residents && residents.Rested,
+            secretDoorInspected=residents && residents.DoorInspected,
+            secretSmallLightOwned=residents && residents.SmallLightOwned,
+            skyboardRallyReward=rally && rally.RewardClaimed,
+            skyboardRallyBest=rally ? rally.BestTime : 0,
+            melodyGardenReward=melody && melody.RewardClaimed,
             normalGravity=traversal && traversal.NormalGravity
         };
     }
@@ -45,6 +68,12 @@ public sealed class SecondIslandSaveState : MonoBehaviour
         var board=FindFirstObjectByType<SkyboardReward>();
         wristband?.RestoreDefeated(progress.defeatedEnemies);
         board?.RestoreProgress(progress.collectedScrolls,progress.boardCooldown);
+        board?.GetComponent<MarshmallowHopRecovery>()?.RestoreChallengeProgress(progress.courseBestRow,progress.courseFalls,progress.courseStars,progress.courseAssist,progress.courseAssistUntil);
+        FindFirstObjectByType<CandyHuntQuest>()?.RestoreProgress(progress.candyHuntStarted, progress.candyHuntMask, progress.candyHuntRewardClaimed, progress.candyHuntSelectedStyle);
+        FindFirstObjectByType<CandyHouseMarker>()?.RestoreHealingPacks(progress.cottageHealingPacks);
+        FindFirstObjectByType<FriendlyMarshmallowVillage>()?.RestoreProgress(progress.secretGroveUnlocked, progress.secretGroveRested, progress.secretDoorInspected, progress.secretSmallLightOwned);
+        FindFirstObjectByType<SkyboardRingRally>()?.RestoreProgress(progress.skyboardRallyReward, progress.skyboardRallyBest);
+        FindFirstObjectByType<CandyMelodyGarden>()?.RestoreProgress(progress.melodyGardenReward);
         GetComponent<SecondIslandObjectives>()?.RestoreProgress(progress.finishedCourse,progress.roninDefeated);
         var gravity=GetComponent<GravityWristbandAbility>();
         if(gravity && gravity.Owned)gravity.SetNormalGravity(progress.normalGravity);

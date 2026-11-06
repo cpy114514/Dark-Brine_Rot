@@ -53,6 +53,14 @@ namespace Mavis
         {
             Load(); remaining = Total; Persist();
         }
+        public static int Add(int amount)
+        {
+            if (amount <= 0) return 0;
+            Load();
+            int added = Mathf.Min(amount, Total - remaining);
+            if (added > 0) { remaining += added; Persist(); }
+            return added;
+        }
         internal static bool Consume()
         {
             Load(); if (remaining == 0) return false;
@@ -104,6 +112,11 @@ namespace Mavis
             health.currentHealth += restored;
             Notify("healing.used");
             return true;
+        }
+        public void NotifyPickup(int amount)
+        {
+            restored = Mathf.Max(0, amount);
+            Notify("healing.pickup");
         }
         void Notify(string key) { feedbackKey = key; feedbackText = null; feedbackUntil = Time.unscaledTime + 2.5f; }
     }

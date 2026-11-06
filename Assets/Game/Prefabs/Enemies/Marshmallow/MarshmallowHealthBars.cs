@@ -10,11 +10,14 @@ public sealed class MarshmallowHealthBars : MonoBehaviour
         public MarshmallowEnemyHealth health;
         public RectTransform rect, fill;
         public Image fillImage;
+        public float displayedRatio = float.NaN;
     }
     static MarshmallowHealthBars instance;
     readonly List<Entry> entries = new List<Entry>();
     Canvas canvas;
     Camera viewer;
+    ThirdPersonPlayerController player;
+    float nextPlayerSearch;
 
     public static void Register(MarshmallowEnemyHealth health)
     {
@@ -59,25 +62,42 @@ public sealed class MarshmallowHealthBars : MonoBehaviour
     void LateUpdate()
     {
         if (!viewer || !viewer.isActiveAndEnabled) viewer = Camera.main;
-        bool uiAllowed = viewer && !GameUITheme.ModalOpen;
+        if(!player && Time.unscaledTime>=nextPlayerSearch)
+        { nextPlayerSearch=Time.unscaledTime+1f;player=FindFirstObjectByType<ThirdPersonPlayerController>(); }
+        bool uiAllowed = viewer && player && player.isActiveAndEnabled && !player.ExternalControlLock && !GameUITheme.ModalOpen;
+        Rect pixelRect=viewer ? viewer.pixelRect : default;
         foreach (var item in entries)
         {
             if (!item.health || !item.rect) continue;
             var health = item.health;
+            if(!uiAllowed || !health.isActiveAndEnabled || !health.gameObject.activeInHierarchy || health.IsDead)
+            {
+                if(item.rect.gameObject.activeSelf)item.rect.gameObject.SetActive(false);
+                continue;
+            }
             float maxDistance = Mathf.Max(1f, health.healthBarVisibleDistance);
             Vector3 anchor = health.transform.position + Vector3.up * health.healthBarHeight;
-            Vector3 viewport = uiAllowed ? viewer.WorldToViewportPoint(anchor) : Vector3.zero;
-            float distance = uiAllowed ? Vector3.Distance(viewer.transform.position, anchor) : float.PositiveInfinity;
-            bool visible = uiAllowed && health.isActiveAndEnabled && health.gameObject.activeInHierarchy && !health.IsDead &&
-                distance <= maxDistance && viewport.z > 0 && viewport.x > 0 && viewport.x < 1 && viewport.y > 0 && viewport.y < 1;
+            float squaredDistance=(viewer.transform.position-anchor).sqrMagnitude;
+            if(squaredDistance>maxDistance*maxDistance)
+            {
+                if(item.rect.gameObject.activeSelf)item.rect.gameObject.SetActive(false);
+                continue;
+            }
+            Vector3 viewport = viewer.WorldToViewportPoint(anchor);
+            bool visible = viewport.z > 0 && viewport.x > 0 && viewport.x < 1 && viewport.y > 0 && viewport.y < 1;
             if (item.rect.gameObject.activeSelf != visible) item.rect.gameObject.SetActive(visible);
             if (!visible) continue;
-            item.rect.position = viewer.WorldToScreenPoint(anchor);
+            item.rect.position = new Vector3(pixelRect.x+viewport.x*pixelRect.width,pixelRect.y+viewport.y*pixelRect.height,viewport.z);
+            float distance=Mathf.Sqrt(squaredDistance);
             float size = Mathf.Lerp(1f, .7f, Mathf.Clamp01(distance / maxDistance));
             item.rect.localScale = Vector3.one * size;
             float ratio = health.Ratio;
-            item.fill.anchorMax = new Vector2(ratio, 1f);
-            item.fillImage.color = Color.Lerp(new Color(1f, .32f, .32f), new Color(.45f, .95f, .65f), ratio);
+            if(float.IsNaN(item.displayedRatio) || !Mathf.Approximately(item.displayedRatio,ratio))
+            {
+                item.displayedRatio=ratio;
+                item.fill.anchorMax = new Vector2(ratio, 1f);
+                item.fillImage.color = Color.Lerp(new Color(1f, .32f, .32f), new Color(.45f, .95f, .65f), ratio);
+            }
         }
     }
 

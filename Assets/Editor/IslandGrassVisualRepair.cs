@@ -15,7 +15,7 @@ internal static class IslandGrassVisualRepair
     internal static void Densify()
     {
         const string rootName="Denser Normal Grass Cover";
-        const float spacing=4.4f, separation=2.2f;
+        const float spacing=3.2f, separation=1.55f;
         var scene=GrassPlacementTools.GetScene();
         if(scene.GetRootGameObjects().Any(g=>g.name==rootName)) throw new Exception("Density pass already applied");
         var near=AssetDatabase.LoadAssetAtPath<Mesh>(Folder+"/VerifiedGrassNear.asset");

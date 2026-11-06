@@ -33,6 +33,7 @@ namespace Mavis
         public static void Register(Component owner)
         {
             if (!OnIsland(owner) || !TryGetKind(owner, out var kind)) return;
+            RuntimeStallDiagnostics.TrackBoss(owner);
             string id = GameWorldProgress.Key(owner);
             if (!string.IsNullOrEmpty(id)) identities[(int)kind].Add(id);
         }
@@ -48,8 +49,12 @@ namespace Mavis
         {
             for (int prerequisite = 0; prerequisite < (int)kind; prerequisite++)
                 if (!IsDefeated((FirstIslandObjectives.BossKind)prerequisite)) return false;
+            if(kind>=FirstIslandObjectives.BossKind.Nailong && FlockPending)return false;
             return true;
         }
+        // Later confirmed victories in an existing save are never relocked.
+        public static bool FlockPending => ChickenBroEncounter.Active && ChickenBroEncounter.Active.RequiredOnIsland &&
+            !ChickenBroEncounter.Active.Completed && !IsDefeated(FirstIslandObjectives.BossKind.Nailong) && !IsDefeated(FirstIslandObjectives.BossKind.Bombardino);
 
         public static bool CanChallenge(Component owner, FirstIslandObjectives.BossKind kind) =>
             !OnIsland(owner) || IsUnlocked(kind);
@@ -70,6 +75,7 @@ namespace Mavis
             for (int prerequisite = 0; prerequisite < (int)kind; prerequisite++)
                 if (!IsDefeated((FirstIslandObjectives.BossKind)prerequisite))
                     return prerequisite == 0 ? "Cappuccino" : GameLocalization.Text("enemy.name");
+            if(kind>=FirstIslandObjectives.BossKind.Nailong && FlockPending)return "Chicken Bro flock";
             return string.Empty;
         }
     }

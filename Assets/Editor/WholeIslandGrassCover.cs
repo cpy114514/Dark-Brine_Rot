@@ -21,10 +21,46 @@ internal static class WholeIslandGrassCover
         if (!File.Exists(request)) return;
         string command = File.ReadAllText(request).Trim();
         File.Delete(request);
+        if(command=="rebuild") { try { Rebuild(); } catch(Exception e) { File.WriteAllText(Work+"/rebuild-error.txt",e.ToString()); Debug.LogException(e); } return; }
         if(command=="densify-normal") { try { IslandGrassVisualRepair.Densify(); } catch(Exception e) { File.WriteAllText(Work+"/density-error.txt",e.ToString()); Debug.LogException(e); } return; }
         if(command=="preview-normal" || command=="repair-normal") { try { IslandGrassVisualRepair.Run(command=="preview-normal"); } catch(Exception e) { File.WriteAllText(Work+"/visual-error.txt",e.ToString()); Debug.LogException(e); } return; }
         try { if (command == "probe") Probe(); else if (command == "fill") Fill(); else if (command == "infill-density") Fill(true); else if (command == "audit") Audit(); else if (command == "ground-probe") IslandGrassGrounding.Run(false); else if (command == "ground-all") IslandGrassGrounding.Run(true); else if (command == "ground-details") IslandGrassGrounding.Details(); }
         catch (Exception e) { File.WriteAllText(Work + "/error.txt", e.ToString()); Debug.LogException(e); }
+    }
+    static void Rebuild()
+    {
+        var scene = Scene();
+        // Retire every previous cover instead of deleting it: the objects stay in the
+        // scene, parked under one inactive holder, so the old look is one click away.
+        // Scatter-decorated grass prefabs are usually parented under an environment
+        // root, so scanning GetRootGameObjects() missed them entirely. Walk the whole
+        // hierarchy, then keep only the outermost matches so a cover object and its
+        // children are not both reparented.
+        var found = new List<GameObject>();
+        foreach (var t in scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Transform>(true)))
+        {
+            string n = t.name;
+            if (n == "Whole Island Grass Cover" || n == "Matched Density Grass Cover" ||
+                n == "Normal Island Grass Cover" || n == "Denser Normal Grass Cover" ||
+                n == "Normal Grass Preview" || n.StartsWith("rostlinka_"))
+                found.Add(t.gameObject);
+        }
+        var legacy = found.Where(g => !found.Any(o => o != g && g.transform.IsChildOf(o.transform))).ToArray();
+        var holder = scene.GetRootGameObjects().FirstOrDefault(g => g.name == "Legacy Grass (inactive)");
+        if (!holder)
+        {
+            holder = new GameObject("Legacy Grass (inactive)");
+            SceneManager.MoveGameObjectToScene(holder, scene);
+            Undo.RegisterCreatedObjectUndo(holder, "Add legacy grass holder");
+        }
+        foreach (var g in legacy)
+        {
+            Undo.RecordObject(g, "Retire old grass");
+            g.transform.SetParent(holder.transform, true);
+            g.SetActive(false);
+        }
+        holder.SetActive(true);
+        Fill();
     }
     static Scene Scene()
     {
@@ -72,6 +108,7 @@ internal static class WholeIslandGrassCover
         internal readonly List<Vector3> positions = new List<Vector3>();
         internal readonly List<Vector3> normals = new List<Vector3>();
         internal readonly List<Vector2> uv = new List<Vector2>();
+        internal readonly List<Color> colors = new List<Color>();
         internal readonly List<int> indices = new List<int>();
         internal int count;
     }
@@ -90,7 +127,7 @@ internal static class WholeIslandGrassCover
         var island = scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<ProceduralIsland>(false)).First(i => i.isActiveAndEnabled);
         var collider = island.GetComponent<MeshCollider>();
         var bounds = collider.bounds;
-        const float spacing = 0.78f;
+        const float spacing = 0.44f;
         var filledCells = new HashSet<Vector2Int>();
         var oldRoots = new Dictionary<Vector2Int,List<Vector2>>();
         if(infill)
@@ -159,11 +196,24 @@ internal static class WholeIslandGrassCover
             if (row % 70 == 0) EditorUtility.DisplayProgressBar("Covering island in grass", "Sampling ground and filling empty areas", (z-bounds.min.z)/bounds.size.z);
             for (float x = bounds.min.x; x <= bounds.max.x; x += spacing)
             {
-                float px = x + (float)(random.NextDouble()-.5)*.06f;
-                float pz = z + (float)(random.NextDouble()-.5)*.06f;
+                // Jitter the cell centre, but not so far that neighbouring clumps
+                // bunch up and leave a hole where the old grid line used to be.
+                float px = x + (float)(random.NextDouble()-.5)*(spacing*.62f);
+                float pz = z + (float)(random.NextDouble()-.5)*(spacing*.62f);
                 if(infill && filledCells.Contains(new Vector2Int(Mathf.RoundToInt((x-bounds.min.x)/spacing),row))) { skippedExisting++; continue; }
                 var p = new Vector3(px, bounds.max.y+10, pz);
-                if (!collider.Raycast(new Ray(p, Vector3.down),out var hit,bounds.size.y+30) || hit.point.y < .65f || hit.normal.y < .70f) { skippedWater++; continue; }
+                if (!collider.Raycast(new Ray(p, Vector3.down),out var hit,bounds.size.y+30) || hit.point.y < .55f) { skippedWater++; continue; }
+                // Fade the field into the sand instead of ending on a contour. A hard
+                // elevation cutoff drew a grass line that followed the beach exactly.
+                if (hit.point.y < 1.60f)
+                {
+                    float shore = (hit.point.y - .55f) / 1.05f;
+                    if (random.NextDouble() > shore * shore) { skippedWater++; continue; }
+                }
+                // Thin the grass out gradually on steep ground. A hard normal cutoff
+                // left a crisp bald contour along every ridge in the screenshot.
+                if (hit.normal.y < .45f) { skippedWater++; continue; }
+                if (hit.normal.y < .62f && random.NextDouble() > (hit.normal.y - .45f) / .17f) { skippedWater++; continue; }
                 bool overlap = false;
                 if (!infill && occupied.TryGetValue(new Vector2Int(Mathf.FloorToInt(px/8),Mathf.FloorToInt(pz/8)),out var patches))
                     foreach (var b in patches) if (px >= b.min.x-.15f && px <= b.max.x+.15f && pz >= b.min.z-.15f && pz <= b.max.z+.15f && Mathf.Abs(hit.point.y-b.min.y)<3f) { overlap=true; break; }
@@ -179,27 +229,72 @@ internal static class WholeIslandGrassCover
                 if (!tiles.TryGetValue(key,out var tile)) tiles[key] = tile = new Tile();
                 var blade = blades[random.Next(blades.Length)];
                 var q = Quaternion.AngleAxis((float)random.NextDouble()*360,Vector3.up);
-                float width = .49f + (float)random.NextDouble()*.025f;
-                float height = .40f + (float)random.NextDouble()*.25f;
+                // Lean each clump toward the ground normal and add a few degrees of
+                // random tilt. Cards that stay perfectly upright on a slope stack into
+                // a hedge wall, and the tips all cut the same silhouette.
+                var slope = Vector3.Slerp(Vector3.up, hit.normal, .45f);
+                var tilt = Quaternion.FromToRotation(Vector3.up, slope) *
+                    Quaternion.Euler(((float)random.NextDouble()-.5f)*13f,0,((float)random.NextDouble()-.5f)*13f);
+                // Low turf, not reeds. The card texture is a handful of thin blades, so
+                // tall narrow cards read as isolated spikes standing on bare soil.
+                float width = .52f + (float)random.NextDouble()*.26f;
+                float patch = Mathf.PerlinNoise(px*.019f+13.7f, pz*.019f+5.3f);
+                float height = (.10f + (float)random.NextDouble()*.14f) * (.74f + patch*.48f);
+                // Each clump samples a different, slightly tiled window of the blade
+                // texture. Without this every tuft is the same stamp repeated, which is
+                // most of what reads as an artificial field.
+                float uScale = .95f + (float)random.NextDouble()*.45f;
+                float vScale = .90f + (float)random.NextDouble()*.35f;
+                float uOffset = (float)random.NextDouble();
+                float vOffset = (float)random.NextDouble();
+                // Per-clump colour: most stay green, some drift dry. Applied through
+                // vertex colour so the shader needs no extra instancing data.
+                float dryness = Mathf.PerlinNoise(px*.041f+51.2f, pz*.037f+7.9f);
+                float value = .86f + (float)random.NextDouble()*.22f;
+                var tint = Color.Lerp(new Color(.88f,.98f,.86f), new Color(1.04f,.96f,.72f), dryness*dryness*.9f) * value;
+                tint.a = 1f;
                 var origin = new Vector3(key.x*24,0,key.y*24);
-                int offset = tile.positions.Count;
-                foreach (var v in blade.p)
+                // Three crossed cards per clump. A single billboard collapses to a thin
+                // vertical line whenever the camera looks along its plane, and two still
+                // leave a visible gap at the 60-degree views in between; three covers
+                // the full turn, which is what made the field read as separate strokes.
+                for (int card = 0; card < 3; card++)
                 {
-                    var horizontal = q * new Vector3(v.x*width,0,v.z*width);
-                    // Each card follows the local ground plane; roots sit 2 cm into it.
-                    float ground = hit.point.y - (hit.normal.x*horizontal.x+hit.normal.z*horizontal.z)/hit.normal.y;
-                    tile.positions.Add(new Vector3(px+horizontal.x,ground+v.y*height-.02f,pz+horizontal.z)-origin);
-                    if(infill && v.y<.001f && count%31==0 && collider.Raycast(new Ray(new Vector3(px+horizontal.x,300,pz+horizontal.z),Vector3.down),out var rootHit,500))
-                    { checkedRoots++; maxRootError=Mathf.Max(maxRootError,Mathf.Abs(ground-.02f-rootHit.point.y)); }
+                    var facing = q * Quaternion.AngleAxis(card * 60f, Vector3.up);
+                    int offset = tile.positions.Count;
+                    foreach (var v in blade.p)
+                    {
+                        // Each card follows the local ground plane; roots sit 2 cm into it.
+                        var local = tilt * (facing * new Vector3(v.x*width,v.y*height,v.z*width));
+                        float ground = hit.point.y - (hit.normal.x*local.x+hit.normal.z*local.z)/hit.normal.y;
+                        tile.positions.Add(new Vector3(px+local.x,ground+local.y-.02f,pz+local.z)-origin);
+                        // Bake root-to-tip shading into the vertex colour so every clump
+                        // has contact shading without a per-pixel AO pass.
+                        float shade = .66f + .34f * Mathf.Clamp01(v.y);
+                        tile.colors.Add(new Color(tint.r*shade, tint.g*shade, tint.b*shade, 1f));
+                    }
+                    // Spherical-ish normals: mostly world up, a little of the card facing
+                    // kept. True card normals make the two crossed sheets shade very
+                    // differently, which is what betrays them as flat intersecting planes.
+                    foreach (var n in blade.n)
+                        tile.normals.Add(Vector3.Slerp(tilt*(facing*n), Vector3.up, .74f).normalized);
+                    foreach (var uv in blade.uv)
+                        tile.uv.Add(new Vector2(uv.x*uScale+uOffset, uv.y*vScale+vOffset));
+                    foreach (int index in blade.triangles) tile.indices.Add(offset+index);
                 }
-                foreach (var n in blade.n) tile.normals.Add(q*n);
-                tile.uv.AddRange(blade.uv);
-                foreach (int index in blade.triangles) tile.indices.Add(offset+index);
                 tile.count++; count++;
             }
         }
         Directory.CreateDirectory(folder); AssetDatabase.Refresh();
-        var material = new Material(sources[0].GetComponent<MeshRenderer>().sharedMaterial) { name = "Island Meadow Grass" };
+        var material = new Material(sources[0].GetComponent<MeshRenderer>().sharedMaterial) { name = "Island Meadow Grass", enableInstancing = true };
+        // The source chunks cut out at 0.36, which shaves the soft edges off the thin
+        // blades and leaves a gap-toothed silhouette. The lower cutoff keeps the fringe
+        // that makes a tuft read as many blades instead of a few spikes.
+        if (material.HasProperty("_Cutoff")) material.SetFloat("_Cutoff", .20f);
+        // Do not cast a grass shadow map. At this density every tuft drops its own hard
+        // blob on the ground, and the field reads as debris; contact shading is baked
+        // into the vertex colours instead.
+        material.SetShaderPassEnabled("ShadowCaster", false);
         // Combined meshes span slopes, so use stationary roots without a shared world-height wind pivot.
         if (material.HasProperty("_WindBend")) material.SetFloat("_WindBend",0);
         AssetDatabase.CreateAsset(material,folder+"/Grass.mat");
@@ -212,7 +307,7 @@ internal static class WholeIslandGrassCover
             {
                 var t = entry.Value;
                 var mesh = new Mesh { name = "Island grass "+entry.Key, indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
-                mesh.SetVertices(t.positions); mesh.SetNormals(t.normals); mesh.SetUVs(0,t.uv); mesh.SetTriangles(t.indices,0); mesh.RecalculateBounds();
+                mesh.SetVertices(t.positions); mesh.SetNormals(t.normals); mesh.SetUVs(0,t.uv); mesh.SetColors(t.colors); mesh.SetTriangles(t.indices,0); mesh.RecalculateBounds();
                 AssetDatabase.CreateAsset(mesh,folder+"/Grass_"+entry.Key.x+"_"+entry.Key.y+".asset");
                 var go = new GameObject("Grass "+entry.Key+" ("+t.count+")",typeof(MeshFilter),typeof(MeshRenderer));
                 go.transform.SetParent(parent.transform,false); go.transform.position = new Vector3(entry.Key.x*24,0,entry.Key.y*24);

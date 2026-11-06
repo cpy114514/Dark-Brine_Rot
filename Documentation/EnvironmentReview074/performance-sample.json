@@ -1,0 +1,28 @@
+{
+  "scope": "Unity Editor Play, isolated actual Environment + Lighting, fixed 1920x1080 RT, renderScale=1, vsync off, 90 warmup + 240 measured frames; editor other views may contribute render counters; no standalone GPU/FPS guarantee",
+  "hardware": "NVIDIA GeForce RTX 4060",
+  "cpu": "Intel(R) Core(TM) i5-14400F",
+  "samples": 240,
+  "meanMs": 10.063387476839125,
+  "medianMs": 9.976997971534729,
+  "p95Ms": 11.145096272230148,
+  "maxMs": 12.931200675666332,
+  "fps": 99.3701178953408,
+  "drawCalls": 840.0,
+  "triangles": 7788187.0,
+  "usedMemoryMiB": 4942.7488644202549,
+  "cpuMainMs": 10.010571666666666,
+  "valid": {
+    "draws": true,
+    "triangles": true,
+    "memory": true,
+    "cpu": true
+  },
+  "grass": [
+    {
+      "InstanceCount": 379063,
+      "VisibleBatches": 465,
+      "IsReady": true
+    }
+  ]
+}

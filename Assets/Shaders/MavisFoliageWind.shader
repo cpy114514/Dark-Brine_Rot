@@ -4,8 +4,8 @@ Shader "Mavis/FoliageWind"
     // Driven by global vectors:
     //   _MavisWindDir   (xyz: normalized wind direction, w: time)
     //   _MavisWindParams (x: strength, y: frequency, z: trunkStiffness, w: gustiness)
-    // Per-renderer override: _MavisWindStrengthScale (float, via MaterialPropertyBlock) lets a
-    // single mesh apply a different wind response (e.g. grass vs. tree).
+    // Instanced anchor, inverse height, response and stiffness keep all LODs rooted.
+    // Authored botany can instead bake each plant's height into vertex colour alpha.
     Properties
     {
         _MainTex              ("Base Map", 2D) = "white" {}
@@ -28,6 +28,14 @@ Shader "Mavis/FoliageWind"
         _PlayerPushStrength   ("Player Push Strength", Range(0,4)) = 1.0
         _PlayerPushHeightBias ("Player Push Height Bias (height where push applies)", Range(0,4)) = 1.0
         [HideInInspector] _ClipBelowSea ("Clip On Beach", Float) = 0
+        [HideInInspector] _UseBladeHeight ("Use Baked Blade Height", Float) = 0
+        [Toggle] _BotanicalSurface ("Botanical PBR Surface", Float) = 0
+        _BotanicalTriplanar ("Bark Triplanar Tiling (0 disables)", Float) = 0
+        [Normal] _BotanicalNormal ("Botanical Normal", 2D) = "bump" {}
+        _BotanicalSurfaceMap ("R Roughness G Occlusion B Transmission A Emission", 2D) = "white" {}
+        [HDR] _BotanicalEmission ("Botanical Emission", Color) = (0,0,0,0)
+        _EcologyDistance ("Ecology Fade Start End", Vector) = (0,0,0,0)
+        [HideInInspector] _EcologyLodFade ("Ecology LOD Coverage", Vector) = (0,0,0,0)
     }
 
     SubShader
@@ -61,6 +69,12 @@ Shader "Mavis/FoliageWind"
                 half   _PlayerPushStrength;
                 half   _PlayerPushHeightBias;
                 half   _ClipBelowSea;
+                half   _UseBladeHeight;
+                half   _BotanicalSurface;
+                float  _BotanicalTriplanar;
+                half4  _BotanicalEmission;
+                float4 _EcologyDistance;
+                float4 _EcologyLodFade;
             CBUFFER_END
 
             UNITY_INSTANCING_BUFFER_START(FoliageInstances)
@@ -76,7 +90,7 @@ Shader "Mavis/FoliageWind"
 
             // Global wind state (set every frame by FoliageWindDriver)
             float4 _MavisWindDir;       // xyz = direction (normalized), w = time
-            float4 _MavisWindParams;    // x = base strength, y = phase, z = trunkStiffness override, w = gustiness
+            float4 _MavisWindParams;    // x = strength, y = pulse frequency, z = frequency multiplier, w = gustiness
 
             // Grass renderers set _ClipBelowSea. FoliageInteractionSystem fills the sand band.
             float _MavisSeaLevel;
@@ -95,6 +109,10 @@ Shader "Mavis/FoliageWind"
             SAMPLER(sampler_MainTex);
             TEXTURE2D(_AlphaMap);
             SAMPLER(sampler_AlphaMap);
+            TEXTURE2D(_BotanicalNormal);
+            SAMPLER(sampler_BotanicalNormal);
+            TEXTURE2D(_BotanicalSurfaceMap);
+            SAMPLER(sampler_BotanicalSurfaceMap);
 
             struct Attributes
             {
@@ -102,6 +120,7 @@ Shader "Mavis/FoliageWind"
                 float3 normalOS   : NORMAL;
                 float4 tangentOS  : TANGENT;
                 float2 uv         : TEXCOORD0;
+                float4 color      : COLOR;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
@@ -113,10 +132,21 @@ Shader "Mavis/FoliageWind"
                 float3 positionWS : TEXCOORD2;
                 float3 restPositionWS : TEXCOORD3;
                 float  squish     : TEXCOORD4;
+                half4  color      : TEXCOORD5;
+                half4 tangentWS   : TEXCOORD6;
+                half fogFactor    : TEXCOORD7;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
-            float3 ComputeWindOffset(float3 positionWS)
+            float BladeHeight(float3 positionWS, float bakedHeight)
+            {
+                // Combined terrain-following grass cannot share one world-Y pivot.
+                // Its vertex colour alpha stores height within each individual blade.
+                return lerp(saturate((positionWS.y - _MavisWindAnchorY) * _MavisWindInvHeight),
+                    saturate(bakedHeight), _UseBladeHeight);
+            }
+
+            float3 ComputeWindOffset(float3 positionWS, float bakedHeight)
             {
                 float3 dir = _MavisWindDir.xyz;
                 dir.y = 0.0;
@@ -129,7 +159,7 @@ Shader "Mavis/FoliageWind"
 
                 // Build a continuous wind field in world space. Adjacent vertices share
                 // the same broad motion instead of receiving unrelated random phases.
-                float heightFactor = saturate((positionWS.y - _MavisWindAnchorY) * _MavisWindInvHeight);
+                float heightFactor = BladeHeight(positionWS, bakedHeight);
                 heightFactor = pow(heightFactor, lerp(1.25, 3.0, _WindTrunkStiffness));
 
                 float2 windPosition = positionWS.xz;
@@ -163,12 +193,12 @@ Shader "Mavis/FoliageWind"
                 Varyings OUT;
                 UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
                 float3 positionWS = TransformObjectToWorld(IN.positionOS.xyz);
-                positionWS += ComputeWindOffset(positionWS);
+                positionWS += ComputeWindOffset(positionWS, IN.color.a);
 
                 float playerInfluence = 0;
                 float3 push = 0;
                 float3 originalWS = TransformObjectToWorld(IN.positionOS.xyz);
-                float rootMask = saturate((originalWS.y - _MavisWindAnchorY) * _MavisWindInvHeight);
+                float rootMask = BladeHeight(originalWS, IN.color.a);
                 rootMask = rootMask * rootMask;
                 // Distant foliage still moves in the wind, without paying for close-up interaction.
                 float3 cameraDelta = originalWS - _WorldSpaceCameraPos;
@@ -200,7 +230,10 @@ Shader "Mavis/FoliageWind"
                 OUT.positionWS = positionWS;
                 OUT.positionCS = TransformWorldToHClip(positionWS);
                 OUT.normalWS   = TransformObjectToWorldNormal(IN.normalOS);
+                OUT.tangentWS = half4(TransformObjectToWorldDir(IN.tangentOS.xyz), IN.tangentOS.w * GetOddNegativeScale());
+                OUT.fogFactor = ComputeFogFactor(OUT.positionCS.z);
                 OUT.uv         = TRANSFORM_TEX(IN.uv, _MainTex);
+                OUT.color      = IN.color;
                 OUT.restPositionWS = originalWS;
                 return OUT;
             }
@@ -219,10 +252,26 @@ Shader "Mavis/FoliageWind"
                 clip(visibility-noise-.00001);
             }
 
-            half4 frag(Varyings IN) : SV_Target
+            void EcologyCoverage(float3 restWS)
+            {
+                if (abs(_EcologyLodFade.y) > .5)
+                {
+                    float noise = frac(sin(dot(floor(restWS.xz * 37),float2(127.1,311.7))) * 43758.5453);
+                    clip(_EcologyLodFade.y > 0 ? noise - _EcologyLodFade.x : _EcologyLodFade.x - noise - .00001);
+                }
+                if (_EcologyDistance.y > 0)
+                {
+                    float fade=1-smoothstep(_EcologyDistance.x,_EcologyDistance.y,distance(restWS,_WorldSpaceCameraPos));
+                    float noise=frac(sin(dot(floor(restWS.xz*19),float2(71.3,119.7)))*27183.17);
+                    clip(fade-noise-.00001);
+                }
+            }
+
+            half4 frag(Varyings IN, FRONT_FACE_TYPE face : FRONT_FACE_SEMANTIC) : SV_Target
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
                 GrassDistanceCoverage(IN.restPositionWS);
+                EcologyCoverage(IN.restPositionWS);
                 #if defined(LOD_FADE_CROSSFADE)
                     LODFadeCrossFade(IN.positionCS);
                 #endif
@@ -234,26 +283,98 @@ Shader "Mavis/FoliageWind"
                     opacity *= SAMPLE_TEXTURE2D(_AlphaMap, sampler_AlphaMap, IN.uv).r;
                 clip(opacity - _Cutoff);
                 half3 albedo  = baseTex.rgb * _BaseColor.rgb;
+                // Baked root-to-tip vertex colour: roots sit in their own shadow while
+                // tips catch light, so each clump gains volume without extra passes.
+                albedo *= IN.color.rgb;
+                // Opt-in for authored botany. Existing meadow/tree materials retain
+                // their calibrated colour response; flowers and fungi keep their hue.
+                if (_BotanicalSurface > .5h)
+                {
+                    half3 normalTS=UnpackNormal(SAMPLE_TEXTURE2D(_BotanicalNormal,sampler_BotanicalNormal,IN.uv));
+                    half3 normal=normalize(IN.normalWS);
+                    half3 tangent=dot(IN.tangentWS.xyz,IN.tangentWS.xyz)>.001?normalize(IN.tangentWS.xyz):normalize(cross(normal,abs(normal.y)>.95?half3(0,0,1):half3(0,1,0)));
+                    half3 bitangent=cross(normal,tangent)*IN.tangentWS.w;
+                    normal=normalize(mul(normalTS,half3x3(tangent,bitangent,normal)));
+                    normal*=IS_FRONT_VFACE(face,1.0h,-1.0h);
+                    half4 map=SAMPLE_TEXTURE2D(_BotanicalSurfaceMap,sampler_BotanicalSurfaceMap,IN.uv);
+                    if (_BotanicalTriplanar > .001)
+                    {
+                        float3 pos=IN.restPositionWS*_BotanicalTriplanar;
+                        half3 N=normalize(IN.normalWS);
+                        half3 weight=pow(abs(N),4);weight/=max(dot(weight,half3(1,1,1)),.001h);
+                        half3 base=SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,pos.zy).rgb*weight.x+
+                            SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,pos.xz).rgb*weight.y+
+                            SAMPLE_TEXTURE2D(_MainTex,sampler_MainTex,pos.xy).rgb*weight.z;
+                        albedo=base*_BaseColor.rgb*IN.color.rgb;
+                        half3 nx=UnpackNormal(SAMPLE_TEXTURE2D(_BotanicalNormal,sampler_BotanicalNormal,pos.zy));
+                        half3 ny=UnpackNormal(SAMPLE_TEXTURE2D(_BotanicalNormal,sampler_BotanicalNormal,pos.xz));
+                        half3 nz=UnpackNormal(SAMPLE_TEXTURE2D(_BotanicalNormal,sampler_BotanicalNormal,pos.xy));
+                        normal=normalize(half3(nx.z*sign(N.x),nx.y,nx.x)*weight.x+
+                            half3(ny.x,ny.z*sign(N.y),ny.y)*weight.y+half3(nz.x,nz.y,nz.z*sign(N.z))*weight.z);
+                    }
+                    // Whole specimens vary gently, without stretching texture frequency.
+                    float2 root=GetObjectToWorldMatrix()._m03_m23;
+                    half tone=frac(sin(dot(root,float2(12.9898,78.233)))*43758.5453);
+                    albedo*=lerp(half3(.88h,.94h,.86h),half3(1.05h,1.0h,.94h),tone);
+                    SurfaceData surface=(SurfaceData)0;
+                    surface.albedo=albedo;surface.alpha=1;surface.metallic=_Metallic;
+                    surface.smoothness=saturate((1-map.r)*_Smoothness);
+                    surface.occlusion=map.g;surface.normalTS=normalTS;
+                    surface.emission=_BotanicalEmission.rgb*map.a;
+                    InputData input=(InputData)0;
+                    input.positionWS=IN.positionWS;input.normalWS=normal;
+                    input.viewDirectionWS=GetWorldSpaceNormalizeViewDir(IN.positionWS);
+                    input.shadowCoord=TransformWorldToShadowCoord(IN.positionWS);
+                    input.bakedGI=SampleSH(normal);input.normalizedScreenSpaceUV=GetNormalizedScreenSpaceUV(IN.positionCS);
+                    input.shadowMask=half4(1,1,1,1);
+                    half4 lit=UniversalFragmentPBR(input,surface);
+                    Light sun=GetMainLight(input.shadowCoord);
+                    half transmit=pow(saturate(dot(-input.viewDirectionWS,sun.direction)),3)*map.b*.13h;
+                    lit.rgb+=albedo*sun.color*transmit*sun.shadowAttenuation;
+                    lit.rgb=MixFog(lit.rgb,IN.fogFactor);
+                    return lit;
+                }
                 // Broad and fine patches keep one shared grass texture from reading as a flat carpet.
                 float2 meadow = IN.positionWS.xz;
                 float broad = sin(meadow.x * 0.041 + meadow.y * 0.017) * sin(meadow.y * 0.033 - meadow.x * 0.012);
                 float fine = sin(meadow.x * 0.19 + 1.7) * sin(meadow.y * 0.16);
-                half3 lush = half3(0.70, 1.08, 0.66);
-                half3 sun = half3(1.08, 0.98, 0.62);
-                albedo *= lerp(sun, lush, saturate(broad * 0.5 + 0.5));
-                albedo *= 0.93 + 0.09 * fine;
+                // The diffuse card is a warm yellow-green; pull most of the hue out
+                // of it and rebuild a deeper green, otherwise the whole field reads
+                // as neon. Keep the brightness drift small so it stays a tint, not
+                // alternating light and dark stripes.
+                half luma = dot(albedo, half3(0.299h, 0.587h, 0.114h));
+                // Rebuild the hue almost entirely from luma. The card texture is
+                // dominated by yellow-green, so a partial mix always leaks lime
+                // back in on the sunlit face; the last 22% keeps blade detail.
+                half3 tint = lerp(half3(0.52h, 0.88h, 0.54h), half3(0.84h, 0.90h, 0.68h),
+                    saturate(broad * 0.5 + 0.5) * 0.65h);
+                albedo = lerp(albedo, luma * tint, 0.82h);
+                albedo *= 0.88h + 0.10h * (fine * 0.5 + 0.5);
 
                 // Simple hemisphere ambient + main directional light
                 Light mainLight = GetMainLight(TransformWorldToShadowCoord(IN.positionWS));
                 half3 N = normalize(IN.normalWS);
                 half NdotL = saturate(dot(N, mainLight.direction));
+                // Grass cards are near-vertical, so a plain N.L makes whole clumps go
+                // black when backlit. Wrap the diffuse and add a cheap transmission
+                // term so sun behind the field still reads as glowing blades.
+                half wrap = saturate((NdotL + 0.40h) / 1.40h);
+                half back = saturate(dot(-N, mainLight.direction)) * 0.20h;
                 half3 sky    = half3(0.55, 0.62, 0.7);
                 half3 ground = half3(0.18, 0.16, 0.13);
                 half3 hemi   = max(SampleSH(N), lerp(ground, sky, N.y * 0.5 + 0.5) * 0.3h);
-                hemi = max(hemi, half3(0.22h, 0.27h, 0.25h));
+                hemi = max(hemi, half3(0.11h, 0.14h, 0.13h));
 
-                half3 lit = albedo * (hemi * 1.05h + mainLight.color * (0.18h + NdotL * 0.72h) *
-                    mainLight.distanceAttenuation * mainLight.shadowAttenuation * 0.85h);
+                // Warm sunlight multiplied into a green albedo is what pushes the field
+                // toward chartreuse no matter how the texture is tinted. Desaturate the
+                // sun for foliage only; the terrain keeps its warmer response.
+                half sunLuma = dot(mainLight.color, half3(0.333h, 0.334h, 0.333h));
+                half3 sun = lerp(mainLight.color, sunLuma.xxx, 0.55h);
+                // Match the island terrain's exposure: the old 0.80 direct term plus a
+                // 1.2 wrap peak made grass ~40% brighter than the ground beneath it,
+                // which is what read as a glowing carpet instead of a lit surface.
+                half3 lit = albedo * (hemi * 0.86h + sun * (wrap + back) *
+                    mainLight.distanceAttenuation * mainLight.shadowAttenuation * 0.54h);
 
                 // Lighten leaves/branches slightly where player is pushing them
                 lit += albedo * IN.squish * 0.15;
@@ -285,6 +406,7 @@ Shader "Mavis/FoliageWind"
             {
                 UNITY_SETUP_INSTANCE_ID(IN);
                 GrassDistanceCoverage(IN.restPositionWS);
+                EcologyCoverage(IN.restPositionWS);
                 #if defined(LOD_FADE_CROSSFADE)
                     LODFadeCrossFade(IN.positionCS);
                 #endif
@@ -326,6 +448,7 @@ Shader "Mavis/FoliageWind"
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+            #pragma multi_compile_fog
             ENDHLSL
         }
 

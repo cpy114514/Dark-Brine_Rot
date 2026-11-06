@@ -76,9 +76,9 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
             voice.rolloffMode = AudioRolloffMode.Linear; voice.dopplerLevel = 0;
             voices[i] = voice;
         }
-        clips[0] = MakeClip("Cotton compression", .27f, 0);
-        clips[1] = MakeClip("Cotton lift", .32f, 1);
-        clips[2] = MakeClip("Cotton soft landing", .42f, 2);
+        clips[0] = Mavis.GameplayAudio.LoadClip("CottonPress");
+        clips[1] = Mavis.GameplayAudio.LoadClip("CottonLift");
+        clips[2] = Mavis.GameplayAudio.LoadClip("CottonLand");
         support = transform.position + Vector3.up * motor.LowestFootWorldOffset;
         lastStep = support;
     }
@@ -307,27 +307,11 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
     }
     void PlaySound(int kind,Vector3 point,float intensity)
     {
-        if(!GameAudioPolicy.SoundEnabled || Time.time-lastSound < .09f || soundVolume<=0) return;
+        if(!GameAudioPolicy.SoundEnabled || Time.time-lastSound < .09f || soundVolume<=0 || !clips[kind]) return;
         lastSound=Time.time;
         var voice=voices[voiceCursor++ % voices.Length];
         voice.transform.position=point;voice.clip=clips[kind];voice.volume=soundVolume*intensity;
         voice.pitch=Random.Range(.94f,1.06f);voice.Play();SoundsPlayed++;
-    }
-    static AudioClip MakeClip(string label,float duration,int kind)
-    {
-        const int rate=22050;int length=Mathf.RoundToInt(rate*duration);
-        var samples=new float[length];var random=new System.Random(9041+kind);
-        float phase=0,filtered=0;
-        for(int i=0;i<length;i++)
-        {
-            float t=i/(float)rate,u=i/(float)(length-1);
-            float frequency=kind==1 ? Mathf.Lerp(110,205,u) : Mathf.Lerp(kind==2 ? 145:180,65,u);
-            phase+=2*Mathf.PI*frequency/rate;
-            filtered=Mathf.Lerp(filtered,(float)random.NextDouble()*2-1,.08f);
-            float envelope=Mathf.Sin(Mathf.PI*u)*Mathf.Exp(-u*(kind==1 ? 3:5));
-            samples[i]=(Mathf.Sin(phase)*.38f+Mathf.Sin(phase*.51f)*.18f+filtered*.65f)*envelope*.5f;
-        }
-        var clip=AudioClip.Create(label,length,1,rate,false);clip.SetData(samples,0);return clip;
     }
     void ClearContacts()
     {
@@ -349,7 +333,6 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
     void OnDisable() => ResetFeedback();
     void OnDestroy()
     {
-        foreach(var clip in clips)if(clip)Destroy(clip);
         if(effects)Destroy(effects);
     }
 }

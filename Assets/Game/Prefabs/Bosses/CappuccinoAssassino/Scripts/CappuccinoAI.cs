@@ -253,7 +253,7 @@ namespace Mavis
 
         void BeginWindup(AttackKind kind, float now)
         {
-            GameplayAudio.Play(GameplayAudio.Cue.Warning, transform.position);
+            if (!bossPresentation) GameplayAudio.Play(GameplayAudio.Cue.Warning, transform.position);
             CurrentAttack = kind; CurrentState = State.Windup;
             stateStartedAt = now; windupDuration = telegraphSeconds + (kind == AttackKind.TwinSlash ? 0f : .25f);
             windupDuration /= AttackFrequencyMultiplier;
