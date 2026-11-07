@@ -5,7 +5,7 @@ Remember to use your map and different kinds tools, they may help you a lot when
 
 ## Click here to play
 
-https://cpy111.itch.io/dark-brine-rot
+[https://cpy111.itch.io/dark-brine-rot](https://github.com/cpy114514/Dark-Brine_Rot/releases)
 
 ## controls
 
