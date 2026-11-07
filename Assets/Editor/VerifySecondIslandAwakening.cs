@@ -21,7 +21,12 @@ public static class VerifySecondIslandAwakening
     static void OnMode(PlayModeStateChange mode)
     {
         if (mode != PlayModeStateChange.EnteredPlayMode || !SessionState.GetBool(Key,false)) return;
-        SessionState.SetBool(Key,false); _ = Run();
+        SessionState.SetBool(Key,false);
+        // This playthrough moves the real player and triggers autosaves. Keep
+        // its progress separate from the player's normal Editor save slot.
+        typeof(Mavis.GameSaveManager).GetField("editorSavePath",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)
+            ?.SetValue(null,Path.GetFullPath("Temp/second-island-full-review-save.json"));
+        _ = Run();
     }
     static void Inject()
     {

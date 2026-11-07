@@ -56,6 +56,7 @@ public static class VerifyPigRoninEncounter
         try
         {
             if (!EditorApplication.isPlaying) throw new Exception("Enter play mode before running the review.");
+            typeof(Mavis.GameSaveManager).GetField("editorSavePath",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static).SetValue(null,Path.GetFullPath("Temp/pig-ronin-test.json"));
             var awakening = UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();
             if (awakening) UnityEngine.Object.DestroyImmediate(awakening.gameObject);
             var marshmallows = GameObject.Find("Marshmallow Friends - Second Island");
@@ -75,6 +76,8 @@ public static class VerifyPigRoninEncounter
             var hips = Array.Find(skin.bones, x => x && x.name == "Hips");
             var chest = Array.Find(skin.bones, x => x && x.name == "Chest");
             var sword = boss.transform.Find("Drawn katana");
+            var trail=sword ? sword.GetComponentInChildren<TrailRenderer>(true) : null;
+            if(!trail)throw new Exception("Sword motion trail missing.");
             var bladePart = sword ? sword.Find("Blade") : null;
             var grip = sword ? sword.Find("Grip") : null;
             var gripHand = sword ? sword.Find("Gripping hand") : null;
@@ -155,12 +158,13 @@ public static class VerifyPigRoninEncounter
                     throw new Exception(kind + " damaged during windup or displayed an attack warning.");
                 ScreenCapture.CaptureScreenshot("Temp/PigRoninReview/" + kind + "-windup.png");
                 float maxArm = 0, maxSword = 0, maxHand = 0, maxVertex = 0, separation = 0, maxWristGap = 0, maxTorsoTwist = 0, maxPenetration = 0;
-                bool sawAttack = false;
+                bool sawAttack = false, sawTrail=false;
                 int samples = 0;
                 while (boss.CurrentState == PigRoninBoss.State.Windup || boss.CurrentState == PigRoninBoss.State.Attack)
                 {
                     if (boss.CurrentState == PigRoninBoss.State.Attack && !sawAttack)
                     { sawAttack = true; ScreenCapture.CaptureScreenshot("Temp/PigRoninReview/" + kind + "-attack.png"); }
+                    if(boss.DamageWindowActive && trail.emitting)sawTrail=true;
                     maxArm = Mathf.Max(maxArm, Quaternion.Angle(startArm, Quaternion.Inverse(boss.transform.rotation) * arm.rotation));
                     maxSword = Mathf.Max(maxSword, Quaternion.Angle(startSword, Quaternion.Inverse(boss.transform.rotation) * sword.rotation));
                     maxHand = Mathf.Max(maxHand, Vector3.Distance(startHand, boss.transform.InverseTransformPoint(hand.position)));
@@ -181,6 +185,7 @@ public static class VerifyPigRoninEncounter
                 }
                 if (!sawAttack || maxArm < 15 || maxSword < 15 || maxHand < .04f || maxVertex < .01f || separation > .03f)
                     throw new Exception($"{kind} visual movement failed: arm={maxArm:F1}, sword={maxSword:F1}, hand={maxHand:F3}, skin={maxVertex:F3}, separation={separation:F3}");
+                if(!sawTrail)throw new Exception(kind+" did not show a sword trail during the strike.");
                 if (maxWristGap > .42f) throw new Exception($"{kind} hand disconnected from the wrist: {maxWristGap:F2}.");
                 if (maxPenetration > .05f) throw new Exception($"{kind} blade penetrated the player capsule by {maxPenetration:F2}.");
                 if (motion.worstSwordStep > 50 || motion.worstHandStep > .55f)
@@ -221,6 +226,8 @@ public static class VerifyPigRoninEncounter
             await Task.Delay(200);
             if (boss.CurrentState != PigRoninBoss.State.Dead || boss.FightActive || boss.GetComponent<CharacterController>().enabled)
                 throw new Exception("Boss death did not end the encounter.");
+            var guide=UnityEngine.Object.FindFirstObjectByType<IslandActivityGuide>();
+            if(!guide || !guide.VisibleTip.Contains("guarding the drifting path"))throw new Exception("Fairy's victory story did not appear.");
             if (!await Until(() => !boss.HudVisible, 5000)) throw new Exception("Boss HUD did not disappear.");
             Result += "death and HUD cleanup OK";
             Status = "passed";

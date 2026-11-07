@@ -12,16 +12,27 @@ public static class VerifyCandyMelodyGarden
 {
     public static string Status="idle",Result="";
     static Keyboard keyboard;
+    static Keyboard previousKeyboard;
     static Key[] keys=Array.Empty<Key>();
     static ThirdPersonPlayerController player;
     static CharacterController body;
     static Transform destination;
     static Transform gardenCentre;
     static bool walking;
+    static string interactTrace="";
+    static int injectedWithF, fPressedAfter;
+    static void TraceInteract()
+    {
+        if(keyboard!=null && keyboard.fKey.isPressed)fPressedAfter++;
+        if(keyboard==null || !keyboard.fKey.wasPressedThisFrame)return;
+        var g=UnityEngine.Object.FindFirstObjectByType<CandyMelodyGarden>();
+        interactTrace=" F="+GameControls.Down(GameControls.Command.Interact)+" modal="+GameUITheme.ModalOpen+" cursor="+Cursor.lockState+" near="+(g&&g.ReservesInteraction)+" lock="+(player&&player.ExternalControlLock)+" movement="+(player&&player.ExternalMovementLock);
+    }
     static readonly FieldInfo Yaw=typeof(ThirdPersonPlayerController).GetField("yaw",BindingFlags.Instance|BindingFlags.NonPublic);
     static void Inject()
     {
         if(keyboard==null || InputState.currentUpdateType!=InputUpdateType.Dynamic)return;
+        if(Array.IndexOf(keys,Key.F)>=0)injectedWithF++;
         keyboard.MakeCurrent();Cursor.lockState=CursorLockMode.Locked;
         if(walking && destination && player)
         {
@@ -46,7 +57,7 @@ public static class VerifyCandyMelodyGarden
         while(!condition()) {if(!EditorApplication.isPlaying || Time.time>end)throw new Exception("Timed out: "+label);await Task.Delay(25);}
     }
     static async Task Press(Key key)
-    {walking=false;keys=Array.Empty<Key>();await Wait(.15f);keys=new[]{key};await Wait(.12f);keys=Array.Empty<Key>();await Wait(.22f);}
+    {walking=false;keys=Array.Empty<Key>();await Wait(.15f);keys=new[]{key};await Wait(.25f);keys=Array.Empty<Key>();await Wait(.22f);}
     static async Task WalkTo(Transform target)
     {
         if(Vector3.Distance(Vector3.ProjectOnPlane(player.transform.position-target.position,Vector3.up),Vector3.zero)<4f)
@@ -68,27 +79,28 @@ public static class VerifyCandyMelodyGarden
     }
     public static async void Run()
     {
-        Status="running";Result="";
+        Status="running";Result="";interactTrace="";injectedWithF=fPressedAfter=0;
         try
         {
             if(!EditorApplication.isPlaying)throw new Exception("Enter play mode first.");
             typeof(GameSaveManager).GetField("editorSavePath",BindingFlags.NonPublic|BindingFlags.Static).SetValue(null,System.IO.Path.GetFullPath("Temp/candy-melody-test.json"));
             var opening=UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();if(opening)UnityEngine.Object.DestroyImmediate(opening.gameObject);
             await Wait(.4f);
-            player=UnityEngine.Object.FindFirstObjectByType<ThirdPersonPlayerController>();body=player.GetComponent<CharacterController>();keyboard=Keyboard.current;
+            player=UnityEngine.Object.FindFirstObjectByType<ThirdPersonPlayerController>();body=player.GetComponent<CharacterController>();
+            previousKeyboard=Keyboard.current;keyboard=InputSystem.AddDevice<Keyboard>();
             var garden=UnityEngine.Object.FindFirstObjectByType<CandyMelodyGarden>();var board=UnityEngine.Object.FindFirstObjectByType<SkyboardReward>();
             gardenCentre=garden.transform;
             if(!player || !garden || !board || keyboard==null)throw new Exception("Garden, player, board or keyboard missing.");
             if(garden.RewardClaimed || garden.CurrentStage!=CandyMelodyGarden.Stage.Idle)throw new Exception("Garden did not start unclaimed and idle.");
             foreach(var renderer in garden.GetComponentsInChildren<Renderer>(true))
-                if(!renderer.GetComponent<Collider>() && !renderer.GetComponentInParent<Collider>())throw new Exception("Visible garden object lacks collision: "+renderer.name);
+                if(!renderer.GetComponent<Collider>() && !renderer.GetComponentInParent<Collider>(true))throw new Exception("Visible garden object lacks collision: "+renderer.name);
             if(!board.CollectSpawnTestKit())throw new Exception("Could not set up board interaction test.");
             var island=player.GetComponent<MarshmallowIslandExperience>().surface.GetComponent<Collider>();
             var q=garden.StartSign.position+new Vector3(0,0,-3);
             if(!island.Raycast(new Ray(q+Vector3.up*50,Vector3.down),out var hit,100))throw new Exception("No ground by the garden sign.");
-            Place(hit.point);InputSystem.onBeforeUpdate+=Inject;await Wait(.5f);
+            Place(hit.point);InputSystem.onBeforeUpdate+=Inject;InputSystem.onAfterUpdate+=TraceInteract;await Wait(.5f);
             await Press(Key.F);
-            if(board.Flying || garden.CurrentStage!=CandyMelodyGarden.Stage.Showing)throw new Exception("Sign did not start the melody or F launched the board.");
+            if(board.Flying || garden.CurrentStage!=CandyMelodyGarden.Stage.Showing)throw new Exception("Sign did not start the melody or F launched the board. F input frames="+injectedWithF+" pressed="+fPressedAfter+interactTrace);
             await Until(()=>garden.CurrentStage==CandyMelodyGarden.Stage.Listening,8,"first sequence");
             int first=garden.SequenceAt(0),second=garden.SequenceAt(1),third=garden.SequenceAt(2);
             // The sign replays the same melody and clears partially entered notes.
@@ -119,7 +131,11 @@ public static class VerifyCandyMelodyGarden
             if(!player.GetComponent<SecondIslandSaveState>().Capture().melodyGardenReward || !GameSaveManager.SaveCurrentGame())throw new Exception("Melody garden was not saved.");
             var map=player.GetComponent<IslandMapUI>();if(!map.SetOpen(true))throw new Exception("Could not open map.");
             Canvas.ForceUpdateCanvases();var labels=UnityEngine.Object.FindObjectsByType<UnityEngine.UI.Text>(FindObjectsSortMode.None);
-            bool marker=Array.Exists(labels,t=>t.text=="♪"),legend=Array.Exists(labels,t=>t.text.Contains("Melody garden"));
+            var flags=BindingFlags.NonPublic|BindingFlags.Instance;
+            var targets=(System.Collections.Generic.List<Transform>)typeof(IslandMapUI).GetField("targets",flags).GetValue(map);
+            var markers=(System.Collections.Generic.List<RectTransform>)typeof(IslandMapUI).GetField("markers",flags).GetValue(map);
+            int markerIndex=targets.IndexOf(garden.MapAnchor);
+            bool marker=markerIndex>=0 && markers[markerIndex].GetComponent<UnityEngine.UI.Text>().text=="✓",legend=Array.Exists(labels,t=>t.text.Contains("Melody garden"));
             if(!marker || !legend || !map.MapGraphic.rectTransform.rect.Contains(map.MapGraphic.WorldToMap(garden.MapAnchor.position)))throw new Exception("Melody map marker or legend is missing.");
             map.SetOpen(false);
             if(!GameSaveManager.QueueContinue())throw new Exception("Could not queue isolated save.");
@@ -143,7 +159,13 @@ public static class VerifyCandyMelodyGarden
             Status="passed";Result="Walked and played all three melody rounds with real input; mistake retry, replay, board shortcut, collision, map, first reward and Continue passed.";
         }
         catch(Exception e){Status="failed";Result=e.ToString();}
-        finally{walking=false;keys=Array.Empty<Key>();InputSystem.onBeforeUpdate-=Inject;if(keyboard!=null)InputState.Change(keyboard,new KeyboardState());}
+        finally
+        {
+            walking=false;keys=Array.Empty<Key>();InputSystem.onBeforeUpdate-=Inject;InputSystem.onAfterUpdate-=TraceInteract;
+            if(keyboard!=null && keyboard.added)InputSystem.RemoveDevice(keyboard);
+            if(previousKeyboard!=null && previousKeyboard.added)previousKeyboard.MakeCurrent();
+            keyboard=null;previousKeyboard=null;
+        }
         Debug.Log("Candy melody garden test: "+Status+" "+Result);
     }
 }

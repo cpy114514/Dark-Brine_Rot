@@ -42,6 +42,7 @@ public static class VerifyMarshmallowHopRecovery
         try
         {
             if (!EditorApplication.isPlaying) throw new Exception("Enter play mode first.");
+            typeof(Mavis.GameSaveManager).GetField("editorSavePath",BindingFlags.NonPublic|BindingFlags.Static).SetValue(null,Path.GetFullPath("Temp/hop-recovery-test.json"));
             var opening = UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();
             if (opening) UnityEngine.Object.DestroyImmediate(opening.gameObject);
             var guide = UnityEngine.Object.FindFirstObjectByType<MarshmallowChallengeGuide>();
@@ -115,6 +116,8 @@ public static class VerifyMarshmallowHopRecovery
             await Place(12);
             if (recovery.AssistanceActive || recovery.ConsecutiveFalls != 0)
                 throw new Exception("Assistance did not finish after three rows of new progress.");
+            int starsBefore=recovery.StarMask;pressed=new[]{Key.Backspace};await Wait(1.1f);pressed=Array.Empty<Key>();
+            if(recovery.CurrentRow!=1 || recovery.StarMask!=starsBefore)throw new Exception("Return to start did not preserve stars.");
             Result += "safety net, fall rules, repeat-fall rescue and recovery after new progress passed";
             Status = "passed";
         }

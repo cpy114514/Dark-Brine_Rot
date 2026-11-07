@@ -17,6 +17,7 @@ public sealed class SkyboardRingRally : MonoBehaviour
         new Vector2(20,1965),new Vector2(-15,2000),new Vector2(-50,2035),new Vector2(-95,2055),new Vector2(-140,2035),
         new Vector2(-165,1995),new Vector2(-140,1955),new Vector2(-100,1935),new Vector2(-60,1925),new Vector2(-20,1935)
     };
+    static readonly Vector2[] ClearanceOffsets={new Vector2(7,0),new Vector2(-7,0),new Vector2(0,7),new Vector2(0,-7)};
     sealed class Ring
     {
         public Transform root;
@@ -41,7 +42,7 @@ public sealed class SkyboardRingRally : MonoBehaviour
     Text status, detail;
     Vector3 previous, lastCleared, moveFrom, moveTo;
     bool hasPrevious, wasFlying, boostActive, relocating;
-    float nextLookup, startedAt, boostUntil, baseSpeed, messageUntil, lastTime, targetDeadline, moveStarted;
+    float nextLookup, startedAt, boostUntil, baseSpeed, messageUntil, lastTime, targetDeadline, moveStarted, nextHudRefresh;
     string resultText="";
     public bool Running {get;private set;}
     public bool RewardClaimed {get;private set;}
@@ -124,7 +125,7 @@ public sealed class SkyboardRingRally : MonoBehaviour
             if(Vector3.Distance(point,current)>MaxShift || Vector3.Distance(point,current)<8f || Vector3.Distance(point,anchor)>MaxShift)continue;
             if(index>0 && Vector3.Distance(point,lastCleared)>95f)continue;
             bool clear=true;
-            foreach(var offset in new[]{new Vector2(7,0),new Vector2(-7,0),new Vector2(0,7),new Vector2(0,-7)})
+            foreach(var offset in ClearanceOffsets)
                 if(!TryGround(xy+offset,out var nearby) || nearby.point.y>point.y-RingRadius-.5f){clear=false;break;}
             if(clear)return point;
         }
@@ -234,7 +235,6 @@ public sealed class SkyboardRingRally : MonoBehaviour
         }
         if(!player || !body || !board || rings.Count!=Route.Length)return;
         var cam=Camera.main;
-        if(signLabel && cam)signLabel.transform.rotation=cam.transform.rotation;
         for(int i=0;i<rings.Count;i++)if(rings[i].label.activeSelf && cam)rings[i].label.transform.rotation=cam.transform.rotation;
         bool flying=board.Flying && body.enabled && player.isActiveAndEnabled;
         if(wasFlying && !flying && Running)Fail("Flight ended. Start again at ring 1.");
@@ -320,6 +320,7 @@ public sealed class SkyboardRingRally : MonoBehaviour
     }
     void RefreshRings()
     {
+        nextHudRefresh=0;
         for(int i=0;i<rings.Count;i++)
         {
             bool next=i==(Running?NextRing:0);
@@ -338,6 +339,8 @@ public sealed class SkyboardRingRally : MonoBehaviour
         bool approaching=board.Flying && sign && Vector3.Distance(Vector3.ProjectOnPlane(player.transform.position-sign.transform.position,Vector3.up),Vector3.zero)<120f;
         bool show=!modal && (Running || result || close || approaching);
         if(hudCard.activeSelf!=show)hudCard.SetActive(show);if(!show)return;
+        if(Time.unscaledTime<nextHudRefresh)return;
+        nextHudRefresh=Time.unscaledTime+.1f;
         if(Running)
         {
             status.text="SKYBOARD RALLY  ·  "+NextRing+" / "+rings.Count+"  ·  "+Elapsed.ToString("F1")+"s";

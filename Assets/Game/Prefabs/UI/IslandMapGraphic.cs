@@ -80,6 +80,10 @@ namespace Mavis
                     if(rally && rally.StartMarker)bounds.Encapsulate(rally.StartMarker.position);
                     var melody=FindFirstObjectByType<CandyMelodyGarden>();
                     if(melody && melody.MapAnchor)bounds.Encapsulate(melody.MapAnchor.position);
+                    var bounce=FindFirstObjectByType<CandyBounceGarden>();
+                    if(bounce && bounce.MapAnchor)bounds.Encapsulate(bounce.MapAnchor.position);
+                    var friends=FindFirstObjectByType<MarshmallowFriendsQuest>();
+                    if(friends && friends.MapAnchor)bounds.Encapsulate(friends.MapAnchor.position);
                 }
             }
             // Include an offshore player without changing the map's north-up orientation.

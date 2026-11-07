@@ -70,7 +70,7 @@ public sealed class CandyHuntQuest : MonoBehaviour
     PlayerHealth health;
     Canvas hud;
     RectTransform card, portrait;
-    Text title, clue, direction, talkPrompt;
+    Text title, clue, direction, talkPrompt, questLandmarkText;
     Camera portraitCamera;
     GameObject portraitRoot, talkPromptRoot, questLandmark;
     Transform portraitLeftWing, portraitRightWing;
@@ -126,8 +126,8 @@ public sealed class CandyHuntQuest : MonoBehaviour
             landmark.localPosition=new Vector3(0,4.8f,0);
             float scale=Mathf.Max(.001f,Mathf.Abs(fairy.lossyScale.x));
             landmark.localScale=Vector3.one*(.028f/scale);
-            var landmarkText=landmark.GetComponentInChildren<Text>();
-            if(landmarkText){landmarkText.fontSize=34;landmarkText.color=new Color(1f,.86f,.53f);}
+            questLandmarkText=landmark.GetComponentInChildren<Text>();
+            if(questLandmarkText){questLandmarkText.fontSize=34;questLandmarkText.color=new Color(1f,.86f,.53f);}
             questLandmark.SetActive(false);
         }
     }
@@ -161,8 +161,7 @@ public sealed class CandyHuntQuest : MonoBehaviour
             bool show=(!Started || Completed && !RewardClaimed) && allowed && fairyDistance>=12f && fairyDistance<=90f;
             if(questLandmark.activeSelf!=show)questLandmark.SetActive(show);
             if(show && cam)questLandmark.transform.rotation=cam.transform.rotation;
-            var landmarkText=questLandmark.GetComponentInChildren<Text>();
-            if(landmarkText)landmarkText.text=Completed && !RewardClaimed ? "!  RETURN TO FAIRY\nCLAIM YOUR REWARD" : "!  OPTIONAL QUEST\nCANDY HUNT";
+            if(questLandmarkText)questLandmarkText.text=Completed && !RewardClaimed ? "!  RETURN TO FAIRY\nCLAIM YOUR REWARD" : "!  OPTIONAL QUEST\nCANDY HUNT";
         }
         if(talkPromptRoot)
         {

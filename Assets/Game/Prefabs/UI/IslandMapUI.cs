@@ -115,6 +115,10 @@ namespace Mavis
                 if(rally && rally.StartMarker)AddMarker(rally.StartMarker,"S",new Color(1f,.85f,.35f),26);
                 var melody=FindFirstObjectByType<CandyMelodyGarden>();
                 if(melody && melody.MapAnchor)AddMarker(melody.MapAnchor,"♪",new Color(.69f,1f,.82f),30);
+                var bounce=FindFirstObjectByType<CandyBounceGarden>();
+                if(bounce && bounce.MapAnchor)AddMarker(bounce.MapAnchor,"★",new Color(1f,.78f,.32f),28);
+                var friends=FindFirstObjectByType<MarshmallowFriendsQuest>();
+                if(friends && friends.MapAnchor)AddMarker(friends.MapAnchor,"F",new Color(.65f,.93f,1f),26);
                 var reward=FindFirstObjectByType<GravityWristbandReward>();
                 wristband=reward;
                 if(reward && reward.enemyRoot)
@@ -150,9 +154,11 @@ namespace Mavis
         {
             playerArrow.rectTransform.anchoredPosition = MapGraphic.WorldToMap(transform.position);
             playerArrow.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -transform.eulerAngles.y);
+            var friends=gameObject.scene.path=="Assets/Scenes/Second Island/Second Island.unity" ? FindFirstObjectByType<MarshmallowFriendsQuest>() : null;
             for (int i = 0; i < targets.Count; i++)
             {
                 var target = targets[i];
+                if(friends && target && (target==friends.Home || target==friends.Lost))target=targets[i]=friends.MapAnchor;
                 bool visible = target != null && target.gameObject.activeInHierarchy;
                 if (visible && target.TryGetComponent<NailongHealth>(out var health)) visible = !health.IsDead;
                 if (visible && target.TryGetComponent<Health>(out var generic)) visible = !generic.IsDead;
@@ -160,13 +166,20 @@ namespace Mavis
                     markers[i].color = cache.IsAvailable ? new Color(1, .83f, .2f) : GameUITheme.Muted;
                 if (visible && wristband && target.name=="Camp map anchor" && target.parent && target.parent.parent==wristband.enemyRoot)
                     markers[i].color = wristband.CampCleared(target.parent.GetSiblingIndex()) ? GameUITheme.Muted : new Color(1f,.7f,.25f);
+                if(visible)
+                {
+                    bool completed=target.TryGetComponent<CandyBounceGarden>(out var b) && b.RewardClaimed || target.TryGetComponent<CandyMelodyGarden>(out var m) && m.RewardClaimed ||
+                        target.GetComponentInParent<SkyboardRingRally>() is SkyboardRingRally rally && rally.RewardClaimed ||
+                        target.GetComponentInParent<CandyHuntQuest>() is CandyHuntQuest hunt && hunt.fairy==target && hunt.RewardClaimed || friends && target==friends.MapAnchor && friends.Stage==3;
+                    if(completed){var text=markers[i];text.text="✓";text.color=new Color(.55f,1f,.72f);}
+                }
                 markers[i].gameObject.SetActive(visible);
                 if (visible)
                 {
                     Vector2 position = MapGraphic.WorldToMap(target.position);
                     // Keep nearby landmarks visible beside the player arrow. The icon
                     // returns to its actual projected position once they separate.
-                    if (target.GetComponent<NealFairyHover>() != null || target.GetComponent<CandyHouseMarker>() != null || target.GetComponent<CandyMelodyGarden>() != null || target.name=="Skyboard rally start sign")
+                    if (target.GetComponent<NealFairyHover>() != null || target.GetComponent<CandyHouseMarker>() != null || target.GetComponent<CandyMelodyGarden>() != null || target.GetComponent<CandyBounceGarden>() != null || friends && (target==friends.Home || target==friends.Lost) || target.name=="Skyboard rally start sign")
                     {
                         Vector2 separation = position - playerArrow.rectTransform.anchoredPosition;
                         if (separation.sqrMagnitude < 28f * 28f)
@@ -206,7 +219,8 @@ namespace Mavis
         }
         void Build()
         {
-            foreach (string name in Font.GetOSInstalledFontNames())
+            if(gameObject.scene.path==SecondIslandBlackboards.ScenePath)font=SecondIslandBlackboards.InterfaceFont;
+            if(!font)foreach (string name in Font.GetOSInstalledFontNames())
                 if (name == "Microsoft YaHei") { font = Font.CreateDynamicFontFromOSFont(name, 24); ownsFont = true; break; }
             if (font == null) font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             root = new GameObject("Island Map Screen", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
@@ -246,6 +260,8 @@ namespace Mavis
                 Label(root.transform, "●  Candy clue", 22, new Vector2(480, -35), new Vector2(330, 40), new Color(1f,.42f,.7f));
                 Label(root.transform, "S  Skyboard rally", 22, new Vector2(480, -75), new Vector2(330, 40), new Color(1f,.85f,.35f));
                 Label(root.transform, "♪  Melody garden", 22, new Vector2(480, -115), new Vector2(330, 40), new Color(.69f,1f,.82f));
+                Label(root.transform, "★  Bounce garden", 22, new Vector2(480, -155), new Vector2(330, 40), new Color(1f,.78f,.32f));
+                Label(root.transform, "F  Friends story   ·   ✓  Completed", 18, new Vector2(480, -190), new Vector2(360, 32), new Color(.65f,.93f,1f));
             }
             else
             {
@@ -257,7 +273,7 @@ namespace Mavis
             Label(root.transform, "R  Shore camp · HP / SP / ammo", 20, new Vector2(480, -95), new Vector2(330, 48), new Color(1, .83f, .2f));
             Label(root.transform, "▣ Ammo supply points", 22, new Vector2(480, -145), new Vector2(330, 48), new Color(1, .83f, .2f));
             }
-            coordinates = Label(root.transform, "", 18, new Vector2(480, -200), new Vector2(360, 120), GameUITheme.Secondary);
+            coordinates = Label(root.transform, "", 18, new Vector2(480, -245), new Vector2(360, 65), GameUITheme.Secondary);
             Label(root.transform, "M / Esc to close · Game paused while viewing", 17, new Vector2(-165, -465), new Vector2(1100, 55), GameUITheme.Secondary);
             var close = Box(root.transform, "Close map", new Vector2(480, -325), new Vector2(290, 64), GameUITheme.Track);
             var closeButton=close.gameObject.AddComponent<Button>();

@@ -91,8 +91,13 @@ public static class PlaySecondIslandMarshmallow
     static void Check(bool ok,string label) { if(!ok)throw new Exception(label); }
     static async Task Run()
     {
+        var outposts=GameObject.Find("Marshmallow Friends - Second Island");
+        bool outpostsWereActive=outposts && outposts.activeSelf;
         try
         {
+            // Keep combat actors from supporting the player while measuring
+            // the island surface; restore them as soon as the test ends.
+            if(outposts)outposts.SetActive(false);
             Directory.CreateDirectory(Folder);
             samples.Clear(); flights.Clear(); inFlight = false; previousVertical = 0f; screenshot = 0;
             observedLandings=landingScreenshots=0;landingCaptureAt=-1;Summary=null;
@@ -162,6 +167,7 @@ public static class PlaySecondIslandMarshmallow
         catch(Exception e) { Status = "failed: " + e; File.WriteAllText(Folder + "/playthrough-error.txt", e.ToString()); }
         finally
         {
+            if(outposts)outposts.SetActive(outpostsWereActive);
             InputSystem.onBeforeUpdate -= Inject;
             if (keyboard != null) InputSystem.RemoveDevice(keyboard);
             if (mouse != null) InputSystem.RemoveDevice(mouse);

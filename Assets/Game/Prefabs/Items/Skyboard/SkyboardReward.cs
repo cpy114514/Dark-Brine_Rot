@@ -164,6 +164,7 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         var label = t.GetComponent<Text>(); label.font = GameLocalization.Font ? GameLocalization.Font : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         label.text = value; label.fontSize = 26; label.alignment = TextAnchor.MiddleCenter; label.color = Color.white; label.raycastTarget = false;
         var outline = t.AddComponent<Outline>(); outline.effectColor = Color.black; outline.effectDistance = new Vector2(2, -2);
+        SecondIslandBlackboards.Attach(go);
     }
     bool InputAllowed => player && body && body.enabled && player.enabled && !player.ExternalControlLock &&
         !(health && health.currentHealth <= 0) && !PlayerDeathRespawn.IsOpen && !GameUITheme.ModalOpen &&
@@ -190,7 +191,9 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
             {
                 var residents=FindFirstObjectByType<FriendlyMarshmallowVillage>();
                 var melody=FindFirstObjectByType<CandyMelodyGarden>();
-                if((!residents || !residents.ReservesInteraction) && (!melody || !melody.ReservesInteraction))TryStartFlight();
+                var bounce=FindFirstObjectByType<CandyBounceGarden>();
+                var friends=FindFirstObjectByType<MarshmallowFriendsQuest>();
+                if((!residents || !residents.ReservesInteraction) && (!melody || !melody.ReservesInteraction) && (!bounce || !bounce.ReservesInteraction) && (!friends || !friends.ReservesInteraction))TryStartFlight();
             }
         }
         if (Flying && InputAllowed)

@@ -19,7 +19,15 @@ namespace Mavis
         static TMP_FontAsset latinFont;
         static TMP_FontAsset uiFont;
         public static GameLanguage Language { get { EnsureLoaded(); return language; } }
-        public static Font Font => font ? font : font = Resources.Load<Font>("Localization/NotoSansCJKsc-Regular");
+        public static Font Font
+        {
+            get
+            {
+                if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().path==SecondIslandBlackboards.ScenePath && SecondIslandBlackboards.InterfaceFont)
+                    return SecondIslandBlackboards.InterfaceFont;
+                return font ? font : font = Resources.Load<Font>("Localization/NotoSansCJKsc-Regular");
+            }
+        }
         public static TMP_FontAsset TMPFont
         {
             get

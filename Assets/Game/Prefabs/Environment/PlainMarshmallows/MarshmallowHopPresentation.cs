@@ -84,10 +84,12 @@ public sealed class MarshmallowHopPresentation : MonoBehaviour
 
     public void ShowFall(int row, bool assisted)
     {
-        notice = assisted ? "ASSIST ON  ·  Slower platforms  ·  Rescue row " + row : "Back to row " + row + "  ·  Try again!";
+        notice = assisted ? "ASSIST ON  ·  Slower platforms  ·  Rescue row " + row + "\nStars and rewards remain available." : "Back to row " + row + "  ·  Try again!";
         noticeUntil = Time.time + 5f;
         nextHudRefresh=0;
     }
+    public void ShowReturn()
+    { notice="Returned to start  ·  Your stars are saved.";noticeUntil=Time.time+5;nextHudRefresh=0; }
     public void ShowStar(int count)
     {
         notice = count == 5 ? "All 5 stars found!" : "Star collected!  " + count + " / 5";
@@ -118,7 +120,7 @@ public sealed class MarshmallowHopPresentation : MonoBehaviour
         progress.text="MARSHMALLOW HOP   " + recovery.CurrentRow + " / 22    |    BONUS STARS " + recovery.StarCount + " / 5";
         message.text=Time.time<noticeUntil ? notice : recovery.AssistanceActive ?
             "ASSIST ON  ·  Slower platforms  ·  Rescue row " + recovery.RescueRow :
-            "Stars are optional. Choose your path!";
+            "Stars are optional. Hold Backspace to return to start.";
     }
 
     void OnDestroy()

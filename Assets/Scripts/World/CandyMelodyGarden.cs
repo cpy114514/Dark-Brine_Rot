@@ -58,6 +58,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
     EquipmentInventory inventory;
     EquipmentItem scroll;
     SkyboardReward board;
+    CandyBounceGarden bounce;
     Collider island;
     AudioSource audioSource;
     GameObject sign,signLabel,signPrompt,hud,hudCard;
@@ -141,6 +142,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         Shape("Icing sign top",PrimitiveType.Cube,sign.transform,new Vector3(0,5.1f,0),new Vector3(7.4f,.2f,.5f),cream);
         Shape("Star on sign",PrimitiveType.Sphere,sign.transform,new Vector3(0,5.4f,0),Vector3.one*.45f,gold);
         signLabel=Label(sign.transform,"CANDY MELODY GARDEN\nWatch the candy lights and listen\nRepeat the colours in order\n3 rounds  ·  First win: 1 speed scroll",3.7f,.012f);
+        signLabel.transform.localPosition=new Vector3(0,3.7f,-.27f);
         ((RectTransform)signLabel.transform).sizeDelta=new Vector2(550,165);
         signPrompt=Label(sign.transform,"",6.4f,.017f);signPromptText=signPrompt.GetComponentInChildren<Text>();signPrompt.SetActive(false);
     }
@@ -191,6 +193,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
             nextLookup=Time.unscaledTime+1;player=FindFirstObjectByType<ThirdPersonPlayerController>();
             if(player){body=player.GetComponent<CharacterController>();health=player.GetComponent<PlayerHealth>();inventory=player.GetComponent<EquipmentInventory>();}
             board=FindFirstObjectByType<SkyboardReward>();scroll=Resources.Load<EquipmentItem>(SkyboardReward.ScrollItemPath);
+            bounce=FindFirstObjectByType<CandyBounceGarden>();
         }
         if(!player || !body || notes.Count!=4)return;
         bool allowed=Time.timeScale>0 && body.enabled && player.isActiveAndEnabled && (!health || health.currentHealth>0) &&
@@ -199,12 +202,6 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         if((CurrentStage==Stage.Showing || CurrentStage==Stage.Listening) && distance>42f){StopPlayback();CurrentStage=Stage.Idle;SetLit(-1);feedback="";}
         if(CurrentStage!=Stage.Showing && lit>=0 && Time.time>=lightUntil)SetLit(-1);
         var cam=Camera.main;
-        if(signLabel && cam)
-        {
-            signLabel.transform.rotation=cam.transform.rotation;
-            Vector3 toward=cam.transform.position-sign.transform.position;toward.y=0;
-            signLabel.transform.position=sign.transform.position+Vector3.up*3.7f+(toward.sqrMagnitude>.001f?toward.normalized*.38f:Vector3.zero);
-        }
         bool bySign=allowed && Near(sign.transform,4f);
         if(signPrompt.activeSelf!=bySign)signPrompt.SetActive(bySign);
         if(bySign && cam)signPrompt.transform.rotation=cam.transform.rotation;
@@ -218,7 +215,6 @@ public sealed class CandyMelodyGarden : MonoBehaviour
             if(allowed && CurrentStage==Stage.Listening && inside && !insideNote[i] && d<closest){closest=d;entered=i;}
             insideNote[i]=inside;
             if(n.prompt && cam)n.prompt.transform.rotation=cam.transform.rotation;
-            if(n.promptText)n.promptText.text=(i+1)+"  "+Names[i];
         }
         if(entered>=0)SelectNote(entered);
         foreach(var friend in friends)
@@ -228,7 +224,10 @@ public sealed class CandyMelodyGarden : MonoBehaviour
             friend.visual.localPosition=Vector3.up*(nearby?Mathf.Max(0,Mathf.Sin(t))*.10f:.015f*Mathf.Sin(t));
             if(friend.arm)friend.arm.localRotation=Quaternion.Euler(0,0,nearby?75+Mathf.Sin(t*1.6f)*18:12);
         }
-        UpdateHud(distance<35f && allowed);
+        float bounceDistance=bounce?Vector3.ProjectOnPlane(player.transform.position-bounce.transform.position,Vector3.up).magnitude:float.PositiveInfinity;
+        bool melodyPlaying=CurrentStage==Stage.Showing || CurrentStage==Stage.Listening;
+        bool bounceHasPriority=bounce && bounceDistance<30f && (bounce.Playing || (!melodyPlaying && bounceDistance<distance));
+        UpdateHud(distance<35f && allowed && !bounceHasPriority);
         if(!allowed || Cursor.lockState!=CursorLockMode.Locked || !GameControls.Down(GameControls.Command.Interact))return;
         if(bySign)lastInteractionFrame=Time.frameCount;
         if(bySign && CurrentStage!=Stage.Showing)

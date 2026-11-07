@@ -242,6 +242,22 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         platformCarryVelocity=Vector3.zero;airborneTime=0;verticalSpeed=-groundStickSpeed;
         landingImpactSpeed=0;landingTimer=.42f;SetMotion(4,"Land",.06f);
     }
+    // A candy spring uses the same gravity and airborne animation as a jump.
+    public bool TryCandySpring(float height)
+    {
+        if (!enabled || !characterController || !characterController.enabled || height <= 0f ||
+            ExternalControlLock || ExternalMovementLock || Swimming ||
+            rollTimer > 0f || airFlipTimer > 0f || GameUITheme.ModalOpen ||
+            (combat && combat.IsJumpSlashActive)) return false;
+        float launchSpeed = Mathf.Sqrt(2f * TraversalGravity * height);
+        if (verticalSpeed >= launchSpeed) return false;
+        verticalSpeed = launchSpeed;
+        if (SoftTraversal) marshmallow.CancelSpacewalk();
+        coyoteTimer = jumpBufferTimer = 0f;
+        airborneTime = landingTimer = 0f;
+        SetMotion(2, "Jump Start", .1f);
+        return true;
+    }
     ParticleSystem waterRipples;
     ParticleSystem waterDroplets;
     ParticleSystem underwaterBubbles;

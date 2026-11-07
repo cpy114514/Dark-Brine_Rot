@@ -221,7 +221,11 @@ public sealed partial class PigRoninBoss : MonoBehaviour
     {
         if(dead)return;dead=true;FightActive=false;DamageWindowActive=false;CurrentState=State.Dead;victoryAt=Time.time;
         if(motor)motor.enabled=false;
-        if(gameObject.scene.path=="Assets/Scenes/Second Island/Second Island.unity")GameSaveManager.RequestAutosave();
+        if(gameObject.scene.path=="Assets/Scenes/Second Island/Second Island.unity")
+        {
+            FindFirstObjectByType<IslandActivityGuide>()?.ShowBossVictory();
+            GameSaveManager.RequestAutosave();
+        }
     }
     void LateUpdate()
     {

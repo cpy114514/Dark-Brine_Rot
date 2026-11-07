@@ -83,7 +83,7 @@ public static class VerifyFriendlyMarshmallowVillage
             float beforeLight=Vector3.Distance(v.Guide.position,v.SmallLight.position);await Wait(.8f);
             if(Vector3.Distance(v.Guide.position,v.SmallLight.position)>=beforeLight-.5f)throw new Exception("Marshmallow did not lead toward the Small Light.");
             foreach(var renderer in v.SmallLight.GetComponentsInChildren<Renderer>())
-                if(!renderer.GetComponent<Collider>() && !renderer.GetComponentInParent<Collider>())throw new Exception("Small Light part has no collider: "+renderer.name);
+                if(!renderer.GetComponent<Collider>() && !renderer.GetComponentInParent<Collider>(true))throw new Exception("Small Light part has no collider: "+renderer.name);
             var lampPoint=v.SmallLight.position+new Vector3(0,0,-3);
             if(!ground.Raycast(new Ray(lampPoint+Vector3.up*50,Vector3.down),out var lampGround,100))throw new Exception("No ground beside Small Light.");
             Place(p,lampGround.point);await Wait(.4f);await Press(Key.F);
@@ -100,7 +100,7 @@ public static class VerifyFriendlyMarshmallowVillage
             await Wait(2f);
             if(!v.InGrove || !v.IsSmall || p.transform.localScale.x>=normalScale.x*.5f || Vector3.Distance(p.transform.position,v.Grove.position)>20 || !body.isGrounded)throw new Exception("Small Light entrance did not shrink and place the player safely in the grove: "+p.transform.position);
             foreach(var renderer in v.Grove.GetComponentsInChildren<Renderer>())
-                if(!renderer.GetComponent<Collider>() && !renderer.GetComponentInParent<Collider>())throw new Exception("Visible grove object has no collider: "+renderer.name);
+                if(!renderer.GetComponent<Collider>() && !renderer.GetComponentInParent<Collider>(true))throw new Exception("Visible grove object has no collider: "+renderer.name);
             var board=UnityEngine.Object.FindFirstObjectByType<SkyboardReward>();
             if(!board || !board.CollectSpawnTestKit() || board.TryStartFlight())throw new Exception("Skyboard should not launch inside the tiny grove.");
             var walkStart=p.transform.position;

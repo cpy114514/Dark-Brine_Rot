@@ -174,6 +174,7 @@ public sealed class GravityWristbandReward : MonoBehaviour
         label.fontSize=28;label.alignment=TextAnchor.MiddleCenter;label.color=new Color(.75f,.95f,1);label.raycastTarget=false;
         label.text=GameLocalization.Text("Gravity Wristband\nWalk up to collect");
         var outline=text.AddComponent<Outline>();outline.effectColor=Color.black;outline.effectDistance=new Vector2(2,-2);
+        SecondIslandBlackboards.Attach(caption);
         var hud=new GameObject("Gravity reward notification",typeof(RectTransform),typeof(Canvas));hud.transform.SetParent(transform,false);
         var canvas=hud.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=65;GameUITheme.Scale(canvas);
         message=GameUITheme.Label(hud.transform,"Reward notification",28,new Vector2(0,-115),new Vector2(1050,60),TextAnchor.MiddleCenter);

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Mavis;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>Returns a fallen course participant to the appropriate moving row.</summary>
 [DefaultExecutionOrder(500), DisallowMultipleComponent, RequireComponent(typeof(MarshmallowHopMotion))]
@@ -15,6 +16,7 @@ public sealed class MarshmallowHopRecovery : MonoBehaviour
     Collider islandGround;
     BoxCollider lastPlatform;
     float nextLookup, nextScan, safeGroundSince = -1, ignoreUntil;
+    float returnHold;
     bool armed;
     int highestRow, consecutiveFalls, assistUntilRow, starMask;
     public bool AssistanceActive { get; private set; }
@@ -99,6 +101,15 @@ public sealed class MarshmallowHopRecovery : MonoBehaviour
         if (!player || !body || !body.enabled || !health || health.currentHealth <= 0 ||
             player.ExternalControlLock || player.ExternalMovementLock || PlayerDeathRespawn.IsOpen) return;
         if (rows.Count == 0) return;
+
+        // A deliberate return gives players a way to take a break without
+        // losing collected stars or requiring another fall.
+        bool returning=armed && CurrentRow>1 && !GameUITheme.ModalOpen && Cursor.lockState==CursorLockMode.Locked && Keyboard.current!=null && Keyboard.current.backspaceKey.isPressed;
+        returnHold=returning?returnHold+Time.deltaTime:0;
+        if(returnHold>=.8f)
+        {
+            returnHold=0;ReturnToRow(1);GetComponent<MarshmallowHopPresentation>()?.ShowReturn();GameSaveManager.RequestAutosave();return;
+        }
 
         float feet = body.bounds.min.y;
         // Walking back onto the island is an exit, not a missed jump.

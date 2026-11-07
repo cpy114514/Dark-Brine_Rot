@@ -15,6 +15,8 @@ public sealed class PigRoninBossVisual : MonoBehaviour
     CharacterController playerBody;
     float nextPlayerSearch;
     Material metal, dark, gold;
+    Material trailMaterial;
+    TrailRenderer swordTrail;
     Mesh bladeMesh;
     Vector3 swordAim;
     Vector3 previousPosition;
@@ -107,6 +109,15 @@ public sealed class PigRoninBossVisual : MonoBehaviour
         SwordCylinder("Pommel", new Vector3(0, 0, -.025f), new Vector3(.057f, .008f, .057f), gold);
         for (int i = 0; i < 3; i++)
             SwordCylinder("Grip binding", new Vector3(0, 0, .025f + i * .052f), new Vector3(.055f, .003f, .055f), gold);
+        var trailShader=Shader.Find("Universal Render Pipeline/Particles/Unlit") ?? Shader.Find("Sprites/Default");
+        if(trailShader)
+        {
+            trailMaterial=new Material(trailShader){name="Ronin sword trail"};
+            var tip=new GameObject("Sword motion trail");tip.transform.SetParent(blade,false);tip.transform.localPosition=new Vector3(0,0,1.03f);
+            swordTrail=tip.AddComponent<TrailRenderer>();swordTrail.sharedMaterial=trailMaterial;swordTrail.time=.16f;
+            swordTrail.widthMultiplier=.10f*Mathf.Abs(transform.lossyScale.x);swordTrail.minVertexDistance=.07f;
+            swordTrail.startColor=new Color(.82f,.94f,1f,.7f);swordTrail.endColor=new Color(.82f,.94f,1f,0);swordTrail.emitting=false;
+        }
     }
     void SwordPart(string name, Vector3 position, Vector3 scale, Material material)
     {
@@ -261,6 +272,7 @@ public sealed class PigRoninBossVisual : MonoBehaviour
             Vector3 bladeUp = Vector3.Cross(swordDirection, bladeRight);
             blade.rotation = Quaternion.LookRotation(swordDirection, bladeUp);
         }
+        if(swordTrail)swordTrail.emitting=boss && boss.DamageWindowActive && boss.CurrentState==PigRoninBoss.State.Attack;
     }
     static float Ease(float value) => Mathf.SmoothStep(0, 1, Mathf.Clamp01(value));
     static Vector3 HandTarget(PigRoninBoss.State state, PigRoninBoss.AttackKind kind, float p)
@@ -388,6 +400,7 @@ public sealed class PigRoninBossVisual : MonoBehaviour
     void OnDestroy()
     {
         if (metal) Destroy(metal); if (dark) Destroy(dark); if (gold) Destroy(gold);
+        if (trailMaterial) Destroy(trailMaterial);
         if (bladeMesh) Destroy(bladeMesh);
     }
 }

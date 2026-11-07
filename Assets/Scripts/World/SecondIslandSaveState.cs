@@ -11,6 +11,9 @@ public sealed class SecondIslandSaveState : MonoBehaviour
     {
         public List<string> defeatedEnemies = new List<string>();
         public bool roninDefeated, finishedCourse, collectedScrolls, normalGravity, courseArmed, flying, courseAssist, candyHuntStarted, secretGroveUnlocked, secretGroveRested, secretDoorInspected, secretSmallLightOwned, skyboardRallyReward, melodyGardenReward, candyHuntRewardClaimed;
+        public bool bounceGardenReward;
+        public int marshmallowFriendsStage;
+        public int activityDiscoveryMask;
         public float boardCooldown, flightRemaining, skyboardRallyBest;
         public int courseRow, courseBestRow, courseFalls, courseStars, courseAssistUntil, candyHuntMask, cottageHealingPacks, candyHuntSelectedStyle;
     }
@@ -31,6 +34,9 @@ public sealed class SecondIslandSaveState : MonoBehaviour
         var residents=FindFirstObjectByType<FriendlyMarshmallowVillage>();
         var rally=FindFirstObjectByType<SkyboardRingRally>();
         var melody=FindFirstObjectByType<CandyMelodyGarden>();
+        var bounce=FindFirstObjectByType<CandyBounceGarden>();
+        var friends=FindFirstObjectByType<MarshmallowFriendsQuest>();
+        var guide=FindFirstObjectByType<IslandActivityGuide>();
         return new Progress {
             defeatedEnemies=wristband ? wristband.CaptureDefeated() : new List<string>(),
             roninDefeated=(objective && objective.RoninDefeated) || (boss && boss.GetComponent<Health>().IsDead),
@@ -58,6 +64,9 @@ public sealed class SecondIslandSaveState : MonoBehaviour
             skyboardRallyReward=rally && rally.RewardClaimed,
             skyboardRallyBest=rally ? rally.BestTime : 0,
             melodyGardenReward=melody && melody.RewardClaimed,
+            bounceGardenReward=bounce && bounce.RewardClaimed,
+            marshmallowFriendsStage=friends ? friends.Stage : 0,
+            activityDiscoveryMask=guide ? guide.DiscoveredMask : 0,
             normalGravity=traversal && traversal.NormalGravity
         };
     }
@@ -74,6 +83,9 @@ public sealed class SecondIslandSaveState : MonoBehaviour
         FindFirstObjectByType<FriendlyMarshmallowVillage>()?.RestoreProgress(progress.secretGroveUnlocked, progress.secretGroveRested, progress.secretDoorInspected, progress.secretSmallLightOwned);
         FindFirstObjectByType<SkyboardRingRally>()?.RestoreProgress(progress.skyboardRallyReward, progress.skyboardRallyBest);
         FindFirstObjectByType<CandyMelodyGarden>()?.RestoreProgress(progress.melodyGardenReward);
+        FindFirstObjectByType<CandyBounceGarden>()?.RestoreProgress(progress.bounceGardenReward);
+        FindFirstObjectByType<MarshmallowFriendsQuest>()?.RestoreProgress(progress.marshmallowFriendsStage);
+        FindFirstObjectByType<IslandActivityGuide>()?.RestoreProgress(progress.activityDiscoveryMask);
         GetComponent<SecondIslandObjectives>()?.RestoreProgress(progress.finishedCourse,progress.roninDefeated);
         var gravity=GetComponent<GravityWristbandAbility>();
         if(gravity && gravity.Owned)gravity.SetNormalGravity(progress.normalGravity);
