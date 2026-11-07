@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "all",
+  "preset": "",
+  "metrics": {
+    "startLatencyFrames": 1,
+    "startLatencyMs": 16.66665,
+    "walk90Ms": 116.666794,
+    "stopMs": 99.99991,
+    "stopDistance": 0.36328125,
+    "sprintReverseMs": 150.000092,
+    "sprintReverse90Ms": 333.3335,
+    "jumpHeight": 2.69836426,
+    "landingRecoveryMs": 149.999619,
+    "dodgeLatencyFrames": 1,
+    "dodgeActiveMs": 583.334,
+    "exitLateralSpeed": 2.05700016,
+    "rollAttackBuffered": true,
+    "clubDodgeBuffered": true,
+    "clubCancelWaitMs": 149.999619,
+    "clubCancelRequestPhase": 0.6351061,
+    "clubMovePreservesAttack": true,
+    "bladeDodgeBuffered": true,
+    "bladeCancelWaitMs": 100.000381,
+    "bladeCancelRequestPhase": 0.6399999,
+    "bladeMovePreservesAttack": true,
+    "mouseTargetDegrees": 30.0,
+    "cameraFirstFrameDegrees": 30.0000038,
+    "cameraSettledErrorDegrees": 3.81469727E-06,
+    "lockFacingErrorDegrees": 0.0
+  },
+  "checks": [
+    {
+      "ok": true,
+      "name": "Movement starts within two frames",
+      "evidence": 1
+    },
+    {
+      "ok": true,
+      "name": "Rapid A/D input stays finite and speed limited",
+      "evidence": 6.233334
+    },
+    {
+      "ok": true,
+      "name": "Diagonal movement has no speed boost",
+      "evidence": 9.6
+    },
+    {
+      "ok": true,
+      "name": "Jump lands and hands control back",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Ordinary dodge begins",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Dodge exit immediately accepts new move direction",
+      "evidence": 3.303667
+    },
+    {
+      "ok": true,
+      "name": "Club retains all three combo stages",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Early dodge respects club attack commitment",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Twin blades retains all three combo stages",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Early dodge respects blade attack commitment",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Camera contracts outside a solid wall",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Real lock-on acquisition survives lateral movement",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 801
+}

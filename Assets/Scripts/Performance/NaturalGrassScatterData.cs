@@ -10,6 +10,8 @@ namespace Mavis
             public Bounds bounds;
             public Vector4[] positions; // xyz world position, w yaw in degrees
             public Vector3[] normals;
+            public byte[] variants;     // optional mesh index per tuft
+            public float[] scales;      // optional authored scale per tuft
         }
         public Mesh[] meshes;
         public Material material;

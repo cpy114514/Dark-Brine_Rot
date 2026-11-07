@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "samples": 357,
+  "missing": 0,
+  "blocked": 0,
+  "maxSlope": 22.3928242,
+  "obstacles": [],
+  "authoredRegularEnemies": 0,
+  "checkpoints": [
+    {
+      "pointName": "Cappuccino approach",
+      "distanceToEncounter": 66.37017,
+      "groundError": 0.0
+    },
+    {
+      "pointName": "Chicken flock approach",
+      "distanceToEncounter": 67.89698,
+      "groundError": 0.0
+    },
+    {
+      "pointName": "Nailong approach",
+      "distanceToEncounter": 65.29931,
+      "groundError": 0.0
+    },
+    {
+      "pointName": "Bombardino approach",
+      "distanceToEncounter": 109.123779,
+      "groundError": 0.0
+    }
+  ],
+  "flockWaves": [
+    4,
+    6,
+    8
+  ]
+}

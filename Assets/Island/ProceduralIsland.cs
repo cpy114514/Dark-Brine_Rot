@@ -52,6 +52,39 @@ public class ProceduralIsland : MonoBehaviour
     [Range(0f, 1f)] public float surfaceVariation = 0.85f;
     [Min(0.001f)] public float surfacePatchScale = 0.045f;
 
+    [Header("Optional baked habitat")]
+    [Tooltip("Linear RGBA map: turf, wear, stone and damp sand. Coordinates are world XZ.")]
+    public Texture2D habitatMap;
+    [Tooltip("World X and Z at the map origin, followed by its width and depth in metres.")]
+    public Vector4 habitatBounds;
+
+    [System.Serializable]
+    public struct Landform
+    {
+        public string name;
+        public Vector2 center;
+        public float height, innerRadius, blendWidth, maxCutFill;
+        [Range(0f, 1f)] public float strength;
+    }
+    [Header("Authored inland landforms (local metres)")]
+    [Tooltip("Softly grade inland clearings and saddles. Empty preserves the original island.")]
+    public Landform[] landforms = System.Array.Empty<Landform>();
+
+    public void SetHabitat(Texture2D map, Vector4 bounds)
+    {
+        habitatMap = map;
+        habitatBounds = bounds;
+        if (terrainMaterial != null)
+            ApplyHabitat();
+    }
+
+    private void ApplyHabitat()
+    {
+        terrainMaterial.SetTexture("_HabitatMap", habitatMap);
+        terrainMaterial.SetVector("_HabitatBounds", habitatBounds);
+        terrainMaterial.SetFloat("_HabitatEnabled", habitatMap != null ? 1f : 0f);
+    }
+
     private Mesh islandMesh;
     private Material terrainMaterial;
     private GameObject shoreFoamObject;
@@ -240,8 +273,20 @@ public class ProceduralIsland : MonoBehaviour
         var ripples = Mathf.Sin(angle * 4f + seed) * 0.26f + Mathf.Sin(angle * 7f - seed * 0.1f) * 0.14f;
         // Keep the very edge at the waterline.  A submerged outer skirt shows
         // through the transparent water as a saw-tooth seam, so it is avoided.
-        return land * (0.18f + peakHeight * dome + ridges + (noise + ripples) * Mathf.SmoothStep(0f, 0.75f, normalizedRadius))
+        float height = land * (0.18f + peakHeight * dome + ridges + (noise + ripples) * Mathf.SmoothStep(0f, 0.75f, normalizedRadius))
                + (1f - land) * 0.04f;
+        if (landforms == null || landforms.Length == 0) return height;
+        float radius = normalizedRadius * EdgeRadius(angle);
+        var position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+        foreach (var form in landforms)
+        {
+            float distance = Vector2.Distance(position, form.center);
+            float weight = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(form.innerRadius,
+                form.innerRadius + Mathf.Max(.01f, form.blendWidth), distance));
+            float limit = Mathf.Max(0f, form.maxCutFill);
+            height += Mathf.Clamp(form.height - height, -limit, limit) * weight * Mathf.Clamp01(form.strength);
+        }
+        return height;
     }
 
     private void EnsureMaterial()
@@ -291,6 +336,7 @@ public class ProceduralIsland : MonoBehaviour
         terrainMaterial.SetTexture("_DryGrassNormal", dryGrassNormal != null ? dryGrassNormal : Texture2D.normalTexture);
         var ocean = FindFirstObjectByType<OceanWorld>();
         terrainMaterial.SetFloat("_SeaLevel", ocean != null ? ocean.oceanHeight : 0f);
+        ApplyHabitat();
     }
 
     private void BuildShoreFoam()

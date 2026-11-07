@@ -1,0 +1,335 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "ok": true,
+      "name": "Four checkpoints with one unchanged default",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Ten two-member patrols loaded",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Unique persistent enemy identities",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Independent local attack groups",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Unvisited boss checkpoints do not replace the default",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Walking into checkpoint activates it",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint is captured by save system",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Death screen entered",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn succeeds",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn lands safely at visited point",
+      "evidence": {
+        "pointName": "Cappuccino approach",
+        "feet": "(263.00, 34.17, 445.00)"
+      }
+    },
+    {
+      "ok": true,
+      "name": "Respawn restores health and stamina",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Save restore resolves checkpoint identity",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Walking into checkpoint activates it",
+      "evidence": "Flock and Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint is captured by save system",
+      "evidence": "Flock and Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Death screen entered",
+      "evidence": "Flock and Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn succeeds",
+      "evidence": "Flock and Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn lands safely at visited point",
+      "evidence": {
+        "pointName": "Flock and Bombardino approach",
+        "feet": "(214.00, 38.57, 580.00)"
+      }
+    },
+    {
+      "ok": true,
+      "name": "Respawn restores health and stamina",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Save restore resolves checkpoint identity",
+      "evidence": "Flock and Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Walking into checkpoint activates it",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint is captured by save system",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Death screen entered",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn succeeds",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn lands safely at visited point",
+      "evidence": {
+        "pointName": "Nailong approach",
+        "feet": "(35.00, 41.16, 817.00)"
+      }
+    },
+    {
+      "ok": true,
+      "name": "Respawn restores health and stamina",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Save restore resolves checkpoint identity",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - North crossing 1",
+        "gap": 0.0861778259
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - North crossing 2",
+        "gap": 0.06751251
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - Western overlook 1",
+        "gap": 0.08346176
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "BullyGoose - Western overlook 2",
+        "gap": 0.08518982
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - West meadow 1",
+        "gap": 0.09596634
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - West meadow 2",
+        "gap": 0.0764083862
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - North grove 1",
+        "gap": 0.0850296
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - North grove 2",
+        "gap": 0.0620803833
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - Far woodland 1",
+        "gap": 0.08740616
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "BullyGoose - Far woodland 2",
+        "gap": 0.09313202
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - Coastal rise 1",
+        "gap": 0.08621979
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - Coastal rise 2",
+        "gap": 0.06550598
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - Shore path 1",
+        "gap": 0.09214401
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - Shore path 2",
+        "gap": 0.0843791962
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - Ridge flank 1",
+        "gap": 0.09142876
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - Ridge flank 2",
+        "gap": 0.077791214
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - West slope 1",
+        "gap": 0.08280563
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - West slope 2",
+        "gap": 0.0576057434
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "ChickenBro - East grove 1",
+        "gap": 0.09090233
+      }
+    },
+    {
+      "ok": true,
+      "name": "Patrol stays grounded",
+      "evidence": {
+        "name": "LongLeggedDuck - East grove 2",
+        "gap": 0.0839347839
+      }
+    },
+    {
+      "ok": true,
+      "name": "Re-enabled patrol cannot join the story wave flock",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Patrol moves on actual island terrain",
+      "evidence": "Lunge"
+    },
+    {
+      "ok": true,
+      "name": "Patrol disengages outside its home boundary",
+      "evidence": "Patrol"
+    },
+    {
+      "ok": true,
+      "name": "Patrol death persists without advancing boss or flock progression",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Defeated patrol stays absent after save restore",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime errors",
+      "evidence": []
+    }
+  ],
+  "errors": []
+}

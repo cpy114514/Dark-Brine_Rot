@@ -12,7 +12,7 @@ namespace Mavis
         readonly Collider[] weapons=new Collider[2];readonly bool[] queuedActive=new bool[2];
         readonly float[] queuedLifetime=new float[2];readonly int[] queuedFrame=new int[2];
         MaterialPropertyBlock chargeBlock;
-        BrineVfxWorld world;MeshRenderer chargeRenderer;Transform chargeRoot;
+        SahurWeaponLoadout loadout;BrineVfxWorld world;MeshRenderer chargeRenderer;Transform chargeRoot;
         CombatHitKind kind;bool charging;float progress,chargeFade;int configured=-1;
         readonly int[] sampledFrame=new[]{-1,-1};
         public int Emissions{get;private set;}
@@ -21,7 +21,7 @@ namespace Mavis
         public int ActivePulseCount=>world?world.CountOwner(GetInstanceID()):0;
         public int TrailVertexCount=>(trails[0]?.VertexCount??0)+(trails[1]?.VertexCount??0);
         public bool ChargeVisible=>chargeRenderer&&chargeRenderer.enabled;
-        void Awake()=>Ensure();
+        void Awake(){loadout=GetComponent<SahurWeaponLoadout>();Ensure();}
         bool Ensure()
         {
             if(world&&trails[0]!=null)return true;
@@ -71,7 +71,7 @@ namespace Mavis
         public void Sample(Vector3 a,Vector3 b,bool active,float lifetime,int hand=0)
         {
             if(!isActiveAndEnabled||!Ensure())return;
-            int i=Mathf.Clamp(hand,0,1);sampledFrame[i]=Time.frameCount;trails[i].Configure(kind,pressureVisibility);trails[i].Sample(a,b,active,lifetime);
+            int i=Mathf.Clamp(hand,0,1);sampledFrame[i]=Time.frameCount;trails[i].Configure(kind,pressureVisibility,loadout&&loadout.UsesTwinBlades);trails[i].Sample(a,b,active,lifetime);
             if(i!=0)return;
             chargeFade=Mathf.MoveTowards(chargeFade,charging?1:0,Time.deltaTime/(charging?.16f:.14f));
             chargeRenderer.enabled=chargeFade>.001f&&pressureVisibility>0;if(!chargeRenderer.enabled)return;

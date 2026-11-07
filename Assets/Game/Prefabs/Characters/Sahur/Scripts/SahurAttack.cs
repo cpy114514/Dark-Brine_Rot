@@ -48,6 +48,7 @@ namespace Mavis
         const string LightUpperBodyLayer = "Light Attack Upper Body";
         const float ChargeLayerFadeIn = 0.10f;
         const float ChargeLayerFadeOut = 0.18f;
+        const float LightLayerFadeIn = 0.06f;
         // Legacy base-layer fallback only; the moving charge uses the extracted clip.
         public const float SafeChargePoseTime = 0.18f;
         [Range(0f, SafeChargePoseTime)] public float chargePoseTime = SafeChargePoseTime;
@@ -162,6 +163,7 @@ namespace Mavis
             {
                 if(!animator || !attacking)return 0;
                 if(lightLayerHandoffFrame==Time.frameCount)return lightLayerHandoffPhase;
+                if(usesBladeRecovery && bladeRecoveryHandoffFrame==Time.frameCount)return bladeRecoveryHandoffPhase;
                 int layer=AttackAnimationLayer;
                 if(animator.IsInTransition(layer))
                 {
@@ -232,6 +234,7 @@ namespace Mavis
             get
             {
                 if (!IsHeavyAttackActive || animator == null) return 0f;
+                if(usesBladeRecovery && bladeRecoveryHandoffFrame==Time.frameCount)return bladeRecoveryHandoffPhase;
                 int layer = AttackAnimationLayer;
                 var state = animator.GetCurrentAnimatorStateInfo(layer);
                 if (animator.IsInTransition(layer) && animator.GetNextAnimatorStateInfo(layer).fullPathHash == AttackAnimationHash)
@@ -289,6 +292,8 @@ namespace Mavis
         static readonly int HeavyPlaybackSpeedHash = Animator.StringToHash("HeavyPlaybackSpeed");
         bool hasHeavyPlaybackSpeed;
         bool usesBladeRecovery;
+        int bladeRecoveryHandoffFrame=-1;
+        float bladeRecoveryHandoffPhase;
         int bladeRecoveryLayer=-1;
         static readonly int BladeRecoveryHash=Animator.StringToHash("Twin Blade Recovery.Capri Recovery");
         int AttackAnimationLayer => usesBladeRecovery ? bladeRecoveryLayer : usesUpperBodyLight ? lightLayerIndex : usesRightArmHeavy ? chargeLayerIndex : 0;
@@ -855,7 +860,7 @@ namespace Mavis
                 animator.SetFloat(chargeTimeHash, HeavyAttackPhase);
             if (lightLayerIndex>0)
                 animator.SetLayerWeight(lightLayerIndex,Mathf.MoveTowards(animator.GetLayerWeight(lightLayerIndex),
-                    usesUpperBodyLight ? 1f : 0f,Time.deltaTime/ChargeLayerFadeOut));
+                    usesUpperBodyLight ? 1f : 0f,Time.deltaTime/(usesUpperBodyLight ? LightLayerFadeIn : ChargeLayerFadeOut)));
             bool ownsArm = charging || (IsHeavyAttackActive && usesRightArmHeavy);
             float target = ownsArm ? 1f : 0f;
             float duration = ownsArm ? ChargeLayerFadeIn : fadingChargePose ? twinBladePoseReleaseBlend : ChargeLayerFadeOut;
@@ -968,7 +973,8 @@ namespace Mavis
             if (secondBlade != null) secondBlade.enabled = false;
             if(usesUpperBodyLight)
             {
-                animator.SetLayerWeight(lightLayerIndex,1);
+                // A hidden layer may still contain the previous strike pose.
+                // Fade it in during windup without restarting the attack clock.
                 animator.CrossFadeInFixedTime(AttackAnimationHash,blend,lightLayerIndex,0);
                 return;
             }
@@ -1011,11 +1017,14 @@ namespace Mavis
                 if(bladeRecoveryLayer>0 && animator.HasState(bladeRecoveryLayer,BladeRecoveryHash))
                 {
                     float phase=HeavyAttackPhase;
+                    // Animator.Play is evaluated later this frame. Do not read the
+                    // hidden recovery layer's old state/clock until that evaluation.
+                    bladeRecoveryHandoffFrame=Time.frameCount;bladeRecoveryHandoffPhase=phase;
                     usesBladeRecovery=true;animator.Play(BladeRecoveryHash,bladeRecoveryLayer,phase);
                     animator.SetLayerWeight(bladeRecoveryLayer,1);controller.PrepareChargeLocomotion();
                 }
             }
-            if (IsSpinning || !attacking || animator == null || Time.time - attackStartedAt < 0.08f || lightLayerHandoffFrame==Time.frameCount)
+            if (IsSpinning || !attacking || animator == null || Time.time - attackStartedAt < 0.08f || lightLayerHandoffFrame==Time.frameCount || bladeRecoveryHandoffFrame==Time.frameCount)
                 return;
 
             int layer = AttackAnimationLayer;

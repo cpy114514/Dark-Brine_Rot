@@ -1,0 +1,91 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "weapons",
+  "preset": "",
+  "metrics": {},
+  "checks": [
+    {
+      "ok": true,
+      "name": "Club charge retains locomotion",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Club deliberate partial charge releases the heavy attack",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Club charge cancels into real dodge",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Club original chord still starts its spin",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Club spin retains its legal dodge exit",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade charge retains locomotion",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade deliberate partial charge releases the heavy attack",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade charge cancels into real dodge",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade original chord still starts its spin",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade spin retains its legal dodge exit",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Twin-blade guard remains ready after entry",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Actual frontal hostile damage still reaches the guard resolver",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Rifle still fires via real input and consumes ammo",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Rifle aim retains its zoom on the responsive camera",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Rifle zoom restores the ordinary field of view",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 408
+}

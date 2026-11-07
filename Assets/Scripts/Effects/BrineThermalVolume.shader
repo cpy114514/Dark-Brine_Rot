@@ -4,6 +4,7 @@ Shader "DarkBrine/Brine Thermal Volume"
     {
         _DensityTex("Periodic three-dimensional density",3D)="white"{}
         _Age("Normalized age",Float)=0
+        _Variation("Density variation",Float)=0
         _Fade("Envelope",Float)=1
         _Steps("Ray samples",Range(20,48))=36
         _DepthAvailable("Scene depth available",Float)=0
@@ -35,7 +36,7 @@ Shader "DarkBrine/Brine Thermal Volume"
             TEXTURE3D(_DensityTex);SAMPLER(sampler_DensityTex);
             CBUFFER_START(UnityPerMaterial)
                 half4 _FireCore,_FireBody,_Smoke;
-                float _Age,_Fade,_Steps,_DepthAvailable,_Dust,_ColorAvailable,_RefractionPixels;
+                float _Age,_Fade,_Steps,_DepthAvailable,_Dust,_ColorAvailable,_RefractionPixels,_Variation;
             CBUFFER_END
             struct A{float4 position:POSITION;};
             struct V{float4 position:SV_POSITION;float3 local:TEXCOORD0;};
@@ -56,6 +57,7 @@ Shader "DarkBrine/Brine Thermal Volume"
                 float shape=SmoothMin(core,crown,.45);
                 float angle=q.y*1.6+_Age*2.5,s=sin(angle),c=cos(angle);
                 float3 flow=float3(q.x*c-q.z*s,q.y-_Age*.65,q.x*s+q.z*c);
+                flow+=float3(_Variation*3.17,0,_Variation*5.31);
                 noise=SAMPLE_TEXTURE3D_LOD(_DensityTex,sampler_DensityTex,flow*.54+float3(.13,_Age*.12,.37),0).r;
                 float detail=SAMPLE_TEXTURE3D_LOD(_DensityTex,sampler_DensityTex,flow*1.6+noise*.18-float3(0,_Age*.38,0),0).r;
                 float erosion=(noise-.48)*1.05+(detail-.5)*.42;
@@ -66,7 +68,7 @@ Shader "DarkBrine/Brine Thermal Volume"
                 density*=1-smoothstep(.90,1.22,length(p.xz));
                 density*=1-smoothstep(1.7,1.98,p.y);
                 float coreDistance=length((q-float3(.02,.50,0))/float3(.8,.7,.8));
-                heat=saturate(1.13-coreDistance*.46-_Age*1.65+(noise-.5)*.48+(detail-.5)*.24);
+                heat=saturate(1.20-coreDistance*.50-_Age*1.55+(noise-.5)*.48+(detail-.5)*.24);
                 if(_Dust>.5){heat=0;density*=smoothstep(0,.09,_Age);}
                 return density*(_Dust>.5?2.8:3.8);
             }
@@ -98,7 +100,7 @@ Shader "DarkBrine/Brine Thermal Volume"
                     float density=Density(p,heat,noise)*_Fade;
                     float alpha=1-exp(-density*stepSize*3.2);
                     float3 normal=normalize(p-float3(0,.65+_Age*.45,0)+.0001);
-                    float lighting=.3+.7*saturate(dot(normal,light.direction)+(noise-.5)*.35);
+                    float lighting=.3+.7*saturate(dot(normal,localLight)+(noise-.5)*.35);
                     // One short light-path sample supplies internal absorption.
                     // Skip on the lowest volume quality tier.
                     float shadow=1;

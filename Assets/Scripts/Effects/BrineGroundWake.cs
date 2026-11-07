@@ -17,7 +17,7 @@ namespace Mavis
         readonly Vector3[] corners=new Vector3[6];readonly RaycastHit[] hits=new RaycastHit[32];
         readonly Mesh waveMesh,rockMesh;readonly MeshRenderer wave,stone;readonly Transform root;readonly BrineVfxStyle style;
         readonly MaterialPropertyBlock block=new MaterialPropertyBlock(),stoneBlock=new MaterialPropertyBlock();
-        float age,radius,power;Color soil;bool timber;
+        float age,radius,power;Color soil;bool timber;CombatMaterial surface;
         public bool Active{get;private set;}
         public BrineGroundWake(Transform parent,BrineVfxStyle style,int index)
         {
@@ -48,9 +48,8 @@ namespace Mavis
         {
             if(!Surface(point,out var ground)||point.y-ground.point.y>3.5f)return false;
             root.SetPositionAndRotation(ground.point,Quaternion.identity);this.radius=radius;this.power=power;age=0;soil=new Color(.23f,.22f,.19f);
+            surface=CombatSurfaceResponse.Resolve(ground.collider,ground.point);soil=CombatSurfaceResponse.Body(surface);timber=surface==CombatMaterial.Wood;
             var renderer=ground.collider.GetComponent<Renderer>();
-            string surfaceName=((renderer&&renderer.sharedMaterial?renderer.sharedMaterial.name:"")+" "+ground.collider.name).ToLowerInvariant();
-            timber=surfaceName.Contains("wood")||surfaceName.Contains("timber")||surfaceName.Contains("deck")||surfaceName.Contains("plank");
             if(renderer&&renderer.sharedMaterial&&renderer.sharedMaterial.HasProperty("_BaseColor"))
             {
                 Color tint=renderer.sharedMaterial.GetColor("_BaseColor");if(tint.maxColorComponent<.85f)soil=Color.Lerp(soil,tint,.55f);
@@ -102,7 +101,7 @@ namespace Mavis
                 float y=Mathf.Max(0,speed*t-6.5f*t*t),slide=Mathf.Min(t,speed/6.5f)*.45f;
                 Vector3 position=Vector3.Lerp(origins[i],settled[i],Mathf.Clamp01(slide/(speed/6.5f*.45f)))+Vector3.up*(y+.018f);
                 var rotation=rotations[i]*Quaternion.Euler(Mathf.Min(t,.3f)*180,0,Mathf.Min(t,.3f)*50*(i%2==0?1:-1));
-                float size=(.045f+(i%4)*.013f)*Mathf.Min(radius,2)*Mathf.Sqrt(power);
+                float size=(surface==CombatMaterial.Sand?.38f:surface==CombatMaterial.Soil?.7f:1)*(.045f+(i%4)*.013f)*Mathf.Min(radius,2)*Mathf.Sqrt(power);
                 int cursor=i*PieceVertices;
                 for(int j=0;j<6;j++){float a=j*Mathf.PI/3;corners[j]=new Vector3(Mathf.Cos(a)*(1+.20f*Mathf.Sin(i+j*3)),.04f*Mathf.Sin(i+j*2),Mathf.Sin(a)*(timber?.20f:.65f));}
                 for(int j=0;j<6;j++)

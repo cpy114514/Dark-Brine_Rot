@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "rifle-vfx",
+  "preset": "",
+  "metrics": {},
+  "checks": [
+    {
+      "ok": true,
+      "name": "Real rifle shot consumes exactly one round",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Actual attached muzzle expires after shooting",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Real projectile emits Rock scenery contact",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Real projectile emits Wood scenery contact",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Real projectile emits Metal scenery contact",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 168
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "windPixels": 121,
+  "interactionPixels": 2471,
+  "rootWind": 0,
+  "rootPush": 2,
+  "rootY": 34,
+  "shaderErrors": [],
+  "forward": 0,
+  "depth": 1,
+  "shadow": 2
+}

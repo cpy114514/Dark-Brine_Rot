@@ -47,10 +47,10 @@ namespace Mavis
         void LateUpdate()
         {
             if (remaining <= 0f || Time.timeScale <= 0f) return;
-            float a = amplitude * Mathf.Pow(remaining / duration, 2f);
+            float a = amplitude * CombatVfxSettings.CameraScale * Mathf.Pow(remaining / duration, 2f);
             float phase = (duration - remaining) * 48f;
             offset = transform.right * (Mathf.Sin(phase) * a) + transform.up * (Mathf.Sin(phase * 1.37f) * a * 0.65f);
-            float impact=directionalStrength*Mathf.Pow(remaining/duration,2f);
+            float impact=directionalStrength*CombatVfxSettings.CameraScale*Mathf.Pow(remaining/duration,2f);
             offset += Vector3.ProjectOnPlane(impactDirection,transform.forward)*(-impact*Mathf.Cos(phase*.6f));
             rotation = Quaternion.Euler(Mathf.Sin(phase * 0.8f) * a * 7f, 0f, Mathf.Sin(phase) * a * 5f);
             // Frontal melee force is almost parallel to the follow camera.

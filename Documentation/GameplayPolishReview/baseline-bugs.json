@@ -1,0 +1,50 @@
+{
+  "passed": false,
+  "hz": 30,
+  "scope": "polish",
+  "preset": "",
+  "metrics": {
+    "forwardDodgeExitSpeed": 4.11400032,
+    "hostilePushPeak": 6.6858263,
+    "rifleShotsPerSecond": 10
+  },
+  "checks": [
+    {
+      "ok": false,
+      "name": "Forward dodge preserves running legs at handoff",
+      "evidence": 4.11400032
+    },
+    {
+      "ok": false,
+      "name": "Hostile push does not compound into locomotion",
+      "evidence": 6.6858263
+    },
+    {
+      "ok": false,
+      "name": "Fresh rifle tap survives fire cooldown",
+      "evidence": 0
+    },
+    {
+      "ok": true,
+      "name": "Walking can aim and fire",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Sprinting fires while rejecting aim",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Automatic fire cadence stays within one round of 10Hz",
+      "evidence": 10
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 132
+}

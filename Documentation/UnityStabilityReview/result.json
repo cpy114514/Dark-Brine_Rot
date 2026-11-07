@@ -1,0 +1,229 @@
+{
+  "passed": true,
+  "checks": [
+    "20000 dormant-camera submissions rejected",
+    "Actual island grass renders from camera callback",
+    "Five minutes of rendered/dormant updates and repeated grass enable/disable"
+  ],
+  "warnings": 1,
+  "error": null,
+  "samples": [
+    {
+      "seconds": 0.0147551,
+      "privateBytes": 8119361536,
+      "unityAllocated": 2373527185,
+      "grassInstances": 14611,
+      "visibleBatches": 0
+    },
+    {
+      "seconds": 10.0073752,
+      "privateBytes": 8018898944,
+      "unityAllocated": 2461300216,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 20.0018337,
+      "privateBytes": 7965069312,
+      "unityAllocated": 2456524888,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 30.0165834,
+      "privateBytes": 7963914240,
+      "unityAllocated": 2456768579,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 40.0108665,
+      "privateBytes": 7959842816,
+      "unityAllocated": 2457605726,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 50.0000089,
+      "privateBytes": 7956164608,
+      "unityAllocated": 2465876203,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 60.002627999999994,
+      "privateBytes": 7978676224,
+      "unityAllocated": 2455493426,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 70.0018905,
+      "privateBytes": 7959371776,
+      "unityAllocated": 2460420492,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 80.019539299999991,
+      "privateBytes": 7965687808,
+      "unityAllocated": 2459770911,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 90.0034767,
+      "privateBytes": 7963824128,
+      "unityAllocated": 2456494242,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 100.0034951,
+      "privateBytes": 7978987520,
+      "unityAllocated": 2457080754,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 110.00484259999999,
+      "privateBytes": 7968219136,
+      "unityAllocated": 2460958188,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 120.0063026,
+      "privateBytes": 7979921408,
+      "unityAllocated": 2457947150,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 130.00797699999998,
+      "privateBytes": 7974666240,
+      "unityAllocated": 2458444182,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 140.0026519,
+      "privateBytes": 7983497216,
+      "unityAllocated": 2455371518,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 150.0050448,
+      "privateBytes": 7980056576,
+      "unityAllocated": 2455345279,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 160.01076469999998,
+      "privateBytes": 8005238784,
+      "unityAllocated": 2460346381,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 170.0162334,
+      "privateBytes": 7982317568,
+      "unityAllocated": 2461394646,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 180.0167349,
+      "privateBytes": 7986880512,
+      "unityAllocated": 2457209978,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 190.0008495,
+      "privateBytes": 7981588480,
+      "unityAllocated": 2458111802,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 200.0186508,
+      "privateBytes": 7991455744,
+      "unityAllocated": 2462701769,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 210.00357069999998,
+      "privateBytes": 7988031488,
+      "unityAllocated": 2464005271,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 220.0217841,
+      "privateBytes": 7996407808,
+      "unityAllocated": 2464182873,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 230.00649489999998,
+      "privateBytes": 7992942592,
+      "unityAllocated": 2464423257,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 240.00436969999998,
+      "privateBytes": 8034349056,
+      "unityAllocated": 2455140704,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 250.01123099999998,
+      "privateBytes": 8032464896,
+      "unityAllocated": 2461251882,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 260.00673259999996,
+      "privateBytes": 8104382464,
+      "unityAllocated": 2454827080,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 270.0139387,
+      "privateBytes": 8096886784,
+      "unityAllocated": 2455995622,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 280.00733759999997,
+      "privateBytes": 8089653248,
+      "unityAllocated": 2456587510,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 290.0130067,
+      "privateBytes": 8086663168,
+      "unityAllocated": 2463315778,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    },
+    {
+      "seconds": 300.0009136,
+      "privateBytes": 8091856896,
+      "unityAllocated": 2463396171,
+      "grassInstances": 136643,
+      "visibleBatches": 282
+    }
+  ]
+}

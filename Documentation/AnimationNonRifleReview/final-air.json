@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "air",
+  "preset": "",
+  "metrics": {},
+  "checks": [
+    {
+      "ok": true,
+      "name": "Staff airborne attack starts",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Staff jump attack returns to ground locomotion",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade airborne attack starts",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade jump attack returns to ground locomotion",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 94
+}

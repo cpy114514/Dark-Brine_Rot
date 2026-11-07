@@ -1,0 +1,38 @@
+{
+ "shark_fin": {
+  "task_id": "459977605681404",
+  "model": "MiniMax-H3",
+  "status": "succeeded",
+  "video_url": "https://matrix-internal-cn.oss-cn-shanghai.aliyuncs.com/Mavis/500351264446099461/files/459978264642877/459977605681404.mp4?Expires=1793859692&OSSAccessKeyId=LTAI5tD6kjGs53up52CwdPJ3&Signature=P9S6/LZ7Ym81%2BmKaQyijM6Rtx%2BA%3D",
+  "node_id": "459978264642877",
+  "resolution": "2K"
+ },
+ "wreck_fog": {
+  "task_id": null,
+  "model": "MiniMax-H3",
+  "status": null
+ },
+ "beast_rise": {
+  "task_id": null,
+  "model": "MiniMax-H3",
+  "status": null
+ },
+ "island_approach": {
+  "task_id": null,
+  "model": "MiniMax-H3",
+  "status": null
+ },
+ "brine_waves": {
+  "task_id": "459978021060841",
+  "model": "MiniMax-H3-Max",
+  "status": "succeeded",
+  "video_url": "https://matrix-internal-cn.oss-cn-shanghai.aliyuncs.com/Mavis/500351264446099461/files/459978130019236/459978021060841.mp4?Expires=1793859499&OSSAccessKeyId=LTAI5tD6kjGs53up52CwdPJ3&Signature=9HzSH3QfmhuQVHBGhVRcjb7nJbc%3D",
+  "node_id": "459978130019236",
+  "resolution": "768P"
+ },
+ "island_approach_fast": {
+  "task_id": null,
+  "model": "MiniMax-H3-Max",
+  "status": null
+ }
+}

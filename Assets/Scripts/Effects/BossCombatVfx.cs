@@ -62,7 +62,7 @@ namespace Mavis
             var world=Application.isPlaying?BrineVfxWorld.Get():null;
             if(world&&!hot)
             {
-                world.Emit(0,point,normal,Mathf.Clamp(spread*.5f,.5f,2),Mathf.Clamp01(tint.a),false,ambientDust:true);
+                world.Emit(0,point,normal,Mathf.Clamp(spread*.5f,.5f,2),Mathf.Clamp01(tint.a),false,surface:CombatMaterial.Soil,ambientDust:true);
                 return;
             }
             BossImpactEmitter emitter=null;

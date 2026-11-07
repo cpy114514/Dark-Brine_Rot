@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "staff",
+  "preset": "",
+  "metrics": {},
+  "checks": [
+    {
+      "ok": true,
+      "name": "Staff original throw accepts legal grounded request",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Throw releases real flying staff from the animated grip",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Staff returns and catches without stale throw state",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 107
+}

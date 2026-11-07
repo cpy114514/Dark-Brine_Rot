@@ -141,15 +141,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8568001339678233369, guid: d63a1d5a99318b247a00ff2dcd29ce53, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 108.6
+      value: -114
       objectReference: {fileID: 0}
     - target: {fileID: 8568001339678233369, guid: d63a1d5a99318b247a00ff2dcd29ce53, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 61.053314
+      value: 55.61638
       objectReference: {fileID: 0}
     - target: {fileID: 8568001339678233369, guid: d63a1d5a99318b247a00ff2dcd29ce53, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 635.9
+      value: 826
       objectReference: {fileID: 0}
     - target: {fileID: 8568001339678233369, guid: d63a1d5a99318b247a00ff2dcd29ce53, type: 3}
       propertyPath: m_LocalRotation.w
@@ -266,15 +266,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4448889119519099086, guid: f2726302fdae7234f9faab22b0831731, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 18
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4448889119519099086, guid: f2726302fdae7234f9faab22b0831731, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 33.44
+      value: 57.40722
       objectReference: {fileID: 0}
     - target: {fileID: 4448889119519099086, guid: f2726302fdae7234f9faab22b0831731, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 868
+      value: 710
       objectReference: {fileID: 0}
     - target: {fileID: 4448889119519099086, guid: f2726302fdae7234f9faab22b0831731, type: 3}
       propertyPath: m_LocalRotation.w
@@ -381,12 +381,12 @@ MonoBehaviour:
   waveCounts: 040000000600000008000000
   maxAlive: 8
   maxSimultaneousAttackers: 2
-  triggerRadius: 38
+  triggerRadius: 40
   arenaSize: 72
   spawnRadius: 8
   waveGap: 2.4
   distanceFromCappuccino: 50
-  placeBesideCappuccino: 1
+  placeBesideCappuccino: 0
   completionId: first-island-chicken-bro-flock
 --- !u!4 &807227200
 Transform:
@@ -397,7 +397,7 @@ Transform:
   m_GameObject: {fileID: 807227197}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 142, y: 51.201813, z: 565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

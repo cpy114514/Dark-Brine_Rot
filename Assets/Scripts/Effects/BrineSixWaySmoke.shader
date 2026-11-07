@@ -51,7 +51,9 @@ Shader "DarkBrine/Brine Six Way Smoke"
                 half response=dot(p.rgb,positive*positive)+dot(n,negative*negative);
                 half ambient=(dot(p.rgb,half3(1,1,1))+dot(n,half3(1,1,1)))/6;
                 half3 irradiance=light.color*response+max(SampleSH(float3(0,1,0)),half3(.12,.12,.12))*ambient*2;
-                half alpha=p.a*_Fade*smoothstep(0,.035,_Age)*(1-smoothstep(.78,1,_Age));
+                // Let the brief thermal core read before the existing soot layer
+                // builds. Cooling smoke then clears without covering the next attack.
+                half alpha=p.a*_Fade*smoothstep(.06,.28,_Age)*(1-smoothstep(.68,1,_Age));
                 if(_DepthAvailable>.5)
                 {
                     float scene=LinearEyeDepth(SampleSceneDepth(GetNormalizedScreenSpaceUV(i.position)),_ZBufferParams);

@@ -32,6 +32,7 @@ namespace Mavis
         float deathTime, deathLength, nearAimBlend;
         bool movingLastFrame, wasForward, firingLastFrame;
         float aimBlend;
+        float presentationAimBlend;
         public bool DeathPoseActive { get; private set; }
         public bool DeathAnimationPlaying => DeathPoseActive && deathTime < deathLength;
 
@@ -145,12 +146,20 @@ namespace Mavis
             {
                 aimBlend=Mathf.MoveTowards(aimBlend,rifleCombat.IsAiming?1:0,Time.deltaTime*8);
                 Vector3 target=rifleCombat.GetAimPoint();
-                if (!rifleCombat.IsAiming && !rifleCombat.FirePoseActive)
+                // Ease only the visual carry/aim handoff. A firing frame must
+                // still align the actual bore before the projectile is launched.
+                float wanted=rifleCombat.IsAiming||rifleCombat.FirePoseActive?1:0;
+                presentationAimBlend=!gripReady||rifleCombat.FirePoseActive?wanted:
+                    Mathf.MoveTowards(presentationAimBlend,wanted,Time.deltaTime/0.08f);
+                if (presentationAimBlend<1)
                 {
                     Vector3 forward=movement.IsSprinting?transform.forward:Vector3.ProjectOnPlane(rifleCombat.AimRay.direction,Vector3.up).normalized;
                     if(forward.sqrMagnitude<.01f)forward=transform.forward;
                     Vector3 carry=(forward-Vector3.up*(movement.IsSprinting?.32f:.18f)).normalized;
-                    target=(spine?spine.position:transform.position)+carry*80;
+                    Vector3 anchor=(rightUpperArm.position+leftUpperArm.position)*.5f;
+                    Vector3 carryTarget=(spine?spine.position:transform.position)+carry*80;
+                    if(presentationAimBlend<=0)target=carryTarget;
+                    else target=anchor+Vector3.Slerp(carryTarget-anchor,target-anchor,presentationAimBlend);
                 }
                 AlignToAim(target);
             }

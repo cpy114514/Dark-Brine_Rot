@@ -1,0 +1,41 @@
+{
+  "runs": [
+    {
+      "run": "after-combat",
+      "passed": true,
+      "checks": 18
+    },
+    {
+      "run": "final-island",
+      "passed": true,
+      "checks": 18
+    },
+    {
+      "run": "surfaces-release",
+      "passed": true,
+      "checks": 37
+    },
+    {
+      "run": "quality-final",
+      "passed": true,
+      "checks": 33
+    },
+    {
+      "run": "final-native-weapons",
+      "passed": true,
+      "checks": 16
+    },
+    {
+      "run": "final-native-rifle",
+      "passed": true,
+      "checks": 6
+    },
+    {
+      "run": "final-native-staff",
+      "passed": true,
+      "checks": 4
+    }
+  ],
+  "checks": 132,
+  "allPassed": true
+}

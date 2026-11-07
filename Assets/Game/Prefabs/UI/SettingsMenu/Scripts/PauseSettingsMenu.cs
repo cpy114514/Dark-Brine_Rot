@@ -83,6 +83,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         public int shadowResolutionIndex;
         public int anisotropicFiltering;
         public int difficulty;
+        public int vfxQuality, cameraShake, screenEffects;
     }
 
     readonly List<Resolution> resolutions = new();
@@ -115,6 +116,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             if (row.name == "language row") row.gameObject.SetActive(false);
         options.RemoveAll(option => option.key == "language");
         EnsurePixel360Option();
+        EnsureVfxOptions();
         Mavis.VisualStyles.VisualStyleUIController.InstallGraphicsRow(this);
         LocalizedGameText.BindTree(transform);
         player = FindFirstObjectByType<ThirdPersonPlayerController>();
@@ -229,6 +231,30 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         var button = row.GetComponentInChildren<Button>(true);
         button.onClick = new Button.ButtonClickedEvent();
         options.Add(new OptionControl { key = "pixel360", button = button, value = button.GetComponentInChildren<TextMeshProUGUI>(true) });
+    }
+
+    void EnsureVfxOptions()
+    {
+        AddFeedbackOption("vfxQuality", "VFX QUALITY", "Low / Medium / High; combat cues stay visible", "antialiasing");
+        AddFeedbackOption("cameraShake", "CAMERA SHAKE", "Off / Reduced / Full impact camera motion", "difficulty");
+        AddFeedbackOption("screenEffects", "INTENSE FEEDBACK", "Off / Reduced / Full heat distortion and impact light", "difficulty");
+    }
+
+    void AddFeedbackOption(string key,string label,string explanation,string templateKey)
+    {
+        if(options.Exists(o=>o.key==key))return;
+        var template=options.Find(o=>o.key==templateKey);
+        if(template?.button==null)return;
+        var source=template.button.transform.parent.parent as RectTransform;
+        var content=source.parent as RectTransform;
+        var row=Instantiate(source.gameObject,content,false).GetComponent<RectTransform>();
+        row.name=key+" row";
+        foreach(RectTransform existing in content)if(existing!=row)existing.anchoredPosition+=Vector2.down*76f;
+        row.SetAsFirstSibling();row.anchoredPosition=new Vector2(0,-36);content.sizeDelta+=Vector2.up*76f;
+        row.Find("Label").GetComponent<TextMeshProUGUI>().text=label;
+        row.Find("Explanation").GetComponent<TextMeshProUGUI>().text=explanation;
+        var button=row.GetComponentInChildren<Button>(true);button.onClick=new Button.ButtonClickedEvent();
+        options.Add(new OptionControl{key=key,button=button,value=button.GetComponentInChildren<TextMeshProUGUI>(true)});
     }
 
     void ConfigureScrollHitAreas()
@@ -413,6 +439,9 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             case "language":
                 GameLocalization.SetLanguage(GameLanguage.English);
                 break;
+            case "vfxQuality": draft.vfxQuality=(draft.vfxQuality+1)%3; break;
+            case "cameraShake": draft.cameraShake=(draft.cameraShake+1)%3; break;
+            case "screenEffects": draft.screenEffects=(draft.screenEffects+1)%3; break;
             case "difficulty": draft.difficulty = (draft.difficulty + 1) % 3; break;
             case "invertY": draft.invertY = !draft.invertY; break;
             case "resolution": draft.resolutionIndex = (draft.resolutionIndex + 1) % resolutions.Count; break;
@@ -491,6 +520,8 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         PlayerPrefs.SetInt(Prefix + "FrameLimit", FrameLimits[s.frameLimitIndex]);
         SaveGraphicsPreferences(s);
         PlayerPrefs.SetInt(Prefix + "Difficulty", s.difficulty);
+        PlayerPrefs.SetInt(Prefix+"CameraShake",s.cameraShake);
+        PlayerPrefs.SetInt(Prefix+"ScreenEffects",s.screenEffects);
     }
 
     void RestoreDefaults()
@@ -532,7 +563,8 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             antialiasing = (int)AntialiasingMode.FastApproximateAntialiasing,
             shadowResolutionIndex = 0,
             anisotropicFiltering = (int)AnisotropicFiltering.Enable,
-            difficulty = 1
+            difficulty = 1,
+            vfxQuality = 2, cameraShake = 2, screenEffects = 2
         };
     }
 
@@ -568,6 +600,9 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             PlayerPrefs.GetInt(Prefix + "ShadowResolution", ShadowResolutions[s.shadowResolutionIndex]));
         if (s.shadowResolutionIndex < 0) s.shadowResolutionIndex = factoryDefaults.shadowResolutionIndex;
         s.anisotropicFiltering = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "AnisotropicFiltering", s.anisotropicFiltering), 0, 2);
+        s.vfxQuality = Mathf.Clamp(PlayerPrefs.GetInt(Prefix+"VfxQuality",2),0,2);
+        s.cameraShake = Mathf.Clamp(PlayerPrefs.GetInt(Prefix+"CameraShake",2),0,2);
+        s.screenEffects = Mathf.Clamp(PlayerPrefs.GetInt(Prefix+"ScreenEffects",2),0,2);
         s.difficulty = Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "Difficulty", 1), 0, 2);
         if (PlayerPrefs.GetInt(RecommendedDefaultsKey, 0) == 0)
         {
@@ -581,6 +616,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     static void SaveGraphicsPreferences(Settings s)
     {
+        PlayerPrefs.SetInt(Prefix+"VfxQuality",s.vfxQuality);
         PlayerPrefs.SetFloat(Prefix + "RenderScale", s.renderScale);
         PlayerPrefs.SetFloat(Prefix + "ShadowDistance", s.shadowDistance);
         PlayerPrefs.SetFloat(Prefix + "LodBias", s.lodBias);
@@ -653,6 +689,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void ApplySettings(Settings s)
     {
+        CombatVfxSettings.Apply(s.vfxQuality,s.cameraShake,s.screenEffects);
         Pixel360Rendering.ReleaseCurrent();
         GameAudioPolicy.ApplyMasterVolume(s.masterVolume);
         var camera = Camera.main;
@@ -753,6 +790,9 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             return draftKeys[(int)action].ToString().ToUpperInvariant();
         switch (key)
         {
+            case "vfxQuality": return new[]{"LOW","MEDIUM","HIGH"}[draft.vfxQuality];
+            case "cameraShake": return new[]{"OFF","REDUCED","FULL"}[draft.cameraShake];
+            case "screenEffects": return new[]{"OFF","REDUCED","FULL"}[draft.screenEffects];
             case "difficulty": return new[] { "EASY", "NORMAL", "HARD" }[draft.difficulty];
             case "cameraDistance": return draft.cameraDistance.ToString("0.0") + " M";
             case "masterVolume": return Mathf.RoundToInt(draft.masterVolume * 100f) + "%";

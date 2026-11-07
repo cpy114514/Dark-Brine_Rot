@@ -82,6 +82,7 @@ Shader "DarkBrine/Procedural Ocean"
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
             #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_ATLAS
             #define _SURFACE_TYPE_TRANSPARENT 1
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -149,7 +150,7 @@ Shader "DarkBrine/Procedural Ocean"
             {
                 float4 positionCS : SV_POSITION;
                 float3 positionWS : TEXCOORD0;
-                half3 normalWS : TEXCOORD1;
+                half2 bowSlope : TEXCOORD1;
                 float4 screenPosition : TEXCOORD2;
                 half fogFactor : TEXCOORD3;
                 float2 baseXZ : TEXCOORD4;
@@ -210,8 +211,7 @@ Shader "DarkBrine/Procedural Ocean"
                 float2 bowSlope = float2(BowLift(output.positionWS.xz + float2(0.4,0)) - bow,
                     BowLift(output.positionWS.xz + float2(0,0.4)) - bow) / 0.4;
                 output.positionWS.y += bow;
-                waveNormal = normalize(waveNormal + float3(-bowSlope.x,0,-bowSlope.y));
-                output.normalWS = waveNormal;
+                output.bowSlope = bowSlope;
                 output.baseXZ = basePosition.xz;
                 output.positionCS = TransformWorldToHClip(output.positionWS);
                 output.screenPosition = ComputeScreenPos(output.positionCS);
@@ -377,71 +377,109 @@ Shader "DarkBrine/Procedural Ocean"
                 float waveCrest;
                 OceanEvaluateWaves(p, oceanTime, detailWeights, displacement, waveNormal, waveCrest);
 
-                // Three procedural scales affect the surface only near the camera, avoiding
-                // repeated normal maps and distant shimmer at the horizon.
+                // Long wind streaks, crossing chop and capillary ripples sit on top
+                // of the shared displacement without affecting sampled wave heights.
                 float2 windDirection = normalize(_Wave1.xy);
-                float2 crossDirection = normalize(_Wave3.xy);
-                float3 largeField = WindDetail(p, windDirection, float2(0.035, 0.026),
-                    oceanTime * float2(-0.075, 0.012));
-                float3 mediumField = WindDetail(p, crossDirection, float2(0.115, 0.075),
-                    oceanTime * float2(-0.21, 0.025));
-                float3 rippleField = WindDetail(p, windDirection, float2(0.58, 0.32),
-                    oceanTime * float2(-0.48, 0.06));
-                float largeNoise = largeField.x, mediumNoise = mediumField.x, rippleNoise = rippleField.x;
+                float2 crossDirection = normalize(_Wave2.xy);
                 float pixelFootprint = max(length(ddx(p)), length(ddy(p)));
-                float rippleFilter = 1.0 - smoothstep(0.35, 1.1, pixelFootprint * 0.58);
-                float mediumFilter = 1.0 - smoothstep(0.35, 1.1, pixelFootprint * 0.115);
-                // Actual two-axis height derivatives, not a fixed diagonal tilt.
-                float2 detailSlope = largeField.yz * (6.5 * _LargeDetailStrength) * mediumDetailFade
-                    + mediumField.yz * (1.8 * _MediumDetailStrength) * nearDetailFade * mediumFilter
-                    + rippleField.yz * (0.2 * _RippleStrength) * nearDetailFade * rippleFilter;
-                float2 capillaryA = windDirection;
-                float2 capillaryB = crossDirection;
-                float microA = cos(dot(p, capillaryA) * 2.2 - oceanTime * 3.0 + mediumNoise * 2.0) * 0.045;
-                float microB = cos(dot(p, capillaryB) * 4.5 - oceanTime * 4.7) * 0.022;
-                float filterA = 1.0 - smoothstep(0.8, 2.4, pixelFootprint * 2.2);
-                float filterB = 1.0 - smoothstep(0.8, 2.4, pixelFootprint * 4.5);
-                float2 capillaryTilt = (capillaryA * microA * filterA + capillaryB * microB * filterB) * nearDetailFade;
-                half3 normalWS = normalize(waveNormal + float3(-detailSlope.x - capillaryTilt.x, 0,
-                    -detailSlope.y - capillaryTilt.y));
-                half3 viewDirection = SafeNormalize(GetWorldSpaceViewDir(input.positionWS));
+                float mediumFilter = nearDetailFade * (1.0 - smoothstep(0.20, 0.67, pixelFootprint * 0.21));
+                float rippleFilter = nearDetailFade * (1.0 - smoothstep(0.20, 0.67, pixelFootprint * 0.86));
+                float3 largeField = float3(0.5, 0, 0);
+                float3 mediumField = largeField;
+                float3 rippleField = largeField;
+                [branch] if (mediumDetailFade > 0.0)
+                    largeField = WindDetail(p, windDirection, float2(0.027, 0.058),
+                        oceanTime * float2(-0.062, 0.015));
+                [branch] if (mediumFilter > 0.0)
+                    mediumField = WindDetail(p, crossDirection, float2(0.21, 0.09),
+                        oceanTime * float2(-0.32, 0.025) + float2(5.1, -8.7));
+                [branch] if (rippleFilter > 0.0)
+                    rippleField = WindDetail(p, windDirection, float2(0.86, 0.33),
+                        oceanTime * float2(-0.74, 0.09) + float2(-12.5, 4.4));
+                float windPatch = lerp(0.32, 1.12, smoothstep(0.18, 0.78, largeField.x));
+                float2 broadSlope = input.bowSlope + largeField.yz * (3.5 * _LargeDetailStrength) * mediumDetailFade;
+                float2 fineSlope = mediumField.yz * (1.25 * _MediumDetailStrength) * mediumFilter
+                    + rippleField.yz * (0.46 * _RippleStrength) * rippleFilter;
+                fineSlope *= windPatch;
+                half3 broadNormal = normalize(waveNormal + float3(-broadSlope.x, 0, -broadSlope.y));
+                half3 normalWS = normalize(broadNormal + float3(-fineSlope.x, 0, -fineSlope.y));
+                float3 viewDirection = SafeNormalize(GetWorldSpaceViewDir(input.positionWS));
 
                 float2 screenUv = input.screenPosition.xy / input.screenPosition.w;
                 float sceneRawDepth = SampleSceneDepth(screenUv);
-                float sceneEyeDepth = LinearEyeDepth(sceneRawDepth, _ZBufferParams);
-                // SV_POSITION is already rasterized in the fragment stage, so
-                // z/w is not clip depth here. Use view-space water depth to
-                // compare like-for-like with the sampled opaque scene depth.
+                float sceneEyeDepth = IsPerspectiveProjection() ? LinearEyeDepth(sceneRawDepth, _ZBufferParams)
+                    : LinearDepthToEyeDepth(sceneRawDepth);
                 float waterEyeDepth = -TransformWorldToView(input.positionWS).z;
-                float waterThickness = max(0.0, sceneEyeDepth - waterEyeDepth);
-                float shallowToMid = saturate(waterThickness / max(_DepthFadeDistance, 0.01));
-                float midToDeep = saturate(waterThickness * _AbsorptionStrength / max(_DepthFadeDistance, 0.01));
+                // Separate the path through water from the vertical depth at the
+                // hit. The same beach keeps its colour band as the camera tilts.
+                float viewRayScale = rcp(max(dot(-viewDirection, GetViewForwardDir()), 0.01));
+                float rayGap = (sceneEyeDepth - waterEyeDepth) * viewRayScale;
+                float waterThickness = max(0.0, rayGap);
+                #if UNITY_REVERSED_Z
+                    bool hasBottom = sceneRawDepth > 0.000001;
+                #else
+                    bool hasBottom = sceneRawDepth < 0.999999;
+                #endif
+                bool showBottom = hasBottom && viewDirection.y > 0.0;
+                float depthRange = max(_DepthFadeDistance, 0.01);
+                float verticalGap = showBottom ? rayGap * viewDirection.y : depthRange * 8.0;
+                float verticalDepth = max(0.0, verticalGap);
+                float shallowToMid = 1.0 - exp2(-1.9 * verticalDepth / depthRange);
+                float midToDeep = 1.0 - exp2(-0.6 * _AbsorptionStrength
+                    * max(0.0, verticalDepth / depthRange - 0.40));
 
                 half3 bodyColor = lerp(_ShallowColor.rgb, _MidColor.rgb, shallowToMid);
                 bodyColor = lerp(bodyColor, _DeepColor.rgb, midToDeep);
                 float brineNoise = ValueNoise(p * _BrineNoiseScale + oceanTime * float2(0.028, -0.018) * _BrineFlowSpeed);
                 bodyColor *= 1.0h + (brineNoise - 0.5h) * _BrineStrength;
 
-                // Opaque Texture permits only a restrained near-shore hint of terrain.
-                half3 sceneColor = SampleSceneColor(screenUv);
-                half opacity = saturate(_WaterOpacity + waterThickness * 0.12);
-                half3 water = lerp(sceneColor, bodyColor, opacity);
-
                 Light sun = GetMainLight(TransformWorldToShadowCoord(input.positionWS), input.positionWS,
                     half4(1, 1, 1, 1));
                 half NoL = saturate(dot(normalWS, sun.direction));
-                half NoV = saturate(dot(normalWS, viewDirection));
                 half attenuation = sun.distanceAttenuation * sun.shadowAttenuation;
                 half3 ambient = max(SampleSH(waveNormal), 0.0h);
-                // Keep the authored brine palette, with restrained scattering light.
                 half3 bodyIllumination = lerp(half3(1, 1, 1),
                     saturate(ambient * 0.8h + sun.color * NoL * attenuation * 0.55h), 0.45h);
-                water *= bodyIllumination;
+                half backlight = saturate(dot(-viewDirection, sun.direction));
+                half scatter = (0.24h + 0.36h * waveCrest) * backlight * backlight;
+                half3 water = bodyColor * bodyIllumination +
+                    half3(0.018h, 0.064h, 0.075h) * sun.color * scatter * attenuation;
+                half transmission = exp2(-waterThickness * _AbsorptionStrength * 0.75 / depthRange)
+                    * (1.0h - _WaterOpacity * smoothstep(0.0, depthRange * 0.68, verticalDepth));
+                [branch] if (showBottom && transmission > 0.012h && _CameraOpaqueTexture_TexelSize.z > 1.0)
+                {
+                    half3 bottomColor = SampleSceneColor(screenUv);
+                    half tintAmount = 1.0h - exp2(-0.9h * waterThickness);
+                    bottomColor *= lerp(half3(1, 1, 1), half3(0.51, 0.83, 0.90), tintAmount);
+
+                    // Project two moving ridges onto the visible seabed along the
+                    // light direction. Only clear, sunlit water carries the pattern.
+                    half causticFade = smoothstep(0.10, 0.38, verticalDepth)
+                        * (1.0h - smoothstep(0.75, 2.1, verticalDepth))
+                        * (1.0h - smoothstep(0.22, 0.58, pixelFootprint))
+                        * saturate(sun.direction.y * 2.0h) * attenuation;
+                    if (causticFade > 0.01h)
+                    {
+                        float2 bottomXZ = input.positionWS.xz - viewDirection.xz * waterThickness;
+                        bottomXZ += sun.direction.xz * (verticalDepth / max(sun.direction.y, 0.25h));
+                        float3 warp = OceanNoiseGradient(bottomXZ * 0.54 + oceanTime * float2(0.07, -0.04));
+                        bottomXZ += warp.yz * 0.68;
+                        float a = sin(dot(bottomXZ, float2(2.8, 1.9)) - oceanTime * 0.92);
+                        float b = sin(dot(bottomXZ, float2(-1.7, 3.4)) + oceanTime * 0.71);
+                        half ridges = 1.0h - smoothstep(0.08, 0.39, min(abs(a + 0.45 * b), abs(b + 0.45 * a)));
+                        half caustic = ridges * smoothstep(0.27, 0.70, warp.x);
+                        bottomColor += bottomColor * sun.color * (0.10h * causticFade * caustic);
+                    }
+                    water = lerp(water, bottomColor, transmission);
+                }
+
+                half3 reflectionNormal = normalize(lerp(broadNormal, normalWS, 0.82h));
+                half NoV = saturate(lerp(viewDirection.y, dot(reflectionNormal, viewDirection), 0.78h));
                 half fresnel = (0.0204h + 0.9796h * pow(1.0h - NoV, _FresnelPower)) * _FresnelStrength;
-                half3 reflectionVector = reflect(-viewDirection, normalWS);
+                half3 reflectionVector = reflect(-viewDirection, reflectionNormal);
                 float normalVariance = dot(ddx(normalWS), ddx(normalWS)) + dot(ddy(normalWS), ddy(normalWS));
-                half surfaceRoughness = saturate(1.0h - _Smoothness + waveCrest * 0.055h
-                    + (mediumNoise - 0.5h) * 0.035h);
+                half surfaceRoughness = saturate(1.0h - _Smoothness + waveCrest * 0.09h
+                    + windPatch * 0.07h);
                 half perceptualRoughness = saturate(sqrt(surfaceRoughness * surfaceRoughness
                     + min(normalVariance, 0.25) * 0.35));
                 half3 probeReflection = GlossyEnvironmentReflection(reflectionVector, input.positionWS,
@@ -451,21 +489,24 @@ Shader "DarkBrine/Procedural Ocean"
                 // channel to a sky-colour floor. Use fallback only for an empty probe.
                 half probeAvailable = step(0.0001h, dot(probeReflection, half3(0.2126h, 0.7152h, 0.0722h)));
                 half3 environment = lerp(coldSkyFallback * 0.70h, probeReflection, probeAvailable);
-                water = lerp(water, environment, saturate(fresnel * _ReflectionStrength));
+                half reflectionWeight = saturate(fresnel * (1.0h - exp2(-3.2h * _ReflectionStrength)));
+                water = lerp(water, environment, reflectionWeight);
 
-                float glintNoise = ValueNoise(p * 0.31 + oceanTime * float2(0.16, -0.11));
-                half glintField = glintNoise * 0.48h + mediumNoise * 0.32h + rippleNoise * 0.20h;
+                half glintField = 0.5h + (mediumField.x - 0.5h) * mediumFilter * 0.48h
+                    + (rippleField.x - 0.5h) * rippleFilter * 0.52h;
                 half glintMask = smoothstep(_SunGlitterThreshold - 0.16h,
                     _SunGlitterThreshold + 0.10h, glintField);
-                half glintCluster = smoothstep(0.28h, 0.64h, largeNoise);
+                half glintCluster = smoothstep(0.28h, 0.64h, largeField.x);
                 BRDFData waterBrdf;
                 half alpha = 1.0h;
                 half roughnessFloor = sqrt(sqrt(max(2.0h / max(_SpecularSharpness + 2.0h, 1.0h), 0.0001h))) * 0.75h;
                 InitializeBRDFDataDirect(half3(0, 0, 0), half3(0, 0, 0), half3(0.0204h, 0.0204h, 0.0204h),
                     0.0204h, 0.9796h, 1.0h - max(perceptualRoughness, roughnessFloor), alpha, waterBrdf);
                 half sunGlint = DirectBRDFSpecular(waterBrdf, normalWS, sun.direction, viewDirection);
+                sunGlint /= 1.0h + 0.03h * sunGlint;
                 water += waterBrdf.specular * sun.color * NoL * attenuation * sunGlint * _SpecularStrength *
-                    (0.75h + glintMask * glintCluster * _SunGlitterStrength) * (1 - .65 * _EnvironmentStyle.x);
+                    (0.57h + glintMask * glintCluster * _SunGlitterStrength) *
+                    (1.0h - reflectionWeight) * (1 - .65 * _EnvironmentStyle.x);
 
                 // Foam drifts with the displaced surface and wind rather than
                 // reading as an independently sliding texture over the waves.
@@ -492,25 +533,26 @@ Shader "DarkBrine/Procedural Ocean"
                 // whitecap, instead of filling the whole crest with a white band.
                 half foamLace = 1.0h - smoothstep(0.07h, 0.25h, abs(foamDetail - 0.48h));
                 crestFoam *= lerp(1.0h, 0.30h + foamLace * 0.70h, _FoamIrregularity);
-                // Opaque depth measures water above submerged terrain. A narrow
-                // Dense contact line with a restrained outer lace follows the
-                // real coastline, while deep water receives no shore foam.
-                // Convert view-depth separation to horizontal contact distance.
-                // This keeps a dense narrow edge even on a shallow beach and at
-                // different camera angles; distant/deep water remains excluded.
+                crestFoam *= lerp(1.0h, 0.40h + 0.60h * smoothstep(0.28h, 0.66h, rippleField.x), rippleFilter);
+                // Convert the vertical depth gradient to approximate horizontal
+                // distance, then break up the wet edge and the wider wash separately.
                 float2 shoreDx = ddx(input.positionWS.xz), shoreDy = ddy(input.positionWS.xz);
-                float2 shoreGradient = float2(ddx(waterThickness) * shoreDy.y - ddy(waterThickness) * shoreDx.y,
-                    ddy(waterThickness) * shoreDx.x - ddx(waterThickness) * shoreDy.x);
+                float gapDx = ddx(verticalGap), gapDy = ddy(verticalGap);
+                float2 shoreGradient = float2(gapDx * shoreDy.y - gapDy * shoreDx.y,
+                    gapDy * shoreDx.x - gapDx * shoreDy.x);
                 float shoreDeterminant = abs(shoreDx.x * shoreDy.y - shoreDx.y * shoreDy.x);
-                float shoreDistance = waterThickness * shoreDeterminant / max(length(shoreGradient), 0.00001);
-                shoreDistance = max(shoreDistance, waterThickness * 0.35);
-                float shoreWidth = clamp(_FoamWidth * 0.55, 0.15, 1.65);
-                float shoreAA = min(fwidth(shoreDistance), 0.35);
-                half shoreMask = 1.0h - smoothstep(0.45h, 1.8h, waterThickness);
-                half contactFoam = (1.0 - smoothstep(shoreWidth * 0.45,
-                    shoreWidth + shoreAA, shoreDistance)) * (0.86h + foamDetail * 0.14h);
-                half breakerFoam = (1.0 - smoothstep(shoreWidth, shoreWidth + 0.7 + shoreAA,
-                    shoreDistance)) * waveCrest * foamLace * 0.24h;
+                float shoreDistance = max(verticalDepth * 0.7,
+                    verticalDepth * shoreDeterminant / max(length(shoreGradient), 0.00001));
+                float shoreWidth = clamp(_FoamWidth * 0.34, 0.12, 2.7)
+                    * lerp(0.6, 1.35, foamRegion);
+                float shoreAA = min(pixelFootprint, 0.48);
+                half shoreMask = showBottom ? (1.0h - smoothstep(0.22, 1.25, verticalDepth))
+                    * (1.0h - smoothstep(5.0, 15.0, waterThickness)) : 0.0h;
+                half contactPatches = smoothstep(0.30h, 0.70h, foamDetail * 0.62h + foamNoise * 0.38h);
+                half contactFoam = (1.0 - smoothstep(shoreWidth * 0.18,
+                    shoreWidth + shoreAA, shoreDistance)) * lerp(0.24h, 0.85h, contactPatches);
+                half breakerFoam = (1.0 - smoothstep(shoreWidth * 0.7, shoreWidth * 3.8 + shoreAA,
+                    shoreDistance)) * foamLace * smoothstep(0.34, 0.67, foamNoise) * (0.30h + waveCrest * 0.4h);
                 half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
                 foam = max(foam, SailingFoam(p, input.positionWS, foamDetail, foamNoise));
                 foam = lerp(foam, smoothstep(.15, .75, foam), .65 * _EnvironmentStyle.x);

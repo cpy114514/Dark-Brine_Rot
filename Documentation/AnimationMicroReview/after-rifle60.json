@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "rifle-micro",
+  "preset": "",
+  "metrics": {
+    "aimInPeakDegreesPerFrame": 10.0352526,
+    "aimOutPeakDegreesPerFrame": 11.7938871,
+    "firingBoreErrorDegrees": 0.0523391552
+  },
+  "checks": [
+    {
+      "ok": true,
+      "name": "Rifle carry/aim has no single-frame pose cut",
+      "evidence": {
+        "maxIn": 10.0352526,
+        "maxOut": 11.7938871
+      }
+    },
+    {
+      "ok": true,
+      "name": "Firing keeps bore aligned to actual aim point",
+      "evidence": 0.0523391552
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 68
+}

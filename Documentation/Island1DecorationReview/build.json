@@ -1,0 +1,224 @@
+{
+  "accepted": 738,
+  "rejected": 1046,
+  "sites": 32,
+  "species": [
+    {
+      "name": "Saltwind sedge",
+      "count": 0,
+      "nearTriangles": 688,
+      "farTriangles": 112,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Low fescue",
+      "count": 53,
+      "nearTriangles": 700,
+      "farTriangles": 96,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Broadleaf woodrush",
+      "count": 0,
+      "nearTriangles": 396,
+      "farTriangles": 80,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Hart tongue fern",
+      "count": 16,
+      "nearTriangles": 396,
+      "farTriangles": 80,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Bracken fern",
+      "count": 14,
+      "nearTriangles": 4096,
+      "farTriangles": 736,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Coastal sage shrub",
+      "count": 0,
+      "nearTriangles": 3456,
+      "farTriangles": 334,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Woodland hazel shrub",
+      "count": 0,
+      "nearTriangles": 3456,
+      "farTriangles": 334,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Rowan sapling",
+      "count": 0,
+      "nearTriangles": 3888,
+      "farTriangles": 334,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Wind bent alder sapling",
+      "count": 0,
+      "nearTriangles": 3888,
+      "farTriangles": 334,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Ochre meadow flower",
+      "count": 74,
+      "nearTriangles": 1764,
+      "farTriangles": 330,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Heather bell flower",
+      "count": 74,
+      "nearTriangles": 1428,
+      "farTriangles": 258,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Ivory woodland flower",
+      "count": 0,
+      "nearTriangles": 1428,
+      "farTriangles": 258,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Chestnut fungi",
+      "count": 14,
+      "nearTriangles": 3456,
+      "farTriangles": 300,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Cushion moss",
+      "count": 31,
+      "nearTriangles": 680,
+      "farTriangles": 108,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Copper leaf litter",
+      "count": 30,
+      "nearTriangles": 380,
+      "farTriangles": 108,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Fallen twigs",
+      "count": 25,
+      "nearTriangles": 190,
+      "farTriangles": 48,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Ink frond fern",
+      "count": 0,
+      "nearTriangles": 4096,
+      "farTriangles": 736,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Tidal lantern fungi",
+      "count": 0,
+      "nearTriangles": 3456,
+      "farTriangles": 300,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Coiled brine vine",
+      "count": 0,
+      "nearTriangles": 3040,
+      "farTriangles": 376,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Dusky seedpod",
+      "count": 0,
+      "nearTriangles": 2208,
+      "farTriangles": 684,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Shingle cluster A",
+      "count": 115,
+      "nearTriangles": 488,
+      "farTriangles": 160,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Shingle cluster B",
+      "count": 156,
+      "nearTriangles": 488,
+      "farTriangles": 160,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Fractured ledge A",
+      "count": 18,
+      "nearTriangles": 183,
+      "farTriangles": 40,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Fractured ledge B",
+      "count": 0,
+      "nearTriangles": 183,
+      "farTriangles": 40,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Stranded branch",
+      "count": 16,
+      "nearTriangles": 288,
+      "farTriangles": 112,
+      "drawDistance": 95.0
+    },
+    {
+      "name": "Shell wrack",
+      "count": 56,
+      "nearTriangles": 864,
+      "farTriangles": 96,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Coppercoil fern",
+      "count": 2,
+      "nearTriangles": 1736,
+      "farTriangles": 416,
+      "drawDistance": 65.0
+    },
+    {
+      "name": "Stranded kelp ribbons",
+      "count": 38,
+      "nearTriangles": 504,
+      "farTriangles": 224,
+      "drawDistance": 45.0
+    },
+    {
+      "name": "Ship timber 2",
+      "count": 2,
+      "nearTriangles": 112,
+      "farTriangles": 112,
+      "drawDistance": 100.0
+    },
+    {
+      "name": "Ship timber 7",
+      "count": 2,
+      "nearTriangles": 112,
+      "farTriangles": 112,
+      "drawDistance": 100.0
+    },
+    {
+      "name": "Ship timber 12",
+      "count": 2,
+      "nearTriangles": 208,
+      "farTriangles": 208,
+      "drawDistance": 100.0
+    }
+  ]
+}

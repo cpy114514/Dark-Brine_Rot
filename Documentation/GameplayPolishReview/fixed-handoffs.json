@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "handoffs",
+  "preset": "",
+  "metrics": {
+    "queuedDodgeCount": 2
+  },
+  "checks": [
+    {
+      "ok": true,
+      "name": "Fresh late dodge press survives the actual recovery cooldown",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Fresh late jump press survives the dodge handoff",
+      "evidence": 12.1903191
+    },
+    {
+      "ok": true,
+      "name": "Preset switching leaves the active dodge timeline intact",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 96
+}

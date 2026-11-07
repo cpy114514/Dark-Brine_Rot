@@ -1,0 +1,10 @@
+Rock 030 by Lennart Demes / ambientCG
+Creative Commons CC0 1.0 Universal
+
+https://ambientcg.com/a/Rock030
+https://docs.ambientcg.com/license/
+https://creativecommons.org/publicdomain/zero/1.0/
+
+This project imports the 1K color and OpenGL normal maps. The imported
+linear surface map packs the source roughness in red and ambient
+occlusion in green. Blue is zero because stone transmits no light.

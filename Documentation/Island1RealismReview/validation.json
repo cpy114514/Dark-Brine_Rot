@@ -1,0 +1,151 @@
+{
+  "passed": true,
+  "grass": 136941,
+  "ecology": 5315,
+  "grassSamples": 431080,
+  "ecologySamples": 5315,
+  "missing": 0,
+  "floaters": 0,
+  "maximumGap": -0.0259876251,
+  "routeIntrusions": 0,
+  "missingMaterials": 0,
+  "shaderErrors": [],
+  "colliders": 54,
+  "species": [
+    {
+      "name": "Saltwind sedge",
+      "uncanny": false,
+      "count": 567
+    },
+    {
+      "name": "Low fescue",
+      "uncanny": false,
+      "count": 1413
+    },
+    {
+      "name": "Broadleaf woodrush",
+      "uncanny": false,
+      "count": 696
+    },
+    {
+      "name": "Hart tongue fern",
+      "uncanny": false,
+      "count": 91
+    },
+    {
+      "name": "Bracken fern",
+      "uncanny": false,
+      "count": 327
+    },
+    {
+      "name": "Coastal sage shrub",
+      "uncanny": false,
+      "count": 310
+    },
+    {
+      "name": "Woodland hazel shrub",
+      "uncanny": false,
+      "count": 55
+    },
+    {
+      "name": "Rowan sapling",
+      "uncanny": false,
+      "count": 24
+    },
+    {
+      "name": "Wind bent alder sapling",
+      "uncanny": false,
+      "count": 18
+    },
+    {
+      "name": "Ochre meadow flower",
+      "uncanny": false,
+      "count": 323
+    },
+    {
+      "name": "Heather bell flower",
+      "uncanny": false,
+      "count": 293
+    },
+    {
+      "name": "Ivory woodland flower",
+      "uncanny": false,
+      "count": 236
+    },
+    {
+      "name": "Chestnut fungi",
+      "uncanny": false,
+      "count": 102
+    },
+    {
+      "name": "Cushion moss",
+      "uncanny": false,
+      "count": 171
+    },
+    {
+      "name": "Copper leaf litter",
+      "uncanny": false,
+      "count": 158
+    },
+    {
+      "name": "Fallen twigs",
+      "uncanny": false,
+      "count": 96
+    },
+    {
+      "name": "Ink frond fern",
+      "uncanny": true,
+      "count": 17
+    },
+    {
+      "name": "Tidal lantern fungi",
+      "uncanny": true,
+      "count": 12
+    },
+    {
+      "name": "Coiled brine vine",
+      "uncanny": true,
+      "count": 12
+    },
+    {
+      "name": "Dusky seedpod",
+      "uncanny": true,
+      "count": 6
+    },
+    {
+      "name": "Shingle cluster A",
+      "uncanny": false,
+      "count": 90
+    },
+    {
+      "name": "Shingle cluster B",
+      "uncanny": false,
+      "count": 76
+    },
+    {
+      "name": "Fractured ledge A",
+      "uncanny": false,
+      "count": 54
+    },
+    {
+      "name": "Fractured ledge B",
+      "uncanny": false,
+      "count": 36
+    },
+    {
+      "name": "Stranded branch",
+      "uncanny": false,
+      "count": 37
+    },
+    {
+      "name": "Shell wrack",
+      "uncanny": false,
+      "count": 91
+    },
+    {
+      "name": "Coppercoil fern",
+      "uncanny": true,
+      "count": 4
+    }
+  ]
+}

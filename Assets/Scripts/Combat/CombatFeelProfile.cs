@@ -107,7 +107,7 @@ namespace Mavis
         }
     }
     public enum CombatHitResult { Hit, HeavyHit, Blocked, Unflinching }
-    public enum CombatMaterial { Flesh, Wood, Metal }
+    public enum CombatMaterial { Flesh, Wood, Metal, Rock, Sand, Soil, Water, Vegetation }
     public readonly struct CombatHitEvent
     {
         public readonly GameObject attacker;

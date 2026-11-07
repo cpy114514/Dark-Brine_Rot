@@ -157,7 +157,13 @@ namespace Mavis
                 var bead = beads[i];
                 bead.transform.position = transform.position+splashVelocity[i]*splashAge+Vector3.down*(4*splashAge*splashAge);
                 float size = collisionRadius*(.32f+(i%3)*.14f);
-                bead.transform.localScale = new Vector3(size,size*1.2f,size);
+                // Stretch along cosmetic flight, then round off as droplets slow.
+                // The colliding core and its sweep radius are untouched.
+                Vector3 travel=splashVelocity[i]+Vector3.down*(8*splashAge);
+                float stretch=1+Mathf.Clamp(travel.magnitude*.12f,0,.6f);
+                if(travel.sqrMagnitude>.001f)bead.transform.rotation=Quaternion.LookRotation(travel);
+                float width=size/Mathf.Sqrt(stretch);
+                bead.transform.localScale=new Vector3(width,width,size*stretch);
                 bead.SetPropertyBlock(properties);
             }
         }

@@ -1,0 +1,154 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "ok": true,
+      "name": "Material fallback resolves Rock"
+    },
+    {
+      "ok": true,
+      "name": "Authored surface resolves Rock"
+    },
+    {
+      "ok": true,
+      "name": "Contact accepted for Rock"
+    },
+    {
+      "ok": true,
+      "name": "No stale contact after Rock"
+    },
+    {
+      "ok": true,
+      "name": "Material fallback resolves Sand"
+    },
+    {
+      "ok": true,
+      "name": "Authored surface resolves Sand"
+    },
+    {
+      "ok": true,
+      "name": "Contact accepted for Sand"
+    },
+    {
+      "ok": true,
+      "name": "No stale contact after Sand"
+    },
+    {
+      "ok": true,
+      "name": "Material fallback resolves Soil"
+    },
+    {
+      "ok": true,
+      "name": "Authored surface resolves Soil"
+    },
+    {
+      "ok": true,
+      "name": "Contact accepted for Soil"
+    },
+    {
+      "ok": true,
+      "name": "No stale contact after Soil"
+    },
+    {
+      "ok": true,
+      "name": "Material fallback resolves Wood"
+    },
+    {
+      "ok": true,
+      "name": "Authored surface resolves Wood"
+    },
+    {
+      "ok": true,
+      "name": "Contact accepted for Wood"
+    },
+    {
+      "ok": true,
+      "name": "No stale contact after Wood"
+    },
+    {
+      "ok": true,
+      "name": "Material fallback resolves Metal"
+    },
+    {
+      "ok": true,
+      "name": "Authored surface resolves Metal"
+    },
+    {
+      "ok": true,
+      "name": "Contact accepted for Metal"
+    },
+    {
+      "ok": true,
+      "name": "No stale contact after Metal"
+    },
+    {
+      "ok": true,
+      "name": "Material fallback resolves Water"
+    },
+    {
+      "ok": true,
+      "name": "Authored surface resolves Water"
+    },
+    {
+      "ok": true,
+      "name": "Contact accepted for Water"
+    },
+    {
+      "ok": true,
+      "name": "No stale contact after Water"
+    },
+    {
+      "ok": true,
+      "name": "Material fallback resolves Vegetation"
+    },
+    {
+      "ok": true,
+      "name": "Authored surface resolves Vegetation"
+    },
+    {
+      "ok": true,
+      "name": "Contact accepted for Vegetation"
+    },
+    {
+      "ok": true,
+      "name": "No stale contact after Vegetation"
+    },
+    {
+      "ok": true,
+      "name": "Muzzle flame and cooling plume expire"
+    },
+    {
+      "ok": true,
+      "name": "Muzzle interruption clears its only renderer"
+    },
+    {
+      "ok": true,
+      "name": "Landing wake accepts authored wood surface"
+    },
+    {
+      "ok": true,
+      "name": "Explicit wood response controls landing chips despite neutral mesh name"
+    },
+    {
+      "ok": true,
+      "name": "Native Nailong glob still contacts the real floor"
+    },
+    {
+      "ok": true,
+      "name": "Nailong retains one core and six cosmetic droplets"
+    },
+    {
+      "ok": true,
+      "name": "Nailong splash returns to its original pool lifecycle"
+    },
+    {
+      "ok": true,
+      "name": "Surface and muzzle shader compile"
+    },
+    {
+      "ok": true,
+      "name": "No runtime or shader errors"
+    }
+  ],
+  "errors": []
+}

@@ -46,7 +46,8 @@ namespace Mavis
             {
                 int index = kind == CueKind.Swing ? 1 : kind == CueKind.Hit || kind == CueKind.Stagger ? 2 : 0;
                 audioSource.pitch = kind == CueKind.Surge ? .7f : kind == CueKind.Stagger ? .75f : 1f;
-                if (clips[index]) audioSource.PlayOneShot(clips[index], kind == CueKind.Hit ? .65f : .45f);
+                float gain = kind == CueKind.Windup ? .9f : kind == CueKind.Hit ? .65f : .45f;
+                if (clips[index]) audioSource.PlayOneShot(clips[index], gain);
             }
         }
 

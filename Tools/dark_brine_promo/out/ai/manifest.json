@@ -1,0 +1,59 @@
+{
+ "test_ocean_01": {
+  "task_id": "459975718998251",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\test_ocean_01.mp4",
+  "cached": true
+ },
+ "shark_fin": {
+  "task_id": "459977605681404",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\shark_fin.mp4",
+  "cached": true
+ },
+ "brine_waves": {
+  "task_id": "459978021060841",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\brine_waves.mp4",
+  "cached": true
+ },
+ "hailuo_ocean": {
+  "task_id": "459981436092638",
+  "status": "succeeded",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\hailuo_ocean.mp4",
+  "resolution": null,
+  "duration": null
+ },
+ "wreck_fog": {
+  "task_id": "459981895430345",
+  "status": "succeeded",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\wreck_fog.mp4",
+  "resolution": null,
+  "duration": null
+ },
+ "beast_rise": {
+  "task_id": "459981353431278",
+  "status": "succeeded",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\beast_rise.mp4",
+  "resolution": null,
+  "duration": null
+ },
+ "island_approach": {
+  "task_id": "459981225685621",
+  "status": "succeeded",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\island_approach.mp4",
+  "resolution": null,
+  "duration": null
+ },
+ "island_approach_fast": {
+  "task_id": "459981591921257",
+  "status": "succeeded",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\island_approach_fast.mp4",
+  "resolution": null,
+  "duration": null
+ },
+ "i2v_island": {
+  "task_id": "459984036880611",
+  "status": "succeeded",
+  "file": "D:\\indiegameDev\\unity\\Dark Brine_Rot\\Tools\\dark_brine_promo\\assets\\ai\\i2v_island.mp4",
+  "resolution": null,
+  "duration": null
+ }
+}

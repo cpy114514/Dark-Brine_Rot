@@ -165,16 +165,17 @@ Shader "DarkBrine/Procedural Shore Foam"
                 float cycle = frac((-input.breaker.x + PI * 0.5) / TWO_PI);
                 float surge = smoothstep(0.04, 0.28, cycle)
                     * (1.0 - smoothstep(0.46, 0.98, cycle));
-                float width = _ShoreBandWidth * lerp(0.65, 1.1, surge) * (0.94 + broad * 0.12);
+                float width = _ShoreBandWidth * lerp(0.52, 1.05, surge) * lerp(0.64, 1.22, broad);
                 float aa = min(fwidth(contactDistance), 0.35);
-                float ribbon = 1.0 - smoothstep(width * 0.45, width + aa, contactDistance);
-                float lace = 1.0 - smoothstep(0.05, 0.22, abs(fine - 0.51));
+                float ribbon = 1.0 - smoothstep(width * 0.25, width + aa, contactDistance);
+                float lace = 1.0 - smoothstep(0.035, 0.19, abs(fine - 0.51));
                 float bubbles = smoothstep(0.18, 0.72, grain);
-                // Keep a solid, dense core all along the waterline. Noise varies
-                // bubbles and the thin outer lace, never punches holes in the line.
-                float fresh = ribbon * (0.86 + bubbles * 0.14);
-                float wash = (1.0 - smoothstep(width, width + 0.65 + aa, contactDistance))
-                    * (1.0 - ribbon) * lace * 0.22;
+                // Fresh bubbles collect in clumps. The spreading wash thins
+                // into lace between those clumps as the surge recedes.
+                float clumps = smoothstep(0.27, 0.68, broad * 0.65 + fine * 0.35);
+                float fresh = ribbon * lerp(0.25, 0.88, clumps) * lerp(0.62, 1.0, bubbles);
+                float wash = (1.0 - smoothstep(width, width * 3.4 + aa, contactDistance))
+                    * (1.0 - ribbon) * lace * lerp(0.12, 0.48, surge) * clumps;
                 float wet = smoothstep(-0.03, 0.06, input.breaker.y)
                     * (1.0 - smoothstep(0.6, 1.8, input.breaker.y));
                 float edge = smoothstep(0.0, 0.035, input.uv.y)

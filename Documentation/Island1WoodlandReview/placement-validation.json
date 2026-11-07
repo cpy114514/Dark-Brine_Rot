@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "ecologyInstances": 2798,
+  "roots": 202389,
+  "floating": 0,
+  "missing": 0,
+  "outside": 0,
+  "minGap": -0.170635223,
+  "maxGap": 0.032980442,
+  "treeFloat": 0,
+  "treeRoots": [
+    {
+      "name": "Crooked coastal 2 - grove 2",
+      "samples": 11,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Crooked coastal 2 - grove 3",
+      "samples": 11,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Upright woodland 1 - grove 4",
+      "samples": 26,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Upright woodland 0 - grove 5",
+      "samples": 26,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Upright woodland 0 - grove 6",
+      "samples": 26,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Crooked coastal 2 - grove 8",
+      "samples": 11,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Crooked coastal 2 - grove 9",
+      "samples": 11,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Upright woodland 1 - grove 10",
+      "samples": 26,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Upright woodland 0 - grove 11",
+      "samples": 26,
+      "worst": -0.0349998474
+    },
+    {
+      "name": "Crooked coastal 0 - grove 13",
+      "samples": 11,
+      "worst": -0.0349998474
+    }
+  ],
+  "badGeometry": 0,
+  "missingMaterials": 0,
+  "shaderErrors": [],
+  "treeCount": 10,
+  "newColliders": 0,
+  "sceneColliders": 54
+}

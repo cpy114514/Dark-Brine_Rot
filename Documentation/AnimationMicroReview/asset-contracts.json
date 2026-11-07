@@ -1,0 +1,1365 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "ok": true,
+      "name": "Balanced remains the persisted default"
+    },
+    {
+      "ok": true,
+      "name": "All three serialized experiments contain valid independent control tuning"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Locomotion"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Locomotion"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Roll"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Roll"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Jump Start"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Jump Start"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Jump Loop"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Jump Loop"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Land"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Land"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Swim Forward"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Swim Forward"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Swim Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Swim Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Air Flip"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Air Flip"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Boomerang Throw"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Boomerang Throw"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Swim Fast"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Swim Fast"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Shore Get Up"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Shore Get Up"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Wreck Climb"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Wreck Climb"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Wreck Surf"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Wreck Surf"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Finale Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Finale Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Finale Stagger"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Finale Stagger"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Finale Knockdown"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Finale Knockdown"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Finale Block"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Finale Block"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Heavy"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Heavy"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Club Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Club Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Blade Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Blade Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Blade Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Blade Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Perfect Step"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Perfect Step"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Base Layer / Capri Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Charge Upper Body / Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Charge Upper Body / Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Twin Blade Charge / Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Twin Blade Charge / Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Combat Received Hit / Received Hit"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Received Hit"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Twin Blade Recovery / Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Twin Blade Recovery / Capri Recovery"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Capri Recovery"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Air Attack Legs / Airborne Pose"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Airborne Pose"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored motion Lock-on Footwork / Directional legs"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded retains authored base speed Directional legs"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded has the isolated roll playback parameter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGrounded footwork never replaces root, torso or weapon arms"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Locomotion"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Locomotion"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Roll"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Roll"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Jump Start"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Jump Start"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Jump Loop"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Jump Loop"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Land"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Land"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Swim Forward"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Swim Forward"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Swim Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Swim Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Air Flip"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Air Flip"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Boomerang Throw"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Boomerang Throw"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Swim Fast"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Swim Fast"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Shore Get Up"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Shore Get Up"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Wreck Climb"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Wreck Climb"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Finale Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Finale Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Finale Stagger"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Finale Stagger"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Finale Knockdown"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Finale Knockdown"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Finale Block"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Finale Block"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Heavy"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Heavy"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Swimming"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Swimming"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Club Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Club Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Blade Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Blade Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Blade Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Blade Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Perfect Step"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Perfect Step"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Base Layer / Capri Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Charge Upper Body / Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Charge Upper Body / Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Charge Upper Body / Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Charge Upper Body / Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Charge Upper Body / Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Light Attack Upper Body / Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Light Attack Upper Body / Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Light Attack Upper Body / Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Twin Blade Charge / Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Twin Blade Charge / Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Combat Received Hit / Received Hit"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Received Hit"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Twin Blade Recovery / Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Twin Blade Recovery / Capri Recovery"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Capri Recovery"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Air Attack Legs / Airborne Pose"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Airborne Pose"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored motion Lock-on Footwork / Directional legs"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay retains authored base speed Directional legs"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay has the isolated roll playback parameter"
+    },
+    {
+      "ok": true,
+      "name": "SahurGameplay footwork never replaces root, torso or weapon arms"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Locomotion"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Locomotion"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Roll"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Roll"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Jump Start"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Jump Start"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Jump Loop"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Jump Loop"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Land"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Land"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Swim Forward"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Swim Forward"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Swim Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Swim Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Air Flip"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Air Flip"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Boomerang Throw"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Boomerang Throw"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Swim Fast"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Swim Fast"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Shore Get Up"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Shore Get Up"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Wreck Climb"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Wreck Climb"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Finale Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Finale Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Finale Stagger"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Finale Stagger"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Finale Knockdown"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Finale Knockdown"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Finale Block"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Finale Block"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Heavy"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Heavy"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Jump Slash"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Swimming"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Swimming"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Blade Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Blade Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Blade Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Blade Guard"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Club Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Club Spin"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Perfect Step"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Perfect Step"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Perfect Counter"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Air Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Base Layer / Capri Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Air Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Charge Upper Body / Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Charge Windup"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Charge Upper Body / Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Heavy Attack"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Charge Upper Body / Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Charge Upper Body / Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Charge Upper Body / Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Light Attack Upper Body / Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 1"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Light Attack Upper Body / Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 2"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Light Attack Upper Body / Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Combo 3"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Rifle Locomotion / Rifle Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Rifle Idle"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Rifle Locomotion / Rifle Move"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Rifle Move"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Rifle Locomotion / Rifle Stop"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Rifle Stop"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Rifle Locomotion / Rifle Death"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Rifle Death"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Rifle Holding Upper Body / Rifle Hold"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Rifle Hold"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Rifle Fire Upper Body / Rifle Fire"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Rifle Fire"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Twin Blade Charge / Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Twin Blade Charge / Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Charge"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Combat Received Hit / Received Hit"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Received Hit"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Twin Blade Recovery / Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Empty"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Twin Blade Recovery / Capri Recovery"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Capri Recovery"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Air Attack Legs / Airborne Pose"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Airborne Pose"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored motion Lock-on Footwork / Directional legs"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle retains authored base speed Directional legs"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle has the isolated roll playback parameter"
+    },
+    {
+      "ok": true,
+      "name": "SahurRifle footwork never replaces root, torso or weapon arms"
+    },
+    {
+      "ok": true,
+      "name": "Actual player prefab references the selected shared control profile"
+    },
+    {
+      "ok": true,
+      "name": "Player prefab has no missing script references"
+    }
+  ]
+}

@@ -34,6 +34,9 @@ Shader "DarkBrine/Island Blended Terrain"
         _VariationAmount ("Surface variation", Range(0,1)) = 0.85
         _PatchScale ("Patch scale", Float) = 0.045
         [HideInInspector] _VariationEnabled ("Variation enabled", Float) = 0
+        [HideInInspector] _HabitatMap ("Baked habitat", 2D) = "black" {}
+        [HideInInspector] _HabitatBounds ("Habitat world bounds", Vector) = (0, 0, 1, 1)
+        [HideInInspector] _HabitatEnabled ("Habitat enabled", Float) = 0
         [HideInInspector] _BaseMap ("Shadow base map", 2D) = "white" {}
         [HideInInspector] _BaseColor ("Shadow base color", Color) = (1, 1, 1, 1)
         [HideInInspector] _Cutoff ("Shadow cutoff", Float) = 0
@@ -75,6 +78,8 @@ Shader "DarkBrine/Island Blended Terrain"
                 half _VariationAmount;
                 half _VariationEnabled;
                 float _PatchScale;
+                float4 _HabitatBounds;
+                half _HabitatEnabled;
             CBUFFER_END
 
             TEXTURE2D(_SandTex); SAMPLER(sampler_SandTex);
@@ -94,6 +99,7 @@ Shader "DarkBrine/Island Blended Terrain"
             TEXTURE2D(_MeadowTex); TEXTURE2D(_DryGrassTex);
             TEXTURE2D(_FineSandNormal); TEXTURE2D(_WetSandNormal);
             TEXTURE2D(_MeadowNormal); TEXTURE2D(_DryGrassNormal);
+            TEXTURE2D(_HabitatMap); SAMPLER(sampler_HabitatMap);
 
             struct Attributes
             {
@@ -152,6 +158,13 @@ Shader "DarkBrine/Island Blended Terrain"
                 float broadPatch = PatchNoise(p * 0.012);
                 float detailPatch = PatchNoise(p * 0.055 + 19.4);
                 float zone = saturate(input.radius + macro * 0.035 + (broadPatch - 0.5) * 0.075);
+                half3 surfaceNormal = normalize(input.normalWS);
+                half4 habitat = 0;
+                if (_HabitatEnabled > 0.5h)
+                {
+                    float2 uv = (p - _HabitatBounds.xy) / _HabitatBounds.zw;
+                    habitat = SAMPLE_TEXTURE2D(_HabitatMap, sampler_HabitatMap, uv);
+                }
 
                 half3 rock = SAMPLE_TEXTURE2D(_RockTex, sampler_RockTex, input.uv).rgb * _RockTint.rgb;
                 half3 dry = SAMPLE_TEXTURE2D(_DryTex, sampler_DryTex, input.uv).rgb * _SandTint.rgb;
@@ -228,7 +241,6 @@ Shader "DarkBrine/Island Blended Terrain"
                     albedo = lerp(albedo, yellowSand, beachBlend);
                 }
 
-                half3 surfaceNormal = normalize(input.normalWS);
                 half slopeRock = (1.0h - smoothstep(0.68h, 0.92h, surfaceNormal.y)) * 0.70h;
                 half exposedSoil = smoothstep(0.50, 0.90, detailPatch) * 0.14h;
                 albedo = lerp(albedo, dry, exposedSoil * (1.0h - shoreBlend) * (1.0h - slopeRock));
@@ -263,6 +275,36 @@ Shader "DarkBrine/Island Blended Terrain"
                 }
                 detailNormal = normalize(lerp(detailNormal, rockNormal, slopeRock));
                 detailNormal.xy *= 0.55h;
+                half damp = 0;
+                if (_HabitatEnabled > 0.5h)
+                {
+                    // World-aligned details break up the baked edges at foot scale.
+                    // Sample the same turf, stone and sand surfaces across both scales.
+                    half grain = PatchNoise(p * 0.87 + 25.3) - 0.5h;
+                    half turf = saturate(habitat.r + grain * 0.21h);
+                    half wear = saturate(habitat.g + grain * habitat.g * 0.45h);
+                    half stone = saturate(habitat.b + grain * habitat.b * 0.43h);
+                    damp = habitat.a * saturate(beachBlend + shoreBlend);
+                    float2 earthUv = p * 0.34 + float2(5.7, 13.2);
+                    half3 earth = SAMPLE_TEXTURE2D(_ForestTex, sampler_ForestTex, earthUv).rgb;
+                    half3 grit = SAMPLE_TEXTURE2D(_DryTex, sampler_DryTex, earthUv * 0.71).rgb;
+                    earth *= half3(0.71h, 0.66h, 0.54h) * (0.90h + detailPatch * 0.27h);
+                    earth = lerp(earth, grit * half3(0.81h, 0.69h, 0.54h), wear * 0.91h);
+                    half shore = max(beachBlend, shoreBlend);
+                    half3 inland = lerp(earth, grass * half3(0.84h, 0.88h, 0.75h), turf * (1.0h - wear * 0.88h));
+                    albedo = lerp(inland, albedo, shore);
+                    // Rotate the rock projection out of the default terrain UV lattice.
+                    float2 rockUv = float2(dot(p, float2(0.143, 0.081)), dot(p, float2(-0.081, 0.143)));
+                    half3 fracturedRock = SAMPLE_TEXTURE2D(_RockTex, sampler_RockTex, rockUv).rgb * _RockTint.rgb;
+                    albedo = lerp(albedo, fracturedRock * half3(0.84h, 0.86h, 0.83h), stone);
+                    albedo *= lerp(1.0h, 0.65h, damp);
+                    half3 earthNormal = UnpackNormal(SAMPLE_TEXTURE2D(_GrassNormal, sampler_GrassNormal, earthUv));
+                    half3 fractureNormal = UnpackNormal(SAMPLE_TEXTURE2D(_RockNormal, sampler_RockNormal, rockUv));
+                    fractureNormal.xy = mul(half2x2(0.87h, -0.49h, 0.49h, 0.87h), fractureNormal.xy);
+                    half3 inlandNormal = lerp(earthNormal * half3(0.76h, 0.76h, 1), grassNormal, turf * (1.0h - wear));
+                    detailNormal = lerp(lerp(inlandNormal, detailNormal, shore), fractureNormal, stone);
+                    detailNormal.xy *= lerp(1.0h, 0.55h, damp);
+                }
                 detailNormal = normalize(detailNormal);
 
                 half3 tangentWS = normalize(half3(1.0h, -surfaceNormal.x / max(surfaceNormal.y, 0.1h), 0.0h));
@@ -274,6 +316,12 @@ Shader "DarkBrine/Island Blended Terrain"
                 half3 ambient = max(SampleSH(normalWS), half3(0.19h, 0.20h, 0.20h));
                 half3 direct = sun.color * NdotL * sun.distanceAttenuation * sun.shadowAttenuation * 0.57h;
                 half3 lit = albedo * (ambient + direct);
+                if (damp > 0.01h)
+                {
+                    half3 viewDirection = GetWorldSpaceNormalizeViewDir(input.positionWS);
+                    half highlight = pow(saturate(dot(normalWS, normalize(sun.direction + viewDirection))), 24.0h);
+                    lit += sun.color * (0.05h * damp * highlight * NdotL * sun.shadowAttenuation);
+                }
                 return half4(MixFog(lit, input.fogFactor), 1.0h);
             }
             ENDHLSL
@@ -281,6 +329,8 @@ Shader "DarkBrine/Island Blended Terrain"
 
         UsePass "Universal Render Pipeline/Lit/ShadowCaster"
         UsePass "Universal Render Pipeline/Lit/DepthOnly"
+        // The PC SSAO depth-normals prepass also supplies depth to the ocean.
+        UsePass "Universal Render Pipeline/Lit/DepthNormals"
     }
     FallBack Off
 }

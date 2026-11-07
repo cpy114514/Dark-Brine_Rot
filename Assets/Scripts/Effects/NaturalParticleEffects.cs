@@ -25,6 +25,7 @@ public static class NaturalParticleEffects
     // Cosmetic bursts can thin out with distance; damage and encounter events remain independent.
     public static int BurstBudget(Vector3 position, int count)
     {
+        count=Mathf.Max(0,Mathf.CeilToInt(count*Mavis.CombatVfxSettings.DetailScale));
         var camera = Camera.main;
         if (camera == null) return count;
         float distance = Vector3.Distance(camera.transform.position, position);

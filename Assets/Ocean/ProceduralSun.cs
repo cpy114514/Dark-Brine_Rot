@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [ExecuteAlways]
 [RequireComponent(typeof(MeshRenderer))]
@@ -26,6 +27,8 @@ public sealed class ProceduralSun : MonoBehaviour
         renderer.sharedMaterial = generatedMaterial;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = false;
+        RenderPipelineManager.beginCameraRendering += BeforeCamera;
+        RenderPipelineManager.endCameraRendering += AfterCamera;
         PositionHighSun();
     }
 
@@ -46,7 +49,24 @@ public sealed class ProceduralSun : MonoBehaviour
 
     void PositionHighSun()
     {
-        Camera camera = Camera.main;
+        PositionHighSun(Camera.main);
+    }
+
+    void BeforeCamera(ScriptableRenderContext context, Camera camera)
+    {
+        if (camera.cameraType == CameraType.Game || camera.cameraType == CameraType.SceneView)
+            PositionHighSun(camera);
+    }
+
+    void AfterCamera(ScriptableRenderContext context, Camera camera)
+    {
+        // Leave the authored object following the gameplay camera between renders.
+        if (camera.cameraType == CameraType.SceneView)
+            PositionHighSun();
+    }
+
+    void PositionHighSun(Camera camera)
+    {
         if (camera == null)
             return;
 
@@ -80,6 +100,8 @@ public sealed class ProceduralSun : MonoBehaviour
 
     void OnDisable()
     {
+        RenderPipelineManager.beginCameraRendering -= BeforeCamera;
+        RenderPipelineManager.endCameraRendering -= AfterCamera;
         cachedLight = null;
         if (generatedMaterial == null) return;
         if (Application.isPlaying) Destroy(generatedMaterial); else DestroyImmediate(generatedMaterial);

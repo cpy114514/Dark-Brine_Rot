@@ -1,0 +1,36 @@
+{
+  "changedColliders": [
+    "--- !u!64 &558624516"
+  ],
+  "changedTransforms": [],
+  "meshPayloads": {
+    "--- !u!33 &367158186": true,
+    "--- !u!33 &558624518": true
+  },
+  "colliderSettingsUnchanged": true,
+  "--- !u!23 &1712791292": [],
+  "--- !u!114 &1898939681": [
+    "--- \n",
+    "+++ \n",
+    "@@ -46,3 +46,5 @@\n",
+    "   dryGrassNormal: {fileID: 2800000, guid: 7e32a1b0b5a136c439aa1f86f186fd16, type: 3}",
+    "   surfaceVariation: 0.85",
+    "   surfacePatchScale: 0.045",
+    "+  habitatMap: {fileID: 0}",
+    "+  habitatBounds: {x: 0, y: 0, z: 0, w: 0}"
+  ],
+  "Enemies": {
+    "changedExistingBlocks": [
+      "--- !u!1660057539 &9223372036854775807"
+    ],
+    "removedBlocks": [],
+    "addedBlocks": 112
+  },
+  "Gameplay": {
+    "changedExistingBlocks": [
+      "--- !u!1660057539 &9223372036854775807"
+    ],
+    "removedBlocks": [],
+    "addedBlocks": 50
+  }
+}

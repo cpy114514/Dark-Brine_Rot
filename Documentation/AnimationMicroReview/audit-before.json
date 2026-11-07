@@ -1,0 +1,2099 @@
+{
+  "playing": false,
+  "prefab": {
+    "movement": "{\"MonoBehaviour\":{\"m_Enabled\":true,\"m_EditorHideFlags\":0,\"m_Name\":\"\",\"m_EditorClassIdentifier\":\"Assembly-CSharp::ThirdPersonPlayerController\",\"showControlDiagnostics\":false,\"useControlPreset\":true,\"perfectDodgeWindow\":0.2800000011920929,\"perfectStepDuration\":0.2800000011920929,\"perfectStepDistance\":2.0,\"perfectCounterWindow\":0.44999998807907107,\"moveSpeed\":9.600000381469727,\"sprintMultiplier\":1.75,\"rotationSpeed\":14.0,\"jumpHeight\":2.700000047683716,\"gravity\":64.0,\"acceleration\":68.0,\"deceleration\":84.0,\"backwardsSpeedMultiplier\":0.699999988079071,\"turnSpeedDegrees\":780.0,\"groundStickSpeed\":11.0,\"attackFacingRecoveryTime\":0.14000000059604646,\"comboSourceX\":[{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":0.0,\"value\":0.04177863895893097,\"inSlope\":0.018738748505711557,\"outSlope\":0.018738748505711557,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.03125,\"value\":0.042364224791526797,\"inSlope\":0.07946372777223587,\"outSlope\":0.07946372777223587,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.0625,\"value\":0.046745121479034427,\"inSlope\":0.16793012619018556,\"outSlope\":0.16793012619018556,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.125,\"value\":0.05581359937787056,\"inSlope\":-0.025544168427586557,\"outSlope\":-0.025544168427586557,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.15625,\"value\":0.05126334726810455,\"inSlope\":-0.2824578881263733,\"outSlope\":-0.2824578881263733,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.1875,\"value\":0.03815997764468193,\"inSlope\":-0.46673521399497988,\"outSlope\":-0.46673521399497988,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.21875,\"value\":0.022092394530773164,\"inSlope\":-0.5952041149139404,\"outSlope\":-0.5952041149139404,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.25,\"value\":0.0009597233147360385,\"inSlope\":-0.7622426748275757,\"outSlope\":-0.7622426748275757,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.28125,\"value\":-0.02554776705801487,\"inSlope\":-0.8943974375724793,\"outSlope\":-0.8943974375724793,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.3125,\"value\":-0.0549401119351387,\"inSlope\":-0.9964047074317932,\"outSlope\":-0.9964047074317932,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.34375,\"value\":-0.0878230556845665,\"inSlope\":-0.9281908869743347,\"outSlope\":-0.9281908869743347,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.40625,\"value\":-0.1327417939901352,\"inSlope\":-0.6439751982688904,\"outSlope\":-0.6439751982688904,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.4687499701976776,\"value\":-0.1700318455696106,\"inSlope\":-0.4927600622177124,\"outSlope\":-0.4927600622177124,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.5625,\"value\":-0.21247020363807679,\"inSlope\":-0.44488102197647097,\"outSlope\":-0.44488102197647097,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.65625,\"value\":-0.25460973381996157,\"inSlope\":-0.46215298771858218,\"outSlope\":-0.46215298771858218,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.8125,\"value\":-0.30612677335739138,\"inSlope\":-0.28034210205078127,\"outSlope\":-0.28034210205078127,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.90625,\"value\":-0.31881630420684817,\"inSlope\":0.06602007895708084,\"outSlope\":0.06602007895708084,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":1.0,\"value\":-0.30565667152404787,\"inSlope\":0.20952659845352174,\"outSlope\":0.20952659845352174,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4},{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":0.0,\"value\":-0.30565667152404787,\"inSlope\":0.13750183582305909,\"outSlope\":0.13750183582305909,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.1904761642217636,\"value\":-0.2699589431285858,\"inSlope\":0.23126636445522309,\"outSlope\":0.23126636445522309,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.3809523284435272,\"value\":-0.22224748134613038,\"inSlope\":0.22785665094852448,\"outSlope\":0.22785665094852448,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.5714284777641296,\"value\":-0.16449694335460664,\"inSlope\":0.41610443592071535,\"outSlope\":0.41610443592071535,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.6190476417541504,\"value\":-0.14315681159496308,\"inSlope\":0.41264066100120547,\"outSlope\":0.41264066100120547,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.7619048357009888,\"value\":-0.0972994789481163,\"inSlope\":0.27313652634620669,\"outSlope\":0.27313652634620669,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.8095238208770752,\"value\":-0.08503677695989609,\"inSlope\":0.18179431557655335,\"outSlope\":0.18179431557655335,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.9047618508338928,\"value\":-0.08025402575731278,\"inSlope\":-0.016116591170430185,\"outSlope\":-0.016116591170430185,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.9999998211860657,\"value\":-0.08576034009456635,\"inSlope\":-0.11874440312385559,\"outSlope\":-0.11874440312385559,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4},{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":0.0,\"value\":-0.08576034009456635,\"inSlope\":-0.29968827962875368,\"outSlope\":-0.29968827962875368,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.018867971375584604,\"value\":-0.09355225414037705,\"inSlope\":-0.5383843779563904,\"outSlope\":-0.5383843779563904,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.03773587569594383,\"value\":-0.10635565966367722,\"inSlope\":-0.7807735204696655,\"outSlope\":-0.7807735204696655,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.056603848934173587,\"value\":-0.12301543354988098,\"inSlope\":-0.7642067074775696,\"outSlope\":-0.7642067074775696,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.07547175139188767,\"value\":-0.13519367575645448,\"inSlope\":-0.4779026210308075,\"outSlope\":-0.4779026210308075,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.1132076308131218,\"value\":-0.14534850418567658,\"inSlope\":-0.20574840903282166,\"outSlope\":-0.20574840903282166,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.15094350278377534,\"value\":-0.14850805699825288,\"inSlope\":0.06439321488142014,\"outSlope\":0.06439321488142014,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.20754721760749818,\"value\":-0.14308859407901765,\"inSlope\":-0.030582763254642488,\"outSlope\":-0.030582763254642488,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.24528302252292634,\"value\":-0.14818082749843598,\"inSlope\":-0.2040390521287918,\"outSlope\":-0.2040390521287918,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.28301897644996645,\"value\":-0.1609196960926056,\"inSlope\":-0.5130671858787537,\"outSlope\":-0.5130671858787537,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.3207547664642334,\"value\":-0.18049563467502595,\"inSlope\":-0.12272906303405762,\"outSlope\":-0.12272906303405762,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.35849058628082278,\"value\":-0.17057465016841889,\"inSlope\":0.23530416190624238,\"outSlope\":0.23530416190624238,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.41509443521499636,\"value\":-0.16680313646793366,\"inSlope\":-0.02089872770011425,\"outSlope\":-0.02089872770011425,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.49056604504585268,\"value\":-0.18067775666713715,\"inSlope\":-0.4164859652519226,\"outSlope\":-0.4164859652519226,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.5283018350601196,\"value\":-0.19494105875492097,\"inSlope\":-0.1502348631620407,\"outSlope\":-0.1502348631620407,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.5660377740859985,\"value\":-0.19372224807739259,\"inSlope\":0.12812039256095887,\"outSlope\":0.12812039256095887,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.6226415038108826,\"value\":-0.17176492512226106,\"inSlope\":0.6687308549880981,\"outSlope\":0.6687308549880981,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.6792453527450562,\"value\":-0.13057127594947816,\"inSlope\":0.6691964268684387,\"outSlope\":0.6691964268684387,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.7169811725616455,\"value\":-0.1040077805519104,\"inSlope\":0.8787518739700317,\"outSlope\":0.8787518739700317,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.7547169923782349,\"value\":-0.06469419598579407,\"inSlope\":1.0849580764770508,\"outSlope\":1.0849580764770508,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.7735849022865295,\"value\":-0.04414850100874901,\"inSlope\":1.0812830924987794,\"outSlope\":1.0812830924987794,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.7924528121948242,\"value\":-0.023891104385256769,\"inSlope\":0.9535424113273621,\"outSlope\":0.9535424113273621,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.8113208413124085,\"value\":-0.008165696635842324,\"inSlope\":0.6989940404891968,\"outSlope\":0.6989940404891968,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.8301887512207031,\"value\":0.0024861134588718416,\"inSlope\":0.5598524212837219,\"outSlope\":0.5598524212837219,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.8679245114326477,\"value\":0.022176120430231096,\"inSlope\":0.41433700919151308,\"outSlope\":0.41433700919151308,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.8867924213409424,\"value\":0.02859612926840782,\"inSlope\":0.2994910478591919,\"outSlope\":0.2994910478591919,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.9056603312492371,\"value\":0.03347765654325485,\"inSlope\":0.2081884741783142,\"outSlope\":0.2081884741783142,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.9433961510658264,\"value\":0.03855980932712555,\"inSlope\":0.09136281162500382,\"outSlope\":0.09136281162500382,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":1.0,\"value\":0.0417298786342144,\"inSlope\":0.05219046026468277,\"outSlope\":0.05219046026468277,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4}],\"comboSourceZ\":[{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":0.0,\"value\":0.032446280121803287,\"inSlope\":-0.37011539936065676,\"outSlope\":-0.37011539936065676,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.03125,\"value\":0.02088017389178276,\"inSlope\":-0.36850741505622866,\"outSlope\":-0.36850741505622866,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.0625,\"value\":0.00941456574946642,\"inSlope\":-0.38831979036331179,\"outSlope\":-0.38831979036331179,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.09375,\"value\":-0.003389813704416156,\"inSlope\":-0.35816192626953127,\"outSlope\":-0.35816192626953127,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.125,\"value\":-0.01297055371105671,\"inSlope\":-0.16178561747074128,\"outSlope\":-0.16178561747074128,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.15625,\"value\":-0.01350141316652298,\"inSlope\":0.15744949877262116,\"outSlope\":0.15744949877262116,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.1875,\"value\":-0.0031299565453082325,\"inSlope\":0.4249292016029358,\"outSlope\":0.4249292016029358,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.21875,\"value\":0.013056664727628231,\"inSlope\":0.5490037798881531,\"outSlope\":0.5490037798881531,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.28125,\"value\":0.053909871727228168,\"inSlope\":0.8445245623588562,\"outSlope\":0.8445245623588562,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.34375,\"value\":0.11616642028093338,\"inSlope\":1.0116676092147828,\"outSlope\":1.0116676092147828,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.40625,\"value\":0.1774730235338211,\"inSlope\":0.9726415276527405,\"outSlope\":0.9726415276527405,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.4687499701976776,\"value\":0.2461474984884262,\"inSlope\":1.3425809144973755,\"outSlope\":1.3425809144973755,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.53125,\"value\":0.337810754776001,\"inSlope\":1.4120012521743775,\"outSlope\":1.4120012521743775,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.65625,\"value\":0.4778326153755188,\"inSlope\":0.7120852470397949,\"outSlope\":0.7120852470397949,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.78125,\"value\":0.5475833415985107,\"inSlope\":0.8381242156028748,\"outSlope\":0.8381242156028748,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.9374999403953552,\"value\":0.741032600402832,\"inSlope\":1.392932653427124,\"outSlope\":1.392932653427124,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":1.0,\"value\":0.8251354694366455,\"inSlope\":1.2968274354934693,\"outSlope\":1.2968274354934693,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4},{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":0.0,\"value\":0.8251354694366455,\"inSlope\":0.8510429859161377,\"outSlope\":0.8510429859161377,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.285714328289032,\"value\":1.0373928546905518,\"inSlope\":0.6257331371307373,\"outSlope\":0.6257331371307373,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.5714284777641296,\"value\":1.2559621334075928,\"inSlope\":0.9664361476898193,\"outSlope\":0.9664361476898193,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":1.0,\"value\":1.626546859741211,\"inSlope\":0.660234808921814,\"outSlope\":0.660234808921814,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4},{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":6.747694669684279e-8,\"value\":1.626546859741211,\"inSlope\":1.6663070917129517,\"outSlope\":1.6663070917129517,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.20754721760749818,\"value\":1.9398995637893677,\"inSlope\":0.7135787606239319,\"outSlope\":0.7135787606239319,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.35849058628082278,\"value\":2.077704668045044,\"inSlope\":1.3946255445480347,\"outSlope\":1.3946255445480347,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.6226415038108826,\"value\":2.2703123092651369,\"inSlope\":-0.18963143229484559,\"outSlope\":-0.18963143229484559,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":0.8490566611289978,\"value\":2.2805700302124025,\"inSlope\":0.41240760684013369,\"outSlope\":0.41240760684013369,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408},{\"serializedVersion\":\"3\",\"time\":1.0,\"value\":2.3021061420440676,\"inSlope\":0.17949719727039338,\"outSlope\":0.17949719727039338,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.3333333432674408,\"outWeight\":0.3333333432674408}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4}],\"comboTravelScale\":0.6499999761581421,\"coyoteTime\":0.10000000149011612,\"jumpBufferTime\":0.15000000596046449,\"seaLevel\":0.0,\"rollDuration\":0.792792797088623,\"rollSpeed\":6.5,\"rollCooldown\":0.18000000715255738,\"rollAnimationExitPhase\":0.8999999761581421,\"rollExitBlend\":0.10999999940395355,\"airFlipDuration\":0.4300000071525574,\"airFlipFastFallSpeed\":16.0,\"airFlipExtraHeight\":1.25,\"waterSplashes\":true,\"splashMinSpeed\":2.299999952316284,\"splashInterval\":0.1599999964237213,\"swimSpeed\":7.5,\"swimAcceleration\":20.0,\"swimSubmergeDepth\":1.2000000476837159,\"swimBuoyancy\":16.0,\"swimStartDepth\":1.149999976158142,\"swimShoreHysteresis\":0.25,\"fastSwimMultiplier\":1.75,\"fastSwimDrainPerSecond\":3.0,\"swimHeadFreeboard\":0.25,\"wadingSpeedMultiplier\":0.699999988079071,\"underwaterCameraDepth\":0.9200000166893005,\"underwaterOverlayStrength\":0.6800000071525574,\"underwaterBubbleParticles\":false,\"underwaterBubbleInterval\":0.23999999463558198,\"cameraDistance\":8.399999618530274,\"cameraHeight\":2.5,\"cameraFollowSharpness\":22.0,\"cameraCollision\":true,\"mouseSensitivity\":0.11999999731779099,\"invertLookY\":false,\"minPitch\":-55.0,\"maxPitch\":78.0,\"rifleAimMagnification\":1.4500000476837159}}",
+    "attack": "{\"MonoBehaviour\":{\"m_Enabled\":true,\"m_EditorHideFlags\":0,\"m_Name\":\"\",\"m_EditorClassIdentifier\":\"Assembly-CSharp::Mavis.SahurAttack\",\"jumpChopHitWindow\":{\"x\":0.3400000035762787,\"y\":0.6700000166893005},\"spinStaminaPerSecond\":9.0,\"spinEntryCost\":4.0,\"spinDamageMultiplier\":0.800000011920929,\"spinStartup\":0.18000000715255738,\"specialBlend\":0.1599999964237213,\"frontalGuardArc\":180.0,\"guardEntrySeconds\":0.1599999964237213,\"guardHitCost\":12.0,\"guardDrainPerSecond\":2.0,\"animator\":{\"fileID\":1828505122080772680,\"guid\":\"950d931fc330dd14c9bc747dc176ec77\",\"type\":3},\"attackTrigger\":\"Attack\",\"chargeState\":\"Charge Windup\",\"heavyAttackState\":\"Heavy Attack\",\"chargeTimeParameter\":\"ChargePhase\",\"chargeClip\":{\"fileID\":7400000,\"guid\":\"06d79df34e813924caac71cb2de074a2\",\"type\":2},\"chargedStrikeClip\":{\"instanceID\":0},\"feel\":{\"fileID\":11400000,\"guid\":\"a56bd21b399fd2d4c8bd2d2e1c5f6f82\",\"type\":2},\"chargePoseTime\":0.18000000715255738,\"comboOneState\":\"Combo 1\",\"comboTwoState\":\"Combo 2\",\"comboThreeState\":\"Combo 3\",\"comboQueueOpen\":0.11999999731779099,\"comboChainPoint\":0.949999988079071,\"comboQueueClose\":0.9800000190734863,\"comboBlendTime\":0.09000000357627869,\"comboTwoDamageMultiplier\":1.2000000476837159,\"comboThreeDamageMultiplier\":1.600000023841858,\"comboOneHitWindow\":{\"x\":0.5699999928474426,\"y\":0.8600000143051148},\"comboTwoHitWindow\":{\"x\":0.11999999731779099,\"y\":0.3400000035762787},\"comboThreeHitWindow\":{\"x\":0.3199999928474426,\"y\":0.550000011920929},\"jumpSlashState\":\"Jump Slash\",\"jumpSlashDamageMultiplier\":1.7000000476837159,\"jumpSlashHitWindow\":{\"x\":0.1599999964237213,\"y\":0.8199999928474426},\"landingImpactRadius\":1.350000023841858,\"landingImpactForwardOffset\":0.550000011920929,\"stickHitbox\":{\"fileID\":3259609279995818234,\"guid\":\"950d931fc330dd14c9bc747dc176ec77\",\"type\":3},\"hitMask\":{\"serializedVersion\":\"2\",\"m_Bits\":4294967295},\"enemyTag\":\"Enemy\",\"damage\":25.0,\"comboReach\":4.800000190734863,\"comboArc\":150.0,\"weaponHitPadding\":0.05000000074505806,\"swingWindowStart\":0.20000000298023225,\"swingWindowEnd\":0.6499999761581421,\"heavySwingWindowStart\":0.3499999940395355,\"heavySwingWindowEnd\":0.4300000071525574,\"cooldown\":0.5,\"fullChargeTime\":1.7999999523162842,\"twinBladeMinimumCharge\":1.2000000476837159,\"twinBladeFullCharge\":2.5999999046325685,\"twinBladeReleaseThreshold\":0.10000000149011612,\"twinBladeEarlyDamageMultiplier\":0.6499999761581421,\"twinBladeRaiseTime\":0.8999999761581421,\"twinBladePoseReleaseBlend\":0.11999999731779099,\"chargeWindupTime\":0.47999998927116396,\"maxChargePosePhase\":0.2800000011920929,\"minChargeDamageMultiplier\":1.25,\"maxChargeDamageMultiplier\":2.200000047683716,\"swingAudio\":{\"fileID\":5610018856762232532,\"guid\":\"950d931fc330dd14c9bc747dc176ec77\",\"type\":3},\"comboSwishes\":[{\"fileID\":8300000,\"guid\":\"0005cba699c24c34380e11ebd75924be\",\"type\":3},{\"fileID\":8300000,\"guid\":\"793ceb264fa35164ca009b168c7a0ee3\",\"type\":3},{\"fileID\":8300000,\"guid\":\"0c2618dbe517f8947a37126d86a0caff\",\"type\":3}],\"heavySwish\":{\"fileID\":8300000,\"guid\":\"44ede6b2ba1f85641abbda1dd55ff54a\",\"type\":3}}}",
+    "profile": "Assets/Resources/Combat/SahurCombatFeel.asset",
+    "feel": "{\"MonoBehaviour\":{\"m_Enabled\":true,\"m_EditorHideFlags\":0,\"m_Name\":\"SahurCombatFeel\",\"m_EditorClassIdentifier\":\"Assembly-CSharp::Mavis.CombatFeelProfile\",\"normal\":{\"stop\":0.04500000178813934,\"cameraStrength\":0.06499999761581421,\"cameraDuration\":0.12999999523162843,\"vfx\":1.0499999523162842,\"reaction\":1.25,\"knockback\":0.1599999964237213},\"second\":{\"stop\":0.03999999910593033,\"cameraStrength\":0.05000000074505806,\"cameraDuration\":0.10999999940395355,\"vfx\":0.949999988079071,\"reaction\":1.100000023841858,\"knockback\":0.12999999523162843},\"finisher\":{\"stop\":0.08500000089406967,\"cameraStrength\":0.0949999988079071,\"cameraDuration\":0.18000000715255738,\"vfx\":1.2999999523162842,\"reaction\":1.7000000476837159,\"knockback\":0.44999998807907107},\"heavy\":{\"stop\":0.07999999821186066,\"cameraStrength\":0.10000000149011612,\"cameraDuration\":0.1899999976158142,\"vfx\":1.399999976158142,\"reaction\":1.7999999523162842,\"knockback\":0.699999988079071},\"received\":{\"stop\":0.054999999701976779,\"cameraStrength\":0.07500000298023224,\"cameraDuration\":0.15000000596046449,\"vfx\":0.949999988079071,\"reaction\":1.0,\"knockback\":0.0},\"receivedHeavy\":{\"stop\":0.08500000089406967,\"cameraStrength\":0.10000000149011612,\"cameraDuration\":0.1899999976158142,\"vfx\":1.2000000476837159,\"reaction\":1.25,\"knockback\":0.0},\"rifle\":{\"stop\":0.02800000086426735,\"cameraStrength\":0.02500000037252903,\"cameraDuration\":0.07500000298023224,\"vfx\":0.699999988079071,\"reaction\":0.6499999761581421,\"knockback\":0.0},\"incomingDamageMultiplier\":0.699999988079071,\"maximumHitHealthFraction\":0.18000000715255738,\"damageRecoverySeconds\":0.6000000238418579,\"dodgeProtectionStart\":0.03999999910593033,\"dodgeProtectionEnd\":0.7200000286102295,\"receivedHitClip\":{\"fileID\":7400000,\"guid\":\"51702e312b3878648bd9f4b5351a3e9b\",\"type\":2},\"receivedReactionSeconds\":0.36000001430511477,\"receivedReactionWeight\":0.8500000238418579,\"inputBuffer\":0.25999999046325686,\"comboTransition\":0.07000000029802323,\"comboRecoveryChain\":0.8999999761581421,\"lightDodgeCancel\":0.8999999761581421,\"heavyDodgeCancel\":0.6200000047683716,\"trailLifetime\":0.0949999988079071,\"lightSpeed\":{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":0.0,\"value\":1.0800000429153443,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0},{\"serializedVersion\":\"3\",\"time\":0.3499999940395355,\"value\":1.0499999523162842,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0},{\"serializedVersion\":\"3\",\"time\":0.5299999713897705,\"value\":1.600000023841858,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0},{\"serializedVersion\":\"3\",\"time\":0.699999988079071,\"value\":1.7999999523162842,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0},{\"serializedVersion\":\"3\",\"time\":0.8799999952316284,\"value\":1.0499999523162842,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0},{\"serializedVersion\":\"3\",\"time\":1.0,\"value\":1.0,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4},\"heavySpeed\":{\"serializedVersion\":\"2\",\"m_Curve\":[{\"serializedVersion\":\"3\",\"time\":0.0,\"value\":0.800000011920929,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0},{\"serializedVersion\":\"3\",\"time\":0.6000000238418579,\"value\":1.899999976158142,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0},{\"serializedVersion\":\"3\",\"time\":1.0,\"value\":2.450000047683716,\"inSlope\":0.0,\"outSlope\":0.0,\"tangentMode\":0,\"weightedMode\":0,\"inWeight\":0.0,\"outWeight\":0.0}],\"m_PreInfinity\":2,\"m_PostInfinity\":2,\"m_RotationOrder\":4},\"useControlTuning\":true,\"controlPreset\":0,\"balanced\":{\"acceleration\":1.100000023841858,\"braking\":1.25,\"redirect\":1.649999976158142,\"airAcceleration\":0.800000011920929,\"airBraking\":0.7200000286102295,\"turning\":1.159999966621399,\"animationAcceleration\":0.04500000178813934,\"animationBraking\":0.05999999865889549,\"dodgeDuration\":0.8199999928474426,\"lightCancel\":0.7400000095367432,\"heavyCancel\":0.6399999856948853,\"comboChain\":0.800000011920929,\"movingLanding\":0.11999999731779099,\"cameraFollow\":1.149999976158142,\"cameraRelease\":10.0,\"manualLookGrace\":0.4000000059604645},\"responsive\":{\"acceleration\":1.25,\"braking\":1.5,\"redirect\":1.850000023841858,\"airAcceleration\":0.949999988079071,\"airBraking\":0.8500000238418579,\"turning\":1.350000023841858,\"animationAcceleration\":0.03500000014901161,\"animationBraking\":0.04500000178813934,\"dodgeDuration\":0.75,\"lightCancel\":0.699999988079071,\"heavyCancel\":0.6200000047683716,\"comboChain\":0.7599999904632568,\"movingLanding\":0.10000000149011612,\"cameraFollow\":1.350000023841858,\"cameraRelease\":12.0,\"manualLookGrace\":0.4000000059604645},\"weighty\":{\"acceleration\":1.0,\"braking\":1.100000023841858,\"redirect\":1.4500000476837159,\"airAcceleration\":0.699999988079071,\"airBraking\":0.6499999761581421,\"turning\":1.0499999523162842,\"animationAcceleration\":0.054999999701976779,\"animationBraking\":0.07000000029802323,\"dodgeDuration\":0.8999999761581421,\"lightCancel\":0.800000011920929,\"heavyCancel\":0.699999988079071,\"comboChain\":0.8600000143051148,\"movingLanding\":0.15000000596046449,\"cameraFollow\":1.0,\"cameraRelease\":8.0,\"manualLookGrace\":0.4000000059604645},\"cameraMotion\":1.0,\"impactBrightness\":0.800000011920929,\"contact\":[{\"fileID\":8300000,\"guid\":\"72cf45299c8084640bd760eb5999b3e0\",\"type\":3}],\"wood\":[{\"fileID\":8300000,\"guid\":\"c8a7c6b4b5e2f4a449d9c9903c6e0b8b\",\"type\":3}],\"metal\":[{\"fileID\":8300000,\"guid\":\"5e9b34c0ae4af584dbe21d963120ba99\",\"type\":3}],\"flesh\":[{\"fileID\":8300000,\"guid\":\"345a7b7f2a89fdd47aacc6deddcab819\",\"type\":3}],\"lowImpact\":[{\"fileID\":8300000,\"guid\":\"643453f0f076d9645ba6e3bd08ea230d\",\"type\":3}],\"enemyReaction\":[],\"soundVolume\":0.699999988079071}}"
+  },
+  "controllers": [
+    {
+      "name": "SahurGrounded",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Locomotion",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Ground speed",
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "speed": 1.85,
+              "speedParameter": "RollPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "Rig|Roll",
+              "length": 1.4666667,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "speed": 2.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Jump_Start",
+              "length": 1.33333337,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Jump_Loop",
+              "length": 2.50000024,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "speed": 2.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Jump_Land",
+              "length": 1.26666677,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "speed": 1.15,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Swim_Fwd_Loop",
+              "length": 1.33333337,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "speed": 0.9,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Swim_Idle_Loop",
+              "length": 3.33333349,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "speed": 1.15,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": [
+                {
+                  "exitTime": 0.89,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": [
+                {
+                  "exitTime": 0.94,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo2",
+              "length": 0.700000048,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo3",
+              "length": 1.76666689,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubJumpChopV278",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "speed": 3.4,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Roll",
+              "length": 1.4666667,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Armature|OverhandThrow",
+              "length": 1.33333337,
+              "transitions": [
+                {
+                  "exitTime": 0.94,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurFastFreestyle",
+              "length": 1.38,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurShoreGetUp",
+              "length": 1.53333342,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "speed": 1.00000012,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Climb_v241",
+              "length": 1.1500001,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Surf",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Armature|Idle_Shield_Loop",
+              "length": 2.50000024,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Sword_Idle",
+              "length": 1.66666675,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "speed": 0.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Hit_Chest",
+              "length": 0.333333343,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "speed": 1.14285719,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Death01",
+              "length": 2.4,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "speed": 1.5,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Armature|Sword_Block",
+              "length": 1.23333335,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "speed": 1.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeSlashV273",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "speed": 1.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeSlashV273",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeFinisherV272",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeRushV002",
+              "length": 0.75000006,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeCharge_v001",
+              "length": 0.49999997,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeJumpChopV278",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Club Spin",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubSpinOneHandV003",
+              "length": 0.900000036,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeSpin_v001",
+              "length": 0.900000036,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeGuard_v001",
+              "length": 0.6,
+              "transitions": []
+            },
+            {
+              "name": "Perfect Step",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Directional planted perfect step v002",
+              "length": 0.0,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Perfect Counter",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubReturnSweepV003",
+              "length": 0.6,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Perfect Counter",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeReturnSweepV001",
+              "length": 0.6,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Combo 1",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubAirCombo1",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Combo 2",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubAirCombo2",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Air Combo 1",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeAirCombo1",
+              "length": 0.8500001,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Air Combo 2",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeAirCombo2",
+              "length": 0.8500001,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Charge Windup",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Empty",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": null,
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeCharge_v001",
+              "length": 0.49999997,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Received Hit",
+              "speed": 0.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurReceivedHitV245",
+              "length": 0.75000006,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Empty",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": null,
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeRushV002",
+              "length": 0.75000006,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Air Attack Legs",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Airborne Pose",
+              "speed": 0.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "AirAttackLegPose",
+              "length": 1.0,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Lock-on Footwork",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Directional legs",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Lock-on directional legs 072",
+              "length": 0.0,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SahurGameplay",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Locomotion",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Ground speed",
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "speed": 1.85,
+              "speedParameter": "RollPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "Rig|Roll",
+              "length": 1.4666667,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_JumpStart_v006",
+              "length": 0.233333364,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_JumpAir_v006",
+              "length": 1.0,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_JumpLand_v006",
+              "length": 0.4166667,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "speed": 1.15,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Swim_v007",
+              "length": 1.2,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "speed": 0.9,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_SwimIdle_v007",
+              "length": 1.50000012,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "speed": 1.15,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": [
+                {
+                  "exitTime": 0.89,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": [
+                {
+                  "exitTime": 0.94,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo2",
+              "length": 0.700000048,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo3",
+              "length": 1.76666689,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubJumpChopV278",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "speed": 3.4,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Roll",
+              "length": 1.4666667,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Armature|OverhandThrow",
+              "length": 1.33333337,
+              "transitions": [
+                {
+                  "exitTime": 0.94,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_SwimFast_v007",
+              "length": 0.8000001,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurShoreGetUp",
+              "length": 1.53333342,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "speed": 1.00000012,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Climb_v241",
+              "length": 1.1500001,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Sword_Idle",
+              "length": 1.66666675,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Stagger_v006",
+              "length": 0.75000006,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Fall_v006",
+              "length": 2.25,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "speed": 1.5,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Armature|Sword_Block",
+              "length": 1.23333335,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "speed": 1.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeSlashV273",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "speed": 1.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeSlashV273",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeFinisherV272",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeRushV002",
+              "length": 0.75000006,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeCharge_v001",
+              "length": 0.49999997,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeJumpChopV278",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Swimming",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Continuous swim speed",
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Club Spin",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubSpinOneHandV003",
+              "length": 0.900000036,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeSpin_v001",
+              "length": 0.900000036,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeGuard_v001",
+              "length": 0.6,
+              "transitions": []
+            },
+            {
+              "name": "Air Combo 1",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubAirCombo1",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Combo 2",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubAirCombo2",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Air Combo 1",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeAirCombo1",
+              "length": 0.8500001,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Air Combo 2",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeAirCombo2",
+              "length": 0.8500001,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Perfect Step",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Directional planted perfect step v002",
+              "length": 0.0,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Perfect Counter",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubReturnSweepV003",
+              "length": 0.6,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Perfect Counter",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeReturnSweepV001",
+              "length": 0.6,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Charge Windup",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Combo 1",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo2",
+              "length": 0.700000048,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo3",
+              "length": 1.76666689,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Light Attack Upper Body",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Combo 1",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "speed": 1.25,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo2",
+              "length": 0.700000048,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "speed": 1.55,
+              "speedParameter": "LightPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurSwordCombo3",
+              "length": 1.76666689,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Empty",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": null,
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeCharge_v001",
+              "length": 0.49999997,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Received Hit",
+              "speed": 0.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurReceivedHitV245",
+              "length": 0.75000006,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Empty",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": null,
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeRushV002",
+              "length": 0.75000006,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Air Attack Legs",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Airborne Pose",
+              "speed": 0.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "AirAttackLegPose",
+              "length": 1.0,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Lock-on Footwork",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Directional legs",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Lock-on directional legs 072",
+              "length": 0.0,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SahurRifle",
+      "layers": [
+        {
+          "name": "Base Layer",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Locomotion",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Ground speed",
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Roll",
+              "speed": 1.85,
+              "speedParameter": "RollPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "Rig|Roll",
+              "length": 1.4666667,
+              "transitions": []
+            },
+            {
+              "name": "Jump Start",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_JumpStart_v006",
+              "length": 0.233333364,
+              "transitions": []
+            },
+            {
+              "name": "Jump Loop",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_JumpAir_v006",
+              "length": 1.0,
+              "transitions": []
+            },
+            {
+              "name": "Land",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_JumpLand_v006",
+              "length": 0.4166667,
+              "transitions": []
+            },
+            {
+              "name": "Swim Forward",
+              "speed": 1.15,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Swim_v007",
+              "length": 1.2,
+              "transitions": []
+            },
+            {
+              "name": "Swim Idle",
+              "speed": 0.9,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_SwimIdle_v007",
+              "length": 1.50000012,
+              "transitions": []
+            },
+            {
+              "name": "Attack",
+              "speed": 1.15,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": [
+                {
+                  "exitTime": 0.89,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Charge Windup",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": [
+                {
+                  "exitTime": 0.94,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 1",
+              "speed": 1.25,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 2",
+              "speed": 1.25,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo2",
+              "length": 0.700000048,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Combo 3",
+              "speed": 1.55,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo3",
+              "length": 1.76666689,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Jump Slash",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubJumpChopV278",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Flip",
+              "speed": 3.4,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Roll",
+              "length": 1.4666667,
+              "transitions": []
+            },
+            {
+              "name": "Boomerang Throw",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Armature|OverhandThrow",
+              "length": 1.33333337,
+              "transitions": [
+                {
+                  "exitTime": 0.94,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Swim Fast",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_SwimFast_v007",
+              "length": 0.8000001,
+              "transitions": []
+            },
+            {
+              "name": "Shore Get Up",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurShoreGetUp",
+              "length": 1.53333342,
+              "transitions": []
+            },
+            {
+              "name": "Wreck Climb",
+              "speed": 1.00000012,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Climb_v241",
+              "length": 1.1500001,
+              "transitions": []
+            },
+            {
+              "name": "Finale Guard",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Rig|Sword_Idle",
+              "length": 1.66666675,
+              "transitions": []
+            },
+            {
+              "name": "Finale Stagger",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Stagger_v006",
+              "length": 0.75000006,
+              "transitions": []
+            },
+            {
+              "name": "Finale Knockdown",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_Fall_v006",
+              "length": 2.25,
+              "transitions": []
+            },
+            {
+              "name": "Finale Block",
+              "speed": 1.5,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Armature|Sword_Block",
+              "length": 1.23333335,
+              "transitions": []
+            },
+            {
+              "name": "Capri Combo 1",
+              "speed": 1.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeSlashV273",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 2",
+              "speed": 1.8,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeSlashV273",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Combo 3",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeFinisherV272",
+              "length": 1.50000012,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Heavy",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeRushV002",
+              "length": 0.75000006,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.16,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Charge",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeCharge_v001",
+              "length": 0.49999997,
+              "transitions": []
+            },
+            {
+              "name": "Capri Jump Slash",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeJumpChopV278",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.1,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Swimming",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Continuous swim speed",
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Blade Spin",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeSpin_v001",
+              "length": 0.900000036,
+              "transitions": []
+            },
+            {
+              "name": "Blade Guard",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeGuard_v001",
+              "length": 0.6,
+              "transitions": []
+            },
+            {
+              "name": "Club Spin",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubSpinOneHandV003",
+              "length": 0.900000036,
+              "transitions": []
+            },
+            {
+              "name": "Perfect Step",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Directional planted perfect step v002",
+              "length": 0.0,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Perfect Counter",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubReturnSweepV003",
+              "length": 0.6,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Perfect Counter",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeReturnSweepV001",
+              "length": 0.6,
+              "transitions": [
+                {
+                  "exitTime": 1.0,
+                  "duration": 0.065,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Combo 1",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubAirCombo1",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Air Combo 2",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "ClubAirCombo2",
+              "length": 0.85,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Air Combo 1",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeAirCombo1",
+              "length": 0.8500001,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            },
+            {
+              "name": "Capri Air Combo 2",
+              "speed": 1.65,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeAirCombo2",
+              "length": 0.8500001,
+              "transitions": [
+                {
+                  "exitTime": 0.98,
+                  "duration": 0.12,
+                  "hasExitTime": true,
+                  "to": "Locomotion"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Charge Upper Body",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Charge Windup",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Heavy Attack",
+              "speed": 1.0,
+              "speedParameter": "HeavyPlaybackSpeed",
+              "speedParameterActive": true,
+              "motion": "SahurStandingMeleeDownward",
+              "length": 2.266667,
+              "transitions": []
+            },
+            {
+              "name": "Combo 1",
+              "speed": 1.25,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "speed": 1.25,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo2",
+              "length": 0.700000048,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "speed": 1.55,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo3",
+              "length": 1.76666689,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Light Attack Upper Body",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Combo 1",
+              "speed": 1.25,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo1",
+              "length": 1.06666672,
+              "transitions": []
+            },
+            {
+              "name": "Combo 2",
+              "speed": 1.25,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo2",
+              "length": 0.700000048,
+              "transitions": []
+            },
+            {
+              "name": "Combo 3",
+              "speed": 1.55,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurSwordCombo3",
+              "length": 1.76666689,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Locomotion",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Rifle Idle",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "RifleIdle",
+              "length": 7.70000029,
+              "transitions": [
+                {
+                  "exitTime": 0.9,
+                  "duration": 0.12,
+                  "hasExitTime": false,
+                  "to": "Rifle Move"
+                }
+              ]
+            },
+            {
+              "name": "Rifle Move",
+              "speed": 1.0,
+              "speedParameter": "RiflePlayback",
+              "speedParameterActive": true,
+              "motion": "Rifle direction",
+              "length": 0.0,
+              "transitions": [
+                {
+                  "exitTime": 0.9,
+                  "duration": 0.13,
+                  "hasExitTime": false,
+                  "to": "Rifle Stop"
+                },
+                {
+                  "exitTime": 0.9,
+                  "duration": 0.14,
+                  "hasExitTime": false,
+                  "to": "Rifle Idle"
+                }
+              ]
+            },
+            {
+              "name": "Rifle Stop",
+              "speed": 1.3,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "RifleStop",
+              "length": 2.03333354,
+              "transitions": [
+                {
+                  "exitTime": 0.9,
+                  "duration": 0.1,
+                  "hasExitTime": false,
+                  "to": "Rifle Move"
+                },
+                {
+                  "exitTime": 0.88,
+                  "duration": 0.2,
+                  "hasExitTime": true,
+                  "to": "Rifle Idle"
+                }
+              ]
+            },
+            {
+              "name": "Rifle Death",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "RifleDeath",
+              "length": 3.30000019,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Holding Upper Body",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Rifle Hold",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "RifleIdle",
+              "length": 7.70000029,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Rifle Fire Upper Body",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Rifle Fire",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "RifleFire",
+              "length": 1.16666675,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Charge",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Empty",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": null,
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Capri Charge",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "PLAYER_BladeCharge_v001",
+              "length": 0.49999997,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Combat Received Hit",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Received Hit",
+              "speed": 0.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "SahurReceivedHitV245",
+              "length": 0.75000006,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Twin Blade Recovery",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Empty",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": null,
+              "length": 0.0,
+              "transitions": []
+            },
+            {
+              "name": "Capri Recovery",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "BladeRushV002",
+              "length": 0.75000006,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Air Attack Legs",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Airborne Pose",
+              "speed": 0.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "AirAttackLegPose",
+              "length": 1.0,
+              "transitions": []
+            }
+          ]
+        },
+        {
+          "name": "Lock-on Footwork",
+          "weight": 0.0,
+          "states": [
+            {
+              "name": "Directional legs",
+              "speed": 1.0,
+              "speedParameter": "",
+              "speedParameterActive": false,
+              "motion": "Lock-on directional legs 072",
+              "length": 0.0,
+              "transitions": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

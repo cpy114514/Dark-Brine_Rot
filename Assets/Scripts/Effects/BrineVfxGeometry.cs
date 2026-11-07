@@ -142,7 +142,7 @@ namespace Mavis
         readonly int[] indices=new int[(Samples-1)*(Cols-1)*12];
         readonly MaterialPropertyBlock properties=new MaterialPropertyBlock();
         readonly Transform root;readonly Mesh mesh;readonly MeshRenderer renderer;readonly BrineVfxStyle style;
-        int count;bool wasActive,newStroke;float strength=1,lifetime=.19f;CombatHitKind kind;
+        int count;bool wasActive,newStroke,sharp;float strength=1,lifetime=.19f;CombatHitKind kind;
         public int SampleCount=>count;
         public int VertexCount=>renderer.enabled?count*Stride:0;
         public bool Visible=>renderer&&renderer.enabled;
@@ -158,16 +158,16 @@ namespace Mavis
                 else{indices[t++]=x;indices[t++]=x+1;indices[t++]=y;indices[t++]=x+1;indices[t++]=y+1;indices[t++]=y;}
             }
         }
-        public void Configure(CombatHitKind kind,float visibility=1){this.kind=kind;strength=visibility;}
+        public void Configure(CombatHitKind kind,float visibility=1,bool sharp=false){this.kind=kind;strength=visibility;this.sharp=sharp;}
         public void Sample(Vector3 start,Vector3 end,bool active,float seconds)
         {
             bool heavy=kind==CombatHitKind.ChargedHeavy||kind==CombatHitKind.ComboFinisher||kind==CombatHitKind.JumpSlash;
-            lifetime=Mathf.Clamp(seconds*(heavy?.85f:.65f),.055f,heavy?.12f:.085f);float now=Time.time;
+            lifetime=Mathf.Clamp(seconds*(heavy?.85f:.65f),.055f,heavy?.12f:.085f);if(sharp)lifetime*=.78f;float now=Time.time;
             while(count>0&&now-times[0]>lifetime)Shift();
             if(active&&!wasActive)newStroke=true;wasActive=active;
             if(active)
             {
-                start=Vector3.Lerp(start,end,heavy?.46f:.62f);
+                start=Vector3.Lerp(start,end,sharp?.72f:heavy?.46f:.62f);
                 if(count>0&&(end-b[count-1]).sqrMagnitude>36)count=0;
                 if(count==0||newStroke){Append(start,end,now,0,true);newStroke=false;}
                 else
@@ -176,7 +176,7 @@ namespace Mavis
                     if(travel>.006f)
                     {
                         Vector3 fromA=a[count-1],fromB=b[count-1];float fromTime=times[count-1],fromDistance=distance[count-1];
-                        int steps=Mathf.Clamp(Mathf.CeilToInt(travel/.22f),1,6);
+                        int steps=Mathf.Clamp(Mathf.CeilToInt(travel/CombatVfxSettings.TrailSpacing),1,CombatVfxSettings.TrailSubsteps);
                         for(int i=1;i<=steps;i++){float t=i/(float)steps;Append(Vector3.Lerp(fromA,start,t),Vector3.Lerp(fromB,end,t),Mathf.Lerp(fromTime,now,t),fromDistance+travel*t);}
                     }
                 }
@@ -216,8 +216,8 @@ namespace Mavis
                 else{indices[triangles++]=x;indices[triangles++]=x+1;indices[triangles++]=y;indices[triangles++]=x+1;indices[triangles++]=y+1;indices[triangles++]=y;}
             }
             renderer.enabled=triangles>0;mesh.SetColors(colours,0,count*Stride);mesh.SetIndices(indices,0,triangles,MeshTopology.Triangles,0,true);
-            properties.SetColor("_Body",style.body);properties.SetColor("_Edge",style.edge);properties.SetFloat("_Mode",0);
-            properties.SetFloat("_Fade",style.visibility*strength*(heavy?.75f:.5f));properties.SetFloat("_Age",0);
+            properties.SetColor("_Body",sharp?new Color(.24f,.27f,.28f):style.body);properties.SetColor("_Edge",sharp?new Color(.68f,.74f,.76f):style.edge);properties.SetFloat("_Mode",0);
+            properties.SetFloat("_Fade",style.visibility*strength*(sharp?.43f:heavy?.75f:.5f));properties.SetFloat("_Age",0);
             properties.SetFloat("_Clock",now);properties.SetFloat("_Heat",heavy?.55f:0);renderer.SetPropertyBlock(properties);
         }
         public void Clear(){count=0;wasActive=false;newStroke=false;if(renderer)renderer.enabled=false;}

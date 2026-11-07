@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "hardware": "NVIDIA GeForce RTX 4060",
+  "resolution": "1920x1080",
+  "renderScale": 1,
+  "warmupFrames": 120,
+  "runs": [
+    {
+      "enabled": false,
+      "meanMs": 6.9586679125980782,
+      "p95Ms": 8.1140948459506035,
+      "drawCalls": 620.64583333333337,
+      "triangles": 4212485.3708333336,
+      "frames": 240
+    },
+    {
+      "enabled": true,
+      "meanMs": 7.2032499825581908,
+      "p95Ms": 8.0634988844394684,
+      "drawCalls": 640.0,
+      "triangles": 4231750.0,
+      "frames": 240
+    },
+    {
+      "enabled": true,
+      "meanMs": 7.1526875137351453,
+      "p95Ms": 8.143899030983448,
+      "drawCalls": 640.0,
+      "triangles": 4231750.0,
+      "frames": 240
+    },
+    {
+      "enabled": false,
+      "meanMs": 6.9411187258083373,
+      "p95Ms": 7.686203345656395,
+      "drawCalls": 616.0,
+      "triangles": 4187018.0,
+      "frames": 240
+    }
+  ],
+  "scope": "Unity Editor Play, isolated Environment and Lighting; matched coastal camera; no standalone GPU/VRAM measurement"
+}

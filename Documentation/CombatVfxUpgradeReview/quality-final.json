@@ -1,0 +1,161 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "ok": true,
+      "name": "Three functional options installed once in existing menu"
+    },
+    {
+      "ok": true,
+      "name": "Draft quality does not apply before Apply"
+    },
+    {
+      "ok": true,
+      "name": "Back discards un-applied quality"
+    },
+    {
+      "ok": true,
+      "name": "Apply saves and activates quality 0"
+    },
+    {
+      "ok": true,
+      "name": "VFX quality leaves render scale independent 0"
+    },
+    {
+      "ok": true,
+      "name": "Saved quality reads back 0"
+    },
+    {
+      "ok": true,
+      "name": "Apply saves and activates quality 1"
+    },
+    {
+      "ok": true,
+      "name": "VFX quality leaves render scale independent 1"
+    },
+    {
+      "ok": true,
+      "name": "Saved quality reads back 1"
+    },
+    {
+      "ok": true,
+      "name": "Apply saves and activates quality 2"
+    },
+    {
+      "ok": true,
+      "name": "VFX quality leaves render scale independent 2"
+    },
+    {
+      "ok": true,
+      "name": "Saved quality reads back 2"
+    },
+    {
+      "ok": true,
+      "name": "Menu applies Off for cameraShake"
+    },
+    {
+      "ok": true,
+      "name": "Menu applies Off for screenEffects"
+    },
+    {
+      "ok": true,
+      "name": "Reopened menu retains both accessibility preferences"
+    },
+    {
+      "ok": true,
+      "name": "Primary blast accepted at quality 2"
+    },
+    {
+      "ok": true,
+      "name": "Volume uses independent sample budget 2"
+    },
+    {
+      "ok": true,
+      "name": "Secondary smoke respects quality 2"
+    },
+    {
+      "ok": true,
+      "name": "Opaque copy requested only for High refraction 2"
+    },
+    {
+      "ok": true,
+      "name": "Primary blast accepted at quality 1"
+    },
+    {
+      "ok": true,
+      "name": "Volume uses independent sample budget 1"
+    },
+    {
+      "ok": true,
+      "name": "Secondary smoke respects quality 1"
+    },
+    {
+      "ok": true,
+      "name": "Opaque copy requested only for High refraction 1"
+    },
+    {
+      "ok": true,
+      "name": "Primary blast accepted at quality 0"
+    },
+    {
+      "ok": true,
+      "name": "Volume uses independent sample budget 0"
+    },
+    {
+      "ok": true,
+      "name": "Secondary smoke respects quality 0"
+    },
+    {
+      "ok": true,
+      "name": "Opaque copy requested only for High refraction 0"
+    },
+    {
+      "ok": true,
+      "name": "High to Low releases active opaque-buffer lease"
+    },
+    {
+      "ok": true,
+      "name": "Low/Off disables active bounce lights"
+    },
+    {
+      "ok": true,
+      "name": "Camera Shake Off gives zero additive camera displacement"
+    },
+    {
+      "ok": true,
+      "name": "Quality switches leave no pooled effects after cleanup"
+    },
+    {
+      "ok": true,
+      "name": "Original camera buffer options restored"
+    },
+    {
+      "ok": true,
+      "name": "No native errors"
+    }
+  ],
+  "measurements": [
+    {
+      "level": 2,
+      "samples": 180,
+      "worldUpdateP95Ms": 0.0837,
+      "volumeSteps": 36,
+      "dustSteps": 20
+    },
+    {
+      "level": 1,
+      "samples": 180,
+      "worldUpdateP95Ms": 0.0767,
+      "volumeSteps": 28,
+      "dustSteps": 16
+    },
+    {
+      "level": 0,
+      "samples": 180,
+      "worldUpdateP95Ms": 0.0668,
+      "volumeSteps": 20,
+      "dustSteps": 12
+    }
+  ],
+  "errors": []
+}

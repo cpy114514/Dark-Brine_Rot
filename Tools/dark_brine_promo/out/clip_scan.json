@@ -1,0 +1,4954 @@
+[
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-fifth-10\\contact-review.mp4",
+  "dur": 147.7,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 8.23
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\sixth-real-30\\review.mp4",
+  "dur": 138.27,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 8.09
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-seventh-10\\contact-review.mp4",
+  "dur": 113.6,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 6.93
+ },
+ {
+  "path": ".codex\\animation-performance-20261019\\contact-final-10\\contact-review.mp4",
+  "dur": 100.3,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 7.17
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-baseline-10\\contact-review.mp4",
+  "dur": 100.3,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 6.63
+ },
+ {
+  "path": ".codex\\animation-performance-20261019\\contact-final-30\\contact-review.mp4",
+  "dur": 98.73,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 9.72
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-sixth-10\\contact-review.mp4",
+  "dur": 98.2,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 7.26
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-third-15\\contact-review.mp4",
+  "dur": 98.07,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 7.93
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-eleventh-30\\contact-review.mp4",
+  "dur": 96.87,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 9.76
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-twelfth-10\\contact-review.mp4",
+  "dur": 94.6,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 6.59
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-fourth-30\\contact-review.mp4",
+  "dur": 94.23,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 9.07
+ },
+ {
+  "path": ".codex\\opening-polish-v262\\before-full\\before-full.mp4",
+  "dur": 92.4,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 27.08
+ },
+ {
+  "path": ".codex\\opening-polish-v262\\fix-9b\\opening-full.mp4",
+  "dur": 91.93,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 18.22
+ },
+ {
+  "path": ".codex\\opening-polish-v262\\after-3\\OpeningPolish-v262-full.mp4",
+  "dur": 91.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 27.47
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\seventh-real-15\\review.mp4",
+  "dur": 90.4,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 6.09
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-eighth-10\\contact-review.mp4",
+  "dur": 90.2,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 6.29
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\seventeenth-rigging-15\\review.mp4",
+  "dur": 89.2,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 7.55
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\sixteenth-rigging-15\\review.mp4",
+  "dur": 89.0,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 5.91
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\eleventh-full-30\\review.mp4",
+  "dur": 88.7,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.7
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\twelfth-v215-30\\review.mp4",
+  "dur": 88.07,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.64
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\fourteenth-v215-30\\review.mp4",
+  "dur": 88.03,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.12
+ },
+ {
+  "path": ".codex\\opening-charge-20261023\\final-30\\SahurShark-final-30.mp4",
+  "dur": 86.8,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 17.19
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\third-15\\review.mp4",
+  "dur": 86.2,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 5.98
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\eighth-deck-15\\review.mp4",
+  "dur": 85.07,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 5.62
+ },
+ {
+  "path": ".codex\\shark-direction-20261023\\baseline-30\\SahurShark-baseline-30.mp4",
+  "dur": 84.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 16.26
+ },
+ {
+  "path": ".codex\\shark-animation-polish-20261021\\accepted-30\\SahurShark-accepted-30.mp4",
+  "dur": 84.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 14.34
+ },
+ {
+  "path": ".codex\\shark-animation-polish-20261021\\baseline-30\\SahurShark-baseline-30.mp4",
+  "dur": 84.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 15.28
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\fourth-15\\review.mp4",
+  "dur": 84.07,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 6.3
+ },
+ {
+  "path": ".codex\\shark-direction-20261023\\final-30\\SahurShark-final-30.mp4",
+  "dur": 83.67,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 16.38
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 78.07,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 6.74
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\dive211-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 74.17,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.57
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-framing-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 73.73,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.16
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\camera211-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 72.37,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 8.7
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\island\\review.mp4",
+  "dur": 71.83,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 5.36
+ },
+ {
+  "path": ".codex\\opening-charge-20261023\\native-30\\SahurShark-native-30.mp4",
+  "dur": 71.33,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 12.23
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\frame211-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 69.17,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 6.86
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\final211-break-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 69.13,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.75
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\shoulder211-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 68.03,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.08
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\overlook211-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 67.6,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 6.09
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\ninth-deck-30\\review.mp4",
+  "dur": 66.07,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 5.0
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\contact-pressure-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 65.17,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.13
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\compact-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 63.57,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.28
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\v020-outward-leg\\native-controls-review.mp4",
+  "dur": 58.53,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 4.38
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\float-clearance-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 57.5,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 6.01
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyninth-tutorial-v222-optimized-15\\review.mp4",
+  "dur": 57.27,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 4.69
+ },
+ {
+  "path": ".codex\\shark-voyage-patrol-20261013\\native-review\\game-review.mp4",
+  "dur": 56.93,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 12.16
+ },
+ {
+  "path": ".codex\\shark-voyage-patrol-20261013\\native-review\\wide-review.mp4",
+  "dur": 56.93,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 15.11
+ },
+ {
+  "path": ".codex\\short-voyage-20261017\\before-10\\review.mp4",
+  "dur": 56.5,
+  "w": 640,
+  "h": 360,
+  "fps": 2.0,
+  "mb": 2.17
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-final-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 55.17,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.34
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\overlook211-multi-playable-ground-hold-10\\front.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 4.39
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\overlook211-multi-playable-ground-hold-10\\pursuit-and-fight.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 4.01
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\overlook211-multi-playable-ground-hold-10\\side.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 5.25
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\overlook211-multi-playable-ground-hold-10\\three-quarter.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 4.87
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\shoulder211-multi-playable-ground-hold-10\\front.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 5.06
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\shoulder211-multi-playable-ground-hold-10\\pursuit-and-fight.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 4.45
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\shoulder211-multi-playable-ground-hold-10\\side.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 5.61
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\shoulder211-multi-playable-ground-hold-10\\three-quarter.mp4",
+  "dur": 55.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 5.16
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-balanced-playable-pause-30\\pursuit-and-fight.mp4",
+  "dur": 52.77,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 7.26
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyeighth-tutorial-v222-final-30\\review.mp4",
+  "dur": 52.3,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 4.97
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyseventh-tutorial-v222-15\\review.mp4",
+  "dur": 50.33,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 3.92
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-final-multi-ground-hold-pause-10\\front.mp4",
+  "dur": 48.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 4.85
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-final-multi-ground-hold-pause-10\\pursuit-and-fight.mp4",
+  "dur": 48.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.74
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-final-multi-ground-hold-pause-10\\review.mp4",
+  "dur": 48.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.6
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-final-multi-ground-hold-pause-10\\side.mp4",
+  "dur": 48.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 4.67
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-final-multi-ground-hold-pause-10\\three-quarter.mp4",
+  "dur": 48.0,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 5.05
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\shoulder211-playable-pause-30\\review.mp4",
+  "dur": 47.93,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 4.82
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtysixth-tutorial-v221-baseline-15\\review.mp4",
+  "dur": 45.33,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 3.37
+ },
+ {
+  "path": ".codex\\opening-polish-v262\\fix-9b\\opening-fight.mp4",
+  "dur": 44.13,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 9.17
+ },
+ {
+  "path": ".codex\\shark-opening035\\baseline\\SharkFight.mp4",
+  "dur": 44.03,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 10.59
+ },
+ {
+  "path": ".codex\\shark041\\after-stabilized\\SharkFight.mp4",
+  "dur": 43.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 11.01
+ },
+ {
+  "path": ".codex\\shark-opening035\\after-1\\SharkFight.mp4",
+  "dur": 43.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 11.06
+ },
+ {
+  "path": ".codex\\shark-opening035\\after-3\\SharkFight.mp4",
+  "dur": 43.2,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 10.85
+ },
+ {
+  "path": ".codex\\shark041\\after-eye-line\\SharkFight.mp4",
+  "dur": 43.07,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 10.47
+ },
+ {
+  "path": ".codex\\shark041\\final\\SharkFight.mp4",
+  "dur": 42.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 10.57
+ },
+ {
+  "path": ".codex\\shark-opening035\\final\\SharkFight.mp4",
+  "dur": 42.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 11.01
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\wreck-traversal\\review.mp4",
+  "dur": 42.63,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.7
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\natural-30\\pursuit-and-fight.mp4",
+  "dur": 40.2,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 6.4
+ },
+ {
+  "path": ".codex\\opening-polish-v262\\OpeningPolish-v262-BeforeAfter-fight.mp4",
+  "dur": 39.77,
+  "w": 1280,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 9.43
+ },
+ {
+  "path": ".codex\\opening-polish-v262\\before-full\\before-fight.mp4",
+  "dur": 39.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 12.32
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\facing211-multi-playable-ground-10\\front.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.49
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\facing211-multi-playable-ground-10\\pursuit-and-fight.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.24
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\facing211-multi-playable-ground-10\\side.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.54
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\facing211-multi-playable-ground-10\\three-quarter.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.76
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\swim-owner211-multi-playable-ground-10\\front.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.53
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\swim-owner211-multi-playable-ground-10\\pursuit-and-fight.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.16
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\swim-owner211-multi-playable-ground-10\\side.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.36
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\swim-owner211-multi-playable-ground-10\\three-quarter.mp4",
+  "dur": 38.8,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.55
+ },
+ {
+  "path": ".codex\\opening-polish-v262\\after-3\\OpeningPolish-v262-fight.mp4",
+  "dur": 38.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 12.72
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\final211-multi-ground-10\\front.mp4",
+  "dur": 38.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.31
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\final211-multi-ground-10\\pursuit-and-fight.mp4",
+  "dur": 38.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.13
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\final211-multi-ground-10\\side.mp4",
+  "dur": 38.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.86
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\final211-multi-ground-10\\three-quarter.mp4",
+  "dur": 38.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.43
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\accepted-ground-10\\pursuit-and-fight.mp4",
+  "dur": 38.1,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 4.11
+ },
+ {
+  "path": ".codex\\shark-opening035\\after-2\\SharkFight.mp4",
+  "dur": 36.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 10.06
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-second-15\\contact-review.mp4",
+  "dur": 36.27,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 3.34
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\swim-rebase-ground-10\\pursuit-and-fight.mp4",
+  "dur": 36.1,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.52
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-before-30\\pursuit-and-fight.mp4",
+  "dur": 35.3,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 3.96
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-framing-multi-ground-10\\front.mp4",
+  "dur": 33.7,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.09
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-framing-multi-ground-10\\pursuit-and-fight.mp4",
+  "dur": 33.7,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.49
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-framing-multi-ground-10\\side.mp4",
+  "dur": 33.7,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.1
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\fixed212-framing-multi-ground-10\\three-quarter.mp4",
+  "dur": 33.7,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.32
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\float-clearance-multi-ground-10\\front.mp4",
+  "dur": 33.4,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.73
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\float-clearance-multi-ground-10\\pursuit-and-fight.mp4",
+  "dur": 33.4,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.19
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\float-clearance-multi-ground-10\\side.mp4",
+  "dur": 33.4,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.1
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\float-clearance-multi-ground-10\\three-quarter.mp4",
+  "dur": 33.4,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.84
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-balanced-ground-10\\pursuit-and-fight.mp4",
+  "dur": 33.4,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.45
+ },
+ {
+  "path": ".codex\\encounter-v025-planning-water\\front-review.mp4",
+  "dur": 33.4,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.89
+ },
+ {
+  "path": ".codex\\encounter-v025-planning-water\\game-review.mp4",
+  "dur": 33.4,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.0
+ },
+ {
+  "path": ".codex\\encounter-v025-planning-water\\side-review.mp4",
+  "dur": 33.4,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.02
+ },
+ {
+  "path": ".codex\\encounter-v025-planning-water\\three-quarter-review.mp4",
+  "dur": 33.4,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.92
+ },
+ {
+  "path": ".codex\\encounter-v034-actual-blend-anchor-water\\front-review.mp4",
+  "dur": 33.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.67
+ },
+ {
+  "path": ".codex\\encounter-v034-actual-blend-anchor-water\\game-review.mp4",
+  "dur": 33.23,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.69
+ },
+ {
+  "path": ".codex\\encounter-v034-actual-blend-anchor-water\\side-review.mp4",
+  "dur": 33.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.83
+ },
+ {
+  "path": ".codex\\encounter-v034-actual-blend-anchor-water\\three-quarter-review.mp4",
+  "dur": 33.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.79
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\contact-pressure-multi-ground-10\\front.mp4",
+  "dur": 33.2,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.77
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\contact-pressure-multi-ground-10\\pursuit-and-fight.mp4",
+  "dur": 33.2,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.15
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\contact-pressure-multi-ground-10\\side.mp4",
+  "dur": 33.2,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.42
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\contact-pressure-multi-ground-10\\three-quarter.mp4",
+  "dur": 33.2,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.64
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\ground-strict-10\\pursuit-and-fight.mp4",
+  "dur": 32.6,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.39
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-density-multi-ground-10\\front.mp4",
+  "dur": 32.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.33
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-density-multi-ground-10\\pursuit-and-fight.mp4",
+  "dur": 32.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.41
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-density-multi-ground-10\\side.mp4",
+  "dur": 32.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.57
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-density-multi-ground-10\\three-quarter.mp4",
+  "dur": 32.5,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.47
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-first-30\\pursuit-and-fight.mp4",
+  "dur": 32.23,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 4.16
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\wave-rate-multi-ground-10\\front.mp4",
+  "dur": 32.1,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.15
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\wave-rate-multi-ground-10\\pursuit-and-fight.mp4",
+  "dur": 32.1,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.4
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\wave-rate-multi-ground-10\\side.mp4",
+  "dur": 32.1,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 2.5
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\wave-rate-multi-ground-10\\three-quarter.mp4",
+  "dur": 32.1,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.04
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-third-10\\pursuit-and-fight.mp4",
+  "dur": 31.7,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.31
+ },
+ {
+  "path": ".codex\\twin-blade-restore-20261021\\combinations-final-30hz\\TwinBladeRestoredV235.mp4",
+  "dur": 31.17,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 0.94
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\v022-real-supported-paddle\\native-controls-review.mp4",
+  "dur": 30.77,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.48
+ },
+ {
+  "path": ".codex\\encounter-v027-supported-stance-water\\front-review.mp4",
+  "dur": 30.2,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.97
+ },
+ {
+  "path": ".codex\\encounter-v027-supported-stance-water\\game-review.mp4",
+  "dur": 30.2,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 3.06
+ },
+ {
+  "path": ".codex\\encounter-v027-supported-stance-water\\side-review.mp4",
+  "dur": 30.2,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.84
+ },
+ {
+  "path": ".codex\\encounter-v027-supported-stance-water\\three-quarter-review.mp4",
+  "dur": 30.2,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.87
+ },
+ {
+  "path": ".codex\\encounter-v026-tail-fin-water\\front-review.mp4",
+  "dur": 29.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.33
+ },
+ {
+  "path": ".codex\\encounter-v026-tail-fin-water\\game-review.mp4",
+  "dur": 29.87,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.17
+ },
+ {
+  "path": ".codex\\encounter-v026-tail-fin-water\\side-review.mp4",
+  "dur": 29.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.78
+ },
+ {
+  "path": ".codex\\encounter-v026-tail-fin-water\\three-quarter-review.mp4",
+  "dur": 29.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.42
+ },
+ {
+  "path": ".codex\\dual-blade-rush-guard-20261019\\final-30hz\\rush-guard-review.mp4",
+  "dur": 29.43,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 0.62
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\hydro-second-10\\pursuit-and-fight.mp4",
+  "dur": 29.4,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 3.07
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\accepted-multi-pause-30\\front.mp4",
+  "dur": 29.33,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 4.02
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\accepted-multi-pause-30\\pursuit-and-fight.mp4",
+  "dur": 29.33,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 4.13
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\accepted-multi-pause-30\\side.mp4",
+  "dur": 29.33,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 3.83
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\accepted-multi-pause-30\\three-quarter.mp4",
+  "dur": 29.33,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 4.06
+ },
+ {
+  "path": ".codex\\encounter-v022-supported-normal\\front-review.mp4",
+  "dur": 28.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.74
+ },
+ {
+  "path": ".codex\\encounter-v022-supported-normal\\game-review.mp4",
+  "dur": 28.43,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.35
+ },
+ {
+  "path": ".codex\\encounter-v022-supported-normal\\side-review.mp4",
+  "dur": 28.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.86
+ },
+ {
+  "path": ".codex\\encounter-v022-supported-normal\\three-quarter-review.mp4",
+  "dur": 28.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 2.23
+ },
+ {
+  "path": ".codex\\dual-blade-rush-guard-20261019\\final-60hz\\rush-guard-review.mp4",
+  "dur": 28.38,
+  "w": 640,
+  "h": 360,
+  "fps": 60.0,
+  "mb": 0.88
+ },
+ {
+  "path": ".codex\\dual-blade-polish-20261019\\verification2-30hz\\dual-blade-review.mp4",
+  "dur": 28.37,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 0.94
+ },
+ {
+  "path": ".codex\\dual-blade-polish-20261019\\final-30hz\\dual-blade-review.mp4",
+  "dur": 28.33,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 0.94
+ },
+ {
+  "path": ".codex\\encounter-v016-physical-hop-normal\\front-review.mp4",
+  "dur": 28.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.26
+ },
+ {
+  "path": ".codex\\encounter-v016-physical-hop-normal\\game-review.mp4",
+  "dur": 28.0,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.08
+ },
+ {
+  "path": ".codex\\encounter-v016-physical-hop-normal\\side-review.mp4",
+  "dur": 28.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.37
+ },
+ {
+  "path": ".codex\\encounter-v016-physical-hop-normal\\three-quarter-review.mp4",
+  "dur": 28.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.32
+ },
+ {
+  "path": ".codex\\dual-blade-polish-20261019\\final-60hz\\dual-blade-review.mp4",
+  "dur": 27.73,
+  "w": 640,
+  "h": 360,
+  "fps": 60.0,
+  "mb": 1.28
+ },
+ {
+  "path": ".codex\\dual-blade-polish-20261019\\verification2-60hz\\dual-blade-review.mp4",
+  "dur": 27.73,
+  "w": 640,
+  "h": 360,
+  "fps": 60.0,
+  "mb": 1.28
+ },
+ {
+  "path": ".codex\\encounter-v030-landing-windup-water\\front-review.mp4",
+  "dur": 27.67,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.34
+ },
+ {
+  "path": ".codex\\encounter-v030-landing-windup-water\\game-review.mp4",
+  "dur": 27.67,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.19
+ },
+ {
+  "path": ".codex\\encounter-v030-landing-windup-water\\side-review.mp4",
+  "dur": 27.67,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.45
+ },
+ {
+  "path": ".codex\\encounter-v030-landing-windup-water\\three-quarter-review.mp4",
+  "dur": 27.67,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.42
+ },
+ {
+  "path": ".codex\\encounter-v013-render-physics-support\\front-review.mp4",
+  "dur": 27.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.58
+ },
+ {
+  "path": ".codex\\encounter-v013-render-physics-support\\game-review.mp4",
+  "dur": 27.23,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.36
+ },
+ {
+  "path": ".codex\\encounter-v013-render-physics-support\\side-review.mp4",
+  "dur": 27.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.79
+ },
+ {
+  "path": ".codex\\encounter-v013-render-physics-support\\three-quarter-review.mp4",
+  "dur": 27.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 2.13
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\cleanup-v223-before-30\\tutorial-review.mp4",
+  "dur": 27.0,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.35
+ },
+ {
+  "path": ".codex\\encounter-v012-visible-shaft\\front-review.mp4",
+  "dur": 26.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.37
+ },
+ {
+  "path": ".codex\\encounter-v012-visible-shaft\\game-review.mp4",
+  "dur": 26.43,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.35
+ },
+ {
+  "path": ".codex\\encounter-v012-visible-shaft\\side-review.mp4",
+  "dur": 26.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.73
+ },
+ {
+  "path": ".codex\\encounter-v012-visible-shaft\\three-quarter-review.mp4",
+  "dur": 26.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.45
+ },
+ {
+  "path": ".codex\\encounter-v011-bounded-water\\front-review.mp4",
+  "dur": 26.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.36
+ },
+ {
+  "path": ".codex\\encounter-v011-bounded-water\\side-review.mp4",
+  "dur": 26.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.47
+ },
+ {
+  "path": ".codex\\encounter-v011-bounded-water\\three-quarter-review.mp4",
+  "dur": 26.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.41
+ },
+ {
+  "path": ".codex\\tutorial-contact-20261021\\Sahur_Shark_Tutorial_v234.mp4",
+  "dur": 26.1,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.72
+ },
+ {
+  "path": ".codex\\encounter-v011-bounded-water\\game-review.mp4",
+  "dur": 26.03,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.23
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-water\\front-review.mp4",
+  "dur": 26.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.92
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-water\\game-review.mp4",
+  "dur": 26.0,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.75
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-water\\side-review.mp4",
+  "dur": 26.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.14
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-water\\three-quarter-review.mp4",
+  "dur": 26.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.03
+ },
+ {
+  "path": ".codex\\encounter-v028-supported-sole-normal\\front-review.mp4",
+  "dur": 25.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.81
+ },
+ {
+  "path": ".codex\\encounter-v028-supported-sole-normal\\game-review.mp4",
+  "dur": 25.97,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.78
+ },
+ {
+  "path": ".codex\\encounter-v028-supported-sole-normal\\side-review.mp4",
+  "dur": 25.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.85
+ },
+ {
+  "path": ".codex\\encounter-v028-supported-sole-normal\\three-quarter-review.mp4",
+  "dur": 25.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.89
+ },
+ {
+  "path": ".codex\\tutorial-contact-20261021\\Sahur_Shark_Tutorial_v234_Final.mp4",
+  "dur": 25.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.66
+ },
+ {
+  "path": ".codex\\encounter-v016-clearance-water\\front-review.mp4",
+  "dur": 25.93,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.04
+ },
+ {
+  "path": ".codex\\encounter-v016-clearance-water\\game-review.mp4",
+  "dur": 25.93,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.71
+ },
+ {
+  "path": ".codex\\encounter-v016-clearance-water\\side-review.mp4",
+  "dur": 25.93,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.03
+ },
+ {
+  "path": ".codex\\encounter-v016-clearance-water\\three-quarter-review.mp4",
+  "dur": 25.93,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.03
+ },
+ {
+  "path": ".codex\\tutorial-contact-20261021\\Sahur_Shark_Tutorial_v234_Verified.mp4",
+  "dur": 25.9,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.66
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\v021-lowered-water-leg\\native-controls-review.mp4",
+  "dur": 25.63,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.1
+ },
+ {
+  "path": ".codex\\encounter-v038-bounded-entry-water\\front-review.mp4",
+  "dur": 25.6,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.78
+ },
+ {
+  "path": ".codex\\encounter-v038-bounded-entry-water\\game-review.mp4",
+  "dur": 25.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.6
+ },
+ {
+  "path": ".codex\\encounter-v038-bounded-entry-water\\side-review.mp4",
+  "dur": 25.6,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.93
+ },
+ {
+  "path": ".codex\\encounter-v038-bounded-entry-water\\three-quarter-review.mp4",
+  "dur": 25.6,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.89
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\twentysixth-crush-v219-30\\review.mp4",
+  "dur": 25.23,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.68
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\fortieth-tutorial-v222-final-30\\tutorial-review.mp4",
+  "dur": 24.9,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.25
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\cleanup-v223-final-30\\tutorial-review.mp4",
+  "dur": 24.83,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.19
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\cleanup-v223-after-30\\tutorial-review.mp4",
+  "dur": 24.77,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.11
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-lowfps\\front-review.mp4",
+  "dur": 24.6,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.19
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-lowfps\\game-review.mp4",
+  "dur": 24.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.84
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-lowfps\\side-review.mp4",
+  "dur": 24.6,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.58
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-lowfps\\three-quarter-review.mp4",
+  "dur": 24.6,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.54
+ },
+ {
+  "path": ".codex\\encounter-v019-original-locomotion-normal\\front-review.mp4",
+  "dur": 24.57,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.12
+ },
+ {
+  "path": ".codex\\encounter-v019-original-locomotion-normal\\game-review.mp4",
+  "dur": 24.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.83
+ },
+ {
+  "path": ".codex\\encounter-v019-original-locomotion-normal\\side-review.mp4",
+  "dur": 24.57,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.45
+ },
+ {
+  "path": ".codex\\encounter-v019-original-locomotion-normal\\three-quarter-review.mp4",
+  "dur": 24.57,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.35
+ },
+ {
+  "path": ".codex\\encounter-v033-timed-slash-water-owned\\front-review.mp4",
+  "dur": 24.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.77
+ },
+ {
+  "path": ".codex\\encounter-v033-timed-slash-water-owned\\game-review.mp4",
+  "dur": 24.37,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.88
+ },
+ {
+  "path": ".codex\\encounter-v033-timed-slash-water-owned\\side-review.mp4",
+  "dur": 24.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.95
+ },
+ {
+  "path": ".codex\\encounter-v033-timed-slash-water-owned\\three-quarter-review.mp4",
+  "dur": 24.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.89
+ },
+ {
+  "path": ".codex\\abduction052\\final-30\\Abduction-To-Island2-Native.mp4",
+  "dur": 24.23,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 12.31
+ },
+ {
+  "path": ".codex\\claws058\\visible-30\\Abduction-To-Island2-Native.mp4",
+  "dur": 24.23,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 12.59
+ },
+ {
+  "path": ".codex\\encounter-v014-reachable-weapon\\game-review.mp4",
+  "dur": 24.17,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.28
+ },
+ {
+  "path": ".codex\\encounter-v014-reachable-weapon\\front-review.mp4",
+  "dur": 24.03,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.19
+ },
+ {
+  "path": ".codex\\encounter-v014-reachable-weapon\\side-review.mp4",
+  "dur": 24.03,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.15
+ },
+ {
+  "path": ".codex\\encounter-v014-reachable-weapon\\three-quarter-review.mp4",
+  "dur": 24.03,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.11
+ },
+ {
+  "path": ".codex\\encounter-v022-guard-catch-water\\front-review.mp4",
+  "dur": 24.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.23
+ },
+ {
+  "path": ".codex\\encounter-v022-guard-catch-water\\game-review.mp4",
+  "dur": 24.0,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.0
+ },
+ {
+  "path": ".codex\\encounter-v022-guard-catch-water\\side-review.mp4",
+  "dur": 24.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.45
+ },
+ {
+  "path": ".codex\\encounter-v022-guard-catch-water\\three-quarter-review.mp4",
+  "dur": 24.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.45
+ },
+ {
+  "path": ".codex\\encounter-v023-head-rise-normal\\front-review.mp4",
+  "dur": 23.8,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.17
+ },
+ {
+  "path": ".codex\\encounter-v023-head-rise-normal\\game-review.mp4",
+  "dur": 23.8,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.63
+ },
+ {
+  "path": ".codex\\encounter-v023-head-rise-normal\\side-review.mp4",
+  "dur": 23.8,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.41
+ },
+ {
+  "path": ".codex\\encounter-v023-head-rise-normal\\three-quarter-review.mp4",
+  "dur": 23.8,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.42
+ },
+ {
+  "path": ".codex\\encounter-v017-physical-support-lowfps\\front-review.mp4",
+  "dur": 23.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.44
+ },
+ {
+  "path": ".codex\\encounter-v017-physical-support-lowfps\\game-review.mp4",
+  "dur": 23.77,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.05
+ },
+ {
+  "path": ".codex\\encounter-v017-physical-support-lowfps\\side-review.mp4",
+  "dur": 23.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.65
+ },
+ {
+  "path": ".codex\\encounter-v017-physical-support-lowfps\\three-quarter-review.mp4",
+  "dur": 23.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.53
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\twentyfifth-crush-v219-30\\review.mp4",
+  "dur": 23.73,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.53
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\twentysecond-crush-v219-30\\review.mp4",
+  "dur": 23.73,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.49
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\twentythird-crush-v219-30\\review.mp4",
+  "dur": 23.73,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.45
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\eighteenth-crush-baseline-15\\review.mp4",
+  "dur": 23.67,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 1.95
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\nineteenth-crush-v219-15\\review.mp4",
+  "dur": 23.67,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 2.02
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\twentyfirst-crush-v219-15\\review.mp4",
+  "dur": 23.67,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 2.1
+ },
+ {
+  "path": ".codex\\abduction052\\final-60\\Abduction-To-Island2-Native.mp4",
+  "dur": 23.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 18.04
+ },
+ {
+  "path": ".codex\\encounter-v015-cached-normal\\game-review.mp4",
+  "dur": 23.4,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.17
+ },
+ {
+  "path": ".codex\\encounter-mesh-colliders-v005\\encounter-gameplay.mp4",
+  "dur": 23.37,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 3.45
+ },
+ {
+  "path": ".codex\\encounter-contact-v004-edge\\encounter-gameplay.mp4",
+  "dur": 23.33,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 3.5
+ },
+ {
+  "path": ".codex\\encounter-v011-footprint-fit\\front-review.mp4",
+  "dur": 23.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.45
+ },
+ {
+  "path": ".codex\\encounter-v011-footprint-fit\\side-review.mp4",
+  "dur": 23.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.82
+ },
+ {
+  "path": ".codex\\encounter-v011-footprint-fit\\three-quarter-review.mp4",
+  "dur": 23.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.58
+ },
+ {
+  "path": ".codex\\encounter-v015-cached-normal\\front-review.mp4",
+  "dur": 23.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.29
+ },
+ {
+  "path": ".codex\\encounter-v015-cached-normal\\side-review.mp4",
+  "dur": 23.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.56
+ },
+ {
+  "path": ".codex\\encounter-v015-cached-normal\\three-quarter-review.mp4",
+  "dur": 23.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.33
+ },
+ {
+  "path": ".codex\\encounter-v012-normal-full\\game-review.mp4",
+  "dur": 23.23,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.78
+ },
+ {
+  "path": ".codex\\encounter-v026-current-lowfps\\front-review.mp4",
+  "dur": 23.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.19
+ },
+ {
+  "path": ".codex\\encounter-v026-current-lowfps\\game-review.mp4",
+  "dur": 23.23,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.0
+ },
+ {
+  "path": ".codex\\encounter-v026-current-lowfps\\side-review.mp4",
+  "dur": 23.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.37
+ },
+ {
+  "path": ".codex\\encounter-v026-current-lowfps\\three-quarter-review.mp4",
+  "dur": 23.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.43
+ },
+ {
+  "path": ".codex\\encounter-v012-normal-full\\front-review.mp4",
+  "dur": 23.2,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.93
+ },
+ {
+  "path": ".codex\\encounter-v012-normal-full\\side-review.mp4",
+  "dur": 23.2,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.95
+ },
+ {
+  "path": ".codex\\encounter-v012-normal-full\\three-quarter-review.mp4",
+  "dur": 23.2,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.95
+ },
+ {
+  "path": ".codex\\encounter-v011-footprint-fit\\game-review.mp4",
+  "dur": 23.07,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.09
+ },
+ {
+  "path": "Tools\\dark_brine_promo\\out\\Dark_Brine_Rot_Teaser.mp4",
+  "dur": 23.0,
+  "w": 1920,
+  "h": 1080,
+  "fps": 24.0,
+  "mb": 48.48
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyfirst-idle-v221-30\\review.mp4",
+  "dur": 22.77,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.47
+ },
+ {
+  "path": ".codex\\dual-blade-rush-guard-20261019\\native-60hz\\rush-guard-review.mp4",
+  "dur": 22.63,
+  "w": 640,
+  "h": 360,
+  "fps": 60.0,
+  "mb": 0.7
+ },
+ {
+  "path": ".codex\\encounter-v028-continuous-support-normal\\front-review.mp4",
+  "dur": 22.57,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v028-continuous-support-normal\\game-review.mp4",
+  "dur": 22.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.26
+ },
+ {
+  "path": ".codex\\encounter-v028-continuous-support-normal\\side-review.mp4",
+  "dur": 22.57,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.83
+ },
+ {
+  "path": ".codex\\encounter-v028-continuous-support-normal\\three-quarter-review.mp4",
+  "dur": 22.57,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.86
+ },
+ {
+  "path": ".codex\\encounter-v016-root-body-normal\\front-review.mp4",
+  "dur": 22.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.82
+ },
+ {
+  "path": ".codex\\encounter-v016-root-body-normal\\game-review.mp4",
+  "dur": 22.43,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.57
+ },
+ {
+  "path": ".codex\\encounter-v016-root-body-normal\\side-review.mp4",
+  "dur": 22.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.1
+ },
+ {
+  "path": ".codex\\encounter-v016-root-body-normal\\three-quarter-review.mp4",
+  "dur": 22.43,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.96
+ },
+ {
+  "path": ".codex\\encounter-v008-art-review\\front-review.mp4",
+  "dur": 22.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.28
+ },
+ {
+  "path": ".codex\\encounter-v008-art-review\\side-review.mp4",
+  "dur": 22.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.95
+ },
+ {
+  "path": ".codex\\encounter-v008-art-review\\three-quarter-review.mp4",
+  "dur": 22.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.54
+ },
+ {
+  "path": ".codex\\encounter-v027-validated-water-support\\front-review.mp4",
+  "dur": 22.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.16
+ },
+ {
+  "path": ".codex\\encounter-v027-validated-water-support\\game-review.mp4",
+  "dur": 22.37,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.74
+ },
+ {
+  "path": ".codex\\encounter-v027-validated-water-support\\side-review.mp4",
+  "dur": 22.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.58
+ },
+ {
+  "path": ".codex\\encounter-v027-validated-water-support\\three-quarter-review.mp4",
+  "dur": 22.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.32
+ },
+ {
+  "path": ".codex\\encounter-v029-support-safe-water\\front-review.mp4",
+  "dur": 22.17,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.69
+ },
+ {
+  "path": ".codex\\encounter-v029-support-safe-water\\game-review.mp4",
+  "dur": 22.17,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.94
+ },
+ {
+  "path": ".codex\\encounter-v029-support-safe-water\\side-review.mp4",
+  "dur": 22.17,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v029-support-safe-water\\three-quarter-review.mp4",
+  "dur": 22.17,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.7
+ },
+ {
+  "path": ".codex\\encounter-v008-art-review\\game-review.mp4",
+  "dur": 22.07,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.77
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\island-final\\review.mp4",
+  "dur": 22.03,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.07
+ },
+ {
+  "path": ".codex\\encounter-v012-cached-parts\\front-review.mp4",
+  "dur": 21.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.1
+ },
+ {
+  "path": ".codex\\encounter-v012-cached-parts\\game-review.mp4",
+  "dur": 21.97,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.12
+ },
+ {
+  "path": ".codex\\encounter-v012-cached-parts\\side-review.mp4",
+  "dur": 21.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.58
+ },
+ {
+  "path": ".codex\\encounter-v012-cached-parts\\three-quarter-review.mp4",
+  "dur": 21.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.39
+ },
+ {
+  "path": ".codex\\encounter-v001\\encounter-final-preview.mp4",
+  "dur": 21.13,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.43
+ },
+ {
+  "path": ".codex\\shark-finale-preview\\shark-wreck-finale.mp4",
+  "dur": 21.13,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.43
+ },
+ {
+  "path": ".codex\\ocean-buoyancy-20261023\\final\\OceanBuoyancy-v244.mp4",
+  "dur": 21.0,
+  "w": 960,
+  "h": 540,
+  "fps": 24.0,
+  "mb": 3.54
+ },
+ {
+  "path": ".codex\\ocean-buoyancy-20261023\\ocean-final-mesh\\OceanReview-v244.mp4",
+  "dur": 21.0,
+  "w": 960,
+  "h": 540,
+  "fps": 24.0,
+  "mb": 3.24
+ },
+ {
+  "path": ".codex\\ocean-buoyancy-20261023\\shore-sea-final\\OceanReview-v244.mp4",
+  "dur": 21.0,
+  "w": 960,
+  "h": 540,
+  "fps": 24.0,
+  "mb": 3.09
+ },
+ {
+  "path": ".codex\\ocean-buoyancy-20261023\\shore-sea-v1\\OceanReview-v244.mp4",
+  "dur": 21.0,
+  "w": 960,
+  "h": 540,
+  "fps": 24.0,
+  "mb": 3.12
+ },
+ {
+  "path": ".codex\\ocean-buoyancy-20261023\\shore-sea-visible\\OceanReview-v244.mp4",
+  "dur": 21.0,
+  "w": 960,
+  "h": 540,
+  "fps": 24.0,
+  "mb": 3.18
+ },
+ {
+  "path": ".codex\\encounter-v003-final-release\\front-review.mp4",
+  "dur": 20.93,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.61
+ },
+ {
+  "path": ".codex\\encounter-v003-final-release\\side-review.mp4",
+  "dur": 20.93,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.83
+ },
+ {
+  "path": ".codex\\encounter-v003-final-release\\three-quarter-review.mp4",
+  "dur": 20.93,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.74
+ },
+ {
+  "path": ".codex\\encounter-v003-reviewed\\front-review.mp4",
+  "dur": 20.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.08
+ },
+ {
+  "path": ".codex\\encounter-v003-reviewed\\side-review.mp4",
+  "dur": 20.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.16
+ },
+ {
+  "path": ".codex\\encounter-v003-reviewed\\three-quarter-review.mp4",
+  "dur": 20.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.14
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v185\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.51
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v185\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.97
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v185\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.44
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v185\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.05
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v186\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.68
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v186\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.63
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v186\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.21
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v186\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.79
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v188\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.92
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v188\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.68
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v188\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.71
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v188\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.76
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v193\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.08
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v193\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.92
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v193\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.45
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v193\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.21
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v196\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.08
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v196\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.75
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v196\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v196\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.31
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v199\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.3
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v199\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.78
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v199\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.19
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v199\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.33
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v201\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.52
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v201\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.8
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v201\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.96
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v201\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.28
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v204\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.39
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v204\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.66
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v204\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.23
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v204\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.58
+ },
+ {
+  "path": ".codex\\finale-admission-20261014\\after-entry\\full-film.mp4",
+  "dur": 20.83,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 4.12
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v053\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.62
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v053\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.53
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v053\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.54
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v053\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.3
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v057\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.94
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v057\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.94
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v057\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.8
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v057\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.28
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v062\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.56
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v062\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.38
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v062\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.59
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v062\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.87
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v064\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.0
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v064\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.52
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v064\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.08
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v064\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.76
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v067\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.58
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v067\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.01
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v067\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.7
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v067\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.49
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v074\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.11
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v074\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.83
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v074\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.76
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v074\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.1
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v075\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.25
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v075\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.83
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v075\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.06
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v075\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.61
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v076\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.65
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v076\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.31
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v076\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.03
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v076\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.53
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v083\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.49
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v083\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.8
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v083\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.16
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v083\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.63
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v084\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.8
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v084\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.76
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v084\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.42
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v084\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.26
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v088\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.84
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v088\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.43
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v088\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.11
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v088\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.93
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v090\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.43
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v090\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.33
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v090\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.82
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v090\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.31
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v103\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.62
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v103\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.98
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v103\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.66
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v103\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.41
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v108\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.11
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v108\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.13
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v108\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.12
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v108\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.8
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v115\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.42
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v115\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.64
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v115\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.81
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v115\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 3.65
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v132\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.33
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v132\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.03
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v132\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.76
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v132\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.49
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v138\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.04
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v138\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.02
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v138\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.19
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v138\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.51
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v146\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.15
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v146\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.35
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v146\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.11
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v146\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.1
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v170\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.94
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v170\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.73
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v170\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.06
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v170\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.07
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v174\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.77
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v174\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.41
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v174\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.23
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v174\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.94
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v180\\front-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.69
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v180\\game-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.55
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v180\\side-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.81
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v180\\three-quarter-review.mp4",
+  "dur": 20.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.84
+ },
+ {
+  "path": ".codex\\encounter-buoyancy-final\\encounter-gameplay.mp4",
+  "dur": 20.77,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.36
+ },
+ {
+  "path": ".codex\\encounter-v024-additive-stance-normal\\front-review.mp4",
+  "dur": 20.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.13
+ },
+ {
+  "path": ".codex\\encounter-v024-additive-stance-normal\\game-review.mp4",
+  "dur": 20.77,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.49
+ },
+ {
+  "path": ".codex\\encounter-v024-additive-stance-normal\\side-review.mp4",
+  "dur": 20.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.14
+ },
+ {
+  "path": ".codex\\encounter-v024-additive-stance-normal\\three-quarter-review.mp4",
+  "dur": 20.77,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.06
+ },
+ {
+  "path": ".codex\\encounter-v003-final-release\\encounter-gameplay.mp4",
+  "dur": 20.73,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.17
+ },
+ {
+  "path": ".codex\\encounter-v003-reviewed\\encounter-gameplay.mp4",
+  "dur": 20.67,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.65
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v203\\front-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.77
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v203\\game-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.48
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v203\\side-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.65
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-paired-v203\\three-quarter-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.73
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v096\\front-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.5
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v096\\game-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.96
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v096\\side-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.66
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v096\\three-quarter-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.34
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v099\\front-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.45
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v099\\game-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 8.26
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v099\\side-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 7.22
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-paired-v099\\three-quarter-review.mp4",
+  "dur": 20.47,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 6.08
+ },
+ {
+  "path": ".codex\\combat-recovery-20261023\\native-review-complete\\CombatImpact-v245.mp4",
+  "dur": 20.13,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.17
+ },
+ {
+  "path": ".codex\\opening-charge-20261023\\deck-v249-normalized\\DeckClearance-v249.mp4",
+  "dur": 20.0,
+  "w": 768,
+  "h": 432,
+  "fps": 12.0,
+  "mb": 1.93
+ },
+ {
+  "path": ".codex\\opening-charge-20261023\\deck-v249-queued\\DeckClearance-v249.mp4",
+  "dur": 20.0,
+  "w": 768,
+  "h": 432,
+  "fps": 12.0,
+  "mb": 1.95
+ },
+ {
+  "path": ".codex\\combat-recovery-20261023\\final-controller-layer\\CombatFeel-v245.mp4",
+  "dur": 19.73,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.17
+ },
+ {
+  "path": ".codex\\combat-recovery-20261023\\native-review-final\\CombatImpact-v245.mp4",
+  "dur": 19.73,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.23
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyfifth-idle-v221-final-30\\review.mp4",
+  "dur": 18.7,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 2.2
+ },
+ {
+  "path": ".codex\\nailong-balance-20261020\\Nailong_Balance_v233.mp4",
+  "dur": 17.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 5.23
+ },
+ {
+  "path": ".codex\\nailong-voice-20261020\\Nailong_MouthWaves_v232.mp4",
+  "dur": 17.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 5.29
+ },
+ {
+  "path": ".codex\\nailong-voice-20261020\\Nailong_MouthWaves_v232_Accepted.mp4",
+  "dur": 17.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 5.26
+ },
+ {
+  "path": ".codex\\nailong-voice-20261020\\Nailong_MouthWaves_v232_Final.mp4",
+  "dur": 17.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 5.25
+ },
+ {
+  "path": ".codex\\nailong-voice-20261020\\Nailong_MouthWaves_v232_Verified.mp4",
+  "dur": 17.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 5.26
+ },
+ {
+  "path": ".codex\\combat-recovery-20261023\\native-review-v1\\CombatImpact-v245.mp4",
+  "dur": 17.73,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 0.55
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\v018-native-simulation-timing\\native-controls-review.mp4",
+  "dur": 16.93,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.5
+ },
+ {
+  "path": ".codex\\shark-blender\\tralalero-animation-preview.mp4",
+  "dur": 16.47,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 2.51
+ },
+ {
+  "path": ".codex\\opening054\\after-2\\Chase-Tail-Native.mp4",
+  "dur": 16.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.64
+ },
+ {
+  "path": ".codex\\opening054\\after-3\\Chase-Tail-Native.mp4",
+  "dur": 16.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.31
+ },
+ {
+  "path": ".codex\\opening054\\final-30\\Chase-Tail-Native.mp4",
+  "dur": 16.27,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 5.58
+ },
+ {
+  "path": ".codex\\blades053\\island-30\\Blades-Aerial-Rush-Native.mp4",
+  "dur": 16.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 12.87
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\v018-surfboard-leg-stroke-reviewed\\native-controls-review.mp4",
+  "dur": 16.0,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.37
+ },
+ {
+  "path": ".codex\\blades053\\final3-60\\Blades-Aerial-Rush-Native.mp4",
+  "dur": 15.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.65
+ },
+ {
+  "path": ".codex\\blade-animation-polish-20261021\\after-60\\BladeAnimation-after-60.mp4",
+  "dur": 15.38,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 1.35
+ },
+ {
+  "path": ".codex\\blade-animation-polish-20261021\\baseline-60\\BladeAnimation-baseline-60.mp4",
+  "dur": 15.37,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 1.36
+ },
+ {
+  "path": ".codex\\encounter-v011-controls\\wreck-traversal-final\\review.mp4",
+  "dur": 15.37,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 1.43
+ },
+ {
+  "path": ".codex\\combat-combinations-20261019\\combat-combinations-review.mp4",
+  "dur": 15.03,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.07
+ },
+ {
+  "path": ".codex\\nailong-height-20261020\\Nailong_Height_v231.mp4",
+  "dur": 14.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 4.42
+ },
+ {
+  "path": ".codex\\nailong-readability-20261020\\Nailong_Readability_v229.mp4",
+  "dur": 14.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 4.42
+ },
+ {
+  "path": ".codex\\nailong-volume-20261020\\Nailong_Volume_v230.mp4",
+  "dur": 14.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 4.4
+ },
+ {
+  "path": ".codex\\nailong-volume-20261020\\Nailong_Volume_v230_Final.mp4",
+  "dur": 14.9,
+  "w": 960,
+  "h": 540,
+  "fps": 10.0,
+  "mb": 4.39
+ },
+ {
+  "path": ".codex\\perfect-dodge043\\final-30\\PerfectDodgeCounter.mp4",
+  "dur": 14.63,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.23
+ },
+ {
+  "path": ".codex\\chase-entry-20261014\\swim-dock-ground-10\\aborted-entry.mp4",
+  "dur": 14.4,
+  "w": 640,
+  "h": 360,
+  "fps": 10.0,
+  "mb": 1.45
+ },
+ {
+  "path": ".codex\\encounter-v001\\multiview\\front-review.mp4",
+  "dur": 14.4,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.9
+ },
+ {
+  "path": ".codex\\encounter-v001\\multiview\\side-review.mp4",
+  "dur": 14.4,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.93
+ },
+ {
+  "path": ".codex\\encounter-v001\\multiview\\three-quarter-review.mp4",
+  "dur": 14.4,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.04
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyfifth-idle-v221-final-30\\crush-preview.mp4",
+  "dur": 13.83,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 1.66
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyfirst-idle-v221-30\\crush-preview.mp4",
+  "dur": 13.83,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 1.62
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\twentysixth-crush-v219-30\\crush-preview.mp4",
+  "dur": 13.83,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 1.66
+ },
+ {
+  "path": ".codex\\perfect-dodge043\\final-60\\PerfectDodgeCounter.mp4",
+  "dur": 13.7,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 1.18
+ },
+ {
+  "path": ".codex\\vfx050\\final\\TungTung-VFX-Native.mp4",
+  "dur": 13.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 23.36
+ },
+ {
+  "path": ".codex\\vfx050\\hybrid-a\\TungTung-VFX-Native.mp4",
+  "dur": 13.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 23.19
+ },
+ {
+  "path": ".codex\\boat-fidget-20261024\\wrist-safe-30\\OpeningBoatCamera-v247.mp4",
+  "dur": 13.13,
+  "w": 768,
+  "h": 432,
+  "fps": 15.0,
+  "mb": 1.36
+ },
+ {
+  "path": ".codex\\boat-fidget-20261024\\wrist-safe-30\\SahurBoatStick-v247.mp4",
+  "dur": 13.13,
+  "w": 768,
+  "h": 432,
+  "fps": 15.0,
+  "mb": 0.88
+ },
+ {
+  "path": ".codex\\vfx037\\art-5\\Brine-Combat-Native.mp4",
+  "dur": 12.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 1.02
+ },
+ {
+  "path": ".codex\\vfx037\\art-7\\Brine-Combat-Native.mp4",
+  "dur": 12.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 1.22
+ },
+ {
+  "path": ".codex\\vfx037\\island-final\\Brine-Combat-Native.mp4",
+  "dur": 12.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 27.29
+ },
+ {
+  "path": ".codex\\vfx039\\final\\Grounded-Combat-Native.mp4",
+  "dur": 12.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 20.66
+ },
+ {
+  "path": ".codex\\vfx039\\final-v2\\Grounded-Combat-Native.mp4",
+  "dur": 12.43,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 19.69
+ },
+ {
+  "path": ".codex\\combat-v265\\jump-final-30\\Sahur-JumpChops-v265.mp4",
+  "dur": 12.37,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.74
+ },
+ {
+  "path": ".codex\\jump-diagonal-v266\\Sahur-DiagonalJumpChops-v266.mp4",
+  "dur": 12.3,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.72
+ },
+ {
+  "path": ".codex\\melee-completion-20261022\\native-current-30\\Sahur-MeleeCompletion-v239.mp4",
+  "dur": 12.23,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.02
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\thirtyfirst-idle-v221-30\\stick-closeup\\idle-preview.mp4",
+  "dur": 9.5,
+  "w": 640,
+  "h": 480,
+  "fps": 10.0,
+  "mb": 0.64
+ },
+ {
+  "path": ".codex\\combat-feel-20261018\\combat-feel-review.mp4",
+  "dur": 9.13,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.36
+ },
+ {
+  "path": ".codex\\dual-blade-polish-20261019\\dual-blade-controls-preview.mp4",
+  "dur": 8.5,
+  "w": 640,
+  "h": 360,
+  "fps": 30.0,
+  "mb": 0.26
+ },
+ {
+  "path": ".codex\\clouds-20261024\\CloudDrift-v251.mp4",
+  "dur": 8.0,
+  "w": 640,
+  "h": 360,
+  "fps": 12.0,
+  "mb": 0.08
+ },
+ {
+  "path": ".codex\\grass038\\baseline-coast.mp4",
+  "dur": 8.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 12.26
+ },
+ {
+  "path": ".codex\\grass038\\final-coast.mp4",
+  "dur": 8.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 12.16
+ },
+ {
+  "path": ".codex\\opening-v264\\visible\\eight-second-helm.mp4",
+  "dur": 7.97,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.24
+ },
+ {
+  "path": ".codex\\shipbreak-camera-20261014\\default-30-final\\camera-review.mp4",
+  "dur": 7.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 2.9
+ },
+ {
+  "path": ".codex\\encounter-redesign-20261017\\contact-v224-first-15\\contact-review.mp4",
+  "dur": 7.67,
+  "w": 640,
+  "h": 360,
+  "fps": 15.0,
+  "mb": 1.07
+ },
+ {
+  "path": ".codex\\shipbreak-camera-20261014\\default-30-polish\\camera-review.mp4",
+  "dur": 7.53,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 2.78
+ },
+ {
+  "path": ".codex\\draw-retrieve-v254\\climb-and-draw-v254-native-take-04.mp4",
+  "dur": 7.17,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.63
+ },
+ {
+  "path": ".codex\\draw-retrieve-v254\\climb-and-draw-v254-native-take-05.mp4",
+  "dur": 7.17,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.7
+ },
+ {
+  "path": ".codex\\jump-transitions-v276\\JumpChop-Transitions-v276.mp4",
+  "dur": 6.83,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 0.55
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\activation-fixed-overtuned\\baseline\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.76
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\activation-fixed-overtuned\\stronger\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.48
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\baseline\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.76
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\first-tuning\\baseline\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.34
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\first-tuning\\stronger\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.71
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\second-tuning-inactive-launch\\baseline\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.34
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\second-tuning-inactive-launch\\stronger\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.71
+ },
+ {
+  "path": ".codex\\wider-wreck-impact-20261013\\stronger\\impact-preview.mp4",
+  "dur": 6.53,
+  "w": 960,
+  "h": 540,
+  "fps": 15.0,
+  "mb": 1.59
+ },
+ {
+  "path": ".codex\\ship-foam-20261007\\ship-foam-preview.mp4",
+  "dur": 6.2,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 1.62
+ },
+ {
+  "path": ".codex\\goose034\\goose-before-after.mp4",
+  "dur": 6.0,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 0.03
+ },
+ {
+  "path": ".codex\\guidance040\\Guidance-and-Grass.mp4",
+  "dur": 6.0,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 4.33
+ },
+ {
+  "path": "AUTO_QA\\Evidence\\batch034\\goose-before-after.mp4",
+  "dur": 6.0,
+  "w": 1280,
+  "h": 720,
+  "fps": 30.0,
+  "mb": 0.52
+ },
+ {
+  "path": ".codex\\tutorial-facing-20261023\\native-30\\Sahur-TutorialFacing-v240.mp4",
+  "dur": 5.87,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.05
+ },
+ {
+  "path": ".codex\\tutorial-facing-20261023\\stable-30\\Sahur-TutorialFacing-v240.mp4",
+  "dur": 5.8,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.31
+ },
+ {
+  "path": ".codex\\draw-retrieve-v254\\native-take-01\\incomplete.mp4",
+  "dur": 5.63,
+  "w": 960,
+  "h": 540,
+  "fps": 30.0,
+  "mb": 1.21
+ },
+ {
+  "path": ".codex\\wukong-step064\\directional-60.mp4",
+  "dur": 5.47,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.43
+ },
+ {
+  "path": ".codex\\shark-animation-polish-20261021\\SahurShark-BeforeAfter-v237.mp4",
+  "dur": 5.4,
+  "w": 1280,
+  "h": 400,
+  "fps": 30.0,
+  "mb": 1.19
+ },
+ {
+  "path": ".codex\\wukong-step064\\DirectionalPerfectStep.mp4",
+  "dur": 5.33,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.39
+ },
+ {
+  "path": ".codex\\encounter-v017-physical-support-lowfps\\ship-impact-review.mp4",
+  "dur": 4.67,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.6
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-lowfps\\ship-impact-review.mp4",
+  "dur": 4.67,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.6
+ },
+ {
+  "path": ".codex\\encounter-v011-bounded-water\\ship-impact-review.mp4",
+  "dur": 4.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.74
+ },
+ {
+  "path": ".codex\\encounter-v013-render-physics-support\\ship-impact-review.mp4",
+  "dur": 4.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v016-physical-hop-normal\\ship-impact-review.mp4",
+  "dur": 4.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.74
+ },
+ {
+  "path": ".codex\\encounter-v024-additive-stance-normal\\ship-impact-review.mp4",
+  "dur": 4.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.72
+ },
+ {
+  "path": ".codex\\encounter-v034-actual-blend-anchor-water\\ship-impact-review.mp4",
+  "dur": 4.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.72
+ },
+ {
+  "path": ".codex\\encounter-v035-actual-crossfade-water\\ship-impact-review.mp4",
+  "dur": 4.6,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.69
+ },
+ {
+  "path": ".codex\\encounter-v008-art-review\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v011-footprint-fit\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v012-cached-parts\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.71
+ },
+ {
+  "path": ".codex\\encounter-v012-normal-full\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.72
+ },
+ {
+  "path": ".codex\\encounter-v012-visible-shaft\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.72
+ },
+ {
+  "path": ".codex\\encounter-v014-reachable-weapon\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.7
+ },
+ {
+  "path": ".codex\\encounter-v015-cached-normal\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v016-root-body-normal\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.71
+ },
+ {
+  "path": ".codex\\encounter-v019-original-locomotion-normal\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v022-guard-catch-water\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.69
+ },
+ {
+  "path": ".codex\\encounter-v022-supported-normal\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.72
+ },
+ {
+  "path": ".codex\\encounter-v023-head-rise-normal\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.7
+ },
+ {
+  "path": ".codex\\encounter-v026-tail-fin-water\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.71
+ },
+ {
+  "path": ".codex\\encounter-v027-supported-stance-water\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.71
+ },
+ {
+  "path": ".codex\\encounter-v027-validated-water-support\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.68
+ },
+ {
+  "path": ".codex\\encounter-v028-supported-sole-normal\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.67
+ },
+ {
+  "path": ".codex\\encounter-v029-support-safe-water\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v030-landing-windup-water\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.7
+ },
+ {
+  "path": ".codex\\encounter-v033-timed-slash-water-owned\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.72
+ },
+ {
+  "path": ".codex\\encounter-v038-bounded-entry-water\\ship-impact-review.mp4",
+  "dur": 4.57,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.73
+ },
+ {
+  "path": ".codex\\encounter-v016-clearance-water\\ship-impact-review.mp4",
+  "dur": 4.53,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.68
+ },
+ {
+  "path": ".codex\\encounter-v025-planning-water\\ship-impact-review.mp4",
+  "dur": 4.53,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.74
+ },
+ {
+  "path": ".codex\\encounter-v026-current-lowfps\\ship-impact-review.mp4",
+  "dur": 4.53,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.6
+ },
+ {
+  "path": ".codex\\encounter-v028-continuous-support-normal\\ship-impact-review.mp4",
+  "dur": 4.53,
+  "w": 720,
+  "h": 406,
+  "fps": 30.0,
+  "mb": 0.69
+ },
+ {
+  "path": ".codex\\blade-animation-polish-20261021\\BladeAnimation-BeforeAfter.mp4",
+  "dur": 4.18,
+  "w": 1280,
+  "h": 400,
+  "fps": 60.0,
+  "mb": 0.36
+ },
+ {
+  "path": ".codex\\sync061\\uvcs-local-before\\AUTO_QA\\Evidence\\batch028\\paired-geometry-a.mp4",
+  "dur": 4.0,
+  "w": 960,
+  "h": 540,
+  "fps": 12.0,
+  "mb": 6.84
+ },
+ {
+  "path": ".codex\\sync061\\uvcs-local-before\\AUTO_QA\\Evidence\\batch028\\paired-geometry-fixed.mp4",
+  "dur": 4.0,
+  "w": 960,
+  "h": 540,
+  "fps": 12.0,
+  "mb": 6.83
+ },
+ {
+  "path": "AUTO_QA\\Evidence\\batch027\\production-realistic.mp4",
+  "dur": 4.0,
+  "w": 960,
+  "h": 540,
+  "fps": 12.0,
+  "mb": 4.44
+ },
+ {
+  "path": "AUTO_QA\\Evidence\\batch027\\scene-before.mp4",
+  "dur": 4.0,
+  "w": 960,
+  "h": 540,
+  "fps": 12.0,
+  "mb": 3.22
+ },
+ {
+  "path": "AUTO_QA\\Evidence\\batch027\\scene-candidate.mp4",
+  "dur": 4.0,
+  "w": 960,
+  "h": 540,
+  "fps": 12.0,
+  "mb": 3.27
+ },
+ {
+  "path": "AUTO_QA\\Evidence\\batch028\\paired-geometry-a.mp4",
+  "dur": 4.0,
+  "w": 960,
+  "h": 540,
+  "fps": 12.0,
+  "mb": 6.84
+ },
+ {
+  "path": "AUTO_QA\\Evidence\\batch028\\paired-geometry-fixed.mp4",
+  "dur": 4.0,
+  "w": 960,
+  "h": 540,
+  "fps": 12.0,
+  "mb": 6.83
+ },
+ {
+  "path": ".codex\\boat-fidget-20261024\\three-second-v248\\capture\\ThreeSecondOpening-v248.mp4",
+  "dur": 3.87,
+  "w": 768,
+  "h": 432,
+  "fps": 15.0,
+  "mb": 0.41
+ },
+ {
+  "path": ".codex\\jump-meshy-v270\\presentation-30\\Sahur-AI-JumpChops-v270.mp4",
+  "dur": 3.64,
+  "w": 960,
+  "h": 540,
+  "fps": 25.0,
+  "mb": 0.18
+ },
+ {
+  "path": ".codex\\jump-meshy-v268\\draft2-30\\Sahur-AI-JumpChops-v268.mp4",
+  "dur": 3.56,
+  "w": 960,
+  "h": 540,
+  "fps": 25.0,
+  "mb": 0.35
+ },
+ {
+  "path": ".codex\\jump-forward-v277\\JumpChop-Forward-v277.mp4",
+  "dur": 3.17,
+  "w": 960,
+  "h": 540,
+  "fps": 30.32,
+  "mb": 0.26
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\after-focus-headings-60\\Sahur-ForwardJump-v278.mp4",
+  "dur": 3.17,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.43
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\after-synced-headings-60\\Sahur-ForwardJump-v278.mp4",
+  "dur": 3.17,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.43
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\final-bound-forward-60\\Sahur-ForwardJump-v278.mp4",
+  "dur": 3.17,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.44
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v086\\front-review.mp4",
+  "dur": 1.87,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.01
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v086\\side-review.mp4",
+  "dur": 1.87,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.01
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v086\\three-quarter-review.mp4",
+  "dur": 1.87,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.01
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-v086b\\front-review.mp4",
+  "dur": 1.87,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.08
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-v086b\\side-review.mp4",
+  "dur": 1.87,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.08
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-v086b\\three-quarter-review.mp4",
+  "dur": 1.87,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v050\\front-review.mp4",
+  "dur": 1.62,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.02
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v050\\side-review.mp4",
+  "dur": 1.62,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.01
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v050\\three-quarter-review.mp4",
+  "dur": 1.62,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.02
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\after-focus-headings-60\\piece0.mp4",
+  "dur": 1.58,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.2
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\after-focus-headings-60\\piece1.mp4",
+  "dur": 1.58,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.24
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\after-synced-headings-60\\piece0.mp4",
+  "dur": 1.58,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.2
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\after-synced-headings-60\\piece1.mp4",
+  "dur": 1.58,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.24
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\final-bound-forward-60\\piece0.mp4",
+  "dur": 1.58,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.2
+ },
+ {
+  "path": ".codex\\jump-stable-v278\\final-bound-forward-60\\piece1.mp4",
+  "dur": 1.58,
+  "w": 960,
+  "h": 540,
+  "fps": 60.0,
+  "mb": 0.24
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\movies\\CH1_SahurSlash_v040.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.07
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v051\\front-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.08
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v051\\side-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.08
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-v051\\three-quarter-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-slash-v128\\CH1_SahurSlash_v051-front-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-slash-v128\\CH1_SahurSlash_v051-side-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-slash-v128\\CH1_SahurSlash_v051-three-quarter-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-slash-v128\\CH1_SahurSlash_v128-front-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-slash-v128\\CH1_SahurSlash_v128-side-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-slash-v128\\CH1_SahurSlash_v128-three-quarter-review.mp4",
+  "dur": 1.42,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\encounter-v033\\native-continuous\\front-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\encounter-v033\\native-continuous\\side-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\encounter-v033\\native-continuous\\three-quarter-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\encounter-v036\\native-continuous\\v033-front-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\encounter-v036\\native-continuous\\v033-side-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\encounter-v036\\native-continuous\\v033-three-quarter-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\encounter-v036\\native-continuous\\v036-front-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.09
+ },
+ {
+  "path": ".codex\\encounter-v036\\native-continuous\\v036-side-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\encounter-v036\\native-continuous\\v036-three-quarter-60fps-review.mp4",
+  "dur": 1.4,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.1
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\movies\\CH1_SahurBrace_v040.mp4",
+  "dur": 1.32,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-shark-framed-v057\\front-review.mp4",
+  "dur": 1.32,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-shark-framed-v057\\side-review.mp4",
+  "dur": 1.32,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.05
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-shark-framed-v057\\three-quarter-review.mp4",
+  "dur": 1.32,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.05
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-paddle-v054\\PLAYER_BoardPaddleReverse_v054-front.mp4",
+  "dur": 1.22,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.02
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-paddle-v054\\PLAYER_BoardPaddleReverse_v054-side.mp4",
+  "dur": 1.22,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.03
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-paddle-v054\\PLAYER_BoardPaddleReverse_v054-three-quarter.mp4",
+  "dur": 1.22,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.03
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-paddle-v054\\PLAYER_BoardPaddle_v054-front.mp4",
+  "dur": 1.22,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.03
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-paddle-v054\\PLAYER_BoardPaddle_v054-side.mp4",
+  "dur": 1.22,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.03
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-continuous-paddle-v054\\PLAYER_BoardPaddle_v054-three-quarter.mp4",
+  "dur": 1.22,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.03
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\movies\\CH1_SahurParry_v040.mp4",
+  "dur": 1.12,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-parry-v090\\front-review.mp4",
+  "dur": 1.12,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-parry-v090\\side-review.mp4",
+  "dur": 1.12,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\opening-optimization-20261012\\native-framed-parry-v090\\three-quarter-review.mp4",
+  "dur": 1.12,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.05
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v194\\CH1_SahurParry_v171-front-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v194\\CH1_SahurParry_v171-side-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v194\\CH1_SahurParry_v171-three-quarter-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.05
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v194\\CH1_SahurParry_v194-front-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v194\\CH1_SahurParry_v194-side-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v194\\CH1_SahurParry_v194-three-quarter-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.05
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v198\\CH1_SahurParry_v171-front-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v198\\CH1_SahurParry_v171-side-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v198\\CH1_SahurParry_v171-three-quarter-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.05
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v198\\CH1_SahurParry_v198-front-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v198\\CH1_SahurParry_v198-side-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.04
+ },
+ {
+  "path": ".codex\\animation-continuation-20261014\\native-framed-parry-v198\\CH1_SahurParry_v198-three-quarter-review.mp4",
+  "dur": 1.1,
+  "w": 480,
+  "h": 480,
+  "fps": 60.0,
+  "mb": 0.05
+ },
+ {
+  "path": ".codex\\dual-blade-polish-20261019\\pause\\pause-review.mp4",
+  "dur": 1.05,
+  "w": 640,
+  "h": 360,
+  "fps": 60.0,
+  "mb": 0.05
+ }
+]

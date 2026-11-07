@@ -1,0 +1,55 @@
+{
+  "beforeBlocks": 264680,
+  "afterBlocks": 264680,
+  "removed": [],
+  "added": [],
+  "changed": [
+    {
+      "block": "--- !u!114 &558624515",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -47 +47,3 @@\n",
+        "   surfacePatchScale: 0.045",
+        "+  habitatMap: {fileID: 2800000, guid: 10029a2056bd2d54498a3741501547df, type: 2}",
+        "+  habitatBounds: {x: -459.54456, y: 44.347412, z: 983.9938, w: 1086.5225}"
+      ]
+    },
+    {
+      "block": "--- !u!114 &598175172",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -11,2 +11,2 @@\n",
+        "   m_EditorClassIdentifier: Assembly-CSharp::Mavis.NaturalGrassScatter",
+        "-  data: {fileID: 11400000, guid: 55dd7a71eadbf9f4fada4c42ece3bda6, type: 2}",
+        "+  data: {fileID: 11400000, guid: ffc50f141649a604e848bb62248caefd, type: 2}"
+      ]
+    },
+    {
+      "block": "--- !u!114 &826403706",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -11,2 +11,2 @@\n",
+        "   m_EditorClassIdentifier: Assembly-CSharp::Mavis.IslandEcologyRenderer",
+        "-  data: {fileID: 11400000, guid: c64b05a53594bc642a218def42a7e263, type: 2}",
+        "+  data: {fileID: 11400000, guid: 600315f1d71a4b346ab613a536878773, type: 2}"
+      ]
+    }
+  ],
+  "meshRemapping": [
+    {
+      "before": 1931194995,
+      "after": 1931194995,
+      "identicalPayload": true,
+      "changedFields": []
+    },
+    {
+      "before": 1271507384,
+      "after": 1271507384,
+      "identicalPayload": true,
+      "changedFields": []
+    }
+  ]
+}

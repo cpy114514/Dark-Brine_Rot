@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "regression-terrain",
+  "preset": "",
+  "metrics": {},
+  "checks": [
+    {
+      "ok": true,
+      "name": "Walking remains free and regenerates stamina",
+      "evidence": 99.00012
+    },
+    {
+      "ok": true,
+      "name": "Actual weapon sweep still damages a real Health target",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Confirmed impacts never stop global time",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Mobile hit stop freezes the attack layer and leaves locomotion live",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Local hit stop releases after contact",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "External/scripted owners retain movement and combat control",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Paused dodge presses do not execute after resume",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Cinematic-to-player camera handoff has no cut",
+      "evidence": 0.07751912
+    },
+    {
+      "ok": true,
+      "name": "Second Island low gravity and authored jump height remain active",
+      "evidence": 4.800005
+    },
+    {
+      "ok": true,
+      "name": "Production island ocean is present",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Actual ocean takes ownership from ground combat",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Swimming buoyancy remains finite",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Returning to shore restores ground movement",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 441
+}

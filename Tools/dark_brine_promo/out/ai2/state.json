@@ -1,0 +1,65 @@
+{
+ "eyes_1": {
+  "task_id": "460645143671378",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460644921357600",
+  "resolution": null
+ },
+ "eyes_2": {
+  "task_id": "460646076080320",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460645488669562",
+  "resolution": null
+ },
+ "eyes_3": {
+  "task_id": "460645207208176",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460645490438881",
+  "resolution": null
+ },
+ "eye_open": {
+  "task_id": "460645143671402",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460645998564599",
+  "resolution": null
+ },
+ "lamp": {
+  "task_id": "460645415150188",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460646884500608",
+  "resolution": null
+ },
+ "claw": {
+  "task_id": "460646586110577",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460646536102711",
+  "resolution": null
+ },
+ "stare": {
+  "task_id": "460646907777233",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460647218496220",
+  "resolution": null
+ },
+ "pulse": {
+  "task_id": "460646586110580",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460646964335706",
+  "resolution": null
+ },
+ "surf_raid": {
+  "task_id": "460646915637454",
+  "model": "MiniMax-Hailuo-2.3",
+  "status": "succeeded",
+  "node_id": "460648221520514",
+  "resolution": null
+ }
+}

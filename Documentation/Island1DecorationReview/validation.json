@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "total": 738,
+  "unsupported": 0,
+  "protectedHits": 0,
+  "boundsErrors": 0,
+  "missing": 0,
+  "maxGap": 2.002716E-05,
+  "shaderErrors": [],
+  "addedColliders": 0,
+  "groups": 29
+}

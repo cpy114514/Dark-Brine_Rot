@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "hz": 30,
+  "scope": "nonrifle-micro",
+  "preset": "",
+  "metrics": {
+    "clubEntryWeight": 0.5555556,
+    "clubEntryArmPeakDegrees": 22.5764217,
+    "bladeHandoff0": {
+      "handed": true,
+      "sourcePhase": 0.577777743,
+      "returnedPhase": 0.6222222
+    },
+    "bladeHandoff1": {
+      "handed": true,
+      "sourcePhase": 0.577777743,
+      "returnedPhase": 0.6222222
+    },
+    "bladeHandoff2": {
+      "handed": true,
+      "sourcePhase": 0.577777743,
+      "returnedPhase": 0.6222222
+    }
+  },
+  "checks": [
+    {
+      "ok": true,
+      "name": "Moving staff entry retains locomotion ownership",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Staff upper body reaches full weight before contact",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery preserves the existing follow-through, attempt 0",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery clock stays continuous, attempt 0",
+      "evidence": 0.6222222
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery preserves the existing follow-through, attempt 1",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery clock stays continuous, attempt 1",
+      "evidence": 0.6222222
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery preserves the existing follow-through, attempt 2",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery clock stays continuous, attempt 2",
+      "evidence": 0.6222222
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 217
+}

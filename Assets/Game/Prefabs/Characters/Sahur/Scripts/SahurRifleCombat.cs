@@ -33,9 +33,7 @@ namespace Mavis
             public bool active;
             public LineRenderer line;
         }
-        struct Impact { public LineRenderer line; public float until; }
         readonly Bullet[] bullets = new Bullet[32];
-        readonly Impact[] impacts = new Impact[12];
         readonly RaycastHit[] castHits = new RaycastHit[128];
         readonly Collider[] overlaps = new Collider[64];
         SahurWeaponLoadout loadout;
@@ -50,14 +48,15 @@ namespace Mavis
         Camera viewer;
         Material tracerMaterial;
         GameObject visuals, hud;
-        LineRenderer flash;
+        BrineMuzzleFlash muzzle;
         Text ammo, status;
         Image reloadFill;
         RectTransform reticle;
         readonly Image[] reticleArms = new Image[4];
-        float nextShot, firePoseUntil, flashUntil, hitUntil, nextHud;
-        int bulletCursor, impactCursor, shownAmmo = -1, shownReserve = -1;
+        float nextShot, firePoseUntil, hitUntil, nextHud;
+        int bulletCursor, shownAmmo = -1, shownReserve = -1;
         bool pendingShot, wasDead, shownReload, shownBlocked;
+        float fireBufferedUntil=-1;
         bool CanOperate => enabled && loadout && loadout.UsesRifle && loadout.RifleUnlocked && loadout.HeldRifle && health && health.currentHealth > 0 && movement && movement.RifleLocomotionAllowed && !(death && death.IsDead);
 
         void Awake()
@@ -78,10 +77,10 @@ namespace Mavis
             if (!visuals && loadout && loadout.UsesRifle) BuildVisuals();
             RefreshHud();
             // Pausing freezes both the reload and bullets, including the frame a menu closes.
-            if (paused) return;
-            if (!CanOperate) return;
+            if (paused || !CanOperate) { fireBufferedUntil=-1; return; }
             if (IsReloading)
             {
+                fireBufferedUntil=-1;
                 ReloadRemaining = Mathf.Max(0, ReloadRemaining - Time.deltaTime);
                 if (ReloadRemaining <= 0)
                 {
@@ -91,9 +90,10 @@ namespace Mavis
                 return;
             }
             if (GameControls.Down(GameControls.Command.Reload) && TryReload()) return;
-            if (Cursor.lockState != CursorLockMode.Locked) return;
+            if (Cursor.lockState != CursorLockMode.Locked) {fireBufferedUntil=-1;return;}
             if (Rounds <= 0) { TryReload(); return; }
-            if (GameControls.Held(GameControls.Command.Attack)) TryFire();
+            if(GameControls.Down(GameControls.Command.Attack))fireBufferedUntil=Time.time+.12f;
+            if (GameControls.Held(GameControls.Command.Attack)||Time.time<=fireBufferedUntil) TryFire();
         }
         public bool TryReload()
         {
@@ -109,7 +109,7 @@ namespace Mavis
         }
         public void RestoreAmmo(int magazine, int reserve)
         {
-            CancelReload(); pendingShot = false;
+            CancelReload(); pendingShot = false; fireBufferedUntil=-1;
             Rounds = Mathf.Clamp(magazine, 0, MagazineCapacity);
             ReserveRounds = Mathf.Clamp(reserve, 0, ReserveCapacity);
         }
@@ -119,6 +119,7 @@ namespace Mavis
             if (!CanOperate || IsReloading || Rounds <= 0 || pendingShot || Time.time < nextShot || Time.timeScale <= 0 || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput) return false;
             if (!visuals) BuildVisuals();
             Rounds--; ShotsFired++; pendingShot = true;
+            fireBufferedUntil=-1;
             GetComponent<PlayerStamina>()?.NotifyCombat();
             GameplayAudio.Play(GameplayAudio.Cue.Gunshot, transform.position);
             nextShot = Time.time + 1f / Mathf.Max(1, roundsPerSecond);
@@ -131,8 +132,8 @@ namespace Mavis
             float dt = Time.deltaTime;
             for (int i = 0; i < bullets.Length; i++) if (bullets[i].active) Step(bullets[i], dt);
             if (pendingShot) { pendingShot = false; Launch(); }
-            if (flash) flash.enabled = Time.time < flashUntil && CanOperate;
-            for (int i = 0; i < impacts.Length; i++) impacts[i].line.enabled = Time.time < impacts[i].until;
+            if(muzzle!=null && loadout && loadout.HeldRifle)
+                muzzle.Tick(dt,loadout.HeldRifle.TransformPoint(MuzzleLocal),loadout.HeldRifle.TransformDirection(Vector3.left),CanOperate);
         }
         bool Valid(Collider other, out IDamageable target)
         {
@@ -182,10 +183,7 @@ namespace Mavis
             Vector3 origin = rifle.TransformPoint(MuzzleLocal);
             // The visible bore is the projectile's direction; the pose solver aims this same line at GetAimPoint().
             Vector3 direction = rifle.TransformDirection(Vector3.left).normalized;
-            flashUntil = Time.time + .045f;
-            flash.SetPosition(0, origin + direction * .7f); flash.SetPosition(1, origin - viewerRight() * .18f);
-            flash.SetPosition(2, origin + viewerRight() * .18f); flash.SetPosition(3, origin + direction * .7f);
-            flash.SetPosition(4, origin - Vector3.up * .16f); flash.SetPosition(5, origin + Vector3.up * .16f);
+            muzzle?.Show(origin,direction,ShotsFired);
             // The barrel cannot protrude through a nearby wall and spawn bullets behind it.
             if (!chest && movement.CharacterAnimator) chest = movement.CharacterAnimator.GetBoneTransform(HumanBodyBones.Chest);
             Vector3 basePoint = chest ? chest.position : transform.position;
@@ -222,13 +220,16 @@ namespace Mavis
                 damaged=CombatHitFeedback.Apply(gameObject,target,DamageAtDistance(distance, aircraft, aircraft && aircraft.IsExposed, engine),point,CombatHitKind.Rifle,bulletDirection(point));
                 if(damaged){Hits++; hitUntil = Time.time + .16f;}
             }
-            int index = impactCursor++ % impacts.Length;
-            var impact = impacts[index]; impact.until = Time.time + .11f; var line = impact.line;
-            float size = damaged ? .3f : .18f;
-            line.SetPosition(0, point - viewerRight() * size); line.SetPosition(1, point + viewerRight() * size);
-            line.SetPosition(2, point); line.SetPosition(3, point - Vector3.up * size); line.SetPosition(4, point + Vector3.up * size);
-            line.startColor = line.endColor = damaged ? new Color(1, .55f, .2f) : new Color(1, .9f, .6f);
-            impacts[index] = impact;
+            // Accepted character hits already use CombatHitFeedback. Scenery
+            // uses that same bounded pool instead of an unrelated luminous cross.
+            if(!damaged)
+            {
+                Vector3 incoming=bulletDirection(point),normal=-incoming;
+                if(collider && collider.Raycast(new Ray(point-incoming*.5f,incoming),out var contact,1f))normal=contact.normal;
+                var surface=CombatSurfaceResponse.Resolve(collider,point);
+                var world=BrineVfxWorld.Get();
+                if(world)world.Emit(GetInstanceID(),point+normal*.025f,normal,.24f,.62f,false,surface:surface);
+            }
         }
         Vector3 bulletDirection(Vector3 point)=>(point-transform.position).normalized;
         LineRenderer Line(string name, int points, float width)
@@ -245,8 +246,7 @@ namespace Mavis
             visuals = new GameObject("M4A1 projectile pool");
             tracerMaterial = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
             for (int i = 0; i < bullets.Length; i++) bullets[i] = new Bullet { line = Line("Bullet " + i, 2, .065f) };
-            for (int i = 0; i < impacts.Length; i++) impacts[i].line = Line("Impact " + i, 5, .045f);
-            flash = Line("Muzzle flash", 6, .12f);
+            var style=BrineVfxStyle.Load();if(style&&style.surface)muzzle=new BrineMuzzleFlash(visuals.transform,style.surface);
             hud = new GameObject("M4A1 Ammo HUD", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
             hud.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay; hud.GetComponent<Canvas>().sortingOrder = 25; GameUITheme.Scale(hud.GetComponent<Canvas>());
             var card = GameUITheme.Rect(hud.transform, "Ammo card", new Vector2(1, 0), new Vector2(260, 110));
@@ -287,10 +287,10 @@ namespace Mavis
         }
         void OnDisable()
         {
-            CancelReload(); pendingShot = false; firePoseUntil = 0;
+            CancelReload(); pendingShot = false; firePoseUntil = 0; fireBufferedUntil=-1;
             if (hud) hud.SetActive(false);
-            if (visuals) { foreach (var bullet in bullets) { bullet.active = false; bullet.line.enabled = false; } foreach (var impact in impacts) impact.line.enabled = false; flash.enabled = false; }
+            if (visuals) { foreach (var bullet in bullets) { bullet.active = false; bullet.line.enabled = false; } muzzle?.Clear(); }
         }
-        void OnDestroy() { if (hud) Destroy(hud); if (visuals) Destroy(visuals); if (tracerMaterial) Destroy(tracerMaterial); }
+        void OnDestroy() { muzzle?.Dispose(); if (hud) Destroy(hud); if (visuals) Destroy(visuals); if (tracerMaterial) Destroy(tracerMaterial); }
     }
 }

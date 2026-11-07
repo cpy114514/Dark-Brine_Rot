@@ -1,0 +1,49 @@
+{
+  "arenas": [
+    {
+      "name": "Cappuccino approach",
+      "position": "(241.00, 38.39, 465.00)"
+    },
+    {
+      "name": "Chicken flock approach",
+      "position": "(142.00, 51.20, 565.00)"
+    },
+    {
+      "name": "Nailong approach",
+      "position": "(20.00, 55.34, 710.00)"
+    },
+    {
+      "name": "Bombardino approach",
+      "position": "(-114.00, 32.94, 826.00)"
+    }
+  ],
+  "checkpoints": [
+    {
+      "pointName": "Cappuccino approach",
+      "isDefault": true,
+      "p": "(275.00, 30.10, 408.00)"
+    },
+    {
+      "pointName": "Chicken flock approach",
+      "isDefault": false,
+      "p": "(191.00, 46.44, 518.00)"
+    },
+    {
+      "pointName": "Nailong approach",
+      "isDefault": false,
+      "p": "(62.00, 54.20, 660.00)"
+    },
+    {
+      "pointName": "Bombardino approach",
+      "isDefault": false,
+      "p": "(-32.00, 46.16, 754.00)"
+    }
+  ],
+  "landforms": 6,
+  "changedVertices": 1444,
+  "maxHeightChange": 3.40000153,
+  "movedTrees": 7,
+  "regrounded": 9,
+  "existingAmmoMoved": 6,
+  "newEnemies": 0
+}

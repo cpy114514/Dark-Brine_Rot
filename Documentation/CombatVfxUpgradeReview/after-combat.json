@@ -1,0 +1,81 @@
+{
+  "passed": true,
+  "error": null,
+  "checks": [
+    {
+      "name": "Imported style and runtime pool available",
+      "ok": true
+    },
+    {
+      "name": "Native surface, solid, smoke and volume shaders compile",
+      "ok": true
+    },
+    {
+      "name": "Real weapon contact accepted by Health",
+      "ok": true
+    },
+    {
+      "name": "Accepted contacts emit folded pressure surfaces",
+      "ok": true
+    },
+    {
+      "name": "Charge surface follows the real held weapon",
+      "ok": true
+    },
+    {
+      "name": "Native charged release reaches target",
+      "ok": true
+    },
+    {
+      "name": "Per-player loft vertex count is bounded",
+      "ok": true
+    },
+    {
+      "name": "Volume requests occlusion depth only while needed",
+      "ok": true
+    },
+    {
+      "name": "Thermal refraction leases the opaque scene copy",
+      "ok": true
+    },
+    {
+      "name": "Thermal refraction restores the opaque copy override",
+      "ok": true
+    },
+    {
+      "name": "Volume restores the camera depth override",
+      "ok": true
+    },
+    {
+      "name": "Boss blast is volumetric mesh geometry, without particle stacking",
+      "ok": true
+    },
+    {
+      "name": "Actual Capri stagger cue enters the shared 3D dust pool",
+      "ok": true
+    },
+    {
+      "name": "One-shot surfaces and ground chips retire completely",
+      "ok": true
+    },
+    {
+      "name": "Global contact, terrain and per-frame budgets reject excess work",
+      "ok": true
+    },
+    {
+      "name": "Explicit lifecycle cleanup clears every pooled surface",
+      "ok": true
+    },
+    {
+      "name": "Weapon and charge cleanup leaves no stale geometry",
+      "ok": true
+    },
+    {
+      "name": "No native runtime or shader errors",
+      "ok": true
+    }
+  ],
+  "errors": [],
+  "images": 403,
+  "worldScriptCpuP95Ms": 0.4779
+}

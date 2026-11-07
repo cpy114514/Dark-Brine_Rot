@@ -29,6 +29,7 @@ Shader "Mavis/FoliageWind"
         _PlayerPushHeightBias ("Player Push Height Bias (height where push applies)", Range(0,4)) = 1.0
         [HideInInspector] _ClipBelowSea ("Clip On Beach", Float) = 0
         [HideInInspector] _UseBladeHeight ("Use Baked Blade Height", Float) = 0
+        [HideInInspector] _AuthoredGrass ("Preserve authored grass blade colours", Float) = 0
         [Toggle] _BotanicalSurface ("Botanical PBR Surface", Float) = 0
         _BotanicalTriplanar ("Bark Triplanar Tiling (0 disables)", Float) = 0
         [Normal] _BotanicalNormal ("Botanical Normal", 2D) = "bump" {}
@@ -70,6 +71,7 @@ Shader "Mavis/FoliageWind"
                 half   _PlayerPushHeightBias;
                 half   _ClipBelowSea;
                 half   _UseBladeHeight;
+                half   _AuthoredGrass;
                 half   _BotanicalSurface;
                 float  _BotanicalTriplanar;
                 half4  _BotanicalEmission;
@@ -342,6 +344,7 @@ Shader "Mavis/FoliageWind"
                 // of it and rebuild a deeper green, otherwise the whole field reads
                 // as neon. Keep the brightness drift small so it stays a tint, not
                 // alternating light and dark stripes.
+                half3 authoredBlade = albedo;
                 half luma = dot(albedo, half3(0.299h, 0.587h, 0.114h));
                 // Rebuild the hue almost entirely from luma. The card texture is
                 // dominated by yellow-green, so a partial mix always leaks lime
@@ -350,6 +353,7 @@ Shader "Mavis/FoliageWind"
                     saturate(broad * 0.5 + 0.5) * 0.65h);
                 albedo = lerp(albedo, luma * tint, 0.82h);
                 albedo *= 0.88h + 0.10h * (fine * 0.5 + 0.5);
+                albedo = lerp(albedo, authoredBlade, _AuthoredGrass);
 
                 // Simple hemisphere ambient + main directional light
                 Light mainLight = GetMainLight(TransformWorldToShadowCoord(IN.positionWS));
@@ -375,9 +379,12 @@ Shader "Mavis/FoliageWind"
                 // which is what read as a glowing carpet instead of a lit surface.
                 half3 lit = albedo * (hemi * 0.86h + sun * (wrap + back) *
                     mainLight.distanceAttenuation * mainLight.shadowAttenuation * 0.54h);
+                // Curved grass ribbons transmit a little light on the shaded face.
+                lit += albedo * _AuthoredGrass * (0.07h + 0.09h * back);
 
                 // Lighten leaves/branches slightly where player is pushing them
                 lit += albedo * IN.squish * 0.15;
+                lit = lerp(lit, MixFog(lit, IN.fogFactor), _AuthoredGrass);
 
                 return half4(lit, 1.0h);
             }

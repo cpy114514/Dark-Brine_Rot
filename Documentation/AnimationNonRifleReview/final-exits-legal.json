@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "hz": 60,
+  "scope": "recovery-exits",
+  "preset": "",
+  "metrics": {},
+  "checks": [
+    {
+      "ok": true,
+      "name": "Blade follow-through cancels into dodge at the original legal phase",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery layer clears on dodge",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Weapon swap is accepted during blade recovery",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery layer clears on weapon",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Blade recovery layer clears on swim",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Moving staff reaches full authored pose by the original hit window",
+      "evidence": 1.0
+    },
+    {
+      "ok": true,
+      "name": "No runtime exceptions or asserts",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "frames": 245
+}

@@ -1,0 +1,54 @@
+{
+  "mode": "Editor Play, fixed 1920x1080, render scale 1, VSync off; warm up 120 frames per run, sample 240, order ABBA",
+  "gpu": "NVIDIA GeForce RTX 4060",
+  "samples": [
+    {
+      "authored": false,
+      "meanMs": 11.3705282,
+      "p95Ms": 12.8707056,
+      "draws": 1152.1583333333333,
+      "triangles": 7161691.6333333338,
+      "cpuMainMs": 11.304649583333333,
+      "grassBatches": 408,
+      "grassTufts": 185170,
+      "ecologyInstances": 7998,
+      "countersValid": true
+    },
+    {
+      "authored": true,
+      "meanMs": 9.874217,
+      "p95Ms": 11.1373024,
+      "draws": 956.0,
+      "triangles": 5832364.8,
+      "cpuMainMs": 9.8227995833333335,
+      "grassBatches": 271,
+      "grassTufts": 136941,
+      "ecologyInstances": 5315,
+      "countersValid": true
+    },
+    {
+      "authored": true,
+      "meanMs": 9.864453,
+      "p95Ms": 11.3275013,
+      "draws": 955.5291666666667,
+      "triangles": 5832176.4666666668,
+      "cpuMainMs": 9.813956666666666,
+      "grassBatches": 271,
+      "grassTufts": 136941,
+      "ecologyInstances": 5315,
+      "countersValid": true
+    },
+    {
+      "authored": false,
+      "meanMs": 11.2471189,
+      "p95Ms": 12.5951033,
+      "draws": 1151.1833333333334,
+      "triangles": 7157444.5333333332,
+      "cpuMainMs": 11.191224166666666,
+      "grassBatches": 408,
+      "grassTufts": 185170,
+      "ecologyInstances": 7998,
+      "countersValid": true
+    }
+  ]
+}

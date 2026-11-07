@@ -1,0 +1,11 @@
+{
+  "seed": 218911,
+  "meadowRetention": 0.85,
+  "gladeRetention": 0.063,
+  "grassPatchMetres": 27,
+  "minGrassNormalY": 0.76,
+  "wornTrailHalfWidth": 1.6,
+  "detailSpacing": 14,
+  "uncannyPocketLimit": 19,
+  "coastlineBandMetres": 32
+}

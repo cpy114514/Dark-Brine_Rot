@@ -1,0 +1,48 @@
+{
+  "runs": [
+    {
+      "run": "final60",
+      "passed": true,
+      "checks": 9
+    },
+    {
+      "run": "final30",
+      "passed": true,
+      "checks": 9
+    },
+    {
+      "run": "final120",
+      "passed": true,
+      "checks": 9
+    },
+    {
+      "run": "final-controls",
+      "passed": true,
+      "checks": 20
+    },
+    {
+      "run": "final-weapons",
+      "passed": true,
+      "checks": 16
+    },
+    {
+      "run": "final-staff",
+      "passed": true,
+      "checks": 4
+    },
+    {
+      "run": "final-air",
+      "passed": true,
+      "checks": 5
+    },
+    {
+      "run": "final-exits-legal",
+      "passed": true,
+      "checks": 7
+    }
+  ],
+  "runtimeChecks": 79,
+  "assetChecks": 340,
+  "editModeNUnitTestsDiscovered": 0,
+  "playModeNUnitTestsDiscovered": 0
+}

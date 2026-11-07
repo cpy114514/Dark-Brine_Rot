@@ -108,6 +108,15 @@ namespace Mavis
 
         bool PlaceInland()
         {
+            // An authored site must stay put when encounters are laid out along a route.
+            // Older scenes keep their automatic position beside Cappuccino.
+            if (!placeBesideCappuccino)
+            {
+                if (!FindGround(transform.position, out var authoredGround)) return false;
+                transform.position = authoredGround;
+                anchored = true;
+                return true;
+            }
             if (!cappuccino)cappuccino=FindFirstObjectByType<CappuccinoAI>(FindObjectsInactive.Include);
             if (!cappuccino) return false;
             if (!island)

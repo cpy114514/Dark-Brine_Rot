@@ -1,0 +1,212 @@
+{
+  "passed": true,
+  "phase": "complete",
+  "checks": [
+    {
+      "ok": true,
+      "name": "No added patrol enemies at scene start",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Original three boss roster",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Original flock counts and mix retained",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Flock keeps its authored site after runtime initialization",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Four visited checkpoints, one default",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint activates",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint captured in save",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Death and respawn succeeds",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn returns to safe ground",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Vitals restored",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint restored from save",
+      "evidence": "Cappuccino approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint activates",
+      "evidence": "Chicken flock approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint captured in save",
+      "evidence": "Chicken flock approach"
+    },
+    {
+      "ok": true,
+      "name": "Death and respawn succeeds",
+      "evidence": "Chicken flock approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn returns to safe ground",
+      "evidence": "Chicken flock approach"
+    },
+    {
+      "ok": true,
+      "name": "Vitals restored",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint restored from save",
+      "evidence": "Chicken flock approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint activates",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint captured in save",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Death and respawn succeeds",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn returns to safe ground",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Vitals restored",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint restored from save",
+      "evidence": "Nailong approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint activates",
+      "evidence": "Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint captured in save",
+      "evidence": "Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Death and respawn succeeds",
+      "evidence": "Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Respawn returns to safe ground",
+      "evidence": "Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Vitals restored",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Checkpoint restored from save",
+      "evidence": "Bombardino approach"
+    },
+    {
+      "ok": true,
+      "name": "Nailong and aircraft initially locked",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Locked bosses reject damage",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Cappuccino victory still requires flock before Nailong",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "All original 18 wave enemies, no extras",
+      "evidence": {
+        "LongLeggedDuck": 5,
+        "ChickenBro": 10,
+        "BullyGoose": 3
+      }
+    },
+    {
+      "ok": true,
+      "name": "Flock unlocks Nailong only",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Nailong unlocks aircraft",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Existing rifle lies beside defeated Nailong",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Aircraft defeat starts existing capture sequence",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Capture owns player movement at the relocated fight",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "Existing capture delivers player to second island",
+      "evidence": null
+    },
+    {
+      "ok": true,
+      "name": "No runtime errors",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "scope": "Scripted defeats validate placement, original spawn counts and progression/capture; not manual combat balance."
+}

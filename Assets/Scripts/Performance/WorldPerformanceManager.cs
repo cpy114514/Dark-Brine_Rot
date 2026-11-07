@@ -353,11 +353,13 @@ namespace Mavis
         }
         internal void SubmitVisibleGrass()
         {
-            submittedGrassBatches = 0;
-            int count = Camera.allCamerasCount;
-            if (grassCameras.Length < count) grassCameras = new Camera[Mathf.NextPowerOfTwo(count)];
-            count = Camera.GetAllCameras(grassCameras);
-            for (int i = 0; i < count; i++) RenderGrass(default, grassCameras[i]);
+            // Legacy editor callers must not enqueue draws for cameras which may
+            // never render. Camera callbacks now own all native submissions.
+        }
+        internal void SubmitVisibleGrass(ScriptableRenderContext context,Camera camera)
+        {
+            submittedGrassBatches=0;
+            RenderGrass(context,camera);
         }
         // -1 outside, 0 intersecting, 1 wholly inside. Include the maximum
         // shader displacement so gusts and body interaction cannot pop at edges.

@@ -16,6 +16,7 @@ namespace Mavis
         readonly Plane[] planes=new Plane[6];
         Coroutine preparation;
         MaterialPropertyBlock lodBlock;
+        Camera renderingCamera;
         static readonly int LodFade=Shader.PropertyToID("_EcologyLodFade");
         Batch MakeBatch(int variant,Matrix4x4[] matrices,Bounds bounds)
         {
@@ -29,6 +30,7 @@ namespace Mavis
 
         void OnEnable()
         {
+            RenderPipelineManager.beginCameraRendering+=DrawCamera;
             if(Application.isPlaying)preparation=StartCoroutine(Prepare());
             else {var work=Prepare();while(work.MoveNext()){} }
         }
@@ -40,13 +42,16 @@ namespace Mavis
             foreach(var cell in data.cells)
             {
                 if(cell.positions==null||cell.normals==null||cell.positions.Length!=cell.normals.Length)continue;
+                bool hasVariants = cell.variants != null && cell.variants.Length == cell.positions.Length;
+                bool hasScales = cell.scales != null && cell.scales.Length == cell.positions.Length;
                 for(int variant=0;variant<data.meshes.Length;variant++)
                 {
                     var matrices=new List<Matrix4x4>(256);
-                    for(int i=variant;i<cell.positions.Length;i+=data.meshes.Length)
+                    for(int i=hasVariants ? 0 : variant;i<cell.positions.Length;i+=hasVariants ? 1 : data.meshes.Length)
                     {
+                        if (hasVariants && cell.variants[i] != variant) continue;
                         var p=cell.positions[i];
-                        float scale=.86f+Mathf.Repeat(p.w*.071f,1)*.28f;
+                        float scale=hasScales ? cell.scales[i] : .86f+Mathf.Repeat(p.w*.071f,1)*.28f;
                         var rotation=Quaternion.FromToRotation(Vector3.up,cell.normals[i])*Quaternion.Euler(0,p.w,0);
                         matrices.Add(Matrix4x4.TRS(new Vector3(p.x,p.y,p.z),rotation,Vector3.one*scale));
                         InstanceCount++;
@@ -58,19 +63,18 @@ namespace Mavis
             }
             IsReady=true;preparation=null;
         }
-        void LateUpdate()
+        void DrawCamera(ScriptableRenderContext context,Camera camera)
         {
-            if(!data||!data.material||!SystemInfo.supportsInstancing)return;
-            var camera=Camera.main;
-#if UNITY_EDITOR
-            if(!Application.isPlaying&&UnityEditor.SceneView.lastActiveSceneView)camera=UnityEditor.SceneView.lastActiveSceneView.camera;
-#endif
-            if(!camera)return;
-            Submit(camera);
+            if(!isActiveAndEnabled||!data||!data.material||!SystemInfo.supportsInstancing||!camera||
+                (camera.cameraType!=CameraType.Game&&camera.cameraType!=CameraType.SceneView))return;
+            // A camera-specific draw remains allocated until that camera renders.
+            // Editor updates and inactive Game views must never accumulate submissions.
+            renderingCamera=camera;
+            try{Submit(camera);}finally{renderingCamera=null;}
         }
         public void Submit(Camera camera)
         {
-            if(!data||!data.material||!camera)return;
+            if(!isActiveAndEnabled||!data||!data.material||!camera||camera!=renderingCamera)return;
             GeometryUtility.CalculateFrustumPlanes(camera,planes);VisibleBatches=0;
             foreach(var batch in batches)
             {
@@ -101,6 +105,8 @@ namespace Mavis
         }
         void OnDisable()
         {
+            RenderPipelineManager.beginCameraRendering-=DrawCamera;
+            renderingCamera=null;
             if(preparation!=null)StopCoroutine(preparation);preparation=null;
             batches.Clear();InstanceCount=0;VisibleBatches=0;IsReady=false;
         }

@@ -160,6 +160,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     bool wasAtSeaSurface;
     bool wasSwimming;
     OceanWorld swimmingOcean;
+    SahurMovementPose movementPose;
     float swimExitJumpTimer;
     float swimRippleTimer;
     readonly RaycastHit[] waterGroundHits = new RaycastHit[32];
@@ -173,7 +174,8 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         !(RequestedMoveDirection.sqrMagnitude > .01f && GameInputSettings.Pressed(GameInputSettings.Action.Sprint)) &&
         GameControls.Held(GameControls.Command.Charge) && Cursor.lockState == CursorLockMode.Locked &&
         !PauseSettingsMenu.IsOpen && !Mavis.SahurLoadoutUI.BlocksInput && RifleLocomotionAllowed;
-    public Vector3 WorldVelocity => planarVelocity+platformCarryVelocity+Vector3.up*verticalSpeed;
+    Vector3 CombatPushVelocity => combatPush*Mathf.Clamp01((combatPushUntil-Time.time)/Mathf.Max(.05f,combatPushDuration));
+    public Vector3 WorldVelocity => planarVelocity+platformCarryVelocity+CombatPushVelocity+Vector3.up*verticalSpeed;
     public Vector3 RequestedMoveDirection
     {
         get
@@ -184,6 +186,20 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         }
     }
     public bool FastSwimming { get; private set; }
+    internal bool CanPoseWaterTransition(SahurMovementPose.WaterTransition transition)
+    {
+        if (!characterController || !characterController.enabled || ExternalMovementLock ||
+            OnFloatingWreckDeck || Motion.Scripted || rollTimer > 0f || airFlipTimer > 0f ||
+            (combat != null && combat.IsCombatMotionActive)) return false;
+
+        return transition switch
+        {
+            SahurMovementPose.WaterTransition.Enter => wasSwimming,
+            SahurMovementPose.WaterTransition.WadeOut => !wasSwimming && motionState is 0 or 3 or 4,
+            SahurMovementPose.WaterTransition.Breach => swimExitJumpTimer > 0f && motionState is 2 or 3,
+            _ => false
+        };
+    }
     // Story cinematics can keep buoyancy, animation and the camera running while withholding input.
     bool externalControlLock;
     public bool ExternalControlLock
@@ -303,10 +319,12 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         cameraInitialized = false;
         continuingCinematicCamera=false;cinematicCameraVelocity=Vector3.zero;
         wasSwimming = FastSwimming = wasAtSeaSurface = false;
+        movementPose?.ClearWaterTransition();
         swimExitJumpTimer = swimRippleTimer = 0f;
         airborneTime = landingTimer = landingImpactSpeed = 0f;
         // Loading or respawning on land must not retain a previous swimming state.
         motionState = 0;
+        combatPush=Vector3.zero;combatPushUntil=combatPushDuration=0;
         if (animator != null)
         {
             bool alreadyLocomotion=animator.GetCurrentAnimatorStateInfo(0).fullPathHash==LocomotionId ||
@@ -384,7 +402,8 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         if (GetComponent<Mavis.IslandMapUI>() == null) gameObject.AddComponent<Mavis.IslandMapUI>();
         enemyLock = GetComponent<Mavis.EnemyLockOn>();
         if (enemyLock == null) enemyLock = gameObject.AddComponent<Mavis.EnemyLockOn>();
-        if(GetComponent<SahurMovementPose>()==null)gameObject.AddComponent<SahurMovementPose>();
+        movementPose = GetComponent<SahurMovementPose>();
+        if (movementPose == null) movementPose = gameObject.AddComponent<SahurMovementPose>();
         if (GetComponent<Mavis.EquipmentInventory>() == null)
             gameObject.AddComponent<Mavis.EquipmentInventory>();
         if (GetComponent<Mavis.SahurWeaponLoadout>() == null)
@@ -557,7 +576,11 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             playerStamina?.StopSprinting();
             if (swimExitJumpTimer <= 0f) verticalSpeed = -groundStickSpeed;
             airborneTime = landingTimer = 0f;
-            if (swimExitJumpTimer <= 0f) SetMotion(0, "Locomotion", 0.10f);
+            if (swimExitJumpTimer <= 0f)
+            {
+                if (!OnFloatingWreckDeck) movementPose?.BeginWaterTransition(SahurMovementPose.WaterTransition.WadeOut);
+                SetMotion(0, "Locomotion", OnFloatingWreckDeck ? 0.10f : 0.22f);
+            }
         }
         float waterDepth = GetWaterDepth();
         if (swimmingOcean != null && IsAtSeaSurface() && waterDepth > 0f && !exitedSwimming)
@@ -716,10 +739,11 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             rollFinishedThisFrame = phase >= exitPhase || rollTimer <= 0f;
             if (rollFinishedThisFrame)
             {
+                Vector3 exitVelocity=rollDirection*rollInheritedSpeed;
                 rollTimer = 0f;
                 rollInheritedSpeed = 0f;
                 if(perfectStep&&perfectAttacker)perfectCounterUntil=Time.time+perfectCounterWindow;
-                if(!perfectStep)planarVelocity = TunedControls ? Vector3.MoveTowards(rollDirection*rollInheritedSpeed,
+                if(!perfectStep)planarVelocity = TunedControls ? Vector3.MoveTowards(exitVelocity,
                     desiredVelocity,acceleration*Response.acceleration*Response.redirect*Time.deltaTime) : desiredVelocity;
             }
         }
@@ -734,26 +758,19 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
                 planarVelocity = AdvanceLocomotion(desiredVelocity, grounded, Time.deltaTime);
             }
         }
-        if (Time.time < combatPushUntil)
-        {
-            float fade = Mathf.Clamp01((combatPushUntil - Time.time) / Mathf.Max(.05f, combatPushDuration));
-            planarVelocity += combatPush * fade;
-        }
+        // Hostile displacement is independent of voluntary locomotion. Adding it
+        // into planarVelocity every frame compounded one hit into lasting momentum.
+        float pushEnd=Mathf.Clamp(combatPushUntil-Time.time,0,combatPushDuration);
+        float pushStart=Mathf.Clamp(combatPushUntil-Time.time+Time.deltaTime,0,combatPushDuration);
+        Vector3 pushVelocity=combatPush*((pushStart*pushStart-pushEnd*pushEnd)/
+            Mathf.Max(.00001f,2*combatPushDuration*Time.deltaTime));
         float downwardSpeedBeforeMove = verticalSpeed;
         Vector3 movementStart=transform.position;
         if (!attackRootMotion)
         {
-            Vector3 movementDelta = (planarVelocity + platformCarryVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement;
+            Vector3 movementDelta = (planarVelocity + platformCarryVelocity + pushVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement;
             if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
-            Vector3 beforeMove=transform.position;
             CollisionFlags collisions = characterController.Move(movementDelta);
-            if(playerStamina && acceptInput && !movementLocked && !sprinting && !isRolling && airFlipTimer<=0f &&
-                moveDirection.sqrMagnitude>.01f && groundMoveSpeed>.01f && Time.deltaTime>0f)
-            {
-                Vector3 travel=Vector3.ProjectOnPlane(transform.position-beforeMove,Vector3.up);
-                float directed=Mathf.Max(0f,Vector3.Dot(travel,moveDirection.normalized));
-                playerStamina.TickWalking(Time.deltaTime,directed/(groundMoveSpeed*Time.deltaTime));
-            }
             if ((collisions & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
                 verticalSpeed = 0f;
             if ((collisions & CollisionFlags.Below) != 0 && verticalSpeed < 0f)
@@ -1529,6 +1546,8 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
 
     void UpdateSwimming(Vector3 input, Vector3 desiredVelocity, bool wantsFastSwim, bool jumpPressed)
     {
+        bool enteringWater = !wasSwimming;
+        float entryImpact = enteringWater ? Mathf.InverseLerp(1f, 12f, -verticalSpeed) : 0f;
         platformCarryVelocity=Vector3.zero;
         rollTimer = 0f;
         rollInheritedSpeed = 0f;
@@ -1573,8 +1592,9 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         characterController.Move((planarVelocity + Vector3.up * buoyancyVelocity) * Time.deltaTime);
 
         bool moving = planarVelocity.sqrMagnitude > 0.12f;
-        if (!wasSwimming)
+        if (enteringWater)
         {
+            movementPose?.BeginWaterTransition(SahurMovementPose.WaterTransition.Enter, entryImpact);
             if (waterSplashes)
             {
                 // One quiet breach ripple sells the waterline far better than a
@@ -1594,8 +1614,17 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         bool blendedSwim=animator!=null && animator.HasState(0,Animator.StringToHash("Swimming"));
         if(blendedSwim)
         {
-            animator.SetFloat("SwimAmount",Mathf.Clamp01(planarVelocity.magnitude/Mathf.Max(.1f,swimSpeed)),.18f,Time.deltaTime);
-            animator.SetFloat("SwimFastBlend",FastSwimming ? 1 : 0,.25f,Time.deltaTime);
+            float strokeAmount = Mathf.Clamp01(planarVelocity.magnitude / Mathf.Max(.1f, swimSpeed));
+            if (enteringWater)
+            {
+                animator.SetFloat("SwimAmount", strokeAmount);
+                animator.SetFloat("SwimFastBlend", 0f);
+            }
+            else
+            {
+                animator.SetFloat("SwimAmount", strokeAmount, .18f, Time.deltaTime);
+                animator.SetFloat("SwimFastBlend", FastSwimming ? 1 : 0, .25f, Time.deltaTime);
+            }
             SetMotion(5,"Swimming",.18f);
         }
         else SetMotion(!moving ? 6 : FastSwimming ? 8 : 5,
@@ -1615,6 +1644,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             verticalSpeed = Mathf.Sqrt(2f * gravity * (jumpHeight + Mathf.Min(swimSubmergeDepth, 0.8f)));
             playerStamina?.StopSprinting();
             FastSwimming = false;
+            movementPose?.BeginWaterTransition(SahurMovementPose.WaterTransition.Breach);
             SetMotion(2, "Jump Start", 0.10f);
         }
     }
