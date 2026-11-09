@@ -26,6 +26,26 @@ In the first Island, you will starting playing in a desert island with your basi
 | Map | m |
 | pause| esc |
 
+## charaters
+
+ISLAND 1
+Mystery Boss #1
+Mystery Boss #2
+Mystery Boss #3
+Chickens
+Ducks
+Gooses
+
+ISLAND 2
+Small Marshmallows 
+Mystery Boss #4
+Mystery Boss #5
+
+## Island
+Desert Island
+Marshmallow Island
+Wait for future updates
+
 ## AI usage
 
 We used AI for coding
