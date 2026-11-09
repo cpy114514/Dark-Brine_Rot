@@ -135,7 +135,8 @@ public static class VerifyCandyMelodyGarden
             var targets=(System.Collections.Generic.List<Transform>)typeof(IslandMapUI).GetField("targets",flags).GetValue(map);
             var markers=(System.Collections.Generic.List<RectTransform>)typeof(IslandMapUI).GetField("markers",flags).GetValue(map);
             int markerIndex=targets.IndexOf(garden.MapAnchor);
-            bool marker=markerIndex>=0 && markers[markerIndex].GetComponent<UnityEngine.UI.Text>().text=="✓",legend=Array.Exists(labels,t=>t.text.Contains("Melody garden"));
+            bool marker=markerIndex>=0 && targets[markerIndex]==garden.StartSign && markers[markerIndex].GetComponent<UnityEngine.UI.Text>().text=="♪✓";
+            bool legend=Array.Exists(labels,t=>t.text.Contains("Candy Melody Garden"));
             if(!marker || !legend || !map.MapGraphic.rectTransform.rect.Contains(map.MapGraphic.WorldToMap(garden.MapAnchor.position)))throw new Exception("Melody map marker or legend is missing.");
             map.SetOpen(false);
             if(!GameSaveManager.QueueContinue())throw new Exception("Could not queue isolated save.");

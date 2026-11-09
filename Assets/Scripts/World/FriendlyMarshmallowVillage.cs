@@ -197,12 +197,8 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
     void MakeGrove()
     {
         grove=new GameObject("Secret Starlight Grove");grove.transform.SetParent(transform,false);grove.transform.position=GroveCenter;
-        var ground=Mat("Grove pink sugar",new Color(.92f,.70f,.81f));
-        var edge=Mat("Grove icing",new Color(1f,.88f,.94f));
-        var wood=Mat("Grove candy stems",new Color(.70f,.43f,.48f));
-        var pink=Mat("Grove rose candy",new Color(1f,.56f,.73f));
-        var blue=Mat("Grove blue candy",new Color(.57f,.85f,.91f));
-        var gold=Mat("Grove golden light",new Color(1f,.85f,.47f),true);
+        var ground=Mat("Grove rose clay",new Color(.66f,.49f,.50f));
+        var edge=Mat("Grove cream stone",new Color(.84f,.72f,.59f));
         Shape("Solid sugar island",PrimitiveType.Cube,grove.transform,new Vector3(0,-.6f,0),new Vector3(36,1.2f,34),ground,true);
         // Low rails make the boundary visible. A recovery check catches low-gravity jumps beyond it.
         foreach(int side in new[]{-1,1})
@@ -210,54 +206,52 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
             Shape("Icing rail",PrimitiveType.Cube,grove.transform,new Vector3(side*17.4f,.65f,0),new Vector3(.55f,1.3f,34),edge,true);
             Shape("Icing rail",PrimitiveType.Cube,grove.transform,new Vector3(0,.65f,side*16.4f),new Vector3(35,1.3f,.55f),edge,true);
         }
-        for(int i=0;i<9;i++)
-        {
-            float a=i*Mathf.PI*2/9f;float x=Mathf.Cos(a)*13.5f,z=Mathf.Sin(a)*12f;
-            Shape("Candy tree stem",PrimitiveType.Cylinder,grove.transform,new Vector3(x,1.5f,z),new Vector3(.28f,1.5f,.28f),wood);
-            Shape("Cotton candy tree",PrimitiveType.Sphere,grove.transform,new Vector3(x,3.4f,z),new Vector3(3.1f,2.8f,3.1f),i%2==0?pink:blue);
-            Shape("Tree sparkle",PrimitiveType.Sphere,grove.transform,new Vector3(x+.6f,4.8f,z),Vector3.one*.4f,gold);
-        }
-        // Icing stepping stones, low candy flowers and lanterns give the garden
-        // a path and focal points; each visible prop has a physical collider.
+        var swirl = SecondIslandProp.Load("Kenney/lollypop");
+        var cupcake = SecondIslandProp.Load("Kenney/cupcake");
+        var wafer = SecondIslandProp.Load("Kenney/waffle");
+        var bench = SecondIslandProp.Load("Quaternius/Bench");
+        var well = SecondIslandProp.Load("Quaternius/Well");
         for(int i=0;i<7;i++)
         {
-            float z=-8+i*1.6f;float x=Mathf.Sin(i*.9f)*.6f;
-            Shape("Icing path stone",PrimitiveType.Cylinder,grove.transform,new Vector3(x,.035f,z),new Vector3(1.2f,.035f,1.1f),i%2==0?edge:blue);
+            float a=(i+.35f)*Mathf.PI*2/7f;
+            var site = new Vector3(Mathf.Cos(a)*13.5f,0,Mathf.Sin(a)*12f);
+            PlaceGroveProp(i%3==1 ? cupcake : swirl, site, new Vector3(4.5f,4.6f,4.5f), i * 31f);
         }
-        for(int i=0;i<8;i++)
+        for(int i=0;i<7;i++)
         {
-            float a=i*Mathf.PI/4f;float x=Mathf.Cos(a)*8.5f,z=Mathf.Sin(a)*7.5f+3f;
-            if(i==6)x+=3.8f; // Keep the entry landing and central path clear.
-            Shape("Candy flower stem",PrimitiveType.Cylinder,grove.transform,new Vector3(x,.35f,z),new Vector3(.12f,.35f,.12f),wood);
-            for(int petal=0;petal<5;petal++)
-            {
-                float pa=petal*Mathf.PI*2/5f;
-                Shape("Candy flower petal",PrimitiveType.Sphere,grove.transform,new Vector3(x+Mathf.Cos(pa)*.25f,.76f,z+Mathf.Sin(pa)*.25f),Vector3.one*.38f,i%2==0?pink:blue);
-            }
-            Shape("Candy flower centre",PrimitiveType.Sphere,grove.transform,new Vector3(x,.83f,z),Vector3.one*.30f,gold);
+            var site = new Vector3(Mathf.Sin(i*.9f)*.6f,0,-8+i*1.6f);
+            PlaceGroveProp(wafer, site, new Vector3(1.4f,.12f,1.4f), (i%3-1)*12f, true);
         }
         foreach(int side in new[]{-1,1})
-        {
-            Shape("Lantern post",PrimitiveType.Cylinder,grove.transform,new Vector3(side*5,1.3f,-6),new Vector3(.2f,1.3f,.2f),wood);
-            Shape("Star lantern",PrimitiveType.Sphere,grove.transform,new Vector3(side*5,2.8f,-6),Vector3.one*.7f,gold);
-            Shape("Garden bench seat",PrimitiveType.Cube,grove.transform,new Vector3(side*10,.65f,0),new Vector3(2.7f,.3f,1.1f),edge);
-            Shape("Garden bench back",PrimitiveType.Cube,grove.transform,new Vector3(side*10,1.25f,.42f),new Vector3(2.7f,1f,.2f),pink);
-            for(int foot=-1;foot<=1;foot+=2)
-                Shape("Bench leg",PrimitiveType.Cylinder,grove.transform,new Vector3(side*10+foot*.95f,.3f,0),new Vector3(.24f,.3f,.24f),wood);
-        }
-        Shape("Fountain base",PrimitiveType.Cylinder,grove.transform,new Vector3(0,.45f,4),new Vector3(3.8f,.45f,3.8f),edge,true);
-        Shape("Fountain pool",PrimitiveType.Cylinder,grove.transform,new Vector3(0,.93f,4),new Vector3(3.1f,.08f,3.1f),blue);
-        Shape("Fountain star",PrimitiveType.Sphere,grove.transform,new Vector3(0,2.1f,4),Vector3.one*.9f,gold);
-        for(int i=0;i<8;i++)
-        {
-            float a=i*Mathf.PI/4f;
-            Shape("Fountain sugar pearl",PrimitiveType.Sphere,grove.transform,new Vector3(Mathf.Cos(a)*1.65f,1.05f,4+Mathf.Sin(a)*1.65f),Vector3.one*.28f,gold);
-        }
+            PlaceGroveProp(bench, new Vector3(side*8,0,2), new Vector3(3.4f,1.65f,3.4f), -side*90);
+        if (well)
+            PlaceGroveProp(well, new Vector3(0,0,4), new Vector3(3.8f,3.25f,3.8f), 0);
+        else
+            Shape("Resting fountain basin",PrimitiveType.Cylinder,grove.transform,new Vector3(0,.45f,4),new Vector3(3.8f,.45f,3.8f),edge);
         var fountain=new GameObject("Resting fountain");fountain.transform.SetParent(grove.transform,false);fountain.transform.localPosition=new Vector3(0,1,4);
-        fountainLabel=MakeLabel(fountain.transform,out fountainText,2.5f);
+        fountainLabel=MakeLabel(fountain.transform,out fountainText,2.65f);
         var exit=MakeGate("Return to Marshmallow Island",GroveCenter+new Vector3(0,.05f,-12),grove.transform);
         exitLabel=MakeLabel(exit.transform,out exitText,4.8f);
         MakeResident("Mint",GroveCenter+new Vector3(5,.05f,7),4.7f,grove.transform);
+    }
+
+    void PlaceGroveProp(GameObject asset, Vector3 site, Vector3 size, float yaw, bool stretch = false)
+    {
+        if (!asset) return;
+        var root = new GameObject(asset.name + " fixture").transform;
+        root.SetParent(grove.transform, false);
+        root.localPosition = site;
+        var model = SecondIslandProp.Mount(asset, root, Vector3.zero, size, Quaternion.Euler(0,yaw,0), stretch);
+        var renderers = model.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0) return;
+        var bounds = renderers[0].bounds;
+        foreach (var renderer in renderers)
+            bounds.Encapsulate(renderer.bounds);
+        var lift = Vector3.up * (root.position.y - bounds.min.y);
+        model.position += lift;
+        var collider = root.gameObject.AddComponent<BoxCollider>();
+        collider.center = root.InverseTransformPoint(bounds.center + lift);
+        collider.size = bounds.size;
     }
     void BuildMessage()
     {
@@ -357,7 +351,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
         if(nearExit)exitText.text=GameControls.Prompt(GameControls.Command.Interact)+"  ·  RETURN TO THE ISLAND";
         bool nearFountain=allowed && InGrove && FlatDistance(player.transform.position,GroveCenter+new Vector3(0,0,4))<5f;
         Label(fountainLabel,nearFountain,cam);
-        if(nearFountain)fountainText.text=Rested ? "A PEACEFUL PLACE TO REST" : GameControls.Prompt(GameControls.Command.Interact)+"  ·  REST AT THE FOUNTAIN";
+        if(nearFountain)fountainText.text=Rested ? "A PEACEFUL PLACE TO REST" : GameControls.Prompt(GameControls.Command.Interact)+"  ·  REST BY THE WELL";
         float lampDistance=smallLight ? FlatDistance(player.transform.position,smallLight.transform.position) : 999f;
         bool nearLight=allowed && smallLight && smallLight.activeSelf && lampDistance<4.5f && Mathf.Abs(body.bounds.min.y-smallLight.transform.position.y)<5f;
         Label(residentLabel,nearGuide && !nearEntrance && !nearLight,cam);if(nearGuide)residentText.text=GameControls.Prompt(GameControls.Command.Interact)+"  ·  TALK TO MARSHMALLOW";
@@ -367,10 +361,10 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
         if(questCard && questCard.activeSelf!=showCard)questCard.SetActive(showCard);
         if(showCard)
         {
-            if(InGrove)questText.text="STARLIGHT GROVE\nA peaceful tiny garden above the clouds.\nThe fountain restores 40% HP and full SP once.\nUse the return door to grow back.";
+            if(InGrove)questText.text="STARLIGHT GROVE\nA peaceful tiny garden above the clouds.\nRest by the well to restore 40% HP and full SP once.\nUse the return door to grow back.";
             else if(!DoorInspected)questText.text="STARLIGHT GROVE\nA hidden garden for tiny visitors.\nApproach the little door to learn how to enter.";
             else if(!SmallLightOwned)questText.text="FIND THE SMALL LIGHT\nThe door is too small for Sahur.\nLook northwest of the door for the light.\nDistance: "+Mathf.RoundToInt(lampDistance)+" m";
-            else questText.text="STARLIGHT GROVE\nUse the Small Light at the tiny door.\nInside is a peaceful garden and a healing fountain.";
+            else questText.text="STARLIGHT GROVE\nUse the Small Light at the tiny door.\nInside is a peaceful garden and a healing well.";
         }
         if(approachesNewDoor && Time.time>=portalReady)
         { StartCoroutine(InspectDoor());return; }
@@ -430,7 +424,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
             : new[]{new SecondIslandDialogue.Line(true,"Hello, traveller! We live peacefully near the candy house."),
                 new SecondIslandDialogue.Line(false,"It's nice to meet a friendly marshmallow!"),
                 new SecondIslandDialogue.Line(true,"Starlight Grove is a secret garden for tiny visitors. I'll show you its little doorway. Stay close!"),
-                new SecondIslandDialogue.Line(true,"Its fountain can restore health and stamina once. A return door brings visitors safely home.")};
+                new SecondIslandDialogue.Line(true,"Rest by the well to restore your health and stamina once. A return door brings visitors safely home.")};
         yield return dialogue.Play(screen.transform,lines,"MARSHMALLOW");yield return null;
         bool first=!Unlocked;Unlocked=true;ApplyProgress();leadingToLight=DoorInspected && !SmallLightOwned;Leading=true;EndConversation();
         if(first)Notify("STARLIGHT GROVE UNLOCKED  ·  Follow your new friend!");
@@ -603,7 +597,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
         if(health)health.currentHealth=Mathf.Min(health.maxHealth,health.currentHealth+health.maxHealth*.4f);
         if(stamina)stamina.currentStamina=stamina.maxStamina;
         Rested=true;GameplayAudio.Play(GameplayAudio.Cue.Pickup,player.transform.position,true);
-        Notify("The fountain restored health and stamina.");GameSaveManager.RequestAutosave();
+        Notify("The well restored health and stamina.");GameSaveManager.RequestAutosave();
     }
     void OnDisable() { StopAllCoroutines();EndConversation();if(isSmall)SetSmall(false); }
     void OnDestroy() { foreach(var m in materials)if(m)Destroy(m); }

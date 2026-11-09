@@ -91,7 +91,6 @@ namespace Mavis
             Add("DARK BRINE: ROT", "暗潮：抽象之岛"); Add("MAIN MENU","主菜单"); Add("FIRST ISLAND","第一座岛");
             Add("Gravity Wristband", "重力手环");
             Add("Marshmallows remaining: {0}", "剩余棉花糖：{0}");
-            Add("Gravity Wristband unlocked! Find it beyond the marshmallows.", "重力手环已出现！前往棉花糖据点后方拾取。");
             Add("Gravity Wristband\nWalk up to collect", "重力手环\n靠近即可拾取");
             Add("B  ·  Gravity: normal", "B  ·  重力：正常");
             Add("B  ·  Gravity: low", "B  ·  重力：低");

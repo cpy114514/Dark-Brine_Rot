@@ -22,8 +22,25 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
     public int Scrolls => inventory && scrollItem ? inventory.Count(scrollItem) : 0;
     public bool Flying { get; private set; }
     public bool Landing { get; private set; }
+    public bool RallyFlight { get; private set; }
+    public bool RallySteeringLocked { get; set; }
+    float rallyCeiling, savedRallyCooldown;
     public float FlightRemaining { get; private set; }
     public float CooldownRemaining { get; private set; }
+    public bool UnlimitedTestFlight
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return SecondIslandTestStation.UnlimitedSkyboard;
+#else
+            return false;
+#endif
+        }
+    }
+#if UNITY_EDITOR
+    public void ClearTestCooldown(){CooldownRemaining=0;if(boardReward && Owned)boardReward.SetActive(false);}
+#endif
     public int CollectedScrolls { get; private set; }
     public void RestoreProgress(bool collectedScrolls, float cooldown)
     {
@@ -39,7 +56,7 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         FlightRemaining=Mathf.Clamp(remaining,.01f,flightSeconds);
         return true;
     }
-    public float CeilingHeight => islandSurface ? islandSurface.bounds.max.y + heightAboveIsland : float.PositiveInfinity;
+    public float CeilingHeight => RallyFlight ? rallyCeiling : UnlimitedTestFlight ? float.PositiveInfinity : islandSurface ? islandSurface.bounds.max.y + heightAboveIsland : float.PositiveInfinity;
     public float DeckHeight { get; private set; }
     public string CooldownDisplayName => "Skyboard";
     public bool CooldownTargetOwned => Owned;
@@ -72,6 +89,7 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
     PlayableGraph riderGraph;
     AnimationClipPlayable riderPose;
     float riderElapsed;
+    float flightStartedAt;
     Quaternion riderBaseRotation;
     bool previousRootMotion;
     Transform leftFoot, rightFoot;
@@ -193,19 +211,25 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
                 var melody=FindFirstObjectByType<CandyMelodyGarden>();
                 var bounce=FindFirstObjectByType<CandyBounceGarden>();
                 var friends=FindFirstObjectByType<MarshmallowFriendsQuest>();
-                if((!residents || !residents.ReservesInteraction) && (!melody || !melody.ReservesInteraction) && (!bounce || !bounce.ReservesInteraction) && (!friends || !friends.ReservesInteraction))TryStartFlight();
+                bool reserved=(!residents || !residents.ReservesInteraction) && (!melody || !melody.ReservesInteraction) && (!bounce || !bounce.ReservesInteraction) && (!friends || !friends.ReservesInteraction);
+                reserved=reserved && !SkyboardRingRally.ReservesInteractionFor(player) &&
+                    !SecondIslandRoninCamp.ReservesInteractionFor(player) && !DriftingPathShortcut.ReservesInteractionFor(player);
+#if UNITY_EDITOR
+                reserved=reserved && !SecondIslandTestStation.ReservesInteraction;
+#endif
+                if(reserved)TryStartFlight();
             }
         }
-        if (Flying && InputAllowed)
+        if (Flying && InputAllowed && !RallyFlight)
         {
-            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame && FlightRemaining < flightSeconds - .25f) EndFlight();
-            else
+            if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame && (UnlimitedTestFlight ? Time.time-flightStartedAt>.25f : FlightRemaining < flightSeconds - .25f)) EndFlight();
+            else if(!UnlimitedTestFlight)
             {
                 FlightRemaining = Mathf.Max(0, FlightRemaining - Time.deltaTime);
                 if (FlightRemaining <= 0) EndFlight();
             }
         }
-        if (Flying && InputAllowed)
+        if (Flying && InputAllowed && !RallySteeringLocked)
         {
             var move = player.RequestedMoveDirection * horizontalSpeed;
             float up = (GameInputSettings.Pressed(GameInputSettings.Action.Jump) ? 1 : 0) - (GameInputSettings.Pressed(GameInputSettings.Action.Dodge) ? 1 : 0);
@@ -238,9 +262,9 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         bool visible = Flying && InputAllowed;
         if (flightHud.activeSelf != visible) flightHud.SetActive(visible);
         if (!visible) return;
-        flightHudTitle.text = "SKYBOARD  ·  " + Mathf.CeilToInt(FlightRemaining) + "s";
+        flightHudTitle.text = RallyFlight ? "SKYBOARD  ·  RACE MODE" : UnlimitedTestFlight ? "SKYBOARD  ·  TEST: UNLIMITED" : "SKYBOARD  ·  " + Mathf.CeilToInt(FlightRemaining) + "s";
         flightHudControls.text = $"{GameInputSettings.Get(GameInputSettings.Action.Forward)} / {GameInputSettings.Get(GameInputSettings.Action.Left)} / {GameInputSettings.Get(GameInputSettings.Action.Back)} / {GameInputSettings.Get(GameInputSettings.Action.Right)}   Move\n" +
-            $"{GameInputSettings.Get(GameInputSettings.Action.Jump)}   Ascend\n{GameInputSettings.Get(GameInputSettings.Action.Dodge)}   Descend\nF   Put away";
+            $"{GameInputSettings.Get(GameInputSettings.Action.Jump)}   Ascend\n{GameInputSettings.Get(GameInputSettings.Action.Dodge)}   Descend\n"+(RallyFlight ? "R   Restart    F   Exit race" : "F   Put away");
     }
     void PositionReward(GameObject reward, BoxCollider platform)
     {
@@ -253,12 +277,38 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         var b = platform.bounds; var p = body.bounds.center; float feet = body.bounds.min.y;
         return Mathf.Abs(feet - b.max.y) < 2.2f && Vector2.Distance(new Vector2(p.x, p.z), new Vector2(b.center.x, b.center.z)) < 2.2f;
     }
-    public bool TryStartFlight()
+    public bool TryStartFlight() => TryStartFlight(false);
+
+    public bool TryStartRallyFlight(float ceiling)
     {
+        if (!Owned || RallyFlight || Landing || !player || !body || !body.enabled) return false;
+        bool arrivedFlying = Flying;
+        savedRallyCooldown = arrivedFlying && !UnlimitedTestFlight ? cooldownSeconds : CooldownRemaining;
+        rallyCeiling = ceiling;
+        RallyFlight = true;
+        if (arrivedFlying || TryStartFlight(true)) return true;
+        RallyFlight = false;
+        return false;
+    }
+
+    public void StopRallyFlight()
+    {
+        if (RallyFlight) EndFlight();
+    }
+
+    // Align the altitude clamp immediately after an in-race teleport.
+    public void RefreshRallyPosition()
+    {
+        if (RallyFlight && body) DeckHeight = body.bounds.min.y;
+    }
+
+    bool TryStartFlight(bool forRally)
+    {
+        if (MarshmallowHollowEntrance.Contains(player)) return false;
         var village=FindFirstObjectByType<FriendlyMarshmallowVillage>();
-        if(village && village.InGrove)return false;
-        if (!Owned || Flying || Landing || CooldownRemaining > 0 || !player || !body || !body.enabled || !islandSurface || player.ExternalMovementLock) return false;
-        Flying = true; FlightRemaining = flightSeconds; player.ExternalMovementLock = true;
+        if(village && village.InGrove && !UnlimitedTestFlight)return false;
+        if (!Owned || Flying || Landing || !forRally && CooldownRemaining > 0 && !UnlimitedTestFlight || !player || !body || !body.enabled || !islandSurface || player.ExternalMovementLock) return false;
+        Flying = true; FlightRemaining = flightSeconds; flightStartedAt=Time.time; player.ExternalMovementLock = true;
         weaponLoadout = player.GetComponent<SahurWeaponLoadout>();
         weaponLoadout?.SetSkyboardStowed(true);
         stickStow = player.GetComponent<SahurSwimmingWeapon>();
@@ -289,7 +339,7 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         BuildBoardProbe();
         DeckHeight = body.bounds.min.y;
         StartRiderAnimation();
-        GameSaveManager.RequestAutosave();
+        if (!forRally) GameSaveManager.RequestAutosave();
         return true;
     }
     void StartRiderAnimation()
@@ -350,7 +400,9 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
     }
     void EndFlight()
     {
-        if (Flying) CooldownRemaining = cooldownSeconds;
+        if (RallyFlight) CooldownRemaining = savedRallyCooldown;
+        else if (Flying) CooldownRemaining = UnlimitedTestFlight ? 0 : cooldownSeconds;
+        RallyFlight = RallySteeringLocked = false;
         Flying = Landing = false; FlightRemaining = 0;
         if (player) player.ExternalMovementLock = false;
         StopRiderAnimation();
@@ -400,9 +452,12 @@ public sealed class SkyboardReward : MonoBehaviour, ICooldownTarget
         var b = riddenRenderers[0].bounds;
         for (int i = 1; i < riddenRenderers.Length; i++) b.Encapsulate(riddenRenderers[i].bounds);
         riddenBoard.transform.position += new Vector3(center.x - b.center.x, DeckHeight - b.max.y, center.z - b.center.z);
-        KeepBoardAbovePlatforms();
-        ResolveBoardPlatformIntersections();
-        KeepBoardAboveIsland();
+        if (!RallyFlight)
+        {
+            KeepBoardAbovePlatforms();
+            ResolveBoardPlatformIntersections();
+            KeepBoardAboveIsland();
+        }
         if (stickStow && stickStow.SkyboardStow) stickStow.RefreshPose();
     }
     void KeepBoardAbovePlatforms()

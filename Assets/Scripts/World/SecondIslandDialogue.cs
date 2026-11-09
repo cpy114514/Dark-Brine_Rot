@@ -22,7 +22,7 @@ public sealed class SecondIslandDialogue : MonoBehaviour
         new Line(false, "Why am I here? Do you know how I can get back?"),
         new Line(true,  "I'm afraid you'll have to find that answer yourself. I don't know where you mean by 'back'."),
         new Line(false, "What do you mean? Is there no way for you to leave this island?"),
-        new Line(true,  "No, there isn't. But I believe you can find a way. Don't give up!")
+        new Line(true,  "I don't know a way off. Take the gravity wristband beside you, then look for the big lollipop at Mint Gate.")
     };
     public bool Active { get; private set; }
     public int CurrentLine { get; private set; } = -1;

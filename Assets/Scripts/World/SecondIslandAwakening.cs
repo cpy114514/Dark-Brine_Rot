@@ -169,7 +169,12 @@ public sealed class SecondIslandAwakening : MonoBehaviour
         Dialogue=gameObject.AddComponent<SecondIslandDialogue>();
         yield return Dialogue.Play(transform);
         dialogueShot=false;
-        if(player && view)player.ContinueCameraFromCurrentView(view,cameraVelocity);
+        if(player && view)
+        {
+            var reward=FindFirstObjectByType<GravityWristbandReward>();
+            var target=reward ? (!reward.Collected ? reward.transform : reward.CampMapAnchor(reward.NextMainCamp)) : null;
+            player.ContinueCameraFromCurrentView(view,cameraVelocity,target ? target.position-player.transform.position : (Vector3?)null);
+        }
         // Keep the input lock through the frame that dismissed the last line.
         yield return null;
         playing = false;

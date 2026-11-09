@@ -157,7 +157,8 @@ namespace Mavis
             GuidanceKind kind = GuidanceKind.None;
             int total = rifle ? rifle.Rounds + rifle.ReserveRounds : 0;
             float fraction = health.currentHealth / Mathf.Max(1, health.maxHealth);
-            if (fraction <= .4f) recoveryRequested = true;
+            if (gameObject.scene.path == SecondIslandRoninCamp.ScenePath) recoveryRequested = false;
+            else if (fraction <= .4f) recoveryRequested = true;
             else if (fraction >= .75f) recoveryRequested = false;
             if (recoveryRequested)
                 foreach (var cache in supplyCaches)

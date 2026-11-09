@@ -7,12 +7,13 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class SecondIslandObjectives : MonoBehaviour
 {
-    public enum Objective { Marshmallows, Wristband, Ronin, Course, Scrolls, Complete }
+    public enum Objective { Marshmallows, Wristband, ZhuBaJie, Course, Scrolls, Complete }
     public Objective Current { get; private set; }
     public bool FinishedCourse { get; private set; }
-    public bool RoninDefeated => roninDefeated || roninHealth && roninHealth.IsDead;
+    public bool LegacyRoninDefeated { get; private set; }
+    public bool RidgeCleared => FinishedCourse || LegacyRoninDefeated || zhuBaJie && zhuBaJie.Health.IsDead;
     public void RestoreProgress(bool finishedCourse, bool defeatedRonin)
-    { FinishedCourse = finishedCourse; roninDefeated = defeatedRonin; nextRefresh = 0; }
+    { FinishedCourse = finishedCourse; LegacyRoninDefeated = defeatedRonin; nextRefresh = 0; }
     public string CurrentText => label ? label.text : "";
     public bool Visible => panel && panel.activeSelf;
     public Transform CurrentTarget { get; private set; }
@@ -22,14 +23,14 @@ public sealed class SecondIslandObjectives : MonoBehaviour
     GravityWristbandReward wristband;
     SkyboardReward skyboard;
     MarshmallowHopRecovery recovery;
-    PigRoninBoss ronin;
-    Health roninHealth;
-    MarshmallowEnemyHealth[] enemies;
+    MarshmallowChallengeGuide courseGuide;
+    SecondIslandRoninCamp ridgeCamp;
+    DriftingPathShortcut shortcut;
+    ZhuBaJieBoss zhuBaJie;
     readonly List<Transform> rows = new List<Transform>(22);
     GameObject panel;
     Text label;
     float nextRefresh, nextDiscovery;
-    bool roninDefeated;
 
     void Start()
     {
@@ -54,8 +55,9 @@ public sealed class SecondIslandObjectives : MonoBehaviour
     {
         nextDiscovery = Time.unscaledTime + 1f;
         if (!wristband) wristband = FindFirstObjectByType<GravityWristbandReward>();
-        if (wristband && enemies == null && wristband.enemyRoot)
-            enemies = wristband.enemyRoot.GetComponentsInChildren<MarshmallowEnemyHealth>(true);
+        if (!ridgeCamp) ridgeCamp = FindFirstObjectByType<SecondIslandRoninCamp>();
+        if (!courseGuide) courseGuide = FindFirstObjectByType<MarshmallowChallengeGuide>();
+        if (!shortcut) shortcut = FindFirstObjectByType<DriftingPathShortcut>();
         if (!skyboard)
         {
             skyboard = FindFirstObjectByType<SkyboardReward>();
@@ -67,23 +69,24 @@ public sealed class SecondIslandObjectives : MonoBehaviour
                     if (child.name.StartsWith("Row ")) rows.Add(child);
             }
         }
-        if (!ronin && !roninDefeated)
-        {
-            ronin = FindFirstObjectByType<PigRoninBoss>();
-            roninHealth = ronin ? ronin.GetComponent<Health>() : null;
-        }
+        if (!zhuBaJie) zhuBaJie = FindFirstObjectByType<ZhuBaJieBoss>();
     }
 
     void Update()
     {
         if (!player || !label) return;
         if (Time.unscaledTime >= nextDiscovery) Discover();
-        if (roninHealth && roninHealth.IsDead) roninDefeated = true;
         if (!FinishedCourse && recovery && rows.Count > 0 && recovery.CurrentRow >= rows.Count)
         { FinishedCourse = true; GameSaveManager.RequestAutosave(); }
-        bool show = player.enabled && !player.ExternalControlLock && (!health || health.currentHealth > 0) && !GameUITheme.ModalOpen &&
+        bool inHollow = MarshmallowHollowEntrance.Contains(player);
+        if (inHollow) CurrentTarget = null;
+        bool show = player.enabled && !player.ExternalControlLock && !SkyboardRingRally.IsRacing(player) && !inHollow && (!health || health.currentHealth > 0) && !GameUITheme.ModalOpen &&
             !SecondIslandAwakening.BlocksInputFor(player);
-        if (panel.activeSelf != show) panel.SetActive(show);
+        if (panel.activeSelf != show)
+        {
+            panel.SetActive(show);
+            if (show) nextRefresh = 0;
+        }
         if (!show || Time.unscaledTime < nextRefresh) return;
         nextRefresh = Time.unscaledTime + .2f;
         if (!wristband || wristband.Total <= 0)
@@ -94,30 +97,41 @@ public sealed class SecondIslandObjectives : MonoBehaviour
 
         Transform target = null;
         string description;
-        if (!wristband.Unlocked && !wristband.Collected)
-        {
-            Current = Objective.Marshmallows;
-            description = "1 / 5  ·  FAIRY'S REQUEST\nClear the marshmallow camps  ·  " + wristband.ClearedCamps + " / " + wristband.CampCount + " camps\nThe wristband unlocks when all are defeated.";
-            target = NearestEnemy();
-        }
-        else if (!wristband.Collected)
+        if (!wristband.Collected)
         {
             Current = Objective.Wristband;
-            description = "2 / 5  ·  THE GRAVITY WRISTBAND\nCollect the wristband beyond the camps";
+            description = "1 / 5  ·  THE GRAVITY WRISTBAND\nWalk up to the wristband beside the awakening spot.";
             target = wristband.transform;
         }
-        else if (!roninDefeated)
+        else if (!wristband.MainCampsComplete && !RidgeCleared)
         {
-            Current = Objective.Ronin;
-            description = "3 / 5  ·  THE SWORDSMAN\nFind and defeat Pig Ronin\nB: switch gravity modes";
-            target = ronin ? ronin.transform : null;
+            Current = Objective.Marshmallows;
+            int camp = wristband.NextMainCamp;
+            description = "2 / 5  ·  FAIRY'S REQUEST\nClear " + wristband.CampName(camp) + "  ·  " + wristband.MainCampsCleared + " / " + wristband.MainCampCount + " camps";
+            target = wristband.CampMapAnchor(camp);
+        }
+        else if (!RidgeCleared)
+        {
+            Current = Objective.ZhuBaJie;
+            bool visitCamp = ridgeCamp && !ridgeCamp.IsCheckpoint && (!zhuBaJie || !zhuBaJie.FightActive);
+            description = visitCamp
+                ? "3 / 5  ·  ZHU BAJIE\nVisit Ridge Rest Camp\nSet a checkpoint and try your wristband."
+                : "3 / 5  ·  ZHU BAJIE\nDefeat Zhu Bajie\n" + GameControls.Prompt(GameControls.Command.Gravity) + "  Switch gravity";
+            target = visitCamp ? ridgeCamp.transform : zhuBaJie ? zhuBaJie.transform : null;
         }
         else if (!FinishedCourse)
         {
             Current = Objective.Course;
             int row = recovery ? Mathf.Clamp(recovery.CurrentRow, 0, rows.Count) : 0;
-            description = "4 / 5  ·  THE DRIFTING PATH\nReach the final moving marshmallow\nRow: " + row + " / " + rows.Count + "  ·  Low gravity helps";
-            target = NextCourseTarget(row);
+            description = row == 0 && courseGuide
+                ? "4 / 5  ·  THE DRIFTING PATH\nFind the fairy at the course entrance\nLow gravity helps on the moving platforms."
+                : "4 / 5  ·  THE DRIFTING PATH\nReach the final moving marshmallow\nRow: " + row + " / " + rows.Count + "  ·  Low gravity helps";
+            target = row == 0 && courseGuide ? courseGuide.transform : NextCourseTarget(row);
+            if (row == 0 && shortcut && shortcut.Guides(player))
+            {
+                description = "4 / 5  ·  THE DRIFTING PATH\nTake the hillside shortcut to the course\nLook for the lantern waypost.";
+                target = shortcut.transform;
+            }
         }
         else if (!skyboard || !skyboard.Owned || skyboard.CollectedScrolls == 0)
         {
@@ -137,19 +151,6 @@ public sealed class SecondIslandObjectives : MonoBehaviour
         CurrentTarget = target;
         if (target) description += "\n" + DirectionTo(target.position);
         if (label.text != description) label.text = description;
-    }
-
-    Transform NearestEnemy()
-    {
-        if (enemies == null) return null;
-        Transform nearest = null; float best = float.PositiveInfinity;
-        foreach (var enemy in enemies)
-        {
-            if (!enemy || enemy.IsDead || !enemy.gameObject.activeInHierarchy) continue;
-            float distance = (enemy.transform.position - transform.position).sqrMagnitude;
-            if (distance < best) { best = distance; nearest = enemy.transform; }
-        }
-        return nearest;
     }
 
     Transform NextCourseTarget(int currentRow)

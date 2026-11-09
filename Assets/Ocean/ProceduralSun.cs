@@ -9,6 +9,7 @@ public sealed class ProceduralSun : MonoBehaviour
     [Range(0.35f, 0.95f)] public float elevation = 0.78f;
     [Range(0.001f, 0.04f)] public float apparentSize = 0.022f;
     [Min(80f)] public float maximumDistance = 2200f;
+    Vector4 skyDisk;
     static readonly int DiskId = Shader.PropertyToID("_BrineSolarDisk");
     static readonly int ColorId = Shader.PropertyToID("_BrineSolarColor");
     void OnEnable()
@@ -28,7 +29,14 @@ public sealed class ProceduralSun : MonoBehaviour
     {
         Shader.SetGlobalColor(ColorId, core);
         float radius = Mathf.Clamp(apparentSize * .5f, .001f, .0065f);
-        Shader.SetGlobalVector(DiskId, new Vector4(radius, Mathf.Clamp(intensity * .4f, 0f, 1.5f), visible ? 1f : 0f, 0));
+        skyDisk = new Vector4(radius, Mathf.Clamp(intensity * .4f, 0f, 1.5f), visible ? 1f : 0f, 0);
+        LateUpdate();
+    }
+    void LateUpdate()
+    {
+        var camera = Camera.main;
+        bool circuit = Application.isPlaying && camera && SkyboardRingRally.UsesCircuitCamera(camera);
+        Shader.SetGlobalVector(DiskId, circuit ? Vector4.zero : skyDisk);
     }
     void OnDisable() => Shader.SetGlobalVector(DiskId, Vector4.zero);
 }

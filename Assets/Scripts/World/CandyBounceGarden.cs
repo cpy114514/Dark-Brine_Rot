@@ -67,11 +67,13 @@ public sealed class CandyBounceGarden : MonoBehaviour
         island=experience && experience.surface ? experience.surface.GetComponent<Collider>() : null;
         if (!island) { Debug.LogError("Candy Bounce Garden could not find island ground."); enabled=false; return; }
         transform.position=Ground(new Vector2(118,2070));
-        var cream=Mat("Bounce vanilla icing",new Color(1,.91f,.90f));
+        var cream=Mat("Bounce biscuit trim",new Color(.78f,.56f,.37f));
         var gold=Mat("Bounce star gold",new Color(1,.83f,.23f),true);
         var wood=Mat("Bounce sign wood",new Color(.42f,.22f,.28f));
         starMesh=CreateStarMesh();
-        for (int i=0;i<Sites.Length;i++) BuildPad(i,cream,gold);
+        var biscuit = SecondIslandProp.Load("Kenney/cookie");
+        var cocoa = SecondIslandProp.Load("Kenney/cookie-chocolate");
+        for (int i=0;i<Sites.Length;i++) BuildPad(i,cream,gold,i == 1 && cocoa ? cocoa : biscuit);
         BuildSign(cream,wood,gold);
         var prefab=Resources.Load<GameObject>("SecondIslandResidents/Strawberry Friendly Marshmallow");
         if(prefab)
@@ -108,7 +110,7 @@ public sealed class CandyBounceGarden : MonoBehaviour
         }
         return o;
     }
-    void BuildPad(int i,Material cream,Material gold)
+    void BuildPad(int i,Material cream,Material gold,GameObject biscuit)
     {
         var p=Sites[i];var ground=Ground(p);
         // Keep the top of each spring above the uneven ground, including its edges.
@@ -116,13 +118,15 @@ public sealed class CandyBounceGarden : MonoBehaviour
             ground.y=Mathf.Max(ground.y,Ground(p+d).y);
         var root=new GameObject("Candy spring "+(i+1)).transform;root.SetParent(transform,false);root.position=ground;
         BuildRamp(root,p,cream);
-        Shape("Vanilla spring base",PrimitiveType.Cylinder,root,new Vector3(0,.16f,0),new Vector3(6.5f,.16f,6.5f),cream);
-        Shape("Soft candy top",PrimitiveType.Cylinder,root,new Vector3(0,.40f,0),new Vector3(6f,.12f,6f),Mat("Spring "+i,PadColors[i]));
-        for(int n=0;n<8;n++)
+        Shape("Wafer spring base",PrimitiveType.Cylinder,root,new Vector3(0,.16f,0),new Vector3(6.5f,.16f,6.5f),cream);
+        var top = Shape("Biscuit landing surface",PrimitiveType.Cylinder,root,new Vector3(0,.40f,0),new Vector3(6f,.12f,6f),cream);
+        if (biscuit)
         {
-            float a=n*Mathf.PI/4;var sprinkle=Shape("Sugar sprinkle",PrimitiveType.Sphere,root,new Vector3(Mathf.Cos(a)*2.35f,.55f,Mathf.Sin(a)*2.35f),new Vector3(.22f,.11f,.38f),n%2==0?gold:cream);
-            sprinkle.transform.localRotation=Quaternion.Euler(0,-a*Mathf.Rad2Deg,0);sprinkle.GetComponent<Collider>().isTrigger=true;
+            top.GetComponent<Renderer>().enabled = false;
+            SecondIslandProp.Mount(biscuit, top.transform, Vector3.up * .42f,
+                new Vector3(1.01f,1.18f,1.01f), Quaternion.Euler(0,i * 37f,0), true);
         }
+        else top.GetComponent<Renderer>().sharedMaterial = Mat("Spring "+i,PadColors[i]);
         pads.Add(root);
         var star=new GameObject("Bounce star "+(i+1));star.transform.SetParent(root,false);star.transform.localPosition=Vector3.up*6.8f;
         star.AddComponent<MeshFilter>().sharedMesh=starMesh;star.AddComponent<MeshRenderer>().sharedMaterial=gold;

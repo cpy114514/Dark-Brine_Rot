@@ -29,9 +29,12 @@ namespace Mavis
 
         public static string Key(Component component)
         {
-            if (!component || !component.gameObject.scene.path.StartsWith("Assets/Scenes/First Island/", StringComparison.Ordinal)) return null;
+            if (!component) return null;
             var identity = component.GetComponent<WorldSaveIdentity>();
-            return identity && !string.IsNullOrEmpty(identity.id) ? identity.id : null;
+            if (!identity || string.IsNullOrEmpty(identity.id)) return null;
+            var path = component.gameObject.scene.path;
+            bool roninCamp = path == SecondIslandRoninCamp.ScenePath && identity.id == SecondIslandRoninCamp.SaveId;
+            return path.StartsWith("Assets/Scenes/First Island/", StringComparison.Ordinal) || roninCamp ? identity.id : null;
         }
         public static void Record(Component component, int value)
         {
@@ -56,7 +59,7 @@ namespace Mavis
                 if (!pickup.IsCollected && pickup.Item && pickup.gameObject.scene.path.StartsWith("Assets/Scenes/First Island/", StringComparison.Ordinal))
                     result.drops.Add(new Drop { item = pickup.Item.id, scene = pickup.gameObject.scene.path, position = pickup.transform.position });
             var respawn = player.GetComponent<PlayerDeathRespawn>();
-            if (respawn && respawn.Checkpoint) result.checkpoint = Key(respawn.Checkpoint);
+            if (respawn) result.checkpoint = Key(MarshmallowHollowEntrance.SaveCheckpoint(player, respawn.Checkpoint));
             return result;
         }
         public static void Restore(Snapshot snapshot, ThirdPersonPlayerController player)

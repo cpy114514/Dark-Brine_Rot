@@ -66,7 +66,7 @@ public static class SecondIslandBlackboards
 public sealed class SecondIslandBlackboardUI : MonoBehaviour
 {
     static readonly System.Collections.Generic.HashSet<string> Panels=new System.Collections.Generic.HashSet<string>{
-        "Vitals surface","Objective card","Supply reminder","Marshmallows remaining","Encounter","Course card","Fairy clue","Bounce card","Melody card","Grove information","Discovery tip","Friends story card","Rally card","Fairy conversation","Flight controls card"
+        "Vitals surface","Objective card","Supply reminder","Marshmallows remaining","Encounter","Course card","Fairy clue","Bounce card","Melody card","Grove information","Discovery tip","Friends story card","Rally card","Fairy conversation","Flight controls card","Test mode card"
     };
     float nextScan;
     void Update()

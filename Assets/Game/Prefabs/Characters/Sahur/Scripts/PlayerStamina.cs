@@ -58,6 +58,9 @@ namespace Mavis
 
         void Update()
         {
+#if UNITY_EDITOR
+            if(GameSaveManager.EditorTestSessionActive){currentStamina=maxStamina;return;}
+#endif
             if (Time.time >= nextContextScan)
             {
                 nextContextScan = Time.time + .5f;
@@ -82,11 +85,17 @@ namespace Mavis
 
         public bool CanSpend(float amount)
         {
+#if UNITY_EDITOR
+            if(GameSaveManager.EditorTestSessionActive)return true;
+#endif
             return amount <= 0f || currentStamina + 0.001f >= amount;
         }
 
         public bool TrySpend(float amount)
         {
+#if UNITY_EDITOR
+            if(GameSaveManager.EditorTestSessionActive)return true;
+#endif
             if (amount <= 0f) return true;
             if (!CanSpend(amount)) return false;
 
@@ -103,6 +112,9 @@ namespace Mavis
 
         public bool TickSprint(float deltaTime, float drainPerSecond)
         {
+#if UNITY_EDITOR
+            if(GameSaveManager.EditorTestSessionActive)return true;
+#endif
             if (!sprinting)
             {
                 if (currentStamina < sprintRestartThreshold) return false;

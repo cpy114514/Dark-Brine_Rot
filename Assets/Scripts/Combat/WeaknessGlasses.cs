@@ -11,7 +11,16 @@ namespace Mavis
         public bool Equipped {get;private set;}
         float activeUntil,readyAt; EquipmentInventory inventory; EquipmentItem item; GameObject worn; GUIStyle hudStyle;
         public float ActiveRemaining=>Mathf.Max(0,activeUntil-Time.time);
-        public float CooldownRemaining=>Mathf.Max(0,readyAt-Time.time);
+        public float CooldownRemaining
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if(SecondIslandTestStation.UnlimitedGlasses)return 0;
+#endif
+                return Mathf.Max(0,readyAt-Time.time);
+            }
+        }
         public string CooldownDisplayName=>DisplayName;
         public bool CooldownTargetOwned=>Owned;
         public bool CanReduceCooldown=>Owned && CooldownRemaining>0;
@@ -60,6 +69,9 @@ namespace Mavis
         }
         void Update()
         {
+#if UNITY_EDITOR
+            if(SecondIslandTestStation.UnlimitedGlasses && activeUntil>Time.time)activeUntil=Time.time+Duration;
+#endif
             if(Equipped && !worn)FitWornModel();
             if(GameControls.Down(GameControls.Command.Glasses) && Cursor.lockState==CursorLockMode.Locked)Activate();
         }
@@ -68,6 +80,9 @@ namespace Mavis
         {
             if(!Equipped || PauseSettingsMenu.IsOpen || SahurLoadoutUI.BlocksInput)return;
             string status=IsActive?"WEAK POINTS  "+Mathf.CeilToInt(ActiveRemaining)+"s":CooldownRemaining>0?"WEAKNESS GLASSES  "+System.TimeSpan.FromSeconds(CooldownRemaining).ToString(@"mm\:ss"):"WEAKNESS GLASSES  [G] Reveal for 30s";
+#if UNITY_EDITOR
+            if(SecondIslandTestStation.UnlimitedGlasses)status=IsActive?"WEAK POINTS  ·  TEST: NO TIME LIMIT":"WEAKNESS GLASSES  [G]  ·  TEST: NO COOLDOWN";
+#endif
             if(hudStyle==null)hudStyle=new GUIStyle(GUI.skin.box){font=GameLocalization.Font?GameLocalization.Font:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"),fontSize=16};
             GUI.Box(new Rect(Screen.width*.5f-180,Screen.height-110,360,30),status,hudStyle);
         }

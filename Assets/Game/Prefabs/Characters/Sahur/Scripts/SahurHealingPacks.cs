@@ -64,6 +64,9 @@ namespace Mavis
         internal static bool Consume()
         {
             Load(); if (remaining == 0) return false;
+#if UNITY_EDITOR
+            if (SecondIslandTestStation.UnlimitedHealing) return true;
+#endif
             remaining--; Persist(); return true;
         }
     }

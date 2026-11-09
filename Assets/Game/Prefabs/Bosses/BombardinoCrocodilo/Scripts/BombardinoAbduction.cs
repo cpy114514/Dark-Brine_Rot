@@ -10,6 +10,7 @@ namespace Mavis
     public sealed class BombardinoAbduction : MonoBehaviour
     {
         const string Destination="Assets/Scenes/Second Island/Second Island.unity";
+        const int ArrivalRifleRounds=150;
         public static bool Playing {get;private set;}
         public string Phase {get;private set;}="approach";
         public float GripError=>pose!=null?pose.GripError:0;
@@ -38,6 +39,8 @@ namespace Mavis
             visualRest=boss.visual?boss.visual.localRotation:Quaternion.identity;
             bellyFrame=boss.visual?boss.visual:boss.transform;
             claws=new BombardinoCaptureClaws(bellyFrame);bellyLocal=claws.GripLocal;
+            var loadout=player.GetComponent<SahurWeaponLoadout>();
+            selectedWeapon=loadout?loadout.CurrentWeapon:SahurWeaponLoadout.Weapon.Stick;
             LockPlayer();view=Camera.main;MakeCover();CinematicLetterbox.Set(this,true);
             boss.Explosion(boss.transform.position,3.5f);
             var face=Quaternion.LookRotation(facing);
@@ -95,7 +98,6 @@ namespace Mavis
             player.Motion.Claim(this,SahurControlState.Cinematic);player.ExternalControlLock=true;player.ExternalMovementLock=true;player.enabled=false;
             if(capsule)capsule.enabled=false;
             bodyHeight=capsule?capsule.height*Mathf.Abs(player.transform.lossyScale.y):4;
-            selectedWeapon=player.GetComponent<SahurWeaponLoadout>()?player.GetComponent<SahurWeaponLoadout>().CurrentWeapon:SahurWeaponLoadout.Weapon.Stick;
             var stow=player.GetComponent<SahurSwimmingWeapon>();if(stow){stow.CinematicTraversal=true;stow.CinematicStowWeight=1;}
             player.GetComponent<SahurWeaponLoadout>()?.SetSkyboardStowed(true);
             pose=new SahurAbductionPose(player);
@@ -121,13 +123,17 @@ namespace Mavis
             var oldHealth=previous.GetComponent<PlayerHealth>();var health=resident.GetComponent<PlayerHealth>();if(health&&oldHealth)health.currentHealth=Mathf.Clamp(oldHealth.currentHealth,1,health.maxHealth);
             var oldStamina=previous.GetComponent<PlayerStamina>();var stamina=resident.GetComponent<PlayerStamina>();if(stamina&&oldStamina)stamina.currentStamina=Mathf.Clamp(oldStamina.currentStamina,0,stamina.maxStamina);
             var glasses=previous.GetComponent<WeaknessGlasses>();if(glasses)resident.GetComponent<WeaknessGlasses>()?.Restore(glasses.Owned,glasses.Equipped,glasses.ActiveRemaining,glasses.CooldownRemaining);
-            var savedWeapon=selectedWeapon;
-            var loadout=previous.GetComponent<SahurWeaponLoadout>();if(loadout)resident.GetComponent<SahurWeaponLoadout>()?.Restore(loadout.HasTwinBlades,savedWeapon,loadout.HasM4A1);
-            var rifle=previous.GetComponent<SahurRifleCombat>();if(rifle)resident.GetComponent<SahurRifleCombat>()?.RestoreAmmo(rifle.Rounds,rifle.ReserveRounds);
+            var loadout=previous.GetComponent<SahurWeaponLoadout>();
+            bool ownsTwinBlades=loadout&&loadout.HasTwinBlades;
+            bool ownsRifle=loadout&&loadout.HasM4A1;
             bool excluded=previous.GetComponent<GameSaveExcluded>();UnlockPlayer();previous.gameObject.SetActive(false);Destroy(previous.gameObject);
             player=resident;if(excluded&&!player.GetComponent<GameSaveExcluded>())player.gameObject.AddComponent<GameSaveExcluded>();
             home=resident.transform.position;homeRotation=resident.transform.rotation;
-            LockPlayer();selectedWeapon=savedWeapon;player.transform.SetParent(boss.transform,true);SceneManager.MoveGameObjectToScene(boss.gameObject,scene);sceneReady=true;
+            LockPlayer();
+            // Restore inventory ownership now and equip once the arrival gives control back.
+            player.GetComponent<SahurWeaponLoadout>()?.Restore(ownsTwinBlades,selectedWeapon,ownsRifle);
+            player.GetComponent<SahurRifleCombat>()?.RestoreAmmo(SahurRifleCombat.MagazineCapacity,ArrivalRifleRounds-SahurRifleCombat.MagazineCapacity);
+            player.transform.SetParent(boss.transform,true);SceneManager.MoveGameObjectToScene(boss.gameObject,scene);sceneReady=true;
         }
         void FindLanding()
         {
@@ -243,6 +249,7 @@ namespace Mavis
             player.transform.SetParent(null,true);player.RestoreSavedPose(landing,homeRotation);UnlockPlayer();Playing=false;
             bool started=SecondIslandAwakening.BeginAfterAbduction(player);
             if(!started&&view)player.ContinueCameraFromCurrentView(view,cameraVelocity);
+            GameSaveManager.RequestAutosave();
             restored=true;CinematicLetterbox.Set(this,false);Destroy(boss.gameObject);
         }
         void Abort()

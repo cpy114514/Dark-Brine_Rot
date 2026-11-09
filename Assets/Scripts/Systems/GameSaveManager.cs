@@ -52,6 +52,32 @@ namespace Mavis
 #if UNITY_EDITOR
         // Editor verification can use an isolated file without touching a player's save.
         static string editorSavePath;
+        public static bool EditorTestSessionActive { get; private set; }
+        static string editorTestOriginalCampaign;
+        static int editorTestOriginalHealing;
+
+        /// <summary>Keep optional spawn test equipment out of the player's normal save.</summary>
+        public static bool BeginEditorTestSession()
+        {
+            if(EditorTestSessionActive)return true;
+            if(IsContinuePending)return false;
+            editorTestOriginalCampaign=HealingPackSupply.Campaign;
+            editorTestOriginalHealing=HealingPackSupply.Remaining;
+            if(string.IsNullOrEmpty(editorSavePath))editorSavePath=Path.GetFullPath("Temp/SecondIslandManualTestSave.json");
+            HealingPackSupply.StartNewGame();
+            EditorTestSessionActive=true;
+            UnityEditor.EditorApplication.playModeStateChanged-=EndEditorTestSession;
+            UnityEditor.EditorApplication.playModeStateChanged+=EndEditorTestSession;
+            return true;
+        }
+        static void EndEditorTestSession(UnityEditor.PlayModeStateChange state)
+        {
+            if(state!=UnityEditor.PlayModeStateChange.ExitingPlayMode)return;
+            // Keep the temporary save path until Play stops; shutdown must not
+            // write the test inventory back into the real campaign.
+            if(EditorTestSessionActive)HealingPackSupply.RestoreCampaign(editorTestOriginalCampaign,editorTestOriginalHealing);
+            UnityEditor.EditorApplication.playModeStateChanged-=EndEditorTestSession;
+        }
 #endif
         static string SavePath =>
 #if UNITY_EDITOR
@@ -67,7 +93,7 @@ namespace Mavis
         static bool CanSavePlayer(ThirdPersonPlayerController player)
         {
             if (player == null || (player.gameObject.scene.name != GameplaySceneName && player.gameObject.scene.path != SecondIslandScenePath) ||
-                player.GetComponent<GameSaveExcluded>() != null) return false;
+                player.GetComponent<GameSaveExcluded>() != null || SkyboardRingRally.IsRacing(player)) return false;
             var health = player.GetComponent<PlayerHealth>();
             var board = player.gameObject.scene.path == SecondIslandScenePath ? FindFirstObjectByType<SkyboardReward>() : null;
             bool savingFlight = board && board.Flying;
@@ -81,6 +107,10 @@ namespace Mavis
         static void ResetStatics()
         {
             instance = null;
+#if UNITY_EDITOR
+            editorSavePath=null;EditorTestSessionActive=false;editorTestOriginalCampaign=null;editorTestOriginalHealing=0;
+            UnityEditor.EditorApplication.playModeStateChanged-=EndEditorTestSession;
+#endif
         }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
@@ -173,6 +203,11 @@ namespace Mavis
                     healingPacksRemaining = HealingPackSupply.Remaining,
                     healingCampaign = HealingPackSupply.Campaign
                 };
+                if (MarshmallowHollowEntrance.SurfaceSavePose(player, out var surfacePosition, out var surfaceRotation))
+                {
+                    data.playerPosition = surfacePosition;
+                    data.playerRotation = surfaceRotation;
+                }
                 if (arrival != null)
                 {
                     data.hasArrivalState = true;

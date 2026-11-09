@@ -556,7 +556,7 @@ public sealed class OceanWorld : MonoBehaviour
             return;
 
         Camera camera = Camera.main;
-        if (camera != null)
+        if (camera != null && !SkyboardRingRally.UsesCircuitCamera(camera))
         {
             // The ocean follows the player. Geometry outside the configured view range is never needed.
             if (followCamera)

@@ -9,6 +9,7 @@ Shader "DarkBrine/Marshmallow Surface"
         _PatchScale ("World palette scale", Float) = .035
         _FiberScale ("Fine sugar texture scale", Float) = 10
         _CloudMode ("Distant cloud mode", Float) = 0
+        _SurfaceFinish ("Velvet sugar finish", Range(0,1)) = 0
     }
     SubShader
     {
@@ -38,21 +39,42 @@ Shader "DarkBrine/Marshmallow Surface"
                 // Stable fine fibres and tiny sugar highlights, softened with distance.
                 float fibre = CandyNoise(i.restWS.xz * _FiberScale + i.restWS.y * .13);
                 float detailFade = 1 - smoothstep(18, 65, distance(GetCameraPositionWS(), i.positionWS));
+                if (_SurfaceFinish > 0)
+                {
+                    // Fade the weave before its world-space fibres become subpixel.
+                    float2 grain = (i.restWS.xz + float2(.34,.71) * i.restWS.y) * _FiberScale;
+                    float pixelSize = max(length(ddx(grain)), length(ddy(grain)));
+                    detailFade *= 1 - smoothstep(.24, 1.12, pixelSize);
+                    float2 weave = float2(dot(grain, float2(.84,.54)), dot(grain, float2(-.54,.84)));
+                    fibre = lerp(fibre, CandyNoise(weave * float2(.57,1.37)), _SurfaceFinish);
+                    float tufts = CandyNoise(weave * .105 + broad * 3);
+                    albedo *= 1 + (tufts - .5) * .083 * _SurfaceFinish;
+                }
                 albedo *= 1 + (fibre - .5) * .065 * detailFade;
                 albedo = lerp(albedo, _PressedColor.rgb, saturate(response.y) * .46);
                 albedo = lerp(albedo, _Vanilla.rgb * 1.12, saturate(response.z) * .55);
-                float epsilon = .13;
-                float dx = (CandyResponse(i.restWS + float3(epsilon,0,0)).x - response.x) / epsilon;
-                float dz = (CandyResponse(i.restWS + float3(0,0,epsilon)).x - response.x) / epsilon;
-                half3 n = normalize(i.normalWS - float3(dx,0,dz) * smoothstep(.1,.8,i.normalWS.y));
+                half3 n = normalize(i.normalWS);
+                if (abs(response.x) > .001 || max(response.y, response.z) > .005)
+                {
+                    float epsilon = .13;
+                    float dx = (CandyResponse(i.restWS + float3(epsilon,0,0)).x - response.x) / epsilon;
+                    float dz = (CandyResponse(i.restWS + float3(0,0,epsilon)).x - response.x) / epsilon;
+                    n = normalize(i.normalWS - float3(dx,0,dz) * smoothstep(.1,.8,i.normalWS.y));
+                }
                 Light sun = GetMainLight(TransformWorldToShadowCoord(i.positionWS));
                 half wrapped = saturate((dot(n, sun.direction) + .4h) / 1.4h);
                 half shadow = lerp(.57h, 1.h, sun.shadowAttenuation);
                 half3 ambient = max(SampleSH(n), half3(.22,.19,.26));
                 half3 color = albedo * (ambient * .7 + sun.color * wrapped * shadow * .62 + .13);
-                half rim = pow(1 - saturate(dot(n, GetWorldSpaceNormalizeViewDir(i.positionWS))), 3);
+                half3 view = GetWorldSpaceNormalizeViewDir(i.positionWS);
+                half rim = pow(1 - saturate(dot(n, view)), 3);
                 color += _Vanilla.rgb * rim * .065;
                 color += pow(saturate(fibre), 18) * detailFade * .035 * wrapped;
+                if (_SurfaceFinish > 0)
+                {
+                    half sheen = pow(saturate(dot(n, SafeNormalize(view + sun.direction))), 20) * wrapped;
+                    color += _Vanilla.rgb * sheen * .085 * _SurfaceFinish * sun.shadowAttenuation;
+                }
                 return half4(MixFog(color, i.fog), 1);
             }
             ENDHLSL

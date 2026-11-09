@@ -150,7 +150,7 @@ public sealed class CandyHuntQuest : MonoBehaviour
             candy.localPosition=candyBases[i]+Vector3.up*(.15f*Mathf.Sin(Time.time*1.8f+i));
             candy.localRotation=Quaternion.Euler(0,Time.time*35f+i*36f,0);
         }
-        bool modal=GameUITheme.ModalOpen || SecondIslandAwakening.BlocksInputFor(player) || MarshmallowChallengeGuide.AnyConversation;
+        bool modal=GameUITheme.ModalOpen || MarshmallowHollowEntrance.Contains(player) || SecondIslandAwakening.BlocksInputFor(player) || MarshmallowChallengeGuide.AnyConversation;
         bool alive=!health || health.currentHealth>0;
         bool allowed=Time.timeScale>0 && !modal && !talking && alive && player.enabled && body.enabled &&
             !player.ExternalControlLock && !player.ExternalMovementLock;

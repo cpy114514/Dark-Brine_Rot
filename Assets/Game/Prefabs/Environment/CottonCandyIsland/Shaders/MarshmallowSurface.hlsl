@@ -9,6 +9,7 @@ CBUFFER_START(UnityPerMaterial)
     float _PatchScale;
     float _FiberScale;
     float _CloudMode;
+    float _SurfaceFinish;
 CBUFFER_END
 
 // Per-renderer state. Never global: other islands cannot inherit these impressions.

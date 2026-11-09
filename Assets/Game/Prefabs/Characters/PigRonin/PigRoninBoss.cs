@@ -31,6 +31,7 @@ public sealed partial class PigRoninBoss : MonoBehaviour
     PlayerHealth target;
     BossHudPanel hud;
     Vector3 home, committed;
+    Quaternion homeRotation;
     float vertical, timer, previousPhase, poise, lastHit, victoryAt, nextStaggerAt, blockedTime;
     int sidestepDirection=1;
     Volume clarityVolume;
@@ -64,6 +65,21 @@ public sealed partial class PigRoninBoss : MonoBehaviour
             motor.enabled=false;transform.position=new Vector3(transform.position.x,ground.y+.04f,transform.position.z);motor.enabled=true;
         }
         home=transform.position;
+        homeRotation=transform.rotation;
+    }
+    internal void ResetForCampRetry()
+    {
+        if (!FightActive || health.IsDead) return;
+        FightActive = DamageWindowActive = false;
+        CurrentState = State.Idle;
+        ActionProgress = vertical = timer = previousPhase = poise = lastHit = nextStaggerAt = blockedTime = 0;
+        sequence = hitMask = 0;
+        sidestepDirection = 1;
+        motor.enabled = false;
+        transform.SetPositionAndRotation(home, homeRotation);
+        motor.enabled = true;
+        health.currentHealth = health.maxHealth;
+        health.OnHealthChanged?.Invoke(health.currentHealth, health.maxHealth);
     }
     void Update()
     {
@@ -223,7 +239,6 @@ public sealed partial class PigRoninBoss : MonoBehaviour
         if(motor)motor.enabled=false;
         if(gameObject.scene.path=="Assets/Scenes/Second Island/Second Island.unity")
         {
-            FindFirstObjectByType<IslandActivityGuide>()?.ShowBossVictory();
             GameSaveManager.RequestAutosave();
         }
     }

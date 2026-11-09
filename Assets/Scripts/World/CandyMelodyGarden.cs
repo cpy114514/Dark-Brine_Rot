@@ -23,7 +23,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
     public int InputCount {get;private set;}
     public int Mistakes {get;private set;}
     public int SequenceLength=>3+Round;
-    public Transform MapAnchor=>transform;
+    public Transform MapAnchor=>StartSign;
     public Transform NoteTransform(int index)=>index>=0 && index<notes.Count?notes[index].root:null;
     public int SequenceAt(int index)=>index>=0 && index<SequenceLength?sequence[index]:-1;
     public Transform StartSign=>sign ? sign.transform : null;
@@ -42,8 +42,6 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         public Transform root, candy;
         public Renderer renderer;
         public Material normal, bright;
-        public GameObject prompt;
-        public Text promptText;
     }
     sealed class Friend { public Transform root,visual,arm; public float phase; }
     readonly List<Note> notes=new List<Note>();
@@ -89,8 +87,9 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         var cream=Mat("Melody icing",new Color(1f,.88f,.94f));
         var wood=Mat("Melody candy stems",new Color(.62f,.34f,.40f));
         var gold=Mat("Melody gold",new Color(1f,.83f,.38f),true);
-        for(int i=0;i<Sites.Length;i++)BuildNote(i,cream,wood,gold);
-        BuildSign(cream,wood,gold);
+        var bell = SecondIslandProp.Load("Quaternius/Bell");
+        for(int i=0;i<Sites.Length;i++)BuildNote(i,wood,bell);
+        BuildSign(cream,wood,gold,bell);
         MakeFriend("Strawberry",new Vector2(146,2072),.7f);
         MakeFriend("Mint",new Vector2(175,2091),2.3f);
         BuildHud();BuildTones();
@@ -121,18 +120,29 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         var text=t.GetComponentInChildren<Text>();if(text)text.fontSize=27;
         return t.gameObject;
     }
-    void BuildNote(int index,Material cream,Material wood,Material gold)
+    void BuildNote(int index, Material wood, GameObject bell)
     {
         var root=new GameObject(Names[index]+" singing candy");root.transform.SetParent(transform,false);root.transform.position=Ground(Sites[index]);
-        var normal=Mat(Names[index]+" candy",Colors[index]);var bright=Mat(Names[index]+" glowing candy",Colors[index],true);
-        Shape("Icing base",PrimitiveType.Cylinder,root.transform,new Vector3(0,.14f,0),new Vector3(3,.14f,3),cream);
-        Shape("Candy stem",PrimitiveType.Cylinder,root.transform,new Vector3(0,.9f,0),new Vector3(.34f,.76f,.34f),wood);
-        var candy=Shape("Singing candy",PrimitiveType.Sphere,root.transform,new Vector3(0,2.15f,0),new Vector3(1.9f,1.9f,1.9f),normal);
-        Shape("Candy cap",PrimitiveType.Sphere,root.transform,new Vector3(0,3.08f,0),Vector3.one*.28f,gold);
-        var prompt=Label(root.transform,(index+1)+"  "+Names[index],3.9f,.02f);var promptText=prompt.GetComponentInChildren<Text>();
-        notes.Add(new Note{root=root.transform,candy=candy.transform,renderer=candy.GetComponent<Renderer>(),normal=normal,bright=bright,prompt=prompt,promptText=promptText});
+        var normal=Mat(Names[index]+" enamel",Colors[index]);var bright=Mat(Names[index]+" lit enamel",Colors[index],true);
+        normal.SetFloat("_Metallic", .30f);
+        bright.SetFloat("_Metallic", .30f);
+        Shape("Bell plinth",PrimitiveType.Cube,root.transform,new Vector3(0,.22f,0),new Vector3(2.8f,.44f,2.8f),wood);
+        var candy = new GameObject("Bell pivot").transform;
+        candy.SetParent(root.transform, false);
+        candy.localPosition = Vector3.up * 2.7f;
+        var renderer = bell
+            ? SecondIslandProp.Mount(bell, candy, Vector3.down * 1.03f, new Vector3(2.4f,2.45f,2.4f), Quaternion.identity).GetComponentInChildren<Renderer>()
+            : Shape("Singing candy",PrimitiveType.Sphere,candy,Vector3.down,new Vector3(1.9f,1.9f,1.9f),normal).GetComponent<Renderer>();
+        var bellCollider = root.AddComponent<BoxCollider>();
+        bellCollider.center = Vector3.up * 1.67f;
+        bellCollider.size = new Vector3(1.85f,2.45f,1.85f);
+        renderer.sharedMaterial = normal;
+        var plaque=Label(root.transform,(index+1)+"  "+Names[index],.46f,.011f);
+        plaque.transform.localPosition = new Vector3(0,.46f,-1.43f);
+        plaque.transform.localRotation = Quaternion.Euler(-15,0,0);
+        notes.Add(new Note{root=root.transform,candy=candy,renderer=renderer,normal=normal,bright=bright});
     }
-    void BuildSign(Material cream,Material wood,Material gold)
+    void BuildSign(Material cream,Material wood,Material gold,GameObject bell)
     {
         sign=new GameObject("Melody Garden sign");sign.transform.SetParent(transform,false);sign.transform.position=Ground(new Vector2(160,2067));
         var dark=Mat("Melody sign background",new Color(.15f,.075f,.20f));
@@ -140,11 +150,34 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         Shape("Sign post right",PrimitiveType.Cylinder,sign.transform,new Vector3(2.8f,1.8f,0),new Vector3(.32f,1.8f,.32f),wood);
         Shape("Sign board",PrimitiveType.Cube,sign.transform,new Vector3(0,3.7f,0),new Vector3(7.2f,2.6f,.45f),dark);
         Shape("Icing sign top",PrimitiveType.Cube,sign.transform,new Vector3(0,5.1f,0),new Vector3(7.4f,.2f,.5f),cream);
-        Shape("Star on sign",PrimitiveType.Sphere,sign.transform,new Vector3(0,5.4f,0),Vector3.one*.45f,gold);
-        signLabel=Label(sign.transform,"CANDY MELODY GARDEN\nWatch the candy lights and listen\nRepeat the colours in order\n3 rounds  ·  First win: 1 speed scroll",3.7f,.012f);
+        if(bell)
+        {
+            var crest=new GameObject("Melody bell crest",typeof(BoxCollider)).transform;
+            crest.SetParent(sign.transform,false);
+            crest.localPosition=Vector3.up*5.94f;
+            var visual=SecondIslandProp.Mount(bell,crest,Vector3.zero,new Vector3(1.5f,1.5f,1.5f),Quaternion.identity);
+            visual.GetComponentInChildren<Renderer>().sharedMaterial=gold;
+            crest.GetComponent<BoxCollider>().size=new Vector3(1.4f,1.5f,1.4f);
+        }
+        const string rules="CANDY MELODY GARDEN\nListen and watch the four bells\nWalk up to them in the same order\n3 rounds  ·  First win: 1 speed scroll";
+        signLabel=Label(sign.transform,rules,3.7f,.012f);
         signLabel.transform.localPosition=new Vector3(0,3.7f,-.27f);
         ((RectTransform)signLabel.transform).sizeDelta=new Vector2(550,165);
+        var back=new GameObject("Melody rules reverse face").transform;
+        back.SetParent(sign.transform,false);back.localRotation=Quaternion.Euler(0,180,0);
+        var reverse=Label(back,rules,3.7f,.012f);
+        reverse.transform.localPosition=new Vector3(0,3.7f,-.27f);
+        ((RectTransform)reverse.transform).sizeDelta=new Vector2(550,165);
         signPrompt=Label(sign.transform,"",6.4f,.017f);signPromptText=signPrompt.GetComponentInChildren<Text>();signPrompt.SetActive(false);
+        signPrompt.transform.localPosition=Vector3.up*7.55f;
+
+        var wayfinder=new GameObject("Melody wayfinder near Bounce Garden").transform;
+        wayfinder.SetParent(transform,false);
+        wayfinder.SetPositionAndRotation(Ground(new Vector2(129,2061)),Quaternion.LookRotation(new Vector3(13,0,3)));
+        Shape("Wayfinder post",PrimitiveType.Cube,wayfinder,new Vector3(0,1f,.29f),new Vector3(.29f,2.25f,.32f),wood);
+        int distance=Mathf.RoundToInt(Vector3.ProjectOnPlane(sign.transform.position-wayfinder.position,Vector3.up).magnitude);
+        var pointer=Label(wayfinder,"CANDY MELODY GARDEN\nFour bells ahead  ·  "+distance+" m",2.28f,.0105f);
+        ((RectTransform)pointer.transform).sizeDelta=new Vector2(425,110);
     }
     void MakeFriend(string color,Vector2 site,float phase)
     {
@@ -214,7 +247,6 @@ public sealed class CandyMelodyGarden : MonoBehaviour
             float d=Vector3.Distance(Vector3.ProjectOnPlane(player.transform.position-n.root.position,Vector3.up),Vector3.zero);
             if(allowed && CurrentStage==Stage.Listening && inside && !insideNote[i] && d<closest){closest=d;entered=i;}
             insideNote[i]=inside;
-            if(n.prompt && cam)n.prompt.transform.rotation=cam.transform.rotation;
         }
         if(entered>=0)SelectNote(entered);
         foreach(var friend in friends)
@@ -227,7 +259,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         float bounceDistance=bounce?Vector3.ProjectOnPlane(player.transform.position-bounce.transform.position,Vector3.up).magnitude:float.PositiveInfinity;
         bool melodyPlaying=CurrentStage==Stage.Showing || CurrentStage==Stage.Listening;
         bool bounceHasPriority=bounce && bounceDistance<30f && (bounce.Playing || (!melodyPlaying && bounceDistance<distance));
-        UpdateHud(distance<35f && allowed && !bounceHasPriority);
+        UpdateHud(allowed && (bySign || (distance<35f && (melodyPlaying || !bounceHasPriority))));
         if(!allowed || Cursor.lockState!=CursorLockMode.Locked || !GameControls.Down(GameControls.Command.Interact))return;
         if(bySign)lastInteractionFrame=Time.frameCount;
         if(bySign && CurrentStage!=Stage.Showing)
@@ -293,7 +325,15 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         for(int i=0;i<notes.Count;i++)
         {
             var n=notes[i];n.renderer.sharedMaterial=i==index?n.bright:n.normal;
-            n.candy.localScale=Vector3.one*(i==index?2.25f:1.9f);
+            n.candy.localRotation = Quaternion.identity;
+        }
+    }
+    void LateUpdate()
+    {
+        if (lit >= 0 && lit < notes.Count)
+        {
+            var note = notes[lit];
+            note.candy.localRotation = Quaternion.Euler(0, 0, Mathf.Sin(Time.time * 25f) * 8f);
         }
     }
     void PlayTone(int index){if(GameAudioPolicy.SoundEnabled && audioSource && tones[index])audioSource.PlayOneShot(tones[index]);}

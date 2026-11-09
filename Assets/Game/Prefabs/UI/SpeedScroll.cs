@@ -11,7 +11,11 @@ namespace Mavis
             if (!inventory || !item || inventory.Count(item) <= 0 || target == null ||
                 !target.CooldownTargetOwned || !target.CanReduceCooldown || seconds <= 0) return false;
             if (!target.ReduceCooldown(seconds)) return false;
-            if (!inventory.TryConsume(item)) return false;
+            bool unlimited=false;
+#if UNITY_EDITOR
+            unlimited=SecondIslandTestStation.UnlimitedScrolls;
+#endif
+            if (!unlimited && !inventory.TryConsume(item)) return false;
             if (inventory.gameObject.scene.path == "Assets/Scenes/Second Island/Second Island.unity") GameSaveManager.RequestAutosave();
             return true;
         }

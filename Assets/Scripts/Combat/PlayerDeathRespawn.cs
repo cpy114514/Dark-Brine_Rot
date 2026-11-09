@@ -16,6 +16,7 @@ namespace Mavis
         static int consumedFrame = -1;
         public bool IsDead { get; private set; }
         public IslandRespawnPoint Checkpoint { get; private set; }
+        public event System.Action Respawned;
         public float protectionSeconds = 2f;
         PlayerHealth health;
         ThirdPersonPlayerController movement;
@@ -63,6 +64,7 @@ namespace Mavis
             float distance = float.PositiveInfinity;
             foreach (var point in FindObjectsByType<IslandRespawnPoint>(FindObjectsSortMode.None))
             {
+                if (!point.useAsFallback) continue;
                 if (Checkpoint != null && Checkpoint.isDefault && !point.isDefault) continue;
                 float d = (point.transform.position - transform.position).sqrMagnitude;
                 if (Checkpoint == null || (point.isDefault && !Checkpoint.isDefault) || d < distance)
@@ -165,6 +167,7 @@ namespace Mavis
             Time.timeScale = previousTimeScale > 0f ? previousTimeScale : 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            Respawned?.Invoke();
             return true;
         }
         void BuildUI()

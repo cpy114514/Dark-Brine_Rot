@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Mavis;
@@ -7,153 +8,194 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 
-/// <summary>Flies the real board with keyboard input through the authored ring course.</summary>
+/// <summary>Runs the circuit with the actual board controls and an isolated save.</summary>
 public static class VerifySkyboardRingRally
 {
-    public static string Status="idle",Result="";
+    public static string Status = "idle", Result = "";
     static Keyboard keyboard;
     static ThirdPersonPlayerController player;
     static CharacterController body;
     static SkyboardRingRally rally;
     static SkyboardReward board;
     static bool steer;
-    static Key[] keys=Array.Empty<Key>();
-    static readonly FieldInfo Yaw=typeof(ThirdPersonPlayerController).GetField("yaw",BindingFlags.Instance|BindingFlags.NonPublic);
+    static Key[] keys = Array.Empty<Key>();
+    static readonly FieldInfo Yaw = typeof(ThirdPersonPlayerController).GetField("yaw", BindingFlags.Instance | BindingFlags.NonPublic);
+
     static void Inject()
     {
-        if(keyboard==null || InputState.currentUpdateType!=InputUpdateType.Dynamic)return;
-        keyboard.MakeCurrent();Cursor.lockState=CursorLockMode.Locked;
-        if(steer && player && body && rally && board && board.Flying)
+        if (keyboard == null || InputState.currentUpdateType != InputUpdateType.Dynamic) return;
+        keyboard.MakeCurrent(); Cursor.lockState = CursorLockMode.Locked;
+        if (steer && rally.Running && board.Flying)
         {
-            int index=rally.Running?rally.NextRing:0;
-            var ring=rally.RingTransform(index);
-            if(ring)
+            var gate = rally.RingTransform(rally.NextRing);
+            if (gate)
             {
-                Vector3 delta=ring.position+ring.forward*9f-body.bounds.center;
-                Vector3 flat=Vector3.ProjectOnPlane(delta,Vector3.up);
-                if(flat.sqrMagnitude>.01f)Yaw.SetValue(player,Quaternion.LookRotation(flat).eulerAngles.y);
-                float vertical=ring.position.y-body.bounds.center.y;
-                if(vertical>1f)keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward),GameInputSettings.Get(GameInputSettings.Action.Jump)};
-                else if(vertical< -1f)keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward),GameInputSettings.Get(GameInputSettings.Action.Dodge)};
-                else keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};
+                Vector3 center = body.bounds.center;
+                Vector3 delta = gate.position + gate.forward * 6 - center;
+                Vector3 flat = Vector3.ProjectOnPlane(delta, Vector3.up);
+                if (flat.sqrMagnitude > .01f) Yaw.SetValue(player, Quaternion.LookRotation(flat).eulerAngles.y);
+                float vertical = gate.position.y - center.y;
+                var forward = GameInputSettings.Get(GameInputSettings.Action.Forward);
+                keys = vertical > .7f ? new[] { forward, GameInputSettings.Get(GameInputSettings.Action.Jump) } :
+                    vertical < -.7f ? new[] { forward, GameInputSettings.Get(GameInputSettings.Action.Dodge) } : new[] { forward };
             }
         }
-        InputState.Change(keyboard,new KeyboardState(keys));
+        InputState.Change(keyboard, new KeyboardState(keys));
     }
+
     static async Task Wait(float seconds)
     {
-        float end=Time.time+seconds;var deadline=DateTime.UtcNow.AddSeconds(18);
-        while(Time.time<end){if(!EditorApplication.isPlaying || DateTime.UtcNow>deadline)throw new Exception("Play mode stopped or stalled.");await Task.Delay(20);}
+        float end = Time.time + seconds;
+        await Until(() => Time.time >= end, seconds + 8, "wait");
     }
-    static void Place(Vector3 desiredCenter,Quaternion facing)
+
+    static async Task Until(Func<bool> condition, float seconds, string step)
     {
-        Vector3 offset=body.bounds.center-player.transform.position;
-        player.RestoreSavedPose(desiredCenter-offset,facing);
+        float end = Time.realtimeSinceStartup + seconds;
+        while (!condition())
+        {
+            if (!EditorApplication.isPlaying || Time.realtimeSinceStartup > end) throw new Exception("Timed out at " + step);
+            await Task.Delay(20);
+        }
     }
+
+    static async Task Tap(Key key)
+    {
+        keys = new[] { key }; await Wait(.13f); keys = Array.Empty<Key>(); await Wait(.15f);
+    }
+
+    static void Place(Vector3 desiredCenter, Quaternion facing)
+    {
+        player.RestoreSavedPose(desiredCenter - (body.bounds.center - player.transform.position), facing);
+        board.RefreshRallyPosition();
+    }
+
+    static void CheckVisibleGate(int expected)
+    {
+        for (int i = 0; i < rally.TotalRings; i++)
+            if (rally.RingTransform(i).gameObject.activeInHierarchy != (i == expected)) throw new Exception("Wrong active gate at index " + i);
+    }
+
     public static async void Run()
     {
-        Status="running";Result="";
+        Status = "running"; Result = "";
         try
         {
-            if(!EditorApplication.isPlaying)throw new Exception("Enter play mode first.");
-            typeof(GameSaveManager).GetField("editorSavePath",BindingFlags.NonPublic|BindingFlags.Static).SetValue(null,System.IO.Path.GetFullPath("Temp/skyboard-rally-test.json"));
-            var opening=UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();if(opening)UnityEngine.Object.DestroyImmediate(opening.gameObject);
-            await Wait(.4f);
-            player=UnityEngine.Object.FindFirstObjectByType<ThirdPersonPlayerController>();rally=UnityEngine.Object.FindFirstObjectByType<SkyboardRingRally>();
-            board=UnityEngine.Object.FindFirstObjectByType<SkyboardReward>();body=player.GetComponent<CharacterController>();keyboard=Keyboard.current;
-            if(!player || !rally || !board || keyboard==null || rally.TotalRings!=10)throw new Exception("Missing player, board or ten-ring course.");
-            player.GetComponent<PlayerHealth>().GrantProtection(120);
-            if(!board.CollectSpawnTestKit())throw new Exception("Could not equip test board.");
-            for(int i=0;i<rally.TotalRings;i++)
-            {
-                var r=rally.RingTransform(i);var mesh=r.GetComponent<MeshCollider>();var trigger=r.GetComponent<BoxCollider>();
-                if(!mesh || !trigger || !trigger.isTrigger)throw new Exception("Ring collider is missing.");
-                if(r.gameObject.activeSelf!=(i==0))throw new Exception("Only the first ring should be visible before the race.");
-                if(i==0 && !mesh.Raycast(new Ray(r.position+r.right*6.5f+r.forward*4,-r.forward),out _,8))throw new Exception("Ring rim did not block a ray.");
-                if(i==0 && mesh.Raycast(new Ray(r.position+r.forward*4,-r.forward),out _,8))throw new Exception("Ring opening is blocked.");
-            }
-            var start=rally.RingTransform(0);
-            // Start on the actual island, not in mid-air, and climb into ring 1.
-            var takeoff=start.position-start.forward*18+start.right*8;
-            var island=player.GetComponent<MarshmallowIslandExperience>().surface.GetComponent<Collider>();
-            if(!island.Raycast(new Ray(takeoff+Vector3.up*100,Vector3.down),out var groundHit,200))throw new Exception("No island ground at rally takeoff.");
-            takeoff.y=groundHit.point.y+body.bounds.extents.y+.12f;Place(takeoff,start.rotation);await Wait(.35f);
-            if(!body.isGrounded)throw new Exception("Player did not reach the rally takeoff ground.");
-            if(!board.TryStartFlight())throw new Exception("Unable to start flight.");
-            InputSystem.onBeforeUpdate+=Inject;await Wait(.3f);
-            steer=true;float takeoffDeadline=Time.time+6f;
-            while(!rally.Running && Time.time<takeoffDeadline)await Task.Delay(25);
-            steer=false;keys=Array.Empty<Key>();await Wait(.15f);
-            if(!rally.Running || rally.NextRing!=1)throw new Exception("Could not ascend from the ground and cross the starting ring: "+body.bounds.center);
-            for(int i=0;i<rally.TotalRings;i++)if(rally.RingTransform(i).gameObject.activeSelf!=(i==1))throw new Exception("Passing ring 1 did not reveal only ring 2.");
-            var movingRing=rally.RingTransform(1);var beforeMove=movingRing.position;
-            float remaining=rally.TimeUntilMove;
-            if(remaining>1)await Wait(remaining-.5f);
-            if(rally.Relocating || Vector3.Distance(movingRing.position,beforeMove)>.05f)throw new Exception("Ring moved before 15 seconds elapsed.");
-            float moveDeadline=Time.time+3;
-            while(!rally.Relocating && Time.time<moveDeadline)await Task.Delay(25);
-            if(!rally.Relocating)throw new Exception("Ring did not start moving after 15 seconds.");
-            await Wait(1.1f);
-            float shift=Vector3.Distance(beforeMove,movingRing.position);
-            if(rally.Relocating || shift<1f || shift>100f || rally.NextRing!=1)throw new Exception("Ring relocation was incorrect: shift="+shift+", next="+rally.NextRing);
-            for(int i=0;i<rally.TotalRings;i++)if(rally.RingTransform(i).gameObject.activeSelf!=(i==1))throw new Exception("Relocation exposed more than the active ring.");
-            // Use one of the temporary test scrolls to obtain a fresh full
-            // flight after the 15-second waiting check.
-            typeof(SkyboardReward).GetMethod("EndFlight",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(board,null);await Wait(.3f);
-            if(!board.TryUseScrollOn(board) || !board.TryStartFlight())throw new Exception("Could not restart test flight after relocation check.");
-            await Wait(.3f);
-            // A later ring cannot start a race. Move through it in the correct direction.
-            var second=rally.RingTransform(1);Place(second.position-second.forward*7,second.rotation);await Wait(.2f);
-            Yaw.SetValue(player,second.rotation.eulerAngles.y);keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};await Wait(1.1f);keys=Array.Empty<Key>();await Wait(.2f);
-            if(rally.Running)throw new Exception("Wrong ring incorrectly started the race.");
-            // Start ring must be crossed in the forward direction.
-            Place(start.position+start.forward*7,Quaternion.LookRotation(-start.forward));await Wait(.2f);
-            Yaw.SetValue(player,Quaternion.LookRotation(-start.forward).eulerAngles.y);keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};await Wait(1.1f);keys=Array.Empty<Key>();await Wait(.2f);
-            if(rally.Running)throw new Exception("Reverse crossing incorrectly started the race.");
-            Place(start.position-start.forward*9,start.rotation);await Wait(.2f);
-            // Start once and exercise the in-flight restart without changing board cooldown.
-            Yaw.SetValue(player,start.rotation.eulerAngles.y);keys=new[]{GameInputSettings.Get(GameInputSettings.Action.Forward)};await Wait(1f);keys=Array.Empty<Key>();await Wait(.2f);
-            if(!rally.Running || rally.NextRing!=1)throw new Exception("Forward crossing did not start ring 1.");
-            keys=new[]{Key.R};await Wait(.12f);keys=Array.Empty<Key>();await Wait(.3f);
-            if(rally.Running || !board.Flying)throw new Exception("In-flight reset failed or stopped the board.");
-            Place(start.position-start.forward*9,start.rotation);await Wait(.2f);
-            float startingSpeed=board.horizontalSpeed;
-            int beforeScrolls=board.Scrolls;
-            int prior=-1;float changed=Time.time;bool sawBoost=false;steer=true;
-            while(!rally.RewardClaimed && Time.time-changed<9f && board.Flying)
-            {
-                if(board.horizontalSpeed>startingSpeed*1.1f)sawBoost=true;
-                int progress=rally.Running?rally.NextRing:0;
-                if(progress!=prior)
-                {
-                    prior=progress;changed=Time.time;Status="flying ring "+(progress+1)+"/10";
-                    for(int i=0;i<rally.TotalRings;i++)if(rally.RingTransform(i).gameObject.activeSelf!=(i==progress))throw new Exception("Unexpected visible ring at progress "+progress);
-                }
-                await Task.Delay(30);
-            }
-            steer=false;keys=Array.Empty<Key>();await Wait(.25f);
-            if(!rally.RewardClaimed)throw new Exception("Could not fly the full course. progress="+rally.NextRing+", running="+rally.Running+", player="+body.bounds.center+", board remaining="+board.FlightRemaining);
-            var inventory=player.GetComponent<EquipmentInventory>();var scroll=Resources.Load<EquipmentItem>(SkyboardReward.ScrollItemPath);
-            int scrolls=inventory.Count(scroll);float best=rally.BestTime;
-            if(scrolls!=beforeScrolls+1 || best<=0 || best>55 || !sawBoost || Mathf.Abs(board.horizontalSpeed-startingSpeed)>.01f)throw new Exception("Finish, reward or boost was incorrect: scrolls="+scrolls+", best="+best+", sawBoost="+sawBoost+", speed="+board.horizontalSpeed);
-            var snapshot=player.GetComponent<SecondIslandSaveState>().Capture();
-            if(!snapshot.skyboardRallyReward || snapshot.skyboardRallyBest<=0 || !GameSaveManager.SaveCurrentGame())throw new Exception("Rally result was not saved.");
-            if(!GameSaveManager.QueueContinue())throw new Exception("Could not queue isolated save.");
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Assets/Scenes/Second Island/Second Island.unity");
-            float deadline=Time.realtimeSinceStartup+15;
-            while(GameSaveManager.IsContinuePending && Time.realtimeSinceStartup<deadline)await Task.Delay(30);
+            if (!EditorApplication.isPlaying) throw new Exception("Enter Play mode first.");
+            typeof(GameSaveManager).GetField("editorSavePath", BindingFlags.NonPublic | BindingFlags.Static)
+                .SetValue(null, Path.GetFullPath("Temp/skyboard-circuit-test.json"));
+            var opening = UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();
+            if (opening) UnityEngine.Object.DestroyImmediate(opening.gameObject);
             await Wait(.5f);
-            rally=UnityEngine.Object.FindFirstObjectByType<SkyboardRingRally>();player=UnityEngine.Object.FindFirstObjectByType<ThirdPersonPlayerController>();
-            board=UnityEngine.Object.FindFirstObjectByType<SkyboardReward>();body=player.GetComponent<CharacterController>();
-            if(GameSaveManager.IsContinuePending || !rally || !rally.RewardClaimed || Mathf.Abs(rally.BestTime-best)>.1f || player.GetComponent<EquipmentInventory>().Count(scroll)!=scrolls)
-                throw new Exception("Continue did not restore the reward and best time.");
-            // Calling the finish path a second time must not duplicate the prize.
-            typeof(SkyboardRingRally).GetMethod("Finish",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(rally,null);
-            if(player.GetComponent<EquipmentInventory>().Count(scroll)!=scrolls)throw new Exception("Repeated finish duplicated the speed scroll.");
-            Status="passed";Result=$"Only one ring visible, moved {shift:F1} units after 15 seconds; flew all 10 in {best:F1}s. Restart, boost, single reward and save/continue passed.";
+            player = UnityEngine.Object.FindFirstObjectByType<ThirdPersonPlayerController>();
+            rally = UnityEngine.Object.FindFirstObjectByType<SkyboardRingRally>();
+            board = UnityEngine.Object.FindFirstObjectByType<SkyboardReward>();
+            body = player.GetComponent<CharacterController>(); keyboard = Keyboard.current;
+            if (!rally || !board || keyboard == null || rally.TotalRings != 10 || !board.CollectSpawnTestKit()) throw new Exception("Missing board or circuit.");
+            player.GetComponent<PlayerHealth>().GrantProtection(120);
+            var camera = Camera.main;
+            var clearFlags = camera.clearFlags;
+            var background = camera.backgroundColor;
+            var island = player.GetComponent<MarshmallowIslandExperience>().surface.GetComponent<Collider>();
+            var entrance = rally.StartMarker.position;
+            if (!island.Raycast(new Ray(entrance + new Vector3(0, 100, -5), Vector3.down), out var hit, 200)) throw new Exception("No ground at sign.");
+            Place(hit.point + Vector3.up * (body.bounds.extents.y + .12f), Quaternion.identity);
+            CheckVisibleGate(-1);
+            InputSystem.onBeforeUpdate += Inject; await Wait(.35f);
+
+            Status = "sign, teleport and countdown";
+            board.RestoreProgress(false, 180);
+            await Tap(Key.F);
+            if (!rally.InRace || rally.Running || !board.Flying || !board.RallySteeringLocked || rally.EntranceRing.gameObject.activeSelf ||
+                Vector3.Distance(entrance, player.transform.position) < 1000 || GameSaveManager.SaveCurrentGame())
+                throw new Exception("Race start, teleport, flight lock or save isolation failed.");
+            if (camera.clearFlags != CameraClearFlags.SolidColor) throw new Exception("Race backdrop did not switch.");
+            CheckVisibleGate(0);
+            var initial = body.bounds.center;
+            keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Forward) }; await Wait(.55f); keys = Array.Empty<Key>();
+            if (Vector3.Distance(body.bounds.center, initial) > .2f || rally.NextRing != 0) throw new Exception("The board could move during countdown.");
+            await Until(() => rally.Running, 5, "green light");
+            if (board.RallySteeringLocked) throw new Exception("The board stayed locked at GO.");
+
+            Status = "direction, moving gate and recovery";
+            var first = rally.RingTransform(0);
+            var mesh = first.GetComponent<MeshCollider>();
+            if (!mesh || !first.GetComponent<BoxCollider>().isTrigger ||
+                !mesh.Raycast(new Ray(first.position + first.right * 6.5f + first.forward * 4, -first.forward), out _, 8) ||
+                mesh.Raycast(new Ray(first.position + first.forward * 4, -first.forward), out _, 8)) throw new Exception("Gate rim or opening collision is incorrect.");
+            Place(first.position + first.forward * 6, Quaternion.LookRotation(-first.forward)); await Wait(.2f);
+            keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Forward) }; await Wait(.75f); keys = Array.Empty<Key>();
+            if (rally.NextRing != 0) throw new Exception("Reverse crossing counted.");
+            Vector3 oldGate = first.position;
+            await Wait(Mathf.Max(.1f, rally.TimeUntilMove - .45f));
+            if (rally.Relocating || Vector3.Distance(first.position, oldGate) > .05f) throw new Exception("Gate moved before 15 seconds.");
+            await Until(() => rally.Relocating, 3, "15-second move");
+            await Until(() => !rally.Relocating, 3, "gate settles");
+            float shift = Vector3.Distance(first.position, oldGate);
+            if (shift < 1 || shift > 100 || rally.NextRing != 0) throw new Exception("Incorrect gate shift or score.");
+            CheckVisibleGate(0);
+            float beforeRecovery = rally.Elapsed;
+            Place(body.bounds.center - Vector3.up * 60, Quaternion.identity); await Wait(.4f);
+            if (!rally.Running || rally.Elapsed < beforeRecovery + 3 || Vector3.Distance(body.bounds.center, initial) > .5f)
+                throw new Exception("Out-of-bounds recovery or time penalty failed.");
+            await Tap(Key.R);
+            if (!rally.InRace || rally.Running || rally.NextRing != 0 || !board.RallySteeringLocked || rally.Elapsed > .1f)
+                throw new Exception("Restart did not reset the grid and clock.");
+            await Wait(.15f);
+            await Tap(Key.F);
+            if (rally.InRace || board.Flying || Mathf.Abs(board.CooldownRemaining - 180) > 2 || Vector3.Distance(entrance, player.transform.position) > 15 ||
+                camera.clearFlags != clearFlags || camera.backgroundColor != background || !rally.EntranceRing.gameObject.activeSelf)
+                throw new Exception("Exit did not restore the entrance, camera or board cooldown.");
+
+            Status = "portal entry";
+            board.RestoreProgress(false, 0);
+            if (!board.TryStartFlight()) throw new Exception("Regular board did not launch.");
+            var portal = rally.EntranceRing;
+            Place(portal.position - portal.forward * 8, portal.rotation); await Wait(.2f);
+            keys = new[] { GameInputSettings.Get(GameInputSettings.Action.Forward) };
+            await Until(() => rally.InRace, 4, "forward portal crossing"); keys = Array.Empty<Key>();
+            if (!board.RallyFlight || rally.NextRing != 0) throw new Exception("Portal did not start a separate race.");
+            await Until(() => rally.Running, 5, "second green light");
+            int beforeScrolls = board.Scrolls;
+            float speed = board.horizontalSpeed;
+            int prior = -1; float changed = Time.time; bool sawBoost = false;
+            steer = true;
+            while (rally.InRace && Time.time - changed < 9 && board.Flying)
+            {
+                if (board.horizontalSpeed > speed * 1.1f) sawBoost = true;
+                if (rally.NextRing != prior)
+                {
+                    prior = rally.NextRing; changed = Time.time;
+                    Status = "flying ring " + (prior + 1) + "/10";
+                    CheckVisibleGate(prior);
+                }
+                await Task.Delay(25);
+            }
+            steer = false; keys = Array.Empty<Key>(); await Wait(.3f);
+            if (rally.InRace || board.Flying || !rally.RewardClaimed || !sawBoost || board.Scrolls != beforeScrolls + 1 ||
+                board.CooldownRemaining < board.cooldownSeconds - 3 || Mathf.Abs(board.horizontalSpeed - speed) > .01f ||
+                Vector3.Distance(entrance, player.transform.position) > 15)
+                throw new Exception($"Full race failed: progress {rally.NextRing}, best {rally.BestTime}, boost {sawBoost}, scrolls {board.Scrolls}.");
+            float best = rally.BestTime;
+            int scrolls = board.Scrolls;
+            CheckVisibleGate(-1);
+            if (!GameSaveManager.QueueContinue()) throw new Exception("Could not queue the race result save.");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Assets/Scenes/Second Island/Second Island.unity");
+            await Until(() => !GameSaveManager.IsContinuePending, 16, "Continue"); await Wait(.5f);
+            rally = UnityEngine.Object.FindFirstObjectByType<SkyboardRingRally>();
+            board = UnityEngine.Object.FindFirstObjectByType<SkyboardReward>();
+            player = UnityEngine.Object.FindFirstObjectByType<ThirdPersonPlayerController>();
+            if (!rally.RewardClaimed || Mathf.Abs(rally.BestTime - best) > .1f || board.Scrolls != scrolls || Vector3.Distance(entrance, player.transform.position) > 15)
+                throw new Exception("Continue did not restore the result and island position.");
+            Status = "passed";
+            Result = $"Sign and portal entry, locked countdown, one-way gates, {shift:F1}-unit move after 15 seconds, recovery, restart, exit, all 10 gates ({best:F1}s), boost, cooldown, reward and Continue passed.";
         }
-        catch(Exception e){Status="failed";Result=e.ToString();}
-        finally{steer=false;keys=Array.Empty<Key>();InputSystem.onBeforeUpdate-=Inject;if(keyboard!=null)InputState.Change(keyboard,new KeyboardState());}
-        Debug.Log("Skyboard rally test: "+Status+" "+Result);
+        catch (Exception e) { Status = "failed"; Result = e.ToString(); }
+        finally
+        {
+            steer = false; keys = Array.Empty<Key>(); InputSystem.onBeforeUpdate -= Inject;
+            if (keyboard != null) InputState.Change(keyboard, new KeyboardState());
+        }
+        Debug.Log("Skyboard circuit test: " + Status + " " + Result);
     }
 }

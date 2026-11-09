@@ -70,7 +70,9 @@ namespace Mavis
                     bounds.Encapsulate(reward.transform.position);
                     var board=FindFirstObjectByType<SkyboardReward>();
                     if(board)foreach(Transform row in board.transform)if(row.name.StartsWith("Row ") && row.childCount>0){bounds.Encapsulate(row.GetChild(0).position);break;}
-                    var boss=FindFirstObjectByType<PigRoninBoss>();if(boss)bounds.Encapsulate(boss.transform.position);
+                    var boss=FindFirstObjectByType<ZhuBaJieBoss>();if(boss)bounds.Encapsulate(boss.transform.position);
+                    var huangMei=FindFirstObjectByType<HuangMeiBoss>();
+                    if(huangMei && huangMei.Health && !huangMei.Health.IsDead)bounds.Encapsulate(huangMei.transform.position);
                     var hunt=FindFirstObjectByType<CandyHuntQuest>();
                     if(hunt && hunt.fairy)bounds.Encapsulate(hunt.fairy.position);
                     if(hunt && hunt.NextTarget)bounds.Encapsulate(hunt.NextTarget.position);

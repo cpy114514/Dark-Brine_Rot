@@ -13,8 +13,14 @@ public sealed class SecondIslandStartProtection : MonoBehaviour
     SkyboardReward skyboard;
     Vector3 previous;
     public bool WaitingForMovement { get; private set; } = true;
-    public static bool Protects(PlayerHealth target) => active && active.WaitingForMovement &&
-        target && active.gameObject == target.gameObject;
+    public static bool Protects(PlayerHealth target)
+    {
+        if(active && active.WaitingForMovement && target && active.gameObject==target.gameObject)return true;
+#if UNITY_EDITOR
+        if(SecondIslandTestStation.Protects(target))return true;
+#endif
+        return false;
+    }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Register()

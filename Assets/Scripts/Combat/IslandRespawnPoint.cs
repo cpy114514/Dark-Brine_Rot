@@ -7,6 +7,8 @@ namespace Mavis
     {
         public string pointName = "Island checkpoint";
         public bool isDefault = true;
+        public bool useAsFallback = true;
+        public bool requireGrounded;
         public float activationRadius = 3f;
         PlayerDeathRespawn player;
         CharacterController playerBody;
@@ -17,6 +19,7 @@ namespace Mavis
             {player=FindFirstObjectByType<PlayerDeathRespawn>();nextSearch=Time.unscaledTime+.5f;}
             if (player == null || player.IsDead) return;
             if (playerBody == null) playerBody = player.GetComponent<CharacterController>();
+            if (requireGrounded && (!playerBody || !playerBody.enabled || !playerBody.isGrounded)) return;
             Vector3 position = player.transform.position;
             if (playerBody != null && playerBody.enabled)
             {

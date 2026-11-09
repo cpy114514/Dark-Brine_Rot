@@ -34,6 +34,10 @@ public static class VerifyCandyCottage
         try
         {
             if(!EditorApplication.isPlaying)throw new Exception("Enter Play mode first.");
+            // The review moves the player through the real scene. Do not let
+            // an autosave overwrite the player's regular campaign slot.
+            typeof(GameSaveManager).GetField("editorSavePath",BindingFlags.NonPublic|BindingFlags.Static)
+                .SetValue(null,System.IO.Path.GetFullPath("Temp/candy-cottage-test.json"));
             var opening=UnityEngine.Object.FindFirstObjectByType<SecondIslandAwakening>();
             if(opening)UnityEngine.Object.DestroyImmediate(opening.gameObject);
             await Wait(.4f);
@@ -73,8 +77,13 @@ public static class VerifyCandyCottage
             var renderers=house.GetComponentsInChildren<Renderer>();
             int structure=0,pickupVisuals=0;
             foreach(var renderer in renderers)
+            {
+                if(!renderer.enabled)continue;
                 if(renderer.GetComponentInParent<CandyHouseHealingPickup>())pickupVisuals++;else structure++;
-            if(structure>32 || pickupVisuals>9)throw new Exception($"Too many cottage renderers: structure={structure}, pickups={pickupVisuals}.");
+            }
+            // Two readable 3D blackboards replaced two old text renderers;
+            // their frame, slate and lettering add four visible renderers.
+            if(structure>36 || pickupVisuals>9)throw new Exception($"Too many cottage renderers: structure={structure}, pickups={pickupVisuals}.");
             Result="Walked from island up the ramp, through the doorway, across the supported floor and back outside.";Status="passed";
         }
         catch(Exception e){Status="failed";Result=e.ToString();}

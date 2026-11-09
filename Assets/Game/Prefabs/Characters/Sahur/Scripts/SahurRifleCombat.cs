@@ -66,6 +66,13 @@ namespace Mavis
         }
         void Update()
         {
+#if UNITY_EDITOR
+            if(SecondIslandTestStation.UnlimitedRifle && !IsReloading)
+            {
+                ReserveRounds=ReserveCapacity;
+                if(Rounds<=0)Rounds=MagazineCapacity;
+            }
+#endif
             bool dead = !health || health.currentHealth <= 0 || (death && death.IsDead);
             if (dead) wasDead = true;
             else if (wasDead) { wasDead = false; CancelReload(); firePoseUntil = 0; }

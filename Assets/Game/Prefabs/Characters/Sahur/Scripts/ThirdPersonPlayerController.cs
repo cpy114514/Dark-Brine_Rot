@@ -453,13 +453,22 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         CreateUnderwaterPresentation();
     }
 
-    public void ContinueCameraFromCurrentView(Camera view,Vector3 velocity=default)
+    public void ContinueCameraFromCurrentView(Camera view,Vector3 velocity=default,Vector3? faceDirection=null)
     {
         if(view==null)return;
         playerCamera=view;
         Vector3 angles=view.transform.rotation.eulerAngles;
         yaw=angles.y;
         pitch=Mathf.Clamp(Mathf.DeltaAngle(0,angles.x),minPitch,maxPitch);
+        if(faceDirection.HasValue)
+        {
+            var direction=Vector3.ProjectOnPlane(faceDirection.Value,Vector3.up);
+            if(direction.sqrMagnitude>.01f)
+            {
+                yaw=Quaternion.LookRotation(direction).eulerAngles.y;
+                pitch=Mathf.Clamp(10f,minPitch,maxPitch);
+            }
+        }
         cameraInitialized=true;
         continuingCinematicCamera=true;cinematicCameraBlendAge=0;cinematicCameraVelocity=velocity;
     }
