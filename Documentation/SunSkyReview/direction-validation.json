@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "name": "valid",
+      "passed": true,
+      "nonFinitePixels": 0,
+      "blueSkyPixels": 88855,
+      "clippedWhitePixels": 0
+    },
+    {
+      "name": "zero",
+      "passed": true,
+      "nonFinitePixels": 0,
+      "blueSkyPixels": 88855,
+      "clippedWhitePixels": 0
+    },
+    {
+      "name": "tiny",
+      "passed": true,
+      "nonFinitePixels": 0,
+      "blueSkyPixels": 88855,
+      "clippedWhitePixels": 0
+    }
+  ],
+  "shaderErrors": [],
+  "scope": "Current running gameplay scene and camera pose; live materials restored; no restart or save changes"
+}

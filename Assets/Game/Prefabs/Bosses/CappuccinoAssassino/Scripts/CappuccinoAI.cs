@@ -7,8 +7,8 @@ namespace Mavis
     [RequireComponent(typeof(Health), typeof(CappuccinoEnemy), typeof(CharacterController))]
     public sealed partial class CappuccinoAI : MonoBehaviour
     {
-        public enum State { Idle, Chase, Attack, Recover, Retreat, Dead, Windup, Orbit, Staggered, Returning }
-        public enum AttackKind { TwinSlash, DashThrust, Whirlwind }
+        public enum State { Idle, Chase, Attack, Recover, Retreat, Dead, Windup, Orbit, Staggered, Returning, PhaseTransition }
+        public enum AttackKind { TwinSlash, DashThrust, Whirlwind, ShadowChain, CremaCyclone, MochaDive, CoffeeTempest }
         [Header("Target / aggro")]
         public Transform target;
         [Min(1f)] public float sightRange = 32f;
@@ -54,7 +54,7 @@ namespace Mavis
         public bool DamageWindowActive { get; private set; }
         public int SwingIndex => swingIndex;
         public bool IsExposed => CurrentState == State.Recover || CurrentState == State.Staggered;
-        public string AttackName => CurrentAttack == AttackKind.DashThrust ? "ASSASSIN RUSH" :
+        public string AttackName => IsPhaseTwoAttack ? PhaseTwoName : CurrentAttack == AttackKind.DashThrust ? "ASSASSIN RUSH" :
             CurrentAttack == AttackKind.Whirlwind ? "BLADE CYCLONE" : FightPhase == 2 ? "TRIPLE CUT" : "TWIN CUT";
 
         Health health;
@@ -94,6 +94,7 @@ namespace Mavis
             ultimate = GetComponent<CappuccinoUltimate>();
             bossPresentation = GetComponent<CappuccinoBossPresentation>();
             if (bossPresentation == null) bossPresentation = gameObject.AddComponent<CappuccinoBossPresentation>();
+            InitializePhaseTwo();
             ocean = FindFirstObjectByType<OceanWorld>();
             health.OnDamaged ??= new UnityEngine.Events.UnityEvent<float>();
             health.OnDeath ??= new UnityEngine.Events.UnityEvent();
@@ -119,6 +120,12 @@ namespace Mavis
 
         void Update() => Tick(Time.deltaTime, Time.time);
 
+        bool targetRespawned;
+        internal void OnTargetRespawn(PlayerHealth player)
+        {
+            if (FightActive && targetHealth == player) targetRespawned = true;
+        }
+
         void Tick(float deltaTime, float now)
         {
             if (deltaTime <= 0f || PauseSettingsMenu.IsOpen || health == null) return;
@@ -130,12 +137,17 @@ namespace Mavis
                 presentation.ResumeLocomotion();
             }
             if (ultimate != null && ultimate.isActiveAndEnabled) ultimate.Simulate(now);
-            ApplyGravity(deltaTime);
+            if (!PhaseTwoAirborne) ApplyGravity(deltaTime);
             if (now - poiseHitAt > 2.5f) poise = Mathf.MoveTowards(poise, 0f, deltaTime * 20f);
             // The full recovery window survives a dead/missing target or an arena exit.
             // Decide whether to return home only after the three-second action lock ends.
             if (ultimate != null && ultimate.CurrentPhase == CappuccinoUltimate.Phase.Immobilized)
             { HoldUltimatePose(deltaTime, Vector3.zero); return; }
+            if (targetRespawned)
+            {
+                targetRespawned = false;
+                if (FightActive) BeginReturn();
+            }
             if (CurrentState == State.Returning) { TickReturn(deltaTime); return; }
             if ((target == null || !target.gameObject.activeInHierarchy) && now >= acquireAt)
             {
@@ -153,14 +165,13 @@ namespace Mavis
             if (distance <= sightRange && HasSight()) engaged = true;
             if (!engaged) { SetMovement(0f, deltaTime); return; }
             if (!FightActive) BeginEncounter(now);
-            if (CurrentState == State.Staggered && now < actionAt)
-            { DamageWindowActive = false; SetMovement(0f, deltaTime); return; }
             if (ultimate != null && ultimate.isActiveAndEnabled && ultimate.TryActivate(now))
             {
-                FightPhase = 2;
-                FinishAttack(now, .2f);
-                bossPresentation?.Cue(CappuccinoBossPresentation.CueKind.Surge);
+                BeginPhaseTransition(now);
             }
+            if (TickPhaseTransition(deltaTime, now)) return;
+            if (CurrentState == State.Staggered && now < actionAt)
+            { DamageWindowActive = false; SetMovement(0f, deltaTime); return; }
             if (ultimate != null && ultimate.AttackLocked)
             { HoldUltimatePose(deltaTime, toTarget); return; }
             bool movementLocked = ultimate != null && ultimate.MovementLocked;
@@ -210,6 +221,7 @@ namespace Mavis
                 return;
             }
             bool visible = HasSight();
+            if (FightPhase == 2 && visible && now >= actionAt && TryChoosePhaseTwo(distance, now)) return;
             if (!movementLocked && visible && distance > attackRange + 1f && distance <= dashReach && now >= dashReadyAt)
             { BeginWindup(AttackKind.DashThrust, now); return; }
             if (distance <= attackRange && visible &&
@@ -253,6 +265,7 @@ namespace Mavis
 
         void BeginWindup(AttackKind kind, float now)
         {
+            if (kind >= AttackKind.ShadowChain) { BeginPhaseTwoAttack(kind, now); return; }
             if (!bossPresentation) GameplayAudio.Play(GameplayAudio.Cue.Warning, transform.position);
             CurrentAttack = kind; CurrentState = State.Windup;
             stateStartedAt = now; windupDuration = telegraphSeconds + (kind == AttackKind.TwinSlash ? 0f : .25f);
@@ -265,6 +278,7 @@ namespace Mavis
 
         void TickWindup(Vector3 toTarget, float dt, float now)
         {
+            if (IsPhaseTwoAttack) { TickPhaseTwoAttack(dt, now); return; }
             SetMovement(0f, dt);
             ActionProgress = Mathf.Clamp01((now - stateStartedAt) / windupDuration);
             if (ActionProgress < .62f)
@@ -295,6 +309,7 @@ namespace Mavis
 
         void TickAttack(float dt, float now)
         {
+            if (IsPhaseTwoAttack) { TickPhaseTwoAttack(dt, now); return; }
             var warning=BossAttackWarning.For(gameObject);
             if(CurrentAttack==AttackKind.DashThrust)warning.Lane(attackStartPosition,attackStartPosition+committedDirection*dashReach,attackReach*Mathf.Sin(32.5f*Mathf.Deg2Rad),.2f);
             else if(CurrentAttack==AttackKind.Whirlwind)warning.Circle(transform.position,attackReach*1.05f,.2f);
@@ -357,6 +372,7 @@ namespace Mavis
 
         void FinishAttack(float now, float recovery)
         {
+            CancelPhaseTwoAction();
             DamageWindowActive = false; hitResolved = true;
             CurrentState = State.Recover; actionAt = now + recovery / AttackFrequencyMultiplier;
             presentation.ResumeLocomotion();
@@ -399,6 +415,7 @@ namespace Mavis
             Face(delta, dt);
             if (delta.magnitude > .5f) { Move(delta.normalized, chaseSpeed, dt, 1f); return; }
             ultimate?.ResetEncounter();
+            ResetPhaseTwo();
             health.Heal(health.maxHealth - health.currentHealth);
             poise = 0f; FightPhase = 1; attackCounter = 0; actionAt = lastTickTime + openingSeconds;
             dashReadyAt = whirlReadyAt = lastTickTime + 1f;
@@ -548,6 +565,8 @@ namespace Mavis
             engaged = target != null;
             float now = Application.isPlaying ? Time.time : lastTickTime;
             if (engaged && !FightActive) BeginEncounter(now);
+            if (ultimate != null && ultimate.isActiveAndEnabled && ultimate.TryActivate(now)) BeginPhaseTransition(now);
+            if (CurrentState == State.PhaseTransition) return;
             poiseHitAt = now;
             poise += amount * (IsExposed ? 1.35f : 1f);
             if (poise >= staggerThreshold && now >= staggerReadyAt && !(ultimate != null && (ultimate.IsEmpowered || ultimate.AttackLocked)))
@@ -564,6 +583,7 @@ namespace Mavis
         void OnDeath()
         {
             if (CurrentState == State.Dead) return;
+            CancelPhaseTwoAction();
             CurrentState = State.Dead;
             FightActive = false; DamageWindowActive = false;
             hitResolved = true;
@@ -574,11 +594,13 @@ namespace Mavis
 
         void CancelCombat(bool resumePose = true)
         {
+            SuspendPhaseTransition();
+            CancelPhaseTwoAction();
             engaged = false;
             pendingRetreat = false;
             hitResolved = true;
             DamageWindowActive = false;
-            if (resumePose && (CurrentState == State.Attack || CurrentState == State.Windup))
+            if (resumePose && (CurrentState == State.Attack || CurrentState == State.Windup || CurrentState == State.PhaseTransition))
                 presentation.ResumeLocomotion();
             CurrentState = State.Idle;
         }
@@ -588,7 +610,7 @@ namespace Mavis
             if (CurrentState != State.Dead)
             {
                 // Object deactivation cannot safely crossfade its Animator.
-                resumeLocomotionPending |= CurrentState == State.Attack || CurrentState == State.Windup;
+                resumeLocomotionPending |= CurrentState == State.Attack || CurrentState == State.Windup || CurrentState == State.PhaseTransition;
                 CancelCombat(false);
             }
             DamageWindowActive = false;

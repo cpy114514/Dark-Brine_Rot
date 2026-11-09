@@ -1121,6 +1121,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a0579fa34ed4147439a32b3201494819, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2357366160247427764}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a0579fa34ed4147439a32b3201494819, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4814796603587674411}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a0579fa34ed4147439a32b3201494819, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4685289298114282189}
   m_SourcePrefab: {fileID: 100100000, guid: a0579fa34ed4147439a32b3201494819, type: 3}
 --- !u!4 &1958093111465054081 stripped
 Transform:
@@ -1384,6 +1390,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c4b5d0a719ebef46b64ccfbc18fc7c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Mavis.BossWeaknessSetup
+--- !u!114 &4814796603587674411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3960477964465410676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1ad0d4f64c2c1746be260bcb828f364, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongPhaseAnimation
+--- !u!114 &4685289298114282189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3960477964465410676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a253a750c26cc1f4fada47d74af6d667, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.NailongHitReaction
+  lightRecoilDegrees: 12
+  heavyRecoilDegrees: 22
 --- !u!4 &4069364082922344787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 166159824728751734, guid: a0579fa34ed4147439a32b3201494819, type: 3}

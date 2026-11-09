@@ -119,6 +119,9 @@ namespace Mavis
             if (!IsDead) return false;
             GameControls.ConsumeMenuInput();
             FindCheckpoint();
+            // Boss ticks are paused while the death screen is open. Notify them
+            // before restoring HP so the active encounter can return to its start.
+            FirstIslandBossProgression.OnPlayerRespawn(health);
             var capsule = GetComponent<CharacterController>();
             Vector3 position = initialPosition;
             Quaternion rotation = initialRotation;

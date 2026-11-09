@@ -1,0 +1,510 @@
+{
+  "passed": true,
+  "error": null,
+  "failed": 0,
+  "checkCount": 110,
+  "errors": [],
+  "cases": [
+    {
+      "phase": 1,
+      "kind": "TwinSlash",
+      "hits": 2,
+      "damage": 14.0
+    },
+    {
+      "phase": 1,
+      "kind": "DashThrust",
+      "hits": 1,
+      "damage": 11.0
+    },
+    {
+      "phase": 1,
+      "kind": "Whirlwind",
+      "hits": 1,
+      "damage": 12.0
+    },
+    {
+      "phase": 2,
+      "kind": "ShadowChain",
+      "hits": 3,
+      "damage": 21.0,
+      "highest": 0.05999976,
+      "maxStep": 2.833229,
+      "echoSamples": 31,
+      "maxEchoRatio": 1.05835843
+    },
+    {
+      "phase": 2,
+      "kind": "CremaCyclone",
+      "hits": 2,
+      "damage": 14.0,
+      "highest": 0.05999952,
+      "maxStep": 0.0,
+      "echoSamples": 0,
+      "maxEchoRatio": 0.0
+    },
+    {
+      "phase": 2,
+      "kind": "MochaDive",
+      "hits": 1,
+      "damage": 9.0,
+      "highest": 5.65999937,
+      "maxStep": 1.94331408,
+      "echoSamples": 10,
+      "maxEchoRatio": 1.08062649
+    },
+    {
+      "phase": 2,
+      "kind": "CoffeeTempest",
+      "hits": 4,
+      "damage": 28.0,
+      "highest": 0.05999976,
+      "maxStep": 0.765604258,
+      "echoSamples": 10,
+      "maxEchoRatio": 1.0553993
+    }
+  ],
+  "checks": [
+    {
+      "passed": true,
+      "name": "Original fixed health cap and first-phase entry"
+    },
+    {
+      "passed": true,
+      "name": "Phase one TwinSlash retains real native damage"
+    },
+    {
+      "passed": true,
+      "name": "Phase one DashThrust retains real native damage"
+    },
+    {
+      "passed": true,
+      "name": "Phase one Whirlwind retains real native damage"
+    },
+    {
+      "passed": true,
+      "name": "Threshold interrupts old action and delays phase commit"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition has no attack hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Transition duration is 4.2 seconds"
+    },
+    {
+      "passed": true,
+      "name": "Authored body animation completes into phase two"
+    },
+    {
+      "passed": true,
+      "name": "Transition does no damage and preserves current boss HP"
+    },
+    {
+      "passed": true,
+      "name": "Threshold transition cannot retrigger"
+    },
+    {
+      "passed": true,
+      "name": "Existing 200 HP heal and fixed health cap preserved"
+    },
+    {
+      "passed": true,
+      "name": "Existing three-second vulnerability lock preserved"
+    },
+    {
+      "passed": true,
+      "name": "Ultimate recovery cannot be skipped"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain readable startup"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain readable startup"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain readable startup"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain readable startup"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain readable startup"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain readable startup"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain readable startup"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain native hit confirmed"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain ends in punishable recovery"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain bounded movement without teleport"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain rendered afterimages match body scale"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain recovery cannot deliver delayed hits"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain disable cancels damage ownership"
+    },
+    {
+      "passed": true,
+      "name": "ShadowChain re-enable cannot deliver old hits"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone native hit confirmed"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone ends in punishable recovery"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone bounded movement without teleport"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone recovery cannot deliver delayed hits"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone disable cancels damage ownership"
+    },
+    {
+      "passed": true,
+      "name": "CremaCyclone re-enable cannot deliver old hits"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive readable startup"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive readable startup"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive readable startup"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive readable startup"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive readable startup"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive readable startup"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive native hit confirmed"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive ends in punishable recovery"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive bounded movement without teleport"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive rendered afterimages match body scale"
+    },
+    {
+      "passed": true,
+      "name": "Dive travels airborne and lands on real floor"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive recovery cannot deliver delayed hits"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive disable cancels damage ownership"
+    },
+    {
+      "passed": true,
+      "name": "MochaDive re-enable cannot deliver old hits"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest readable startup"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest native hit confirmed"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest ends in punishable recovery"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest bounded movement without teleport"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest rendered afterimages match body scale"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest recovery cannot deliver delayed hits"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest disable cancels damage ownership"
+    },
+    {
+      "passed": true,
+      "name": "CoffeeTempest re-enable cannot deliver old hits"
+    },
+    {
+      "passed": true,
+      "name": "Shadow chain cannot move or hit through solid cover"
+    },
+    {
+      "passed": true,
+      "name": "Airborne death cancels action, wave and AI"
+    },
+    {
+      "passed": true,
+      "name": "Death never revives through ultimate heal"
+    },
+    {
+      "passed": true,
+      "name": "Native fight emits no errors or exceptions"
+    }
+  ],
+  "frames": 191
+}

@@ -77,13 +77,16 @@ namespace Mavis
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Install()
         {
-            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-sahur-baseline") < 0 || FindAnyObjectByType<IslandPerformanceBaseline>()) return;
+            var arguments = Environment.GetCommandLineArgs();
+            if ((Array.IndexOf(arguments, "-sahur-baseline") < 0 && Array.IndexOf(arguments, "-baseline-observe-only") < 0) || FindAnyObjectByType<IslandPerformanceBaseline>()) return;
             var go = new GameObject("Optional island baseline"); DontDestroyOnLoad(go); go.AddComponent<IslandPerformanceBaseline>();
         }
         static string Argument(string prefix)
         { foreach (string arg in Environment.GetCommandLineArgs()) if (arg.StartsWith(prefix, StringComparison.Ordinal)) return arg.Substring(prefix.Length); return null; }
         void Awake()
         {
+            observeOnly = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-observe-only") >= 0;
+            if (observeOnly) { BeginObservation(); return; }
             output = Argument("-baseline-report=") ?? Path.Combine(Application.persistentDataPath, "island-baseline.json");
             if (float.TryParse(Argument("-baseline-seconds="), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float requested)) seconds = Mathf.Clamp(requested, 3, 60);
             story = Array.IndexOf(Environment.GetCommandLineArgs(), "-baseline-story") >= 0;
@@ -209,6 +212,7 @@ namespace Mavis
         }
         IEnumerator Start()
         {
+            if (observeOnly) yield break;
             double start = Time.realtimeSinceStartupAsDouble;
             string scene = story ? "Assets/Scenes/First story/Story1.unity" : "Assets/Scenes/First Island/Main.unity";
             report.scene = scene;
@@ -355,6 +359,7 @@ namespace Mavis
         }
         void LateUpdate()
         {
+            if (observeOnly) { ObserveFrame(); return; }
             if (forestAttribution) ForestControlWork();
             long tick = System.Diagnostics.Stopwatch.GetTimestamp();
             float wallMs = previousFrameTick == 0 ? 0 : (float)((tick - previousFrameTick) * 1000.0 / System.Diagnostics.Stopwatch.Frequency);
@@ -412,6 +417,7 @@ namespace Mavis
         }
         void OnDestroy()
         {
+            if (observeOnly) { EndObservation(); return; }
             RestoreForestState();
             if (fixedBudgetControl) WorldPerformanceManager.ForceFixedInitializationBudget = previousFixedBudget;
             Application.logMessageReceived -= Log; allocations.Dispose();

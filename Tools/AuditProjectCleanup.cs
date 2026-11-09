@@ -17,11 +17,14 @@ public static class AuditProjectCleanup
         var scenes=EditorBuildSettings.scenes.Where(s=>s.enabled).Select(s=>s.path).ToArray();
         var sceneDependencies=AssetDatabase.GetDependencies(scenes,true).OrderBy(p=>p).Select(p=>new{path=p,guid=AssetDatabase.AssetPathToGUID(p)}).ToArray();
         var runtimeResources=paths.Where(p=>p.StartsWith("Assets/Resources/",StringComparison.Ordinal)).OrderBy(p=>p).Select(p=>new{path=p,guid=AssetDatabase.AssetPathToGUID(p)}).ToArray();
+        // Preserve the legacy root-only field for existing comparisons, but also
+        // audit Resources folders inside equipment, third-party and other roots.
+        var nestedResources=paths.Where(p=>p.Contains("/Resources/") && !p.StartsWith("Assets/Resources/",StringComparison.Ordinal)).OrderBy(p=>p).Select(p=>new{path=p,guid=AssetDatabase.AssetPathToGUID(p)}).ToArray();
         var rootModel=AssetDatabase.GUIDToAssetPath("12cf83c4f8df11e46b335cb8a2fcfd5f");
         var result=new {label,assetCount=paths.Length,scenes,referencedBackups,backupAssets=paths.Where(IsBackup).OrderBy(p=>p).ToArray(),
-            sceneDependencies,runtimeResources,rootModel=new{guid=AssetDatabase.AssetPathToGUID(rootModel),meshes=AssetDatabase.LoadAllAssetsAtPath(rootModel).OfType<Mesh>().Select(m=>m.name).ToArray()}};
+            sceneDependencies,runtimeResources,nestedResources,rootModel=new{guid=AssetDatabase.AssetPathToGUID(rootModel),meshes=AssetDatabase.LoadAllAssetsAtPath(rootModel).OfType<Mesh>().Select(m=>m.name).ToArray()}};
         string destination=Path.GetFullPath(".codex/cleanup/dependencies-"+label+".json");Directory.CreateDirectory(Path.GetDirectoryName(destination));
         File.WriteAllText(destination,Newtonsoft.Json.JsonConvert.SerializeObject(result,Newtonsoft.Json.Formatting.Indented));
-        return new {label,result.assetCount,buildScenes=scenes.Length,runtimeResources=runtimeResources.Length,sceneDependencies=sceneDependencies.Length,referencedBackups,backupAssets=result.backupAssets.Length,result.rootModel};
+        return new {label,result.assetCount,buildScenes=scenes.Length,runtimeResources=runtimeResources.Length,nestedResources=nestedResources.Length,sceneDependencies=sceneDependencies.Length,referencedBackups,backupAssets=result.backupAssets.Length,result.rootModel};
     }
 }

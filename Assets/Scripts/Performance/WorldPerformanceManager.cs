@@ -318,6 +318,8 @@ namespace Mavis
             // The shader caps horizontal push at one, while vertical push is
             // bounded by .35 times the sum of active body/footprint strengths.
             float push = count > 0 ? .65f * Mathf.Sqrt(1f + .1225f * sumStrength * sumStrength) : 0f;
+            bool shadowsEnabled = QualitySettings.shadows != ShadowQuality.Disable && QualitySettings.shadowDistance > 0;
+            Vector3 cameraPosition = camera.transform.position;
             grassPadding.Clear();
             using (GrassVisibility.Auto())
             foreach (var batch in activeGrassBatches)
@@ -332,7 +334,7 @@ namespace Mavis
                     grassPadding.Add(batch.material, scale);
                 }
                 float padding = scale.x * batch.maximumResponse + scale.y;
-                SubmitGrassShadows(batch,camera,padding);
+                if (shadowsEnabled) SubmitGrassShadows(batch, camera, cameraPosition, padding);
                 int classification = GrassFrustum(batch.bounds, padding);
                 if (classification < 0) continue;
                 if (classification > 0) { SubmitGrass(batch, camera); continue; }
@@ -356,7 +358,7 @@ namespace Mavis
             // Legacy editor callers must not enqueue draws for cameras which may
             // never render. Camera callbacks now own all native submissions.
         }
-        internal void SubmitVisibleGrass(ScriptableRenderContext context,Camera camera)
+        internal void SubmitCameraGrass(ScriptableRenderContext context,Camera camera)
         {
             submittedGrassBatches=0;
             RenderGrass(context,camera);
@@ -386,24 +388,39 @@ namespace Mavis
                 Graphics.DrawMeshInstanced(batch.mesh, 0, batch.material, batch.matrices, batch.count, batch.properties,
                     ShadowCastingMode.Off, true, 0, camera, LightProbeUsage.Off);
         }
-        void SubmitGrassShadows(GrassBatch batch,Camera camera,float padding)
+        void SubmitGrassShadows(GrassBatch batch, Camera camera, Vector3 cameraPosition, float padding)
         {
-            if(QualitySettings.shadows==ShadowQuality.Disable||QualitySettings.shadowDistance<=0||
-                SquaredDistance(camera.transform.position,batch.bounds)>GrassShadowResidentDistance*GrassShadowResidentDistance)return;
-            var shadow=shadowGrass;shadow.count=0;
-            float range=GrassShadowResidentDistance+padding;
+            if (SquaredDistance(cameraPosition, batch.bounds) > GrassShadowResidentDistance * GrassShadowResidentDistance) return;
+            float range = GrassShadowResidentDistance + padding;
+            float rangeSquared = range * range;
+            Vector3 offset = batch.bounds.center - cameraPosition;
+            Vector3 farthest = new Vector3(Mathf.Abs(offset.x), Mathf.Abs(offset.y), Mathf.Abs(offset.z)) + batch.bounds.extents;
+            // A whole batch inside the shadow sphere already has all matching
+            // instance data, including the wind properties. Partial batches use
+            // the original per-instance test.
+            if (farthest.sqrMagnitude <= rangeSquared)
+            {
+                DrawGrassShadows(batch, camera);
+                return;
+            }
+            var shadow = shadowGrass;
+            shadow.count = 0;
             for(int i=0;i<batch.count;i++)
             {
-                if(SquaredDistance(camera.transform.position,batch.occupants[i].bounds)>range*range)continue;
+                if (SquaredDistance(cameraPosition, batch.occupants[i].bounds) > rangeSquared) continue;
                 int index=shadow.count++;shadow.matrices[index]=batch.matrices[i];shadow.anchors[index]=batch.anchors[i];
                 shadow.heights[index]=batch.heights[i];shadow.responses[index]=batch.responses[i];shadow.stiffness[index]=batch.stiffness[i];
             }
             if(shadow.count==0)return;
             SetGrassProperties(shadow);
-            // Off-screen blades may still cast into the view. Select the small
-            // shadow set independently of the camera's visible-blade frustum.
-            Graphics.DrawMeshInstanced(batch.mesh,0,batch.material,shadow.matrices,shadow.count,shadow.properties,
-                ShadowCastingMode.ShadowsOnly,false,0,camera,LightProbeUsage.Off);
+            DrawGrassShadows(shadow, camera, batch.mesh, batch.material);
+        }
+        static void DrawGrassShadows(GrassBatch batch, Camera camera, Mesh mesh = null, Material material = null)
+        {
+            // Off-screen blades may still cast into the view.
+            Graphics.DrawMeshInstanced(mesh ?? batch.mesh, 0, material ?? batch.material,
+                batch.matrices, batch.count, batch.properties, ShadowCastingMode.ShadowsOnly,
+                false, 0, camera, LightProbeUsage.Off);
         }
         static void SetGrassProperties(GrassBatch batch)
         {

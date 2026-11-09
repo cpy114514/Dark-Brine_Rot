@@ -1,0 +1,11 @@
+[
+  {"do": "focus"},
+  {"do": "click", "x": 958, "y": 669, "delay": 2.0},
+  {"do": "wait", "seconds": 5},
+  {"do": "capture", "name": "07_respawned"},
+  {"do": "shots", "name": "island_walk", "seconds": 5, "fps": 12, "keys": ["w"], "look": [3, 0]},
+  {"do": "shots", "name": "island_sprint", "seconds": 5, "fps": 12, "keys": ["w", "shift"], "look": [5, 0]},
+  {"do": "capture", "name": "08_after_run"},
+  {"do": "shots", "name": "island_gear", "seconds": 3, "fps": 8},
+  {"do": "capture", "name": "09_after_gear"}
+]

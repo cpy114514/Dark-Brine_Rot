@@ -42,6 +42,9 @@ namespace Mavis
         float floorHeight;
         CappuccinoAI boss;
         Health health;
+        Quaternion[] entryPose;
+        int previousPoseHash;
+        float poseEntryAt;
 
         public void Initialize()
         {
@@ -76,9 +79,20 @@ namespace Mavis
 
         public void ApplyPose()
         {
-            if(health&&health.IsDead&&(Time.timeScale<=0||PauseSettingsMenu.IsOpen)&&health.GetComponent<EnemyDeathPresentation>() is EnemyDeathPresentation corpse&&corpse.IsPlaying)return;
+            if(health&&health.IsDead&&health.GetComponent<EnemyDeathPresentation>() is EnemyDeathPresentation corpse&&
+                corpse.IsPlaying&&(corpse.IsSettled||Time.timeScale<=0||PauseSettingsMenu.IsOpen))return;
             if (sourceBones == null) Initialize();
             if (sourceBones == null) return;
+            var stateInfo=motionAnimator.GetCurrentAnimatorStateInfo(0);
+            bool polished=stateInfo.IsName("CapriP2Transition")||stateInfo.IsName("CapriP2Shadow")||stateInfo.IsName("CapriP2Cyclone")||
+                stateInfo.IsName("CapriP2Dive")||stateInfo.IsName("CapriP2Tempest");
+            if(polished&&previousPoseHash!=stateInfo.fullPathHash)
+            {
+                if(entryPose==null||entryPose.Length!=bindings.Length)entryPose=new Quaternion[bindings.Length];
+                for(int i=0;i<bindings.Length;i++)if(bindings[i].target)entryPose[i]=bindings[i].target.localRotation;
+                poseEntryAt=Time.time;
+            }
+            previousPoseHash=stateInfo.fullPathHash;
             rigRoot.localPosition = rigRestPosition;
             if(health&&health.IsDead)rigRoot.localRotation=rigRestRotation;
             var sourceFrame = motionAnimator.transform;
@@ -96,7 +110,7 @@ namespace Mavis
                 bool bodyBone=binding.sourceBone==HumanBodyBones.Hips || binding.sourceBone==HumanBodyBones.Spine ||
                     binding.sourceBone==HumanBodyBones.Chest || binding.sourceBone==HumanBodyBones.UpperChest;
                 if(bodyBone && boss!=null && health!=null && !health.IsDead &&
-                    (boss.CurrentState==CappuccinoAI.State.Attack || boss.CurrentState==CappuccinoAI.State.Windup))
+                    (boss.CurrentState==CappuccinoAI.State.Attack || boss.CurrentState==CappuccinoAI.State.Windup || boss.InPhaseTransition))
                 {
                     // The human sword clip folds its torso far enough to topple
                     // the cup. Preserve its twist while limiting the heavy body's lean.
@@ -108,7 +122,12 @@ namespace Mavis
                 }
                 // Smooth a change of sword hand without blurring the attack's event clock.
                 Quaternion local = binding.target.parent != null ? Quaternion.Inverse(binding.target.parent.rotation) * desired : desired;
-                float blend = Application.isPlaying ? 1f - Mathf.Exp(-30f * Time.deltaTime) : 1f;
+                if(Application.isPlaying&&polished&&entryPose!=null&&Time.time-poseEntryAt<.16f)
+                {
+                    float u=Mathf.Clamp01((Time.time-poseEntryAt)/.16f);u=u*u*u*(u*(u*6-15)+10);
+                    local=Quaternion.Slerp(entryPose[i],local,u);
+                }
+                float blend = Application.isPlaying ? 1f - Mathf.Exp(-(polished?65f:30f) * Time.deltaTime) : 1f;
                 binding.target.localRotation = Quaternion.Slerp(binding.target.localRotation,local,blend);
             }
             if (boss != null && health!=null && !health.IsDead)

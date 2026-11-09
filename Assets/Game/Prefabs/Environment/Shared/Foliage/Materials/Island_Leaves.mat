@@ -31,14 +31,27 @@ Material:
         m_Texture: {fileID: 2800000, guid: 3896fa1b54718d5448bcc85d8bbce43b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _BotanicalNormal:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BotanicalSurfaceMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 3896fa1b54718d5448bcc85d8bbce43b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _AuthoredGrass: 0
+    - _BotanicalSurface: 0
+    - _BotanicalTriplanar: 0
+    - _ClipBelowSea: 0
     - _Cull: 0
     - _Cutoff: 0.38
+    - _GrassTintStrength: 0.55
     - _LocalWindScale: 1
     - _MavisWindAnchorY: 0
     - _MavisWindInvHeight: 1
@@ -46,13 +59,19 @@ Material:
     - _Metallic: 0
     - _PlayerPushHeightBias: 1
     - _PlayerPushStrength: 0
+    - _RootSeatDepth: 0
     - _Smoothness: 0.04
+    - _SunDesaturation: 0.2
     - _UseAlphaMap: 1
+    - _UseBladeHeight: 0
     - _WindBend: 0.8
     - _WindFrequency: 0.75
     - _WindGust: 0.6
     - _WindTrunkStiffness: 0.15
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.91, g: 0.94, b: 0.79, a: 1}
+    - _BotanicalEmission: {r: 0, g: 0, b: 0, a: 0}
+    - _EcologyDistance: {r: 0, g: 0, b: 0, a: 0}
+    - _EcologyLodFade: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

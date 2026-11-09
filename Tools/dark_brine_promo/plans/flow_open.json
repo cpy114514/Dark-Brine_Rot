@@ -1,0 +1,8 @@
+[
+  {"do": "focus"},
+  {"do": "click", "x": 205, "y": 481, "delay": 2.0},
+  {"do": "wait", "seconds": 5},
+  {"do": "capture", "name": "02_loading"},
+  {"do": "record", "name": "03_opening", "seconds": 45, "fps": 12},
+  {"do": "capture", "name": "04_after_opening"}
+]

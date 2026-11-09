@@ -1,0 +1,5 @@
+[
+  {"do": "focus"},
+  {"do": "capture", "name": "01_menu"},
+  {"do": "wait", "seconds": 1}
+]

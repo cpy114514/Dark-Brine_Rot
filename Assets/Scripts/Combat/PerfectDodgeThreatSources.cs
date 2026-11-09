@@ -47,6 +47,7 @@ namespace Mavis
     {
         public bool ForecastDodge(PlayerHealth player,float horizon,out PerfectDodgeThreat threat)
         {
+            if(IsPhaseTwoAttack)return ForecastPhaseTwoDodge(player,horizon,out threat);
             threat=default;if(!FightActive||health.IsDead||CurrentState!=State.Windup&&CurrentState!=State.Attack)return false;
             bool wind=CurrentState==State.Windup;
             if(!wind&&hitResolved)return false;

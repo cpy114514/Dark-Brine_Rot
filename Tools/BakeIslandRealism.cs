@@ -272,12 +272,13 @@ public static class BakeIslandRealism
     {
         var material = new Material(source) { enableInstancing = true };
         material.SetTexture("_MainTex", Texture2D.whiteTexture);
-        material.SetColor("_BaseColor", Color.white);
+        material.SetColor("_BaseColor", new Color(.96f, .95f, .87f));
         material.SetFloat("_UseAlphaMap", 0);
         material.SetFloat("_ClipBelowSea", 0);
         material.SetFloat("_BotanicalSurface", 0);
         material.SetFloat("_AuthoredGrass", 1);
-        material.SetFloat("_WindBend", .63f);
+        material.SetFloat("_WindBend", .48f);
+        material.SetFloat("_SunDesaturation", .35f);
         material.SetFloat("_WindFrequency", 1.25f);
         material.SetFloat("_Cutoff", .1f);
         material.SetFloat("_Cull", 0);
@@ -475,6 +476,13 @@ public static class BakeIslandRealism
     static T InScene<T>(Scene scene) where T : Component =>
         Object.FindObjectsByType<T>(FindObjectsSortMode.None).Single(c => c.gameObject.scene == scene);
 
+    // Authored detail compositions share the renderer type but own a different asset.
+    static IslandEcologyRenderer FindDressing(Scene scene) =>
+        Object.FindObjectsByType<IslandEcologyRenderer>(FindObjectsSortMode.None).Single(c =>
+            c.gameObject.scene == scene && c.data &&
+            (AssetDatabase.GetAssetPath(c.data) == Output + "/Woodland and coastal dressing.asset" ||
+             AssetDatabase.GetAssetPath(c.data) == Previous + "/Ecology.asset"));
+
     public static object Bake()
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Stop Play Mode before baking.");
@@ -483,7 +491,7 @@ public static class BakeIslandRealism
         var island = Object.FindObjectsByType<ProceduralIsland>(FindObjectsSortMode.None)
             .Single(i => i.gameObject.scene == scene && i.isActiveAndEnabled);
         var scatter = InScene<NaturalGrassScatter>(scene);
-        var renderer = InScene<IslandEcologyRenderer>(scene);
+        var renderer = FindDressing(scene);
         var source = AssetDatabase.LoadAssetAtPath<NaturalGrassScatterData>(Candidates);
         var baseEcology = AssetDatabase.LoadAssetAtPath<IslandEcologyData>(Previous + "/Ecology.asset");
         var protection = AssetDatabase.LoadAssetAtPath<IslandEcologySettings>(Previous + "/Settings.asset");
@@ -508,6 +516,7 @@ public static class BakeIslandRealism
         scatter.enabled = true;
         renderer.data = ecology;
         renderer.Rebuild();
+        IslandEcologyCollisionBaker.Rebuild(renderer);
         EditorUtility.SetDirty(island);
         EditorUtility.SetDirty(scatter);
         EditorUtility.SetDirty(renderer);
@@ -1030,7 +1039,7 @@ public static class BakeIslandRealism
         var island = Object.FindObjectsByType<ProceduralIsland>(FindObjectsSortMode.None)
             .Single(i => i.gameObject.scene == scene && i.isActiveAndEnabled);
         var grass = InScene<NaturalGrassScatter>(scene);
-        var ecology = InScene<IslandEcologyRenderer>(scene);
+        var ecology = FindDressing(scene);
         if (!island.habitatMap || !grass.data || !ecology.data ||
             AssetDatabase.GetAssetPath(grass.data) != Output + "/Meadow Scatter.asset" ||
             AssetDatabase.GetAssetPath(ecology.data) != Output + "/Woodland and coastal dressing.asset")

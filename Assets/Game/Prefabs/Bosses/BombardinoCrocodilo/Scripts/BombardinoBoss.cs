@@ -138,6 +138,17 @@ namespace Mavis
             impactStrength=Mathf.Clamp(strength,.3f,1.8f);impactAge=0;
         }
         void Update()=>Tick(Time.deltaTime);
+        internal void OnTargetRespawn(PlayerHealth player)
+        {
+            if (FightActive && targetHealth == player) BeginReturn();
+        }
+
+        void BeginReturn()
+        {
+            FightActive = false;
+            SetState(State.Returning);
+            ClearHazards();
+        }
         public void Tick(float deltaTime)
         {
             if(!initialized)Initialize();
@@ -162,10 +173,10 @@ namespace Mavis
         {
             clock+=dt;age+=dt;
             if(FightActive&&!FirstIslandBossProgression.CanChallenge(this,FirstIslandObjectives.BossKind.Bombardino))
-            {FightActive=false;ClearHazards();SetState(State.Returning);}
+            {BeginReturn();}
             impactAge=Mathf.Min(.3f,impactAge+dt);
             if(FightActive&&(target==null||targetHealth==null||!targetHealth.isActiveAndEnabled||targetHealth.currentHealth<=0))
-            {FightActive=false;SetState(State.Returning);ClearHazards();}
+            {BeginReturn();}
             for(int i=fireImpacts.Count-1;i>=0;i--)if(clock>=fireImpacts[i].at)
             {
                 var impact=fireImpacts[i];fireImpacts.RemoveAt(i);
@@ -194,7 +205,7 @@ namespace Mavis
             if(clock>=protectPlayersAt){protectPlayersAt=clock+2f;ProtectPlayersFromBodyCollision();}
             if(clock>=acquireAt){acquireAt=clock+.5f;Acquire();}
             if(FightActive&&(targetHealth==null||targetHealth.currentHealth<=0||Vector3.Distance(Ground(target.position),home)>leashRadius))
-            {FightActive=false;SetState(State.Returning);ClearHazards();}
+            {BeginReturn();}
             prediction.Observe(target);
             // Schedule warning + attack against the previous attack's start, so travel,
             // burst length and the enraged phase never add an extra cooling delay.

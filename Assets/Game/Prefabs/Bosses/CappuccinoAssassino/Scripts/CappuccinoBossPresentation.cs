@@ -67,7 +67,7 @@ namespace Mavis
             bool victory=health.IsDead && Time.time-victoryAt<3f;
             bool visible=camera && (ai.FightActive || victory);
             hud.Refresh(visible,camera?(transform.position-camera.transform.position).sqrMagnitude:float.PositiveInfinity,
-                health.Ratio,health.currentHealth,health.maxHealth,"CAPPUCCINO ASSASSINO",Time.deltaTime);
+                health.Ratio,health.currentHealth,health.maxHealth,ai.FightPhase==2?"CAPPUCCINO ASSASSINO · RISTRETTO":"CAPPUCCINO ASSASSINO",Time.deltaTime);
         }
 
         void CreateAudio()

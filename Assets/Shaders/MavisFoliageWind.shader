@@ -30,7 +30,10 @@ Shader "Mavis/FoliageWind"
         [HideInInspector] _ClipBelowSea ("Clip On Beach", Float) = 0
         [HideInInspector] _UseBladeHeight ("Use Baked Blade Height", Float) = 0
         [HideInInspector] _AuthoredGrass ("Preserve authored grass blade colours", Float) = 0
+        _GrassTintStrength ("Legacy meadow tint (0 for bark)", Range(0,1.25)) = 1
+        _SunDesaturation ("Legacy sunlight desaturation", Range(0,1)) = 0.55
         [Toggle] _BotanicalSurface ("Botanical PBR Surface", Float) = 0
+        _RootSeatDepth ("Tree root extension (local units)", Range(0, 0.2)) = 0
         _BotanicalTriplanar ("Bark Triplanar Tiling (0 disables)", Float) = 0
         [Normal] _BotanicalNormal ("Botanical Normal", 2D) = "bump" {}
         _BotanicalSurfaceMap ("R Roughness G Occlusion B Transmission A Emission", 2D) = "white" {}
@@ -67,12 +70,14 @@ Shader "Mavis/FoliageWind"
                 half   _WindFrequency;
                 half   _WindGust;
                 half   _LocalWindScale;
-                half   _PlayerPushStrength;
                 half   _PlayerPushHeightBias;
                 half   _ClipBelowSea;
                 half   _UseBladeHeight;
                 half   _AuthoredGrass;
+                half   _GrassTintStrength;
+                half   _SunDesaturation;
                 half   _BotanicalSurface;
+                half   _RootSeatDepth;
                 float  _BotanicalTriplanar;
                 half4  _BotanicalEmission;
                 float4 _EcologyDistance;
@@ -84,11 +89,15 @@ Shader "Mavis/FoliageWind"
                 UNITY_DEFINE_INSTANCED_PROP(float, _MavisWindInvHeight)
                 UNITY_DEFINE_INSTANCED_PROP(float, _MavisWindResponse)
                 UNITY_DEFINE_INSTANCED_PROP(float, _WindTrunkStiffness)
+                // FoliageWindDriver overrides this per renderer/material slot.
+                // Keep it instanced so the property block does not split grass batches.
+                UNITY_DEFINE_INSTANCED_PROP(float, _PlayerPushStrength)
             UNITY_INSTANCING_BUFFER_END(FoliageInstances)
             #define _MavisWindAnchorY UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _MavisWindAnchorY)
             #define _MavisWindInvHeight UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _MavisWindInvHeight)
             #define _MavisWindResponse UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _MavisWindResponse)
             #define _WindTrunkStiffness UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _WindTrunkStiffness)
+            #define _PlayerPushStrength UNITY_ACCESS_INSTANCED_PROP(FoliageInstances, _PlayerPushStrength)
 
             // Global wind state (set every frame by FoliageWindDriver)
             float4 _MavisWindDir;       // xyz = direction (normalized), w = time
@@ -194,12 +203,16 @@ Shader "Mavis/FoliageWind"
                 UNITY_SETUP_INSTANCE_ID(IN);
                 Varyings OUT;
                 UNITY_TRANSFER_INSTANCE_ID(IN, OUT);
-                float3 positionWS = TransformObjectToWorld(IN.positionOS.xyz);
-                positionWS += ComputeWindOffset(positionWS, IN.color.a);
+                float3 positionOS = IN.positionOS.xyz;
+                // Extend the visible foot of the large island trunk into slopes.
+                // The same vertices drive the color, depth, and shadow passes.
+                [branch] if (_RootSeatDepth > 0.0h)
+                    positionOS.y -= _RootSeatDepth * (1.0 - smoothstep(0.04, 0.29, positionOS.y));
+                float3 originalWS = TransformObjectToWorld(positionOS);
+                float3 positionWS = originalWS + ComputeWindOffset(originalWS, IN.color.a);
 
                 float playerInfluence = 0;
                 float3 push = 0;
-                float3 originalWS = TransformObjectToWorld(IN.positionOS.xyz);
                 float rootMask = BladeHeight(originalWS, IN.color.a);
                 rootMask = rootMask * rootMask;
                 // Distant foliage still moves in the wind, without paying for close-up interaction.
@@ -284,6 +297,7 @@ Shader "Mavis/FoliageWind"
                 if (_UseAlphaMap > 0.5h)
                     opacity *= SAMPLE_TEXTURE2D(_AlphaMap, sampler_AlphaMap, IN.uv).r;
                 clip(opacity - _Cutoff);
+                half edgeCoverage = _AlphaToMaskAvailable > .5 && _Cutoff > .01h ? saturate((opacity-_Cutoff)/max(fwidth(opacity),.005h)+.5h) : 1.0h;
                 half3 albedo  = baseTex.rgb * _BaseColor.rgb;
                 // Baked root-to-tip vertex colour: roots sit in their own shadow while
                 // tips catch light, so each clump gains volume without extra passes.
@@ -321,7 +335,8 @@ Shader "Mavis/FoliageWind"
                     SurfaceData surface=(SurfaceData)0;
                     surface.albedo=albedo;surface.alpha=1;surface.metallic=_Metallic;
                     surface.smoothness=saturate((1-map.r)*_Smoothness);
-                    surface.occlusion=map.g;surface.normalTS=normalTS;
+                    half rootOcclusion=lerp(.74h,1.0h,smoothstep(.02h,.65h,IN.color.a));
+                    surface.occlusion=map.g*lerp(1.0h,rootOcclusion,saturate(_UseBladeHeight));surface.normalTS=normalTS;
                     surface.emission=_BotanicalEmission.rgb*map.a;
                     InputData input=(InputData)0;
                     input.positionWS=IN.positionWS;input.normalWS=normal;
@@ -334,6 +349,7 @@ Shader "Mavis/FoliageWind"
                     half transmit=pow(saturate(dot(-input.viewDirectionWS,sun.direction)),3)*map.b*.13h;
                     lit.rgb+=albedo*sun.color*transmit*sun.shadowAttenuation;
                     lit.rgb=MixFog(lit.rgb,IN.fogFactor);
+                    lit.a=edgeCoverage;
                     return lit;
                 }
                 // Broad and fine patches keep one shared grass texture from reading as a flat carpet.
@@ -351,9 +367,9 @@ Shader "Mavis/FoliageWind"
                 // back in on the sunlit face; the last 22% keeps blade detail.
                 half3 tint = lerp(half3(0.52h, 0.88h, 0.54h), half3(0.84h, 0.90h, 0.68h),
                     saturate(broad * 0.5 + 0.5) * 0.65h);
-                albedo = lerp(albedo, luma * tint, 0.82h);
+                albedo = lerp(albedo, luma * tint, saturate(0.82h * _GrassTintStrength));
                 albedo *= 0.88h + 0.10h * (fine * 0.5 + 0.5);
-                albedo = lerp(albedo, authoredBlade, _AuthoredGrass);
+                albedo = lerp(authoredBlade, albedo, saturate(_GrassTintStrength) * (1.0h - _AuthoredGrass));
 
                 // Simple hemisphere ambient + main directional light
                 Light mainLight = GetMainLight(TransformWorldToShadowCoord(IN.positionWS));
@@ -373,7 +389,7 @@ Shader "Mavis/FoliageWind"
                 // toward chartreuse no matter how the texture is tinted. Desaturate the
                 // sun for foliage only; the terrain keeps its warmer response.
                 half sunLuma = dot(mainLight.color, half3(0.333h, 0.334h, 0.333h));
-                half3 sun = lerp(mainLight.color, sunLuma.xxx, 0.55h);
+                half3 sun = lerp(mainLight.color, sunLuma.xxx, _SunDesaturation);
                 // Match the island terrain's exposure: the old 0.80 direct term plus a
                 // 1.2 wrap peak made grass ~40% brighter than the ground beneath it,
                 // which is what read as a glowing carpet instead of a lit surface.
@@ -384,9 +400,9 @@ Shader "Mavis/FoliageWind"
 
                 // Lighten leaves/branches slightly where player is pushing them
                 lit += albedo * IN.squish * 0.15;
-                lit = lerp(lit, MixFog(lit, IN.fogFactor), _AuthoredGrass);
+                lit = MixFog(lit, IN.fogFactor);
 
-                return half4(lit, 1.0h);
+                return half4(lit, edgeCoverage);
             }
             float3 _LightDirection;
             float3 _LightPosition;
@@ -445,6 +461,7 @@ Shader "Mavis/FoliageWind"
             Name "ForwardLit"
             Tags { "LightMode" = "UniversalForward" }
             Cull [_Cull]
+            AlphaToMask On
             HLSLPROGRAM
             #pragma target 4.5
             #pragma vertex vert
@@ -456,6 +473,9 @@ Shader "Mavis/FoliageWind"
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
             #pragma multi_compile_fog
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
             ENDHLSL
         }
 

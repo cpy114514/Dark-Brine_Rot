@@ -1,0 +1,53 @@
+{
+  "removedFiles": 156108,
+  "removedBytes": 83407974200,
+  "removedGiB": 77.68,
+  "driveFreeIncreaseBytes": 82498985984,
+  "failures": [
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-0.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-0.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-1.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-1.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-10.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-10.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-2.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-2.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-3.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-3.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-4.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-4.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-5.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-5.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-6.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-6.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-7.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-7.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-8.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-8.log' because it is being used by another process."
+    },
+    {
+      "path": "Logs/shadercompiler-UnityShaderCompiler.exe-9.log",
+      "error": "The process cannot access the file 'D:\\indiegameDev\\unity\\Dark Brine_Rot\\Logs\\shadercompiler-UnityShaderCompiler.exe-9.log' because it is being used by another process."
+    }
+  ],
+  "planSha256": "8A2112B2057B738A7460EF0BE5B310B6494D61351226B4921427EC39C9C5FAA3"
+}

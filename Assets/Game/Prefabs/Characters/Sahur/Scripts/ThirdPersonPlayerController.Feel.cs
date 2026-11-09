@@ -7,6 +7,29 @@ public sealed partial class ThirdPersonPlayerController
     public CombatFeelProfile ControlFeel => combat && combat.feel ? combat.feel : CombatFeelProfile.Default;
     bool TunedControls => useControlPreset && ControlFeel.useControlTuning;
     CombatFeelProfile.ControlResponse Response => ControlFeel.Controls;
+
+    static readonly int LocomotionState = Animator.StringToHash("Base Layer.Locomotion");
+
+    float WalkStrideScale(float walkSpeed, float deltaTime)
+    {
+        if (motionState != 0 || walkSpeed <= 0f || !animator || !animator.isActiveAndEnabled ||
+            animator.IsInTransition(0))
+            return 1f;
+
+        var state = animator.GetCurrentAnimatorStateInfo(0);
+        if (state.fullPathHash != LocomotionState || state.length <= 0f)
+            return 1f;
+
+        float walkWeight = 1f - Mathf.Clamp01(4f * Mathf.Abs(animator.GetFloat(SpeedId) / walkSpeed - 1f));
+        // The planted foot moves back fastest near 12% and 62% of Walk_Loop.
+        // Average the two pulses over the frame so a full loop keeps its distance.
+        const float radiansPerCycle = 4f * Mathf.PI;
+        float phase = (Mathf.Repeat(state.normalizedTime, 1f) - .12f) * radiansPerCycle;
+        float halfSpan = deltaTime * animator.speed * state.speed * state.speedMultiplier / state.length * radiansPerCycle * .5f;
+        float average = Mathf.Abs(halfSpan) > .0001f ? Mathf.Sin(halfSpan) / halfSpan : 1f;
+        return 1f + .10f * walkWeight * average * Mathf.Cos(phase + halfSpan);
+    }
+
     Vector3 AdvanceLocomotion(Vector3 desired,bool grounded,float dt)
     {
         float rate=desired.sqrMagnitude>planarVelocity.sqrMagnitude ? acceleration : deceleration;

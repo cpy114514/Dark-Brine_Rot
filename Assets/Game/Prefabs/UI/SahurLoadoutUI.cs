@@ -392,6 +392,8 @@ namespace Mavis
 
         void RefreshLanguage()
         {
+            // The scene-owned canvas can be destroyed before the player's final loadout notification.
+            if (!root || !panel) return;
             if (pickupNotice != null)
             {
                 var names = recentPickups.ConvertAll(item => item ? item.LocalizedName : "");
@@ -399,6 +401,7 @@ namespace Mavis
             }
             for (int i = 0; i < equipmentNames.Length; i++)
             {
+                if (!equipmentLabels[i]) return;
                 int count = 0;
                 if (inventory != null) foreach (var pair in inventory.Items) if ((int)pair.Key.slot == i) count += pair.Value;
                 equipmentLabels[i].text = count > 0 ? GameLocalization.Format("gear.count", GameLocalization.Text(equipmentNames[i]), count) :

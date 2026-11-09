@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Mavis
 {
@@ -112,6 +112,7 @@ namespace Mavis
             animator.SetBool(Dead, true); animator.Play("Rifle Death", locomotion, 0); animator.Update(0);
             return true;
         }
+
         public void ResetDeath()
         {
             if (!DeathPoseActive) return;

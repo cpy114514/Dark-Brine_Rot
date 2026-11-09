@@ -15,6 +15,9 @@ public sealed class DayNightCycle : MonoBehaviour
     public bool previewInEditor;
     [Tooltip("Use the Second Island's cream, rose and lavender atmosphere while preserving the day/night clock.")]
     public bool marshmallowPalette;
+    [Header("Coastal atmosphere")]
+    public bool coastalAtmosphere;
+    [Range(0.0001f, 0.002f)] public float coastalHazeDensity = .00065f;
 
 #if UNITY_EDITOR
     void OnValidate()
@@ -80,6 +83,7 @@ public sealed class DayNightCycle : MonoBehaviour
     bool originalFog;
     float originalFogStart;
     float originalFogEnd;
+    float originalFogDensity;
     FogMode originalFogMode;
     Color originalFogColor;
     AmbientMode originalAmbientMode;
@@ -143,6 +147,7 @@ public sealed class DayNightCycle : MonoBehaviour
         originalFogMode = RenderSettings.fogMode;
         originalFogStart = RenderSettings.fogStartDistance;
         originalFogEnd = RenderSettings.fogEndDistance;
+        originalFogDensity = RenderSettings.fogDensity;
         originalFogColor = RenderSettings.fogColor;
         originalAmbientMode = RenderSettings.ambientMode;
         originalAmbientSkyColor = RenderSettings.ambientSkyColor;
@@ -251,12 +256,14 @@ public sealed class DayNightCycle : MonoBehaviour
         // The directional sun becomes the moonlight at night. Keep it cool, but
         // bright enough to visibly light terrain and characters under a full moon.
         Color nightSun = new Color(0.52f, 0.65f, 0.92f, 1f);
-        Color daySun = new Color(1f, 0.93f, 0.79f, 1f);
+        bool useCoastalPalette = coastalAtmosphere && !marshmallowPalette;
+        Color daySun = useCoastalPalette ? new Color(1f, 0.95f, 0.86f, 1f) : new Color(1f, 0.93f, 0.79f, 1f);
         Color warmSun = Color.Lerp(new Color(1f, 0.42f, 0.26f, 1f),
             new Color(1f, 0.58f, 0.23f, 1f), dailyPalette);
         Color lowSunColor = Color.Lerp(daySun, warmSun, 0.72f);
         sun.color = Color.Lerp(Color.Lerp(nightSun, daySun, daylight), lowSunColor, twilight);
-        float moonlight = Mathf.Lerp(0.08f, Mathf.Max(0.08f, fullMoonLightIntensity), MoonIllumination) * night;
+        float minimumMoonlight = useCoastalPalette ? 0.13f : 0.08f;
+        float moonlight = Mathf.Lerp(minimumMoonlight, Mathf.Max(minimumMoonlight, fullMoonLightIntensity), MoonIllumination) * night;
         sun.intensity = Mathf.Lerp(moonlight, noonIntensity, daylight);
         sun.shadows = daylight > 0.16f ? originalShadows : LightShadows.None;
         sun.shadowStrength = Mathf.Lerp(0.15f, 1f, SmoothThreshold(daylight, 0.02f, 0.25f)) * (1f - twilight * 0.38f);
@@ -278,7 +285,7 @@ public sealed class DayNightCycle : MonoBehaviour
         Color zenith = Color.Lerp(nightSky, daySky, daylight);
         Color horizon = Color.Lerp(nightHorizon, dayHorizon, daylight);
         Color cloud = Color.Lerp(nightCloud, dayCloud, daylight);
-        zenith = Color.Lerp(zenith, goldenSky, twilight * 0.72f);
+        zenith = Color.Lerp(zenith, goldenSky, twilight * (useCoastalPalette ? 0.53f : 0.72f));
         horizon = Color.Lerp(horizon, goldenHorizon, twilight * 0.92f);
         cloud = Color.Lerp(cloud, goldenCloud, twilight * 0.8f);
 
@@ -311,6 +318,17 @@ public sealed class DayNightCycle : MonoBehaviour
             RenderSettings.ambientGroundColor = Color.Lerp(new Color(.07f,.05f,.12f),new Color(.37f,.27f,.34f),daylight);
             RenderSettings.fogColor = Color.Lerp(zenith,horizon,.55f);
         }
+        else if (coastalAtmosphere)
+        {
+            RenderSettings.ambientSkyColor = Color.Lerp(new Color(.25f,.32f,.43f), new Color(.47f,.58f,.68f), daylight);
+            RenderSettings.ambientEquatorColor = Color.Lerp(new Color(.16f,.21f,.29f), new Color(.39f,.44f,.46f), daylight);
+            RenderSettings.ambientGroundColor = Color.Lerp(new Color(.12f,.145f,.19f), new Color(.22f,.20f,.17f), daylight);
+            RenderSettings.ambientIntensity = Mathf.Lerp(0.46f + moonlight * 0.42f, 1f, daylight);
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = coastalHazeDensity * Mathf.Lerp(1.35f,1f,daylight);
+            RenderSettings.fogColor = Color.Lerp(new Color(.035f,.052f,.105f),new Color(.49f,.61f,.69f),daylight);
+            RenderSettings.fogColor = Color.Lerp(RenderSettings.fogColor,goldenHorizon,twilight*.28f);
+        }
 
         if (ocean == null || !ocean.isActiveAndEnabled)
             ocean = FindFirstObjectByType<OceanWorld>();
@@ -328,7 +346,7 @@ public sealed class DayNightCycle : MonoBehaviour
             ocean.ApplyDayNightAppearance(horizon, zenith, cloud, cloudCoverage, sunDisk,
                 Mathf.Lerp(0.32f, 1f, Mathf.Max(daylight, twilight * 0.85f)), daylight, Mathf.Clamp01(night),
                 MoonDirection, MoonIllumination,
-                shallow, middle, deep, waterReflection);
+                shallow, middle, deep, waterReflection, useCoastalPalette);
         }
 
         if (sunVisual == null)
@@ -452,6 +470,7 @@ public sealed class DayNightCycle : MonoBehaviour
         RenderSettings.fogMode = originalFogMode;
         RenderSettings.fogStartDistance = originalFogStart;
         RenderSettings.fogEndDistance = originalFogEnd;
+        RenderSettings.fogDensity = originalFogDensity;
         RenderSettings.fogColor = originalFogColor;
         RenderSettings.ambientMode = originalAmbientMode;
         RenderSettings.ambientSkyColor = originalAmbientSkyColor;

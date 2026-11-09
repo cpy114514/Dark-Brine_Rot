@@ -11,7 +11,7 @@ public sealed class Story1WreckChaseEntry:MonoBehaviour
     public float SwimDistance { get; private set; }
     public bool StartsOnDeck=>startsOnDeck;
     public Vector3 Direction { get; private set; }
-    Story1WreckBattle battle;ThirdPersonPlayerController hero;TralaleroSwimAnimator shark;OceanWorld ocean;Camera camera;
+    Story1WreckBattle battle;ThirdPersonPlayerController hero;TralaleroSwimAnimator shark;OceanWorld ocean;Camera cinematicCamera;
     PlayableGraph graph;AnimationClipPlayable swimPose,jumpPose;AnimationMixerPlayable mixer;
     RuntimeAnimatorController sharkController;AnimatorOverrideController chaseController;
     AnimationClip chaseClip;Vector3 startRoot,startDirection,velocity;Quaternion startRotation;
@@ -25,7 +25,7 @@ public sealed class Story1WreckChaseEntry:MonoBehaviour
     static float Ease(float t)=>Mathf.SmoothStep(0,1,Mathf.Clamp01(t));
     public void Initialize(Story1WreckBattle encounter,ThirdPersonPlayerController actor,TralaleroSwimAnimator enemy,Camera view,OceanWorld water,bool onDeck,AnimationClip fallbackSwim,AnimationClip departure)
     {
-        battle=encounter;hero=actor;shark=enemy;camera=view;ocean=water;startsOnDeck=onDeck;
+        battle=encounter;hero=actor;shark=enemy;cinematicCamera=view;ocean=water;startsOnDeck=onDeck;
         SwimDepth=Mathf.Clamp(shark.SurfaceRootY(Water(shark.transform.position),shark.transform.rotation)-shark.transform.position.y,0,8);
         startRoot=actor.transform.position;startRotation=actor.transform.rotation;
         renderedRoot=startRoot;renderedHeading=startRotation;support=battle.EntryDeck;
@@ -100,7 +100,7 @@ public sealed class Story1WreckChaseEntry:MonoBehaviour
         {
             Vector3 focus=hero.CharacterAnimator.GetBoneTransform(HumanBodyBones.Chest).position;
             Vector3 orbit=-Direction*13+Vector3.Cross(Vector3.up,Direction)*7+Vector3.up*6;
-            Story1WreckFinale.PlaceCinematicCamera(camera,focus,orbit,focus);
+            Story1WreckFinale.PlaceCinematicCamera(cinematicCamera,focus,orbit,focus);
         }
     }
     public void SetSupport(Story1WreckPlank target){support=target;}

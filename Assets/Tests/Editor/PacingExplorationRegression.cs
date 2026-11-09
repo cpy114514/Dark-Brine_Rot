@@ -33,7 +33,7 @@ public static class PacingExplorationRegression
             reports.Add("PASS exploration/combat sprint, recovery tuning and insufficient-stamina protection");
 
             Close(SahurAttack.BalancedDamage(25, false), 25, "Stick damage");
-            Close(SahurAttack.BalancedDamage(25, true), 20, "Twin-blade per-hit damage");
+            Close(SahurAttack.BalancedDamage(25, true), 16, "Twin-blade per-hit damage");
             Close(SahurRifleCombat.DamageAtDistance(10, false, false, false), 20, "Near ground damage");
             Close(SahurRifleCombat.DamageAtDistance(100, false, false, false), 8, "Far ground damage");
             Close(SahurRifleCombat.DamageAtDistance(90, true, false, false), 20, "Anti-air damage");

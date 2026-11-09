@@ -1,0 +1,8 @@
+[
+  {"do": "focus"},
+  {"do": "key", "name": "enter", "times": 1, "delay": 1.5},
+  {"do": "wait", "seconds": 4},
+  {"do": "capture", "name": "05_respawn"},
+  {"do": "shots", "name": "island_combat", "seconds": 7, "fps": 12, "attack": true, "look": [2, 0]},
+  {"do": "capture", "name": "06_after_fight"}
+]

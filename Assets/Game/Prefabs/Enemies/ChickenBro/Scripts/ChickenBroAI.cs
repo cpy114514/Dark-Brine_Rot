@@ -100,6 +100,7 @@ namespace Mavis
             path = new NavMeshPath();
             home = patrol = transform.position;
             repathStride = (Mathf.Abs(GetInstanceID()) % 8) * .05f;
+            BirdHurtboxes.Ensure(gameObject);
             CombatBodyCollision.Ensure(gameObject);
             if (!GetComponent<CombatImpactResponse>())
             {
@@ -159,6 +160,7 @@ namespace Mavis
             transform.SetPositionAndRotation(position, rotation);
             if (motor) motor.enabled = true;
             gameObject.SetActive(true);
+            BirdHurtboxes.Ensure(gameObject);
         }
 
         public CombatHitResult ResolveCombatHit(GameObject attacker, float damage, Vector3 point, CombatHitKind kind)

@@ -70,7 +70,10 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     [Range(0.08f, 0.8f)] public float underwaterBubbleInterval = 0.24f;
 
     [Header("Third-person camera")]
-    [Min(1f)] public float cameraDistance = 4.2f;
+    public const float MinimumCameraDistance = 2.5f;
+    public const float MaximumCameraDistance = 16f;
+    public const float DefaultCameraDistance = 14f;
+    [Min(1f)] public float cameraDistance = DefaultCameraDistance;
     [Tooltip("Camera focus height above the calibrated soles, in metres.")]
     [Min(0.5f)] public float cameraHeight = 0.85f;
     [Min(0.1f)] public float cameraFollowSharpness = 20f;
@@ -202,9 +205,10 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     }
     // Story cinematics can keep buoyancy, animation and the camera running while withholding input.
     bool externalControlLock;
+    public bool NarrativeControlLock => externalControlLock || SecondIslandAwakening.BlocksInputFor(this);
     public bool ExternalControlLock
     {
-        get => externalControlLock || SecondIslandAwakening.BlocksInputFor(this);
+        get => NarrativeControlLock;
         set => externalControlLock = value;
     }
     [System.NonSerialized] public bool OnFloatingWreckDeck;
@@ -429,7 +433,10 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     }
 
     bool runtimePrepared;
-    void Start()=>PrepareRuntime();
+    void Start()
+    {
+        PrepareRuntime();
+    }
     public void PrepareRuntime()
     {
         if(runtimePrepared)return;
@@ -478,7 +485,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         yaw += look.x;
         pitch = Mathf.Clamp(pitch + (invertLookY ? look.y : -look.y), minPitch, maxPitch);
         if (acceptInput && Mouse.current!=null && !GameControls.UsingGamepad)
-        cameraDistance = Mathf.Clamp(cameraDistance - Mouse.current.scroll.ReadValue().y * 0.004f, 2.5f, 11f);
+        cameraDistance = Mathf.Clamp(cameraDistance - Mouse.current.scroll.ReadValue().y * 0.004f, MinimumCameraDistance, MaximumCameraDistance);
 
         // Mounted controls leave camera input available while the platform owns movement.
         if (ExternalMovementLock)
@@ -599,7 +606,8 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             }
         }
         float waterDepth = GetWaterDepth();
-        if (swimmingOcean != null && IsAtSeaSurface() && waterDepth > 0f && !exitedSwimming)
+        bool wading = swimmingOcean != null && IsAtSeaSurface() && waterDepth > 0f && !exitedSwimming;
+        if (wading)
             desiredVelocity *= Mathf.Lerp(1f, wadingSpeedMultiplier, Mathf.Clamp01(waterDepth / swimStartDepth));
 
         bool grounded = verticalSpeed <= 0f && (IsGroundedOrOnSea() || combatDodge && dodgeGrounded);
@@ -680,7 +688,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             verticalSpeed = Mathf.Sqrt(2f * TraversalGravity *
                 (sprinting ? marshmallow.sprintingBoundHeight : marshmallow.walkingBoundHeight));
             verticalSpeed += marshmallow.UphillLift(characterController, planarVelocity);
-            marshmallow.BeginSpacewalk(verticalSpeed);
+            marshmallow.BeginSpacewalk(verticalSpeed, walking: !sprinting);
             coyoteTimer = jumpBufferTimer = 0f;
             grounded = false;
             airborneTime = 0f;
@@ -782,11 +790,29 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             Mathf.Max(.00001f,2*combatPushDuration*Time.deltaTime));
         float downwardSpeedBeforeMove = verticalSpeed;
         Vector3 movementStart=transform.position;
+        float walkStrideScale = 1f;
         if (!attackRootMotion)
         {
-            Vector3 movementDelta = (planarVelocity + platformCarryVelocity + pushVelocity) * Time.deltaTime + Vector3.up * verticalDisplacement;
+            if (!isRolling && !sprinting && !combatLocked && !holdingRifle && !wading && !exitedSwimming &&
+                !OnFloatingWreckDeck && WalkingTutorialConstraint == null && (!enemyLock || !enemyLock.IsLocked) &&
+                moveDirection.sqrMagnitude > .01f)
+            {
+                if (SoftTraversal)
+                {
+                    if (!grounded)
+                        walkStrideScale = marshmallow.WalkBoundStrideScale(verticalSpeed + TraversalGravity * .5f * Time.deltaTime);
+                }
+                else if (grounded && verticalSpeed <= 0f)
+                    walkStrideScale = WalkStrideScale(groundMoveSpeed, Time.deltaTime);
+            }
+
+            Vector3 movementDelta = (planarVelocity * walkStrideScale + platformCarryVelocity + pushVelocity) * Time.deltaTime
+                + Vector3.up * verticalDisplacement;
             if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
-            CollisionFlags collisions = characterController.Move(movementDelta);
+            bool lowStep = grounded && verticalDisplacement <= 0f && motionState == 0 && !isRolling &&
+                airFlipTimer <= 0f && !ExternalControlLock && !OnFloatingWreckDeck && !SoftTraversal &&
+                (combat == null || !combat.IsCombatMotionActive);
+            CollisionFlags collisions = MoveWithLowStep(characterController, movementDelta, lowStep);
             if ((collisions & CollisionFlags.Above) != 0 && verticalSpeed > 0f)
                 verticalSpeed = 0f;
             if ((collisions & CollisionFlags.Below) != 0 && verticalSpeed < 0f)
@@ -837,7 +863,9 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         {
             // rollTimer is now authoritative: it avoids retaining the stale
             // pre-update isRolling value on the frame that the roll finishes.
-            float animationSpeed=rollTimer>0 ? 0 : actualPlanarSpeed;
+            // Drive the blend tree with the underlying speed so the step pulse
+            // does not blend the animation in and out of a walk on each step.
+            float animationSpeed=rollTimer>0 ? 0 : actualPlanarSpeed / walkStrideScale;
             float damping=animationSpeed>animator.GetFloat(SpeedId) ? (TunedControls ? Response.animationAcceleration : .065f) : (TunedControls ? Response.animationBraking : .085f);
             animator.SetFloat(SpeedId,animationSpeed,damping,Time.deltaTime);
             UpdateLockFootwork();
@@ -1164,7 +1192,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
                 focus=lockFocus;
                 // Framing both actors must not move the lens several metres
                 // closer to Sahur merely because its focus moved toward the foe.
-                followDistance = Mathf.Clamp(Mathf.Max(cameraDistance+focusAdvance, toward.magnitude * .45f + 2f), cameraDistance, 12f);
+                followDistance = Mathf.Clamp(Mathf.Max(cameraDistance+focusAdvance, toward.magnitude * .45f + 2f), cameraDistance, MaximumCameraDistance);
             }
         }
         bool shoulderView = rifleLoadout && rifleLoadout.UsesRifle && !Swimming && !ExternalControlLock && !ExternalCameraFocus;
@@ -1346,6 +1374,20 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         float surface = OceanSurfaceSampler.Height(swimmingOcean, playerCamera.transform.position, playerCamera);
         // A small dead band keeps the overlay from flickering at the surface.
         return playerCamera.transform.position.y < surface + (underwaterBlend > 0.05f ? 0.08f : -0.12f);
+    }
+
+    // Only ordinary grounded movement gets the extra step clearance. Keep the
+    // authored setting for jump/dodge/combat and the existing support probes.
+    static CollisionFlags MoveWithLowStep(CharacterController motor, Vector3 delta, bool allowLowStep)
+    {
+        float originalStep = motor.stepOffset;
+        try
+        {
+            if (allowLowStep && Vector3.ProjectOnPlane(delta, Vector3.up).sqrMagnitude > .000001f)
+                motor.stepOffset = Mathf.Max(originalStep, Mathf.Min(.45f, motor.height));
+            return motor.Move(delta);
+        }
+        finally { if (motor.stepOffset != originalStep) motor.stepOffset = originalStep; }
     }
 
     void ConfigureColliderToModel()

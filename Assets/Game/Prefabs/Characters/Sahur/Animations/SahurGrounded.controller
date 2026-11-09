@@ -126,7 +126,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Combo 1
-  m_Speed: 1.8
+  m_Speed: 2.16
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6739966954594992796}
@@ -342,7 +342,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Blade Spin
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -722,7 +722,7 @@ BlendTree:
     m_Motion: {fileID: -8349492526526354690, guid: 92baeb4f280360744824e1725669d952, type: 3}
     m_Threshold: 9.6
     m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: 1.3
     m_CycleOffset: 0
     m_DirectBlendParameter: Blend
     m_Mirror: 0
@@ -845,7 +845,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Combo 2
-  m_Speed: 1.8
+  m_Speed: 2.16
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 5067744772820339034}
@@ -1215,7 +1215,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Recovery
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -1272,7 +1272,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Heavy
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 3536477308847829158}
@@ -1598,7 +1598,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Combo 3
-  m_Speed: 1.65
+  m_Speed: 1.98
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 7204380479677805957}
@@ -1677,7 +1677,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Jump Slash
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6889439966519490507}
@@ -1849,7 +1849,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Air Combo 2
-  m_Speed: 1.65
+  m_Speed: 1.98
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 3022798909374611334}
@@ -1876,7 +1876,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Perfect Counter
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -6913557007002445525}
@@ -2274,7 +2274,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Air Combo 1
-  m_Speed: 1.65
+  m_Speed: 1.98
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6197193087509340497}

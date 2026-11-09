@@ -126,7 +126,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Combo 1
-  m_Speed: 1.8
+  m_Speed: 2.16
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6739966954594992796}
@@ -794,7 +794,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Recovery
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -921,7 +921,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Combo 2
-  m_Speed: 1.8
+  m_Speed: 2.16
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 5067744772820339034}
@@ -996,7 +996,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Perfect Counter
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -22860183767747881}
@@ -1023,7 +1023,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Air Combo 2
-  m_Speed: 1.65
+  m_Speed: 1.98
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 4819301458481659493}
@@ -1538,7 +1538,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Heavy
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 5525779504095595785}
@@ -1896,7 +1896,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Combo 3
-  m_Speed: 1.65
+  m_Speed: 1.98
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 7204380479677805957}
@@ -1923,7 +1923,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Jump Slash
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 6889439966519490507}
@@ -2281,7 +2281,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Capri Air Combo 1
-  m_Speed: 1.65
+  m_Speed: 1.98
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 8065022629293604848}
@@ -2490,7 +2490,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Blade Spin
-  m_Speed: 1
+  m_Speed: 1.2
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []

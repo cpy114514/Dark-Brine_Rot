@@ -42,19 +42,19 @@ public sealed class IslandHabitatReview : EditorWindow
         }
         if (GUILayout.Button("Inspect habitat mask")) Selection.activeObject = terrain.habitatMap;
         if (GUILayout.Button("Edit routes and clearings")) Selection.activeObject = AssetDatabase.LoadAssetAtPath<IslandEcologySettings>(Protection);
-        if (GUILayout.Button("Edit baked plant and prop placements"))
+        foreach (var ecology in FindObjectsByType<IslandEcologyRenderer>(FindObjectsSortMode.None)
+            .Where(r => r.gameObject.scene.path == Environment && r.data))
         {
-            var ecology = FindEcology();
-            if (ecology) Selection.activeObject = ecology.data;
+            if (GUILayout.Button("Inspect: " + ecology.data.name)) Selection.activeObject = ecology.data;
         }
+        var layout = FindObjectsByType<IslandDecorationLayout>(FindObjectsSortMode.None)
+            .FirstOrDefault(l => l.gameObject.scene.path == Environment);
+        if (layout && GUILayout.Button("Edit composition markers (then Bake)")) Selection.activeGameObject = layout.gameObject;
         EditorGUILayout.LabelField("Mask channels", "R turf • G wear • B stone • A damp sand");
     }
 
     static ProceduralIsland FindIsland() => FindObjectsByType<ProceduralIsland>(FindObjectsSortMode.None)
         .FirstOrDefault(i => i.isActiveAndEnabled && i.gameObject.scene.path == Environment);
-
-    static IslandEcologyRenderer FindEcology() => FindObjectsByType<IslandEcologyRenderer>(FindObjectsSortMode.None)
-        .FirstOrDefault(i => i.gameObject.scene.path == Environment);
 
     void DrawScene(SceneView view)
     {
@@ -99,9 +99,10 @@ public sealed class IslandHabitatReview : EditorWindow
 
     void DrawPlacements(Camera camera)
     {
-        var ecology = FindEcology();
-        if (!ecology || !ecology.data || !camera) return;
+        if (!camera) return;
         var planes = GeometryUtility.CalculateFrustumPlanes(camera);
+        foreach (var ecology in FindObjectsByType<IslandEcologyRenderer>(FindObjectsSortMode.None)
+            .Where(r => r.gameObject.scene.path == Environment && r.isActiveAndEnabled && r.data))
         foreach (var species in ecology.data.species)
         {
             if (species.uncanny ? !showDiscoveries : !showGroundDetails || !IsGroundDetail(species.name)) continue;

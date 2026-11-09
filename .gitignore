@@ -177,3 +177,8 @@ AgentScripts/
 /Assets/_Recovery/
 /Assets/_Recovery.meta
 /Tools/blender/5.2/python/
+
+# Local editor preferences and generated preview/build outputs.
+/.vscode/
+/Tools/dark_brine_promo/out/
+/Documentation/LocalTestCleanup-20261108/audit.zip

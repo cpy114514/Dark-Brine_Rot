@@ -1,0 +1,64 @@
+[
+  {
+    "name": "CapriP2Idle",
+    "length": 2.4,
+    "humanMotion": true,
+    "path": "Assets/Resources/CapriPhase2/Polish/CapriP2IdleSmooth.anim",
+    "source": [
+      "Idle_B"
+    ]
+  },
+  {
+    "name": "CapriP2Transition",
+    "length": 4.2,
+    "humanMotion": true,
+    "path": "Assets/Resources/CapriPhase2/Polish/CapriP2TransitionSmooth.anim",
+    "source": [
+      "Hit_B",
+      "Ranged_Magic_Summon",
+      "Melee_Dualwield_Attack_Slice"
+    ]
+  },
+  {
+    "name": "CapriP2Shadow",
+    "length": 3.35,
+    "humanMotion": true,
+    "path": "Assets/Resources/CapriPhase2/Polish/CapriP2ShadowSmooth.anim",
+    "source": [
+      "Melee_Dualwield_Attack_Slice"
+    ]
+  },
+  {
+    "name": "CapriP2Cyclone",
+    "length": 3.25,
+    "humanMotion": true,
+    "path": "Assets/Resources/CapriPhase2/Polish/CapriP2CycloneSmooth.anim",
+    "source": [
+      "Melee_2H_Attack_Spin"
+    ]
+  },
+  {
+    "name": "CapriP2Dive",
+    "length": 3.45,
+    "humanMotion": true,
+    "path": "Assets/Resources/CapriPhase2/Polish/CapriP2DiveSmooth.anim",
+    "source": [
+      "Armature|NinjaJump_Start",
+      "Armature|NinjaJump_Idle_Loop",
+      "Melee_Dualwield_Attack_Chop",
+      "Armature|NinjaJump_Land",
+      "Melee_Dualwield_Attack_Slice"
+    ]
+  },
+  {
+    "name": "CapriP2Tempest",
+    "length": 5.15,
+    "humanMotion": true,
+    "path": "Assets/Resources/CapriPhase2/Polish/CapriP2TempestSmooth.anim",
+    "source": [
+      "Melee_Dualwield_Attack_Slice",
+      "Melee_Dualwield_Attack_Stab",
+      "Melee_Dualwield_Attack_Chop"
+    ]
+  }
+]

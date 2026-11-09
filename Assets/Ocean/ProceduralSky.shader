@@ -6,6 +6,7 @@ Shader "DarkBrine/Procedural Sky"
         _ZenithColor ("Zenith colour", Color) = (0.18, 0.47, 0.79, 1)
         _CloudColor ("Cloud highlight", Color) = (0.94, 0.97, 0.98, 1)
         _SunColor ("Sunlight colour", Color) = (1.0, 0.96, 0.87, 1)
+        [HideInInspector] _SunDirection ("Sun direction", Vector) = (0.32, 0.78, 0.49, 0)
         _CloudCoverage ("Weather coverage", Range(0, 1)) = 0.55
         _CloudStrength ("Cloud strength", Range(0, 1)) = 0.72
         _CloudDetail ("Raymarch quality", Range(1, 5)) = 4
@@ -15,6 +16,7 @@ Shader "DarkBrine/Procedural Sky"
         _SunGlow ("Sunlight intensity", Range(0, 1)) = 0.72
         _Daylight ("Daylight", Range(0, 1)) = 1
         _NightFactor ("Night sky", Range(0, 1)) = 0
+        [HideInInspector] _CoastalAtmosphere ("Coastal atmosphere", Float) = 0
         _MoonDirection ("Moon direction", Vector) = (0, 1, 0, 0)
         _MoonIllumination ("Moon illumination", Range(0, 1)) = 0.5
     }
@@ -52,10 +54,14 @@ Shader "DarkBrine/Procedural Sky"
                 half _SunGlow;
                 half _Daylight;
                 half _NightFactor;
+                half _CoastalAtmosphere;
                 float4 _SunDirection;
                 float4 _MoonDirection;
                 half _MoonIllumination;
             CBUFFER_END
+
+            float4 _BrineSolarDisk;
+            half4 _BrineSolarColor;
 
             struct Attributes { float4 positionOS : POSITION; };
             struct Varyings { float4 positionCS : SV_POSITION; float3 positionWS : TEXCOORD0; };
@@ -194,16 +200,28 @@ Shader "DarkBrine/Procedural Sky"
                 float elevation = saturate(rayDirection.y * 0.5 + 0.5);
                 float horizon = pow(saturate(1.0 - max(rayDirection.y, 0.0)), 2.2);
                 float3 sky = lerp(_HorizonColor.rgb, _ZenithColor.rgb, pow(elevation, 0.72));
-                sky = lerp(sky, float3(0.78, 0.88, 0.96), horizon * 0.19);
+                float horizonHaze = 1.0 - smoothstep(0.0, 0.16, abs(rayDirection.y));
+                sky = lerp(sky, float3(0.78, 0.88, 0.96), horizon * 0.19 * (1.0 - _CoastalAtmosphere));
+                float coastalHaze = _CoastalAtmosphere * lerp(0.28, 0.76, _Daylight);
+                sky = lerp(sky, unity_FogColor.rgb, horizonHaze * coastalHaze);
 
-                float3 sunDirection = normalize(_SunDirection.xyz);
-                if (dot(sunDirection, sunDirection) < 0.01)
-                    sunDirection = normalize(float3(0.32, 0.78, 0.49));
+                // Test the source before normalization: normalize(0) is undefined
+                // and poisons the entire sky once used by the solar disk/clouds.
+                float sunLengthSq = dot(_SunDirection.xyz, _SunDirection.xyz);
+                float3 sunDirection = sunLengthSq > 0.0001
+                    ? _SunDirection.xyz * rsqrt(max(sunLengthSq, 0.0001))
+                    : normalize(float3(0.32, 0.78, 0.49));
                 float sunFacing = saturate(dot(rayDirection, sunDirection));
                 float cloudAlpha = 0.0;
 
+                // The sun lives in the depth-tested sky, never in world geometry.
+                float solarDistance = length(rayDirection - sunDirection);
+                float solarEdge = max(0.00001, max(fwidth(solarDistance), _BrineSolarDisk.x * 0.09));
+                float solarDisk = 1.0 - smoothstep(_BrineSolarDisk.x - solarEdge,
+                    _BrineSolarDisk.x + solarEdge, solarDistance);
+                sky += _BrineSolarColor.rgb * solarDisk * _BrineSolarDisk.y * _BrineSolarDisk.z;
+
                 // A soft warm scattering halo follows the actual sunset direction.
-                // The procedural disk remains a separate camera-facing sun mesh.
                 float mieHalo = pow(sunFacing, 11.0) * _SunGlow * 0.20;
                 float aureole = pow(sunFacing, 3.4) * _SunGlow * (1.0 - _Daylight) * 0.055;
                 float sunsetWash = pow(sunFacing, 1.7) * _SunGlow * (1.0 - _Daylight) * 0.07;
@@ -233,9 +251,10 @@ Shader "DarkBrine/Procedural Sky"
                 float streak = (1.0 - smoothstep(0.001, 0.004, width)) * saturate(1.0 + along / 0.14);
                 sky += float3(1.0, 0.88, 0.72) * streak * eventFade * starVisibility * 3.0;
 
-                float3 moonDirection = normalize(_MoonDirection.xyz);
-                if (dot(moonDirection, moonDirection) < 0.01)
-                    moonDirection = normalize(-sunDirection);
+                float moonLengthSq = dot(_MoonDirection.xyz, _MoonDirection.xyz);
+                float3 moonDirection = moonLengthSq > 0.0001
+                    ? _MoonDirection.xyz * rsqrt(max(moonLengthSq, 0.0001))
+                    : -sunDirection;
                 float moonFacing = saturate(dot(rayDirection, moonDirection));
                 float moonGlow = pow(moonFacing, 38.0) * lerp(0.04, 0.11, _MoonIllumination);
                 float moonAureole = pow(moonFacing, 5.5) * 0.012;
@@ -261,24 +280,30 @@ Shader "DarkBrine/Procedural Sky"
                     float exit = min(cloudDistance, (cloudTop - rayOrigin.y) / rayDirection.y);
                     if (exit > entry)
                     {
-                        uint steps = _CloudDetail < 3.0 ? 8u : (_CloudDetail < 5.0 ? 14u : 20u);
+                        uint steps = _CloudDetail < 3.0 ? 12u : (_CloudDetail < 5.0 ? 24u : 40u);
                         // The same coarse world buffer handles sky and geometry; fewer rays suffice here.
                         if (_PixelStyleUI > .5) steps = 8u;
                         // Keep each quality tier continuous across viewing angles.
                         // Distance-dependent step-count jumps exposed hard rings.
                         float segmentLength = (exit - entry) / steps;
-                        // Smooth angular jitter breaks up sampling bands without
-                        // introducing pixel-sized grain in the distant cloud layer.
-                        float jitter = ValueNoise(rayDirection * 173.0) - 0.5;
-                        float jitterStrength = 0.20 * (1.0 - saturate((entry - 4000.0) / 8000.0));
+                        // A fixed pixel seed decorrelates neighbouring rays. Smooth
+                        // angular noise left adjacent pixels on the same horizontal slices.
+                        // Keep the seed independent of time so stationary clouds stay still.
+                        float2 pixel = floor(input.positionCS.xy);
+                        float sampleSeed = frac(52.9829189 * frac(dot(pixel, float2(0.06711056, 0.00583715))));
+                        float rayFootprint = max(length(ddx(rayDirection)), length(ddy(rayDirection)));
                         float transmittance = 1.0;
                         [loop]
-                        for (uint i = 0u; i < 20u; i++)
+                        for (uint i = 0u; i < 40u; i++)
                         {
                             if (i >= steps || transmittance < 0.015) break;
-                            float travel = entry + (i + 0.5 + jitter * jitterStrength) * segmentLength;
+                            // Rotate the seed between strata instead of shifting the
+                            // entire ray by one correlated offset.
+                            float sampleOffset = lerp(0.12, 0.88, frac(sampleSeed + i * 0.618033989));
+                            float travel = entry + (i + sampleOffset) * segmentLength;
                             float3 samplePosition = rayOrigin + rayDirection * travel;
-                            float density = CloudDensity(samplePosition, cloudBase, cloudThickness, segmentLength);
+                            float footprint = max(segmentLength * 0.45, travel * rayFootprint);
+                            float density = CloudDensity(samplePosition, cloudBase, cloudThickness, footprint);
                             if (density > 0.001)
                             {
                                 float lightThroughCloud = SampleSunLight(samplePosition, sunDirection, cloudBase, cloudThickness);
@@ -287,6 +312,11 @@ Shader "DarkBrine/Procedural Sky"
                                 float3 shaded = ambient + _CloudColor.rgb * _SunColor.rgb
                                     * (0.30 * _Daylight * lightThroughCloud) * (0.9 + pow(sunFacing, 5.0) * 0.1);
                                 float rangeFade = 1.0 - smoothstep(cloudDistance * 0.65, cloudDistance, travel);
+                                // Long grazing rays resolve the coastal cloud layer least well.
+                                // Fade that part of the volume into the same air as the island.
+                                float distantHaze = smoothstep(5200.0, 14500.0, travel);
+                                shaded = lerp(shaded, unity_FogColor.rgb, distantHaze * coastalHaze);
+                                rangeFade *= 1.0 - distantHaze * coastalHaze * 0.88;
                                 float opacity = 1.0 - exp(-density * rangeFade * segmentLength * 0.007);
                                 // Beer-Lambert compositing: integrate absorbed energy,
                                 // rather than adding a full linear step at soft edges.

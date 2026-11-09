@@ -1,0 +1,22 @@
+{
+  "protectedFilesChecked": 11406,
+  "changedProtectedFiles": [],
+  "missingProtectedFiles": [],
+  "deletedTrackedGameInputs": [],
+  "remainingTrees": [],
+  "retainedActiveLogs": [
+    "Logs/shadercompiler-UnityShaderCompiler.exe-0.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-1.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-10.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-2.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-3.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-4.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-5.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-6.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-7.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-8.log",
+    "Logs/shadercompiler-UnityShaderCompiler.exe-9.log"
+  ],
+  "unexpectedRemainingFiles": [],
+  "passed": true
+}

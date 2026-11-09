@@ -2493,13 +2493,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf8759fa360fd64191a20c076474284, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonPlayerController
+  showControlDiagnostics: 0
   useControlPreset: 1
   perfectDodgeWindow: 0.28
   perfectStepDuration: 0.28
   perfectStepDistance: 2
   perfectCounterWindow: 0.45
   moveSpeed: 9.6
-  sprintMultiplier: 1.75
+  sprintMultiplier: 1.85
   rotationSpeed: 14
   jumpHeight: 2.7
   gravity: 64
@@ -3317,7 +3318,7 @@ MonoBehaviour:
   underwaterOverlayStrength: 0.68
   underwaterBubbleParticles: 0
   underwaterBubbleInterval: 0.24
-  cameraDistance: 8.4
+  cameraDistance: 14
   cameraHeight: 2.5
   cameraFollowSharpness: 22
   cameraCollision: 1

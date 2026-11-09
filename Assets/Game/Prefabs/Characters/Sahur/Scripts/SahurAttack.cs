@@ -63,6 +63,8 @@ namespace Mavis
         [Range(0.01f, 0.2f)] public float comboBlendTime = 0.06f;
         [Min(0f)] public float comboTwoDamageMultiplier = 1.2f;
         [Min(0f)] public float comboThreeDamageMultiplier = 1.6f;
+        [Tooltip("Additional damage multiplier for the stick's third grounded combo hit only.")]
+        [Min(0f)] public float stickFinisherDamageMultiplier = 1.25f;
         public Vector2 comboOneHitWindow = new Vector2(0.57f, 0.86f);
         public Vector2 comboTwoHitWindow = new Vector2(0.12f, 0.34f);
         public Vector2 comboThreeHitWindow = new Vector2(0.32f, 0.55f);
@@ -643,6 +645,7 @@ namespace Mavis
             else controller?.BeginComboSourceTravel(stage);
             float multiplier = stage == 1 ? comboTwoDamageMultiplier :
                 stage == 2 ? comboThreeDamageMultiplier : 1f;
+            if (stage == 2 && !UsesTwinBlades) multiplier *= stickFinisherDamageMultiplier;
             BeginAttack(comboStateHashes[animationStage], damage * multiplier, 0f,
                 stage == 0 ? 0.08f : Feel.comboTransition);
         }
@@ -1377,7 +1380,7 @@ namespace Mavis
             if (stickHitbox == null || !stickHitbox.enabled) return;
             TryHit(other, false);
         }
-        public static float BalancedDamage(float amount, bool twinBlades) => amount * (twinBlades ? .8f : 1f);
+        public static float BalancedDamage(float amount, bool twinBlades) => amount * (twinBlades ? .64f : 1f);
 
         void TryHit(Collider other, bool weaponContact, bool underfootContact = false)
         {

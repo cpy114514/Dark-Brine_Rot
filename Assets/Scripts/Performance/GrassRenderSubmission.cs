@@ -13,7 +13,7 @@ namespace Mavis
         void DrawCamera(ScriptableRenderContext context,Camera camera)
         {
             if(owner!=null&&owner.isActiveAndEnabled&&camera&&camera.cameraType==CameraType.Game)
-                owner.SubmitVisibleGrass(context,camera);
+                owner.SubmitCameraGrass(context,camera);
         }
     }
 }

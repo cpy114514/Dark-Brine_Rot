@@ -24,11 +24,11 @@ namespace Mavis
         MaterialPropertyBlock properties;
         NavMeshPath navPath;
         FirstIslandObjectives objectives;ThirdPersonPlayerController motor;SahurAttack attack;CharacterController capsule;
-        Mesh mesh;MeshRenderer renderer;Transform root;Coroutine job;
+        Mesh mesh;MeshRenderer threadRenderer;Transform root;Coroutine job;
         Vector3 gridOrigin,lastStart,lastGoal;string targetId;float nextPath,fade,waterLevel;int routeCount;
         float routeFade=1;
         bool replacingRoute;
-        public bool Visible=>renderer&&renderer.enabled&&fade>.01f;
+        public bool Visible=>threadRenderer&&threadRenderer.enabled&&fade>.01f;
         public int RoutePointCount=>routeCount;
         public Vector3 TargetPosition{get;private set;}
         public string TargetId=>targetId;
@@ -49,8 +49,8 @@ namespace Mavis
             if(mesh)return;var material=Resources.Load<Material>("Guidance/QuestThread");if(!material)return;
             mesh=new Mesh{name="Main quest white guiding thread"};mesh.MarkDynamic();
             var go=new GameObject("Main quest guiding thread");go.transform.SetParent(transform,false);root=go.transform;
-            go.AddComponent<MeshFilter>().sharedMesh=mesh;renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=material;
-            renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;renderer.lightProbeUsage=LightProbeUsage.Off;renderer.enabled=false;
+            go.AddComponent<MeshFilter>().sharedMesh=mesh;threadRenderer=go.AddComponent<MeshRenderer>();threadRenderer.sharedMaterial=material;
+            threadRenderer.shadowCastingMode=ShadowCastingMode.Off;threadRenderer.receiveShadows=false;threadRenderer.lightProbeUsage=LightProbeUsage.Off;threadRenderer.enabled=false;
             int cursor=0;
             for(int strand=0;strand<Strands;strand++)for(int p=0;p<Points-1;p++)for(int r=0;r<Ring;r++)
             {
@@ -70,7 +70,7 @@ namespace Mavis
             (attack&&attack.IsCombatMotionActive)||AdditiveSceneBootstrap.IsLoading||GameSaveManager.IsContinuePending;
         void LateUpdate()
         {
-            Ensure();if(!renderer)return;
+            Ensure();if(!threadRenderer)return;
             Vector3 goal=default;string id=null;
             bool available=!Blocked&&objectives&&objectives.TryGetGuidanceTarget(out goal,out id)&&
                 Vector3.ProjectOnPlane(goal-transform.position,Vector3.up).sqrMagnitude>25;
@@ -84,7 +84,7 @@ namespace Mavis
             }
             fade=Mathf.MoveTowards(fade,available&&routeCount>1?1:0,Time.unscaledDeltaTime/(available?.65f:.22f));
             if(!replacingRoute)routeFade=Mathf.MoveTowards(routeFade,1,Time.unscaledDeltaTime/.3f);
-            renderer.enabled=fade>.001f&&routeCount>1;if(renderer.enabled)Draw();
+            threadRenderer.enabled=fade>.001f&&routeCount>1;if(threadRenderer.enabled)Draw();
         }
         // Walking along an existing world-space route must not rebuild its grid.
         // Replan only after a meaningful lateral deviation or destination move.
@@ -273,32 +273,33 @@ namespace Mavis
             Matrix4x4 worldToLocal=root.worldToLocalMatrix;
             float now=Time.time;
             float best=DistanceToRouteSquared(transform.position,out float start);
-            if(best>100){renderer.enabled=false;return;}
-            float height=capsule?Mathf.Clamp(capsule.height*Mathf.Abs(transform.lossyScale.y)*.65f,2.2f,3.8f):2.2f;
+            if(best>100){threadRenderer.enabled=false;return;}
+            float height=capsule?Mathf.Clamp(capsule.height*Mathf.Abs(transform.lossyScale.y)*.20f,.42f,.82f):.55f;
             for(int strand=0;strand<Strands;strand++)for(int i=0;i<Points;i++)
             {
                 int p=Mathf.Min(i,routeCount-1);Vector3 tangent=route[Mathf.Min(routeCount-1,p+1)]-route[Mathf.Max(0,p-1)];tangent.y=0;
                 if(tangent.sqrMagnitude<.001f)tangent=transform.forward;tangent.Normalize();Vector3 side=Vector3.Cross(Vector3.up,tangent);
                 float d=lengths[p]-start;
                 float envelope=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.3f,1.5f,d));
+                envelope*=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(28f,62f,d));
                 if(i>=routeCount||d<0)envelope=0;
                 // Geometry stays anchored to the terrain; only shader highlights flow.
                 Vector3 centre=route[p]+Vector3.up*height;
                 for(int r=0;r<Ring;r++)
                 {
                     int k=(strand*Points+i)*Ring+r;
-                    Vector3 normal=side*ringDirections[r].x+Vector3.up*ringDirections[r].y;float radius=.055f;
+                    Vector3 normal=side*ringDirections[r].x+Vector3.up*ringDirections[r].y;float radius=.039f;
                     vertices[k]=worldToLocal.MultiplyPoint3x4(centre+normal*radius);normals[k]=worldToLocal.MultiplyVector(normal).normalized;
                     uv[k]=new Vector2(lengths[p],r/(float)Ring);
                     colors[k]=new Color(1,1,1,envelope);
                 }
             }
             mesh.vertices=vertices;mesh.normals=normals;mesh.uv=uv;mesh.colors=colors;mesh.RecalculateBounds();
-            properties.SetFloat("_Clock",now);properties.SetFloat("_Fade",fade*routeFade);renderer.SetPropertyBlock(properties);
+            properties.SetFloat("_Clock",now);properties.SetFloat("_Fade",fade*routeFade);threadRenderer.SetPropertyBlock(properties);
         }
         void OnDisable()
         {
-            if(job!=null)StopCoroutine(job);job=null;routeCount=0;fade=0;routeFade=1;replacingRoute=false;if(renderer)renderer.enabled=false;
+            if(job!=null)StopCoroutine(job);job=null;routeCount=0;fade=0;routeFade=1;replacingRoute=false;if(threadRenderer)threadRenderer.enabled=false;
 #if UNITY_EDITOR
             UnityEditor.AssemblyReloadEvents.beforeAssemblyReload-=BeforeReload;
 #endif
@@ -309,7 +310,7 @@ namespace Mavis
         void Dispose(bool immediate)
         {
             if(mesh){if(immediate)DestroyImmediate(mesh);else Destroy(mesh);}mesh=null;
-            if(root){if(immediate)DestroyImmediate(root.gameObject);else Destroy(root.gameObject);}root=null;renderer=null;
+            if(root){if(immediate)DestroyImmediate(root.gameObject);else Destroy(root.gameObject);}root=null;threadRenderer=null;
         }
         void OnDestroy()=>Dispose(false);
     }

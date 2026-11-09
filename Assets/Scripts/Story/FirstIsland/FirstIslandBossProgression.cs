@@ -18,6 +18,17 @@ namespace Mavis
         static bool OnIsland(Component owner) => owner &&
             owner.gameObject.scene.path.StartsWith("Assets/Scenes/First Island/", StringComparison.Ordinal);
 
+        internal static void OnPlayerRespawn(PlayerHealth player)
+        {
+            if (!OnIsland(player)) return;
+            foreach (var boss in UnityEngine.Object.FindObjectsByType<CappuccinoAI>(FindObjectsSortMode.None))
+                if (OnIsland(boss)) boss.OnTargetRespawn(player);
+            foreach (var boss in UnityEngine.Object.FindObjectsByType<NailongAI>(FindObjectsSortMode.None))
+                if (OnIsland(boss)) boss.OnTargetRespawn(player);
+            foreach (var boss in UnityEngine.Object.FindObjectsByType<BombardinoBoss>(FindObjectsSortMode.None))
+                if (OnIsland(boss)) boss.OnTargetRespawn(player);
+        }
+
         public static bool TryGetKind(Component owner, out FirstIslandObjectives.BossKind kind)
         {
             kind = FirstIslandObjectives.BossKind.Capri;

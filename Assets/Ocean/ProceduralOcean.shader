@@ -55,6 +55,7 @@ Shader "DarkBrine/Procedural Ocean"
         _NearDetailDistance ("Near detail distance", Float) = 180
         _MidDetailDistance ("Mid detail distance", Float) = 700
         _ViewDistance ("View distance", Float) = 3000
+        [HideInInspector] _CoastalDaylight ("Coastal daylight", Float) = 0
     }
 
     SubShader
@@ -132,6 +133,7 @@ Shader "DarkBrine/Procedural Ocean"
                 float _NearDetailDistance;
                 float _MidDetailDistance;
                 float _ViewDistance;
+                half _CoastalDaylight;
                 float _ShipHullMaskEnabled;
                 float4x4 _ShipHullWorldToLocal;
                 float4 _ShipHullWidths[21];
@@ -444,6 +446,12 @@ Shader "DarkBrine/Procedural Ocean"
                 half scatter = (0.24h + 0.36h * waveCrest) * backlight * backlight;
                 half3 water = bodyColor * bodyIllumination +
                     half3(0.018h, 0.064h, 0.075h) * sun.color * scatter * attenuation;
+                // Pale sand under shallow water scatters more light than the open ocean.
+                // Keep the tint under the same shadow as the existing water lighting.
+                half shelf = showBottom ? (1.0h - smoothstep(0.20h, 3.10h, verticalDepth))
+                    * (1.0h - smoothstep(6.0h, 18.0h, waterThickness)) : 0.0h;
+                water += half3(0.020h, 0.103h, 0.103h) * shelf * _CoastalDaylight
+                    * (ambient * 0.55h + sun.color * NoL * attenuation * 0.78h);
                 half transmission = exp2(-waterThickness * _AbsorptionStrength * 0.75 / depthRange)
                     * (1.0h - _WaterOpacity * smoothstep(0.0, depthRange * 0.68, verticalDepth));
                 [branch] if (showBottom && transmission > 0.012h && _CameraOpaqueTexture_TexelSize.z > 1.0)
@@ -479,7 +487,7 @@ Shader "DarkBrine/Procedural Ocean"
                 half3 reflectionVector = reflect(-viewDirection, reflectionNormal);
                 float normalVariance = dot(ddx(normalWS), ddx(normalWS)) + dot(ddy(normalWS), ddy(normalWS));
                 half surfaceRoughness = saturate(1.0h - _Smoothness + waveCrest * 0.09h
-                    + windPatch * 0.07h);
+                    + windPatch * 0.07h + _CoastalDaylight * (0.032h + windPatch * 0.045h));
                 half perceptualRoughness = saturate(sqrt(surfaceRoughness * surfaceRoughness
                     + min(normalVariance, 0.25) * 0.35));
                 half3 probeReflection = GlossyEnvironmentReflection(reflectionVector, input.positionWS,
@@ -490,6 +498,8 @@ Shader "DarkBrine/Procedural Ocean"
                 half probeAvailable = step(0.0001h, dot(probeReflection, half3(0.2126h, 0.7152h, 0.0722h)));
                 half3 environment = lerp(coldSkyFallback * 0.70h, probeReflection, probeAvailable);
                 half reflectionWeight = saturate(fresnel * (1.0h - exp2(-3.2h * _ReflectionStrength)));
+                // Near the shore, keep the seabed legible through the rough wash.
+                reflectionWeight *= 1.0h - 0.38h * _CoastalDaylight * shelf;
                 water = lerp(water, environment, reflectionWeight);
 
                 half glintField = 0.5h + (mediumField.x - 0.5h) * mediumFilter * 0.48h
@@ -553,6 +563,11 @@ Shader "DarkBrine/Procedural Ocean"
                     shoreWidth + shoreAA, shoreDistance)) * lerp(0.24h, 0.85h, contactPatches);
                 half breakerFoam = (1.0 - smoothstep(shoreWidth * 0.7, shoreWidth * 3.8 + shoreAA,
                     shoreDistance)) * foamLace * smoothstep(0.34, 0.67, foamNoise) * (0.30h + waveCrest * 0.4h);
+                // Let shallow water show between patches. Filter the fine gaps as
+                // they get smaller than a pixel to keep the edge stable in motion.
+                half washBreakup = lerp(0.52h, smoothstep(0.34h, 0.65h, foamDetail), rippleFilter);
+                contactFoam *= lerp(1.0h, lerp(0.40h, 1.0h, washBreakup), _CoastalDaylight);
+                breakerFoam *= 1.0h + _CoastalDaylight * 0.20h;
                 half foam = max(crestFoam * _WhitecapStrength, max(contactFoam, breakerFoam) * shoreMask) * _FoamStrength;
                 foam = max(foam, SailingFoam(p, input.positionWS, foamDetail, foamNoise));
                 foam = lerp(foam, smoothstep(.15, .75, foam), .65 * _EnvironmentStyle.x);

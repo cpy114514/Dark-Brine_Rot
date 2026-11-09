@@ -535,9 +535,10 @@ MonoBehaviour:
   patrolRadius: 32
   cruiseSpeed: 20
   rushSpeed: 72
-  lowAltitude: 3.6
   telegraphSeconds: 1.5
   attackInterval: 5
+  counterWindowSeconds: 2.2
+  lowAltitude: 3.6
   exposedSeconds: 0
   bombDamage: 28
   missileDamage: 23

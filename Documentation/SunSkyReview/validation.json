@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "visiblePixels": 42,
+  "secondPixels": 42,
+  "occludedPixels": 0,
+  "hiddenPixels": 0,
+  "worldSphereEnabled": false,
+  "worldColliderEnabled": false,
+  "shaderErrors": []
+}

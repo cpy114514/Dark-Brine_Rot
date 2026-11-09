@@ -1,0 +1,8 @@
+[
+  {"name": "a_walk", "keys": ["w"], "seconds": 4, "look": [3, 0]},
+  {"name": "b_sprint", "keys": ["w", "shift"], "seconds": 4, "look": [4, 0]},
+  {"name": "c_combat", "attack": true, "seconds": 4},
+  {"name": "d_look", "seconds": 3, "look": [10, 0]},
+  {"name": "e_gear", "press": ["i"], "seconds": 2.5, "ui": true},
+  {"name": "f_close", "press": ["i"], "seconds": 1.5, "ui": true}
+]

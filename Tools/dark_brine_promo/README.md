@@ -221,7 +221,74 @@ for four bars, then lands twice in a row on bars 6 and 7.
 
 ---
 
-## 2. Real gameplay frames
+## 1d. Real gameplay footage (the release client)
+
+The trailer that ships with the project was cut from two still frames and a
+pile of AI shots. The island, however, only exists at runtime, so the only way
+to get real footage is to drive the game itself.
+
+`Tools/dark_brine_promo/capture_window.py` and `promo_capture.py` do that:
+
+* they drive the standalone build with real input events (WASD, mouse),
+* they grab the game window with GDI (`PrintWindow`, `PW_RENDERFULLCONTENT`),
+* they check every take: a black picture or a frozen one is reported as a
+  failure instead of quietly becoming part of the trailer.
+
+```bash
+# launch the client that is built for playtests
+.build/development/DarkBrineRot_Playtest.exe -screen-width 1920 -screen-height 1080
+
+# one frame of whatever is on screen
+python capture_window.py shot out/frame.png --method print
+
+# a scripted session: click, walk, fight, open the map
+python promo_capture.py --pid 12345 plans/flow_island.json out/raw
+```
+
+`plans/*.json` are the sessions. Each action is one line:
+
+```json
+{"do": "click", "x": 958, "y": 669}
+{"do": "shots", "name": "island_walk", "keys": ["w"], "seconds": 5, "look": [3, 0]}
+{"do": "record", "name": "03_opening", "seconds": 45, "fps": 12}
+```
+
+Coordinates are in the game view, with (0, 0) at the top left of the picture.
+
+Three traps, all of them paid for in lost takes:
+
+* **the game pauses itself when it loses the foreground**, and the Unity
+  editor sits maximized on top of it. A click that lands on the editor both
+  steals the foreground and pauses the game. `focus_window()` raises the game
+  before every shot and the focus is held for the whole take.
+* **the pointer must stay inside the window.** A relative mouse move that
+  walks off the edge makes the next click hit whatever is underneath.
+* **the capture rate is the frame rate of the grab, not of the game.** The
+  frames come in at about 8–12 fps, so the trailer builder interpolates them
+  back up to 24 fps.
+
+`make_sheet.py` prints a contact sheet of a take, `slice_frames.py` cuts a
+time range out of one.
+
+```bash
+python make_sheet.py out/raw/island_walk out/raw/sheet.png
+python slice_frames.py out/raw/03_opening out/raw/boss_fight 0 7.5
+```
+
+### The cut that uses it
+
+```bash
+python build_promo_v2.py            # 40 s, 1920x1080
+python build_promo_v2.py --preview  # 960x540
+```
+
+The real footage and the AI shots are graded into one palette: the island is
+shot in daylight while the sea is shot at night, so the daylight takes get an
+extra `DUSK` grade (`build_promo_v2.py`) instead of cutting from black to
+bright in the middle of the story. Every caption also gets a dim plate under
+it, because light type on transparent disappears over grass.
+
+---
 
 The island is generated at runtime, so nothing meaningful exists in edit
 mode — frames have to be captured while the game is running.

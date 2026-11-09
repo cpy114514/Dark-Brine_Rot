@@ -1,0 +1,302 @@
+[
+  {
+    "path": "Assets/ThirdParty/CapriPolishKayKit/Rig_Medium_CombatMelee.fbx",
+    "clips": [
+      {
+        "name": "Melee_1H_Attack_Chop",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_1H_Attack_Jump_Chop",
+        "length": 1.33333337,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_1H_Attack_Slice_Diagonal",
+        "length": 1.0,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_1H_Attack_Slice_Horizontal",
+        "length": 1.36666679,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_1H_Attack_Stab",
+        "length": 1.60000014,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_2H_Attack_Chop",
+        "length": 1.63333344,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_2H_Attack_Slice",
+        "length": 1.1,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_2H_Attack_Spin",
+        "length": 2.4,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_2H_Attack_Spinning",
+        "length": 0.6666667,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_2H_Attack_Stab",
+        "length": 1.60000014,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_2H_Idle",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Block",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Block_Attack",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Block_Hit",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Blocking",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Dualwield_Attack_Chop",
+        "length": 1.26666677,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Dualwield_Attack_Slice",
+        "length": 1.16666675,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Dualwield_Attack_Stab",
+        "length": 1.60000014,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Unarmed_Attack_Kick",
+        "length": 0.9333334,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Unarmed_Attack_Punch_A",
+        "length": 1.16666675,
+        "humanMotion": true
+      },
+      {
+        "name": "Melee_Unarmed_Idle",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "T-Pose",
+        "length": 0.0333333351,
+        "humanMotion": true
+      }
+    ]
+  },
+  {
+    "path": "Assets/ThirdParty/CapriPolishKayKit/Rig_Medium_CombatRanged.fbx",
+    "clips": [
+      {
+        "name": "Ranged_1H_Aiming",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_1H_Reload",
+        "length": 1.16666675,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_1H_Shoot",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_1H_Shooting",
+        "length": 1.60000014,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_2H_Aiming",
+        "length": 1.60000014,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_2H_Reload",
+        "length": 1.60000014,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_2H_Shoot",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_2H_Shooting",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Bow_Aiming_Idle",
+        "length": 1.83333337,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Bow_Draw",
+        "length": 1.33333337,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Bow_Draw_Up",
+        "length": 1.33333337,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Bow_Idle",
+        "length": 1.56666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Bow_Release",
+        "length": 1.33333337,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Bow_Release_Up",
+        "length": 1.36666679,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Magic_Raise",
+        "length": 2.10000014,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Magic_Shoot",
+        "length": 0.9333334,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Magic_Spellcasting",
+        "length": 0.6666667,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Magic_Spellcasting_Long",
+        "length": 2.53333354,
+        "humanMotion": true
+      },
+      {
+        "name": "Ranged_Magic_Summon",
+        "length": 4.3,
+        "humanMotion": true
+      },
+      {
+        "name": "T-Pose",
+        "length": 0.0333333351,
+        "humanMotion": true
+      }
+    ]
+  },
+  {
+    "path": "Assets/ThirdParty/CapriPolishKayKit/Rig_Medium_General.fbx",
+    "clips": [
+      {
+        "name": "Death_A",
+        "length": 0.8000001,
+        "humanMotion": true
+      },
+      {
+        "name": "Death_A_Pose",
+        "length": 0.0333333351,
+        "humanMotion": true
+      },
+      {
+        "name": "Death_B",
+        "length": 2.63333344,
+        "humanMotion": true
+      },
+      {
+        "name": "Death_B_Pose",
+        "length": 0.0333333351,
+        "humanMotion": true
+      },
+      {
+        "name": "Hit_A",
+        "length": 0.6666667,
+        "humanMotion": true
+      },
+      {
+        "name": "Hit_B",
+        "length": 0.866666734,
+        "humanMotion": true
+      },
+      {
+        "name": "Idle_A",
+        "length": 1.06666672,
+        "humanMotion": true
+      },
+      {
+        "name": "Idle_B",
+        "length": 2.13333344,
+        "humanMotion": true
+      },
+      {
+        "name": "Interact",
+        "length": 1.30000007,
+        "humanMotion": true
+      },
+      {
+        "name": "PickUp",
+        "length": 1.30000007,
+        "humanMotion": true
+      },
+      {
+        "name": "Spawn_Air",
+        "length": 1.30000007,
+        "humanMotion": true
+      },
+      {
+        "name": "Spawn_Ground",
+        "length": 1.30000007,
+        "humanMotion": true
+      },
+      {
+        "name": "T-Pose",
+        "length": 0.0333333351,
+        "humanMotion": true
+      },
+      {
+        "name": "Throw",
+        "length": 1.36666679,
+        "humanMotion": true
+      },
+      {
+        "name": "Use_Item",
+        "length": 1.60000014,
+        "humanMotion": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,441 @@
+{
+  "passed": true,
+  "error": null,
+  "failed": 0,
+  "checkCount": 108,
+  "errors": [],
+  "checks": [
+    {
+      "passed": true,
+      "name": "Native transition begins before object disable"
+    },
+    {
+      "passed": true,
+      "name": "Object reactivation resumes remaining transition without old hitbox"
+    },
+    {
+      "passed": true,
+      "name": "Interrupted transition still commits phase two exactly once"
+    },
+    {
+      "passed": true,
+      "name": "Target death during transition returns home and resets encounter"
+    },
+    {
+      "passed": true,
+      "name": "Reset restores one transition for the next encounter"
+    },
+    {
+      "passed": true,
+      "name": "Lethal damage interrupts transition without resurrection"
+    },
+    {
+      "passed": true,
+      "name": "Grounded player is hit by expanding annulus beyond the landing strike"
+    },
+    {
+      "passed": true,
+      "name": "Jumping clears the expanding low shockwave"
+    },
+    {
+      "passed": true,
+      "name": "New shadow attack participates in real perfect-dodge forecasting"
+    },
+    {
+      "passed": true,
+      "name": "Leaving cyclone range avoids every turn"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 0"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 0"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 0"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 1"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 1"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 1"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 2"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 2"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 2"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 3"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 3"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 3"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 4"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 4"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 4"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 5"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 5"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 5"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 6"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 6"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 6"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 7"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 7"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 7"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 8"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 8"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 8"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 9"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 9"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 9"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 10"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 10"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 10"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 11"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 11"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 11"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 12"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 12"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 12"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 13"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 13"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 13"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 14"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 14"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 14"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 15"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 15"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 15"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 16"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 16"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 16"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 17"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 17"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 17"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 18"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 18"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 18"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 19"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 19"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 19"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 20"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 20"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 20"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 21"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 21"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 21"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 22"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 22"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 22"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 23"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 23"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 23"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 24"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 24"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 24"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 25"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 25"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 25"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 26"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 26"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 26"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 27"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 27"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 27"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 28"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 28"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 28"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 29"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 29"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 29"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 30"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 30"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 30"
+    },
+    {
+      "passed": true,
+      "name": "Phase-two selector chooses new mechanic at sample 31"
+    },
+    {
+      "passed": true,
+      "name": "Selector avoids immediate repeated special at sample 31"
+    },
+    {
+      "passed": true,
+      "name": "Selected special has independent cooldown at sample 31"
+    },
+    {
+      "passed": true,
+      "name": "Distance-aware weighted decisions cover all four new mechanics"
+    },
+    {
+      "passed": true,
+      "name": "Edge cases produce no native errors or exceptions"
+    }
+  ]
+}

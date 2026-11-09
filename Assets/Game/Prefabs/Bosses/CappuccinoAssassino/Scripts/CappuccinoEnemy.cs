@@ -117,7 +117,22 @@ namespace Mavis
             if (animator == null || deathTime >= 0f) return;
             animator.speed = 1f;
             animator.ResetTrigger(AttackTrigger);
-            animator.CrossFadeInFixedTime("Idle", .14f);
+            bool phaseTwo = TryGetComponent<CappuccinoAI>(out var ai) && ai.FightPhase == 2;
+            animator.CrossFadeInFixedTime(phaseTwo ? "CapriP2Idle" : "Idle", .18f);
+        }
+
+        internal void SetPhaseTwoPose(string state, float normalized)
+        {
+            if (animator == null || deathTime >= 0f) return;
+            animator.ResetTrigger(AttackTrigger);
+            animator.speed = 0f;
+            animator.Play(state, 0, Mathf.Clamp01(normalized));
+            // Evaluate this action-clock pose now, before the fitted rig / trails.
+            // Waiting for the next Animator update introduced a frame of phase lag.
+            if(animator.isActiveAndEnabled)animator.Update(0f);
+            // Evaluate this action-clock pose now, before the fitted rig / trails.
+            // Waiting for the next Animator update introduced a frame of phase lag.
+            if(animator.isActiveAndEnabled)animator.Update(0f);
         }
 
         internal bool TryPlayAttack(float now)
@@ -132,6 +147,7 @@ namespace Mavis
         void OnDeath()
         {
             if (deathTime >= 0f) return;
+            GetComponent<CappuccinoAI>()?.PreparePhaseTwoDeath();
             deathTime = Time.time;
             if(visual){deathStartPosition=visual.localPosition;deathStartRotation=visual.localRotation;}
             GetComponent<CappuccinoWeaponLoot>()?.Drop();

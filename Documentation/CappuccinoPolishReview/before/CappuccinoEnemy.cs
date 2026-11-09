@@ -1,0 +1,201 @@
+﻿using UnityEngine;
+using UnityEngine.Events;
+
+namespace Mavis
+{
+    /// <summary>Presentation for the attackable Cappuccino enemy. Health owns damage and extension events.</summary>
+    [RequireComponent(typeof(Health))]
+    public sealed class CappuccinoEnemy : MonoBehaviour
+    {
+        public Transform visual;
+        public Renderer[] bodyRenderers;
+        public Collider bodyCollider;
+        [Header("Authored animation")]
+        public Animator animator;
+        public CappuccinoMotionRig motionRig;
+        public AnimationClip attackClip;
+        public AnimationClip deathClip;
+        public bool attackOnHit = true;
+        [Min(0f)] public float hitReactionDuration = 0.22f;
+        [Range(0,25)] public float combatRecoilDegrees = 18f;
+        [Min(0.1f)] public float deathDuration = 0.9f;
+        [Min(0f)] public float removeAfterDeath = 4f;
+        public Color hitColor = new Color(1f, 0.32f, 0.18f, 1f);
+        public UnityEvent onDefeated = new UnityEvent();
+
+        Health health;
+        CappuccinoUltimate ultimate;
+        Vector3 restPosition;
+        Quaternion restRotation;
+        Vector3 deathStartPosition;
+        Quaternion deathStartRotation;
+        float deathTime = -1f;
+        float modelHeight;
+        float nextAttackTime;
+        Vector3 combatHitDirection=Vector3.back;
+        float combatHitWeight=1;
+        float combatReactionElapsed=100;
+        public void ApplyCombatImpact(Vector3 direction,float weight)
+        {
+            combatHitDirection=visual && visual.parent ? visual.parent.InverseTransformDirection(direction) : transform.InverseTransformDirection(direction);
+            combatHitDirection.y=0;combatHitDirection=Vector3.ClampMagnitude(combatHitDirection,1);
+            combatHitWeight=Mathf.Clamp(weight,0,2);
+        }
+        static readonly int AttackTrigger = Animator.StringToHash("Attack");
+        static readonly int DeathTrigger = Animator.StringToHash("Die");
+
+        void Awake()
+        {
+            if (GetComponent<CappuccinoWeaponLoot>() == null) gameObject.AddComponent<CappuccinoWeaponLoot>();
+            FitBodyCollision();
+            health = GetComponent<Health>();
+            ultimate = GetComponent<CappuccinoUltimate>();
+            health.OnDamaged ??= new UnityEvent<float>();
+            health.OnDeath ??= new UnityEvent();
+            health.OnHealthChanged ??= new UnityEvent<float, float>();
+            if (visual != null)
+            {
+                restPosition = visual.localPosition;
+                restRotation = visual.localRotation;
+            }
+            if (bodyCollider != null) modelHeight = bodyCollider.bounds.size.y / Mathf.Max(transform.lossyScale.y, 0.001f);
+            health.OnDamaged.AddListener(OnHit);
+            health.OnDeath.AddListener(OnDeath);
+            if (health.IsDead) OnDeath();
+        }
+
+        public void FitBodyCollision()
+        {
+            var motor=GetComponent<CharacterController>();
+            if(motor==null||bodyRenderers==null)return;
+            // Fit the cup, excluding its swords. The old 1.65 m radius left the
+            // sides of the 4.48 m wide cup outside the physical character body.
+            foreach(var renderer in bodyRenderers)
+            {
+                if(renderer==null||renderer.name!="Capuchino")continue;
+                Bounds source=renderer.localBounds;
+                var frame=renderer is SkinnedMeshRenderer skin&&skin.rootBone!=null?skin.rootBone:renderer.transform;
+                var matrix=transform.worldToLocalMatrix*frame.localToWorldMatrix;
+                Bounds local=new Bounds(matrix.MultiplyPoint3x4(source.center),Vector3.zero);
+                for(int x=-1;x<=1;x+=2)for(int y=-1;y<=1;y+=2)for(int z=-1;z<=1;z+=2)
+                    local.Encapsulate(matrix.MultiplyPoint3x4(source.center+Vector3.Scale(source.extents,new Vector3(x,y,z))));
+                // Rotation must not orbit an offset capsule through a nearby player.
+                // Enclose the cup about the actor pivot at every facing angle.
+                motor.radius=Mathf.Max(local.extents.x,local.extents.z)+new Vector2(local.center.x,local.center.z).magnitude+.06f;
+                motor.height=Mathf.Max(local.size.y,motor.radius*2);
+                motor.center=new Vector3(0,local.center.y,0);
+                motor.detectCollisions=true;
+                bodyCollider=motor;
+                break;
+            }
+        }
+
+        void OnHit(float amount)
+        {
+            combatReactionElapsed=0;
+            if (attackOnHit && health != null && !health.IsDead) PlayAttack();
+        }
+
+        [ContextMenu("Play Attack (Play Mode)")]
+        void PreviewAttack() { if (Application.isPlaying) PlayAttack(); }
+
+        public void PlayAttack() => TryPlayAttack();
+
+        public bool TryPlayAttack() => TryPlayAttack(Time.time);
+
+        // The boss action clock owns the authored pose and the matching damage window.
+        internal void SetBossPose(float normalized, bool mirrored = false)
+        {
+            if (animator == null || deathTime >= 0f) return;
+            animator.ResetTrigger(AttackTrigger);
+            animator.speed = 0f;
+            animator.Play(mirrored ? "AttackMirrored" : "Attack", 0, Mathf.Clamp01(normalized));
+        }
+
+        internal void ResumeLocomotion()
+        {
+            if (animator == null || deathTime >= 0f) return;
+            animator.speed = 1f;
+            animator.ResetTrigger(AttackTrigger);
+            bool phaseTwo = TryGetComponent<CappuccinoAI>(out var ai) && ai.FightPhase == 2;
+            animator.CrossFadeInFixedTime(phaseTwo ? "CapriP2Idle" : "Idle", .18f);
+        }
+
+        internal void SetPhaseTwoPose(string state, float normalized)
+        {
+            if (animator == null || deathTime >= 0f) return;
+            animator.ResetTrigger(AttackTrigger);
+            animator.speed = 0f;
+            animator.Play(state, 0, Mathf.Clamp01(normalized));
+        }
+
+        internal bool TryPlayAttack(float now)
+        {
+            if (animator == null || deathTime >= 0f ||
+                (health != null && health.IsDead) || (ultimate != null && ultimate.AttackLocked) || now < nextAttackTime) return false;
+            animator.SetTrigger(AttackTrigger);
+            nextAttackTime = now + (attackClip != null ? attackClip.length : 1.5f) + 0.25f;
+            return true;
+        }
+
+        void OnDeath()
+        {
+            if (deathTime >= 0f) return;
+            GetComponent<CappuccinoAI>()?.PreparePhaseTwoDeath();
+            deathTime = Time.time;
+            if(visual){deathStartPosition=visual.localPosition;deathStartRotation=visual.localRotation;}
+            GetComponent<CappuccinoWeaponLoot>()?.Drop();
+            if (bodyRenderers != null) foreach (var renderer in bodyRenderers)
+                if (renderer && renderer.name == "Katana") renderer.enabled = false;
+            foreach (var collider in GetComponentsInChildren<Collider>(true)) collider.enabled = false;
+            if (animator != null && deathClip != null)
+            {
+                animator.speed = 1f;
+                animator.ResetTrigger(AttackTrigger);
+                animator.SetTrigger(DeathTrigger);
+                motionRig?.SetDeathGrounding();
+            }
+            onDefeated.Invoke();
+            float fallDuration = deathClip != null ? deathClip.length + 1.8f : deathDuration + 1.8f;
+            if (removeAfterDeath > 0f) Destroy(gameObject, Mathf.Max(removeAfterDeath, fallDuration));
+        }
+
+        void Update()
+        {
+            if(Time.timeScale>0 && !CombatLocalHitStop.Active(gameObject))combatReactionElapsed+=Time.deltaTime;
+            float impactPhase=Mathf.Clamp01(combatReactionElapsed/Mathf.Max(.28f,hitReactionDuration));
+            if (visual == null) return;
+            if (deathTime >= 0f)
+            {
+                if(EnemyDeathPresentation.OwnsFallback(gameObject))return;
+                if (animator != null && deathClip != null)
+                {
+                    float entry=Mathf.SmoothStep(0,1,Mathf.Clamp01((Time.time-deathTime)/.18f));
+                    visual.localPosition = Vector3.Lerp(deathStartPosition,restPosition,entry);
+                    visual.localRotation = Quaternion.Slerp(deathStartRotation,restRotation,entry);
+                    return;
+                }
+                float t = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((Time.time - deathTime) / deathDuration));
+                // Lift the pivot while tipping so the cup settles onto its side above the ground.
+                visual.localPosition = restPosition + Vector3.up * (modelHeight * 0.43f * t);
+                visual.localRotation = restRotation * Quaternion.Euler(0f, 0f, 88f * t);
+            }
+            else
+            {
+                float kick=Mathf.Sin(Mathf.PI*Mathf.Clamp01(impactPhase/.18f)*.5f)*Mathf.Pow(1-impactPhase,1.5f);
+                float degrees=Mathf.Min(25,combatRecoilDegrees*combatHitWeight)*kick;
+                visual.localPosition = restPosition + combatHitDirection * (0.14f * kick * combatHitWeight);
+                // Offset in the parent's force frame; the imported visual's
+                // rest axes may be rotated ninety degrees relative to it.
+                visual.localRotation = Quaternion.AngleAxis(degrees,Vector3.Cross(Vector3.up,combatHitDirection))*restRotation;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (health == null) return;
+            health.OnDamaged?.RemoveListener(OnHit);
+            health.OnDeath?.RemoveListener(OnDeath);
+        }
+    }
+}

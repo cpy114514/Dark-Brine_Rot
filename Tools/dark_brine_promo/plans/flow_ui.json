@@ -1,0 +1,10 @@
+[
+  {"do": "focus"},
+  {"do": "capture", "name": "10_state"},
+  {"do": "shots", "name": "island_gear", "seconds": 3, "fps": 8, "press": ["i"], "press_delay": 1.0},
+  {"do": "key", "name": "i", "times": 1, "delay": 0.8},
+  {"do": "shots", "name": "island_map", "seconds": 3, "fps": 8, "press": ["m"], "press_delay": 1.0},
+  {"do": "key", "name": "m", "times": 1, "delay": 0.8},
+  {"do": "shots", "name": "island_fight", "seconds": 6, "fps": 12, "attack": true, "look": [2, 0]},
+  {"do": "capture", "name": "11_end_state"}
+]

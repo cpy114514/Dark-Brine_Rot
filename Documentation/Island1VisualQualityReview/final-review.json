@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "error": null,
+  "samples": [
+    {
+      "view": "meadow",
+      "meanMs": 10.780552902724594,
+      "p95Ms": 12.787096202373505,
+      "drawCalls": 997.0,
+      "triangles": 6392210.0
+    },
+    {
+      "view": "woodland",
+      "meanMs": 12.097387504763901,
+      "p95Ms": 14.367503114044666,
+      "drawCalls": 1207.0,
+      "triangles": 15297201.0
+    },
+    {
+      "view": "west-shore",
+      "meanMs": 4.2402203146290658,
+      "p95Ms": 7.5134993530809879,
+      "drawCalls": 53.0,
+      "triangles": 399647.0
+    }
+  ],
+  "msaa": 4,
+  "hardware": "NVIDIA GeForce RTX 4060",
+  "scope": "Editor Play, Environment + Lighting, 1920x1080, 120 warm-up and 240 measured frames per view; no standalone/GPU isolation"
+}

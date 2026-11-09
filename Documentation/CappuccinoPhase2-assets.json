@@ -1,0 +1,38 @@
+[
+  {
+    "name": "CapriP2Transition",
+    "duration": 4.2,
+    "humanMotion": true,
+    "curves": 130
+  },
+  {
+    "name": "CapriP2Shadow",
+    "duration": 3.35,
+    "humanMotion": true,
+    "curves": 130
+  },
+  {
+    "name": "CapriP2Cyclone",
+    "duration": 3.25,
+    "humanMotion": true,
+    "curves": 130
+  },
+  {
+    "name": "CapriP2Dive",
+    "duration": 3.45,
+    "humanMotion": true,
+    "curves": 130
+  },
+  {
+    "name": "CapriP2Tempest",
+    "duration": 5.15,
+    "humanMotion": true,
+    "curves": 130
+  },
+  {
+    "name": "CapriP2Idle",
+    "duration": 1.66666675,
+    "humanMotion": true,
+    "curves": 130
+  }
+]

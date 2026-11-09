@@ -1,0 +1,36 @@
+[
+  {
+    "prefab": "ChickenBro/ChickenBro.prefab",
+    "controllerTravel": 2.0,
+    "oldTailDamage": 0.0,
+    "fixedTailDamage": 10.0,
+    "repeatedSweepDamage": 10.0,
+    "parts": 18,
+    "deadDisabled": true,
+    "restored": true
+  },
+  {
+    "prefab": "LongLeggedDuck/LongLeggedDuck.prefab",
+    "controllerTravel": 2.0,
+    "oldTailDamage": 0.0,
+    "fixedTailDamage": 10.0,
+    "repeatedSweepDamage": 10.0,
+    "parts": 12,
+    "deadDisabled": true,
+    "restored": true
+  },
+  {
+    "prefab": "BullyGoose/BullyGoose.prefab",
+    "controllerTravel": 2.0,
+    "oldTailDamage": 0.0,
+    "fixedTailDamage": 10.0,
+    "repeatedSweepDamage": 10.0,
+    "parts": 18,
+    "deadDisabled": true,
+    "restored": true
+  },
+  {
+    "wallDamage": 0.0,
+    "outsideDamage": 0.0
+  }
+]

@@ -23,6 +23,7 @@ namespace Mavis
         public bool AttackLocked => CurrentPhase == Phase.Charging || CurrentPhase == Phase.Immobilized;
         public bool IsEmpowered => CurrentPhase == Phase.Empowered;
         public float RemainingSeconds => Mathf.Max(0f, phaseEndsAt - lastTime);
+        public float TransitionSeconds => Mathf.Max(4.2f, chargeSeconds);
 
         Health health;
         float phaseEndsAt, lastTime;
@@ -37,7 +38,7 @@ namespace Mavis
             if (!ultimateEnabled || !isActiveAndEnabled || CurrentPhase != Phase.Ready || health == null ||
                 health.IsDead || health.Ratio > triggerHealthRatio) return false;
             CurrentPhase = Phase.Charging;
-            phaseEndsAt = now + chargeSeconds;
+            phaseEndsAt = now + TransitionSeconds;
             lastTime = now;
             return true;
         }

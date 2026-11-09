@@ -38,3 +38,11 @@ Unity 的崩溃场景副本已保存在 `Assets/_Recovery`。本轮不保存或�
 
 证据副本：[持续测试](UnityStabilityReview/result.json)、[场景重开](UnityStabilityReview/scene-cycles.json)。本轮处理了有明确崩溃栈支持的草地提交风险；长期编辑、其他场景或不同崩溃栈仍需进一步验证。
 
+## 2026-11-07：普通草丛批次开销复查
+
+发现 2,760 个普通草丛使用的 Grass_12 / Grass_Stems 关闭了实例化，且风场逐物体覆盖的 `_PlayerPushStrength` 不是实例化属性。保留此前摄像机提交保护，将该既有属性纳入 shader 实例化缓冲，并通过原生 API 开启两份材质的 GPU Instancing；不改变草量、几何体、画质或图形缓冲大小。
+
+相同编辑器 Game View 的 draw calls 从 4,009 降至 1,617，triangles 保持 53,558,679；受控开关测试重复确认合批差异。同机位渲染的近地取样区域像素一致。脚本域重载及两轮 Play 进出未新增 Ring Buffer、运行时异常或设备丢失日志。五场景与正式存档哈希核验未改变。此项验证不代表长期警告已根治，也不代替独立构建、完整通关和 90 分钟稳定性验收。
+
+完整范围、原始数据和前后图：[本轮记录](../.codex/ring-buffer-review-20261107/review.md)。
+

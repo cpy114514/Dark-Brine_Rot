@@ -100,6 +100,8 @@ public sealed class OceanWorld : MonoBehaviour
     Mesh generatedMesh;
     Mesh forwardMesh;
     Mesh surroundMesh;
+    Bounds forwardFlatBounds, surroundFlatBounds;
+    MeshFilter oceanFilter;
     Material generatedMaterial;
     GameObject skyDome;
     Material skyMaterial;
@@ -161,13 +163,11 @@ public sealed class OceanWorld : MonoBehaviour
             EffectsQuality.Medium => Mathf.Min(resolution, 160),
             _ => Mathf.Min(resolution, 300)
         };
-        int coverageAngle = GetVisibleCoverageAngle();
-        int coverageMode = coverageAngle >= 360 ? 360 : 1;
         // Keep the square mesh edge beyond the camera's far clip. The shader fogs the extra band.
         // Keep a generous band beyond the camera range.  The same mesh is used at every
         // altitude, so looking down from the sky cannot reveal a square water boundary.
         float meshSize = (oceanSize + Mathf.Max(300f, oceanSize * 0.2f)) * 2f;
-        var filter = GetComponent<MeshFilter>();
+        if (!oceanFilter) oceanFilter = GetComponent<MeshFilter>();
         var renderer = GetComponent<MeshRenderer>();
 
         if (generatedResolution != effectiveResolution || !Mathf.Approximately(generatedSize, meshSize))
@@ -177,25 +177,10 @@ public sealed class OceanWorld : MonoBehaviour
             generatedSize = meshSize;
         }
 
-        if (generatedMesh == null || generatedCoverageAngle != coverageMode)
-        {
-            // Each view shape is generated once per resolution/range. Looking up and down
-            // then only swaps a mesh reference, avoiding repeated allocations and uploads.
-            if (coverageMode == 360)
-            {
-                if (surroundMesh == null)
-                    surroundMesh = CreateOceanMesh(effectiveResolution, meshSize, coverageAngle);
-                generatedMesh = surroundMesh;
-            }
-            else
-            {
-                if (forwardMesh == null)
-                    forwardMesh = CreateOceanMesh(effectiveResolution, meshSize, coverageAngle);
-                generatedMesh = forwardMesh;
-            }
-            filter.sharedMesh = generatedMesh;
-            generatedCoverageAngle = coverageMode;
-        }
+        SelectCoverage(Camera.main);
+        // Refresh both cached meshes when wave settings are edited.
+        if (forwardMesh) SetWaveBounds(forwardMesh, forwardFlatBounds);
+        if (surroundMesh) SetWaveBounds(surroundMesh, surroundFlatBounds);
 
         if (generatedMaterial == null)
         {
@@ -213,35 +198,52 @@ public sealed class OceanWorld : MonoBehaviour
         generatedMaterial.renderQueue = 2900;
         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         renderer.receiveShadows = true;
-        // Shader displacement must remain inside the CPU culling volume.
-        // Recompute flat bounds first so repeated quality rebuilds cannot grow it.
-        generatedMesh.RecalculateBounds();
-        float verticalPadding = (wave1.amplitude + wave2.amplitude + wave3.amplitude + wave4.amplitude) * 2.05f;
-        float horizontalPadding = (wave1.amplitude * wave1.steepness + wave2.amplitude * wave2.steepness +
-            wave3.amplitude * wave3.steepness + wave4.amplitude * wave4.steepness) * 2.05f;
-        Bounds waveBounds = generatedMesh.bounds;
-        waveBounds.Expand(new Vector3(horizontalPadding * 2f, verticalPadding * 2f, horizontalPadding * 2f));
-        generatedMesh.bounds = waveBounds;
         UpdateWaterDistances();
         ApplyMaterialSettings();
         BuildSky();
     }
 
-    int GetVisibleCoverageAngle()
+    void SelectCoverage(Camera camera)
     {
-        Camera camera = Camera.main;
-        if (camera == null)
-            return 360;
+        bool surround = !camera || -camera.transform.forward.y > .58f;
+        int mode = surround ? 360 : 1;
+        if (generatedMesh && generatedCoverageAngle == mode) return;
+        if (surround)
+        {
+            if (!surroundMesh)
+            {
+                surroundMesh = CreateOceanMesh(generatedResolution, generatedSize, 360);
+                surroundFlatBounds = surroundMesh.bounds;
+                SetWaveBounds(surroundMesh, surroundFlatBounds);
+            }
+            generatedMesh = surroundMesh;
+        }
+        else
+        {
+            if (!forwardMesh)
+            {
+                float downwardLook = Mathf.Clamp01(-camera.transform.forward.y);
+                float fov = Camera.VerticalToHorizontalFieldOfView(camera.fieldOfView, camera.aspect);
+                float coverage = fov + Mathf.Lerp(58f, 145f, downwardLook);
+                int angle = Mathf.Clamp(Mathf.RoundToInt(coverage / 15f) * 15, 120, 255);
+                forwardMesh = CreateOceanMesh(generatedResolution, generatedSize, angle);
+                forwardFlatBounds = forwardMesh.bounds;
+                SetWaveBounds(forwardMesh, forwardFlatBounds);
+            }
+            generatedMesh = forwardMesh;
+        }
+        oceanFilter.sharedMesh = generatedMesh;
+        generatedCoverageAngle = mode;
+    }
 
-        // A downward-looking camera can see water around itself. In all other cases a wide
-        // forward sector contains the visible frustum plus turning safety margin.
-        float downwardLook = Mathf.Clamp01(-camera.transform.forward.y);
-        if (downwardLook > 0.58f)
-            return 360;
-
-        float horizontalFov = Camera.VerticalToHorizontalFieldOfView(camera.fieldOfView, camera.aspect);
-        float coverage = horizontalFov + Mathf.Lerp(58f, 145f, downwardLook);
-        return Mathf.Clamp(Mathf.RoundToInt(coverage / 15f) * 15, 120, 255);
+    void SetWaveBounds(Mesh mesh, Bounds bounds)
+    {
+        // Expand the original flat bounds once, including shader displacement.
+        float verticalPadding = (wave1.amplitude + wave2.amplitude + wave3.amplitude + wave4.amplitude) * 2.05f;
+        float horizontalPadding = (wave1.amplitude * wave1.steepness + wave2.amplitude * wave2.steepness +
+            wave3.amplitude * wave3.steepness + wave4.amplitude * wave4.steepness) * 2.05f;
+        bounds.Expand(new Vector3(horizontalPadding * 2f, verticalPadding * 2f, horizontalPadding * 2f));
+        mesh.bounds = bounds;
     }
 
     static Mesh CreateOceanMesh(int meshResolution, float meshSize, int coverageAngle)
@@ -395,7 +397,7 @@ public sealed class OceanWorld : MonoBehaviour
 
     public void ApplyDayNightAppearance(Color horizon, Color zenith, Color clouds, float cloudCoverage, Color sun,
         float sunGlow, float daylight, float night, Vector3 moonDirection, float moonIllumination,
-        Color shallow, Color mid, Color deep, Color reflectedSky)
+        Color shallow, Color mid, Color deep, Color reflectedSky, bool coastalAtmosphere = false)
     {
         if (skyMaterial != null)
         {
@@ -407,6 +409,7 @@ public sealed class OceanWorld : MonoBehaviour
             skyMaterial.SetFloat("_SunGlow", sunGlow);
             skyMaterial.SetFloat("_Daylight", daylight);
             skyMaterial.SetFloat("_NightFactor", night);
+            skyMaterial.SetFloat("_CoastalAtmosphere", coastalAtmosphere ? 1f : 0f);
             skyMaterial.SetVector(MoonDirectionId, moonDirection);
             skyMaterial.SetFloat(MoonIlluminationId, moonIllumination);
         }
@@ -417,6 +420,7 @@ public sealed class OceanWorld : MonoBehaviour
             generatedMaterial.SetColor(MidColorId, mid);
             generatedMaterial.SetColor(DeepColorId, deep);
             generatedMaterial.SetColor("_WaterReflectionTint", reflectedSky);
+            generatedMaterial.SetFloat("_CoastalDaylight", coastalAtmosphere ? daylight : 0f);
             generatedMaterial.SetFloat("_ReflectionStrength", Mathf.Clamp(reflectionStrength * 1.45f, 0f, 2f));
             generatedMaterial.SetFloat("_Smoothness", Mathf.Lerp(smoothness, 0.9f, 0.42f));
             // The main directional light already becomes dim blue moonlight.
@@ -567,21 +571,30 @@ public sealed class OceanWorld : MonoBehaviour
                 camera.clearFlags = CameraClearFlags.Skybox;
             skyDome.transform.position = camera.transform.position;
             UpdateWaterDistances();
-            int coverageAngle = GetVisibleCoverageAngle();
-            if ((coverageAngle >= 360 ? 360 : 1) != generatedCoverageAngle)
-                BuildOcean();
+            SelectCoverage(camera);
         }
 
         // Retain live editor selection; only cache during play, reacquiring destroyed or
         // deactivated lights. This scene's sun no longer requires a scene-wide search/frame.
-        if (!Application.isPlaying || cachedSun == null || !cachedSun.gameObject.activeInHierarchy)
-            cachedSun = FindFirstObjectByType<Light>();
+        if (!Application.isPlaying || cachedSun == null || !cachedSun.isActiveAndEnabled ||
+            cachedSun.type != LightType.Directional)
+        {
+            cachedSun = null;
+            foreach (var candidate in FindObjectsByType<Light>(FindObjectsSortMode.None))
+                if (candidate.isActiveAndEnabled && candidate.type == LightType.Directional)
+                {
+                    cachedSun = candidate;
+                    break;
+                }
+        }
         Light sun = cachedSun;
         if (sun != null && sun.type == LightType.Directional)
         {
             sun.TryGetComponent<DayNightCycle>(out var cycle);
-            skyMaterial.SetVector(SunDirectionId, cycle != null ? cycle.SunDirection : -sun.transform.forward);
+            skyMaterial.SetVector(SunDirectionId, cycle != null && cycle.isActiveAndEnabled &&
+                cycle.SunDirection.sqrMagnitude > .001f ? cycle.SunDirection : -sun.transform.forward);
         }
+        else skyMaterial.SetVector(SunDirectionId, new Vector4(.32f, .78f, .49f, 0));
     }
 
     void OnDisable()

@@ -157,6 +157,11 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         foreach (OptionControl option in options)
         {
             if (option.key == "shadowDistance" && option.slider != null) option.slider.maxValue = 800f;
+            if (option.key == "cameraDistance" && option.slider != null)
+            {
+                option.slider.minValue = ThirdPersonPlayerController.MinimumCameraDistance;
+                option.slider.maxValue = ThirdPersonPlayerController.MaximumCameraDistance;
+            }
             controlsByKey[option.key] = option;
         }
     }
@@ -542,7 +547,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             masterVolume = 1f,
             sensitivity = 0.12f,
             fieldOfView = Camera.main != null ? Camera.main.fieldOfView : 60f,
-            cameraDistance = player != null ? player.cameraDistance : 4.2f,
+            cameraDistance = ThirdPersonPlayerController.DefaultCameraDistance,
             // Spend the rendering budget on distant scenery. UI stays native;
             // lower pixel/texture/shadow costs while retaining FXAA and color grading.
             renderScale = 0.75f,
@@ -576,7 +581,14 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         s.masterVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(Prefix + "MasterVolume", s.masterVolume));
         s.sensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "Sensitivity", s.sensitivity), 0.03f, 0.5f);
         s.fieldOfView = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "FieldOfView", s.fieldOfView), 50f, 90f);
-        s.cameraDistance = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "CameraDistance", s.cameraDistance), 2.5f, 11f);
+        s.cameraDistance = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "CameraDistance", s.cameraDistance), ThirdPersonPlayerController.MinimumCameraDistance, ThirdPersonPlayerController.MaximumCameraDistance);
+        if (PlayerPrefs.GetInt(Prefix + "CameraDistanceV2", 0) == 0)
+        {
+            // The old slider stopped at 11 m. A saved value on that cap was as far back as the camera could sit.
+            if (s.cameraDistance >= 10.95f) s.cameraDistance = ThirdPersonPlayerController.DefaultCameraDistance;
+            PlayerPrefs.SetFloat(Prefix + "CameraDistance", s.cameraDistance);
+            PlayerPrefs.SetInt(Prefix + "CameraDistanceV2", 1);
+        }
         s.renderScale = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "RenderScale", s.renderScale), 0.6f, 1.2f);
         s.shadowDistance = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "ShadowDistance", s.shadowDistance), 15f, 800f);
         s.lodBias = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "LodBias", s.lodBias), 0.5f, 3f);

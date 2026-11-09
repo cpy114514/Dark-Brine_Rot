@@ -1,0 +1,145 @@
+{
+  "passed": true,
+  "failure": null,
+  "errors": [],
+  "state": {
+    "renderers": 65,
+    "colliders": 18,
+    "rigidbodies": 0,
+    "runtimeScripts": 0,
+    "missingMaterials": 0,
+    "missingMeshes": 0,
+    "walks": [
+      {
+        "x": 351.0,
+        "finalZ": 467.0,
+        "newWreckContacts": 0
+      },
+      {
+        "x": 353.0,
+        "finalZ": 467.0,
+        "newWreckContacts": 0
+      },
+      {
+        "x": 355.0,
+        "finalZ": 467.0,
+        "newWreckContacts": 0
+      }
+    ],
+    "savablePlayer": false
+  },
+  "samples": [
+    {
+      "view": "approach",
+      "label": "before",
+      "position": "(324.0000, 14.7042, 343.0000)",
+      "rotation": "(359.7843, 47.5792, 0.0000)",
+      "meanMs": 6.141763855703175,
+      "p95Ms": 6.882901303470135,
+      "drawCalls": 78.0,
+      "triangles": 403510.0,
+      "unityAllocatedMB": 2411.3681144714355
+    },
+    {
+      "view": "approach",
+      "label": "after",
+      "position": "(324.0000, 14.7042, 343.0000)",
+      "rotation": "(359.7843, 47.5792, 0.0000)",
+      "meanMs": 5.725490014689664,
+      "p95Ms": 6.184800062328577,
+      "drawCalls": 205.0,
+      "triangles": 471802.0,
+      "unityAllocatedMB": 2411.6340322494507
+    },
+    {
+      "view": "shoreline",
+      "label": "before",
+      "position": "(354.0000, 10.5121, 363.0000)",
+      "rotation": "(354.0797, 40.3141, 0.0000)",
+      "meanMs": 6.64674167184987,
+      "p95Ms": 7.498802617192268,
+      "drawCalls": 68.35555555555555,
+      "triangles": 432208.1,
+      "unityAllocatedMB": 2411.8546867370605
+    },
+    {
+      "view": "shoreline",
+      "label": "after",
+      "position": "(354.0000, 10.5121, 363.0000)",
+      "rotation": "(354.0797, 40.3141, 0.0000)",
+      "meanMs": 5.667523902633952,
+      "p95Ms": 6.0918014496564865,
+      "drawCalls": 203.00555555555556,
+      "triangles": 440995.0111111111,
+      "unityAllocatedMB": 2412.104992866516
+    },
+    {
+      "view": "bow",
+      "label": "before",
+      "position": "(356.0000, 13.2313, 405.0000)",
+      "rotation": "(356.7679, 106.6992, 0.0000)",
+      "meanMs": 6.7100983332946065,
+      "p95Ms": 7.16770114377141,
+      "drawCalls": 56.0,
+      "triangles": 353021.0,
+      "unityAllocatedMB": 2412.588013648987
+    },
+    {
+      "view": "bow",
+      "label": "after",
+      "position": "(356.0000, 13.2313, 405.0000)",
+      "rotation": "(356.7679, 106.6992, 0.0000)",
+      "meanMs": 5.0502622267231345,
+      "p95Ms": 5.4366993717849255,
+      "drawCalls": 185.0,
+      "triangles": 430385.0,
+      "unityAllocatedMB": 2412.837487220764
+    },
+    {
+      "view": "debris",
+      "label": "before",
+      "position": "(356.0000, 13.9053, 431.0000)",
+      "rotation": "(22.7726, 98.1301, 0.0000)",
+      "meanMs": 3.754408332881414,
+      "p95Ms": 4.307001363486052,
+      "drawCalls": 51.0,
+      "triangles": 354773.0,
+      "unityAllocatedMB": 2413.345335006714
+    },
+    {
+      "view": "debris",
+      "label": "after",
+      "position": "(356.0000, 13.9053, 431.0000)",
+      "rotation": "(22.7726, 98.1301, 0.0000)",
+      "meanMs": 4.005236093265315,
+      "p95Ms": 4.720394033938646,
+      "drawCalls": 171.0,
+      "triangles": 414681.0,
+      "unityAllocatedMB": 2413.615400314331
+    },
+    {
+      "view": "along-coast",
+      "label": "before",
+      "position": "(377.0000, 7.3160, 466.0000)",
+      "rotation": "(356.1857, 175.1009, 0.0000)",
+      "meanMs": 6.452339456882328,
+      "p95Ms": 6.8761976435780525,
+      "drawCalls": 105.0,
+      "triangles": 381034.0,
+      "unityAllocatedMB": 2413.8783617019653
+    },
+    {
+      "view": "along-coast",
+      "label": "after",
+      "position": "(377.0000, 7.3160, 466.0000)",
+      "rotation": "(356.1857, 175.1009, 0.0000)",
+      "meanMs": 6.5275427859483495,
+      "p95Ms": 8.378301747143269,
+      "drawCalls": 255.0,
+      "triangles": 465619.0,
+      "unityAllocatedMB": 2411.5864763259888
+    }
+  ],
+  "hardware": "NVIDIA GeForce RTX 4060",
+  "scope": "Environment + Lighting Editor Play, 1920x1080 PC quality 4xMSAA 09:00 fixed clouds and wind; 100 warm-up and 180 sampled frames, same Play session and camera per before/after pair"
+}

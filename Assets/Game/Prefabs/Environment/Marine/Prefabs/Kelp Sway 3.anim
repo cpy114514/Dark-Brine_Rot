@@ -1,0 +1,141 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!74 &7400000
+AnimationClip:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Kelp Sway 3
+  serializedVersion: 7
+  m_Legacy: 1
+  m_Compressed: 0
+  m_UseHighQualityCurve: 1
+  m_RotationCurves: []
+  m_CompressedRotationCurves: []
+  m_EulerCurves:
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: {x: -6.972605, y: 0, z: -4.250206}
+        inSlope: {x: -3.9747107, y: 0, z: 3.5376456}
+        outSlope: {x: -3.9747107, y: 0, z: 3.5376456}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 0.775
+        value: {x: -7.703712, y: 0, z: -0.5369755}
+        inSlope: {x: 2.1859815, y: 0, z: 5.5471654}
+        outSlope: {x: 2.1859815, y: 0, z: 5.5471654}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 1.55
+        value: {x: -3.9220867, y: 0, z: 3.49081}
+        inSlope: {x: 7.066158, y: 0, z: 4.3072305}
+        outSlope: {x: 7.066158, y: 0, z: 4.3072305}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 2.3249998
+        value: {x: 2.1570418, y: 0, z: 5.4737244}
+        inSlope: {x: 7.8070726, y: 0, z: 0.5441792}
+        outSlope: {x: 7.8070726, y: 0, z: 0.5441792}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 3.1
+        value: {x: 6.9726067, y: 0, z: 4.2502046}
+        inSlope: {x: 3.9747083, y: 0, z: -3.537647}
+        outSlope: {x: 3.9747083, y: 0, z: -3.537647}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 3.875
+        value: {x: 7.70371, y: 0, z: 0.5369711}
+        inSlope: {x: -2.1859877, y: 0, z: -5.547166}
+        outSlope: {x: -2.1859877, y: 0, z: -5.547166}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 4.6499996
+        value: {x: 3.922088, y: 0, z: -3.4908094}
+        inSlope: {x: -7.0661573, y: 0, z: -4.3072314}
+        outSlope: {x: -7.0661573, y: 0, z: -4.3072314}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 5.4249997
+        value: {x: -2.1570442, y: 0, z: -5.4737244}
+        inSlope: {x: -7.807072, y: 0, z: -0.5441774}
+        outSlope: {x: -7.807072, y: 0, z: -0.5441774}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      - serializedVersion: 3
+        time: 6.2
+        value: {x: -6.9726043, y: 0, z: -4.2502036}
+        inSlope: {x: -3.9747128, y: 0, z: 3.5376484}
+        outSlope: {x: -3.9747128, y: 0, z: 3.5376484}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0, y: 0.33333334, z: 0}
+        outWeight: {x: 0, y: 0.33333334, z: 0}
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    path: 
+  m_PositionCurves: []
+  m_ScaleCurves: []
+  m_FloatCurves: []
+  m_PPtrCurves: []
+  m_SampleRate: 30
+  m_WrapMode: 2
+  m_Bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  m_ClipBindingConstant:
+    genericBindings: []
+    pptrCurveMapping: []
+  m_AnimationClipSettings:
+    serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
+    m_StartTime: 0
+    m_StopTime: 6.2
+    m_OrientationOffsetY: 0
+    m_Level: 0
+    m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
+    m_LoopTime: 1
+    m_LoopBlend: 0
+    m_LoopBlendOrientation: 0
+    m_LoopBlendPositionY: 0
+    m_LoopBlendPositionXZ: 0
+    m_KeepOriginalOrientation: 0
+    m_KeepOriginalPositionY: 1
+    m_KeepOriginalPositionXZ: 0
+    m_HeightFromFeet: 0
+    m_Mirror: 0
+  m_EditorCurves: []
+  m_EulerEditorCurves: []
+  m_HasGenericRootTransform: 0
+  m_HasMotionFloatCurves: 0
+  m_Events: []

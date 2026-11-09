@@ -1,6 +1,6 @@
 # Dark Brine_Rot
 
-It's a first person perspective game play as Sahur and explore the islands. The story starts from a strange ocean where you may find you are in trouble. By the game process, you can travel around the island and find out different treasures and bosses. Beat them to get new weapons or tools! By using different attack combos or different special technique, you may find out the own fighting style for you. Your mission is to stay alive, beating boss and investigate what's happening here. Is it just a normal adventure or it's all because a conspiracy? 
+It's a third-person action-adventure game where you play as Sahur and explore the islands. The story starts from a strange ocean where you may find you are in trouble. By the game process, you can travel around the island and find out different treasures and bosses. Beat them to get new weapons or tools! By using different attack combos or different special technique, you may find out the own fighting style for you. Your mission is to stay alive, beating boss and investigate what's happening here. Is it just a normal adventure or it's all because a conspiracy?
 Remember to use your map and different kinds tools, they may help you a lot when you are investigating the islands. Don't wait! Start playing now.
 
 ## Click here to play
@@ -19,7 +19,7 @@ Remember to use your map and different kinds tools, they may help you a lot when
 | Lock on | Middle mouse button |
 | Heal | H |
 | Equipment | I; use the mouse to browse, equip and close |
-| switching wepons/ numbers |
+| Switch weapons | 1 / 2 / 3, when unlocked |
 | Activate equipped weakness glasses | G |
 | Map | m |
 | pause| esc |
@@ -27,6 +27,10 @@ Remember to use your map and different kinds tools, they may help you a lot when
 ## AI usage
 
 We used AI for coding
+
+## Project maintenance
+
+Use the Unity version in `ProjectSettings/ProjectVersion.txt`. Scene ownership and safe editing rules are in [COLLABORATION.md](COLLABORATION.md); current inspection, cleanup and content tools are indexed in [Tools/README.md](Tools/README.md).
 
 ## This is a project for Hackclub Thirdspace
 

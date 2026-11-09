@@ -1,0 +1,957 @@
+[
+  {
+    "frame": 0,
+    "label": "transition",
+    "time": 13.2504625
+  },
+  {
+    "frame": 1,
+    "label": "transition",
+    "time": 13.3554115
+  },
+  {
+    "frame": 2,
+    "label": "transition",
+    "time": 13.4584684
+  },
+  {
+    "frame": 3,
+    "label": "transition",
+    "time": 13.5598545
+  },
+  {
+    "frame": 4,
+    "label": "transition",
+    "time": 13.6634455
+  },
+  {
+    "frame": 5,
+    "label": "transition",
+    "time": 13.7682762
+  },
+  {
+    "frame": 6,
+    "label": "transition",
+    "time": 13.870554
+  },
+  {
+    "frame": 7,
+    "label": "transition",
+    "time": 13.9711924
+  },
+  {
+    "frame": 8,
+    "label": "transition",
+    "time": 14.0770206
+  },
+  {
+    "frame": 9,
+    "label": "transition",
+    "time": 14.1808462
+  },
+  {
+    "frame": 10,
+    "label": "transition",
+    "time": 14.2878551
+  },
+  {
+    "frame": 11,
+    "label": "transition",
+    "time": 14.391655
+  },
+  {
+    "frame": 12,
+    "label": "transition",
+    "time": 14.4958248
+  },
+  {
+    "frame": 13,
+    "label": "transition",
+    "time": 14.5988083
+  },
+  {
+    "frame": 14,
+    "label": "transition",
+    "time": 14.7055855
+  },
+  {
+    "frame": 15,
+    "label": "transition",
+    "time": 14.8074818
+  },
+  {
+    "frame": 16,
+    "label": "transition",
+    "time": 14.9121571
+  },
+  {
+    "frame": 17,
+    "label": "transition",
+    "time": 15.0164623
+  },
+  {
+    "frame": 18,
+    "label": "transition",
+    "time": 15.1216049
+  },
+  {
+    "frame": 19,
+    "label": "transition",
+    "time": 15.2257824
+  },
+  {
+    "frame": 20,
+    "label": "transition",
+    "time": 15.3305
+  },
+  {
+    "frame": 21,
+    "label": "transition",
+    "time": 15.4308758
+  },
+  {
+    "frame": 22,
+    "label": "transition",
+    "time": 15.5359182
+  },
+  {
+    "frame": 23,
+    "label": "transition",
+    "time": 15.6396379
+  },
+  {
+    "frame": 24,
+    "label": "transition",
+    "time": 15.7402153
+  },
+  {
+    "frame": 25,
+    "label": "transition",
+    "time": 15.8468084
+  },
+  {
+    "frame": 26,
+    "label": "transition",
+    "time": 15.95206
+  },
+  {
+    "frame": 27,
+    "label": "transition",
+    "time": 16.0597973
+  },
+  {
+    "frame": 28,
+    "label": "transition",
+    "time": 16.1661663
+  },
+  {
+    "frame": 29,
+    "label": "transition",
+    "time": 16.2730923
+  },
+  {
+    "frame": 30,
+    "label": "transition",
+    "time": 16.3732948
+  },
+  {
+    "frame": 31,
+    "label": "transition",
+    "time": 16.4794464
+  },
+  {
+    "frame": 32,
+    "label": "transition",
+    "time": 16.5839043
+  },
+  {
+    "frame": 33,
+    "label": "transition",
+    "time": 16.6884289
+  },
+  {
+    "frame": 34,
+    "label": "transition",
+    "time": 16.79499
+  },
+  {
+    "frame": 35,
+    "label": "transition",
+    "time": 16.8968887
+  },
+  {
+    "frame": 36,
+    "label": "transition",
+    "time": 17.00045
+  },
+  {
+    "frame": 37,
+    "label": "transition",
+    "time": 17.10651
+  },
+  {
+    "frame": 38,
+    "label": "transition",
+    "time": 17.2088223
+  },
+  {
+    "frame": 39,
+    "label": "transition",
+    "time": 17.3128834
+  },
+  {
+    "frame": 40,
+    "label": "transition",
+    "time": 17.4137135
+  },
+  {
+    "frame": 41,
+    "label": "ShadowChain",
+    "time": 26.1631317
+  },
+  {
+    "frame": 42,
+    "label": "ShadowChain",
+    "time": 26.2658463
+  },
+  {
+    "frame": 43,
+    "label": "ShadowChain",
+    "time": 26.3663559
+  },
+  {
+    "frame": 44,
+    "label": "ShadowChain",
+    "time": 26.4681263
+  },
+  {
+    "frame": 45,
+    "label": "ShadowChain",
+    "time": 26.5716457
+  },
+  {
+    "frame": 46,
+    "label": "ShadowChain",
+    "time": 26.6762218
+  },
+  {
+    "frame": 47,
+    "label": "ShadowChain",
+    "time": 26.77706
+  },
+  {
+    "frame": 48,
+    "label": "ShadowChain",
+    "time": 26.8829613
+  },
+  {
+    "frame": 49,
+    "label": "ShadowChain",
+    "time": 26.9890442
+  },
+  {
+    "frame": 50,
+    "label": "ShadowChain",
+    "time": 27.092535
+  },
+  {
+    "frame": 51,
+    "label": "ShadowChain",
+    "time": 27.1957455
+  },
+  {
+    "frame": 52,
+    "label": "ShadowChain",
+    "time": 27.2967129
+  },
+  {
+    "frame": 53,
+    "label": "ShadowChain",
+    "time": 27.3979111
+  },
+  {
+    "frame": 54,
+    "label": "ShadowChain",
+    "time": 27.5006714
+  },
+  {
+    "frame": 55,
+    "label": "ShadowChain",
+    "time": 27.6017361
+  },
+  {
+    "frame": 56,
+    "label": "ShadowChain",
+    "time": 27.7066326
+  },
+  {
+    "frame": 57,
+    "label": "ShadowChain",
+    "time": 27.8102741
+  },
+  {
+    "frame": 58,
+    "label": "ShadowChain",
+    "time": 27.9127254
+  },
+  {
+    "frame": 59,
+    "label": "ShadowChain",
+    "time": 28.0197716
+  },
+  {
+    "frame": 60,
+    "label": "ShadowChain",
+    "time": 28.122303
+  },
+  {
+    "frame": 61,
+    "label": "ShadowChain",
+    "time": 28.2242355
+  },
+  {
+    "frame": 62,
+    "label": "ShadowChain",
+    "time": 28.3286476
+  },
+  {
+    "frame": 63,
+    "label": "ShadowChain",
+    "time": 28.432024
+  },
+  {
+    "frame": 64,
+    "label": "ShadowChain",
+    "time": 28.53212
+  },
+  {
+    "frame": 65,
+    "label": "ShadowChain",
+    "time": 28.6375942
+  },
+  {
+    "frame": 66,
+    "label": "ShadowChain",
+    "time": 28.743885
+  },
+  {
+    "frame": 67,
+    "label": "ShadowChain",
+    "time": 28.8485374
+  },
+  {
+    "frame": 68,
+    "label": "ShadowChain",
+    "time": 28.9486141
+  },
+  {
+    "frame": 69,
+    "label": "ShadowChain",
+    "time": 29.0545216
+  },
+  {
+    "frame": 70,
+    "label": "ShadowChain",
+    "time": 29.1601868
+  },
+  {
+    "frame": 71,
+    "label": "ShadowChain",
+    "time": 29.26067
+  },
+  {
+    "frame": 72,
+    "label": "ShadowChain",
+    "time": 29.3624611
+  },
+  {
+    "frame": 73,
+    "label": "ShadowChain",
+    "time": 29.46365
+  },
+  {
+    "frame": 74,
+    "label": "CremaCyclone",
+    "time": 31.384861
+  },
+  {
+    "frame": 75,
+    "label": "CremaCyclone",
+    "time": 31.489996
+  },
+  {
+    "frame": 76,
+    "label": "CremaCyclone",
+    "time": 31.5959816
+  },
+  {
+    "frame": 77,
+    "label": "CremaCyclone",
+    "time": 31.7025127
+  },
+  {
+    "frame": 78,
+    "label": "CremaCyclone",
+    "time": 31.8038216
+  },
+  {
+    "frame": 79,
+    "label": "CremaCyclone",
+    "time": 31.90874
+  },
+  {
+    "frame": 80,
+    "label": "CremaCyclone",
+    "time": 32.0121269
+  },
+  {
+    "frame": 81,
+    "label": "CremaCyclone",
+    "time": 32.11407
+  },
+  {
+    "frame": 82,
+    "label": "CremaCyclone",
+    "time": 32.2198
+  },
+  {
+    "frame": 83,
+    "label": "CremaCyclone",
+    "time": 32.32576
+  },
+  {
+    "frame": 84,
+    "label": "CremaCyclone",
+    "time": 32.425827
+  },
+  {
+    "frame": 85,
+    "label": "CremaCyclone",
+    "time": 32.5300026
+  },
+  {
+    "frame": 86,
+    "label": "CremaCyclone",
+    "time": 32.63764
+  },
+  {
+    "frame": 87,
+    "label": "CremaCyclone",
+    "time": 32.7422829
+  },
+  {
+    "frame": 88,
+    "label": "CremaCyclone",
+    "time": 32.84659
+  },
+  {
+    "frame": 89,
+    "label": "CremaCyclone",
+    "time": 32.950943
+  },
+  {
+    "frame": 90,
+    "label": "CremaCyclone",
+    "time": 33.0534477
+  },
+  {
+    "frame": 91,
+    "label": "CremaCyclone",
+    "time": 33.15831
+  },
+  {
+    "frame": 92,
+    "label": "CremaCyclone",
+    "time": 33.2612076
+  },
+  {
+    "frame": 93,
+    "label": "CremaCyclone",
+    "time": 33.3619347
+  },
+  {
+    "frame": 94,
+    "label": "CremaCyclone",
+    "time": 33.4623222
+  },
+  {
+    "frame": 95,
+    "label": "CremaCyclone",
+    "time": 33.5630722
+  },
+  {
+    "frame": 96,
+    "label": "CremaCyclone",
+    "time": 33.6642265
+  },
+  {
+    "frame": 97,
+    "label": "CremaCyclone",
+    "time": 33.76606
+  },
+  {
+    "frame": 98,
+    "label": "CremaCyclone",
+    "time": 33.86735
+  },
+  {
+    "frame": 99,
+    "label": "CremaCyclone",
+    "time": 33.96738
+  },
+  {
+    "frame": 100,
+    "label": "CremaCyclone",
+    "time": 34.0687141
+  },
+  {
+    "frame": 101,
+    "label": "CremaCyclone",
+    "time": 34.16941
+  },
+  {
+    "frame": 102,
+    "label": "CremaCyclone",
+    "time": 34.26957
+  },
+  {
+    "frame": 103,
+    "label": "CremaCyclone",
+    "time": 34.3715134
+  },
+  {
+    "frame": 104,
+    "label": "CremaCyclone",
+    "time": 34.4725456
+  },
+  {
+    "frame": 105,
+    "label": "CremaCyclone",
+    "time": 34.57838
+  },
+  {
+    "frame": 106,
+    "label": "MochaDive",
+    "time": 36.49721
+  },
+  {
+    "frame": 107,
+    "label": "MochaDive",
+    "time": 36.604744
+  },
+  {
+    "frame": 108,
+    "label": "MochaDive",
+    "time": 36.7117233
+  },
+  {
+    "frame": 109,
+    "label": "MochaDive",
+    "time": 36.8136864
+  },
+  {
+    "frame": 110,
+    "label": "MochaDive",
+    "time": 36.91469
+  },
+  {
+    "frame": 111,
+    "label": "MochaDive",
+    "time": 37.0206757
+  },
+  {
+    "frame": 112,
+    "label": "MochaDive",
+    "time": 37.12408
+  },
+  {
+    "frame": 113,
+    "label": "MochaDive",
+    "time": 37.23354
+  },
+  {
+    "frame": 114,
+    "label": "MochaDive",
+    "time": 37.3360138
+  },
+  {
+    "frame": 115,
+    "label": "MochaDive",
+    "time": 37.44144
+  },
+  {
+    "frame": 116,
+    "label": "MochaDive",
+    "time": 37.5427551
+  },
+  {
+    "frame": 117,
+    "label": "MochaDive",
+    "time": 37.6459732
+  },
+  {
+    "frame": 118,
+    "label": "MochaDive",
+    "time": 37.7464638
+  },
+  {
+    "frame": 119,
+    "label": "MochaDive",
+    "time": 37.84829
+  },
+  {
+    "frame": 120,
+    "label": "MochaDive",
+    "time": 37.9515953
+  },
+  {
+    "frame": 121,
+    "label": "MochaDive",
+    "time": 38.0535774
+  },
+  {
+    "frame": 122,
+    "label": "MochaDive",
+    "time": 38.15767
+  },
+  {
+    "frame": 123,
+    "label": "MochaDive",
+    "time": 38.26526
+  },
+  {
+    "frame": 124,
+    "label": "MochaDive",
+    "time": 38.36878
+  },
+  {
+    "frame": 125,
+    "label": "MochaDive",
+    "time": 38.4725266
+  },
+  {
+    "frame": 126,
+    "label": "MochaDive",
+    "time": 38.5735855
+  },
+  {
+    "frame": 127,
+    "label": "MochaDive",
+    "time": 38.676815
+  },
+  {
+    "frame": 128,
+    "label": "MochaDive",
+    "time": 38.78227
+  },
+  {
+    "frame": 129,
+    "label": "MochaDive",
+    "time": 38.89135
+  },
+  {
+    "frame": 130,
+    "label": "MochaDive",
+    "time": 38.99641
+  },
+  {
+    "frame": 131,
+    "label": "MochaDive",
+    "time": 39.09783
+  },
+  {
+    "frame": 132,
+    "label": "MochaDive",
+    "time": 39.20217
+  },
+  {
+    "frame": 133,
+    "label": "MochaDive",
+    "time": 39.3050766
+  },
+  {
+    "frame": 134,
+    "label": "MochaDive",
+    "time": 39.4057236
+  },
+  {
+    "frame": 135,
+    "label": "MochaDive",
+    "time": 39.5079575
+  },
+  {
+    "frame": 136,
+    "label": "MochaDive",
+    "time": 39.608017
+  },
+  {
+    "frame": 137,
+    "label": "MochaDive",
+    "time": 39.7127151
+  },
+  {
+    "frame": 138,
+    "label": "MochaDive",
+    "time": 39.8187256
+  },
+  {
+    "frame": 139,
+    "label": "MochaDive",
+    "time": 39.9195938
+  },
+  {
+    "frame": 140,
+    "label": "CoffeeTempest",
+    "time": 41.842865
+  },
+  {
+    "frame": 141,
+    "label": "CoffeeTempest",
+    "time": 41.9445
+  },
+  {
+    "frame": 142,
+    "label": "CoffeeTempest",
+    "time": 42.0504265
+  },
+  {
+    "frame": 143,
+    "label": "CoffeeTempest",
+    "time": 42.15712
+  },
+  {
+    "frame": 144,
+    "label": "CoffeeTempest",
+    "time": 42.25771
+  },
+  {
+    "frame": 145,
+    "label": "CoffeeTempest",
+    "time": 42.3639832
+  },
+  {
+    "frame": 146,
+    "label": "CoffeeTempest",
+    "time": 42.4662971
+  },
+  {
+    "frame": 147,
+    "label": "CoffeeTempest",
+    "time": 42.5723648
+  },
+  {
+    "frame": 148,
+    "label": "CoffeeTempest",
+    "time": 42.6744041
+  },
+  {
+    "frame": 149,
+    "label": "CoffeeTempest",
+    "time": 42.7805023
+  },
+  {
+    "frame": 150,
+    "label": "CoffeeTempest",
+    "time": 42.8826981
+  },
+  {
+    "frame": 151,
+    "label": "CoffeeTempest",
+    "time": 42.9853477
+  },
+  {
+    "frame": 152,
+    "label": "CoffeeTempest",
+    "time": 43.0887
+  },
+  {
+    "frame": 153,
+    "label": "CoffeeTempest",
+    "time": 43.1922836
+  },
+  {
+    "frame": 154,
+    "label": "CoffeeTempest",
+    "time": 43.29513
+  },
+  {
+    "frame": 155,
+    "label": "CoffeeTempest",
+    "time": 43.3972664
+  },
+  {
+    "frame": 156,
+    "label": "CoffeeTempest",
+    "time": 43.4983253
+  },
+  {
+    "frame": 157,
+    "label": "CoffeeTempest",
+    "time": 43.60175
+  },
+  {
+    "frame": 158,
+    "label": "CoffeeTempest",
+    "time": 43.7046356
+  },
+  {
+    "frame": 159,
+    "label": "CoffeeTempest",
+    "time": 43.80808
+  },
+  {
+    "frame": 160,
+    "label": "CoffeeTempest",
+    "time": 43.91432
+  },
+  {
+    "frame": 161,
+    "label": "CoffeeTempest",
+    "time": 44.0200424
+  },
+  {
+    "frame": 162,
+    "label": "CoffeeTempest",
+    "time": 44.12556
+  },
+  {
+    "frame": 163,
+    "label": "CoffeeTempest",
+    "time": 44.2275658
+  },
+  {
+    "frame": 164,
+    "label": "CoffeeTempest",
+    "time": 44.3326569
+  },
+  {
+    "frame": 165,
+    "label": "CoffeeTempest",
+    "time": 44.433815
+  },
+  {
+    "frame": 166,
+    "label": "CoffeeTempest",
+    "time": 44.5341949
+  },
+  {
+    "frame": 167,
+    "label": "CoffeeTempest",
+    "time": 44.63926
+  },
+  {
+    "frame": 168,
+    "label": "CoffeeTempest",
+    "time": 44.7455559
+  },
+  {
+    "frame": 169,
+    "label": "CoffeeTempest",
+    "time": 44.8506966
+  },
+  {
+    "frame": 170,
+    "label": "CoffeeTempest",
+    "time": 44.95136
+  },
+  {
+    "frame": 171,
+    "label": "CoffeeTempest",
+    "time": 45.0580025
+  },
+  {
+    "frame": 172,
+    "label": "CoffeeTempest",
+    "time": 45.16243
+  },
+  {
+    "frame": 173,
+    "label": "CoffeeTempest",
+    "time": 45.2638
+  },
+  {
+    "frame": 174,
+    "label": "CoffeeTempest",
+    "time": 45.36875
+  },
+  {
+    "frame": 175,
+    "label": "CoffeeTempest",
+    "time": 45.4747238
+  },
+  {
+    "frame": 176,
+    "label": "CoffeeTempest",
+    "time": 45.5791168
+  },
+  {
+    "frame": 177,
+    "label": "CoffeeTempest",
+    "time": 45.6803932
+  },
+  {
+    "frame": 178,
+    "label": "CoffeeTempest",
+    "time": 45.7828522
+  },
+  {
+    "frame": 179,
+    "label": "CoffeeTempest",
+    "time": 45.8902931
+  },
+  {
+    "frame": 180,
+    "label": "CoffeeTempest",
+    "time": 45.99289
+  },
+  {
+    "frame": 181,
+    "label": "CoffeeTempest",
+    "time": 46.0986557
+  },
+  {
+    "frame": 182,
+    "label": "CoffeeTempest",
+    "time": 46.2052155
+  },
+  {
+    "frame": 183,
+    "label": "CoffeeTempest",
+    "time": 46.3076477
+  },
+  {
+    "frame": 184,
+    "label": "CoffeeTempest",
+    "time": 46.411377
+  },
+  {
+    "frame": 185,
+    "label": "CoffeeTempest",
+    "time": 46.5143051
+  },
+  {
+    "frame": 186,
+    "label": "CoffeeTempest",
+    "time": 46.6173668
+  },
+  {
+    "frame": 187,
+    "label": "CoffeeTempest",
+    "time": 46.72101
+  },
+  {
+    "frame": 188,
+    "label": "CoffeeTempest",
+    "time": 46.8232269
+  },
+  {
+    "frame": 189,
+    "label": "CoffeeTempest",
+    "time": 46.9234467
+  },
+  {
+    "frame": 190,
+    "label": "death",
+    "time": 53.1284332
+  }
+]

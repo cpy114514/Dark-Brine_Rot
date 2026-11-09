@@ -1,0 +1,75 @@
+{
+  "removed": [
+    "2059262187",
+    "1081540231"
+  ],
+  "added": 37,
+  "changed": [
+    {
+      "id": "367158186",
+      "type": "MeshFilter:",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -7,2 +7,2 @@\n",
+        "   m_GameObject: {fileID: 367158182}",
+        "-  m_Mesh: {fileID: 2059262187}",
+        "+  m_Mesh: {fileID: 1621808757}"
+      ]
+    },
+    {
+      "id": "9223372036854775807",
+      "type": "SceneRoots:",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -6072 +6072,2 @@\n",
+        "   - {fileID: 1293331349}",
+        "+  - {fileID: 721944693}"
+      ]
+    },
+    {
+      "id": "558624516",
+      "type": "MeshCollider:",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -21,2 +21,2 @@\n",
+        "   m_CookingOptions: 30",
+        "-  m_Mesh: {fileID: 1081540231}",
+        "+  m_Mesh: {fileID: 1015425874}"
+      ]
+    },
+    {
+      "id": "558624518",
+      "type": "MeshFilter:",
+      "diff": [
+        "--- \n",
+        "+++ \n",
+        "@@ -7,2 +7,2 @@\n",
+        "   m_GameObject: {fileID: 558624514}",
+        "-  m_Mesh: {fileID: 1081540231}",
+        "+  m_Mesh: {fileID: 1015425874}"
+      ]
+    }
+  ],
+  "otherScenesUnchanged": {
+    "Enemies.unity": true,
+    "Gameplay.unity": true,
+    "Main.unity": true
+  },
+  "regeneratedMeshPayloads": [
+    {
+      "old": "2059262187",
+      "new": "1621808757",
+      "identical": true,
+      "diff": []
+    },
+    {
+      "old": "1081540231",
+      "new": "1015425874",
+      "identical": true,
+      "diff": []
+    }
+  ]
+}

@@ -5,6 +5,14 @@ using UnityEngine;
 using UnityEditor;
 public static class InspectSceneGlow
 {
+ public static object Suns()
+ {
+  var cameras=UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsInactive.Include,FindObjectsSortMode.None);
+  return new{
+   cameras=cameras.Select(c=>new{c.name,c.enabled,position=c.transform.position.ToString(),rotation=c.transform.eulerAngles.ToString(),c.farClipPlane,c.targetDisplay,type=c.cameraType.ToString()}),
+   suns=UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include,FindObjectsSortMode.None).Where(r=>r.sharedMaterials.Any(m=>m&&(m.shader.name.Contains("Sun")||m.name.Contains("Sun")))).Select(r=>new{r.name,scene=r.gameObject.scene.name,active=r.enabled&&r.gameObject.activeInHierarchy,position=r.transform.position.ToString(),size=r.bounds.size.ToString(),components=r.GetComponents<Component>().Select(c=>c?c.GetType().Name:"missing"),materials=r.sharedMaterials.Where(m=>m).Select(m=>new{m.name,shader=m.shader.name})}),
+   cycles=UnityEngine.Object.FindObjectsByType<DayNightCycle>(FindObjectsInactive.Include,FindObjectsSortMode.None).Select(c=>new{c.name,c.enabled,direction=c.SunDirection.ToString()})};
+ }
  public static object Audit()
  {
   string Path(Transform t)=>t.parent?Path(t.parent)+"/"+t.name:t.name;

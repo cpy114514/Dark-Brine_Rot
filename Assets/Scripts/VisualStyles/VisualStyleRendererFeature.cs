@@ -33,7 +33,7 @@ namespace Mavis.VisualStyles
         {
             Material material;
             readonly ProfilingSampler sampler = new ProfilingSampler("VisualStyle.Transform");
-            string passName;
+            string stylePassLabel;
             VisualStylePreset appliedPreset;
             int appliedRevision = -1, presetRevision = -1, quality = -1;
             bool pixel;
@@ -56,7 +56,7 @@ namespace Mavis.VisualStyles
                 comic = (int)preset.Mode >= (int)VisualStyleMode.ColorComic;
                 renderPassEvent = comic ? RenderPassEvent.AfterRenderingPostProcessing : RenderPassEvent.BeforeRenderingTransparents;
                 ConfigureInput(comic ? ScriptableRenderPassInput.Depth : ScriptableRenderPassInput.Depth | ScriptableRenderPassInput.Normal);
-                passName = "Visual Style / " + preset.displayName;
+                stylePassLabel = "Visual Style / " + preset.displayName;
                 mat.SetFloat("_StyleMode", (int)preset.Mode);
                 var details = VisualStyleManager.Instance.Details;
                 mat.SetVector("_Comic", details);
@@ -89,7 +89,7 @@ namespace Mavis.VisualStyles
                     comicDepth = graph.CreateTexture(depthDesc);
                     comicDepthCopy.Render(graph, frame, comicDepth, resources.activeDepthTexture, false, "Comic / Complete opaque depth");
                 }
-                using (var builder = graph.AddRasterRenderPass<Data>(passName, out var data, sampler))
+                using (var builder = graph.AddRasterRenderPass<Data>(stylePassLabel, out var data, sampler))
                 {
                     data.source = source; data.material = material;
                     data.comic = comic; data.comicDepth = comicDepth;

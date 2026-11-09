@@ -1,0 +1,80 @@
+[
+  {
+    "view": "coast",
+    "beforeMs": 6.057316675368282,
+    "afterMs": 5.7213999835463865,
+    "beforeP95": 7.382504176348448,
+    "afterP95": 6.396697834134102,
+    "beforeDrawCalls": 53.0,
+    "afterDrawCalls": 53.0,
+    "beforeUnityMB": 2410.425224304199,
+    "afterUnityMB": 2321.835404396057,
+    "afterPrivateMB": 7943.57421875,
+    "afterWorkingMB": 5699.69140625
+  },
+  {
+    "view": "dune",
+    "beforeMs": 13.053960523878535,
+    "afterMs": 9.949353927125534,
+    "beforeP95": 15.306299552321434,
+    "afterP95": 11.440199799835682,
+    "beforeDrawCalls": 1093.0,
+    "afterDrawCalls": 1053.0055555555555,
+    "beforeUnityMB": 2414.1423320770264,
+    "afterUnityMB": 2325.5354013442993,
+    "afterPrivateMB": 7937.796875,
+    "afterWorkingMB": 5694.92578125
+  },
+  {
+    "view": "meadow",
+    "beforeMs": 13.399314978677365,
+    "afterMs": 10.227441632499298,
+    "beforeP95": 16.140801832079887,
+    "afterP95": 12.280902825295925,
+    "beforeDrawCalls": 1089.0,
+    "afterDrawCalls": 1052.0055555555555,
+    "beforeUnityMB": 2415.483139038086,
+    "afterUnityMB": 2327.69011592865,
+    "afterPrivateMB": 7907.44921875,
+    "afterWorkingMB": 5666.04296875
+  },
+  {
+    "view": "woodland",
+    "beforeMs": 12.304170496968759,
+    "afterMs": 11.307105551370316,
+    "beforeP95": 14.66409396380186,
+    "afterP95": 14.763293787837029,
+    "beforeDrawCalls": 1249.5222222222221,
+    "afterDrawCalls": 1185.0,
+    "beforeUnityMB": 2419.3989849090576,
+    "afterUnityMB": 2331.447690010071,
+    "afterPrivateMB": 7857.30078125,
+    "afterWorkingMB": 5617.73046875
+  },
+  {
+    "view": "boss-junction",
+    "beforeMs": 12.013087809706727,
+    "afterMs": 10.352831665012571,
+    "beforeP95": 14.331101439893246,
+    "afterP95": 12.55150232464075,
+    "beforeDrawCalls": 1117.0,
+    "afterDrawCalls": 1058.0,
+    "beforeUnityMB": 2419.962161064148,
+    "afterUnityMB": 2331.990505218506,
+    "afterPrivateMB": 7859.2421875,
+    "afterWorkingMB": 5619.71875
+  },
+  {
+    "view": "ground",
+    "beforeMs": 9.908894470168484,
+    "afterMs": 8.360728331738049,
+    "beforeP95": 12.056902050971985,
+    "afterP95": 10.38009487092495,
+    "beforeDrawCalls": 651.0,
+    "afterDrawCalls": 639.0,
+    "beforeUnityMB": 2420.1564445495605,
+    "afterUnityMB": 2332.1845598220825,
+    "afterPrivateMB": 7858.0234375,
+    "afterWorkingMB": 5618.55078125
+  }
+]

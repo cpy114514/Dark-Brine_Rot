@@ -64,5 +64,6 @@ namespace Mavis
         {
             ApplyDamage(currentHealth + 1f, transform.position);
         }
+
     }
 }

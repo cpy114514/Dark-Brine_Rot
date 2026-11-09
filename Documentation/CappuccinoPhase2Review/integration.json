@@ -1,0 +1,63 @@
+{
+  "unity": "6000.3.23f1",
+  "originalStates": [
+    {
+      "name": "Idle",
+      "motion": "CapriSlash",
+      "mirror": false
+    },
+    {
+      "name": "Attack",
+      "motion": "CapriSlash",
+      "mirror": false
+    },
+    {
+      "name": "Death",
+      "motion": "CapriDeath",
+      "mirror": false
+    },
+    {
+      "name": "Walk",
+      "motion": "CapriWalking",
+      "mirror": false
+    },
+    {
+      "name": "Retreat",
+      "motion": "CapriRetreat",
+      "mirror": false
+    },
+    {
+      "name": "AttackMirrored",
+      "motion": "CapriSlash",
+      "mirror": true
+    }
+  ],
+  "newStates": 6,
+  "shader": "DarkBrine/Crema Mesh",
+  "shaderSupported": true,
+  "shaderErrors": [],
+  "audio": [
+    {
+      "name": "SteamCharge",
+      "exists": true
+    },
+    {
+      "name": "BladeAccent",
+      "exists": true
+    },
+    {
+      "name": "CremaImpact",
+      "exists": true
+    },
+    {
+      "name": "RistrettoRhythm",
+      "exists": true
+    }
+  ],
+  "live": [
+    {
+      "name": "CappuccinoAssassino",
+      "controller": "CapriCombat"
+    }
+  ]
+}

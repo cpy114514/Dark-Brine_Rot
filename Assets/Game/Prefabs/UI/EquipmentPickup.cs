@@ -143,6 +143,7 @@ namespace Mavis
         void LateUpdate()
         {
             if (!beam) return;
+            properties ??= new MaterialPropertyBlock();
             properties.SetFloat("_Fade", 1f);
             properties.SetFloat("_Clock", Time.time);
             beam.SetPropertyBlock(properties);

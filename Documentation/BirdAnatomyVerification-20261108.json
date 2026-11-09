@@ -1,0 +1,500 @@
+[
+  {
+    "prefab": "ChickenBro/ChickenBro.prefab",
+    "samples": [
+      {
+        "clip": "Armature|Idle_Loop",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 420,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Idle_Loop",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 423,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Idle_Loop",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 423,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Walk_Loop",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 417,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Walk_Loop",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 422,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Walk_Loop",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 420,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Punch_Jab",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 409,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Punch_Jab",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 431,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Punch_Jab",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 413,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Sword_Attack",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 438,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Sword_Attack",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 442,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Sword_Attack",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 425,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Hit_Chest",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 423,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Hit_Chest",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 438,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Hit_Chest",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 423,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Hit_Head",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 442,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Hit_Head",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 437,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Hit_Head",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 422,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death01",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 425,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death01",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 470,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death01",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 492,
+        "afterMiss": 1
+      }
+    ]
+  },
+  {
+    "prefab": "LongLeggedDuck/LongLeggedDuck.prefab",
+    "samples": [
+      {
+        "clip": "Armature|Idle",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 294,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Idle",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 302,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Idle",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 301,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Walk",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 305,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Walk",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 311,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Walk",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 299,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Run",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 311,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Run",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 328,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Run",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 312,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Peck",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 307,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Peck",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 297,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Peck",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 301,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Lunge",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 291,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Lunge",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 326,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Lunge",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 301,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Flinch",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 286,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Flinch",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 286,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Flinch",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 286,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Knockdown",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 372,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Knockdown",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 389,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Knockdown",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 407,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 383,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 408,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 410,
+        "afterMiss": 0
+      }
+    ]
+  },
+  {
+    "prefab": "BullyGoose/BullyGoose.prefab",
+    "samples": [
+      {
+        "clip": "IdlePolish034",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 299,
+        "afterMiss": 0
+      },
+      {
+        "clip": "IdlePolish034",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 300,
+        "afterMiss": 0
+      },
+      {
+        "clip": "IdlePolish034",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 299,
+        "afterMiss": 0
+      },
+      {
+        "clip": "WalkPolish034",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 299,
+        "afterMiss": 0
+      },
+      {
+        "clip": "WalkPolish034",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 294,
+        "afterMiss": 0
+      },
+      {
+        "clip": "WalkPolish034",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 301,
+        "afterMiss": 0
+      },
+      {
+        "clip": "RunPolish034",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 340,
+        "afterMiss": 0
+      },
+      {
+        "clip": "RunPolish034",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 350,
+        "afterMiss": 0
+      },
+      {
+        "clip": "RunPolish034",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 341,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Peck",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 270,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Peck",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 346,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Peck",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 305,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Lunge",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 336,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Lunge",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 357,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Lunge",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 304,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Flinch",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 273,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Flinch",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 298,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Flinch",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 285,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Knockdown",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 336,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Knockdown",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 369,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Knockdown",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 373,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death",
+        "time": 0.15,
+        "total": 501,
+        "beforeMiss": 347,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death",
+        "time": 0.5,
+        "total": 501,
+        "beforeMiss": 366,
+        "afterMiss": 0
+      },
+      {
+        "clip": "Armature|Death",
+        "time": 0.85,
+        "total": 501,
+        "beforeMiss": 367,
+        "afterMiss": 0
+      }
+    ]
+  }
+]

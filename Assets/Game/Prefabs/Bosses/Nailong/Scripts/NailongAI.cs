@@ -770,6 +770,11 @@ namespace Mavis
                 animator.CrossFadeInFixedTime(hash, 0.12f, 0, 0f);
         }
 
+        internal void OnTargetRespawn(PlayerHealth player)
+        {
+            if (FightActive && targetHealth == player) BeginReturn();
+        }
+
         void BeginReturn()
         {
             EnterIdle(); activeAttack = AttackPattern.None; engaged = false;

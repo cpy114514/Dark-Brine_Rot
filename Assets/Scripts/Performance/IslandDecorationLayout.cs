@@ -62,9 +62,24 @@ public sealed class IslandDecorationLayout : MonoBehaviour
             }
             next.Add(new IslandEcologyData.Species {name=s.name, uncanny=s.uncanny, near=s.near, far=s.far, material=s.material, lodStart=s.lodStart, lodEnd=s.lodEnd, drawDistance=s.drawDistance, shadowDistance=s.shadowDistance, cells=cells.ToArray()});
         }
-        Undo.RecordObject(output.data, "Bake island decoration edits");
-        output.data.species = next.ToArray(); output.data.seed = seed;
-        EditorUtility.SetDirty(output.data); AssetDatabase.SaveAssetIfDirty(output.data); output.Rebuild();
+        Undo.IncrementCurrentGroup();
+        int undo = Undo.GetCurrentGroup();
+        Undo.SetCurrentGroupName("Bake island decoration and solid collision");
+        try
+        {
+            Undo.RecordObject(output.data, "Bake island decoration edits");
+            output.data.species = next.ToArray(); output.data.seed = seed;
+            IslandEcologyCollisionBaker.Rebuild(output);
+            EditorUtility.SetDirty(output.data); AssetDatabase.SaveAssetIfDirty(output.data); output.Rebuild();
+            Undo.CollapseUndoOperations(undo);
+        }
+        catch
+        {
+            Undo.FlushUndoRecordObjects();
+            Undo.RevertAllDownToGroup(undo);
+            output.Rebuild();
+            throw;
+        }
         Debug.Log("Island decoration: baked " + markers.Length + " editable placements.");
     }
     public static bool Allowed(Vector2 p, float radius, IslandEcologySettings s)
@@ -92,7 +107,7 @@ public sealed class IslandDecorationLayoutInspector : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-        EditorGUILayout.HelpBox("Move, rotate, uniformly scale or duplicate the named child markers, then bake. Keep the numeric palette prefix. Baking validates terrain and route buffers before replacing any data. The EditorOnly marker hierarchy is stripped from builds.",MessageType.Info);
+        EditorGUILayout.HelpBox("Move, rotate, uniformly scale or duplicate the named child markers, then bake. Keep the numeric palette prefix. Baking validates terrain and route buffers, updates baked data and solid collision together. Save the Environment scene after baking. The EditorOnly marker hierarchy is stripped from builds.",MessageType.Info);
         if(GUILayout.Button("Bake edited placements")) ((IslandDecorationLayout)target).Bake();
     }
 }

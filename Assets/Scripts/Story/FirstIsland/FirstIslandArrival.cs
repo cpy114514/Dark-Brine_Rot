@@ -30,6 +30,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
     SahurAttack attack;
     SahurBoomerang boomerang;
     SahurSwimmingWeapon swimmingWeapon;
+    FirstIslandObjectives objectives;
     CharacterController capsule;
     Animator animator;
     Camera arrivalCamera;
@@ -49,6 +50,7 @@ public sealed class FirstIslandArrival : MonoBehaviour
         attack = player.GetComponent<SahurAttack>();
         boomerang = player.GetComponent<SahurBoomerang>();
         swimmingWeapon = player.GetComponent<SahurSwimmingWeapon>();
+        objectives = player.GetComponent<FirstIslandObjectives>();
         capsule = player.GetComponent<CharacterController>();
         continuing = GameSaveManager.IsContinuePending;
         if (continuing) { HasLanded = IsAwake = true; return; }
@@ -190,7 +192,6 @@ public sealed class FirstIslandArrival : MonoBehaviour
         player.FinishCinematicPose(standing, standingRotation);
         IsGettingUp = false; HasLanded = IsAwake = true; ReleaseCinematic();
         if(arrivalCamera)player.ContinueCameraFromCurrentView(arrivalCamera);
-        hint.text = "Your stick washed away. Find it along the beach.";
         blackout.color = Color.clear;
     }
 
@@ -236,9 +237,11 @@ public sealed class FirstIslandArrival : MonoBehaviour
     void Update()
     {
         if (!IsAwake || hint == null) return;
+        bool canPickUp = CanPickUp;
         hint.text = HasStick ? (recoveredAt >= 0 && Time.time - recoveredAt < 3 ? "You recovered your stick." : "") :
-            CanPickUp ? "F  Pick up the stick" : "Your stick washed away. Find it along the beach.";
-        if (CanPickUp && GameControls.Down(GameControls.Command.Interact) && Cursor.lockState == CursorLockMode.Locked) TryPickUp();
+            canPickUp ? GameControls.Token(GameControls.Command.Interact) + "  Pick up the stick" :
+            objectives && objectives.isActiveAndEnabled ? "" : "Your stick washed away. Find it along the beach.";
+        if (canPickUp && GameControls.Down(GameControls.Command.Interact) && Cursor.lockState == CursorLockMode.Locked) TryPickUp();
     }
 
     public bool TryPickUp()

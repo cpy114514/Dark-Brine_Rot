@@ -61,6 +61,9 @@ Shader "DarkBrine/Island Blended Terrain"
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
             #pragma multi_compile_fog
+            #pragma multi_compile_fragment _ _SCREEN_SPACE_OCCLUSION
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
+            #pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -245,8 +248,11 @@ Shader "DarkBrine/Island Blended Terrain"
                 half exposedSoil = smoothstep(0.50, 0.90, detailPatch) * 0.14h;
                 albedo = lerp(albedo, dry, exposedSoil * (1.0h - shoreBlend) * (1.0h - slopeRock));
                 albedo = lerp(albedo, rock, slopeRock);
-                half wetSand = (1.0h - smoothstep(0.3h, 2.8h, shoreHeight)) * (1.0h - slopeRock);
-                albedo *= lerp(1.0h, 0.78h, wetSand);
+                // A ragged dark band above the water separates the wet sand from
+                // the dry beach. Use the local slope and the same beach breakup.
+                half tidalHeight = shoreHeight + (detailPatch - 0.5h) * 0.80h;
+                half tidalDamp = (1.0h - smoothstep(0.25h, 2.15h, tidalHeight)) * (1.0h - slopeRock);
+                albedo *= lerp(1.0h, 0.70h, tidalDamp);
                 albedo *= 0.96h + 0.04h * macro;
 
                 half3 rockNormal = UnpackNormal(SAMPLE_TEXTURE2D(_RockNormal, sampler_RockNormal, input.uv));
@@ -288,10 +294,19 @@ Shader "DarkBrine/Island Blended Terrain"
                     float2 earthUv = p * 0.34 + float2(5.7, 13.2);
                     half3 earth = SAMPLE_TEXTURE2D(_ForestTex, sampler_ForestTex, earthUv).rgb;
                     half3 grit = SAMPLE_TEXTURE2D(_DryTex, sampler_DryTex, earthUv * 0.71).rgb;
-                    earth *= half3(0.71h, 0.66h, 0.54h) * (0.90h + detailPatch * 0.27h);
+                    // Keep the path blend readable while breaking up the large
+                    // stretches of uniform ochre soil between existing grass tufts.
+                    half organicSoil = smoothstep(0.30h, 0.68h, broadPatch * 0.48h + detailPatch * 0.52h);
+                    earth *= lerp(half3(0.78h, 0.70h, 0.57h), half3(0.59h, 0.56h, 0.44h), organicSoil);
                     earth = lerp(earth, grit * half3(0.81h, 0.69h, 0.54h), wear * 0.91h);
                     half shore = max(beachBlend, shoreBlend);
-                    half3 inland = lerp(earth, grass * half3(0.84h, 0.88h, 0.75h), turf * (1.0h - wear * 0.88h));
+                    half turfCoverage = turf * (1.0h - wear * 0.88h);
+                    half edge = 4.0h * turfCoverage * (1.0h - turfCoverage);
+                    // Use the existing turf sample as a height cue where both
+                    // materials meet, so the boundary follows the ground texture.
+                    half turfRelief = dot(leafy, half3(0.2126h, 0.7152h, 0.0722h));
+                    turfCoverage = saturate(turfCoverage + (turfRelief - 0.22h + grain * 0.4h) * edge * 0.42h);
+                    half3 inland = lerp(earth, grass * half3(0.83h, 0.89h, 0.77h), turfCoverage);
                     albedo = lerp(inland, albedo, shore);
                     // Rotate the rock projection out of the default terrain UV lattice.
                     float2 rockUv = float2(dot(p, float2(0.143, 0.081)), dot(p, float2(-0.081, 0.143)));
@@ -301,28 +316,44 @@ Shader "DarkBrine/Island Blended Terrain"
                     half3 earthNormal = UnpackNormal(SAMPLE_TEXTURE2D(_GrassNormal, sampler_GrassNormal, earthUv));
                     half3 fractureNormal = UnpackNormal(SAMPLE_TEXTURE2D(_RockNormal, sampler_RockNormal, rockUv));
                     fractureNormal.xy = mul(half2x2(0.87h, -0.49h, 0.49h, 0.87h), fractureNormal.xy);
-                    half3 inlandNormal = lerp(earthNormal * half3(0.76h, 0.76h, 1), grassNormal, turf * (1.0h - wear));
+                    half3 inlandNormal = lerp(earthNormal * half3(0.85h, 0.85h, 1), grassNormal, turfCoverage);
                     detailNormal = lerp(lerp(inlandNormal, detailNormal, shore), fractureNormal, stone);
                     detailNormal.xy *= lerp(1.0h, 0.55h, damp);
                 }
+                float3 viewDelta = input.positionWS - _WorldSpaceCameraPos;
+                detailNormal.xy *= lerp(1.0h,.58h,smoothstep(1225.0,15625.0,dot(viewDelta,viewDelta)));
                 detailNormal = normalize(detailNormal);
 
                 half3 tangentWS = normalize(half3(1.0h, -surfaceNormal.x / max(surfaceNormal.y, 0.1h), 0.0h));
                 half3 bitangentWS = normalize(cross(tangentWS, surfaceNormal));
                 half3 normalWS = normalize(detailNormal.x * tangentWS + detailNormal.y * bitangentWS + detailNormal.z * surfaceNormal);
 
-                Light sun = GetMainLight(TransformWorldToShadowCoord(input.positionWS));
-                half NdotL = saturate(dot(normalWS, sun.direction));
-                half3 ambient = max(SampleSH(normalWS), half3(0.19h, 0.20h, 0.20h));
-                half3 direct = sun.color * NdotL * sun.distanceAttenuation * sun.shadowAttenuation * 0.57h;
-                half3 lit = albedo * (ambient + direct);
-                if (damp > 0.01h)
-                {
-                    half3 viewDirection = GetWorldSpaceNormalizeViewDir(input.positionWS);
-                    half highlight = pow(saturate(dot(normalWS, normalize(sun.direction + viewDirection))), 24.0h);
-                    lit += sun.color * (0.05h * damp * highlight * NdotL * sun.shadowAttenuation);
-                }
-                return half4(MixFog(lit, input.fogFactor), 1.0h);
+                // Low-frequency mineral/soil variation sits underneath foot-scale
+                // detail instead of repeating the same contrast at every distance.
+                half mineral = PatchNoise(p * .013 + float2(41.7, 9.2));
+                albedo *= lerp(half3(.89h,.91h,.88h), half3(1.04h,1.02h,.98h), mineral);
+                half surfaceLuma=dot(albedo,half3(.2126h,.7152h,.0722h));
+                albedo=lerp(albedo,surfaceLuma*half3(1.04h,1.0h,.93h),max(shoreBlend,beachBlend)*.24h)*.91h;
+                half stoneSurface = saturate(max(slopeRock, habitat.b));
+                half grainRoughness = PatchNoise(p * .39 + 71.3);
+                SurfaceData surface = (SurfaceData)0;
+                surface.albedo = max(albedo, 0);
+                surface.alpha = 1;
+                surface.metallic = 0;
+                surface.smoothness = lerp(.08h, .23h, stoneSurface) + (grainRoughness-.5h)*.06h;
+                surface.smoothness = lerp(surface.smoothness, .57h, max(damp, tidalDamp * .72h));
+                surface.occlusion = 1;
+                surface.normalTS = detailNormal;
+                InputData lighting = (InputData)0;
+                lighting.positionWS = input.positionWS;
+                lighting.normalWS = normalWS;
+                lighting.viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
+                lighting.shadowCoord = TransformWorldToShadowCoord(input.positionWS);
+                lighting.bakedGI = SampleSH(normalWS);
+                lighting.normalizedScreenSpaceUV = GetNormalizedScreenSpaceUV(input.positionCS);
+                lighting.shadowMask = half4(1,1,1,1);
+                half4 lit = UniversalFragmentPBR(lighting, surface);
+                return half4(MixFog(lit.rgb, input.fogFactor), 1.0h);
             }
             ENDHLSL
         }

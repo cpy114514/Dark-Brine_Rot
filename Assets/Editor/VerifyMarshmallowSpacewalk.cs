@@ -32,7 +32,7 @@ public sealed class MarshmallowStrideReview : MonoBehaviour
     public double DenseSoleMilliseconds => timingSamples==0 ? 0 : denseTicks*1000.0/System.Diagnostics.Stopwatch.Frequency/timingSamples;
     public double FastSoleMilliseconds => timingSamples==0 ? 0 : fastTicks*1000.0/System.Diagnostics.Stopwatch.Frequency/timingSamples;
     public double LegacySoleMilliseconds => legacySamples==0 ? 0 : legacyTicks*1000.0/System.Diagnostics.Stopwatch.Frequency/legacySamples;
-    ThirdPersonPlayerController motor;MarshmallowSpacewalk gait;Camera camera;
+    ThirdPersonPlayerController motor;MarshmallowSpacewalk gait;Camera reviewCamera;
     readonly HashSet<string> shots=new HashSet<string>();
     const string Folder="Temp/MarshmallowSpacewalk/FootRepair/Review";
     HumanPoseHandler poseReader;
@@ -43,8 +43,8 @@ public sealed class MarshmallowStrideReview : MonoBehaviour
     void Start()
     {
         Directory.CreateDirectory(Folder);motor=GetComponent<ThirdPersonPlayerController>();gait=GetComponent<MarshmallowSpacewalk>();
-        var go=new GameObject("Temporary spacewalk side camera");camera=go.AddComponent<Camera>();camera.enabled=false;
-        camera.CopyFrom(Camera.main);camera.enabled=false;camera.fieldOfView=45;camera.nearClipPlane=.1f;
+        var go=new GameObject("Temporary spacewalk side camera");reviewCamera=go.AddComponent<Camera>();reviewCamera.enabled=false;
+        reviewCamera.CopyFrom(Camera.main);reviewCamera.enabled=false;reviewCamera.fieldOfView=45;reviewCamera.nearClipPlane=.1f;
         poseReader=new HumanPoseHandler(motor.CharacterAnimator.avatar,motor.CharacterAnimator.transform);
     }
     void LateUpdate()
@@ -130,22 +130,22 @@ public sealed class MarshmallowStrideReview : MonoBehaviour
         string key=gait.Strides+"-"+bin;
         if(!shots.Add(key))return;
         var focus=transform.position+Vector3.up*(motor.LowestFootWorldOffset+2.5f);
-        camera.transform.position=focus+transform.right*11+Vector3.up*3.5f-transform.forward*2.8f;
-        camera.transform.LookAt(focus);
+        reviewCamera.transform.position=focus+transform.right*11+Vector3.up*3.5f-transform.forward*2.8f;
+        reviewCamera.transform.LookAt(focus);
         var old=RenderTexture.active;var rt=RenderTexture.GetTemporary(1280,720,24);
         var image=new Texture2D(1280,720,TextureFormat.RGB24,false);
         try
         {
-            camera.targetTexture=rt;camera.Render();RenderTexture.active=rt;
+            reviewCamera.targetTexture=rt;reviewCamera.Render();RenderTexture.active=rt;
             image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();
             File.WriteAllBytes(Folder+"/stride-"+key+".png",image.EncodeToPNG());captured++;
-            camera.transform.position=focus+transform.forward*10+Vector3.up*2.5f;camera.transform.LookAt(focus);
-            camera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();
+            reviewCamera.transform.position=focus+transform.forward*10+Vector3.up*2.5f;reviewCamera.transform.LookAt(focus);
+            reviewCamera.Render();RenderTexture.active=rt;image.ReadPixels(new Rect(0,0,1280,720),0,0);image.Apply();
             File.WriteAllBytes(Folder+"/front-"+key+".png",image.EncodeToPNG());captured++;
         }
-        finally{camera.targetTexture=null;RenderTexture.active=old;RenderTexture.ReleaseTemporary(rt);Destroy(image);}
+        finally{reviewCamera.targetTexture=null;RenderTexture.active=old;RenderTexture.ReleaseTemporary(rt);Destroy(image);}
     }
-    void OnDestroy(){poseReader?.Dispose();if(camera)Destroy(camera.gameObject);}
+    void OnDestroy(){poseReader?.Dispose();if(reviewCamera)Destroy(reviewCamera.gameObject);}
 }
 public static class VerifyMarshmallowSpacewalk
 {

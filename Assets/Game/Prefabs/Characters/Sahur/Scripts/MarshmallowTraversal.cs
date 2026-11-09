@@ -23,6 +23,7 @@ public sealed class MarshmallowTraversal : MonoBehaviour
         if (enabled) CancelSpacewalk();
     }
     float contactTime, landingAge = 1f;
+    float walkingBoundLaunchSpeed;
     Transform visual;
     Vector3 restScale;
     readonly RaycastHit[] footing = new RaycastHit[16];
@@ -37,13 +38,24 @@ public sealed class MarshmallowTraversal : MonoBehaviour
     public float FootPenetrationBefore { get; private set; }
     public float FootPenetrationAfter { get; private set; }
     public int CorrectedFeet { get; private set; }
-    public void BeginSpacewalk(float speed)
+    public void BeginSpacewalk(float speed, bool walking = false)
     {
+        walkingBoundLaunchSpeed = walking ? speed : 0f;
         if(!spacewalk)spacewalk=GetComponent<MarshmallowSpacewalk>();
         if(spacewalk)spacewalk.BeginBound(speed);
     }
+
+    internal float WalkBoundStrideScale(float verticalSpeed)
+    {
+        if (walkingBoundLaunchSpeed <= 0f) return 1f;
+        float phase = Mathf.Clamp01((walkingBoundLaunchSpeed - verticalSpeed) / (2f * walkingBoundLaunchSpeed));
+        // Carry the push-off forward, then ease the stride into the next contact.
+        return 1f + .12f * Mathf.Sin(2f * Mathf.PI * phase);
+    }
+
     public void CancelSpacewalk()
     {
+        walkingBoundLaunchSpeed = 0f;
         if(!spacewalk)spacewalk=GetComponent<MarshmallowSpacewalk>();
         if(spacewalk)spacewalk.Cancel();
     }
@@ -95,6 +107,7 @@ public sealed class MarshmallowTraversal : MonoBehaviour
 
     public void Land(float impactSpeed = 5f)
     {
+        walkingBoundLaunchSpeed = 0f;
         if(spacewalk)spacewalk.Land();
         landingAge = 0f;
         impactScale = Mathf.Lerp(.65f,1.2f,Mathf.InverseLerp(2f,15f,impactSpeed));

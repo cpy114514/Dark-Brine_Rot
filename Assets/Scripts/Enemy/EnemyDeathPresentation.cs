@@ -18,6 +18,7 @@ namespace Mavis
         }
         struct BonePose {public Transform bone;public Quaternion start,target;public Vector3 position;}
         struct CapturedPose {public Transform bone;public Vector3 position,scale;public Quaternion rotation;}
+        enum FallStyle { Shared, Dragon, Ronin }
         static EnemyDeathSupportLibrary library;
         static readonly Dictionary<string,EnemyDeathSupportLibrary.Entry> shapes=new Dictionary<string,EnemyDeathSupportLibrary.Entry>();
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -36,7 +37,11 @@ namespace Mavis
         float height,age,clipLength,animatorSpeed,impactWeight,flightHeight,flightSpeed;
         AnimatorCullingMode culling;
         bool fallback,prepared,held,animatorEnabled,settled;
+        FallStyle fallStyle;
+        CappuccinoMotionRig cupRig;
+        float heldAt;
         public bool IsPlaying {get;private set;}
+        public bool IsSettled => IsPlaying && settled;
         public bool UsesFallback=>fallback&&IsPlaying;
         public float GroundCorrection {get;private set;}
         public static bool OwnsFallback(GameObject owner)
@@ -64,6 +69,9 @@ namespace Mavis
             WarmUp();skins.Clear();relaxed.Clear();capturedPose.Clear();heights.Clear();prepared=false;held=false;settled=false;age=0;impactWeight=0;floor=null;previousCorrection=Vector3.zero;previousPlane=Quaternion.identity;
             var cup=GetComponent<CappuccinoEnemy>();var marshmallow=GetComponent<MarshmallowEnemyVisual>();
             var pig=GetComponent<PigRoninBossVisual>();
+            var dragon=GetComponent<NailongAI>();
+            fallStyle = pig ? FallStyle.Ronin : dragon ? FallStyle.Dragon : FallStyle.Shared;
+            cupRig = cup ? cup.motionRig : null;
             animator=cup?cup.animator:GetComponentInChildren<Animator>();
             visual=cup&&cup.motionRig?cup.motionRig.rigRoot:marshmallow?marshmallow.visual:animator?animator.transform:null;
             if(!visual){var renderer=GetComponentInChildren<Renderer>();visual=renderer?renderer.transform:transform;}
@@ -75,16 +83,18 @@ namespace Mavis
             // The bulky bird/dragon rigs fold their coats and heads into the torso
             // under the shared human death clip. Collapse their actual last pose
             // with limited limb relaxation instead of retargeting that clip.
-            fallback=marshmallow||pig||GetComponent<ChickenBroAI>()||GetComponent<NailongAI>()||clipLength<=.05f;
+            fallback=marshmallow||pig||GetComponent<ChickenBroAI>()||dragon||clipLength<=.05f;
             if(animator){animatorSpeed=animator.speed;culling=animator.cullingMode;animatorEnabled=animator.enabled;}
             localPosition=visual.localPosition;localRotation=visual.localRotation;localScale=visual.localScale;
             collisionState.Clear();foreach(var collider in GetComponentsInChildren<Collider>(true))collisionState.Add((collider,collider.enabled));
             startPosition=visual.position;startRotation=visual.rotation;
-            var renderers=visual.GetComponentsInChildren<Renderer>(false);
+            // The cup skin is bound to the retargeted rig but lives beside it.
+            var renderers = cup && cup.bodyRenderers != null && cup.bodyRenderers.Length > 0
+                ? cup.bodyRenderers : visual.GetComponentsInChildren<Renderer>(false);
             Bounds bounds=new Bounds(transform.position,Vector3.one);bool found=false;
             foreach(var renderer in renderers)
             {
-                if(!renderer.enabled||Weapon(renderer.transform))continue;
+                if(!renderer||!renderer.enabled||!renderer.gameObject.activeInHierarchy||Weapon(renderer.transform))continue;
                 Mesh mesh=null;Transform[] bones=null;
                 if(renderer is SkinnedMeshRenderer skinned){mesh=skinned.sharedMesh;bones=skinned.bones;}
                 else {var filter=renderer.GetComponent<MeshFilter>();if(filter)mesh=filter.sharedMesh;}
@@ -95,6 +105,7 @@ namespace Mavis
             }
             if(!found)return;
             height=Mathf.Max(.4f,bounds.size.y);pivot=bounds.center;
+            if (fallStyle != FallStyle.Shared) pivot.y = bounds.min.y + height * .23f;
             fallDirection=Vector3.ProjectOnPlane(bounds.center-hitPoint,Vector3.up);
             if(fallDirection.sqrMagnitude<.01f)fallDirection=-transform.forward;
             fallDirection=(fallDirection.normalized+transform.right*.24f).normalized;
@@ -121,6 +132,10 @@ namespace Mavis
                     else if(name.Contains("upperarm")||name=="leftarm"||name=="rightarm")angle=-24;
                     else if(name.Contains("lowerleg")||name=="leftleg"||name=="rightleg")angle=26;
                     else if(name=="chest"||name=="spine1")angle=9;
+                    else if(fallStyle!=FallStyle.Shared && (name=="head"||name=="neck"))
+                        angle=fallStyle==FallStyle.Dragon?14:8;
+                    else if(fallStyle!=FallStyle.Shared && (name.Contains("upperleg")||name.Contains("upleg")))
+                        angle=fallStyle==FallStyle.Dragon?-12:-20;
                     if(angle==0||!bone.parent)continue;
                     var axis=bone.parent.InverseTransformDirection(transform.right).normalized;
                     relaxed.Add(new BonePose{bone=bone,start=bone.localRotation,position=bone.localPosition,target=Quaternion.AngleAxis(angle,axis)*bone.localRotation});
@@ -232,8 +247,10 @@ namespace Mavis
             {
                 animator.enabled=true;animator.speed=1;animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
                 foreach(var parameter in animator.parameters)if(parameter.type==AnimatorControllerParameterType.Trigger)animator.ResetTrigger(parameter.nameHash);
-                if(animator.HasState(0,Animator.StringToHash("Death")))animator.CrossFadeInFixedTime("Death",.16f,0,0);
-                else if(animator.HasState(0,Animator.StringToHash("Die")))animator.CrossFadeInFixedTime("Die",.16f,0,0);
+                int death = Animator.StringToHash(animator.GetLayerName(0) + ".Death");
+                int die = Animator.StringToHash(animator.GetLayerName(0) + ".Die");
+                if(animator.HasState(0,death))animator.CrossFadeInFixedTime(death,.16f,0,0);
+                else if(animator.HasState(0,die))animator.CrossFadeInFixedTime(die,.16f,0,0);
             }
         }
         float VertexFloor(Vector3 p)
@@ -250,12 +267,46 @@ namespace Mavis
             else y=floorPoint.y-(floorNormal.x*(px-floorPoint.x)+floorNormal.z*(pz-floorPoint.z))/Mathf.Max(.35f,floorNormal.y);
             heights[key]=y;return y;
         }
+        void PoseBossFall()
+        {
+            bool dragon = fallStyle == FallStyle.Dragon;
+            float buckleEnd = dragon ? .43f : .34f;
+            float contact = dragon ? 1.23f : .96f;
+            float settleEnd = contact + (dragon ? .40f : .32f);
+            float buckle = Mathf.SmoothStep(0, 1, age / buckleEnd);
+            float down = Mathf.InverseLerp(buckleEnd, contact, age);
+            float settle = Mathf.InverseLerp(contact, settleEnd, age);
+            float recoil = Mathf.Sin(Mathf.PI * Mathf.InverseLerp(0, .22f, age));
+            // Weight first drops through the knees. The body accelerates into
+            // contact and rolls a few degrees before resting on the slope.
+            float pitch = 10 * buckle + 76 * down * down
+                + (dragon ? 4 : 7) * Mathf.Sin(Mathf.PI * settle) + 3 * settle - 6 * recoil;
+            var plane = Quaternion.Slerp(Quaternion.identity,
+                Quaternion.FromToRotation(Vector3.up, floorNormal), down * down);
+            var rotation = plane * Quaternion.AngleAxis(pitch, Vector3.Cross(Vector3.up, fallDirection).normalized);
+            float compression = buckle * (1 - down) * (dragon ? .09f : .13f);
+            float follow = down * down * (3 - 2 * down);
+            visual.SetPositionAndRotation(
+                pivot + rotation * (startPosition - pivot)
+                + fallDirection * (height * (.05f + .04f * impactWeight) * follow)
+                - Vector3.up * (height * compression), rotation * startRotation);
+            visual.localScale = localScale;
+            foreach (var pose in relaxed)
+            {
+                if (!pose.bone) continue;
+                float release = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(
+                    dragon ? .14f : .08f, contact * .78f, age));
+                pose.bone.localRotation = Quaternion.Slerp(pose.start, pose.target, release);
+                pose.bone.localPosition = pose.position;
+            }
+        }
         void LateUpdate()
         {
             if(!IsPlaying||settled||!visual||Time.timeScale<=0||Time.deltaTime<=0||PauseSettingsMenu.IsOpen)return;
             age+=Time.deltaTime;
             if(flightHeight>0||flightSpeed>0){flightSpeed-=18f*Time.deltaTime;flightHeight=Mathf.Max(0,flightHeight+flightSpeed*Time.deltaTime);}
-            if(fallback)
+            if (fallback && fallStyle != FallStyle.Shared) PoseBossFall();
+            else if(fallback)
             {
                 float relax=Mathf.SmoothStep(0,1,Mathf.Clamp01(age/.7f));
                 foreach(var pose in relaxed)if(pose.bone){pose.bone.localRotation=Quaternion.Slerp(pose.start,pose.target,relax);pose.bone.localPosition=pose.position;}
@@ -271,11 +322,11 @@ namespace Mavis
             {
                 // Capri's retargeter rewrites its rig position every frame. Other
                 // imported Animator roots keep the correction from the previous frame.
-                if(!GetComponent<CappuccinoEnemy>()){visual.position-=previousCorrection;visual.rotation=Quaternion.Inverse(previousPlane)*visual.rotation;}
+                if(!cupRig){visual.position-=previousCorrection;visual.rotation=Quaternion.Inverse(previousPlane)*visual.rotation;}
                 previousPlane=Quaternion.Slerp(Quaternion.identity,Quaternion.FromToRotation(Vector3.up,floorNormal),Mathf.SmoothStep(0,1,Mathf.Clamp01(age/Mathf.Max(.5f,clipLength*.8f))));
                 visual.rotation=previousPlane*visual.rotation;
                 if(animator&&!held&&age>clipLength*.65f&&!animator.IsInTransition(0)&&animator.GetCurrentAnimatorStateInfo(0).normalizedTime>=.985f)
-                {animator.speed=0;held=true;}
+                {animator.speed=0;held=true;heldAt=age;}
             }
             float lowest=float.PositiveInfinity;
             foreach(var skin in skins)
@@ -306,7 +357,9 @@ namespace Mavis
                 // corrections and never use standing foot targets for a prone body.
                 previousCorrection=Vector3.up*(.025f+flightHeight-lowest);visual.position+=previousCorrection;GroundCorrection=previousCorrection.y;
             }
-            if(fallback&&age>1.6f&&flightHeight<=0)settled=true;
+            float settleTime = fallStyle == FallStyle.Dragon ? 1.68f : 1.6f;
+            if(fallback&&age>settleTime&&flightHeight<=0)settled=true;
+            if(cupRig&&held&&age-heldAt>.28f)settled=true;
         }
         void OnDisable()
         {

@@ -58,7 +58,12 @@ namespace Mavis
                         if(pressure)pressure.Rush(body.bounds.center-rushDirection*.5f,rushDirection);
                     }
                     movingRush = true;
-                    try { body.Move(rushDirection * distance); }
+                    try
+                    {
+                        Vector3 before = transform.position;
+                        body.Move(rushDirection * distance);
+                        attack.ScanTwinBladeRushTravel(transform.position - before);
+                    }
                     finally { movingRush = false; }
                 }
                 lastRushProgress = progress;

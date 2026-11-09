@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "nativeAssertions": 110,
+  "edgeAssertions": 108,
+  "totalAssertions": 218,
+  "nativeErrors": 0,
+  "edgeErrors": 0,
+  "scenesRestored": 5,
+  "savesUnchanged": true,
+  "review": "CappuccinoPhase2-Native.mp4",
+  "reviewAudio": "silent",
+  "scope": "Isolated native Unity Play Mode; no full-island human playthrough or subjective audio approval"
+}

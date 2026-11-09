@@ -14361,7 +14361,7 @@ MonoBehaviour:
   underwaterOverlayStrength: 0.68
   underwaterBubbleParticles: 0
   underwaterBubbleInterval: 0.24
-  cameraDistance: 10.4
+  cameraDistance: 14
   cameraHeight: 2.5
   cameraFollowSharpness: 22
   cameraCollision: 1

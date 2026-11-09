@@ -54,7 +54,7 @@ public static class SecondIslandBlackboards
     {
         var obj=new GameObject("3D chalk lettering",typeof(RectTransform),typeof(TextMeshPro));obj.transform.SetParent(parent,false);
         var text=obj.GetComponent<TextMeshPro>();if(Font)text.font=Font;text.color=new Color(1f,.97f,.88f);
-        text.alignment=TextAlignmentOptions.Center;text.enableWordWrapping=false;text.overflowMode=TextOverflowModes.Overflow;
+        text.alignment=TextAlignmentOptions.Center;text.textWrappingMode=TextWrappingModes.NoWrap;text.overflowMode=TextOverflowModes.Overflow;
         text.enableAutoSizing=true;text.fontSizeMin=.1f;text.fontSizeMax=80;text.raycastTarget=false;
         var renderer=obj.GetComponent<Renderer>();if(renderer){renderer.shadowCastingMode=ShadowCastingMode.Off;renderer.receiveShadows=false;}
         return text;
