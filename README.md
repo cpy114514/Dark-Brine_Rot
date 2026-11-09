@@ -46,10 +46,6 @@ Desert Island
 Marshmallow Island
 Wait for future updates
 
-## AI usage
-
-We used AI for coding
-
 ## Project maintenance
 
 Use the Unity version in `ProjectSettings/ProjectVersion.txt`. Scene ownership and safe editing rules are in [COLLABORATION.md](COLLABORATION.md); current inspection, cleanup and content tools are indexed in [Tools/README.md](Tools/README.md).
@@ -59,3 +55,8 @@ Use the Unity version in `ProjectSettings/ProjectVersion.txt`. Scene ownership a
 <img width="1350" height="670" alt="image" src="https://github.com/user-attachments/assets/88dc2cef-e9bc-47ba-b9df-0e8d895925f8" />
 <img width="1707" height="960" alt="image" src="https://github.com/user-attachments/assets/12431631-87a7-439a-8a98-40157e2a5547" />
 
+## AI usage
+
+We used AI for coding
+
+## This is a project for Hackclub third space
