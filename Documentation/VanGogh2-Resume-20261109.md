@@ -10,7 +10,7 @@ Final single-sample GPU medians: Economy paint.978ms, Balanced1.409ms, Fine1.740
 
 Other-style return tests:4 styles pixel-identical; realistic at most1/255 in57pixels, with similar1LSB variation observed in an earlier repeated-control run. No keyword residual. New shaders compile; existing ocean/sky warnings remain. Editor stopped, formal saves byte-unchanged, original clean Second Island setup restored. Quality settings restored; no EXE rebuilt or remote push.
 
-Gameplay feel completed separately through bbef1e6b, with929 blade checks plus input/actual-island routes; keep those changes. Scoped rendering commit follows this checkpoint. Existing unrelated second-island changes remain preserved. If automated continuation finds both revisions complete, report completion briefly and do not manufacture extra work or rerun completed stages. The user explicitly asked that schedules only recover actually unfinished work.
+Gameplay feel completed separately through bbef1e6b, with929 blade checks plus input/actual-island routes; keep those changes. Scoped rendering implementation/report commit: ffc9cd0c. Existing unrelated second-island changes remain preserved. If automated continuation finds both revisions complete, report completion briefly and do not manufacture extra work or rerun completed stages. The user explicitly asked that schedules only recover actually unfinished work.
 
 ---
 
