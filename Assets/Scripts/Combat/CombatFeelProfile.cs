@@ -65,6 +65,10 @@ namespace Mavis
             [Range(.02f,.15f)] public float animationBraking = .06f;
             [Tooltip("Maximum downward ground follow after supported movement; never used during a rising jump or authored attack travel. Zero disables it.")]
             [Range(0f,.8f)] public float groundFollowDistance = .6f;
+            [Tooltip("Blend the existing walking/running leg animations under ordinary moving twin-blade slashes. Rotating attacks keep their authored legs.")]
+            public bool mobileBladeFootwork = true;
+            [Tooltip("Match locomotion cadence when actual speed exceeds the existing blend tree's calibrated top speed.")]
+            public bool matchOverspeedStride = true;
             [Header("Commitment and recovery (never before the damage window ends)")]
             [Range(.65f,1f)] public float dodgeDuration = .82f;
             [Range(.6f,.95f)] public float lightCancel = .74f;

@@ -878,6 +878,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             float animationSpeed=rollTimer>0 ? 0 : actualPlanarSpeed / walkStrideScale;
             float damping=animationSpeed>animator.GetFloat(SpeedId) ? (TunedControls ? Response.animationAcceleration : .065f) : (TunedControls ? Response.animationBraking : .085f);
             animator.SetFloat(SpeedId,animationSpeed,damping,Time.deltaTime);
+            MatchLocomotionStride(animationSpeed);
             UpdateLockFootwork();
             if(animationSpeed<.03f && animator.GetFloat(SpeedId)<.05f)animator.SetFloat(SpeedId,0);
         }

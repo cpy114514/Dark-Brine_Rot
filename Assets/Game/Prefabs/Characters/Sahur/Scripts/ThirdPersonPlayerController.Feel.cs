@@ -99,17 +99,36 @@ public sealed partial class ThirdPersonPlayerController
     }
     int bladeFootworkLayer=-1;
     RuntimeAnimatorController footworkController;
+    bool hasLocomotionRate;
+    float locomotionReferenceSpeed=16.8f;
+    static readonly int LocomotionRateId=Animator.StringToHash("LocomotionPlaybackSpeed");
+    static readonly int LocomotionReferenceId=Animator.StringToHash("LocomotionReferenceSpeed");
     bool bladeFootworkActive;
     public bool BladeFootworkActive => bladeFootworkActive&&bladeFootworkLayer>0&&animator&&animator.GetLayerWeight(bladeFootworkLayer)>.01f;
+    void CacheFootworkController()
+    {
+        if(footworkController==animator.runtimeAnimatorController)return;
+        footworkController=animator.runtimeAnimatorController;bladeFootworkLayer=animator.GetLayerIndex("Mobile Blade Legs");hasLocomotionRate=false;
+        foreach(var parameter in animator.parameters)
+        {
+            if(parameter.nameHash==LocomotionRateId)hasLocomotionRate=true;
+            if(parameter.nameHash==LocomotionReferenceId)locomotionReferenceSpeed=Mathf.Max(.1f,parameter.defaultFloat);
+        }
+    }
+    void MatchLocomotionStride(float speed)
+    {
+        CacheFootworkController();
+        if(hasLocomotionRate)animator.SetFloat(LocomotionRateId,TunedControls&&Response.matchOverspeedStride?
+            Mathf.Clamp(speed/locomotionReferenceSpeed,1,1.8f):1);
+    }
     void UpdateLockFootwork()
     {
         int layer=animator.GetLayerIndex("Lock-on Footwork");if(layer<1)return;
-        if(footworkController!=animator.runtimeAnimatorController)
-        {footworkController=animator.runtimeAnimatorController;bladeFootworkLayer=animator.GetLayerIndex("Mobile Blade Legs");}
+        CacheFootworkController();
         bool use=TunedControls&&enemyLock&&enemyLock.IsLocked&&!IsSprinting&&!Swimming&&!ExternalControlLock&&
             !ExternalMovementLock&&rollTimer<=0&&airFlipTimer<=0&&motionState==0&&!(combat&&combat.IsCombatMotionActive);
         Vector3 actual=Vector3.ProjectOnPlane(WorldVelocity,Vector3.up);
-        bladeFootworkActive=TunedControls&&bladeFootworkLayer>0&&combat&&combat.UsesTwinBlades&&combat.IsGroundComboActive&&
+        bladeFootworkActive=TunedControls&&Response.mobileBladeFootwork&&bladeFootworkLayer>0&&combat&&combat.UsesTwinBlades&&combat.IsGroundComboActive&&
             combat.CurrentComboStage<2&&actual.sqrMagnitude>.0225f&&verticalSpeed<=0&&IsGroundedOrOnSea()&&
             !Swimming&&!ExternalControlLock&&!ExternalMovementLock&&rollTimer<=0&&airFlipTimer<=0&&motionState==0;
         Vector3 local=Quaternion.Inverse(transform.rotation)*(bladeFootworkActive?actual:planarVelocity)/Mathf.Max(.1f,moveSpeed);

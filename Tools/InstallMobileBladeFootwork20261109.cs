@@ -17,6 +17,10 @@ public static class InstallMobileBladeFootwork20261109
    var locomotion=controller.layers[0].stateMachine.states.First(s=>s.state.name=="Locomotion").state.motion as BlendTree;
    if(!original||!locomotion||!legs.avatarMask)throw new Exception("Missing existing leg animation architecture");
    var idle=locomotion.children[0];var walk=locomotion.children[1];var run=locomotion.children[2];
+   if(!controller.parameters.Any(p=>p.name=="LocomotionPlaybackSpeed"))controller.AddParameter(new AnimatorControllerParameter{name="LocomotionPlaybackSpeed",type=AnimatorControllerParameterType.Float,defaultFloat=1});
+   if(!controller.parameters.Any(p=>p.name=="LocomotionReferenceSpeed"))controller.AddParameter(new AnimatorControllerParameter{name="LocomotionReferenceSpeed",type=AnimatorControllerParameterType.Float,defaultFloat=run.threshold});
+   var locomotionState=controller.layers[0].stateMachine.states.First(s=>s.state.name=="Locomotion").state;
+   locomotionState.speedParameter="LocomotionPlaybackSpeed";locomotionState.speedParameterActive=true;EditorUtility.SetDirty(locomotionState);
    var layer=controller.layers.FirstOrDefault(l=>l.name=="Mobile Blade Legs");
    if(layer==null)
    {
@@ -32,6 +36,7 @@ public static class InstallMobileBladeFootwork20261109
    children.Add(new ChildMotion{motion=run.motion,position=Vector2.up*1.75f,timeScale=run.timeScale});
    foreach(var c in original.children.Where(c=>c.position.sqrMagnitude>.5f&&c.position!=Vector2.up))children.Add(new ChildMotion{motion=c.motion,position=c.position*1.75f,timeScale=c.timeScale*1.75f});
    tree.children=children.ToArray();state.writeDefaultValues=true;layer.stateMachine.defaultState=state;
+   state.speedParameter="LocomotionPlaybackSpeed";state.speedParameterActive=true;
    foreach(var item in controller.layers[0].stateMachine.states.Where(s=>s.state.name=="Capri Combo 1"||s.state.name=="Capri Combo 2"))
    {item.state.speedParameter="LightPlaybackSpeed";item.state.speedParameterActive=true;EditorUtility.SetDirty(item.state);}
    EditorUtility.SetDirty(tree);EditorUtility.SetDirty(state);EditorUtility.SetDirty(layer.stateMachine);EditorUtility.SetDirty(controller);AssetDatabase.SaveAssetIfDirty(controller);

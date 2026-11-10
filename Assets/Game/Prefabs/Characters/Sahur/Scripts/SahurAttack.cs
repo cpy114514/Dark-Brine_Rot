@@ -154,10 +154,10 @@ namespace Mavis
             CurrentAttackPhase >= Mathf.Max(CurrentWindowEnd+.02f,IsHeavyAttackActive?Feel.HeavyCancelPhase:Feel.LightCancelPhase);
         public bool TryDodgeCancel() => CanDodgeCancel && TryConsumeDodgeCancel(true);
         public bool CanMoveDuringCombat => charging || usesUpperBodyLight || (IsHeavyAttackActive && (usesRightArmHeavy || usesBladeRecovery));
-        // Full-body spins retain their authored pose and hit-stop, while the capsule travels.
-        public bool CanTranslateDuringCombat => CanMoveDuringCombat || IsTwinBladeSpinActive ||
+        // Blade combos retain their authored pose and hit-stop, while WASD owns capsule travel.
+        public bool CanTranslateDuringCombat => CanMoveDuringCombat || IsTwinBladeSpinActive || UsesTwinBlades && IsGroundComboActive ||
             IsJumpSlashRecovering && controller != null && controller.CanUseGroundAttack;
-        public bool UsesAnimationRootMotion => attacking && !IsPerfectCounterActive && !IsSpinning && !IsTwinBladeSpinActive && !(UsesTwinBlades && IsHeavyAttackActive) && !IsJumpSlashActive && !usesRightArmHeavy && !usesUpperBodyLight;
+        public bool UsesAnimationRootMotion => attacking && !IsPerfectCounterActive && !IsSpinning && !(UsesTwinBlades && (IsGroundComboActive || IsHeavyAttackActive)) && !IsJumpSlashActive && !usesRightArmHeavy && !usesUpperBodyLight;
         public bool SafeForCinematic => !IsSpinning && !IsGuarding && (!IsCombatMotionActive || (attacking && !charging && CurrentAttackPhase>=CurrentWindowEnd+.04f));
         public float CurrentAttackPhase
         {

@@ -182,6 +182,8 @@ MonoBehaviour:
     animationAcceleration: 0.045
     animationBraking: 0.06
     groundFollowDistance: 0.6
+    mobileBladeFootwork: 1
+    matchOverspeedStride: 1
     dodgeDuration: 0.82
     lightCancel: 0.74
     heavyCancel: 0.64
@@ -200,6 +202,8 @@ MonoBehaviour:
     animationAcceleration: 0.035
     animationBraking: 0.045
     groundFollowDistance: 0.6
+    mobileBladeFootwork: 1
+    matchOverspeedStride: 1
     dodgeDuration: 0.75
     lightCancel: 0.7
     heavyCancel: 0.62
@@ -218,6 +222,8 @@ MonoBehaviour:
     animationAcceleration: 0.055
     animationBraking: 0.07
     groundFollowDistance: 0.6
+    mobileBladeFootwork: 1
+    matchOverspeedStride: 1
     dodgeDuration: 0.9
     lightCancel: 0.8
     heavyCancel: 0.7
