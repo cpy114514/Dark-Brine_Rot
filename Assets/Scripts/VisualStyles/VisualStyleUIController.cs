@@ -211,7 +211,7 @@ namespace Mavis.VisualStyles
             var mode = manager.Current.Mode;
             bool advanced = (int)mode >= (int)VisualStyleMode.ColorComic;
             var names = mode == VisualStyleMode.InkWash ? new[] { "Ink bleed", "Brush texture", "Paper grain", "Mist" } :
-                mode == VisualStyleMode.VanGogh ? new[] { "Brush size", "Swirl", "Impasto", "Color richness" } :
+                mode == VisualStyleMode.VanGogh ? new[] { "Brush size", "Brush curvature", "Impasto", "Colour expression" } :
                 new[] { "Ink weight", "Tone contrast", "Screentone", "Shadow ink" };
             for (int i = 0; i < 4; i++)
             {

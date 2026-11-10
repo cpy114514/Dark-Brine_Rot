@@ -37,8 +37,12 @@ Shader "DarkBrine/Procedural Sky"
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 3.5
+            #pragma multi_compile_fragment _ VAN_GOGH_SURFACE
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Assets/Shaders/EnvironmentVisualStyle.hlsl"
+            #if defined(VAN_GOGH_SURFACE)
+            #include "Assets/Shaders/VanGoghPigment.hlsl"
+            #endif
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _HorizonColor;
@@ -351,6 +355,20 @@ Shader "DarkBrine/Procedural Sky"
                 sky *= 1.0 - cloudAlpha * saturate(_NightFactor) * 0.35;
                 sky = StyleEnvironmentColor(sky, input.positionCS.xy / _ScaledScreenParams.xy,
                     cloudAlpha * .16 * (1 - saturate(dot(cloudColor, float3(.2126, .7152, .0722)))));
+                #if defined(VAN_GOGH_SURFACE)
+                float2 celestial=float2(atan2(rayDirection.x,rayDirection.z),asin(clamp(rayDirection.y,-.9999,.9999)));
+                float2 skyCoordinates=celestial*float2(70,100)/max(.25,_VGBrush.x*2);
+                float2 celestialX=ddx(celestial),celestialY=ddy(celestial);
+                float celestialDet=celestialX.x*celestialY.y-celestialX.y*celestialY.x;
+                float2 alphaGradient=float2(ddx(cloudAlpha),ddy(cloudAlpha));
+                float2 cloudGradient=float2(alphaGradient.x*celestialY.y-alphaGradient.y*celestialX.y,
+                    celestialX.x*alphaGradient.y-celestialY.x*alphaGradient.x)/max(abs(celestialDet),1e-10)*sign(celestialDet);
+                float2 contour=normalize(float2(-cloudGradient.y,cloudGradient.x)+float2(.001,0));
+                contour*=contour.x<0?-1:1;
+                float edgeFlow=saturate(length(cloudGradient)*.12)*_VGBrush.z;
+                float cloudFlow=lerp(.1+sin(celestial.y*4)*.15,atan2(contour.y,contour.x),edgeFlow*.85);
+                sky=VGSurface(sky,skyCoordinates,cloudFlow,3);
+                #endif
                 return half4(sky, 1.0);
             }
             ENDHLSL

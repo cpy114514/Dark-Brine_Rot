@@ -13,22 +13,29 @@ namespace Mavis.VisualStyles
         public Shader illustrationShader;
         Material material;
         IllustrationPass pass;
+        VanGoghRenderPass vanGoghPass;
+        bool wasVanGogh;
         public override void Create()
         {
             pass?.Dispose();
+            vanGoghPass?.Dispose();
             CoreUtils.Destroy(material);
             if (illustrationShader) material = CoreUtils.CreateEngineMaterial(illustrationShader);
             var resources = GraphicsSettings.GetRenderPipelineSettings<UniversalRendererResources>();
             pass = new IllustrationPass(resources?.copyDepthPS) { renderPassEvent = RenderPassEvent.BeforeRenderingTransparents };
+            vanGoghPass=new VanGoghRenderPass(resources?.copyDepthPS);
         }
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
+            bool vanGogh=VanGoghPainting.Active;
+            if(wasVanGogh&&!vanGogh)vanGoghPass?.Deactivate();wasVanGogh=vanGogh;
             if (!Application.isPlaying || !VisualStyleManager.IsIllustrated || !material || renderingData.cameraData.cameraType != CameraType.Game || renderingData.cameraData.renderType == CameraRenderType.Overlay) return;
             if (renderingData.cameraData.camera.cullingMask == (1 << 5)) return; // Dedicated UI cameras keep native color and text.
+            if(vanGogh){renderer.EnqueuePass(vanGoghPass);return;}
             pass.Setup(material, VisualStyleManager.Instance.Current, VisualStyleManager.Instance.Intensity);
             renderer.EnqueuePass(pass);
         }
-        protected override void Dispose(bool disposing) { pass?.Dispose(); CoreUtils.Destroy(material); material = null; }
+        protected override void Dispose(bool disposing) { pass?.Dispose();vanGoghPass?.Dispose(); CoreUtils.Destroy(material); material = null; }
         sealed class IllustrationPass : ScriptableRenderPass
         {
             Material material;

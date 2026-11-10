@@ -10,7 +10,7 @@ namespace Mavis.VisualStyles
         // Replaced effects have different controls; preserve old preferences without
         // treating film grain/fold shading as comic control values.
         public static string DetailKey(string id, int index) => "DarkBrine.VisualStyle." + id +
-            (id == "origami" || id == "monochrome" ? ".Comic1.Detail" : ".Detail") + index;
+            (id == "van-gogh" ? ".Painting2.Detail" : id == "origami" || id == "monochrome" ? ".Comic1.Detail" : ".Detail") + index;
         public static Vector4 Details(VisualStylePreset preset)
         {
             var defaults = preset.DefaultDetails;

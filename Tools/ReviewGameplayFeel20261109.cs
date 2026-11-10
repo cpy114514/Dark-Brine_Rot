@@ -2,6 +2,13 @@ using System;using System.IO;using System.Linq;using System.Collections;using Sy
 using UnityEngine;using UnityEditor;using UnityEngine.SceneManagement;using UnityEditor.SceneManagement;using UnityEngine.InputSystem;using UnityEngine.InputSystem.LowLevel;using Mavis;
 public static class ReviewGameplayFeel20261109
 {
+ public static object VGMobile(){_ = RunVgMobile();return "Moving twin blades under new painting renderer";}
+ static async System.Threading.Tasks.Task RunVgMobile()
+ {
+  var pipeline=UnityEngine.Rendering.Universal.UniversalRenderPipeline.asset;float scale=pipeline.renderScale;
+  try{pipeline.renderScale=1;Mavis.VisualStyles.VisualStyleManager.Instance.Select("van-gogh",false);Start("visual-vg-mobile",60,"film-terrain","Balanced");var end=DateTime.UtcNow.AddMinutes(3);while(!File.Exists(".codex/gameplay-feel-20261109/visual-vg-mobile/result.json")){if(!Application.isPlaying||DateTime.UtcNow>end)throw new Exception("Mobile painting review interrupted");await System.Threading.Tasks.Task.Delay(50);}}
+  finally{pipeline.renderScale=scale;Mavis.VisualStyles.VisualStyleManager.Instance.RestorePreference();}
+ }
  public static object LoadIsland(){if(!Application.isPlaying)throw new Exception("Isolated Play required");SceneManager.LoadSceneAsync("Assets/Scenes/First Island/Main.unity",LoadSceneMode.Single);return "Loading actual Island1 in isolated Play; no Editor scenes saved";}
  public static object IslandState()=>new{loading=AdditiveSceneBootstrap.IsLoading,scenes=Enumerable.Range(0,SceneManager.sceneCount).Select(i=>new{SceneManager.GetSceneAt(i).name,SceneManager.GetSceneAt(i).isLoaded}),island=UnityEngine.Object.FindFirstObjectByType<ProceduralIsland>()!=null};
  public static object Start(string label,int hz=60,string scope="all",string preset="")

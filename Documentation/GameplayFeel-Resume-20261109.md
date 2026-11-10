@@ -1,3 +1,19 @@
+# Latest authoritative status — completed gameplay revision
+
+The focused movement/combat revision is implemented and verified. Read `Documentation/GameplayFeel-Results-20261109.md` first. Historical entries below describe intermediate states and do not mean those steps are still pending.
+
+Branch `codex/gameplay-feel-20261109`: audit9044089a, ground/legs7e36fbf0, local stopb2f603d8, movement/cadence integrationb5fc5b78. Final evidence/report commit: bbef1e6b. Ordinary moving twin blades are included and must remain. No execution feature was added.
+
+Accepted routes: flat30/60/120Hz20 assertions each; weapon rules60Hz18; handoffs30/60/120Hz4 each; real elapsed actions12; actual Island1 terrain20; actual Island1 ownership/impact/pause/low-gravity/ocean14. Expanded native blade regression929 checks48 cases passes again after final stride changes. Ground guard checks6 pass. Same-condition current×1.85 steep sprint60Hz improves24/120→120/120 support, other current-rate enabled probes all supported. Existing leg masks preserve weapon arms; moving blade hitstop holds attack but advances legs. Warmed changed-method measurements record0 managed allocations, not whole-game GC/FPS claims.
+
+Visual comparison `.codex/gameplay-feel-20261109/blade-before-after.mp4`, left original slash legs/right mobile legs, reviewed via matched sampled frames. Editor is stopped; formal save bytes unchanged and original clean Second Island scene setup restored. Recompile reports up_to_date,failed=false,errors=[]. Existing unrelated second-island work is preserved and uncommitted. No new EXE or remote upload.
+
+Human play/animation approval, fullcampaign/allBoss coverage and release-build hardware latency remain honest limitations, not deferred implementation phases. Do not repeat the completed revision merely because a scheduled heartbeat fires. Van Gogh Rendering2.0 is also now implemented and verified; read `Documentation/VanGogh2-Results-20261109.md` and its latest resume status. At scheduled wake-up, continue only genuinely unfinished new work; if neither revision has remaining implementation, do not invent extra work.
+
+Two one-shot thread continuation automations exist:5h rendering recovery (`van-gogh`) and10h5m unfinished-work recovery (`automation`). They must not cause intentional deferral. At wake read current state, continue only unfinished work; if everything is complete, do not manufacture extra work. The user may run out of quota; durable checkpoints are recovery aids, not completion claims.
+
+---
+
 # Gameplay feel overhaul — continuation checkpoint
 
 This is a recovery point, not authorization to defer work. User explicitly asked to keep working now and schedule a one-time continuation ten hours five minutes later in case their usage allowance runs out. At a scheduled wake-up, inspect actual current progress and continue ONLY unfinished work; do not redo completed changes or invent additional scope.
@@ -57,19 +73,3 @@ NEXT: finish scoped PhaseB commit if not yet present, then fix the confirmed rep
 PhaseB committed7e36fbf0. PhaseC implemented: CombatLocalHitStop bounds a group of holds to first-start+.13s, then restores playback for.035s. Explicit Release retains immediate original handoff semantics. New fields saved natively to the existing CombatFeelProfile. Mobile ordinary blade slashes with active footwork freeze only LightPlaybackSpeed, leaving legs live; spins retain whole-body freeze. Probe now sets Animator AlwaysAnimate and includes an unheld clock control. phase-c-{30,60,120}.json show all40° sprint samples grounded and resumed frames under repeated holds, plus0 attack-phase/positive leg-phase movement during held blade impacts across all3 controllers. Expanded native twin-blade regression passes929/48 again, updated its assertion to distinguish ordinary attack-layer stop vs full-body spin stop. Editor stopped, formal saves and scene restoration checked by existing session helper.
 
 NEXT: commit scoped PhaseC files if not yet committed, then do PhaseD/E integration and actual Island1 rendered input review. Existing Tools/ReviewGameFeel072.cs is a useful actual-input/camera harness, but read setup/cleanup before reuse and use a new evidence directory, isolated runtime scene/save path, preserve latest user scene setup. Need jump/ledge/step exclusions, club/charge/jump/dodge/counter/rifle and camera checks at30/60/120, real enemy/boss reactions, performance/alloc sampling, before-after images/video, final report and scoped commits. No need to repeat already passed targeted probes unless a new concern/change warrants it. Finish the task now; delayed automations are recovery only.
-# Latest authoritative status — completed gameplay revision
-
-The focused movement/combat revision is implemented and verified. Read `Documentation/GameplayFeel-Results-20261109.md` first. Historical entries below describe intermediate states and do not mean those steps are still pending.
-
-Branch `codex/gameplay-feel-20261109`: audit9044089a, ground/legs7e36fbf0, local stopb2f603d8, movement/cadence integrationb5fc5b78. Final evidence/report commit follows this entry. Ordinary moving twin blades are included and must remain. No execution feature was added.
-
-Accepted routes: flat30/60/120Hz20 assertions each; weapon rules60Hz18; handoffs30/60/120Hz4 each; real elapsed actions12; actual Island1 terrain20; actual Island1 ownership/impact/pause/low-gravity/ocean14. Expanded native blade regression929 checks48 cases passes again after final stride changes. Ground guard checks6 pass. Same-condition current×1.85 steep sprint60Hz improves24/120→120/120 support, other current-rate enabled probes all supported. Existing leg masks preserve weapon arms; moving blade hitstop holds attack but advances legs. Warmed changed-method measurements record0 managed allocations, not whole-game GC/FPS claims.
-
-Visual comparison `.codex/gameplay-feel-20261109/blade-before-after.mp4`, left original slash legs/right mobile legs, reviewed via matched sampled frames. Editor is stopped; formal save bytes unchanged and original clean Second Island scene setup restored. Recompile reports up_to_date,failed=false,errors=[]. Existing unrelated second-island work is preserved and uncommitted. No new EXE or remote upload.
-
-Human play/animation approval, fullcampaign/allBoss coverage and release-build hardware latency remain honest limitations, not deferred implementation phases. Do not repeat the completed revision merely because a scheduled heartbeat fires. Van Gogh Rendering2.0 remains separate: use `Documentation/VanGogh2-Resume-20261109.md` and latest Git/native state to continue genuinely unfinished rendering work.
-
-Two one-shot thread continuation automations exist:5h rendering recovery (`van-gogh`) and10h5m unfinished-work recovery (`automation`). They must not cause intentional deferral. At wake read current state, continue only unfinished work; if everything is complete, do not manufacture extra work. The user may run out of quota; durable checkpoints are recovery aids, not completion claims.
-
----
-

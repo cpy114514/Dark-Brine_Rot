@@ -26,7 +26,7 @@ namespace Mavis.VisualStyles
         public event Action<VisualStylePreset, float> EnvironmentChanged;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        static void ResetStatics() { instance = null; Changed = null; Shader.SetGlobalVector("_EnvironmentStyle", Vector4.zero); Shader.SetGlobalFloat("_EnvironmentMode", 0); }
+        static void ResetStatics() { instance = null; Changed = null; Shader.SetGlobalVector("_EnvironmentStyle", Vector4.zero); Shader.SetGlobalFloat("_EnvironmentMode", 0); VanGoghPainting.Reset(); }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Ensure()
         {
@@ -60,6 +60,7 @@ namespace Mavis.VisualStyles
             ApplyEnvironment();
         }
         void Start() { if (!environmentCaptured) CaptureEnvironment(); }
+        void LateUpdate(){if(Current&&Current.Mode==VisualStyleMode.VanGogh)VanGoghPainting.RefreshIfChanged(this);}
         void SceneLoaded(Scene scene, LoadSceneMode mode) { if (scene == SceneManager.GetActiveScene()) CaptureEnvironment(); }
         void ActiveSceneChanged(Scene oldScene, Scene nextScene) { CaptureEnvironment(); }
         void CaptureEnvironment()
@@ -98,6 +99,7 @@ namespace Mavis.VisualStyles
         {
             if (!Current) return;
             Revision++;
+            VanGoghPainting.Apply(this);
             // Comics process the composed world after transparents/postprocessing.
             // Only the unchanged Dark Fairytale branch shades sky/water in place.
             Shader.SetGlobalFloat("_EnvironmentMode", 0);
@@ -119,6 +121,7 @@ namespace Mavis.VisualStyles
         void OnDestroy()
         {
             if (instance != this) return;
+            VanGoghPainting.Reset();
             Shader.SetGlobalVector("_EnvironmentStyle", Vector4.zero); Shader.SetGlobalFloat("_EnvironmentMode", 0);
             SceneManager.sceneLoaded -= SceneLoaded; SceneManager.activeSceneChanged -= ActiveSceneChanged;
             if (environmentCaptured) { RenderSettings.fogColor = fog; RenderSettings.ambientSkyColor = ambientSky; RenderSettings.ambientEquatorColor = ambientEquator; RenderSettings.ambientGroundColor = ambientGround; }

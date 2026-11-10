@@ -78,6 +78,7 @@ Shader "DarkBrine/Procedural Ocean"
             #pragma fragment frag
             #pragma target 3.5
             #pragma multi_compile_fog
+            #pragma multi_compile_fragment _ VAN_GOGH_SURFACE
             #pragma multi_compile _ _CLUSTER_LIGHT_LOOP
             #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
             #pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
@@ -90,6 +91,9 @@ Shader "DarkBrine/Procedural Ocean"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareOpaqueTexture.hlsl"
             #include "Assets/Shaders/EnvironmentVisualStyle.hlsl"
+            #if defined(VAN_GOGH_SURFACE)
+            #include "Assets/Shaders/VanGoghPigment.hlsl"
+            #endif
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _DeepColor;
@@ -582,6 +586,10 @@ Shader "DarkBrine/Procedural Ocean"
                 water = MixFog(water, input.fogFactor);
                 water = StyleEnvironmentColor(water, screenUv,
                     saturate(waveCrest * .18 + contactFoam * shoreMask * .08));
+                #if defined(VAN_GOGH_SURFACE)
+                float2 paintCoordinates=float2(dot(p,windDirection),dot(p,float2(-windDirection.y,windDirection.x)))/max(.1,_VGBrush.x*3);
+                water=VGSurface(water,paintCoordinates,.12+dot(waveNormal.xz,windDirection)*.65,2);
+                #endif
                 return half4(water, 1.0h);
             }
             ENDHLSL
