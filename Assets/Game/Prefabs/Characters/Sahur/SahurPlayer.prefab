@@ -3416,6 +3416,7 @@ MonoBehaviour:
   comboBlendTime: 0.09
   comboTwoDamageMultiplier: 1.2
   comboThreeDamageMultiplier: 1.6
+  stickFinisherDamageMultiplier: 1.25
   comboOneHitWindow: {x: 0.57, y: 0.86}
   comboTwoHitWindow: {x: 0.12, y: 0.34}
   comboThreeHitWindow: {x: 0.32, y: 0.55}
@@ -3694,7 +3695,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6599514254367242517}
-  m_Mesh: {fileID: -3362887337151679087, guid: ea99ea48758729747b6f4bcd3814fc03, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 7c5db43699285464eab679ac1d69728e, type: 2}
 --- !u!23 &1979745650828945054
 MeshRenderer:
   m_ObjectHideFlags: 0
