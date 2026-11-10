@@ -58,3 +58,19 @@ Unity 6000.3.23f1，URP。岛二的新增布置保存在 Second Island 场景的
 两名敌人的材质备份位于 `.codex/model-refinement/flock`，船骸逐网格备份在 `.codex/model-refinement/wreck/mesh-backups`。Blender 工作文件在 `ArtSource/ModelRefinement`。复建船骸需要先取得 v002 的 `fragments.json`，再运行 `refine_wreck_edges.py` 和 `RefineShipWreckEdges.Install`。若从旧工具重新导入船骸，要再执行该步骤恢复已修断面。
 
 后续待处理的范围包括其他 Boss、已审计的环境模型，以及需要逐角色验证的近景网格优化。本批对鸡哥和鹅的工作集中在材质，三角面数沿用生产网格。
+
+## 第三批 · 八戒九齿钉耙与黄眉
+
+**九齿钉耙。** 核对八戒生产 Prefab 后，发现原钉耙三角面数为 210,457，全部顶点以权重 1 绑定 `weapon`，生产骨架共 9 骨。Blender 工作副本按握杆、九齿横梁和尾饰分别处理，减至 62,036 面、36,367 个 Unity 顶点。九齿横梁分配更高几何预算，保留雕刻和齿形，复制原 UV、三材质槽以及生产 Bind Pose。两张 512² 贴图让锻造金属边缘、旧包浆和杆部织带分别响应光照。
+
+Blender 对两个表面方向采样的最大距离约为源模型空间 4.4 毫米，95% 顶点距离约 0.75 毫米。游戏武器的缩放为 2，最大值换算约 8.8 毫米。Unity 同姿态比较中，包围范围偏差约 0.76 毫米，手与握持点偏差为零。检查了三面、两次挥击、闪避和近景。Unity Profiler 网格对象内存约 17.12 → 2.38 MiB，三角面减少约 70.5%。两张贴图含 Mipmap 的 BC7 纹理数据合计约 0.67 MiB。
+
+八戒的生产 Prefab 更新了武器 Mesh 引用。原碰撞和 9 骨绑定通过核对。实景战斗回归通过了兽形冲锋、尾扫、玩家近战伤害、半血变身、人形挥耙伤害、反应闪避、死亡及 Continue。前后对照在 `.codex/model-refinement/comparisons/bajie-rake.png`，战斗记录在 `bajie-rake/combat-regression.json`。
+
+**黄眉。** 在源 FBX 的 Blender 工作副本中，分别处理头部和躯干皮肤、黄袈裟、蓝色织金、饰物及两种朱漆佛像。金属遮罩来自原贴图颜色，法线的凹凸参与粗糙度。七张 512² BC7 贴图含 Mipmap 的纹理数据约为 2.33 MiB，编辑器对象内存的本次采样约为 4.67 MiB。身体仍用生产的 276,424 三角面和 340 骨蒙皮。
+
+同灯光工作室比较了正、侧、背、横扫和面部近景，骨骼矩阵逐项相同。岛二实景逐项运行横扫、砸杖、掌印和金轮，全部到达收招，半血 Invocation 和第二阶段死亡也通过。横扫、砸杖与金轮在本次站位测试中对玩家造成伤害，掌印完成了发射与收招。对照位于 `.codex/model-refinement/comparisons/huang-mei.png`，实景动作与记录在 `huang/runtime-*.png`、`huang/runtime-regression.json`。
+
+两个 Blender 工作文件在 `ArtSource/ModelRefinement/ZhuBaJie` 与 `HuangMei`。钉耙的 Blender 副本保留原网格作参考，Unity 继续使用生产武器骨架。原 Prefab 与两张武器材质的备份在 `.codex/model-refinement/bajie-rake`，黄眉七张原材质备份在 `huang`。两个 Boss 的源 FBX、原动画文件和场景快照均可用于追溯。
+
+本批之后仍待逐项精修的资源包括飞鳄、鲨鱼、猪武士及其余环境模型。审计中猪武士身体和卡布奇诺刀刃没有切线，两者当前材质都没有连接法线贴图。本批按已确认问题处理资源。环境 Prefab 的总面数包含多个 LOD，后续按实景生效的网格评估。
