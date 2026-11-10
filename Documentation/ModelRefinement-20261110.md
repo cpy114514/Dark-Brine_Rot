@@ -33,9 +33,9 @@ Unity 6000.3.23f1，URP。岛二的新增布置保存在 Second Island 场景的
 | 优先级 | 当前状态 |
 | --- | --- |
 | 高频近景玩家和主要 Boss | 本批完成上述精修。Sahur 身体的骨架、权重和手指附件需要以生产网格为准。奶龙和 Sahur 的高面数近景身体仍待单独做变形对照后决定减面或 LOD |
-| 三种普通敌人 | 已完成长腿鸭远景网格。鸡哥 499,918 面 / 28 骨、鹅 499,972 面 / 19 骨仍待针对各自轮廓与动作处理 |
+| 三种普通敌人 | 已完成长腿鸭远景网格及鸡哥、鹅的表面精修。鸡哥与鹅的高面数网格仍待针对各自轮廓与动作验证 |
 | 其余 Boss | 黄眉 276,424 面 / 340 骨主体，八戒兽形身体和毛发共 141,964 面 / 289 骨、人形 111,091 面 / 397 骨，九齿钉耙 210,457 面 / 9 骨。另找到飞鳄和鲨鱼的生产视觉资源，鲨鱼战斗使用动画 FBX |
-| 环境与船骸 | 岛二已改上述观景线、院路与营地。序章船骸用 `Assets/Resources/Story1Wreck/ShipWreckPieces.asset`，对应 Blender 分件源在 `ArtSource/ShipWreck`。船骸与其余环境资源仍待逐项精修 |
+| 环境与船骸 | 岛二已改上述观景线、院路与营地。序章船骸断面已精修，生产入口为 `Assets/Resources/Story1Wreck/ShipWreckPieces.asset`。其余环境资源待逐项精修 |
 
 ## 本机证据与回退
 
@@ -44,3 +44,17 @@ Unity 6000.3.23f1，URP。岛二的新增布置保存在 Second Island 场景的
 岛二单项回退用原生 Unity 命令 `unity command run_script --file Tools/BuildSecondIslandCloudSea.cs --entry BuildSecondIslandCloudSea.Remove`。该命令要求打开已保存的岛二场景，按根节点移除这一批布置。需要重新应用时使用同一工具的 `BuildSecondIslandCloudSea.Run`。布置复用了工作区已有的 `Assets/Resources/SecondIslandRealism` 道具。
 
 在隔离 Play 中用 `ReviewSecondIslandCloudSea` 和 `ReviewRefinedModels` 复测。原生审计入口为 `AuditModelRefinement.Run`。局部导出和安装入口在 `RefineSahurStick`、`InstallHeroSurfaceRefinement` 与对应的 Blender 脚本中。
+
+## 第二批 · 鸡哥、鹅和序章船骸
+
+**鸡哥与鹅。** 从两者现有 FBX 在 Blender 烘出原姿势的 UV 位置图，用它分开相近颜色的表面。鸡哥保留夸张银发与黑白服装，银发压低过曝并带冷色，衣料、皮靴和脸部采用不同光泽。鹅保留原头身比例与白羽，胸羽、颈部细绒、喙、脚蹼和眼睛分开控制。两者使用新的 2K 颜色和 1K 光泽贴图，保留生产法线图与材质 GUID。
+
+生产网格仍为鸡哥 499,918 面 / 28 骨、鹅 499,972 面 / 19 骨。第一岛用同机位比较正、侧、背、跑步和各自两种攻击，确认骨骼矩阵相等，原 Avatar 和鸟类受击盒可用。鸡哥替换贴图后的 Unity 对象内存近似持平。鹅新增 1K BC7 光泽，带完整 Mipmap 的纹理数据约 1.33 MiB，Unity Editor 这次采样的对象内存多约 2.67 MiB。截图位于 `.codex/model-refinement/comparisons/ChickenBro.png` 与 `BullyGoose.png`。
+
+**船骸。** 打开原 `ship_g_fractured_v002.blend` 精修甲板、船壳和小碎片的木材断面。修复 175 个网格的 9,284 个侧面，其中 4,549 面原 UV 退化为线。沿切口朝向重新投影木纹，并恢复切口的硬边法线。原材质和贴图沿用，顶点与三角索引逐项相等，21,504 个三角面与约 6.41 MiB 的 Unity 网格对象内存一致。原网格 GUID、拼装尺寸和碰撞几何沿用。
+
+序章实景进入鲨鱼战斗，本次生成 214 个碎片、31 块木板。采样的入口木板与船壳仍有碰撞网格，同帧碰撞缓存回归通过。近景和开场实景对照在 `.codex/model-refinement/comparisons/shipwreck-detail.png` 与 `shipwreck-edges.png`。正式存档和已打开场景通过隔离 Play 的还原核对。
+
+两名敌人的材质备份位于 `.codex/model-refinement/flock`，船骸逐网格备份在 `.codex/model-refinement/wreck/mesh-backups`。Blender 工作文件在 `ArtSource/ModelRefinement`。复建船骸需要先取得 v002 的 `fragments.json`，再运行 `refine_wreck_edges.py` 和 `RefineShipWreckEdges.Install`。若从旧工具重新导入船骸，要再执行该步骤恢复已修断面。
+
+后续待处理的范围包括其他 Boss、已审计的环境模型，以及需要逐角色验证的近景网格优化。本批对鸡哥和鹅的工作集中在材质，三角面数沿用生产网格。
