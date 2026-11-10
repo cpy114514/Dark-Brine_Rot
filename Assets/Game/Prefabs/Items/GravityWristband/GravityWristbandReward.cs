@@ -296,7 +296,7 @@ public sealed class GravityWristbandReward : MonoBehaviour
                 markerAnchors[count]=anchor;
                 marker.anchorMin=marker.anchorMax=anchor;marker.anchoredPosition=Vector2.zero;
                 float distance=Vector3.Distance(player.transform.position,enemy.transform.position);
-                enemyMarkerLabels[count].text="◆\n"+Mathf.RoundToInt(distance)+" m";
+                enemyMarkerLabels[count].text="◆\n"+Mathf.RoundToInt(WorldMeasurements.ToMetres(distance))+" m";
                 marker.gameObject.SetActive(true);count++;
                 if(count==enemyMarkers.Length)break;
             }

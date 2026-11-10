@@ -363,7 +363,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
         {
             if(InGrove)questText.text="STARLIGHT GROVE\nA peaceful tiny garden above the clouds.\nRest by the well to restore 40% HP and full SP once.\nUse the return door to grow back.";
             else if(!DoorInspected)questText.text="STARLIGHT GROVE\nA hidden garden for tiny visitors.\nApproach the little door to learn how to enter.";
-            else if(!SmallLightOwned)questText.text="FIND THE SMALL LIGHT\nThe door is too small for Sahur.\nLook northwest of the door for the light.\nDistance: "+Mathf.RoundToInt(lampDistance)+" m";
+            else if(!SmallLightOwned)questText.text="FIND THE SMALL LIGHT\nThe door is too small for Sahur.\nLook northwest of the door for the light.\nDistance: "+Mathf.RoundToInt(WorldMeasurements.ToMetres(lampDistance))+" m";
             else questText.text="STARLIGHT GROVE\nUse the Small Light at the tiny door.\nInside is a peaceful garden and a healing well.";
         }
         if(approachesNewDoor && Time.time>=portalReady)

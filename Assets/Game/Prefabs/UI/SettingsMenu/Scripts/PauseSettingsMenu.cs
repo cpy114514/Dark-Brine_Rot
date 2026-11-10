@@ -806,7 +806,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             case "cameraShake": return new[]{"OFF","REDUCED","FULL"}[draft.cameraShake];
             case "screenEffects": return new[]{"OFF","REDUCED","FULL"}[draft.screenEffects];
             case "difficulty": return new[] { "EASY", "NORMAL", "HARD" }[draft.difficulty];
-            case "cameraDistance": return draft.cameraDistance.ToString("0.0") + " M";
+            case "cameraDistance": return WorldMeasurements.ToMetres(draft.cameraDistance).ToString("0.0") + " M";
             case "masterVolume": return Mathf.RoundToInt(draft.masterVolume * 100f) + "%";
             case "sensitivity": return draft.sensitivity.ToString("0.00");
             case "fieldOfView": return Mathf.RoundToInt(draft.fieldOfView) + "°";
@@ -824,7 +824,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
             case "postProcessing": return OnOff(draft.postProcessing);
             case "shadows": return OnOff(draft.shadows);
             case "renderScale": return draft.pixel360 ? "PIXEL STYLE" : Mathf.RoundToInt(draft.renderScale * 100f) + "%";
-            case "shadowDistance": return Mathf.RoundToInt(draft.shadowDistance) + " M";
+            case "shadowDistance": return Mathf.RoundToInt(WorldMeasurements.ToMetres(draft.shadowDistance)) + " M";
             case "shadowResolution": return ShadowResolutions[draft.shadowResolutionIndex].ToString();
             case "anisotropic": return new[] { "OFF", "PER TEXTURE", "FORCED" }[draft.anisotropicFiltering];
             case "lodBias": return draft.lodBias.ToString("0.0") + "X";

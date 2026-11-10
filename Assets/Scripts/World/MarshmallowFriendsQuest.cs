@@ -149,7 +149,7 @@ public sealed class MarshmallowFriendsQuest : MonoBehaviour
         {
             nextHud=Time.unscaledTime+.25f;var target=MapAnchor;
             string hint=Stage==1?"Find Pip, the blue marshmallow.":IsNearHome?"Talk to Lily to reunite the friends.":lostDistance>28?"Pip is waiting for you. Go back to help.":"Lead Pip back to Lily. Pip follows nearby.";
-            cardText.text="A FRIEND IN THE CLOUDS\n"+(Time.unscaledTime<noticeUntil?notice:hint)+"\n"+Mathf.RoundToInt(Flat(player.transform.position,target.position))+" m  ·  See M for map";
+            cardText.text="A FRIEND IN THE CLOUDS\n"+(Time.unscaledTime<noticeUntil?notice:hint)+"\n"+Mathf.RoundToInt(WorldMeasurements.ToMetres(Flat(player.transform.position,target.position)))+" m  ·  See M for map";
         }
         if(!allowed || Cursor.lockState!=CursorLockMode.Locked || !GameControls.Down(GameControls.Command.Interact))return;
         if(nearHome || nearLost){lastInteractionFrame=Time.frameCount;StartCoroutine(Talk(nearHome));}

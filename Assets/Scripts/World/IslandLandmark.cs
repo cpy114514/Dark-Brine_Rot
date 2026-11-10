@@ -16,7 +16,7 @@ namespace Mavis
             caption.GetComponent<MeshRenderer>().sharedMaterial = caption.font.material;
             caption.text = destination && destination.TryGetComponent<IslandSupplyCache>(out var cache) ?
                 (cache.supportsMelee ? "Recovery / ammo" : cache.DisplayName) : englishName;
-            if (destination) caption.text += "\n" + Mathf.RoundToInt(Vector3.ProjectOnPlane(destination.position - transform.position, Vector3.up).magnitude) + " m";
+            if (destination) caption.text += "\n" + Mathf.RoundToInt(WorldMeasurements.ToMetres(Vector3.ProjectOnPlane(destination.position - transform.position, Vector3.up).magnitude)) + " m";
         }
         void OnDestroy() => GameLocalization.Changed -= Refresh;
     }

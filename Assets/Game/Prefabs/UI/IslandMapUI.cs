@@ -208,7 +208,8 @@ namespace Mavis
                     markers[i].rectTransform.anchoredPosition = position;
                 }
             }
-            var rounded=new Vector3(Mathf.Round(transform.position.x),Mathf.Round(transform.position.z),Mathf.Round(MapGraphic.WorldSpan));
+            var rounded=new Vector3(Mathf.Round(WorldMeasurements.ToMetres(transform.position.x)),
+                Mathf.Round(WorldMeasurements.ToMetres(transform.position.z)),Mathf.Round(WorldMeasurements.ToMetres(MapGraphic.WorldSpan)));
             if(rounded!=shownCoordinates || coordinateLanguage!=GameLocalization.Language)
             {
                 shownCoordinates=rounded;coordinateLanguage=GameLocalization.Language;

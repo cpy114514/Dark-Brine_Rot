@@ -201,7 +201,7 @@ namespace Mavis
                 SetText(message, reminder);
                 if (Target)
                 {
-                    int metres = Mathf.CeilToInt(Vector3.Distance(Position(Target), transform.position));
+                    int metres = Mathf.CeilToInt(WorldMeasurements.ToMetres(Vector3.Distance(Position(Target), transform.position)));
                     SetText(destination, kind == GuidanceKind.Gun ? GameLocalization.Format("supply.gunDistance", metres) :
                         Target is RifleAmmoPickup ammo ? GameLocalization.Format("supply.ammoDistance", ammo.amount, metres) :
                         ((IslandSupplyCache)Target).DisplayName + " · " + metres + " m");

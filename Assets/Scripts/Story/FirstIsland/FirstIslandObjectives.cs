@@ -280,7 +280,7 @@ namespace Mavis
                 text.Append('\n');
             }
             else if(FirstIslandBossProgression.FlockPending && ChickenBroEncounter.Active.TryGetGuidanceTarget(out var flockPoint))
-                text.Append("Next: Chicken Bro flock · ").Append(Mathf.RoundToInt(Mathf.Sqrt(FlatDistanceSquared(transform.position,flockPoint)))).Append(" m\n");
+                text.Append("Next: Chicken Bro flock · ").Append(Mathf.RoundToInt(WorldMeasurements.ToMetres(Mathf.Sqrt(FlatDistanceSquared(transform.position,flockPoint))))).Append(" m\n");
             else text.Append(en ? (DefeatedBossCount == 3 ? "All three defeated\n" : "Finding nearby bosses...\n") :
                 (DefeatedBossCount == 3 ? "All three defeated\n" : "Finding nearby bosses...\n"));
             for (int kind = 0; kind < 3; kind++)
@@ -295,7 +295,7 @@ namespace Mavis
                     text.Append("Locked — defeat ").Append(FirstIslandBossProgression.RequiredBossName((BossKind)kind));
                 else if (flow != null && flow.identity && flow.identity.gameObject.activeInHierarchy)
                 {
-                    text.Append(Mathf.RoundToInt(Mathf.Sqrt(FlatDistanceSquared(transform.position, flow.identity.transform.position)))).Append(" m · ");
+                    text.Append(Mathf.RoundToInt(WorldMeasurements.ToMetres(Mathf.Sqrt(FlatDistanceSquared(transform.position, flow.identity.transform.position))))).Append(" m · ");
                     text.Append(flow.Fighting ? ("In combat") : ("Available"));
                 }
                 else text.Append("Not available");

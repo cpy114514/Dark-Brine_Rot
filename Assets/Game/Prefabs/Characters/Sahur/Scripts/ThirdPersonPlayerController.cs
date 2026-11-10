@@ -74,7 +74,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     public const float MaximumCameraDistance = 16f;
     public const float DefaultCameraDistance = 14f;
     [Min(1f)] public float cameraDistance = DefaultCameraDistance;
-    [Tooltip("Camera focus height above the calibrated soles, in metres.")]
+    [Tooltip("Camera focus height above the calibrated soles, in authored world units.")]
     [Min(0.5f)] public float cameraHeight = 0.85f;
     [Min(0.1f)] public float cameraFollowSharpness = 20f;
     public bool cameraCollision = true;

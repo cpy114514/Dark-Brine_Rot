@@ -175,7 +175,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         wayfinder.SetParent(transform,false);
         wayfinder.SetPositionAndRotation(Ground(new Vector2(129,2061)),Quaternion.LookRotation(new Vector3(13,0,3)));
         Shape("Wayfinder post",PrimitiveType.Cube,wayfinder,new Vector3(0,1f,.29f),new Vector3(.29f,2.25f,.32f),wood);
-        int distance=Mathf.RoundToInt(Vector3.ProjectOnPlane(sign.transform.position-wayfinder.position,Vector3.up).magnitude);
+        int distance=Mathf.RoundToInt(WorldMeasurements.ToMetres(Vector3.ProjectOnPlane(sign.transform.position-wayfinder.position,Vector3.up).magnitude));
         var pointer=Label(wayfinder,"CANDY MELODY GARDEN\nFour bells ahead  ·  "+distance+" m",2.28f,.0105f);
         ((RectTransform)pointer.transform).sizeDelta=new Vector2(425,110);
     }

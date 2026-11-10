@@ -462,7 +462,7 @@ public sealed partial class SkyboardRingRally : MonoBehaviour
             float f = Vector3.Dot(forward, delta), s = Vector3.Dot(right, delta);
             string arrow = Mathf.Abs(s) > Mathf.Abs(f) * .45f ? (s > 0 ? "→" : "←") : (f >= 0 ? "↑" : "↓");
             string guidance = !Running ? "HOLD AT THE START" : Time.time < recoveryUntil ? "BACK ON TRACK  ·  +3s" :
-                $"{arrow}  NEXT RING  {Mathf.RoundToInt(delta.magnitude)} m  ·  {(Relocating ? "RING MOVING" : "MOVES IN " + Mathf.CeilToInt(TimeUntilMove) + "s")}";
+                $"{arrow}  NEXT RING  {Mathf.RoundToInt(WorldMeasurements.ToMetres(delta.magnitude))} m  ·  {(Relocating ? "RING MOVING" : "MOVES IN " + Mathf.CeilToInt(TimeUntilMove) + "s")}";
             detail.text = guidance + (boostActive ? "  ·  BOOST" : "");
         }
         else if (result)

@@ -370,7 +370,7 @@ public sealed class CandyHuntQuest : MonoBehaviour
                 Vector3 r=Vector3.ProjectOnPlane(view.transform.right,Vector3.up).normalized;
                 float front=Vector3.Dot(f,delta),side=Vector3.Dot(r,delta);
                 string arrow=Mathf.Abs(side)>Mathf.Abs(front)*.45f?(side>0?"→":"←"):(front>=0?"↑":"↓");
-                direction.text=arrow+"  "+Mathf.RoundToInt(delta.magnitude)+" m  ·  "+GameControls.Prompt(GameControls.Command.Map)+": map";
+                direction.text=arrow+"  "+Mathf.RoundToInt(WorldMeasurements.ToMetres(delta.magnitude))+" m  ·  "+GameControls.Prompt(GameControls.Command.Map)+": map";
             }
         }
         bool popup=Time.unscaledTime<popupUntil;

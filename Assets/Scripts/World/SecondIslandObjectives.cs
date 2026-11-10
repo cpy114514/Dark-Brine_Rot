@@ -174,6 +174,6 @@ public sealed class SecondIslandObjectives : MonoBehaviour
         Vector3 right = camera ? Vector3.ProjectOnPlane(camera.transform.right, Vector3.up).normalized : transform.right;
         float ahead = Vector3.Dot(forward, delta), side = Vector3.Dot(right, delta);
         string arrow = Mathf.Abs(side) > Mathf.Abs(ahead) * .45f ? (side > 0 ? "→" : "←") : ahead >= 0 ? "↑" : "↓";
-        return arrow + "  " + Mathf.RoundToInt(delta.magnitude) + " m";
+        return arrow + "  " + Mathf.RoundToInt(WorldMeasurements.ToMetres(delta.magnitude)) + " m";
     }
 }
