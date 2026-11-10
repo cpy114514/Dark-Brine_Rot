@@ -7,7 +7,7 @@ namespace Mavis
     public sealed class CombatLocalHitStop : MonoBehaviour
     {
         Animator animator;
-        float savedSpeed, until;
+        float savedSpeed, until, burstStartedAt, resumeUntil;
         bool ownsSpeed;
         Transform[] pose;
         Vector3[] positions;
@@ -29,6 +29,9 @@ namespace Mavis
         }
         public void Hold(Animator target, float seconds)
         {
+            float now=Time.unscaledTime;
+            if(ownsSpeed&&now>=until)EndBurst();
+            if(now<resumeUntil)return;
             if (ownsSpeed && animator!=target) Release();
             if(animator!=target || pose==null)
             {
@@ -44,19 +47,21 @@ namespace Mavis
             }
             if (!ownsSpeed)
             {
-                savedSpeed=animator.speed; ownsSpeed=true; capturedPose=false;layerSpeed=0;
+                savedSpeed=animator.speed; ownsSpeed=true; capturedPose=false;layerSpeed=0;burstStartedAt=now;
                 // Mobile strikes share their Animator with locomotion. Freeze the attack
                 // state parameter so the legs can keep stepping instead of sliding for 90ms.
                 var melee=GetComponent<SahurAttack>();
-                if(melee && melee.CanMoveDuringCombat)
+                if(melee && (melee.CanMoveDuringCombat || GetComponent<ThirdPersonPlayerController>() is ThirdPersonPlayerController motor && motor.BladeFootworkActive))
                 {
                     int hash=melee.IsHeavyAttackActive?HeavySpeed:LightSpeed;
                     if(melee.IsHeavyAttackActive?hasHeavyParameter:hasLightParameter)
                     {layerSpeed=hash;savedLayerSpeed=animator.GetFloat(hash);}
                 }
             }
-            // Repeated area hits extend to a bounded end, never add durations.
-            until=Mathf.Max(until,Time.unscaledTime+Mathf.Clamp(seconds,0,.13f));
+            // A group of contacts shares one budget measured from its first
+            // hold. A new contact cannot move that budget into the future.
+            until=Mathf.Min(Mathf.Max(until,now+Mathf.Clamp(seconds,0,.13f)),
+                burstStartedAt+CombatFeelProfile.Default.maximumContinuousStop);
             if(layerSpeed!=0)animator.SetFloat(layerSpeed,0);else animator.speed=0;
         }
         void LateUpdate()
@@ -75,7 +80,8 @@ namespace Mavis
         void Update()
         {
             if (!ownsSpeed) return;
-            if (!animator || !animator.enabled || !animator.gameObject.activeInHierarchy || Time.unscaledTime>=until) Release();
+            if (!animator || !animator.enabled || !animator.gameObject.activeInHierarchy)Release();
+            else if(Time.unscaledTime>=until)EndBurst();
             else if(layerSpeed!=0)animator.SetFloat(layerSpeed,0);
         }
         public void Release()
@@ -86,8 +92,9 @@ namespace Mavis
                 if(layerSpeed!=0){if(Mathf.Approximately(animator.GetFloat(layerSpeed),0))animator.SetFloat(layerSpeed,savedLayerSpeed);}
                 else if(Mathf.Approximately(animator.speed,0))animator.speed=savedSpeed;
             }
-            ownsSpeed=false; capturedPose=false; until=0;layerSpeed=0;
+            ownsSpeed=false; capturedPose=false; until=0;layerSpeed=0;resumeUntil=0;
         }
+        void EndBurst(){Release();resumeUntil=Time.unscaledTime+CombatFeelProfile.Default.hitStopResumeSeconds;}
         void OnDisable() => Release();
         void OnDestroy() => Release();
     }

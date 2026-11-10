@@ -61,6 +61,8 @@ MonoBehaviour:
     vfx: 0.7
     reaction: 0.65
     knockback: 0
+  maximumContinuousStop: 0.13
+  hitStopResumeSeconds: 0.035
   incomingDamageMultiplier: 0.7
   maximumHitHealthFraction: 0.18
   damageRecoverySeconds: 0.6

@@ -26,6 +26,11 @@ namespace Mavis
         public Impact received = new Impact(.055f,.075f,.15f,.95f,1,0);
         public Impact receivedHeavy = new Impact(.085f,.10f,.19f,1.2f,1.25f,0);
         public Impact rifle = new Impact(.028f,.025f,.075f,.7f,.65f,0);
+        [Header("Local hitstop burst budget")]
+        [Tooltip("Maximum continuous animation hold from a group of contacts, independent of how often that group renews it.")]
+        [Range(.05f,.2f)] public float maximumContinuousStop = .13f;
+        [Tooltip("Minimum interval with restored playback after a saturated burst. Input and movement are never globally frozen.")]
+        [Range(.008f,.08f)] public float hitStopResumeSeconds = .035f;
         [Header("Combat forgiveness (hostile attacks only)")]
         [Range(.25f,1f)] public float incomingDamageMultiplier = .7f;
         [Range(.1f,.5f)] public float maximumHitHealthFraction = .18f;

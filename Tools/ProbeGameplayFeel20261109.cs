@@ -31,6 +31,7 @@ public static class ProbeGameplayFeel20261109
    foreach(var b in actor.GetComponentsInChildren<MonoBehaviour>(true))b.enabled=false;
    root.SetActive(true);foreach(var b in actor.GetComponentsInChildren<MonoBehaviour>(true))b.enabled=false;
    var motor=actor.GetComponent<ThirdPersonPlayerController>();var body=actor.GetComponent<CharacterController>();var attack=actor.GetComponent<SahurAttack>();var animator=attack.animator;
+   animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
    motor.moveSpeed=9.6f;motor.sprintMultiplier=1.75f;motor.acceleration=68;motor.deceleration=84;motor.turnSpeedDegrees=780;motor.seaLevel=-2000;motor.waterSplashes=false;motor.cameraCollision=false;
    motor.enabled=true;motor.ExternalControlLock=motor.ExternalMovementLock=false;
    keyboard=InputSystem.AddDevice<Keyboard>("Feel probe keyboard");mouse=InputSystem.AddDevice<Mouse>("Feel probe mouse");keyboard.MakeCurrent();mouse.MakeCurrent();Cursor.lockState=CursorLockMode.Locked;InputState.Change(mouse,new MouseState());
@@ -70,12 +71,18 @@ public static class ProbeGameplayFeel20261109
     for(int i=0;i<12;i++){Call(motor,"Update");Call(motor,"UpdateLockFootwork");animator.Update(0);}
     int layer=animator.GetLayerIndex("Mobile Blade Legs");
     report.Add(new{kind="blade-footwork",controller,active=motor.BladeFootworkActive,weight=layer>0?animator.GetLayerWeight(layer):0,armDelta=Quaternion.Angle(armBefore,arm.localRotation),handDelta=Quaternion.Angle(handBefore,hand.localRotation),footDelta=Quaternion.Angle(footBefore,foot.localRotation)});
+    var contactStop=actor.GetComponent<CombatLocalHitStop>();if(!contactStop)contactStop=actor.AddComponent<CombatLocalHitStop>();contactStop.enabled=true;
+    float attackPhase=animator.GetCurrentAnimatorStateInfo(0).normalizedTime,legPhase=layer>0?animator.GetCurrentAnimatorStateInfo(layer).normalizedTime:0;
+    contactStop.Hold(animator,.08f);for(int i=0;i<4;i++)animator.Update(1f/hz);
+    report.Add(new{kind="moving-blade-hitstop",controller,layerFreeze=contactStop.UsesLayerFreeze,animatorSpeed=animator.speed,attackPhaseDelta=animator.GetCurrentAnimatorStateInfo(0).normalizedTime-attackPhase,legPhaseDelta=layer>0?animator.GetCurrentAnimatorStateInfo(layer).normalizedTime-legPhase:0});contactStop.Release();
     Call(attack,"StartComboStage",2);Call(motor,"UpdateLockFootwork");
     report.Add(new{kind="finisher-priority",controller,ordinaryFootworkActive=motor.BladeFootworkActive});
    }
    attack.SuspendForSwimming();motor.enabled=false;InputState.Change(keyboard,new KeyboardState());
    var stop=actor.GetComponent<CombatLocalHitStop>();if(!stop)stop=actor.AddComponent<CombatLocalHitStop>();stop.enabled=true;
    animator.speed=1;animator.Play("Base Layer.Locomotion",0,0);animator.Update(0);
+   float controlStart=animator.GetCurrentAnimatorStateInfo(0).normalizedTime;await Frame();await Frame();await Frame();
+   report.Add(new{kind="animation-clock-control",hz,phaseDelta=animator.GetCurrentAnimatorStateInfo(0).normalizedTime-controlStart});
    float started=Time.unscaledTime;int frames=0,resumed=0;float before=animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
    while(Time.unscaledTime-started<.38f)
    {
