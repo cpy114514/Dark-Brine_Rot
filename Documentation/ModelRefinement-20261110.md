@@ -74,3 +74,13 @@ Blender 对两个表面方向采样的最大距离约为源模型空间 4.4 毫�
 两个 Blender 工作文件在 `ArtSource/ModelRefinement/ZhuBaJie` 与 `HuangMei`。钉耙的 Blender 副本保留原网格作参考，Unity 继续使用生产武器骨架。原 Prefab 与两张武器材质的备份在 `.codex/model-refinement/bajie-rake`，黄眉七张原材质备份在 `huang`。两个 Boss 的源 FBX、原动画文件和场景快照均可用于追溯。
 
 本批之后仍待逐项精修的资源包括飞鳄、鲨鱼、猪武士及其余环境模型。审计中猪武士身体和卡布奇诺刀刃没有切线，两者当前材质都没有连接法线贴图。本批按已确认问题处理资源。环境 Prefab 的总面数包含多个 LOD，后续按实景生效的网格评估。
+
+## 第四批 · 飞鳄的旧漆、发动机与鳞片
+
+从飞鳄原 `source/Low.fbx` 建立 Blender 工作文件，修复工作副本中失效的纹理路径，再为迷彩机身、发动机和鳄鱼皮分别调整光泽与金属响应。机身旧漆偏哑光，磨损处显露金属，发动机的裸露部分更光滑，鳞片保持较宽的反光，牙齿有更集中的高光。三张 512² BC7 贴图含 Mipmap 的纹理数据约 1 MiB，Unity 编辑器对象内存采样约 2 MiB。
+
+飞鳄的生产网格沿用 25,030 三角面和 9 个材质槽。工作室同灯光比较了四个角度。第一岛的验证使用生产 Prefab，并将测试实例放入临时运行时场景以隔离战斗进度。依次运行高空轰炸、低空冲刺、导弹、喷火、二阶段齐射和交叉轰炸，检查真实飞行和每次反击窗口。累计产生 14 枚炸弹、11 枚导弹和 7 处火区，死亡状态通过。
+
+Blender 工作文件在 `ArtSource/ModelRefinement/Bombardino`。对照与记录在 `.codex/model-refinement/comparisons/bombardino.png`、`bombardino/runtime-regression.json`，三张原材质备份在 `bombardino/*.mat.before`。新材质接入原资源 GUID。
+
+当前已完成的批次均已留有本地回退点。鲨鱼、猪武士和其余环境资源仍待针对实际问题逐项处理。
