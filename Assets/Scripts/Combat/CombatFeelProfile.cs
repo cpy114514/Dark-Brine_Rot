@@ -58,6 +58,8 @@ namespace Mavis
             [Range(.5f,2f)] public float turning = 1.16f;
             [Range(.02f,.15f)] public float animationAcceleration = .045f;
             [Range(.02f,.15f)] public float animationBraking = .06f;
+            [Tooltip("Maximum downward ground follow after supported movement; never used during a rising jump or authored attack travel. Zero disables it.")]
+            [Range(0f,.8f)] public float groundFollowDistance = .6f;
             [Header("Commitment and recovery (never before the damage window ends)")]
             [Range(.65f,1f)] public float dodgeDuration = .82f;
             [Range(.6f,.95f)] public float lightCancel = .74f;

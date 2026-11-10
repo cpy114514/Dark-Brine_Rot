@@ -55,7 +55,25 @@ public static class ProbeGameplayFeel20261109
     report.Add(new{kind="slope",hz,angle,sprint,groundedFrames=grounded,totalFrames=hz*2,maxBottomGap=maxGap,travel=Vector3.ProjectOnPlane(actor.transform.position-start,Vector3.up).magnitude});
     UnityEngine.Object.DestroyImmediate(ramp);
    }
-   motor.enabled=false;InputState.Change(keyboard,new KeyboardState());
+   var floor=GameObject.CreatePrimitive(PrimitiveType.Cube);floor.transform.SetParent(root.transform,false);floor.transform.localPosition=Vector3.down*.5f;floor.transform.localScale=new Vector3(200,1,200);Physics.SyncTransforms();
+   var weapons=actor.GetComponent<SahurWeaponLoadout>();weapons.enabled=attack.enabled=true;
+   motor.ExternalControlLock=motor.ExternalMovementLock=false;weapons.Restore(true,SahurWeaponLoadout.Weapon.CapriTwinBlades);
+   foreach(string controller in new[]{"Assets/Resources/Encounter/v006/SahurGameplay.controller","Assets/Game/Prefabs/Characters/Sahur/Animations/SahurGrounded.controller","Assets/Resources/Equipment/M4A1/SahurRifle.controller"})
+   {
+    attack.SuspendForSwimming();animator.runtimeAnimatorController=AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controller);animator.Rebind();animator.SetFloat("LightPlaybackSpeed",1);
+    motor.RestoreSavedPose(root.transform.position+Vector3.up*(.02f-(body.center.y-body.height*.5f)*Mathf.Abs(actor.transform.lossyScale.y)),Quaternion.identity);Set(motor,"verticalSpeed",-motor.groundStickSpeed);Set(motor,"motionState",0);Set(motor,"yaw",0f);
+    Physics.SyncTransforms();body.Move(Vector3.down*.1f);
+    Call(attack,"StartComboStage",0);int hash=(int)typeof(SahurAttack).GetField("activeAttackHash",F).GetValue(attack);animator.Play(hash,0,.4f);animator.Update(0);
+    var arm=animator.GetBoneTransform(HumanBodyBones.RightUpperArm);var hand=animator.GetBoneTransform(HumanBodyBones.RightHand);var foot=animator.GetBoneTransform(HumanBodyBones.RightFoot);
+    var armBefore=arm.localRotation;var handBefore=hand.localRotation;var footBefore=foot.localRotation;
+    InputState.Change(keyboard,new KeyboardState(Key.W));
+    for(int i=0;i<12;i++){Call(motor,"Update");Call(motor,"UpdateLockFootwork");animator.Update(0);}
+    int layer=animator.GetLayerIndex("Mobile Blade Legs");
+    report.Add(new{kind="blade-footwork",controller,active=motor.BladeFootworkActive,weight=layer>0?animator.GetLayerWeight(layer):0,armDelta=Quaternion.Angle(armBefore,arm.localRotation),handDelta=Quaternion.Angle(handBefore,hand.localRotation),footDelta=Quaternion.Angle(footBefore,foot.localRotation)});
+    Call(attack,"StartComboStage",2);Call(motor,"UpdateLockFootwork");
+    report.Add(new{kind="finisher-priority",controller,ordinaryFootworkActive=motor.BladeFootworkActive});
+   }
+   attack.SuspendForSwimming();motor.enabled=false;InputState.Change(keyboard,new KeyboardState());
    var stop=actor.GetComponent<CombatLocalHitStop>();if(!stop)stop=actor.AddComponent<CombatLocalHitStop>();stop.enabled=true;
    animator.speed=1;animator.Play("Base Layer.Locomotion",0,0);animator.Update(0);
    float started=Time.unscaledTime;int frames=0,resumed=0;float before=animator.GetCurrentAnimatorStateInfo(0).normalizedTime;

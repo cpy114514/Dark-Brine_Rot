@@ -817,6 +817,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
 
             Vector3 movementDelta = (planarVelocity * walkStrideScale + platformCarryVelocity + pushVelocity) * Time.deltaTime
                 + Vector3.up * verticalDisplacement;
+            movementDelta=FollowWalkableGround(movementDelta,grounded);
             if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
             bool lowStep = grounded && verticalDisplacement <= 0f && motionState == 0 && !isRolling &&
                 airFlipTimer <= 0f && !ExternalControlLock && !OnFloatingWreckDeck && !SoftTraversal &&

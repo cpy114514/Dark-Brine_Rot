@@ -44,6 +44,32 @@ public sealed partial class ThirdPersonPlayerController
         if(SoftTraversal&&!grounded)rate*=marshmallow.airControl;
         return Vector3.MoveTowards(planarVelocity,desired,Mathf.Max(0,rate)*dt);
     }
+    readonly RaycastHit[] groundFollowHits=new RaycastHit[16];
+    Vector3 FollowWalkableGround(Vector3 delta,bool supported)
+    {
+        if(!supported||!TunedControls||Response.groundFollowDistance<=0||verticalSpeed>0||delta.y>0||
+            motionState!=0||rollTimer>0||airFlipTimer>0||SoftTraversal||OnFloatingWreckDeck||ExternalControlLock||
+            ExternalMovementLock||WalkingTutorialConstraint!=null||delta.x*delta.x+delta.z*delta.z<.000001f)return delta;
+        var bounds=characterController.bounds;
+        float radius=Mathf.Max(.03f,Mathf.Min(bounds.extents.x,bounds.extents.z)*.92f);
+        float lift=.06f+characterController.skinWidth*Mathf.Abs(transform.lossyScale.y);
+        var origin=new Vector3(bounds.center.x+delta.x,bounds.min.y+radius+lift,bounds.center.z+delta.z);
+        int count=Physics.SphereCastNonAlloc(origin,radius,Vector3.down,groundFollowHits,lift+Response.groundFollowDistance,~0,QueryTriggerInteraction.Ignore);
+        float minimumNormal=Mathf.Cos(characterController.slopeLimit*Mathf.Deg2Rad),nearest=float.PositiveInfinity;
+        for(int i=0;i<count;i++)
+        {
+            var hit=groundFollowHits[i];
+            if(!hit.collider||hit.transform.IsChildOf(transform)||CombatBodyCollision.IsActor(hit.collider)||
+                hit.normal.y<minimumNormal||hit.distance>=nearest)continue;
+            nearest=hit.distance;
+        }
+        if(float.IsPositiveInfinity(nearest))return delta;
+        float down=origin.y-nearest-radius-bounds.min.y-.015f;
+        // One collision-resolved Move owns the whole displacement. The probe
+        // only adds the missing descent; steps, walls and ascent remain native.
+        if(down<delta.y&&down>=-Response.groundFollowDistance)delta.y=down;
+        return delta;
+    }
     public float DodgeTimeRemaining => Mathf.Max(0,rollTimer-ActiveDodgeDuration*(perfectStep?0:1-Mathf.Clamp(rollAnimationExitPhase,.75f,.98f)));
     void ConfigureDodgePlayback()
     {
@@ -71,13 +97,25 @@ public sealed partial class ThirdPersonPlayerController
         // Smooth the moving anchor, not a second copy of mouse/stick rotation.
         return smoothControlFocus-rotation*Vector3.forward*controlCameraDistance;
     }
+    int bladeFootworkLayer=-1;
+    RuntimeAnimatorController footworkController;
+    bool bladeFootworkActive;
+    public bool BladeFootworkActive => bladeFootworkActive&&bladeFootworkLayer>0&&animator&&animator.GetLayerWeight(bladeFootworkLayer)>.01f;
     void UpdateLockFootwork()
     {
         int layer=animator.GetLayerIndex("Lock-on Footwork");if(layer<1)return;
+        if(footworkController!=animator.runtimeAnimatorController)
+        {footworkController=animator.runtimeAnimatorController;bladeFootworkLayer=animator.GetLayerIndex("Mobile Blade Legs");}
         bool use=TunedControls&&enemyLock&&enemyLock.IsLocked&&!IsSprinting&&!Swimming&&!ExternalControlLock&&
             !ExternalMovementLock&&rollTimer<=0&&airFlipTimer<=0&&motionState==0&&!(combat&&combat.IsCombatMotionActive);
-        Vector3 local=Quaternion.Inverse(transform.rotation)*planarVelocity/Mathf.Max(.1f,moveSpeed);
+        Vector3 actual=Vector3.ProjectOnPlane(WorldVelocity,Vector3.up);
+        bladeFootworkActive=TunedControls&&bladeFootworkLayer>0&&combat&&combat.UsesTwinBlades&&combat.IsGroundComboActive&&
+            combat.CurrentComboStage<2&&actual.sqrMagnitude>.0225f&&verticalSpeed<=0&&IsGroundedOrOnSea()&&
+            !Swimming&&!ExternalControlLock&&!ExternalMovementLock&&rollTimer<=0&&airFlipTimer<=0&&motionState==0;
+        Vector3 local=Quaternion.Inverse(transform.rotation)*(bladeFootworkActive?actual:planarVelocity)/Mathf.Max(.1f,moveSpeed);
         animator.SetFloat("LockMoveX",local.x,.055f,Time.deltaTime);animator.SetFloat("LockMoveY",local.z,.055f,Time.deltaTime);
         animator.SetLayerWeight(layer,Mathf.MoveTowards(animator.GetLayerWeight(layer),use?1:0,Time.deltaTime/(use?.12f:.08f)));
+        if(bladeFootworkLayer>0)animator.SetLayerWeight(bladeFootworkLayer,Mathf.MoveTowards(animator.GetLayerWeight(bladeFootworkLayer),
+            bladeFootworkActive?1:0,Time.deltaTime/(bladeFootworkActive?.09f:.065f)));
     }
 }

@@ -35,3 +35,13 @@ Animation inspection also confirms the existing Lock-on Footwork mask affects on
 - E: fixed-step regression, actual Island1 input/rendered review and comparisons; publish measured results, parameters and remaining human feel decisions. Commit scoped stages separately.
 
 Research informing priorities: coordinated hitstop, sound and camera are associated with impact feel in [Lin et al.2022](https://arxiv.org/abs/2208.06155). Native collision ownership follows [CharacterController.Move](https://docs.unity3d.com/6000.0/Documentation/ScriptReference/CharacterController.Move.html); animation blends use the existing [Blend Tree](https://docs.unity.cn/6000.2/Documentation/Manual/class-BlendTree.html) architecture. These sources motivate implementation choices; the table above comes from this project's own tests.
+
+## Phase B implementation and targeted validation
+
+Added a short predictive downward-only sphere probe for previously supported movement. Its maximum follow distance is.6m in the existing ControlResponse profile. It only supplies missing descent to the controller's existing single collision-resolved Move. Upward jumps, authored root travel, airborne states, rolls, moving decks, soft-island motion, external locks and tutorial movement remain excluded. No new position/velocity owner or per-frame allocation was added.
+
+At60Hz the same40° sprint probe now reports120/120 grounded samples, compared with29/120 before. Horizontal travel remains31.85m over the two-second probe; the maximum capsule-bottom separation falls to the ordinary round-capsule contact value of.155m. Flat and30° controls remain supported.
+
+The three existing controllers now have an initially weight-zero Mobile Blade Legs layer using the existing legs-only mask, calibrated forward walk and jog clips and existing directional footwork. It activates only for moving, grounded ordinary blade slash stages0/1; spinning finisher/other special states retain priority. Actual capsule velocity drives its directions. Blade slash base states keep their original clips, mirror and speed; an existing LightPlaybackSpeed multiplier is enabled at its neutral value1 to permit later attack-only hitstop while legs continue.
+
+Native rig checks on all three controllers confirm active walking legs at full blend, zero change to the right upper-arm and hand local rotations at the same frozen attack phase, and a changed foot pose. The leg layer disengages for the finisher. This proves mask ownership; final rendered stride/transition review and30/120Hz regressions are still pending.
