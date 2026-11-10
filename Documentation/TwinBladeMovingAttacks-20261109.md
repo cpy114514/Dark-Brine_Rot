@@ -1,0 +1,13 @@
+# Moving twin-blade attacks — 2026-11-09
+
+Follow-up: `GameplayFeel-Results-20261109.md` describes the subsequent approved locomotion polish, which adds a legs-only layer under ordinary moving slashes. The "no controller changes" scope below describes only the original two-condition movement fix. Both are now implemented; final movement regression still passes929 checks/48 cases.
+
+Ordinary twin-blade ground slashes now accept the same camera-relative WASD and sprint translation as the existing blade spins. Holding movement before pressing attack and pressing movement during an ongoing slash both retain the attack. Releasing movement brakes normally without cancelling the swing.
+
+`SahurAttack.CanTranslateDuringCombat` includes twin-blade ground combos. `UsesAnimationRootMotion` excludes those combos, making the CharacterController the single physical translation owner. Original full-body slash/finisher animations, facing/contact-arc rules, alternating swings, combo stages, hit windows, damage, stamina costs, hit-stop and heavy rush are retained. No animation/controller/model/scene assets were changed. The ordinary full-body slash pose remains; this change does not introduce a separate leg locomotion animation layer.
+
+Expanded `Tools/VerifyTwinSpinMovementV275.cs` to include the two ordinary slash stages alongside both existing spin modes, with new evidence under ignored `.codex/twin-blade-moving-attacks` (the older v275 evidence is preserved). Final native verification passed 929 assertions and48 directional cases across the three existing Animator controllers. It checks walking/sprinting, stopping without cancelling, stable state/phase, actual attack entry with movement held, real blade contact, no duplicate same-swing damage, hit-stop, wall blocking/external ownership for the existing finisher, and original continuous-spin costs/release/exhaustion. These are native integration checks rather than a complete rendered gameplay or human animation approval.
+
+Fixture corrections: isolated actors live in a temporary runtime scene so Second Island's narrative lock cannot affect them. The test temporarily disables the editor session's unlimited-stamina convenience only during synchronous checks, then restores it; the isolated save path remains in force. Independent test entries reset their cooldown, rather than reusing a previous test's fire time within the same native frame.
+
+`Assets/Editor/VerifyTwinBladeMovingSession.cs` owns the temporary Play save path and records formal-save/scene restoration. Private save snapshots stay ignored. Production change is limited to the two movement/root-motion conditions in SahurAttack.cs. Scheduled Van Gogh Rendering2.0 work is separate and remains pending.

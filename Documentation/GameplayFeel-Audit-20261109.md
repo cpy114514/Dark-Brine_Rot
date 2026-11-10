@@ -10,7 +10,7 @@ The user's prior ordinary twin-blade movement change is already present and sepa
 
 ## Reproduced baseline
 
-`Tools/AuditGameplayFeel20261109.cs` records actual profile/controller configuration. `Tools/ProbeGameplayFeel20261109.cs` exercises a native scaled Sahur on isolated collider ramps using actual input/controller methods at fixed30/60/120Hz simulation steps. It uses the established Island1 movement configuration (9.6m/s, sprint×1.75, acceleration68, braking84, turn780 before profile multipliers). It also repeatedly calls local hitstop on a real animated rig, with real unscaled time and evaluated frame progress.
+`Tools/AuditGameplayFeel20261109.cs` records actual profile/controller configuration. `Tools/ProbeGameplayFeel20261109.cs` exercises a native scaled Sahur on isolated collider ramps using actual input/controller methods at fixed30/60/120Hz simulation steps. The initial controlled bench used9.6m/s, sprint×1.75, acceleration68, braking84, turn780 before profile multipliers. Fresh native inspection later found the current Gameplay scene uses sprint×1.85; a separate same-condition comparison below verifies that actual setting. The probe also repeatedly calls local hitstop on a real animated rig, with real unscaled time and evaluated frame progress.
 
 | Before | 30Hz | 60Hz | 120Hz |
 |---|---:|---:|---:|

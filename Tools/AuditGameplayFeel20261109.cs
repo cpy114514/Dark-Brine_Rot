@@ -8,6 +8,18 @@ using Mavis;
 public static class AuditGameplayFeel20261109
 {
  const string Root=".codex/gameplay-feel-20261109/";
+ public static object ActualIsland()
+ {
+  if(Application.isPlaying)throw new Exception("Use stopped Editor");
+  var scene=UnityEditor.SceneManagement.EditorSceneManager.OpenPreviewScene("Assets/Scenes/First Island/Gameplay.unity");
+  try
+  {
+   var player=scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<ThirdPersonPlayerController>(true)).First();
+   var data=new{player.moveSpeed,player.sprintMultiplier,player.acceleration,player.deceleration,player.turnSpeedDegrees,player.rollDuration,player.cameraHeight,player.cameraDistance,scale=player.transform.lossyScale.ToString(),movement=EditorJsonUtility.ToJson(player),attack=EditorJsonUtility.ToJson(player.GetComponent<SahurAttack>())};
+   File.WriteAllText(Root+"actual-scene-config.json",Newtonsoft.Json.JsonConvert.SerializeObject(data,Newtonsoft.Json.Formatting.Indented));return data;
+  }
+  finally{UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(scene);}
+ }
  public static object Run()
  {
   Directory.CreateDirectory(Root);

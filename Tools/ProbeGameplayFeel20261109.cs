@@ -16,12 +16,12 @@ public static class ProbeGameplayFeel20261109
  static void Set(object o,string key,object value)=>o.GetType().GetField(key,F).SetValue(o,value);
  static object Call(object o,string key,params object[] values)=>o.GetType().GetMethod(key,F).Invoke(o,values);
  static async Task Frame(){int f=Time.frameCount;while(f==Time.frameCount){if(!Application.isPlaying)throw new Exception("Play ended");await Task.Delay(5);}}
- public static async Task<object> Run(string label="before",int hz=60)
+ public static async Task<object> Run(string label="before",int hz=60,float sprintMultiplier=1.75f,float groundDistance=-1)
  {
   if(!Application.isPlaying)throw new Exception("Owned isolated Play required");
   float oldScale=Time.timeScale,oldCapture=Time.captureDeltaTime;var oldKeyboard=Keyboard.current;var oldMouse=Mouse.current;var oldCursor=Cursor.lockState;
   var tags=UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None).Select(c=>(c,c.tag)).ToArray();
-  Scene scene=default;GameObject root=null;Keyboard keyboard=null;Mouse mouse=null;
+  Scene scene=default;GameObject root=null;Keyboard keyboard=null;Mouse mouse=null;CombatFeelProfile isolatedFeel=null;
   var report=new List<object>();
   try
   {
@@ -31,8 +31,10 @@ public static class ProbeGameplayFeel20261109
    foreach(var b in actor.GetComponentsInChildren<MonoBehaviour>(true))b.enabled=false;
    root.SetActive(true);foreach(var b in actor.GetComponentsInChildren<MonoBehaviour>(true))b.enabled=false;
    var motor=actor.GetComponent<ThirdPersonPlayerController>();var body=actor.GetComponent<CharacterController>();var attack=actor.GetComponent<SahurAttack>();var animator=attack.animator;
+   isolatedFeel=UnityEngine.Object.Instantiate(attack.feel?attack.feel:CombatFeelProfile.Default);attack.feel=isolatedFeel;
+   if(groundDistance>=0)isolatedFeel.balanced.groundFollowDistance=isolatedFeel.responsive.groundFollowDistance=isolatedFeel.weighty.groundFollowDistance=groundDistance;
    animator.cullingMode=AnimatorCullingMode.AlwaysAnimate;
-   motor.moveSpeed=9.6f;motor.sprintMultiplier=1.75f;motor.acceleration=68;motor.deceleration=84;motor.turnSpeedDegrees=780;motor.seaLevel=-2000;motor.waterSplashes=false;motor.cameraCollision=false;
+   motor.moveSpeed=9.6f;motor.sprintMultiplier=sprintMultiplier;motor.acceleration=68;motor.deceleration=84;motor.turnSpeedDegrees=780;motor.seaLevel=-2000;motor.waterSplashes=false;motor.cameraCollision=false;
    motor.enabled=true;motor.ExternalControlLock=motor.ExternalMovementLock=false;
    keyboard=InputSystem.AddDevice<Keyboard>("Feel probe keyboard");mouse=InputSystem.AddDevice<Mouse>("Feel probe mouse");keyboard.MakeCurrent();mouse.MakeCurrent();Cursor.lockState=CursorLockMode.Locked;InputState.Change(mouse,new MouseState());
    foreach(var t in tags)if(t.tag=="MainCamera")t.c.tag="Untagged";
@@ -53,7 +55,7 @@ public static class ProbeGameplayFeel20261109
      var foot=new Vector3(body.bounds.center.x,body.bounds.min.y,body.bounds.center.z);
      if(ramp.GetComponent<Collider>().Raycast(new Ray(foot+Vector3.up*20,Vector3.down),out var ground,60))maxGap=Mathf.Max(maxGap,foot.y-ground.point.y);
     }
-    report.Add(new{kind="slope",hz,angle,sprint,groundedFrames=grounded,totalFrames=hz*2,maxBottomGap=maxGap,travel=Vector3.ProjectOnPlane(actor.transform.position-start,Vector3.up).magnitude});
+    report.Add(new{kind="slope",hz,angle,sprint,sprintMultiplier,groundDistance=isolatedFeel.Controls.groundFollowDistance,groundedFrames=grounded,totalFrames=hz*2,maxBottomGap=maxGap,travel=Vector3.ProjectOnPlane(actor.transform.position-start,Vector3.up).magnitude});
     UnityEngine.Object.DestroyImmediate(ramp);
    }
    var floor=GameObject.CreatePrimitive(PrimitiveType.Cube);floor.transform.SetParent(root.transform,false);floor.transform.localPosition=Vector3.down*.5f;floor.transform.localScale=new Vector3(200,1,200);Physics.SyncTransforms();
@@ -94,7 +96,7 @@ public static class ProbeGameplayFeel20261109
   finally
   {
    Time.timeScale=oldScale;Time.captureDeltaTime=oldCapture;
-   if(root)UnityEngine.Object.DestroyImmediate(root);if(scene.IsValid()&&scene.isLoaded)SceneManager.UnloadSceneAsync(scene);
+   if(root)UnityEngine.Object.DestroyImmediate(root);if(isolatedFeel)UnityEngine.Object.DestroyImmediate(isolatedFeel);if(scene.IsValid()&&scene.isLoaded)SceneManager.UnloadSceneAsync(scene);
    if(keyboard!=null&&keyboard.added)InputSystem.RemoveDevice(keyboard);if(mouse!=null&&mouse.added)InputSystem.RemoveDevice(mouse);
    if(oldKeyboard!=null&&oldKeyboard.added)oldKeyboard.MakeCurrent();if(oldMouse!=null&&oldMouse.added)oldMouse.MakeCurrent();foreach(var t in tags)if(t.c)t.c.tag=t.tag;Cursor.lockState=oldCursor;
   }
