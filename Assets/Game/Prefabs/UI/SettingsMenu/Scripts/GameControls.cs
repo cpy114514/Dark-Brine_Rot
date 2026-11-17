@@ -36,7 +36,7 @@ public static class GameControls
     public static string ControllerFamily { get { Ensure(); return family; } }
     public static bool InputInterrupted=>Time.frameCount<=interruptedFrame;
     public static bool HasDevice=>Keyboard.current!=null||Gamepad.current!=null;
-    public static bool MenusOpen=>PauseSettingsMenu.IsOpen||Mavis.SahurLoadoutUI.BlocksInput||
+    public static bool MenusOpen=>SaveSlotMenu.BlocksInput||PauseSettingsMenu.IsOpen||Mavis.SahurLoadoutUI.BlocksInput||
         Mavis.IslandMapUI.BlocksInput||Mavis.PlayerDeathRespawn.IsOpen||Mavis.VisualStyles.VisualStyleUIController.BlocksParentInput;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

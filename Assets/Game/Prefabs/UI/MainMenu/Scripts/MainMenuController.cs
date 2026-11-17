@@ -34,6 +34,9 @@ public sealed class MainMenuController : MonoBehaviour
             saveStatus = saveStatusTransform.GetComponent<TMP_Text>();
         RefreshSaveStatus();
         MinimalMenuLayout.MainMenu(this);
+        if (continueButton) continueButton.GetComponentInChildren<TMP_Text>().text = "LOAD GAME";
+        var quit = transform.Find("Quit");
+        if (quit) quit.GetComponentInChildren<TMP_Text>().text = "QUIT TO DESKTOP";
         Mavis.VisualStyles.VisualStyleUIController.InstallMainMenu(this);
     }
 
@@ -54,22 +57,23 @@ public sealed class MainMenuController : MonoBehaviour
             Debug.LogError("[Main Menu] Story1 is missing from Build Settings.", this);
             return;
         }
-        GameWorldProgress.Reset();
-        HealingPackSupply.StartNewGame();
-        GameSaveManager.CancelPendingContinue();
-        StartGame(StoryScenePath);
+        SaveSlotMenu.Show(SaveSlotMenu.Mode.NewGame, slot =>
+        {
+            if (!GameSaveManager.PrepareNewGame(slot)) return false;
+            StartGame(StoryScenePath);
+            return true;
+        });
     }
 
     public void ContinueGame()
     {
         if(SceneLoadingScreen.IsLoading)return;
-        if (!GameSaveManager.QueueContinue())
+        SaveSlotMenu.Show(SaveSlotMenu.Mode.Load, slot =>
         {
-            RefreshSaveStatus();
-            return;
-        }
-
-        StartGame(GameSaveManager.ContinueScenePath);
+            if (!GameSaveManager.QueueContinue(slot)) { RefreshSaveStatus(); return false; }
+            StartGame(GameSaveManager.ContinueScenePath);
+            return true;
+        });
     }
 
     void StartGame(string scenePath)

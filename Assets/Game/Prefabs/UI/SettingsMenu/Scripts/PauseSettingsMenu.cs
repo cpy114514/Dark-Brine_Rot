@@ -104,6 +104,8 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     int section;
     bool showingSettings;
     bool confirmQuit;
+    bool quitToMainMenu;
+    Button saveGameButton, mainMenuButton;
     string pendingKey;
     float previousTimeScale = 1f;
     RenderPipelineAsset originalPipelineAsset;
@@ -137,6 +139,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         draftKeys = (Key[])savedKeys.Clone();
         BindRuntimeControls();
         MinimalMenuLayout.Settings(this);
+        InstallSessionActions();
         ApplySettings(saved);
         Refresh();
         HideImmediate();
@@ -282,6 +285,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
 
     void Update()
     {
+        if (SaveSlotMenu.BlocksInput) return;
         if (consumedFrame == Time.frameCount || (IsOpen && active != this)) return;
         if (Mavis.VisualStyles.VisualStyleUIController.BlocksParentInput || SahurLoadoutUI.BlocksInput) return;
         if (pendingKey != null)
@@ -375,7 +379,9 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         pendingKey = null;
         showingSettings = false;
         confirmQuit = false;
-        quitLabel.text = "QUIT";
+        quitLabel.text = "QUIT TO DESKTOP";
+        if (mainMenuButton) mainMenuButton.GetComponentInChildren<TMP_Text>().text = "QUIT TO MAIN MENU";
+        if (saveGameButton) saveGameButton.interactable = GameSaveManager.HasSavableGame;
         homePanel.SetActive(true);
         settingsPanel.SetActive(false);
         footerHint.text = "ESC  RESUME";
@@ -404,13 +410,56 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         footerHint.text = "ESC  BACK     /     APPLY TO SAVE";
     }
 
-    void QuitOrConfirm()
+    void InstallSessionActions()
     {
-        if (!confirmQuit)
+        if (mainMenuSettingsOnly) return;
+        Button CopyAction(string name, string caption, UnityEngine.Events.UnityAction action)
+        {
+            var frame = Instantiate(quitButton.transform.parent.gameObject, homePanel.transform);
+            frame.name = name;
+            var button = frame.GetComponentInChildren<Button>();
+            button.onClick = new Button.ButtonClickedEvent();
+            button.onClick.AddListener(action);
+            button.GetComponentInChildren<TMP_Text>().text = caption;
+            return button;
+        }
+        saveGameButton = CopyAction("Save Game", "SAVE GAME", () =>
+            SaveSlotMenu.Show(SaveSlotMenu.Mode.Save, slot =>
+            {
+                bool savedGame = GameSaveManager.SaveCurrentGame(slot);
+                footerHint.text = savedGame ? "SAVED TO SLOT " + slot : "SAVE FAILED";
+                return savedGame;
+            }));
+        mainMenuButton = CopyAction("Quit to Main Menu", "QUIT TO MAIN MENU", () => RequestQuit(true));
+        var panel = (RectTransform)homePanel.transform;
+        panel.sizeDelta = new Vector2(Mathf.Max(640, panel.sizeDelta.x), 740);
+        var title = homePanel.transform.Find("Paused title") as RectTransform;
+        if (title) title.anchoredPosition = new Vector2(0, 282);
+        int row = 0;
+        foreach (var button in new[] { resumeButton, settingsButton, saveGameButton, mainMenuButton, quitButton })
+            ((RectTransform)button.transform.parent).anchoredPosition = new Vector2(0, 164 - row++ * 78);
+    }
+
+    void QuitOrConfirm() => RequestQuit(false);
+
+    void RequestQuit(bool mainMenu)
+    {
+        if (SceneLoadingScreen.IsLoading) return;
+        if (mainMenu && !Application.CanStreamedLevelBeLoaded("Assets/Scenes/Main Menu/MainMenu.unity"))
+        {
+            footerHint.text = "MAIN MENU IS UNAVAILABLE";
+            return;
+        }
+        if (!confirmQuit || quitToMainMenu != mainMenu)
         {
             confirmQuit = true;
-            quitLabel.text = "CONFIRM QUIT";
-            footerHint.text = "SELECT AGAIN TO EXIT  /  ESC TO CANCEL";
+            quitToMainMenu = mainMenu;
+            quitLabel.text = "QUIT TO DESKTOP";
+            if (mainMenuButton) mainMenuButton.GetComponentInChildren<TMP_Text>().text = "QUIT TO MAIN MENU";
+            (mainMenu ? mainMenuButton.GetComponentInChildren<TMP_Text>() : quitLabel).text = "CONFIRM EXIT";
+            footerHint.text = GameSaveManager.HasSavableGame ?
+                "CURRENT PROGRESS WILL BE SAVED  /  SELECT AGAIN TO EXIT" :
+                "UNSAVED PROGRESS WILL BE LOST  /  SELECT AGAIN TO EXIT";
             return;
         }
         bool hasActiveGame = GameSaveManager.HasSavableGame;
@@ -418,11 +467,22 @@ public sealed class PauseSettingsMenu : MonoBehaviour
         if (hasActiveGame && !savedGame)
         {
             confirmQuit = false;
-            quitLabel.text = "QUIT";
+            quitLabel.text = "QUIT TO DESKTOP";
+            if (mainMenuButton) mainMenuButton.GetComponentInChildren<TMP_Text>().text = "QUIT TO MAIN MENU";
             footerHint.text = "SAVE FAILED  /  EXIT CANCELLED";
             return;
         }
         PlayerPrefs.Save();
+        if (mainMenu)
+        {
+            GameSaveManager.CancelPendingContinue();
+            Resume();
+            Time.timeScale = 1;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            SceneLoadingScreen.Load("Assets/Scenes/Main Menu/MainMenu.unity");
+            return;
+        }
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

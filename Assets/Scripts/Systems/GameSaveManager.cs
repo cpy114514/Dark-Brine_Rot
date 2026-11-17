@@ -14,6 +14,15 @@ namespace Mavis
         const string GameplaySceneName = "Gameplay";
         const string SecondIslandScenePath = "Assets/Scenes/Second Island/Second Island.unity";
         const string FirstIslandScenePath = "Assets/Scenes/First Island/Main.unity";
+        public const int SlotCount = 3;
+        public static int ActiveSlot { get; private set; } = 1;
+
+        public sealed class SlotInfo
+        {
+            public int number;
+            public bool exists, readable;
+            public string description;
+        }
 
         static GameSaveManager instance;
         SaveData pendingSave;
@@ -79,13 +88,66 @@ namespace Mavis
             UnityEditor.EditorApplication.playModeStateChanged-=EndEditorTestSession;
         }
 #endif
-        static string SavePath =>
+        static string BaseSavePath =>
 #if UNITY_EDITOR
             !string.IsNullOrEmpty(editorSavePath) ? editorSavePath :
 #endif
             Path.Combine(Application.persistentDataPath, SaveFileName);
 
-        public static bool HasSave => TryReadSave(out _);
+        static string SlotPath(int slot)
+        {
+            if (slot < 1 || slot > SlotCount) throw new ArgumentOutOfRangeException(nameof(slot));
+            var path = BaseSavePath;
+            return slot == 1 ? path : Path.Combine(Path.GetDirectoryName(path),
+                Path.GetFileNameWithoutExtension(path) + "-slot-" + slot + ".json");
+        }
+        static string SavePath => SlotPath(ActiveSlot);
+        public static bool HasSave
+        {
+            get { for (int slot = 1; slot <= SlotCount; slot++) if (ReadSlot(slot, out _)) return true; return false; }
+        }
+        static bool ReadSlot(int slot, out SaveData data) =>
+            TryReadSaveFile(SlotPath(slot), out data) || TryReadSaveFile(SlotPath(slot) + ".bak", out data);
+
+        public static SlotInfo GetSlot(int slot)
+        {
+            bool readable = ReadSlot(slot, out var data);
+            string description = "Empty";
+            if (readable)
+            {
+                string area = data.scenePath == SecondIslandScenePath ? "Second Island" : "First Island";
+                string date = data.savedAtUtcTicks > 0 && data.savedAtUtcTicks <= DateTime.MaxValue.Ticks ?
+                    new DateTime(data.savedAtUtcTicks, DateTimeKind.Utc).ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "Legacy save";
+                description = area + "  /  " + date;
+            }
+            bool exists = File.Exists(SlotPath(slot)) || File.Exists(SlotPath(slot) + ".bak");
+            return new SlotInfo { number = slot, readable = readable, exists = exists,
+                description = readable ? description : exists ? "Unreadable save" : description };
+        }
+
+        public static bool PrepareNewGame(int slot)
+        {
+            if (HasSavableGame || IsContinuePending) return false;
+            string path = SlotPath(slot), archive = ".previous-" + Guid.NewGuid().ToString("N");
+            bool moved = false;
+            try
+            {
+                if (File.Exists(path)) { File.Move(path, path + archive); moved = true; }
+                if (File.Exists(path + ".bak")) File.Move(path + ".bak", path + ".bak" + archive);
+            }
+            catch (Exception exception)
+            {
+                try { if (moved && !File.Exists(path)) File.Move(path + archive, path); }
+                catch (Exception rollback) { Debug.LogError("[Save] Archived progress retained at " + path + archive + ": " + rollback.Message); }
+                Debug.LogError("[Save] Could not prepare slot: " + exception.Message);
+                return false;
+            }
+            ActiveSlot = slot;
+            CancelPendingContinue();
+            GameWorldProgress.Reset();
+            HealingPackSupply.StartNewGame();
+            return true;
+        }
         public static bool IsContinuePending => instance != null && instance.restorePending;
         public static string ContinueScenePath => instance != null && instance.pendingSave != null && instance.pendingSave.scenePath == SecondIslandScenePath ? SecondIslandScenePath : FirstIslandScenePath;
         public static bool HasSavableGame => CanSavePlayer(FindFirstObjectByType<ThirdPersonPlayerController>());
@@ -107,6 +169,7 @@ namespace Mavis
         static void ResetStatics()
         {
             instance = null;
+            ActiveSlot = 1;
 #if UNITY_EDITOR
             editorSavePath=null;EditorTestSessionActive=false;editorTestOriginalCampaign=null;editorTestOriginalHealing=0;
             UnityEditor.EditorApplication.playModeStateChanged-=EndEditorTestSession;
@@ -159,11 +222,13 @@ namespace Mavis
             instance = null;
         }
 
-        public static bool QueueContinue()
+        public static bool QueueContinue() => QueueContinue(ActiveSlot);
+        public static bool QueueContinue(int slot)
         {
-            if (!TryReadSave(out SaveData data))
+            if (IsContinuePending || !ReadSlot(slot, out SaveData data))
                 return false;
 
+            ActiveSlot = slot;
             GameWorldProgress.Reset();
             GameSaveManager manager = EnsureManager();
             manager.pendingSave = data;
@@ -181,10 +246,13 @@ namespace Mavis
             instance.pendingSave = null;
             instance.restorePending = false;
             instance.restoreRoutineRunning = false;
+            instance.autosavePending = false;
         }
 
-        public static bool SaveCurrentGame()
+        public static bool SaveCurrentGame() => SaveCurrentGame(ActiveSlot);
+        public static bool SaveCurrentGame(int slot)
         {
+            string destination = SlotPath(slot);
             using var activity=RuntimeStallDiagnostics.Measure("save capture and atomic disk commit");
             ThirdPersonPlayerController player = FindFirstObjectByType<ThirdPersonPlayerController>();
             if (!CanSavePlayer(player)) return false;
@@ -253,15 +321,16 @@ namespace Mavis
                 }
 
                 data.world = GameWorldProgress.Capture(player);
-                string directory = Path.GetDirectoryName(SavePath);
+                string directory = Path.GetDirectoryName(destination);
                 if (!string.IsNullOrEmpty(directory))
                     Directory.CreateDirectory(directory);
                 // Commit only a completely written file, preserving the previous save
                 // if writing is interrupted or the replacement cannot be completed.
-                string temporary = SavePath + ".tmp";
+                string temporary = destination + ".tmp";
                 File.WriteAllText(temporary, JsonUtility.ToJson(data, true));
-                if (File.Exists(SavePath)) File.Replace(temporary, SavePath, SavePath + ".bak");
-                else File.Move(temporary, SavePath);
+                if (File.Exists(destination)) File.Replace(temporary, destination, destination + ".bak");
+                else File.Move(temporary, destination);
+                ActiveSlot = slot;
                 PlayerPrefs.Save();
                 Debug.Log("[Save] Game progress saved.");
                 return true;

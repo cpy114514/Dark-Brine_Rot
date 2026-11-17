@@ -14,7 +14,7 @@ public static class GameUITheme
     public static readonly Color Backdrop = Gray(0,.92f);
     public static Color Gray(float value,float alpha=1) => new Color(value,value,value,alpha);
     public static Color Neutral(Color color) => Gray(color.grayscale,color.a);
-    public static bool ModalOpen => PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.IsOpen ||
+    public static bool ModalOpen => SaveSlotMenu.IsOpen || PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.IsOpen ||
         Mavis.IslandMapUI.BlocksInput || Mavis.PlayerDeathRespawn.IsOpen;
 
     public static void Scale(Canvas canvas)
