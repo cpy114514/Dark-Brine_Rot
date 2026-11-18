@@ -80,6 +80,8 @@ namespace Mavis
         bool hasPath, returningHome, reclaiming, subscribed, animatorReady, announced;
         static readonly float[] AvoidAngles = { 0f, 28f, -28f, 56f, -56f, 84f, -84f };
         static readonly int SpeedHash = Animator.StringToHash("Speed");
+        static readonly int GaitRateHash = Animator.StringToHash("GaitRate");
+        bool hasGaitRate;
         static readonly int MotionHash = Animator.StringToHash("Motion");
 
         public Mood Mode { get; private set; } = Mood.Idle;
@@ -548,7 +550,10 @@ namespace Mavis
             if (!animatorReady)
             {
                 foreach (var parameter in animator.parameters)
+                {
                     if (parameter.nameHash == MotionHash) animatorReady = true;
+                    if (parameter.nameHash == GaitRateHash) hasGaitRate = true;
+                }
                 if (!animatorReady) { animator = null; return; }
             }
             float speed = Mode == Mood.Chase ? 1f : Mode == Mood.Patrol ? .45f : 0f;
@@ -560,6 +565,12 @@ namespace Mavis
                 speed = animator.GetFloat(SpeedHash);
             }
             else animator.SetFloat(SpeedHash, speed);
+            if (hasGaitRate)
+            {
+                float nominalSpeed = speed > .7f ? runSpeed : walkSpeed;
+                float rate = Mathf.Clamp(locomotionSpeed / Mathf.Max(.01f, nominalSpeed), .35f, 1.55f);
+                animator.SetFloat(GaitRateHash, rate, .08f, Time.deltaTime);
+            }
             animator.SetInteger(MotionHash, Mode == Mood.Dead ? 7 : Mode == Mood.Knockdown || Mode == Mood.Launch ? 6 :
                 Mode == Mood.Flinch ? 5 : Mode == Mood.Lunge ? 4 : Mode == Mood.Strike ? 3 :
                 Mode == Mood.Wing ? 9 : Mode == Mood.Alert ? 8 : speed > .7f ? 2 : speed > .1f ? 1 : 0);

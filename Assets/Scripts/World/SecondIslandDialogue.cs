@@ -43,7 +43,6 @@ public sealed class SecondIslandDialogue : MonoBehaviour
             CurrentLine=index;
             var line=currentLines[index];
             speaker.text=line.fairy ? fairyName : "SAHUR";
-            speaker.color=line.fairy ? new Color(.66f,.94f,.9f) : new Color(1f,.82f,.68f);
             english.text=line.english;
             hint.text=index==currentLines.Length-1 ? "SPACE / CLICK  FINISH" : "SPACE / CLICK  CONTINUE";
             // Require a fresh press after the line is visible; an input used to
@@ -83,14 +82,15 @@ public sealed class SecondIslandDialogue : MonoBehaviour
         panel=new GameObject("Fairy conversation",typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));panel.transform.SetParent(parent,false);
         var rect=panel.GetComponent<RectTransform>();rect.anchorMin=new Vector2(.12f,0);rect.anchorMax=new Vector2(.88f,0);
         rect.offsetMin=new Vector2(0,42);rect.offsetMax=new Vector2(0,258);
-        var bg=panel.GetComponent<Image>();bg.color=new Color(.035f,.025f,.055f,.92f);bg.raycastTarget=false;
+        var bg=panel.GetComponent<Image>();bg.color=GameUITheme.Surface;bg.raycastTarget=false;
         var rule=new GameObject("Accent",typeof(RectTransform),typeof(CanvasRenderer),typeof(Image));rule.transform.SetParent(panel.transform,false);
         var rr=rule.GetComponent<RectTransform>();rr.anchorMin=new Vector2(0,1);rr.anchorMax=Vector2.one;rr.offsetMin=new Vector2(0,-3);rr.offsetMax=Vector2.zero;
-        var line=rule.GetComponent<Image>();line.color=new Color(.75f,.59f,.82f,.95f);line.raycastTarget=false;
+        var line=rule.GetComponent<Image>();line.color=GameUITheme.Muted;line.raycastTarget=false;
         speaker=Label(panel.transform,"Speaker",26,TextAnchor.MiddleLeft,new Vector2(0,1),Vector2.one,new Vector2(36,-56),new Vector2(-36,-16));
+        speaker.fontStyle=FontStyle.Bold;
         english=Label(panel.transform,"English dialogue",30,TextAnchor.MiddleLeft,new Vector2(0,1),Vector2.one,new Vector2(36,-155),new Vector2(-36,-55));
         hint=Label(panel.transform,"Continue",16,TextAnchor.MiddleRight,Vector2.zero,new Vector2(1,0),new Vector2(36,9),new Vector2(-36,39));
-        hint.color=new Color(.72f,.68f,.77f);
+        hint.color=GameUITheme.Secondary;
         Mavis.LocalizedGameText.Bind(hint);
     }
     void OnDestroy() { Active=false; if(panel)Destroy(panel); }

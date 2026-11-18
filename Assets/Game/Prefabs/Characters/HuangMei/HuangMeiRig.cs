@@ -89,6 +89,9 @@ public sealed class HuangMeiRig : MonoBehaviour
     readonly List<Joint> fingers=new List<Joint>();
     readonly RaycastHit[] groundHits=new RaycastHit[12];
     float stride,death;
+    Mavis.BossClipPlayer authored;
+    float walkClock;
+    Limb[] authoredLegs;
 
     void Awake()
     {
@@ -107,10 +110,13 @@ public sealed class HuangMeiRig : MonoBehaviour
         rightLeg=new Limb(transform,bones["thigh_r"],bones["calf_r"],bones["foot_r"]);
         foreach(string finger in new[]{"index","middle","ring","pinky"})
             for(int part=1;part<=3;part++)fingers.Add(new Joint(bones[$"{finger}_0{part}_r"],transform));
+        authored=new Mavis.BossClipPlayer(art.gameObject,"Huang");
+        authoredLegs=new[]{leftLeg,rightLeg};
     }
 
     void LateUpdate()
     {
+        if(authored!=null&&authored.Ready){PlayAuthored();return;}
         art.SetLocalPositionAndRotation(artRest,artFacing);
         pelvis.localPosition=pelvisRest;
         leftArm.Reset();rightArm.Reset();leftLeg.Reset();rightLeg.Reset();
@@ -157,6 +163,42 @@ public sealed class HuangMeiRig : MonoBehaviour
             art.localRotation=Quaternion.Euler(-86*t,0,-8*t)*artFacing;
             art.localPosition=artRest+new Vector3(0,1.45f*t,-.5f*t);
         }
+    }
+
+    void PlayAuthored()
+    {
+        art.SetLocalPositionAndRotation(artRest,artFacing);
+        float dt=Time.deltaTime,p=boss.Progress;
+        string key="Idle";float clock=Time.time;
+        if(boss.CurrentState==HuangMeiBoss.State.Dead){death+=dt;key="Death";clock=death;}
+        else if(boss.CurrentState==HuangMeiBoss.State.Invocation){key="Invocation";clock=p*.86f;}
+        else if(boss.CurrentState==HuangMeiBoss.State.Windup||boss.CurrentState==HuangMeiBoss.State.Strike||boss.CurrentState==HuangMeiBoss.State.Recover)
+        {
+            key=boss.CurrentAttack switch {HuangMeiBoss.Attack.StaffSweep=>"Sweep",HuangMeiBoss.Attack.StaffSlam=>"Slam",HuangMeiBoss.Attack.PalmSeal=>"Palm",_=>"Mandala"};
+            float wind=key=="Sweep"?.83f:key=="Slam"?1.22f:key=="Palm"?.92f:1.72f;
+            float strike=key=="Sweep"?1.48f:key=="Mandala"?4.18f:1.25f;
+            clock=boss.CurrentState==HuangMeiBoss.State.Windup?p*wind:boss.CurrentState==HuangMeiBoss.State.Strike?wind+p*strike:wind+strike+p*(key=="Mandala"?1.65f:.86f);
+        }
+        else if(boss.Moving>.06f){key="Walk";walkClock+=dt*Mathf.Lerp(.6f,1.4f,boss.Moving);clock=walkClock;}
+        authored.Sample(key,clock,dt);
+        if(boss.CurrentState!=HuangMeiBoss.State.Dead)CorrectGrounding();
+    }
+
+    void CorrectGrounding()
+    {
+        float correction=float.NegativeInfinity;
+        foreach(var leg in authoredLegs)
+        {
+            var foot=leg.end.bone.position;
+            int count=Physics.RaycastNonAlloc(foot+Vector3.up*1.5f,Vector3.down,groundHits,3,~0,QueryTriggerInteraction.Ignore);
+            float nearest=float.PositiveInfinity;
+            for(int i=0;i<count;i++)
+            {
+                var hit=groundHits[i];if(!hit.collider||hit.transform.IsChildOf(transform)||Mavis.CombatBodyCollision.IsActor(hit.collider)||hit.normal.y<.65f||hit.distance>=nearest)continue;
+                nearest=hit.distance;correction=Mathf.Max(correction,hit.point.y+.12f-foot.y);
+            }
+        }
+        if(!float.IsNegativeInfinity(correction))art.position+=Vector3.up*Mathf.Clamp(correction,-.22f,.35f);
     }
 
     static Pose SweepPose(float t)

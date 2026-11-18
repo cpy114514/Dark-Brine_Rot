@@ -20,7 +20,10 @@ public sealed class MinimalButtonMotion : MonoBehaviour, IPointerEnterHandler, I
     }
     void Update()
     {
-        float target = button && button.interactable && (hovered || selected) ? 1f : 0f;
+        if (!button) return;
+        float target = button.interactable && (hovered || selected) ? 1f : 0f;
+        if (target > 0f)
+            line.color = button.colors.normalColor.grayscale > .5f ? Color.black : GameUITheme.Foreground;
         if (Mathf.Approximately(amount, target)) return;
         amount = Mathf.MoveTowards(amount, target, Time.unscaledDeltaTime * 8f);
         line.rectTransform.sizeDelta = new Vector2(((RectTransform)transform).rect.width * amount, 1f);

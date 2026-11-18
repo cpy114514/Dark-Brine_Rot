@@ -119,16 +119,37 @@ public sealed partial class Story1WreckBattle
         }
         return point;
     }
+    // Distances along the flank, with tangents in world units per story second.
+    // Shared endpoint speeds carry the same stroke across takeoff and the apex.
+    static float RedTravel(float phase, float duration, float from, float to, float entrySpeed, float exitSpeed)
+    {
+        float u = Mathf.Clamp01(phase);
+        float remaining = 1 - u;
+        return Mathf.Lerp(from, to, u*u*(3-2*u))
+            + duration*u*remaining*(remaining*entrySpeed - u*exitSpeed);
+    }
+
     void RedCrushShark(float t)
     {
         if(t<3)
         {
-            Vector3 centre=redCrushContact+redRight*Mathf.Lerp(115,80,REase(t,0,3));
+            float approach = R01(t, 0, 3);
+            float bend = Mathf.Sin(approach * Mathf.PI);
+            float across = RedTravel(approach, 3, 115, 80, -9, -20);
+            Vector3 centre = redCrushContact + redRight*across + redForward*(5*bend*bend);
+            // Follow the curve with the nose as the tail continues the swim stroke.
+            float acrossSpeed = -9 + 6*approach - 17*approach*approach;
+            Vector3 tangent = (redRight*acrossSpeed + redForward*(5*Mathf.PI/3*Mathf.Sin(2*Mathf.PI*approach))).normalized;
             float launchPitch=Mathf.Lerp(0,24,REase(t,2.65f,3.4f))*Mathf.Deg2Rad;
-            RedShark("Swim",t,centre,-redRight*Mathf.Cos(launchPitch)+Vector3.up*Mathf.Sin(launchPitch));
+            RedShark("Swim",t,centre,tangent*Mathf.Cos(launchPitch)+Vector3.up*Mathf.Sin(launchPitch));
             var skin=RedContactSkin();float top=float.NegativeInfinity;
             foreach(var vertex in redPosedVertices)top=Mathf.Max(top,skin.transform.TransformPoint(vertex).y);
-            Vector3 submerged=shark.position;submerged.y+=RedWater(centre)-2-top;shark.position=submerged;
+            float depth = 2 + 6*REase(t, 1.85f, 2.55f);
+            float drive = R01(t, 2.55f, 3);
+            depth -= 7*drive*drive;
+            Vector3 submerged = shark.position;
+            submerged.y += RedWater(centre) - depth - top;
+            shark.position = submerged;
             Vector3 belly=RedBellySurface();shark.position+=Vector3.ProjectOnPlane(centre-belly,Vector3.up);
             redBreachBellyY=RedBellySurface().y;
             RedWarningShadow(t);return;
@@ -137,14 +158,19 @@ public sealed partial class Story1WreckBattle
         if(!redCrushEntryCaptured){RedCaptureCrushPose();redCrushEntryCaptured=true;}
         // Gain height outside the rigging before crossing over the deck.
         // The earlier path climbed through the masts on the way up.
-        Vector3 target=redCrushContact+redRight*(t<4.48f?Mathf.Lerp(80,8,REase(t,3,4.48f)):Mathf.Lerp(8,0,REase(t,4.48f,6)));
+        const float apex = 4.48f;
+        float rise = R01(t, 3, apex), fall = R01(t, apex, 6);
+        float distance = t < apex
+            ? RedTravel(rise, apex-3, 80, 8, -20, -12)
+            : RedTravel(fall, 6-apex, 8, 0, -12, 0);
+        Vector3 target = redCrushContact + redRight*distance;
         // A fixed additive arc loses its apex when the original large shark
         // starts deep underwater. Author the visible crest independently of
         // the submerged starting height, then accelerate into the hull.
         float crest=redCrushContact.y+55;
-        const float apex=4.48f;
-        float rise=R01(t,3,apex),fall=R01(t,apex,6);
-        target.y=t<apex?crest-(crest-redBreachBellyY)*(1-rise)*(1-rise):Mathf.Lerp(crest,redCrushContact.y,fall*fall);
+        target.y = t < apex
+            ? RedTravel(rise, apex-3, redBreachBellyY, crest, 31, 0)
+            : Mathf.Lerp(crest, redCrushContact.y, fall*fall);
         float pitch=t<3.5f?Mathf.Lerp(0,24,REase(t,2.65f,3.4f)):
             t<apex?Mathf.Lerp(24,0,REase(t,3.5f,apex)):Mathf.Lerp(0,-20,REase(t,apex,6));
         // The authored compression is at 2.52s. Previously the hull contact
@@ -189,7 +215,7 @@ public sealed partial class Story1WreckBattle
         else
         {
             if(!redCrushRecoveryCaptured){RedCaptureCrushPose();redCrushRecoveryCaptured=true;}
-            RedShark("Swim",1+age-.9f,nose,rotation*Vector3.forward);
+            RedShark("Swim",3+3.599f+age-.9f,nose,rotation*Vector3.forward);
             RedBlendCrushPose(REase(age,.9f,1.25f));
             shark.position+=nose-sharkAnimator.NoseWorldPoint;
         }
@@ -244,9 +270,31 @@ public sealed partial class Story1WreckBattle
         Vector3 approach=(target-surface).normalized;
         shark.position+=(target-approach*radius-surface)*weight;
     }
+    float RedCounterShaftGap(SkinnedMeshRenderer skin, out Vector3 contact, out Vector3 shaft)
+    {
+        // The descending shaft can graze the cheek before its tip reaches
+        // the snout. Measure the whole held capsule against posed head vertices.
+        Story1CapsuleContact.Segment(redWeapon, out var a, out var b, out float radius);
+        contact = sharkAnimator.NoseWorldPoint;
+        shaft = a;
+        float best = float.PositiveInfinity;
+        var matrix = skin.transform.localToWorldMatrix;
+        foreach (int vertex in redHeadVertices)
+        {
+            Vector3 point = matrix.MultiplyPoint3x4(redPosedVertices[vertex]);
+            Vector3 nearest = RedClosestSegment(point, a, b);
+            float square = (point - nearest).sqrMagnitude;
+            if (square >= best) continue;
+            best = square;
+            contact = point;
+            shaft = nearest;
+        }
+        return Mathf.Sqrt(best) - radius;
+    }
     bool RedRegisterHeadHit(string label,Vector3 impulse,float strength)
     {
-        RedesignContactGap=RedHeldHeadGap(out var contact);
+        RedesignSignedContactGap = RedCounterShaftGap(RedContactSkin(), out var contact, out _);
+        RedesignContactGap = Mathf.Max(0, RedesignSignedContactGap);
         if(RedesignContactGap>.18f)return false;
         Effects.Impact(contact,impulse,strength);RedImpactShake(strength*1.1f,.45f);
         RedEvent(label+"; visible head/shaft gap="+RedesignContactGap.ToString("F3"));return true;

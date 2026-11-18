@@ -68,7 +68,12 @@ public static class VerifyZhuBaJieBoss
                 throw new Exception("Player controller crossed the boar's solid body: "+flags+", travel="+travel);
             Result+="body collision; ";
             // Use Sahur's actual attack from the front of the long boar body.
-            boss.enabled=false;var face=Vector3.ProjectOnPlane(boss.transform.position-player.transform.position,Vector3.up);
+            boss.enabled=false;
+            // The slope can deflect the collision probe sideways; place the separate
+            // melee probe immediately outside the actual solid front surface.
+            var front=solid.ClosestPoint(boss.transform.position-axis*12+Vector3.up*3);
+            Place(player,front-axis*(playerBody.radius*Mathf.Abs(player.transform.lossyScale.x)+.08f));
+            var face=Vector3.ProjectOnPlane(boss.transform.position-player.transform.position,Vector3.up);
             var facing=Quaternion.LookRotation(face);player.RestoreSavedPose(player.transform.position,facing);
             typeof(ThirdPersonPlayerController).GetField("yaw",BindingFlags.NonPublic|BindingFlags.Instance).SetValue(player,facing.eulerAngles.y);
             await Wait(.6f);Cursor.lockState=CursorLockMode.Locked;

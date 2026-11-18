@@ -63,7 +63,7 @@ public sealed class MarshmallowFriendsQuest : MonoBehaviour
         var ui=new GameObject("Friends story UI",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));ui.transform.SetParent(transform,false);
         dialogueCanvas=ui.GetComponent<Canvas>();dialogueCanvas.renderMode=RenderMode.ScreenSpaceOverlay;dialogueCanvas.sortingOrder=88;GameUITheme.Scale(dialogueCanvas);
         var panel=GameUITheme.Rect(ui.transform,"Friends story card",new Vector2(1,1),new Vector2(480,120));panel.pivot=Vector2.one;panel.anchoredPosition=new Vector2(-24,-195);
-        GameUITheme.Image(panel,new Color(.09f,.045f,.12f,.93f));cardText=GameUITheme.Label(panel,"Story hint",20,new Vector2(-460,-58),new Vector2(440,105),TextAnchor.MiddleLeft);card=panel.gameObject;card.SetActive(false);
+        GameUITheme.Image(panel,GameUITheme.Surface);cardText=GameUITheme.Label(panel,"Story hint",20,new Vector2(-460,-58),new Vector2(440,105),TextAnchor.MiddleLeft);card=panel.gameObject;card.SetActive(false);
     }
     Vector3 Ground(Vector2 p)
     {

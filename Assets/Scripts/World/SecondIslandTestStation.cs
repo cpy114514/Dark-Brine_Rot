@@ -116,7 +116,7 @@ public sealed class SecondIslandTestStation : MonoBehaviour
         var ui=new GameObject("Editor test session HUD",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));ui.transform.SetParent(transform,false);
         var canvas=ui.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=73;GameUITheme.Scale(canvas);
         var panel=GameUITheme.Rect(ui.transform,"Test mode card",new Vector2(1,.5f),new Vector2(380,110));panel.pivot=new Vector2(1,.5f);panel.anchoredPosition=new Vector2(-24,0);
-        GameUITheme.Image(panel,new Color(.025f,.09f,.075f,.94f));status=GameUITheme.Label(panel,"Test session",18,new Vector2(-175,-55),new Vector2(350,100),TextAnchor.MiddleLeft);
+        GameUITheme.Image(panel,GameUITheme.Surface);status=GameUITheme.Label(panel,"Test session",18,new Vector2(-175,-55),new Vector2(350,100),TextAnchor.MiddleLeft);
         statusCard=panel.gameObject;statusCard.SetActive(false);
     }
     static string Name(TestItem item)

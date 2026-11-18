@@ -11,10 +11,15 @@ public sealed class ZhuBaJieBossVisual : MonoBehaviour
     readonly Quaternion[] tailRest=new Quaternion[6];
     Vector3 lastPosition; float movement;
     readonly RaycastHit[] groundHits=new RaycastHit[24];
+    Mavis.BossClipPlayer authored;
+    Mavis.BossClipPlayer boarMotions;
+    float walkClock,deathClock;
+    bool humanAttack;
     void Awake()
     {
         boss=GetComponent<ZhuBaJieBoss>();
         if(boss.boarForm)boarAnimator=boss.boarForm.GetComponentInChildren<Animator>(true);
+        if(boarAnimator)boarMotions=new Mavis.BossClipPlayer(boarAnimator.gameObject,"Boar");
         human=boss.humanForm?boss.humanForm.transform:null;
         if(human)
         {
@@ -24,6 +29,7 @@ public sealed class ZhuBaJieBossVisual : MonoBehaviour
             leftToe=Find(bones,"ball_l");rightToe=Find(bones,"ball_r");
             if(upper)upperRest=upper.localRotation;if(lower)lowerRest=lower.localRotation;if(hand)handRest=hand.localRotation;
             if(spine)spineRest=spine.localRotation;if(leftThigh)leftRest=leftThigh.localRotation;if(rightThigh)rightRest=rightThigh.localRotation;
+            var model=human.Find("Human Model");if(model)authored=new Mavis.BossClipPlayer(model.gameObject,"Bajie");
         }
         if(boss.boarForm)
         {
@@ -39,7 +45,8 @@ public sealed class ZhuBaJieBossVisual : MonoBehaviour
     static Transform Find(Transform[] bones,string name)=>bones.FirstOrDefault(t=>t.name==name);
     public void BeginAttack(ZhuBaJieBoss.MoveKind move)
     {
-        if(boarAnimator && !boss.HumanPhase)
+        if(boss.HumanPhase)humanAttack=true;
+        if(boarAnimator && !boss.HumanPhase && !(boarMotions!=null&&boarMotions.Ready))
         {
             string clip=move==ZhuBaJieBoss.MoveKind.TailSweep?"atk_02":"atk_01";
             // The source clips contain long sequences with large root-bone
@@ -48,22 +55,53 @@ public sealed class ZhuBaJieBossVisual : MonoBehaviour
             boarAnimator.speed=.55f;boarAnimator.Play(clip,0,0);
         }
     }
-    public void BeginTransform(){if(boarAnimator)boarAnimator.Play("Idle",0,0);}
+    public void BeginTransform(){if(boarAnimator&&boarAnimator.enabled)boarAnimator.CrossFadeInFixedTime("Idle",.16f,0);}
     public void SetHuman(){if(boarAnimator)boarAnimator.enabled=false;}
-    public void Die(){if(boarAnimator && !boss.HumanPhase)boarAnimator.Play("dead",0,0);}
+    public void Die(){if(boarAnimator && boarAnimator.enabled && !boss.HumanPhase)boarAnimator.Play("dead",0,0);}
     void LateUpdate()
     {
-        if(!boss || boss.CurrentState==ZhuBaJieBoss.State.Dead)return;
+        if(!boss)return;
+        if(boss.CurrentState==ZhuBaJieBoss.State.Dead)
+        {
+            deathClock+=Time.deltaTime;
+            if(boss.HumanPhase&&authored!=null&&authored.Ready)authored.Sample("Death",deathClock,Time.deltaTime);
+            else if(boarMotions!=null&&boarMotions.Ready)boarMotions.Sample("Death",deathClock,Time.deltaTime);
+            return;
+        }
         float dt=Mathf.Max(.001f,Time.deltaTime);float speed=Vector3.ProjectOnPlane(transform.position-lastPosition,Vector3.up).magnitude/dt;
         lastPosition=transform.position;movement=Mathf.MoveTowards(movement,Mathf.Clamp01(speed/5),dt*5);
         if(!boss.HumanPhase)
         {
+            if(boarMotions!=null&&boarMotions.Ready)
+            {
+                string key="Idle";float clock=Time.time;
+                if(boss.CurrentState==ZhuBaJieBoss.State.Windup||boss.CurrentState==ZhuBaJieBoss.State.Attack||boss.CurrentState==ZhuBaJieBoss.State.Recover)
+                {
+                    bool sweep=boss.CurrentMove==ZhuBaJieBoss.MoveKind.TailSweep;key=sweep?"Tail":"Charge";
+                    float wind=sweep?.85f:.9f,hit=sweep?.8f:1.25f,recover=sweep?.85f:1;
+                    clock=boss.CurrentState==ZhuBaJieBoss.State.Windup?boss.ActionProgress*wind:boss.CurrentState==ZhuBaJieBoss.State.Attack?wind+boss.ActionProgress*hit:wind+hit+boss.ActionProgress*recover;
+                }
+                else if(movement>.08f){key="Walk";walkClock+=dt*Mathf.Lerp(.6f,1.7f,movement);clock=walkClock;}
+                boarMotions.Sample(key,clock,dt);
+                if(tail[0]&&boss.CurrentMove==ZhuBaJieBoss.MoveKind.TailSweep)PoseTailSweep();return;
+            }
             if(boarAnimator && boss.CurrentState!=ZhuBaJieBoss.State.Windup && boss.CurrentState!=ZhuBaJieBoss.State.Attack && boss.CurrentState!=ZhuBaJieBoss.State.Recover)
             {
                 var state=boarAnimator.GetCurrentAnimatorStateInfo(0);if(!state.IsName("Idle")){boarAnimator.speed=1;boarAnimator.Play("Idle",0,0);}
             }
             if(tail[0] && boss.CurrentMove==ZhuBaJieBoss.MoveKind.TailSweep)PoseTailSweep();
             return;
+        }
+        if(authored!=null&&authored.Ready)
+        {
+            string key="Idle";float clock=Time.time;
+            if(boss.CurrentState==ZhuBaJieBoss.State.Transform){key="Rise";clock=Mathf.InverseLerp(.53f,1,boss.ActionProgress)*.8f;}
+            else if(boss.CurrentState==ZhuBaJieBoss.State.Dodge){key="Dodge";clock=boss.ActionProgress*.48f;}
+            else if(boss.CurrentState==ZhuBaJieBoss.State.Windup){key="Rake";clock=boss.ActionProgress*.78f;}
+            else if(boss.CurrentState==ZhuBaJieBoss.State.Attack){key="Rake";clock=.78f+boss.ActionProgress*1.25f;}
+            else if(boss.CurrentState==ZhuBaJieBoss.State.Recover&&humanAttack){key="Rake";clock=2.03f+boss.ActionProgress*.9f;}
+            else if(movement>.08f){key="Walk";walkClock+=dt*Mathf.Lerp(.5f,1.5f,movement);clock=walkClock;}
+            authored.Sample(key,clock,dt);AdjustFooting(dt);return;
         }
         if(upper)upper.localRotation=upperRest;if(lower)lower.localRotation=lowerRest;if(hand)hand.localRotation=handRest;
         if(spine)spine.localRotation=spineRest;if(leftThigh)leftThigh.localRotation=leftRest;if(rightThigh)rightThigh.localRotation=rightRest;

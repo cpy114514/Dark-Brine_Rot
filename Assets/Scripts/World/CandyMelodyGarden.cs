@@ -48,6 +48,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
     readonly List<Friend> friends=new List<Friend>();
     readonly List<Material> materials=new List<Material>();
     readonly AudioClip[] tones=new AudioClip[4];
+    readonly bool[] ownedTones=new bool[4];
     readonly int[] sequence=new int[5];
     readonly System.Random random=new System.Random();
     ThirdPersonPlayerController player;
@@ -191,7 +192,7 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         hud=new GameObject("Candy Melody HUD",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));hud.transform.SetParent(transform,false);
         var canvas=hud.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=82;GameUITheme.Scale(canvas);
         var card=GameUITheme.Rect(hud.transform,"Melody card",new Vector2(.5f,1),new Vector2(600,128));card.pivot=new Vector2(.5f,1);card.anchoredPosition=new Vector2(0,-24);
-        GameUITheme.Image(card,new Color(.09f,.045f,.13f,.94f));
+        GameUITheme.Image(card,GameUITheme.Surface);
         title=GameUITheme.Label(card,"Title",24,new Vector2(-280,-26),new Vector2(560,34),TextAnchor.MiddleLeft);
         detail=GameUITheme.Label(card,"Instructions",20,new Vector2(-280,-79),new Vector2(560,70),TextAnchor.MiddleLeft);
         hudCard=card.gameObject;hudCard.SetActive(false);
@@ -202,6 +203,8 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         const int rate=22050;int count=Mathf.RoundToInt(.38f*rate);
         for(int n=0;n<tones.Length;n++)
         {
+            tones[n]=SecondIslandAudio.Clip("Melody"+n);if(tones[n])continue;
+            ownedTones[n]=true;
             var data=new float[count];
             for(int i=0;i<count;i++)
             {
@@ -238,8 +241,8 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         bool bySign=allowed && Near(sign.transform,4f);
         if(signPrompt.activeSelf!=bySign)signPrompt.SetActive(bySign);
         if(bySign && cam)signPrompt.transform.rotation=cam.transform.rotation;
-        if(bySign)signPromptText.text=CurrentStage==Stage.Showing?"LISTEN TO THE MELODY":
-            GameControls.Prompt(GameControls.Command.Interact)+(CurrentStage==Stage.Listening?"  ·  REPLAY MELODY":"  ·  START MELODY");
+        if(bySign)signPromptText.text=CurrentStage==Stage.Showing?"Listen to the melody":
+            GameUITheme.InteractPrompt(CurrentStage==Stage.Listening?"Replay melody":"Start melody");
         int entered=-1;float closest=3.7f;
         for(int i=0;i<notes.Count;i++)
         {
@@ -350,5 +353,5 @@ public sealed class CandyMelodyGarden : MonoBehaviour
         else detail.text="Watch the lights and repeat the melody.\nThree rounds. The sign lets you replay any pattern.";
     }
     void OnDisable(){StopPlayback();SetLit(-1);if(audioSource)audioSource.Stop();}
-    void OnDestroy(){foreach(var clip in tones)if(clip)Destroy(clip);foreach(var material in materials)if(material)Destroy(material);}
+    void OnDestroy(){for(int i=0;i<tones.Length;i++)if(ownedTones[i]&&tones[i])Destroy(tones[i]);foreach(var material in materials)if(material)Destroy(material);}
 }

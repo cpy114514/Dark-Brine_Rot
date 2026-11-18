@@ -156,12 +156,13 @@ namespace Mavis
             Add("ISLAND MAP","岛屿地图"); Add("NORTH  N","北  N"); Add("LEGEND","地图图例"); Add("▲  Player / Facing","▲  玩家 / 朝向"); Add("◆  Island checkpoint","◆  岛上复活点"); Add("●  Karen Fairy","●  猪妖小仙人","●  Nailong", "●  奶龙");
             Add("✦  Fairy","✦  仙子");
             Add("M / Esc to close · Game paused while viewing","M / Esc 关闭地图 · 查看时游戏暂停"); Add("BACK TO GAME","返回游戏");
-            Add("Position\nX {0}   Z {1}\n\nMap width  {2} m","当前位置\nX {0}   Z {1}\n\n地图宽度  {2} 米","map.coordinates");
+            Add("Position\nX {0}   Z {1}\nMap width  {2} m","当前位置\nX {0}   Z {1}\n地图宽度  {2} 米","map.coordinates");
             Add("Head","头部"); Add("Body","身体"); Add("Legs","腿部"); Add("Feet","脚部"); Add("Weapon","武器"); Add("GEAR","装备");
             Add("SAHUR / FIELD NOTES","SAHUR / 装备手记");
             Add("Equipment & island finds","随身装备 · 岛屿拾遗");
             Add("Close ×","合上 ×");
             Add("Stick","木棍"); Add("Twin blades","双刀"); Add("Equipped","已装备");
+            Add("Cycle weapon", "切换武器");
             Add("M4A1 assault rifle","M4A1 突击步枪"); Add("Sahur stick","萨胡尔木棍"); Add("Capri twin blades","卡布奇诺双刀");
             Add("Reloading ","换弹中 ");
             Add("R Reload · Reserve {0}", "R 换弹 · 备用 {0} 发", "rifle.reserve");

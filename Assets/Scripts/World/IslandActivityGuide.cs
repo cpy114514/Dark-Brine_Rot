@@ -44,7 +44,7 @@ public sealed class IslandActivityGuide : MonoBehaviour
         var obj=new GameObject("Fairy discovery tips",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));obj.transform.SetParent(transform,false);
         var canvas=obj.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=83;GameUITheme.Scale(canvas);
         var panel=GameUITheme.Rect(obj.transform,"Discovery tip",new Vector2(.5f,0),new Vector2(680,100));panel.pivot=new Vector2(.5f,0);panel.anchoredPosition=new Vector2(0,28);
-        GameUITheme.Image(panel,new Color(.075f,.04f,.12f,.93f));
+        GameUITheme.Image(panel,GameUITheme.Surface);
         text=GameUITheme.Label(panel,"Fairy says",21,new Vector2(-315,-50),new Vector2(630,90),TextAnchor.MiddleLeft);card=panel.gameObject;card.SetActive(false);
     }
     public void RestoreProgress(int mask){DiscoveredMask=mask & 15;until=0;if(card)card.SetActive(false);}

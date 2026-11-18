@@ -40,7 +40,12 @@ namespace Mavis
                 var camera=Camera.main;if(camera&&(camera.transform.position-transform.position).sqrMagnitude>7200)active=false;
                 Vector3 end=r.hand.TransformPoint(r.tip),start=Vector3.Lerp(r.hand.position,end,.3f);
                 if(!capri){end=r.hand.position+transform.up*.2f;start=end-transform.up*.4f;}
-                r.trail.Configure(CombatHitKind.ComboFinisher,.72f,capri!=null);r.trail.Sample(start,end,active,capri?.18f:.14f);
+                bool thrust = capri && capri.CurrentAttack == CappuccinoAI.AttackKind.DashThrust;
+                bool cut = capri && capri.CurrentAttack == CappuccinoAI.AttackKind.TwinSlash;
+                if (thrust) start = Vector3.Lerp(start, end, .55f);
+                r.trail.Configure(cut || thrust ? CombatHitKind.ComboOne : CombatHitKind.ComboFinisher,
+                    thrust ? .54f : .72f, capri != null);
+                r.trail.Sample(start, end, active, thrust ? .085f : cut ? .115f : capri ? .18f : .14f);
             }
         }
         void OnDisable(){foreach(var r in ribbons)r.trail.Clear();}

@@ -78,7 +78,7 @@ public sealed class SecondIslandBlackboardUI : MonoBehaviour
             if(text.gameObject.scene!=gameObject.scene)continue;
             var canvas=text.GetComponentInParent<Canvas>(true);if(!canvas || canvas.renderMode==RenderMode.WorldSpace)continue;
             if(font && text.font!=font)text.font=font;
-            if(text.name=="Label" && text.text.StartsWith("Current weapon",System.StringComparison.Ordinal) && text.transform.parent && text.transform.parent.name=="Sahur Equipment and Skills UI")AddWeaponBackdrop(text);
+            if(text.name=="Current weapon caption" && text.transform.parent && text.transform.parent.name=="Sahur Equipment and Skills UI")AddWeaponBackdrop(text);
         }
         foreach(var text in Object.FindObjectsByType<TextMeshProUGUI>(FindObjectsInactive.Include,FindObjectsSortMode.None))
             if(text.gameObject.scene==gameObject.scene && SecondIslandBlackboards.Font && text.font!=SecondIslandBlackboards.Font)text.font=SecondIslandBlackboards.Font;
@@ -86,9 +86,9 @@ public sealed class SecondIslandBlackboardUI : MonoBehaviour
         {
             if(image.gameObject.scene!=gameObject.scene || !Panels.Contains(image.name))continue;
             var canvas=image.GetComponentInParent<Canvas>(true);if(!canvas || canvas.renderMode==RenderMode.WorldSpace)continue;
-            var c=image.color;image.color=new Color(.025f,.09f,.075f,c.a);
+            image.color=GameUITheme.Gray(GameUITheme.Surface.r,image.color.a);
             var outline=image.GetComponent<Outline>();if(!outline)outline=image.gameObject.AddComponent<Outline>();
-            outline.effectColor=new Color(.42f,.24f,.14f,.95f);outline.effectDistance=new Vector2(3,-3);
+            outline.effectColor=GameUITheme.Track;outline.effectDistance=new Vector2(1,-1);
         }
     }
     static void AddWeaponBackdrop(Text text)
@@ -98,8 +98,8 @@ public sealed class SecondIslandBlackboardUI : MonoBehaviour
         var src=text.rectTransform;var rect=(RectTransform)obj.transform;rect.anchorMin=src.anchorMin;rect.anchorMax=src.anchorMax;rect.pivot=src.pivot;
         rect.anchoredPosition=src.anchoredPosition;rect.sizeDelta=src.sizeDelta+new Vector2(20,14);rect.localRotation=src.localRotation;rect.localScale=src.localScale;
         obj.transform.SetSiblingIndex(text.transform.GetSiblingIndex());
-        var image=obj.GetComponent<Image>();image.color=new Color(.025f,.09f,.075f,.9f);image.raycastTarget=false;
-        var outline=obj.GetComponent<Outline>();outline.effectColor=new Color(.42f,.24f,.14f,.95f);outline.effectDistance=new Vector2(3,-3);
+        var image=obj.GetComponent<Image>();image.color=GameUITheme.Surface;image.raycastTarget=false;
+        var outline=obj.GetComponent<Outline>();outline.effectColor=GameUITheme.Track;outline.effectDistance=new Vector2(1,-1);
         obj.AddComponent<SecondIslandWeaponBackdrop>().source=text;
     }
 }
@@ -115,8 +115,10 @@ public sealed class SecondIslandWeaponBackdrop : MonoBehaviour
         var outline=GetComponent<Outline>();if(outline && outline.enabled!=show)outline.enabled=show;
         if(!show)return;
         var s=source.rectTransform;var r=(RectTransform)transform;
-        if(r.anchorMin!=s.anchorMin || r.anchorMax!=s.anchorMax || r.anchoredPosition!=s.anchoredPosition || r.sizeDelta!=s.sizeDelta+new Vector2(20,14))
-        {r.anchorMin=s.anchorMin;r.anchorMax=s.anchorMax;r.pivot=s.pivot;r.anchoredPosition=s.anchoredPosition;r.sizeDelta=s.sizeDelta+new Vector2(20,14);}
+        var padding = new Vector2(20,14);
+        var position = s.anchoredPosition + Vector2.Scale(s.pivot - Vector2.one * .5f, padding);
+        if(r.anchorMin!=s.anchorMin || r.anchorMax!=s.anchorMax || r.anchoredPosition!=position || r.sizeDelta!=s.sizeDelta+padding)
+        {r.anchorMin=s.anchorMin;r.anchorMax=s.anchorMax;r.pivot=s.pivot;r.anchoredPosition=position;r.sizeDelta=s.sizeDelta+padding;}
     }
 }
 
@@ -154,7 +156,19 @@ public sealed class SecondIslandBlackboardLabel : MonoBehaviour
     {
         if(!source || !chalk)return;
         shown=source.text ?? "";oldFontSize=source.fontSize;oldSize=sourceRect.sizeDelta;
-        int lines=1,longest=0,count=0;foreach(char c in shown){if(c=='\n'){longest=Mathf.Max(longest,count);count=0;lines++;}else count++;}longest=Mathf.Max(longest,count);
+        int lines=1,longest=0,count=0;
+        bool inTag=false;
+        foreach(char c in shown)
+        {
+            if(c=='<')inTag=true;
+            if(!inTag)
+            {
+                if(c=='\n'){longest=Mathf.Max(longest,count);count=0;lines++;}
+                else count++;
+            }
+            if(c=='>')inTag=false;
+        }
+        longest=Mathf.Max(longest,count);
         float width=Mathf.Clamp(longest*oldFontSize*.63f+75,180,Mathf.Max(180,oldSize.x));
         float height=Mathf.Clamp(lines*oldFontSize*1.35f+42,75,Mathf.Max(75,oldSize.y));
         frame.localPosition=new Vector3(0,0,4);frame.localScale=new Vector3(width,height,10);

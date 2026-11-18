@@ -408,7 +408,9 @@ namespace Mavis
             {
                 SaveData data = pendingSave;
                 GameWorldProgress.Restore(data.world, player);
-                player.RestoreSavedPose(data.playerPosition, data.playerRotation);
+                var chocolate = player.GetComponent<SecondIslandChocolateContact>();
+                Vector3 restoredPosition = chocolate ? chocolate.CorrectSavedPosition(data.playerPosition) : data.playerPosition;
+                player.RestoreSavedPose(restoredPosition, data.playerRotation);
                 player.GetComponent<SecondIslandSaveState>()?.RestoreCoursePosition();
                 player.GetComponent<WeaknessGlasses>()?.Restore(data.ownsWeaknessGlasses,data.weaknessGlassesEquipped,data.weaknessActiveRemaining,data.weaknessCooldownRemaining);
                 var arrival = player.GetComponent<FirstIslandArrival>();

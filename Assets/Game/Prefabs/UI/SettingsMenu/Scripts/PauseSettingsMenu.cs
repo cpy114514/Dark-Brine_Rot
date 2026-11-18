@@ -114,8 +114,23 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     void Awake()
     {
         // Legacy prefabs may still contain the former language selector.
-        foreach (var row in GetComponentsInChildren<Transform>(true))
-            if (row.name == "language row") row.gameObject.SetActive(false);
+        foreach (var row in GetComponentsInChildren<RectTransform>(true))
+        {
+            if (row.name != "language row" || !row.gameObject.activeSelf) continue;
+            var content = (RectTransform)row.parent;
+            float next = float.NegativeInfinity;
+            foreach (RectTransform sibling in content)
+                if (sibling.anchoredPosition.y < row.anchoredPosition.y)
+                    next = Mathf.Max(next, sibling.anchoredPosition.y);
+            if (!float.IsNegativeInfinity(next))
+            {
+                float gap = row.anchoredPosition.y - next;
+                foreach (RectTransform sibling in content)
+                    if (sibling.anchoredPosition.y <= next) sibling.anchoredPosition += Vector2.up * gap;
+                content.sizeDelta -= Vector2.up * gap;
+            }
+            row.gameObject.SetActive(false);
+        }
         options.RemoveAll(option => option.key == "language");
         EnsurePixel360Option();
         EnsureVfxOptions();
@@ -197,7 +212,7 @@ public sealed class PauseSettingsMenu : MonoBehaviour
     void Bind()
     {
         foreach(var button in new[]{resumeButton,settingsButton,quitButton,backButton,applyButton,defaultsButton})
-            GameUITheme.StyleButton(button);
+            GameUITheme.StyleButton(button, button == applyButton);
         resumeButton.onClick.AddListener(Resume);
         settingsButton.onClick.AddListener(ShowSettings);
         quitButton.onClick.AddListener(QuitOrConfirm);

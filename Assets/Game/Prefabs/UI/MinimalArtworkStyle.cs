@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>Preserves artwork color, authored sprite swaps and UV alignment within the neutral menu.</summary>
+/// <summary>Displays the menu artwork in grayscale, including its authored hover state.</summary>
 [DisallowMultipleComponent, RequireComponent(typeof(Image))]
 public sealed class MinimalArtworkStyle : MonoBehaviour
 {
@@ -9,6 +9,7 @@ public sealed class MinimalArtworkStyle : MonoBehaviour
     void Awake()
     {
         var image=GetComponent<Image>();var interaction=GetComponent<SahurDecorationHover>();
+        image.color=GameUITheme.Neutral(image.color);
         normal=Copy(image.material==image.defaultMaterial?null:image.material);
         if(normal){image.material=normal;if(interaction)interaction.SetNormalMaterial(normal);}
         if(interaction && interaction.hoverMaterial)
@@ -19,7 +20,9 @@ public sealed class MinimalArtworkStyle : MonoBehaviour
         var shader=source&&source.HasProperty("_Saturation")?source.shader:Shader.Find("UI/Hand Drawn Contrast");
         if(!shader)return null;
         var material=source&&source.shader==shader?new Material(source):new Material(shader);
-        material.name="Menu artwork";material.SetFloat("_Saturation",1);
+        material.name="Menu artwork";
+        material.SetFloat("_Saturation",0);
+        material.SetColor("_Color",GameUITheme.Neutral(material.GetColor("_Color")));
         if(!source){material.SetFloat("_Contrast",1);material.SetFloat("_Pivot",.5f);}
         return material;
     }

@@ -3,17 +3,36 @@ using UnityEngine.UI;
 using TMPro;
 using Mavis;
 
-/// <summary>Shared neutral UI palette. World materials retain their authored colors.</summary>
+/// <summary>Neutral colors shared by the menus and instruments.</summary>
 public static class GameUITheme
 {
-    public static readonly Color Foreground = Color.white;
-    public static readonly Color Secondary = Gray(.72f);
-    public static readonly Color Muted = Gray(.42f);
-    public static readonly Color Surface = Gray(.035f,.94f);
-    public static readonly Color Track = Gray(.16f,.98f);
-    public static readonly Color Backdrop = Gray(0,.92f);
+    public static readonly Color Foreground = Gray(.97f);
+    public static readonly Color Secondary = Gray(.74f);
+    public static readonly Color Muted = Gray(.56f);
+    public static readonly Color Surface = Gray(.065f, .95f);
+    public static readonly Color Track = Gray(.23f);
+    public static readonly Color Backdrop = Gray(.025f, .98f);
     public static Color Gray(float value,float alpha=1) => new Color(value,value,value,alpha);
     public static Color Neutral(Color color) => Gray(color.grayscale,color.a);
+    static readonly System.Collections.Generic.Dictionary<(string, bool), string> worldPrompts = new();
+    static int promptRevision = -1;
+    static GameLanguage promptLanguage;
+
+    public static string InteractPrompt(string action, bool withSprint = false)
+    {
+        if (promptRevision != GameControls.Revision || promptLanguage != GameLocalization.Language)
+        {
+            worldPrompts.Clear();
+            promptRevision = GameControls.Revision;
+            promptLanguage = GameLocalization.Language;
+        }
+        if (worldPrompts.TryGetValue((action, withSprint), out var label)) return label;
+        string key = GameControls.Prompt(GameControls.Command.Interact);
+        if (withSprint) key = GameControls.Prompt(GameControls.Command.Sprint) + " + " + key;
+        label = "<b>[" + key + "]</b>  " + GameLocalization.Text(action);
+        worldPrompts.Add((action, withSprint), label);
+        return label;
+    }
     public static bool ModalOpen => SaveSlotMenu.IsOpen || PauseSettingsMenu.IsOpen || Mavis.SahurLoadoutUI.IsOpen ||
         Mavis.IslandMapUI.BlocksInput || Mavis.PlayerDeathRespawn.IsOpen;
 
@@ -75,16 +94,16 @@ public static class GameUITheme
         // Use a white base and explicit neutral states instead.
         if(button.image) button.image.color=Color.white;
         var colors=button.colors;
-        colors.normalColor=Gray(light ? 1f : .08f);
+        colors.normalColor=light ? Foreground : Gray(.115f);
         colors.highlightedColor=Gray(light ? .86f : .22f);
-        colors.pressedColor=Gray(light ? .72f : .32f);
-        colors.selectedColor=Gray(light ? .92f : .18f);
-        colors.disabledColor=Gray(light ? .65f : .10f,.5f);
+        colors.pressedColor=Gray(light ? .73f : .32f);
+        colors.selectedColor=Gray(light ? .88f : .25f);
+        colors.disabledColor=Gray(light ? .53f : .055f);
         colors.colorMultiplier=1; colors.fadeDuration=.08f;
         button.colors=colors;
         // Background and caption must be restyled together. Settings switches
         // originally light prefab buttons to dark ones when it binds controls.
-        Color captionColor=light ? Color.black : Foreground;
+        Color captionColor=light ? Color.black : button.interactable ? Foreground : Muted;
         foreach(var caption in button.GetComponentsInChildren<TMP_Text>(true))
         {
             if(caption.GetComponentInParent<Button>(true)!=button) continue;

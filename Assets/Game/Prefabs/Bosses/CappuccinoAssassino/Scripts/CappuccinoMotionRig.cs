@@ -98,6 +98,16 @@ namespace Mavis
             var sourceFrame = motionAnimator.transform;
             bool mirrored = mirroredReferences != null && motionAnimator.GetCurrentAnimatorStateInfo(0).IsName("AttackMirrored");
             Vector3 hipOffset = sourceFrame.InverseTransformPoint(sourceHips.position) - sourceReferenceHipPosition;
+            float guard = 0f;
+            bool thrust = boss && boss.CurrentAttack == CappuccinoAI.AttackKind.DashThrust;
+            if (boss && health && !health.IsDead && boss.CurrentAttack <= CappuccinoAI.AttackKind.Whirlwind)
+            {
+                // Set the guard early, then hold the silhouette as tracking stops.
+                if (boss.CurrentState == CappuccinoAI.State.Windup)
+                    guard = Mathf.SmoothStep(0f, 1f, boss.ActionProgress / .55f);
+                else if (boss.CurrentState == CappuccinoAI.State.Attack && boss.SwingIndex == 0)
+                    guard = 1f - Mathf.SmoothStep(0f, 1f, boss.ActionProgress / .16f);
+            }
             for (int i = 0; i < bindings.Length; i++)
             {
                 var binding = bindings[i];
@@ -107,6 +117,19 @@ namespace Mavis
                 Quaternion sourceRotation = Quaternion.Inverse(sourceFrame.rotation) * sourceBones[i].rotation;
                 Quaternion desired = visualFrame.rotation * sourceRotation *
                     Quaternion.Inverse(mirrored ? mirroredReferences[i] : binding.sourceReferenceRotation) * binding.targetReferenceRotation;
+                // The dash sights down one blade. The cut chambers both elbows wide.
+                if (guard > 0f)
+                {
+                    bool left = binding.sourceBone == HumanBodyBones.LeftLowerArm || binding.sourceBone == HumanBodyBones.LeftHand;
+                    bool right = binding.sourceBone == HumanBodyBones.RightLowerArm || binding.sourceBone == HumanBodyBones.RightHand;
+                    if (left || right)
+                    {
+                        float cant = left ? (thrust ? 21f : -24f) : (thrust ? -8f : 27f);
+                        float lift = left ? -12f : (thrust ? -24f : -9f);
+                        desired = Quaternion.AngleAxis(cant * guard, visualFrame.forward) *
+                            Quaternion.AngleAxis(lift * guard, visualFrame.right) * desired;
+                    }
+                }
                 bool bodyBone=binding.sourceBone==HumanBodyBones.Hips || binding.sourceBone==HumanBodyBones.Spine ||
                     binding.sourceBone==HumanBodyBones.Chest || binding.sourceBone==HumanBodyBones.UpperChest;
                 if(bodyBone && boss!=null && health!=null && !health.IsDead &&

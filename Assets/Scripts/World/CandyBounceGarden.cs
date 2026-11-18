@@ -180,7 +180,7 @@ public sealed class CandyBounceGarden : MonoBehaviour
         var root=new GameObject("Bounce Garden HUD",typeof(RectTransform),typeof(Canvas),typeof(CanvasScaler));root.transform.SetParent(transform,false);
         var canvas=root.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=82;GameUITheme.Scale(canvas);
         var card=GameUITheme.Rect(root.transform,"Bounce card",new Vector2(.5f,1),new Vector2(570,112));card.pivot=new Vector2(.5f,1);card.anchoredPosition=new Vector2(0,-24);
-        GameUITheme.Image(card,new Color(.12f,.055f,.13f,.94f));
+        GameUITheme.Image(card,GameUITheme.Surface);
         hudText=GameUITheme.Label(card,"Bounce status",21,new Vector2(-265,-57),new Vector2(530,104),TextAnchor.MiddleLeft);
         hud=card.gameObject;hud.SetActive(false);
     }
@@ -205,7 +205,12 @@ public sealed class CandyBounceGarden : MonoBehaviour
         var cam=Camera.main;
         bool bySign=allowed && Vector3.ProjectOnPlane(player.transform.position-sign.position,Vector3.up).sqrMagnitude<16 && Mathf.Abs(body.bounds.min.y-sign.position.y)<4;
         if(signPrompt.gameObject.activeSelf!=bySign)signPrompt.gameObject.SetActive(bySign);
-        if(bySign){if(cam)signPrompt.rotation=cam.transform.rotation;promptText.text=GameControls.Prompt(GameControls.Command.Interact)+(Playing?"  ·  RESTART":"  ·  PLAY")+(RewardClaimed?"\n"+GameControls.Prompt(GameControls.Command.Sprint)+" + "+GameControls.Prompt(GameControls.Command.Interact)+"  ·  MOVING STARS":"");}
+        if (bySign)
+        {
+            if (cam) signPrompt.rotation = cam.transform.rotation;
+            promptText.text = GameUITheme.InteractPrompt(Playing ? "Restart" : "Play") +
+                (RewardClaimed ? "\n" + GameUITheme.InteractPrompt("Moving stars", true) : "");
+        }
         if(bySign && Cursor.lockState==CursorLockMode.Locked && GameControls.Down(GameControls.Command.Interact)){lastInteractionFrame=Time.frameCount;BeginGame(GameControls.Held(GameControls.Command.Sprint));}
         if(friendVisual){float t=Time.time*3;friendVisual.localPosition=Vector3.up*(distance<32?Mathf.Max(0,Mathf.Sin(t))*.13f:.015f*Mathf.Sin(t));if(friendArm)friendArm.localRotation=Quaternion.Euler(0,0,distance<32?75+Mathf.Sin(t*1.4f)*20:12);}
         for(int i=0;i<stars.Count;i++)if(stars[i].gameObject.activeSelf)

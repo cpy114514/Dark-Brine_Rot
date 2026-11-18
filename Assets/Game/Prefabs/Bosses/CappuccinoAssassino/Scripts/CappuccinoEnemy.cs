@@ -110,6 +110,7 @@ namespace Mavis
             animator.ResetTrigger(AttackTrigger);
             animator.speed = 0f;
             animator.Play(mirrored ? "AttackMirrored" : "Attack", 0, Mathf.Clamp01(normalized));
+            if (animator.isActiveAndEnabled) animator.Update(0f);
         }
 
         internal void ResumeLocomotion()
@@ -127,9 +128,6 @@ namespace Mavis
             animator.ResetTrigger(AttackTrigger);
             animator.speed = 0f;
             animator.Play(state, 0, Mathf.Clamp01(normalized));
-            // Evaluate this action-clock pose now, before the fitted rig / trails.
-            // Waiting for the next Animator update introduced a frame of phase lag.
-            if(animator.isActiveAndEnabled)animator.Update(0f);
             // Evaluate this action-clock pose now, before the fitted rig / trails.
             // Waiting for the next Animator update introduced a frame of phase lag.
             if(animator.isActiveAndEnabled)animator.Update(0f);

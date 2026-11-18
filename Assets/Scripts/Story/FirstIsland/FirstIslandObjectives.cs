@@ -129,7 +129,7 @@ namespace Mavis
             panel = canvas;
             card = GameUITheme.Rect(canvas.transform, "Objective card", new Vector2(0, 1), new Vector2(480, 104));
             card.pivot = new Vector2(0, 1); card.anchoredPosition = new Vector2(28, -132);
-            GameUITheme.Image(card, new Color(.035f, .045f, .045f, .82f));
+            GameUITheme.Image(card, GameUITheme.Surface);
             label = GameUITheme.Label(card, "Current objective", 20, new Vector2(20, -49), new Vector2(440, 92), TextAnchor.MiddleLeft);
             label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(0, 1);
             label.rectTransform.pivot = new Vector2(0, .5f);

@@ -107,6 +107,7 @@ MonoBehaviour:
   turnSpeed: 540
   surroundDistance: 3.5
   separationRadius: 1.16
+  matchLocomotionToMovement: 1
   strikeDamage: 3
   lungeDamage: 5
   strikeDuration: 0.86666673
@@ -125,6 +126,19 @@ MonoBehaviour:
   knockdownSeconds: 0.85
   removeAfterDeath: 4
   courtesySeconds: 0.4
+  alertSeconds: 0
+  peckReach: 0
+  wingDamage: 0
+  wingRange: 0
+  wingDuration: 0.7
+  wingWindowStart: 0.42
+  wingWindowEnd: 0.66
+  wingRadius: 1.2
+  wingRecovery: 0
+  lungePush: 0
+  wingPush: 0
+  attackPriority: 0
+  shoveSmallerEnemies: 0
 --- !u!114 &1548064402530592748
 MonoBehaviour:
   m_ObjectHideFlags: 0

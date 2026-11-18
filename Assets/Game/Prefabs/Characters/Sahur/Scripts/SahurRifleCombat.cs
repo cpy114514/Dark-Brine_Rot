@@ -52,7 +52,6 @@ namespace Mavis
         Text ammo, status;
         Image reloadFill;
         RectTransform reticle;
-        readonly Image[] reticleArms = new Image[4];
         float nextShot, firePoseUntil, hitUntil, nextHud;
         int bulletCursor, shownAmmo = -1, shownReserve = -1;
         bool pendingShot, wasDead, shownReload, shownBlocked;
@@ -258,13 +257,13 @@ namespace Mavis
             hud.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay; hud.GetComponent<Canvas>().sortingOrder = 25; GameUITheme.Scale(hud.GetComponent<Canvas>());
             var card = GameUITheme.Rect(hud.transform, "Ammo card", new Vector2(1, 0), new Vector2(260, 110));
             card.pivot = new Vector2(1, 0); card.anchoredPosition = new Vector2(-38, 38); card.localRotation = Quaternion.Euler(0, 0, -.7f);
-            GameUITheme.Image(card, new Color(.88f, .83f, .70f, .94f));
-            ammo = GameUITheme.Label(card, "Ammunition", 27, new Vector2(-108, -29), new Vector2(230, 42), TextAnchor.MiddleLeft); ammo.color = new Color(.22f, .17f, .12f);
-            status = GameUITheme.Label(card, "Reload status", 17, new Vector2(-108, -65), new Vector2(235, 32), TextAnchor.MiddleLeft); status.color = ammo.color;
-            var bar = GameUITheme.Rect(card, "Reload track", new Vector2(.5f, 0), new Vector2(220, 3)); bar.anchoredPosition = new Vector2(0, 16); GameUITheme.Image(bar, new Color(.4f, .32f, .22f, .3f));
-            reloadFill = GameUITheme.Fill(bar, "Reload progress", new Color(.5f, .24f, .12f));
+            GameUITheme.Image(card, GameUITheme.Surface);
+            ammo = GameUITheme.Label(card, "Ammunition", 27, new Vector2(-108, -29), new Vector2(230, 42), TextAnchor.MiddleLeft);
+            status = GameUITheme.Label(card, "Reload status", 17, new Vector2(-108, -65), new Vector2(235, 32), TextAnchor.MiddleLeft); status.color = GameUITheme.Secondary;
+            var bar = GameUITheme.Rect(card, "Reload track", new Vector2(.5f, 0), new Vector2(220, 3)); bar.anchoredPosition = new Vector2(0, 16); GameUITheme.Image(bar, GameUITheme.Track);
+            reloadFill = GameUITheme.Fill(bar, "Reload progress", GameUITheme.Foreground);
             reticle = GameUITheme.Rect(hud.transform, "Rifle crosshair", new Vector2(.5f, .5f), new Vector2(32, 32));
-            for (int i = 0; i < reticleArms.Length; i++)
+            for (int i = 0; i < 4; i++)
             {
                 Vector2 direction = i == 0 ? Vector2.left : i == 1 ? Vector2.right : i == 2 ? Vector2.up : Vector2.down;
                 Vector2 size = i < 2 ? new Vector2(10, 2) : new Vector2(2, 10);
@@ -272,7 +271,7 @@ namespace Mavis
                 outline.anchoredPosition = direction * 10;
                 GameUITheme.Image(outline, new Color(0, 0, 0, .8f));
                 var arm = GameUITheme.Rect(outline, "Crosshair arm", new Vector2(.5f, .5f), size);
-                reticleArms[i] = GameUITheme.Image(arm, Color.white);
+                GameUITheme.Image(arm, GameUITheme.Foreground);
             }
         }
         void RefreshHud()
@@ -282,8 +281,7 @@ namespace Mavis
             if (hud.activeSelf != visible) hud.SetActive(visible);
             if (!visible) return;
             bool hit = Time.time < hitUntil;
-            Color crosshairColor = hit ? new Color(1, .55f, .2f) : Color.white;
-            for (int i = 0; i < reticleArms.Length; i++) reticleArms[i].color = crosshairColor;
+            reticle.localRotation = hit ? Quaternion.Euler(0, 0, 45f) : Quaternion.identity;
             reticle.localScale = Vector3.one * (hit ? 1.15f : IsAiming ? .8f : movement && movement.IsSprinting ? 1.35f : 1);
             reloadFill.fillAmount = ReloadProgress;
             bool blocked = !CanOperate;

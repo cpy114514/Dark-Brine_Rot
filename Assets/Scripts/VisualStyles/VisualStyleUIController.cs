@@ -29,7 +29,6 @@ namespace Mavis.VisualStyles
         public IReadOnlyList<Slider> DetailSliders => detailSliders;
         Selectable previousSelection;
         Transform owner;
-        readonly Color parchment = new Color(.90f, .86f, .76f);
 
         public static void Open(Transform source = null)
         {
@@ -93,7 +92,7 @@ namespace Mavis.VisualStyles
             var slider = r.gameObject.AddComponent<Slider>(); slider.minValue = 0; slider.maxValue = 1;
             var area = Rect(r, "Handle area", size, Vector2.zero); Stretch(area);
             var handle = Rect(area, "Divider", new Vector2(fullHeight ? 3 : 8, fullHeight ? size.y : 24), Vector2.zero);
-            var image = handle.gameObject.AddComponent<Image>(); image.color = new Color(.93f, .87f, .73f);
+            var image = handle.gameObject.AddComponent<Image>(); image.color = GameUITheme.Foreground;
             slider.handleRect = handle; slider.targetGraphic = image; slider.direction = UnityEngine.UI.Slider.Direction.LeftToRight;
             handle.sizeDelta = new Vector2(fullHeight ? 3 : 8, fullHeight ? 0 : 24-size.y);
             if (!fullHeight) { var track = Rect(r, "Track", new Vector2(size.x, 2), Vector2.zero); GameUITheme.Image(track, GameUITheme.Gray(.35f)); track.SetAsFirstSibling(); }
@@ -105,9 +104,9 @@ namespace Mavis.VisualStyles
             root.transform.SetParent(transform, false);
             var canvas = root.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 1400; GameUITheme.Scale(canvas);
             panel = root; Stretch(root.GetComponent<RectTransform>());
-            var shade = root.AddComponent<Image>(); shade.color = new Color(.018f, .024f, .033f, .98f);
+            var shade = root.AddComponent<Image>(); shade.color = GameUITheme.Backdrop;
             var sheet = Rect(root.transform, "Visual style panel", new Vector2(1520, 960), Vector2.zero);
-            Label(sheet, "VISUAL STYLE", 38, new Vector2(0, 414), new Vector2(900, 60)).color = parchment;
+            Label(sheet, "VISUAL STYLE", 38, new Vector2(0, 414), new Vector2(900, 60));
             subtitle = Label(sheet, "One world. Choose how you see it.", 19, new Vector2(0, 367), new Vector2(900, 32)); subtitle.color = GameUITheme.Secondary;
             Button(sheet, "CLOSE", new Vector2(660, 416), new Vector2(150, 48), Close);
             gallery = Rect(sheet, "Style cards", new Vector2(1440, 700), Vector2.zero).gameObject;
@@ -120,11 +119,11 @@ namespace Mavis.VisualStyles
                 var card = Rect(gallery.transform, preset.id, size, new Vector2(x, compact ? 200-(i/3)*250 : 75));
                 var border = card.gameObject.AddComponent<Image>(); border.color = GameUITheme.Gray(.32f); borders.Add(border);
                 var hover = card.gameObject.AddComponent<VisualStyleCardHover>();
-                hover.entered = () => border.color = VisualStyleManager.Instance.Current == preset ? parchment : GameUITheme.Gray(.58f);
+                hover.entered = () => border.color = VisualStyleManager.Instance.Current == preset ? GameUITheme.Foreground : GameUITheme.Muted;
                 hover.exited = Refresh;
                 var body = Rect(card, "Surface", size-Vector2.one*4, Vector2.zero); GameUITheme.Image(body, GameUITheme.Gray(.045f));
                 Picture(body, "Actual scene preview", preset.preview, compact ? new Vector2(224,126) : new Vector2(320,180), compact ? new Vector2(-105,35) : new Vector2(0,110));
-                Label(body, preset.displayName, 22, compact ? new Vector2(124,75) : new Vector2(0,-10), compact ? new Vector2(190,32) : new Vector2(312,34)).color = parchment;
+                Label(body, preset.displayName, 22, compact ? new Vector2(124,75) : new Vector2(0,-10), compact ? new Vector2(190,32) : new Vector2(312,34));
                 Label(body, preset.description, compact ? 16 : 17, compact ? new Vector2(124,12) : new Vector2(0,-78), compact ? new Vector2(188,90) : new Vector2(304,88)).color = GameUITheme.Secondary;
                 var button = Button(body, "SELECT", new Vector2(0,compact ? -83 : -174), compact ? new Vector2(420,38) : new Vector2(306,44), () => VisualStyleManager.Instance.Select(preset.id));
                 styleButtons.Add(button); captions.Add(button.GetComponentInChildren<Text>());
@@ -203,7 +202,7 @@ namespace Mavis.VisualStyles
             {
                 bool selected = manager.Presets[i] == manager.Current;
                 captions[i].text = selected ? "SELECTED" : "SELECT STYLE";
-                borders[i].color = selected ? parchment : GameUITheme.Gray(.24f);
+                borders[i].color = selected ? GameUITheme.Foreground : GameUITheme.Track;
                 GameUITheme.StyleButton(styleButtons[i], selected);
             }
             IntensitySlider.SetValueWithoutNotify(manager.Intensity);

@@ -212,16 +212,16 @@ public sealed partial class SkyboardRingRally : MonoBehaviour
         GameUITheme.Scale(canvas);
         var card = GameUITheme.Rect(hud.transform, "Race timing", new Vector2(0, 1), new Vector2(545, 96));
         card.pivot = new Vector2(0, 1); card.anchoredPosition = new Vector2(28, -25);
-        GameUITheme.Image(card, new Color(.035f, .045f, .105f, .95f));
+        GameUITheme.Image(card, GameUITheme.Surface);
         GameUITheme.Rule(card, new Vector2(0, -2), new Vector2(545, 3), new Color(.25f, .88f, 1f), new Vector2(.5f, 1));
         status = GameUITheme.Label(card, "Race status", 23, new Vector2(-254, -26), new Vector2(510, 34), TextAnchor.MiddleLeft);
         detail = GameUITheme.Label(card, "Race detail", 18, new Vector2(-254, -65), new Vector2(510, 50), TextAnchor.MiddleLeft);
         hudCard = card.gameObject; hudCard.SetActive(false);
         var center = GameUITheme.Rect(hud.transform, "Countdown", new Vector2(.5f, .5f), new Vector2(140, 130));
         center.anchoredPosition = new Vector2(0, 110);
-        GameUITheme.Image(center, new Color(.035f, .045f, .105f, .84f));
+        GameUITheme.Image(center, GameUITheme.Surface);
         countdown = GameUITheme.Label(center, "Countdown number", 72, Vector2.zero, new Vector2(140, 125), TextAnchor.MiddleCenter);
-        countdown.color = new Color(.29f, .94f, 1f);
+        countdown.fontStyle = FontStyle.Bold;
         countdownCard = center.gameObject; countdownCard.SetActive(false);
     }
 

@@ -2,7 +2,19 @@ using UnityEngine;
 
 public static class SecondIslandProp
 {
-    public static GameObject Load(string asset) => Resources.Load<GameObject>("SecondIslandProps/" + asset);
+    public static GameObject Load(string asset)
+    {
+        string replacement=asset switch {
+            "Quaternius/Bench"=>"painted_wooden_bench",
+            "Quaternius/Crate"=>"wooden_crate_01",
+            "Holiday/lantern"=>"wooden_lantern_01",
+            "Kenney/cupcake"=>"food_apple_01",
+            "Kenney/lollypop"=>"Lollipop",
+            _=>null
+        };
+        var realistic=replacement!=null?Resources.Load<GameObject>("SecondIslandRealism/"+replacement):null;
+        return realistic?realistic:Resources.Load<GameObject>("SecondIslandProps/"+asset);
+    }
 
     public static Transform Mount(GameObject asset, Transform parent, Vector3 center, Vector3 size, Quaternion rotation, bool stretch = false)
     {

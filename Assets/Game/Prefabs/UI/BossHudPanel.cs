@@ -51,16 +51,18 @@ public sealed class BossHudPanel
         canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 160;
         GameUITheme.Scale(canvas);
         group = root.GetComponent<CanvasGroup>(); group.alpha = 0; group.blocksRaycasts = false; group.interactable = false;
-        var panel = GameUITheme.Rect(root.transform, "Encounter", new Vector2(.5f, 1), new Vector2(820, 86));
-        panel.pivot = new Vector2(.5f, 1); panel.anchoredPosition = new Vector2(0, -30);
+        var panel = GameUITheme.Rect(root.transform, "Encounter", new Vector2(.5f, 1), new Vector2(720, 64));
+        panel.pivot = new Vector2(.5f, 1); panel.anchoredPosition = new Vector2(0, -22);
         GameUITheme.Image(panel, GameUITheme.Surface);
-        GameUITheme.Rule(panel, new Vector2(0, -1), new Vector2(820, 1), GameUITheme.Muted, new Vector2(.5f, 1));
-        title = GameUITheme.Label(panel, "Boss name", 26, new Vector2(-386, -27), new Vector2(580, 34), TextAnchor.MiddleLeft);
-        numbers = GameUITheme.Label(panel, "Health value", 16, new Vector2(386, -27), new Vector2(170, 28), TextAnchor.MiddleRight);
-        var track = GameUITheme.Rect(panel, "Health track", new Vector2(.5f,1), new Vector2(772, 8));
-        track.anchoredPosition = new Vector2(0, -60); GameUITheme.Image(track, GameUITheme.Track);
+        title = GameUITheme.Label(panel, "Boss name", 24, new Vector2(-342, -23), new Vector2(545, 30), TextAnchor.MiddleLeft);
+        numbers = GameUITheme.Label(panel, "Health value", 16, new Vector2(342, -23), new Vector2(132, 26), TextAnchor.MiddleRight);
+        numbers.color = GameUITheme.Secondary;
+        var track = GameUITheme.Rect(panel, "Health track", new Vector2(.5f,1), new Vector2(684, 7));
+        track.anchoredPosition = new Vector2(0, -46); GameUITheme.Image(track, GameUITheme.Track);
         trail = GameUITheme.Fill(track, "Recent damage", GameUITheme.Muted);
         health = GameUITheme.Fill(track, "Health", GameUITheme.Foreground);
+        for (int i = 1; i <= 3; i++)
+            GameUITheme.Rule(track, Vector2.zero, new Vector2(2, 7), GameUITheme.Surface, new Vector2(i * .25f, .5f));
         panels.Add(this);
     }
 

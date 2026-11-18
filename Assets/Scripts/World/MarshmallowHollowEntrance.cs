@@ -144,7 +144,7 @@ public sealed class MarshmallowHollowEntrance : MonoBehaviour
         var rect = (RectTransform)sheet.transform;
         rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
         rect.offsetMin = rect.offsetMax = Vector2.zero;
-        sheet.GetComponent<Image>().color = new Color(.025f, .016f, .030f);
+        sheet.GetComponent<Image>().color = GameUITheme.Gray(GameUITheme.Backdrop.r);
         fade = cover.GetComponent<CanvasGroup>();
         fade.alpha = 0f; fade.blocksRaycasts = false;
     }
@@ -181,7 +181,7 @@ public sealed class MarshmallowHollowEntrance : MonoBehaviour
             prompt.text = "PIP\nBring the Gravity Wristband. Some doors down there open under your weight.";
         else if (nearDoor)
         {
-            prompt.text = GameControls.Prompt(GameControls.Command.Interact) + "   ENTER MARSHMALLOW HOLLOW\nThe old kilns are still warm.";
+            prompt.text = GameUITheme.InteractPrompt("Enter Marshmallow Hollow");
             if (body.isGrounded && GameControls.Down(GameControls.Command.Interact)) StartCoroutine(Enter());
         }
         else prompt.text = WaymarkCopied ? "PIP\nThat mark comes from somewhere beyond this island. Keep the rubbing close." :

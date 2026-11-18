@@ -1,0 +1,256 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e75314c921190d4d9ce36ab4fa441bf, type: 3}
+  m_Name: CombatSounds
+  m_EditorClassIdentifier: Assembly-CSharp::Mavis.CombatFeelProfile
+  normal:
+    stop: 0.045
+    cameraStrength: 0.065
+    cameraDuration: 0.13
+    vfx: 1.05
+    reaction: 1.25
+    knockback: 0.16
+  second:
+    stop: 0.04
+    cameraStrength: 0.05
+    cameraDuration: 0.11
+    vfx: 0.95
+    reaction: 1.1
+    knockback: 0.13
+  finisher:
+    stop: 0.085
+    cameraStrength: 0.095
+    cameraDuration: 0.18
+    vfx: 1.3
+    reaction: 1.7
+    knockback: 0.45
+  heavy:
+    stop: 0.08
+    cameraStrength: 0.1
+    cameraDuration: 0.19
+    vfx: 1.4
+    reaction: 1.8
+    knockback: 0.7
+  received:
+    stop: 0.055
+    cameraStrength: 0.075
+    cameraDuration: 0.15
+    vfx: 0.95
+    reaction: 1
+    knockback: 0
+  receivedHeavy:
+    stop: 0.085
+    cameraStrength: 0.1
+    cameraDuration: 0.19
+    vfx: 1.2
+    reaction: 1.25
+    knockback: 0
+  rifle:
+    stop: 0.028
+    cameraStrength: 0.025
+    cameraDuration: 0.075
+    vfx: 0.7
+    reaction: 0.65
+    knockback: 0
+  maximumContinuousStop: 0.13
+  hitStopResumeSeconds: 0.035
+  incomingDamageMultiplier: 0.7
+  maximumHitHealthFraction: 0.18
+  damageRecoverySeconds: 0.6
+  dodgeProtectionStart: 0.04
+  dodgeProtectionEnd: 0.72
+  receivedHitClip: {fileID: 7400000, guid: 51702e312b3878648bd9f4b5351a3e9b, type: 2}
+  receivedReactionSeconds: 0.36
+  receivedReactionWeight: 0.85
+  inputBuffer: 0.26
+  comboTransition: 0.07
+  comboRecoveryChain: 0.9
+  lightDodgeCancel: 0.9
+  heavyDodgeCancel: 0.62
+  trailLifetime: 0.095
+  lightSpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1.08
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.35
+      value: 1.05
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.53
+      value: 1.6
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.7
+      value: 1.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.88
+      value: 1.05
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  heavySpeed:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.8
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.6
+      value: 1.9
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 2.45
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  useControlTuning: 1
+  controlPreset: 0
+  balanced:
+    acceleration: 1.1
+    braking: 1.25
+    redirect: 1.65
+    airAcceleration: 0.8
+    airBraking: 0.72
+    turning: 1.16
+    animationAcceleration: 0.045
+    animationBraking: 0.06
+    groundFollowDistance: 0.6
+    mobileBladeFootwork: 1
+    matchOverspeedStride: 1
+    dodgeDuration: 0.82
+    lightCancel: 0.74
+    heavyCancel: 0.64
+    comboChain: 0.8
+    movingLanding: 0.12
+    cameraFollow: 1.15
+    cameraRelease: 10
+    manualLookGrace: 0.4
+  responsive:
+    acceleration: 1.25
+    braking: 1.5
+    redirect: 1.85
+    airAcceleration: 0.95
+    airBraking: 0.85
+    turning: 1.35
+    animationAcceleration: 0.035
+    animationBraking: 0.045
+    groundFollowDistance: 0.6
+    mobileBladeFootwork: 1
+    matchOverspeedStride: 1
+    dodgeDuration: 0.75
+    lightCancel: 0.7
+    heavyCancel: 0.62
+    comboChain: 0.76
+    movingLanding: 0.1
+    cameraFollow: 1.35
+    cameraRelease: 12
+    manualLookGrace: 0.4
+  weighty:
+    acceleration: 1
+    braking: 1.1
+    redirect: 1.45
+    airAcceleration: 0.7
+    airBraking: 0.65
+    turning: 1.05
+    animationAcceleration: 0.055
+    animationBraking: 0.07
+    groundFollowDistance: 0.6
+    mobileBladeFootwork: 1
+    matchOverspeedStride: 1
+    dodgeDuration: 0.9
+    lightCancel: 0.8
+    heavyCancel: 0.7
+    comboChain: 0.86
+    movingLanding: 0.15
+    cameraFollow: 1
+    cameraRelease: 8
+    manualLookGrace: 0.4
+  cameraMotion: 1
+  impactBrightness: 0.8
+  contact:
+  - {fileID: 8300000, guid: 809dcbdb37c3a964cb490a6c0e008f76, type: 3}
+  - {fileID: 8300000, guid: 87d7056b2ff45dc4090d10d7552b7c37, type: 3}
+  - {fileID: 8300000, guid: b74fd69e5b954cd4ea644d6d752244b6, type: 3}
+  wood:
+  - {fileID: 8300000, guid: 0c750ad71e2f64a42a2defb46f2d85d9, type: 3}
+  - {fileID: 8300000, guid: 014025852dfeacf419909202d25afd43, type: 3}
+  - {fileID: 8300000, guid: 7325cb2fb100ea54a817d1e5eb2f3a31, type: 3}
+  metal:
+  - {fileID: 8300000, guid: d704b45cd01f9254f89ecd05b0f77437, type: 3}
+  - {fileID: 8300000, guid: 926fc796e53c7db47ab67cfd6637407d, type: 3}
+  - {fileID: 8300000, guid: 3b6e4139f55ee66459448d541f245c15, type: 3}
+  flesh:
+  - {fileID: 8300000, guid: 0f6ec6820d9dd404998e616782e7c4c4, type: 3}
+  - {fileID: 8300000, guid: 0d70bb9d642a3014abe1b40d321c96f4, type: 3}
+  - {fileID: 8300000, guid: e38e80153c66d614d81b851a72112aba, type: 3}
+  lowImpact:
+  - {fileID: 8300000, guid: 3581c1c4574bafb4e8809802469a4c9d, type: 3}
+  enemyReaction: []
+  soundVolume: 0.67

@@ -12,7 +12,7 @@ public sealed partial class Story1WreckBattle
     AvatarMask redGameplayChargeMask;
     bool redSamplingGameplayCharge;
     float redGameplayHoldPhase,redGameplayFullCharge,redGameplayContactPhase,redGameplayContactSeconds;
-    float redGameplayChargePhase;
+    float redGameplayChargePhase, redCounterWindowStart;
     readonly float[] redGameplayReleaseTimes=new float[257];
     Transform[] redChargeHandoffBones;
     Quaternion[] redChargeHandoffRotations;
@@ -53,6 +53,7 @@ public sealed partial class Story1WreckBattle
             if(redGameplayChargeMask==null)throw new InvalidOperationException("Gameplay charge mask missing.");
             redGameplayHoldPhase=attack.maxChargePosePhase;
             redGameplayFullCharge=attack.EffectiveFullChargeTime;
+            redCounterWindowStart = attack.heavySwingWindowStart;
             redGameplayContactPhase=Mathf.Lerp(attack.heavySwingWindowStart,attack.heavySwingWindowEnd,.5f);
             var feel=attack.feel?attack.feel:CombatFeelProfile.Default;
             // Same phase-dependent speed as SahurAttack.UpdateChargeLayerWeight.

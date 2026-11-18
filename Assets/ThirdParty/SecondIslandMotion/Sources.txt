@@ -1,0 +1,9 @@
+Quaternius Universal Animation Library 2 — free Standard edition
+https://quaternius.com/packs/universalanimationlibrary2.html
+https://quaternius.itch.io/universal-animation-library-2
+License: CC0; see License.txt. Downloaded 2026-11-08.
+
+The original FBX is preserved. Rig-specific compositions are baked separately to
+Assets/Resources/SecondIslandMotion using Tools/BuildSecondIslandMotions.cs.
+Those compositions also reuse the existing CC0 KayKit character animation library
+under Assets/ThirdParty/CapriPolishKayKit (license kept in that directory).

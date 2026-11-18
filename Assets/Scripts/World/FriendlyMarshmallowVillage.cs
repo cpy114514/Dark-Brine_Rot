@@ -261,7 +261,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
         message.gameObject.SetActive(false);
         var card=GameUITheme.Rect(obj.transform,"Grove information",new Vector2(1,1),new Vector2(510,150));
         card.pivot=new Vector2(1,1);card.anchoredPosition=new Vector2(-25,-25);
-        GameUITheme.Image(card,new Color(.10f,.045f,.12f,.94f));
+        GameUITheme.Image(card,GameUITheme.Surface);
         questText=GameUITheme.Label(card,"Grove guide",21,Vector2.zero,new Vector2(470,130),TextAnchor.MiddleLeft);
         questText.rectTransform.anchorMin=questText.rectTransform.anchorMax=new Vector2(.5f,.5f);
         questText.rectTransform.pivot=new Vector2(.5f,.5f);
@@ -450,7 +450,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
         if(!prefab)return;
         var frame=GameUITheme.Rect(parent,"Marshmallow portrait frame",new Vector2(1,1),new Vector2(205,205));
         frame.pivot=Vector2.one;frame.anchoredPosition=new Vector2(-28,-25);
-        GameUITheme.Image(frame,new Color(.12f,.06f,.14f,.88f));
+        GameUITheme.Image(frame,GameUITheme.Surface);
         var imageRect=GameUITheme.Rect(frame,"Marshmallow portrait",new Vector2(.5f,.5f),new Vector2(190,190));
         imageRect.anchoredPosition=Vector2.zero;
         var image=imageRect.gameObject.AddComponent<RawImage>();image.raycastTarget=false;

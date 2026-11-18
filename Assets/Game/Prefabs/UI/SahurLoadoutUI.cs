@@ -52,16 +52,15 @@ namespace Mavis
         float hintRemaining = 8f;
         Text details;
         Font font;
-        EquipmentJournalInk specimen;
-        static readonly Color Ink = new Color(.22f,.17f,.12f);
-        static readonly Color Pencil = new Color(.43f,.36f,.27f);
-        static readonly Color Rust = new Color(.52f,.24f,.12f);
+        static readonly Color Ink = new Color(.96f,.96f,.96f);
+        static readonly Color Pencil = new Color(.66f,.66f,.66f);
+        static readonly Color Rust = Color.white;
         readonly System.Collections.Generic.List<EquipmentItem> recentPickups = new System.Collections.Generic.List<EquipmentItem>();
         float previousTimeScale;
         CursorLockMode previousCursor;
         bool previousCursorVisible;
-        readonly Color track = GameUITheme.Track;
-        readonly Color accent = GameUITheme.Foreground;
+        readonly Color track = new Color(.075f,.075f,.075f);
+        readonly Color accent = Color.white;
 
         void Awake()
         {
@@ -160,7 +159,7 @@ namespace Mavis
             if(itemBrowser)itemBrowser.SetActive(false);
             if(skillChoices)skillChoices.SetActive(true);
             if(categoryTitle)categoryTitle.text="Skill slots";
-            if(specimen)specimen.SetDrawing(EquipmentJournalInk.Drawing.Skill);
+
             if(itemTitle)itemTitle.text="Skill " + (index+1);
             if(actionText){actionText.text="No skills available";equipButton.interactable=false;}
             if(unequipButton)unequipButton.gameObject.SetActive(false);
@@ -213,13 +212,13 @@ namespace Mavis
             var label=Button(itemContent,GameLocalization.Text(title)+"\n"+GameLocalization.Text(status),new Vector2(0,-54-index*104),new Vector2(304,90),click);
             var rect=(RectTransform)label.transform.parent;rect.anchorMin=rect.anchorMax=new Vector2(.5f,1);
             label.fontSize=19;label.resizeTextMaxSize=19;
-            rect.localRotation=Quaternion.Euler(0,0,index%2==0?-.5f:.4f);
+            rect.localRotation=Quaternion.identity;
             itemRows.Add(rect.gameObject);
         }
         void InspectWeapon(int index)
         {
             selectedWeapon=index;selectedItem=null;
-            if(specimen)specimen.SetDrawing(index==2?EquipmentJournalInk.Drawing.Rifle:index==0?EquipmentJournalInk.Drawing.Stick:EquipmentJournalInk.Drawing.Blades);
+
             bool owned=weapons!=null&&weapons.Owns((SahurWeaponLoadout.Weapon)index);
             bool rifleLocked=index==2&&weapons!=null&&!weapons.RifleUnlocked;
             bool lostStick=index==0 && weapons!=null && !weapons.HasStick;
@@ -247,7 +246,7 @@ namespace Mavis
             var glasses=GetComponent<WeaknessGlasses>();bool isGlasses=item&&item.id=="nailong_weakness_glasses";
             var worn=GetComponent<SahurWearableEquipment>();bool wearable=SahurWearableEquipment.CanWear(item);
             bool wearing=worn&&worn.IsEquipped(item);
-            if(specimen)specimen.SetDrawing(isGlasses?EquipmentJournalInk.Drawing.Glasses:SlotDrawing(Mathf.Max(0,editingEquipment)));
+
             bool owned=item&&inventory!=null&&inventory.Count(item)>0;
             itemTitle.text=item?item.LocalizedName:"No gear";
             selectionStatus.text=isGlasses?(glasses&&glasses.Equipped?"Equipped":owned?"Collected":"Locked"):owned?"Collected":item?"Locked":"Collected gear will appear here";
@@ -274,7 +273,7 @@ namespace Mavis
             }
             if (item && item.id == "skyboard")
             {
-                if (specimen) specimen.SetDrawing(EquipmentJournalInk.Drawing.Board);
+
                 var board = FindFirstObjectByType<SkyboardReward>();
                 var village = FindFirstObjectByType<FriendlyMarshmallowVillage>();
                 bool inGrove=village && village.InGrove;
@@ -287,7 +286,7 @@ namespace Mavis
             }
             if (item && item.id == "speed_scroll")
             {
-                if (specimen) specimen.SetDrawing(EquipmentJournalInk.Drawing.Scroll);
+
                 selectionStatus.text = owned ? "Available: " + inventory.Count(item) : "None left";
                 details.text = "Choose a collected item to reduce its remaining cooldown by up to 20 minutes.\n\nThe Skyboard's 15-minute cooldown is fully cleared by one scroll. A scroll is consumed only when the selected item is cooling down.";
                 actionText.text = "Use (4)";
@@ -342,14 +341,14 @@ namespace Mavis
             if(!button)return;
             button.image.color=Color.white;
             var colors=button.colors;
-            colors.normalColor=selected?new Color(.77f,.56f,.31f,.32f):new Color(.86f,.77f,.59f,.13f);
+            colors.normalColor=selected?new Color(.24f,.24f,.24f):new Color(.075f,.075f,.075f);
             colors.selectedColor=colors.normalColor;
-            colors.highlightedColor=new Color(.76f,.55f,.30f,.4f);
-            colors.pressedColor=new Color(.65f,.43f,.22f,.48f);
-            colors.disabledColor=new Color(.66f,.57f,.43f,.16f);
+            colors.highlightedColor=new Color(.30f,.30f,.30f);
+            colors.pressedColor=new Color(.38f,.38f,.38f);
+            colors.disabledColor=new Color(.035f,.035f,.035f,.65f);
             colors.fadeDuration=.1f; button.colors=colors;
-            var line=button.transform.Find("Pen outline")?.GetComponent<EquipmentJournalInk>();
-            if(line)line.color=selected?Rust:new Color(Ink.r,Ink.g,Ink.b,.4f);
+            var line=button.GetComponent<Outline>();
+            if(line)line.effectColor=selected?Color.white:new Color(1,1,1,.22f);
             foreach(var caption in button.GetComponentsInChildren<Text>())caption.color=selected?Rust:Ink;
         }
         public void EquipSelection()
@@ -412,11 +411,24 @@ namespace Mavis
             if(glasses && glasses.Equipped)equipmentLabels[(int)EquipmentSlot.Head].text=GameLocalization.Text("Head")+"\n"+GameLocalization.Text("Equipped");
             if(weaponHint && weapons!=null)
             {
-                string locked=GameLocalization.Text("Locked"),missing=GameLocalization.Text("Not collected");
-                weaponHint.text=(weapons.WeaponMissing?GameLocalization.Text("Weapon lost"):GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName)+"\n[1] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.Stick)+(weapons.HasStick?"":" · "+GameLocalization.Text("Weapon lost"))+
-                    "\n[2] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.CapriTwinBlades)+(weapons.HasTwinBlades?"":" · "+locked)+
-                    "\n[3] "+SahurWeaponLoadout.DisplayName(SahurWeaponLoadout.Weapon.M4A1)+(!weapons.RifleUnlocked?" · "+locked:weapons.HasM4A1?"":" · "+missing);
-                if(GameControls.UsingGamepad)weaponHint.text=GameLocalization.Text("Current weapon")+"  "+weapons.WeaponName+"\n["+GameControls.Prompt(GameControls.Command.NextWeapon)+"] Cycle weapon";
+                string alternatives = "";
+                foreach (SahurWeaponLoadout.Weapon weapon in System.Enum.GetValues(typeof(SahurWeaponLoadout.Weapon)))
+                {
+                    if (weapon == weapons.CurrentWeapon || !weapons.Owns(weapon) ||
+                        (weapon == SahurWeaponLoadout.Weapon.M4A1 && !weapons.RifleUnlocked)) continue;
+                    if (GameControls.UsingGamepad)
+                    {
+                        alternatives = "[" + GameControls.Prompt(GameControls.Command.NextWeapon) + "] " + GameLocalization.Text("Cycle weapon");
+                        break;
+                    }
+                    if (alternatives.Length > 0) alternatives += "     ";
+                    alternatives += "[" + ((int)weapon + 1) + "] " + SahurWeaponLoadout.DisplayName(weapon);
+                }
+                weaponHint.text = weapons.WeaponMissing ? weapons.WeaponName :
+                    GameLocalization.Text("Current weapon") + "  " + weapons.WeaponName;
+                if (alternatives.Length > 0) weaponHint.text += "\n<size=16>" + alternatives + "</size>";
+                weaponHint.rectTransform.sizeDelta = new Vector2(Mathf.Clamp(weaponHint.preferredWidth + 8f, 150f, 500f),
+                    alternatives.Length > 0 ? 52f : 32f);
             }
             if (editingEquipment >= 0) SelectEquipment((EquipmentSlot)editingEquipment);
             else SelectSkillForAssignment(EditingSkill);
@@ -462,7 +474,7 @@ namespace Mavis
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(root, gameObject.scene);
             var canvas = root.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            // Keep arrival captions and boss HUDs beneath the modal paper overlay.
+            // Keep arrival captions and boss HUDs beneath the equipment modal.
             canvas.sortingOrder = 910;
             var scaler = root.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -480,36 +492,37 @@ namespace Mavis
                 Label(frame, (i + 1) + "   Empty", Vector2.zero, new Vector2(76, 50), 18, Color.white);
             }
             loadoutHint = Label(root.transform, "I  Gear / Skills", new Vector2(-120, 30), new Vector2(220, 30), 18, Color.white, new Vector2(1, 0));
-            weaponHint = Label(root.transform, "", new Vector2(278, 226), new Vector2(500, 128), 18, GameUITheme.Foreground, new Vector2(0,0));
+            weaponHint = Label(root.transform, "", new Vector2(46, 150), new Vector2(500, 52), 20, GameUITheme.Foreground, new Vector2(0,0));
+            weaponHint.name = "Current weapon caption";
+            weaponHint.rectTransform.pivot = Vector2.zero;
             weaponHint.alignment = TextAnchor.MiddleLeft;
+            GameUITheme.OutlineSymbol(weaponHint);
             pickupNotice = Label(root.transform, "", new Vector2(0, 164), new Vector2(1100, 36), 22, accent, new Vector2(.5f, 0));
             panel = Box(root.transform, "Loadout overlay", new Vector2(.5f, .5f), Vector2.zero, new Vector2(1920, 1080), new Color(0, 0, 0, .72f)).gameObject;
             var shade = (RectTransform)panel.transform;
             shade.anchorMin = Vector2.zero; shade.anchorMax = Vector2.one; shade.sizeDelta = Vector2.zero;
             shade.GetComponent<Image>().raycastTarget = true;
-            var window = Box(shade, "Equipment sketchbook", new Vector2(.5f,.5f),Vector2.zero,new Vector2(1380,920),Color.white);
-            window.GetComponent<Image>().sprite=Resources.Load<Sprite>("EquipmentJournal/Sketchbook");
-            var heading=Label(window,"SAHUR / FIELD NOTES",new Vector2(-352,355),new Vector2(510,55),34,Ink);
+            var window = Box(shade, "Equipment panel", new Vector2(.5f,.5f),Vector2.zero,new Vector2(1380,840),new Color(.025f,.025f,.025f));
+            var heading=Label(window,"EQUIPMENT",new Vector2(-352,355),new Vector2(510,55),34,Ink);
             heading.alignment=TextAnchor.MiddleLeft;
-            heading.rectTransform.localRotation=Quaternion.Euler(0,0,-1);
-            Pen(window,EquipmentJournalInk.Drawing.Rule,new Vector2(-327,318),new Vector2(570,7),Ink);
-            var note=Label(window,"Equipment & island finds",new Vector2(-355,285),new Vector2(510,28),16,Pencil);
+            Box(window,"Header divider",new Vector2(.5f,.5f),new Vector2(0,318),new Vector2(1240,1),new Color(1,1,1,.3f));
+            Box(window,"Category divider",new Vector2(.5f,.5f),new Vector2(-400,-35),new Vector2(1,590),new Color(1,1,1,.16f));
+            Box(window,"Details divider",new Vector2(.5f,.5f),new Vector2(28,-35),new Vector2(1,590),new Color(1,1,1,.16f));
+            var note=Label(window,"Equipment & skills",new Vector2(-355,285),new Vector2(510,28),16,Pencil);
             note.alignment=TextAnchor.MiddleLeft;
-            Button(window,"Close ×",new Vector2(458,-391),new Vector2(150,42),()=>SetOpen(false));
+            Button(window,"Close ×",new Vector2(550,355),new Vector2(150,42),()=>SetOpen(false));
             Label(window,"Gear slots",new Vector2(-516,229),new Vector2(210,30),17,Pencil);
             for(int i=0;i<equipmentNames.Length;i++)
             {
                 int index=i;
                 equipmentLabels[i]=Button(window,equipmentNames[i]+"     Empty",new Vector2(-516,164-i*76),new Vector2(214,64),()=>SelectEquipment((EquipmentSlot)index));
                 var label=equipmentLabels[i];
-                label.rectTransform.anchoredPosition=new Vector2(23,0);label.rectTransform.sizeDelta=new Vector2(157,58);
+                label.rectTransform.anchoredPosition=Vector2.zero;label.rectTransform.sizeDelta=new Vector2(194,58);
                 label.fontSize=18;label.resizeTextMaxSize=18;
                 categoryFrames[i]=label.transform.parent.GetComponent<Image>();
-                Pen(label.transform.parent,SlotDrawing(i),new Vector2(-81,0),new Vector2(34,40),Ink);
             }
             Button(window,"Skill slots >",new Vector2(-216,-295),new Vector2(304,46),()=>SelectSkillForAssignment(EditingSkill));
             categoryTitle=Label(window,"Weapons",new Vector2(-216,229),new Vector2(320,30),19,Ink);
-            Pen(window,EquipmentJournalInk.Drawing.Rule,new Vector2(-216,205),new Vector2(290,4),Pencil);
             itemBrowser=new GameObject("Equipment browser",typeof(RectTransform));itemBrowser.transform.SetParent(window,false);
             var viewport=Box(itemBrowser.transform,"Scrollable item list",new Vector2(.5f,.5f),new Vector2(-216,-37),new Vector2(330,470),Color.clear);
             viewport.GetComponent<Image>().raycastTarget=true;viewport.gameObject.AddComponent<RectMask2D>();
@@ -525,35 +538,11 @@ namespace Mavis
             }
             itemTitle=Label(window,"",new Vector2(333,288),new Vector2(470,50),29,Ink);
             selectionStatus=Label(window,"",new Vector2(333,246),new Vector2(470,28),16,Rust);
-            specimen=Pen(window,EquipmentJournalInk.Drawing.Stick,new Vector2(333,133),new Vector2(210,175),Ink);
-            Pen(window,EquipmentJournalInk.Drawing.Rule,new Vector2(333,26),new Vector2(450,6),Pencil);
-            details=Label(window,"",new Vector2(333,-124),new Vector2(450,267),20,Ink);
+            details=Label(window,"",new Vector2(333,-10),new Vector2(450,430),20,Ink);
             details.alignment=TextAnchor.UpperLeft;
             actionText=Button(window,"Gear",new Vector2(333,-290),new Vector2(450,50),EquipSelection);equipButton=actionText.transform.parent.GetComponent<Button>();
             unequipText=Button(window,"Unequip Glasses",new Vector2(333,-345),new Vector2(450,40),UnequipSelection);unequipButton=unequipText.transform.parent.GetComponent<Button>();
             Label(window,"I / Esc to close",new Vector2(-126,-387),new Vector2(220,30),15,Pencil);
-        }
-
-        static EquipmentJournalInk.Drawing SlotDrawing(int slot)
-        {
-            switch(slot)
-            {
-                case 0:return EquipmentJournalInk.Drawing.Head;
-                case 1:return EquipmentJournalInk.Drawing.Coat;
-                case 2:return EquipmentJournalInk.Drawing.Trousers;
-                case 3:return EquipmentJournalInk.Drawing.Boots;
-                case 5:return EquipmentJournalInk.Drawing.Scroll;
-                default:return EquipmentJournalInk.Drawing.Stick;
-            }
-        }
-
-        EquipmentJournalInk Pen(Transform parent,EquipmentJournalInk.Drawing drawing,Vector2 position,Vector2 size,Color color)
-        {
-            var obj=new GameObject(drawing==EquipmentJournalInk.Drawing.Border?"Pen outline":"Ink sketch",typeof(RectTransform),typeof(CanvasRenderer),typeof(EquipmentJournalInk));
-            obj.transform.SetParent(parent,false);
-            var rect=(RectTransform)obj.transform;rect.anchoredPosition=position;rect.sizeDelta=size;
-            var pen=obj.GetComponent<EquipmentJournalInk>();pen.raycastTarget=false;pen.color=color;pen.SetDrawing(drawing);
-            return pen;
         }
 
         RectTransform Box(Transform parent, string name, Vector2 anchor, Vector2 position, Vector2 size, Color color)
@@ -586,7 +575,7 @@ namespace Mavis
             var rect = Box(parent, title, new Vector2(.5f, .5f), position, size, track);
             var image = rect.GetComponent<Image>(); image.raycastTarget = true;
             var button = rect.gameObject.AddComponent<Button>(); button.targetGraphic = image;
-            Pen(rect,EquipmentJournalInk.Drawing.Border,Vector2.zero,size-new Vector2(3,3),new Color(Ink.r,Ink.g,Ink.b,.4f));
+            var border=rect.gameObject.AddComponent<Outline>();border.effectDistance=new Vector2(1,-1);border.useGraphicAlpha=false;
             SetSelected(button,false);
             var navigation = button.navigation; navigation.mode = Navigation.Mode.Automatic; button.navigation = navigation;
             button.onClick.AddListener(action);

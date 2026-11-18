@@ -10,6 +10,7 @@ Shader "DarkBrine/Marshmallow Surface"
         _FiberScale ("Fine sugar texture scale", Float) = 10
         _CloudMode ("Distant cloud mode", Float) = 0
         _SurfaceFinish ("Velvet sugar finish", Range(0,1)) = 0
+        [Toggle] _CocoaShore ("Use baked chocolate shore", Float) = 0
     }
     SubShader
     {
@@ -53,6 +54,14 @@ Shader "DarkBrine/Marshmallow Surface"
                 albedo *= 1 + (fibre - .5) * .065 * detailFade;
                 albedo = lerp(albedo, _PressedColor.rgb, saturate(response.y) * .46);
                 albedo = lerp(albedo, _Vanilla.rgb * 1.12, saturate(response.z) * .55);
+                half wet = 0;
+                if (i.cocoa > .002)
+                {
+                    float breakup = CandyNoise(i.restWS.xz * .72) * .55 + CandyNoise(i.restWS.xz * 2.6) * .45;
+                    wet = smoothstep(.08, .7, i.cocoa + (breakup - .5) * .36 * saturate(i.cocoa * 4));
+                    half3 cocoa = lerp(half3(.16,.065,.036), half3(.27,.125,.071), breakup);
+                    albedo = lerp(albedo, cocoa, wet);
+                }
                 half3 n = normalize(i.normalWS);
                 if (abs(response.x) > .001 || max(response.y, response.z) > .005)
                 {
@@ -68,8 +77,10 @@ Shader "DarkBrine/Marshmallow Surface"
                 half3 color = albedo * (ambient * .7 + sun.color * wrapped * shadow * .62 + .13);
                 half3 view = GetWorldSpaceNormalizeViewDir(i.positionWS);
                 half rim = pow(1 - saturate(dot(n, view)), 3);
-                color += _Vanilla.rgb * rim * .065;
-                color += pow(saturate(fibre), 18) * detailFade * .035 * wrapped;
+                color += _Vanilla.rgb * rim * .065 * (1-wet);
+                color += pow(saturate(fibre), 18) * detailFade * .035 * wrapped * (1-wet);
+                color += half3(.29,.16,.081) * pow(saturate(dot(n, SafeNormalize(view + sun.direction))), 24)
+                    * wet * .32 * sun.shadowAttenuation;
                 if (_SurfaceFinish > 0)
                 {
                     half sheen = pow(saturate(dot(n, SafeNormalize(view + sun.direction))), 20) * wrapped;

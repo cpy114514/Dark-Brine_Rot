@@ -49,7 +49,7 @@ namespace Mavis
             go.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;captionGroup=go.GetComponent<CanvasGroup>();captionGroup.blocksRaycasts=false;captionGroup.interactable=false;
             var text=new GameObject("Name",typeof(RectTransform),typeof(Text));text.transform.SetParent(go.transform,false);
             var rect=(RectTransform)text.transform;rect.anchorMin=Vector2.zero;rect.anchorMax=Vector2.one;rect.offsetMin=rect.offsetMax=Vector2.zero;
-            label=text.GetComponent<Text>();label.font=GameLocalization.Font?GameLocalization.Font:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");label.fontSize=28;label.alignment=TextAnchor.MiddleCenter;label.color=new Color(1,.83f,.39f);label.raycastTarget=false;
+            label=text.GetComponent<Text>();label.font=GameLocalization.Font?GameLocalization.Font:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");label.fontSize=28;label.alignment=TextAnchor.MiddleCenter;label.raycastTarget=false;
             var outline=text.AddComponent<Outline>();outline.effectColor=new Color(0,0,0,.95f);outline.effectDistance=new Vector2(1.5f,-1.5f);
             text.AddComponent<Pixel360WorldText>();
             GameLocalization.Changed+=RefreshLabel;RefreshLabel();
@@ -60,7 +60,7 @@ namespace Mavis
             if(!label)return;
             captionUnlocked=FirstIslandBossProgression.CanCollectItem(this,item);
             label.text="▼ "+item.LocalizedName+"\n"+(captionUnlocked?GameLocalization.Text("Loot · Walk up to collect"):FirstIslandBossProgression.RifleUnlockHint);
-            label.color=captionUnlocked?new Color(1,.83f,.39f):new Color(.7f,.7f,.7f);
+            label.color=captionUnlocked?GameUITheme.Foreground:GameUITheme.Secondary;
             if(markerMaterial)markerMaterial.SetColor("_BaseColor",captionUnlocked?new Color(1,.75f,.23f):new Color(.45f,.45f,.45f));
         }
         void Update()

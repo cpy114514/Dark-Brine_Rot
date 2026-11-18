@@ -14,7 +14,7 @@ public sealed class MarshmallowHollow : MonoBehaviour
     static readonly Vector3 EntranceExit = new Vector3(0,0,2);
     static readonly Vector3[] Checkpoints =
     {
-        new Vector3(0,0,4), new Vector3(0,0,33), new Vector3(0,8,72),
+        new Vector3(0,0,9.5f), new Vector3(0,0,33), new Vector3(0,8,72),
         new Vector3(0,8,95), new Vector3(0,8,137)
     };
     static readonly int[] PrismAnswer = { 1, 3, 2 };
@@ -206,7 +206,8 @@ public sealed class MarshmallowHollow : MonoBehaviour
     void BuildLobby()
     {
         art.Arch(transform, new Vector3(0,0,1), 7.8f, 7.2f, art.Stone);
-        var exitSign = MarshmallowHollowArt.Node(transform, "Interior exit sign", new Vector3(0,4.55f,1.95f));
+        // Mount the sign against the rear wall, outside the entry camera's view.
+        var exitSign = MarshmallowHollowArt.Node(transform, "Interior exit sign", new Vector3(0,4.55f,-1.36f));
         exitSign.localRotation = Quaternion.Euler(0,180,0);
         art.Panel(exitSign, "SURFACE EXIT", Vector3.zero, 4.55f,.72f);
         art.Panel(transform, "I   THE FIRST KILNS", new Vector3(0,6.6f,26.1f), 12,.88f);
@@ -362,7 +363,7 @@ public sealed class MarshmallowHollow : MonoBehaviour
         var status = GameUITheme.Rect(root.transform,"Exploration objective",new Vector2(0,1),new Vector2(510,150));
         status.pivot=new Vector2(0,1); status.anchoredPosition=new Vector2(28,-161);
         GameUITheme.Image(status,GameUITheme.Surface);
-        hud = GameUITheme.Label(status,"Pip",19,new Vector2(0,-75),new Vector2(476,143),TextAnchor.MiddleCenter);
+        hud = GameUITheme.Label(status,"Pip",19,new Vector2(-237,-75),new Vector2(474,143),TextAnchor.MiddleLeft);
         hudCard = status.gameObject;
         var exit = GameUITheme.Rect(root.transform,"Hollow exit prompt",new Vector2(.5f,0),new Vector2(510,52));
         exit.anchoredPosition = new Vector2(0,107);
@@ -372,7 +373,7 @@ public sealed class MarshmallowHollow : MonoBehaviour
         exitCard.SetActive(false);
         var notes = GameUITheme.Rect(root.transform,"Wall journal",new Vector2(1,.5f),new Vector2(515,476));
         notes.pivot=new Vector2(1,.5f); notes.anchoredPosition=new Vector2(-28,0);
-        GameUITheme.Image(notes,new Color(.055f,.040f,.074f,.96f));
+        GameUITheme.Image(notes,GameUITheme.Surface);
         journal=GameUITheme.Label(notes,"Recorded murals",20,new Vector2(0,-238),new Vector2(465,433),TextAnchor.UpperLeft);
         journalCard=notes.gameObject; journalCard.SetActive(false);
     }
@@ -391,7 +392,7 @@ public sealed class MarshmallowHollow : MonoBehaviour
         Vector3 feet = LocalFeet;
         bool atExit = Near(feet,EntranceExit,5.5f) || Chapter==4 && Near(feet,new Vector3(7.2f,8,139.8f),3.6f);
         exitCard.SetActive(atExit);
-        if (atExit) exitPrompt.text = GameControls.Prompt(GameControls.Command.Interact) + "   RETURN TO MARSHMALLOW ISLAND";
+        if (atExit) exitPrompt.text = GameUITheme.InteractPrompt("Return to Marshmallow Island");
         if (!entrance.CanAct())
         {
             ShowObjective("");
@@ -491,12 +492,12 @@ public sealed class MarshmallowHollow : MonoBehaviour
 
     void ShowObjective(string context)
     {
-        string instruction = context.Length>0 ? GameControls.Prompt(GameControls.Command.Interact)+"  "+context :
+        string instruction = context.Length>0 ? GameUITheme.InteractPrompt(context) :
             Time.unscaledTime<messageUntil ? message : Hints[Chapter];
         string objective = entrance.WaymarkCopied ? "Return to Marshmallow Island" : Objectives[Chapter];
         if (entrance.WaymarkCopied && context.Length==0 && Time.unscaledTime>=messageUntil)
             instruction = "Use the surface lift or return to the entrance.";
-        hud.text = "MARSHMALLOW HOLLOW   /   " + (Chapter<4 ? (Chapter+1)+" OF 4" : "THE STRANGER'S MARK") + "\n" + objective + "\n\n" +
+        hud.text = "<size=15>MARSHMALLOW HOLLOW   /   " + (Chapter<4 ? (Chapter+1)+" OF 4" : "THE STRANGER'S MARK") + "</size>\n<b>" + objective + "</b>\n\n" +
             instruction + "\nJ  Journal   ·   " + GameControls.Prompt(GameControls.Command.Gravity) + "  Gravity";
     }
 

@@ -14,7 +14,7 @@ namespace Mavis
         readonly System.Random pitchVariation = new System.Random();
         int cursor;
 
-        internal static AudioClip LoadClip(string name) => Resources.Load<AudioClip>("GameplayAudio/" + name);
+        internal static AudioClip LoadClip(string name) => SecondIslandAudio.Clip(name) ?? Resources.Load<AudioClip>("GameplayAudio/" + name);
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetStatics() => instance = null;
@@ -38,7 +38,9 @@ namespace Mavis
             for (int k = 0; k < clips.Length; k++)
             {
                 lastPlayed[k] = -100;
-                clips[k] = LoadClip(((Cue)k).ToString());
+                // Keep the persistent pool's fallback palette independent of the
+                // scene in which it was first created; Island 2 routes at playback.
+                clips[k] = Resources.Load<AudioClip>("GameplayAudio/" + ((Cue)k).ToString());
             }
         }
         public static void Play(Cue cue, Vector3 position, bool ui = false)
@@ -46,7 +48,7 @@ namespace Mavis
             if (!GameAudioPolicy.SoundEnabled || !Application.isPlaying) return;
             Prewarm();
             int index = (int)cue;
-            var clip = instance.clips[index];
+            var clip = SecondIslandAudio.Cue(cue) ?? instance.clips[index];
             if (!clip) return;
             if (Time.unscaledTime - instance.lastPlayed[index] < (cue == Cue.Warning ? .3f : .035f)) return;
             instance.lastPlayed[index] = Time.unscaledTime;

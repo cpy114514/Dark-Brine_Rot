@@ -49,7 +49,7 @@ namespace Mavis
             GUI.color=new Color(0,0,0,.8f);
             var label=new Rect(screen.x-100*scale,y+diameter*.5f+4*scale,200*scale,28*scale);
             GUI.DrawTexture(label,Texture2D.whiteTexture);
-            GUI.color=new Color(.1f,1,.8f);labelStyle.fontSize=Mathf.RoundToInt(18*scale);
+            GUI.color=GameUITheme.Foreground;labelStyle.fontSize=Mathf.RoundToInt(18*scale);
             GUI.Label(label,LocationLabel+"  ×1.5",labelStyle);
             GUI.color=previous;GUI.contentColor=previousContent;GUI.depth=previousDepth;
         }
@@ -64,7 +64,7 @@ namespace Mavis
                 float ring=Mathf.Clamp01(2.5f-Mathf.Abs(distance-38));
                 float outline=Mathf.Clamp01(4.5f-Mathf.Abs(distance-38));
                 float dot=Mathf.Clamp01(3-distance);
-                pixels[y*size+x]=Color.Lerp(new Color(0,0,0,outline*.9f),new Color(.05f,1,.8f,1),Mathf.Max(ring,dot));
+                pixels[y*size+x]=Color.Lerp(new Color(0,0,0,outline*.9f),Color.white,Mathf.Max(ring,dot));
             }
             reticle.SetPixels(pixels);reticle.Apply(false,true);
             labelStyle=new GUIStyle{font=GameLocalization.Font?GameLocalization.Font:Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"),alignment=TextAnchor.MiddleCenter,fontStyle=FontStyle.Bold};

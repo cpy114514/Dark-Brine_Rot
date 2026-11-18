@@ -92,7 +92,7 @@ namespace Mavis
 
             var healthBack = CreateImage(hud.transform, "Health Track", GameUITheme.Track);
             SetTopRow(healthBack.rectTransform, 18f, -44f, 8f);
-            healthFill = CreateImage(healthBack.transform, "Health Fill", new Color32(245, 245, 245, 255));
+            healthFill = CreateImage(healthBack.transform, "Health Fill", GameUITheme.Foreground);
             SetFillRect(healthFill.rectTransform);
 
             var staminaBack = CreateImage(hud.transform, "Stamina Track", GameUITheme.Track);

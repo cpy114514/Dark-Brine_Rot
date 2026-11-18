@@ -88,6 +88,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
     CharacterController characterController;
     MarshmallowTraversal marshmallow;
     public void BindMarshmallowTraversal() => marshmallow = GetComponent<MarshmallowTraversal>();
+    SecondIslandChocolateContact chocolateContact;
     bool SoftTraversal => marshmallow != null && marshmallow.LowGravityActive;
     float TraversalGravity => SoftTraversal ? marshmallow.gravity : gravity;
     float TraversalJumpHeight => SoftTraversal ? marshmallow.jumpHeight : jumpHeight;
@@ -371,6 +372,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         combat = GetComponent<Mavis.SahurAttack>();
         marshmallow = GetComponent<MarshmallowTraversal>();
+        chocolateContact = GetComponent<SecondIslandChocolateContact>();
         swimmingOcean = FindFirstObjectByType<OceanWorld>();
         playerStamina = GetComponent<Mavis.PlayerStamina>();
         Animator rootAnimator = GetComponent<Animator>();
@@ -521,6 +523,9 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         // Keep mounted camera/animation handling above, but never move an inactive controller.
         if (!characterController.enabled || !characterController.gameObject.activeInHierarchy) return;
 
+        bool hasChocolate = chocolateContact && chocolateContact.isActiveAndEnabled;
+        if (hasChocolate) chocolateContact.SampleBeforeMovement();
+        bool inChocolate = hasChocolate && chocolateContact.Depth > 0;
         Vector2 moveInput=GameControls.Move;
         Vector3 input = new Vector3(moveInput.x,0,moveInput.y);
         if (input.sqrMagnitude > 1f)
@@ -691,7 +696,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         // A soft surface returns a little energy while walking. Manual jumps,
         // combat, dodges and external movement owners keep their existing priority.
         if (SoftTraversal && marshmallow.WantsBound(grounded, moveDirection.sqrMagnitude > .01f,
-            acceptInput && !combatLocked && !isRolling && !ExternalMovementLock &&
+            acceptInput && !combatLocked && !isRolling && !ExternalMovementLock && !inChocolate &&
             WalkingTutorialConstraint == null && !OnFloatingWreckDeck && jumpBufferTimer <= 0f, Time.deltaTime))
         {
             verticalSpeed = Mathf.Sqrt(2f * TraversalGravity *
@@ -800,6 +805,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         float downwardSpeedBeforeMove = verticalSpeed;
         Vector3 movementStart=transform.position;
         float walkStrideScale = 1f;
+        Vector3 chocolateDrift = Vector3.zero;
         if (!attackRootMotion)
         {
             if (!isRolling && !sprinting && !combatLocked && !holdingRifle && !wading && !exitedSwimming &&
@@ -815,7 +821,13 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
                     walkStrideScale = WalkStrideScale(groundMoveSpeed, Time.deltaTime);
             }
 
-            Vector3 movementDelta = (planarVelocity * walkStrideScale + platformCarryVelocity + pushVelocity) * Time.deltaTime
+            Vector3 locomotion = planarVelocity * walkStrideScale;
+            if (inChocolate && grounded && acceptInput && !isRolling && !combatLocked)
+            {
+                chocolateDrift = chocolateContact.Current;
+                locomotion = locomotion * chocolateContact.SpeedFactor + chocolateDrift;
+            }
+            Vector3 movementDelta = (locomotion + platformCarryVelocity + pushVelocity) * Time.deltaTime
                 + Vector3.up * verticalDisplacement;
             movementDelta=FollowWalkableGround(movementDelta,grounded);
             if (WalkingTutorialConstraint != null) movementDelta = WalkingTutorialConstraint(movementDelta);
@@ -839,6 +851,7 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
         }
 
         bool onGround = verticalSpeed <= 0f && IsGroundedOrOnSea();
+        if (hasChocolate) chocolateContact.AfterMovement(onGround, Mathf.Max(0f, -downwardSpeedBeforeMove));
         if(onGround)platformCarryVelocity=Vector3.zero;
         if (airFlipTimer > 0f)
             airFlipTimer = onGround ? 0f : Mathf.Max(0f, airFlipTimer - Time.deltaTime);
@@ -875,7 +888,15 @@ public sealed partial class ThirdPersonPlayerController : MonoBehaviour
             // pre-update isRolling value on the frame that the roll finishes.
             // Drive the blend tree with the underlying speed so the step pulse
             // does not blend the animation in and out of a walk on each step.
-            float animationSpeed=rollTimer>0 ? 0 : actualPlanarSpeed / walkStrideScale;
+            float strideSpeed = actualPlanarSpeed;
+            if (chocolateDrift.sqrMagnitude > 0f)
+            {
+                // Advection can move a planted Sahur. Only his own travel drives the legs.
+                Vector3 travel = (transform.position - movementStart) / Mathf.Max(.0001f, Time.deltaTime);
+                strideSpeed = Mathf.Min(planarVelocity.magnitude * walkStrideScale,
+                    Vector3.ProjectOnPlane(travel - chocolateDrift, Vector3.up).magnitude);
+            }
+            float animationSpeed=rollTimer>0 ? 0 : strideSpeed / walkStrideScale;
             float damping=animationSpeed>animator.GetFloat(SpeedId) ? (TunedControls ? Response.animationAcceleration : .065f) : (TunedControls ? Response.animationBraking : .085f);
             animator.SetFloat(SpeedId,animationSpeed,damping,Time.deltaTime);
             MatchLocomotionStride(animationSpeed);

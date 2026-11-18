@@ -131,10 +131,11 @@ namespace Mavis
                 soundFrame=Time.frameCount;
                 if(GameAudioPolicy.SoundEnabled)
                 {
-                    Play(contactSource,config.contact,hit.point,config.soundVolume*(blocked?.6f:.85f));
-                    if(!blocked)Play(weightSource,config.lowImpact,hit.point,config.soundVolume*(hit.result==CombatHitResult.HeavyHit?.8f:.32f),.91f);
-                    Play(responseSource,surface==CombatMaterial.Metal?config.metal:surface==CombatMaterial.Wood?config.wood:config.flesh,hit.point,config.soundVolume*.35f);
-                    if(!blocked && config.enemyReaction!=null && config.enemyReaction.Length>0)Play(responseSource,config.enemyReaction,hit.point,config.soundVolume*.22f);
+                    var sound=SecondIslandAudio.SoundProfile(config);
+                    Play(contactSource,sound.contact,hit.point,sound.soundVolume*(blocked?.6f:.85f));
+                    if(!blocked)Play(weightSource,sound.lowImpact,hit.point,sound.soundVolume*(hit.result==CombatHitResult.HeavyHit?.8f:.32f),.91f);
+                    Play(responseSource,surface==CombatMaterial.Metal?sound.metal:surface==CombatMaterial.Wood?sound.wood:sound.flesh,hit.point,sound.soundVolume*.35f);
+                    if(!blocked && sound.enemyReaction!=null && sound.enemyReaction.Length>0)Play(responseSource,sound.enemyReaction,hit.point,sound.soundVolume*.22f);
                 }
                 if(viewer!=Camera.main || !cameraShake)
                 {viewer=Camera.main;if(viewer){cameraShake=viewer.GetComponent<CombatCameraShake>();if(!cameraShake)cameraShake=viewer.gameObject.AddComponent<CombatCameraShake>();}}

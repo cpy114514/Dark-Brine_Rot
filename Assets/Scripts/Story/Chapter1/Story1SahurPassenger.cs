@@ -17,7 +17,9 @@ public sealed class Story1SahurPassenger : MonoBehaviour
     Vector3 leftSole,rightSole;
     bool solesReady,deckCalibrated;
     PlayableGraph idleGraph;
-    AnimationClipPlayable idlePose;
+    AnimationClipPlayable idlePose, fidgetPose;
+    AnimationMixerPlayable passengerMixer;
+    internal const string DeckFidgetClip = "CH1_SahurDeckFidget_v279";
     bool idleInitialized,priorRootMotion;
     AnimationClip sailingIdle,stickFidget;
     Story1SharkCollisionSequence opening;
@@ -59,33 +61,46 @@ public sealed class Story1SahurPassenger : MonoBehaviour
                 opening=FindFirstObjectByType<Story1SharkCollisionSequence>();
                 foreach(var candidate in visual.runtimeAnimatorController.animationClips)
                     if(candidate.name=="Rig|Idle_Loop"){sailingIdle=candidate;break;}
-                var clip=Story1EncounterClipCache.Find("CH1_SahurStickIdle_v247");
-                if(clip==null)clip=Story1EncounterClipCache.Find("CH1_SahurStickIdle_v221");
-                stickFidget=clip;
-                if(sailingIdle!=null)clip=sailingIdle;
-                priorRootMotion=visual.applyRootMotion;priorAnimatorSpeed=visual.speed;
-                visual.applyRootMotion=false;visual.speed=0;
-                if(clip!=null)
+                stickFidget = Story1EncounterClipCache.Find(DeckFidgetClip);
+                priorRootMotion = visual.applyRootMotion;
+                priorAnimatorSpeed = visual.speed;
+                visual.applyRootMotion = false;
+                visual.speed = 0;
+                StickIdleTime = 0;
+                if (sailingIdle != null || stickFidget != null)
                 {
-                    idleGraph=PlayableGraph.Create("Sahur ship stick fidget v246");
+                    idleGraph = PlayableGraph.Create("Sahur on deck");
                     idleGraph.SetTimeUpdateMode(DirectorUpdateMode.Manual);
-                    idlePose=AnimationClipPlayable.Create(idleGraph,clip);idlePose.SetSpeed(0);
-                    AnimationPlayableOutput.Create(idleGraph,"Passenger idle",visual).SetSourcePlayable(idlePose);idleGraph.Play();
+                    passengerMixer = AnimationMixerPlayable.Create(idleGraph, 2);
+                    if (sailingIdle != null)
+                    {
+                        idlePose = AnimationClipPlayable.Create(idleGraph, sailingIdle);
+                        idlePose.SetSpeed(0);
+                        passengerMixer.ConnectInput(0, idlePose, 0);
+                    }
+                    if (stickFidget != null)
+                    {
+                        fidgetPose = AnimationClipPlayable.Create(idleGraph, stickFidget);
+                        fidgetPose.SetSpeed(0);
+                        passengerMixer.ConnectInput(1, fidgetPose, 0);
+                    }
+                    AnimationPlayableOutput.Create(idleGraph, "Passenger", visual).SetSourcePlayable(passengerMixer);
+                    idleGraph.Play();
                 }
-                idleInitialized=true;
+                idleInitialized = true;
             }
-            if(idleGraph.IsValid())
+            if (idleGraph.IsValid())
             {
-                bool fidget=opening==null||opening.VoyageTime>=opening.HelmControlSeconds-OpeningLeadInSeconds;
-                var desired=fidget?stickFidget:sailingIdle;
-                if(desired!=null&&idlePose.GetAnimationClip()!=desired)
-                {
-                    idleGraph.DestroyPlayable(idlePose);
-                    idlePose=AnimationClipPlayable.Create(idleGraph,desired);idlePose.SetSpeed(0);
-                    ((AnimationPlayableOutput)idleGraph.GetOutput(0)).SetSourcePlayable(idlePose);
-                }
-                if(fidget)StickIdleTime+=Time.deltaTime;
-                idlePose.SetTime(Mathf.Repeat(fidget?StickIdleTime:Time.time,idlePose.GetAnimationClip().length));idleGraph.Evaluate(0);
+                bool fidget = opening == null || opening.VoyageTime >= opening.HelmControlSeconds - OpeningLeadInSeconds;
+                if (fidget) StickIdleTime += Time.deltaTime;
+                if (idlePose.IsValid()) idlePose.SetTime(Mathf.Repeat(Time.time, sailingIdle.length));
+                if (fidgetPose.IsValid()) fidgetPose.SetTime(Mathf.Min(StickIdleTime, stickFidget.length));
+                float weight = Mathf.SmoothStep(0, 1, StickIdleTime / .22f);
+                if (sailingIdle == null) weight = 1;
+                if (stickFidget == null) weight = 0;
+                passengerMixer.SetInputWeight(0, 1 - weight);
+                passengerMixer.SetInputWeight(1, weight);
+                idleGraph.Evaluate(0);
             }
             visual.SetFloat("Speed", 0f);
             if(!solesReady){SahurSupportPose.MeasureSoles(visual,ref leftSole,ref rightSole);solesReady=true;}

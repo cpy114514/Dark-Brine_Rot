@@ -50,12 +50,12 @@ public sealed class MarshmallowHealthBars : MonoBehaviour
         var root = new GameObject("Health - " + health.name, typeof(RectTransform), typeof(Image));
         var rect = root.GetComponent<RectTransform>(); rect.SetParent(transform, false);
         rect.anchorMin = rect.anchorMax = Vector2.zero; rect.pivot = new Vector2(.5f, .5f); rect.sizeDelta = new Vector2(56, 8);
-        var track = root.GetComponent<Image>(); track.color = new Color(.08f, .04f, .08f, .88f); track.raycastTarget = false;
+        var track = root.GetComponent<Image>(); track.color = GameUITheme.Surface; track.raycastTarget = false;
         var fillObject = new GameObject("Health fill", typeof(RectTransform), typeof(Image));
         var fill = fillObject.GetComponent<RectTransform>(); fill.SetParent(rect, false);
         fill.anchorMin = Vector2.zero; fill.anchorMax = Vector2.one;
         fill.offsetMin = new Vector2(1.5f, 1.5f); fill.offsetMax = new Vector2(-1.5f, -1.5f);
-        var fillImage = fillObject.GetComponent<Image>(); fillImage.color = new Color(.45f, .95f, .65f, 1f); fillImage.raycastTarget = false;
+        var fillImage = fillObject.GetComponent<Image>(); fillImage.color = GameUITheme.Foreground; fillImage.raycastTarget = false;
         root.SetActive(false);
         entries.Add(new Entry { health = health, rect = rect, fill = fill, fillImage = fillImage });
     }
@@ -96,7 +96,6 @@ public sealed class MarshmallowHealthBars : MonoBehaviour
             {
                 item.displayedRatio=ratio;
                 item.fill.anchorMax = new Vector2(ratio, 1f);
-                item.fillImage.color = Color.Lerp(new Color(1f, .32f, .32f), new Color(.45f, .95f, .65f), ratio);
             }
         }
     }

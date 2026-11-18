@@ -1,12 +1,12 @@
 using UnityEngine;
 
 /// <summary>Pooled world-space seals, staff trail and impact sparks for one encounter.</summary>
-internal sealed class HuangMeiSealEffects
+internal sealed partial class HuangMeiSealEffects
 {
     const int Segments=48;
     const int RadialRows=7;
-    static readonly Color Amber=new Color(1.25f,.43f,.055f,1);
-    static readonly Color Gold=new Color(2.2f,1.2f,.24f,1);
+    static readonly Color Amber=new Color(.94f,.58f,.21f,.84f);
+    static readonly Color Gold=new Color(1.9f,1.45f,.65f,1);
     static readonly Vector2[] PalmGlyph={
         new Vector2(-.22f,-.67f),new Vector2(-.30f,-.34f),new Vector2(-.58f,-.13f),new Vector2(-.61f,.02f),
         new Vector2(-.50f,.11f),new Vector2(-.30f,.04f),new Vector2(-.36f,.45f),new Vector2(-.27f,.53f),
@@ -29,6 +29,7 @@ internal sealed class HuangMeiSealEffects
     readonly TrailRenderer staff;
     readonly AudioSource voice;
     readonly AudioClip gong, thump;
+    readonly bool ownsGong, ownsThump;
     Vector3 shapeCenter;
     float shapeInner=-1,shapeOuter=-1;
 
@@ -60,6 +61,7 @@ internal sealed class HuangMeiSealEffects
             }
         }
         surface.vertices=vertices;surface.triangles=triangles;
+        var uv=new Vector2[vertices.Length];for(int row=0;row<RadialRows;row++)for(int i=0;i<Segments;i++)uv[row*Segments+i]=new Vector2(i/(float)Segments,row/(float)(RadialRows-1));surface.uv=uv;
         var colors=new Color[vertices.Length];for(int i=0;i<colors.Length;i++)colors[i]=Color.white;
         surface.colors=colors;
         plane.GetComponent<MeshFilter>().sharedMesh=surface;
@@ -75,8 +77,9 @@ internal sealed class HuangMeiSealEffects
         var audio=new GameObject("Seal audio emitter");audio.transform.SetParent(root,false);
         voice=audio.AddComponent<AudioSource>();voice.playOnAwake=false;voice.spatialBlend=1;
         voice.rolloffMode=AudioRolloffMode.Linear;voice.minDistance=7;voice.maxDistance=75;voice.dopplerLevel=0;
-        gong=Sound("Bronze mandala bell",1.5f,true);thump=Sound("Seal impact",.48f,false);
-        Hide();
+        gong=SecondIslandAudio.Clip("MandalaBell");ownsGong=!gong;if(!gong)gong=Sound("Bronze mandala bell",1.5f,true);
+        thump=SecondIslandAudio.Clip("SealImpact");ownsThump=!thump;if(!thump)thump=Sound("Seal impact",.48f,false);
+        SetupPolish();Hide();
     }
 
     LineRenderer Line(string name)
@@ -111,7 +114,7 @@ internal sealed class HuangMeiSealEffects
         // Thin expanding waves only need the two outlines. Static hazards reuse
         // their sampled mesh for the entire tell and impact instead of recasting each frame.
         field.enabled=outside-inside>1.1f;
-        if(field.enabled)SetColor(field,flash ? new Color(1.68f,.72f,.11f,.26f*(1-charge)) : new Color(.58f,.18f,.035f,.17f+charge*.16f));
+        if(field.enabled)SetColor(field,flash ? new Color(1.8f,1.15f,.42f,.22f*(1-charge)) : new Color(.97f,.63f,.27f,.09f+charge*.12f));
         if(inner.enabled==(shapeInner>.08f) && (shapeCenter-center).sqrMagnitude<.04f && Mathf.Abs(shapeInner-inside)<.24f && Mathf.Abs(shapeOuter-outside)<.24f)return;
         shapeCenter=center;shapeInner=inside;shapeOuter=outside;
         for(int i=0;i<Segments;i++)
@@ -140,6 +143,7 @@ internal sealed class HuangMeiSealEffects
 
     public void Halo(Vector3 center,Vector3 right,float size,float phase)
     {
+        PoseHalo(center,right,size,phase);
         var spin=Quaternion.AngleAxis(Time.time*16,Vector3.Cross(right,Vector3.up));
         Draw(halo,center,right,Vector3.up,size,.11f,Gold);
         Draw(haloTrim,center,spin*right,spin*Vector3.up,size*.86f,.10f,Color.Lerp(Amber,Gold,phase),true);
@@ -147,10 +151,11 @@ internal sealed class HuangMeiSealEffects
 
     public void Bolt(Vector3 at,Vector3 direction,float radius)
     {
+        PoseBolt(at,direction,radius);
         Vector3 right=Vector3.Cross(Vector3.up,direction).normalized;
         Draw(bolt,at,right,Vector3.up,radius,.16f,Gold);
         Draw(boltRunes,at+direction*.06f,right,Vector3.up,radius*.72f,.11f,Amber,true);
-        palm.enabled=true;palm.widthMultiplier=Mathf.Max(.05f,radius*.065f);SetColor(palm,Gold);
+        palm.enabled=false;palm.widthMultiplier=Mathf.Max(.05f,radius*.065f);SetColor(palm,Gold);
         for(int i=0;i<PalmGlyph.Length;i++)
             palm.SetPosition(i,at+direction*.09f+(right*PalmGlyph[i].x+Vector3.up*PalmGlyph[i].y)*(radius*.94f));
     }
@@ -164,7 +169,7 @@ internal sealed class HuangMeiSealEffects
             line.SetPosition(i,at+(right*circle[i].x+up*circle[i].z)*size);
         }
     }
-    void SetColor(Renderer renderer,Color color){tint.SetColor("_Color",color);renderer.SetPropertyBlock(tint);}
+    void SetColor(Renderer renderer,Color color){tint.SetColor("_Color",color);tint.SetFloat("_Style",renderer==field?1:0);renderer.SetPropertyBlock(tint);}
 
     public void Trail(bool on)
     {
@@ -172,6 +177,7 @@ internal sealed class HuangMeiSealEffects
     }
     public void Impact(Vector3 point,int count,bool large=false,float inner=0,float outer=0)
     {
+        PolishedImpact(point,large,inner,outer);
         if(GameAudioPolicy.SoundEnabled)
         {
             voice.transform.position=point;
@@ -213,8 +219,8 @@ internal sealed class HuangMeiSealEffects
     }
 
     public void HideGround(){outer.enabled=inner.enabled=field.enabled=false;shapeInner=shapeOuter=-1;}
-    public void HideBolt(){bolt.enabled=boltRunes.enabled=palm.enabled=false;}
-    public void Hide(){HideGround();HideBolt();halo.enabled=haloTrim.enabled=false;Trail(false);}
-    public void Clear(){Hide();if(staff)staff.Clear();sparks.Clear();voice.Stop();}
-    public void Dispose(){Object.Destroy(surface);Object.Destroy(ink);Object.Destroy(gong);Object.Destroy(thump);}
+    public void HideBolt(){bolt.enabled=boltRunes.enabled=palm.enabled=false;if(boltSculpture)boltSculpture.gameObject.SetActive(false);}
+    public void Hide(){HideGround();HideBolt();halo.enabled=haloTrim.enabled=false;if(haloSculpture)haloSculpture.gameObject.SetActive(false);Trail(false);}
+    public void Clear(){Hide();if(staff)staff.Clear();sparks.Clear();voice.Stop();if(impactPulse)impactPulse.Clear();if(dust)dust.Clear();}
+    public void Dispose(){DisposePolish();Object.Destroy(surface);Object.Destroy(ink);if(ownsGong)Object.Destroy(gong);if(ownsThump)Object.Destroy(thump);}
 }

@@ -171,3 +171,9 @@ Assets/Game/Prefabs/Characters/PigRonin/Models/*.asset filter=lfs diff=lfs merge
 Assets/Resources/SahurSupport/*.asset binary !eol !linguist-language
 # This existing test scene is a native binary scene, unlike the production YAML scenes.
 "Assets/Scenes/Combat Test/CombatTest.unity" binary !eol !linguist-language
+
+# Large generated Island 2 meshes and sampled animation clips.
+Assets/Game/Art/Island2Decoration/*.asset filter=lfs diff=lfs merge=lfs -text
+Assets/Game/Art/Island2Waterway/*.asset filter=lfs diff=lfs merge=lfs -text
+Assets/Game/Art/Island2WaterSystem/*.asset filter=lfs diff=lfs merge=lfs -text
+Assets/Resources/SecondIslandMotion/*.anim filter=lfs diff=lfs merge=lfs -text

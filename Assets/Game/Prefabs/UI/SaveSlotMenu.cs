@@ -91,6 +91,7 @@ public sealed class SaveSlotMenu : MonoBehaviour
         {
             var slot = GameSaveManager.GetSlot(i + 1);
             buttons[i].interactable = mode != Mode.Load || slot.readable;
+            captions[i].color = buttons[i].interactable ? GameUITheme.Foreground : GameUITheme.Muted;
             captions[i].text = confirmation == slot.number ? "CONFIRM OVERWRITE SLOT " + slot.number :
                 "SLOT " + slot.number + (slot.number == GameSaveManager.ActiveSlot ? "  /  ACTIVE" : "") + "\n" + slot.description;
         }

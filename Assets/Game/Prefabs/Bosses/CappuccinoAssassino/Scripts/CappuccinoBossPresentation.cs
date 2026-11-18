@@ -32,15 +32,12 @@ namespace Mavis
             if (kind == CueKind.Defeated) victoryAt = Time.time;
             if(Application.isPlaying&&!PauseSettingsMenu.IsOpen)
             {
-                if(kind==CueKind.Hit)
-                {
-                    Vector3 point=ai.target?ai.target.position+Vector3.up:transform.position+transform.forward*1.6f+Vector3.up;
-                    var body=ai.target?ai.target.GetComponent<Collider>():null;
-                    if(body)point=body.ClosestPoint(transform.position+Vector3.up);
-                    BossCombatVfx.Burst(point,transform.forward,new Color(.72f,.71f,.65f,.7f),8,1.5f);
-                }
-                else if(kind==CueKind.Stagger||kind==CueKind.Surge)BossCombatVfx.Burst(transform.position,Vector3.up,new Color(.55f,.48f,.36f,.55f),16,3);
-                else if(kind==CueKind.Swing&&ai.CurrentAttack==CappuccinoAI.AttackKind.DashThrust)BossCombatVfx.Burst(transform.position-transform.forward*.5f,Vector3.up,new Color(.42f,.37f,.29f,.5f),10,2);
+                // Accepted damage already produces a material response on the victim.
+                if (kind == CueKind.Stagger && ai.SampleGround(transform.position, out var sole))
+                    BrineVfxWorld.Get()?.Ground(sole, .85f, .50f);
+                else if (kind == CueKind.Swing && ai.CurrentAttack == CappuccinoAI.AttackKind.DashThrust)
+                    BossCombatVfx.Burst(transform.position-transform.forward*.5f, -transform.forward + Vector3.up*.22f,
+                        new Color(.42f,.37f,.29f,.40f), 6, 1.35f);
             }
             if (audioSource != null && !PauseSettingsMenu.IsOpen)
             {

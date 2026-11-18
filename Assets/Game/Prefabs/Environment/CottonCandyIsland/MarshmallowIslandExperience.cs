@@ -35,6 +35,7 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
     MaterialPropertyBlock block;
     ThirdPersonPlayerController motor;
     MarshmallowTraversal traversal;
+    SecondIslandChocolateContact chocolate;
     CharacterController body;
     ParticleSystem fluff, strands, ambient;
     GameObject effects;
@@ -56,6 +57,7 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
         if (initialized || !Application.isPlaying) return;
         motor = GetComponent<ThirdPersonPlayerController>();
         traversal = GetComponent<MarshmallowTraversal>();
+        chocolate = GetComponent<SecondIslandChocolateContact>();
         body = GetComponent<CharacterController>();
         if (!traversal.Active || !surface || !fluffMaterial) return;
         initialized = true;
@@ -102,7 +104,8 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
         RaycastHit hit = default;
         supported = active && ProbeSupport(out hit);
         if (supported && grounded) { support = hit.point; normal = hit.normal; }
-        float targetPressure = grounded && supported ? standingDepression : 0f;
+        bool chocolateFooting = chocolate && chocolate.Depth > 0;
+        float targetPressure = grounded && supported && !chocolateFooting ? standingDepression : 0f;
         pressure = Mathf.SmoothDamp(pressure, targetPressure, ref pressureVelocity, .11f, Mathf.Infinity, dt);
         // Match the rendered depression at the current support, then unstick
         // promptly on takeoff. The collision capsule never sinks into the mesh.
@@ -111,15 +114,21 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
         if (wasGrounded && !grounded && active && motor.VerticalSpeed > 1f && supported)
         {
             Takeoffs++;
-            EmitFluff(support, normal, .28f, 5);
-            EmitStrands(support, .4f);
-            PlaySound(1, support, .55f);
+            if (!chocolateFooting && !(chocolate && chocolate.Coating > .1f && chocolate.TrySample(support, out var surfaceAtStep, out _) && surfaceAtStep.y > support.y))
+            {
+                EmitFluff(support, normal, .28f, 5);
+                EmitStrands(support, .4f);
+                PlaySound(1, support, .55f);
+            }
         }
         if (grounded && supported && motor.WorldVelocity.sqrMagnitude > 2 &&
             Vector3.Distance(lastStep, support) > 2.1f && Time.time - lastStepTime > .22f)
         {
-            Stamp(support, 1.25f, .32f);
-            EmitFluff(support, normal, .18f, 3);
+            if (!chocolateFooting)
+            {
+                Stamp(support, 1.25f, .32f);
+                EmitFluff(support, normal, .18f, 3);
+            }
             PlaySound(0, support, .5f);
             lastStep = support; lastStepTime = Time.time;
         }
@@ -154,6 +163,13 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
         if (!initialized || !isActiveAndEnabled || !traversal.Active || !ProbeSupport(out var hit)) return;
         Landings++; LastImpact = Mathf.Clamp01((impactSpeed - 2) / 13f);
         support = hit.point; normal = hit.normal;
+        if (chocolate && chocolate.Depth > 0)
+        {
+            PlaySound(2, support, Mathf.Lerp(.6f, 1f, LastImpact));
+            lastStep = support;
+            lastStepTime = Time.time;
+            return;
+        }
         float energy = Mathf.Lerp(.42f,1.25f,LastImpact);
         Stamp(support, Mathf.Lerp(2.3f,3.6f,LastImpact), energy);
         // Two slightly separated sole impressions give the depression a footfall shape.
@@ -310,7 +326,7 @@ public sealed class MarshmallowIslandExperience : MonoBehaviour
         if(!GameAudioPolicy.SoundEnabled || Time.time-lastSound < .09f || soundVolume<=0 || !clips[kind]) return;
         lastSound=Time.time;
         var voice=voices[voiceCursor++ % voices.Length];
-        voice.transform.position=point;voice.clip=clips[kind];voice.volume=soundVolume*intensity;
+        voice.transform.position=point;voice.clip=SecondIslandAudio.Movement(kind,point,clips[kind]);voice.volume=soundVolume*intensity;
         voice.pitch=Random.Range(.94f,1.06f);voice.Play();SoundsPlayed++;
     }
     void ClearContacts()

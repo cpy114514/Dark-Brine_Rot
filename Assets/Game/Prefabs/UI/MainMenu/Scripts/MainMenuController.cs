@@ -93,7 +93,10 @@ public sealed class MainMenuController : MonoBehaviour
     {
         bool hasSave = GameSaveManager.HasSave;
         if (continueButton != null)
+        {
             continueButton.interactable = hasSave;
+            GameUITheme.StyleButton(continueButton);
+        }
         if (saveStatus != null)
             saveStatus.text = hasSave ? "SAVE DATA FOUND" : "NO SAVE DATA";
     }

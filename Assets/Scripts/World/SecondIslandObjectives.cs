@@ -43,7 +43,7 @@ public sealed class SecondIslandObjectives : MonoBehaviour
         panel = canvas;
         var card = GameUITheme.Rect(canvas.transform, "Objective card", new Vector2(0, 1), new Vector2(485, 150));
         card.pivot = new Vector2(0, 1); card.anchoredPosition = new Vector2(28, -165);
-        GameUITheme.Image(card, new Color(.035f, .04f, .055f, .86f));
+        GameUITheme.Image(card, GameUITheme.Surface);
         label = GameUITheme.Label(card, "Current objective", 20, new Vector2(18, -75), new Vector2(449, 140), TextAnchor.MiddleLeft);
         label.rectTransform.anchorMin = label.rectTransform.anchorMax = new Vector2(0, 1);
         label.rectTransform.pivot = new Vector2(0, .5f);

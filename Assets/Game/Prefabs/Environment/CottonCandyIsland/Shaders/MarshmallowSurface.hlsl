@@ -10,6 +10,7 @@ CBUFFER_START(UnityPerMaterial)
     float _FiberScale;
     float _CloudMode;
     float _SurfaceFinish;
+    float _CocoaShore;
 CBUFFER_END
 
 // Per-renderer state. Never global: other islands cannot inherit these impressions.
@@ -66,7 +67,7 @@ float3 CandyResponse(float3 p)
     return response;
 }
 
-struct CandyAttributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; };
+struct CandyAttributes { float4 positionOS : POSITION; float3 normalOS : NORMAL; float4 color : COLOR; };
 struct CandyVaryings
 {
     float4 positionCS : SV_POSITION;
@@ -74,6 +75,7 @@ struct CandyVaryings
     half3 normalWS : TEXCOORD1;
     float3 restWS : TEXCOORD2;
     half fog : TEXCOORD3;
+    half cocoa : TEXCOORD4;
 };
 CandyVaryings CandyVertex(CandyAttributes input)
 {
@@ -84,5 +86,6 @@ CandyVaryings CandyVertex(CandyAttributes input)
     o.positionWS.y += CandyResponse(o.restWS).x * smoothstep(.15, .75, o.normalWS.y);
     o.positionCS = TransformWorldToHClip(o.positionWS);
     o.fog = ComputeFogFactor(o.positionCS.z);
+    o.cocoa = input.color.r * _CocoaShore;
     return o;
 }

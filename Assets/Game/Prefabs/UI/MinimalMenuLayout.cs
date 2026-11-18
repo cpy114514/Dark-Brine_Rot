@@ -46,12 +46,6 @@ public static class MinimalMenuLayout
         Caption(Place(root,"Save Status",new Vector2(112,-718),new Vector2(480,30)),13,GameUITheme.Secondary);
         Caption(Place(root,"Footer",new Vector2(112,-794),new Vector2(600,26)),13,GameUITheme.Secondary);
         GameUITheme.Rule(root,new Vector2(352,-764),new Vector2(480,1),GameUITheme.Muted,new Vector2(0,1));
-        var marker=GameUITheme.Label(root,"Chapter marker",13,new Vector2(112,-78),new Vector2(620,24),TextAnchor.MiddleLeft);
-        marker.rectTransform.anchorMin=marker.rectTransform.anchorMax=new Vector2(0,1);
-        marker.text="01  /  FIRST ISLAND";marker.color=GameUITheme.Secondary;
-        Mavis.LocalizedGameText.Bind(marker);
-        // Artwork keeps its authored colors and hover swaps independently of the neutral UI palette.
-        // Keep the interactive island rotation intact.
         foreach(var text in root.GetComponentsInChildren<TMP_Text>(true))
         {var shadow=text.GetComponent<Shadow>();if(shadow)shadow.enabled=false;}
         foreach(var image in root.GetComponentsInChildren<Image>(true))
@@ -64,12 +58,13 @@ public static class MinimalMenuLayout
         {
             if(image.name.EndsWith("border"))image.color=GameUITheme.Gray(.22f);
             else if(image.name=="Divider")image.color=GameUITheme.Muted;
-            else if(image.name=="Backdrop")image.color=GameUITheme.Backdrop;
+            else if(image.name=="Backdrop" || image.name=="Black background")
+                image.color=menu.mainMenuSettingsOnly ? GameUITheme.Gray(GameUITheme.Backdrop.r) : GameUITheme.Backdrop;
         }
         var title=menu.homePanel.transform.Find("Paused title") as RectTransform;
         Caption(title,58,Color.white,false);
         if(title){title.anchoredPosition=new Vector2(0,192);title.sizeDelta=new Vector2(600,82);}
-        GameUITheme.Rule(menu.homePanel.transform,new Vector2(0,126),new Vector2(440,1),GameUITheme.Muted);
+        GameUITheme.Rule(menu.homePanel.transform,new Vector2(0,225),new Vector2(440,1),GameUITheme.Muted);
         int i=0;
         foreach(var button in new[]{menu.resumeButton,menu.settingsButton,menu.quitButton})
         {

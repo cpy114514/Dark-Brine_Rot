@@ -140,7 +140,7 @@ namespace Mavis
             {
                 Vector3 world = candyPoints[i];
                 float elevation = Mathf.InverseLerp(candyMinHeight, candyMaxHeight, world.y);
-                Color terrain = Color.Lerp(new Color(.91f, .72f, .79f), new Color(.68f, .52f, .69f), elevation);
+                Color terrain = GameUITheme.Gray(Mathf.Lerp(.66f,.34f,elevation));
                 vh.AddVert(new Vector2((world.x - WorldCenter.x) * scaleX, (world.z - WorldCenter.y) * scaleY), terrain, Vector2.zero);
             }
             for (int z = 0; z < CandyGrid; z++)

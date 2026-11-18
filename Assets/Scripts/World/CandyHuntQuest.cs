@@ -114,7 +114,9 @@ public sealed class CandyHuntQuest : MonoBehaviour
         var tr=fairy.Find("Pickup label"); if(!tr)return;
         talkPromptRoot=tr.gameObject;
         talkPromptRoot.name="Candy hunt talk prompt";
-        tr.localPosition=new Vector3(0,1.85f,0);
+        float fairyScale=Mathf.Max(.001f,Mathf.Abs(fairy.lossyScale.x));
+        tr.localScale=Vector3.one*(.013f/fairyScale);
+        tr.position=fairy.position+Vector3.up*5.45f;
         talkPrompt=tr.GetComponentInChildren<Text>();
         if(talkPrompt)talkPrompt.fontSize=28;
         talkPromptRoot.SetActive(false);
@@ -166,8 +168,12 @@ public sealed class CandyHuntQuest : MonoBehaviour
         if(talkPromptRoot)
         {
             talkPromptRoot.SetActive(near);
-            if(near && cam)talkPromptRoot.transform.rotation=cam.transform.rotation;
-            if(near && talkPrompt)talkPrompt.text=GameControls.Prompt(GameControls.Command.Interact)+(Completed ? "  ·  CHOOSE YOUR STYLE" : Started ? "  ·  ASK FAIRY" : "  ·  TALK TO FAIRY");
+            if (near && cam)
+            {
+                Vector3 beside = Vector3.ProjectOnPlane(cam.transform.right, Vector3.up).normalized;
+                talkPromptRoot.transform.SetPositionAndRotation(fairy.position + Vector3.up * 5.45f + beside * 2.8f, cam.transform.rotation);
+            }
+            if(near && talkPrompt)talkPrompt.text=GameUITheme.InteractPrompt(Completed ? "Choose your style" : Started ? "Ask the fairy" : "Talk to the fairy");
         }
         if(near && GameControls.Down(GameControls.Command.Interact) && Cursor.lockState==CursorLockMode.Locked)
         {
@@ -230,7 +236,7 @@ public sealed class CandyHuntQuest : MonoBehaviour
         conversationScreen.transform.SetParent(transform,false);
         var canvas=conversationScreen.GetComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=1000;GameUITheme.Scale(canvas);
         var panel=GameUITheme.Rect(conversationScreen.transform,"Choose a style",new Vector2(.5f,.5f),new Vector2(840,540));
-        panel.anchoredPosition=Vector2.zero;GameUITheme.Image(panel,new Color(.05f,.035f,.09f,.97f));
+        panel.anchoredPosition=Vector2.zero;GameUITheme.Image(panel,GameUITheme.Surface);
         var heading=GameUITheme.Label(panel,"Heading",31,new Vector2(0,225),new Vector2(790,54),TextAnchor.MiddleCenter);
         heading.rectTransform.anchorMin=heading.rectTransform.anchorMax=new Vector2(.5f,.5f);
         heading.text=RewardClaimed ? "CHOOSE YOUR SKYBOARD STYLE" : "THANK YOU! CHOOSE YOUR REWARD";
@@ -259,7 +265,8 @@ public sealed class CandyHuntQuest : MonoBehaviour
             for(int i=0;i<labels.Length;i++)
             {
                 labels[i].text=(i+1)+"   "+CandySkyboardStyles.Names[i]+(RewardClaimed && SelectedStyle==i ? "   ·   CURRENT" : "");
-                labels[i].color=i==selected ? new Color(1f,.86f,.55f) : Color.white;
+                labels[i].color=i==selected ? GameUITheme.Foreground : GameUITheme.Secondary;
+                labels[i].fontStyle=i==selected ? FontStyle.Bold : FontStyle.Normal;
             }
             if(Time.timeScale>0 && !GameUITheme.ModalOpen)
             {
@@ -305,13 +312,13 @@ public sealed class CandyHuntQuest : MonoBehaviour
         obj.transform.SetParent(transform,false);hud=obj.GetComponent<Canvas>();hud.renderMode=RenderMode.ScreenSpaceOverlay;hud.sortingOrder=85;GameUITheme.Scale(hud);
         card=GameUITheme.Rect(obj.transform,"Fairy clue",new Vector2(1,1),new Vector2(600,152));
         card.pivot=new Vector2(1,1);card.anchoredPosition=new Vector2(-22,-24);
-        GameUITheme.Image(card,new Color(.06f,.045f,.09f,.93f));
+        GameUITheme.Image(card,GameUITheme.Surface);
         title=GameUITheme.Label(card,"Title",22,new Vector2(-580,-26),new Vector2(410,34),TextAnchor.MiddleLeft);
         title.rectTransform.anchorMin=title.rectTransform.anchorMax=new Vector2(1,1);
         clue=GameUITheme.Label(card,"Clue",22,new Vector2(-580,-75),new Vector2(420,70),TextAnchor.MiddleLeft);
         clue.rectTransform.anchorMin=clue.rectTransform.anchorMax=new Vector2(1,1);
         direction=GameUITheme.Label(card,"Direction",18,new Vector2(-580,-130),new Vector2(410,27),TextAnchor.MiddleLeft);
-        direction.rectTransform.anchorMin=direction.rectTransform.anchorMax=new Vector2(1,1);direction.color=new Color(1f,.85f,.55f);
+        direction.rectTransform.anchorMin=direction.rectTransform.anchorMax=new Vector2(1,1);direction.fontStyle=FontStyle.Bold;
         portrait=GameUITheme.Rect(card,"Fairy portrait",new Vector2(1,1),new Vector2(160,160));
         portrait.pivot=new Vector2(1,1);portrait.anchoredPosition=new Vector2(-4,5);
         var image=portrait.gameObject.AddComponent<RawImage>();image.raycastTarget=false;
