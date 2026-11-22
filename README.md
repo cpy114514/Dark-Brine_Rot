@@ -4,6 +4,7 @@ It's a first person perspective game play as Sahur and explore the islands. The 
 Remember to use your map and different kinds tools, they may help you a lot when you are investigating the islands. Don't wait! Start playing now.
 In the first Island, you will starting playing in a desert island with your basic weapon —— wooden stick. Keep moving and you will find more bosses. Want to know what are those? Play it, I am not gonna tell you🤣, find out by yourself. Then you will enter the second Island, it's the marshmallow island, from there you can walk on the marshmallow, just feel the gravity, it's gonna shock you, walking or flying? You decide! Starting from this island, you will started to discover the secrete of sahur. The real story starts here, of your secrete and adventure. 
 
+### Don't foget that if you don't know what to do, just follow the white line
 
 ## Click here to play
 
@@ -20,10 +21,8 @@ In the first Island, you will starting playing in a desert island with your basi
 | Throw the stick | E |
 | Lock on | Middle mouse button |
 | Heal | H |
-| Equipment | I; use the mouse to browse, equip and close |
-| Switch weapons | 1 / 2 / 3, when unlocked |
+| Switch weapons | 1 / 2 / 3, when unlocked, you won't be able to switch |
 | Activate equipped weakness glasses | G |
-| Map | m |
 | pause| esc |
 
 ## This is a project for Hackclub Thirdspace
