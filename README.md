@@ -26,30 +26,6 @@ In the first Island, you will starting playing in a desert island with your basi
 | Map | m |
 | pause| esc |
 
-## charaters
-
-ISLAND 1
-Mystery Boss #1
-Mystery Boss #2
-Mystery Boss #3
-Chickens
-Ducks
-Gooses
-
-ISLAND 2
-Small Marshmallows 
-Mystery Boss #4
-Mystery Boss #5
-
-## Island
-Desert Island
-Marshmallow Island
-Wait for future updates
-
-## Project maintenance
-
-Use the Unity version in `ProjectSettings/ProjectVersion.txt`. Scene ownership and safe editing rules are in [COLLABORATION.md](COLLABORATION.md); current inspection, cleanup and content tools are indexed in [Tools/README.md](Tools/README.md).
-
 ## This is a project for Hackclub Thirdspace
 
 <img width="1350" height="670" alt="image" src="https://github.com/user-attachments/assets/88dc2cef-e9bc-47ba-b9df-0e8d895925f8" />
