@@ -88,4 +88,4 @@ Unity6000.3.23f1／URP17.3／Render Graph，使用项目已安装版本的 API�
 
 实现、对照和上述技术检查完成。艺术偏好及极端镜头仍需玩家判断；不宣称已获得人工最终美术批准、零纹理游泳或完整全 Boss 流程通关。尤其是小型刚性附件使用世界表面路径，风吹网格没有逐叶专属UV缓冲；新角色缓存等待和UV接缝是后续视觉回归时应留意的位置。原模型／场景本身的远景边界或植被 LOD 未通过改模来遮掩。
 
-复现入口：`BuildVanGogh2.cs`、`ReviewVanGogh2.cs`、`ReviewVanGoghMotion.cs`、`VerifyVanGoghControls.cs`。使用已有隔离存档 Play helper，先加载真实岛屿再调用验证；不要重新运行会覆盖旧 before 截图的基线工具。旧源文件备份仍在忽略目录 `before/Assets`，新旧切换对照使用不持久化的 LegacyComparison。定时任务应先读完成状态，只接着做确实尚未完成的工作。
+复现入口：`BuildVanGogh2.cs`、`ReviewVanGogh2.cs`、`ReviewVanGoghMotion.cs`、`VerifyVanGoghControls.cs`。使用已有隔离存档 Play helper，先加载真实岛屿再调用验证；不要重新运行会覆盖旧 before 截图的基线工具。旧源文件备份仍在忽略目录 `before/Assets`，新旧切换对照使用不持久化的 LegacyComparison。
