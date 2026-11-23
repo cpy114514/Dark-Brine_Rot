@@ -6,6 +6,8 @@ In the first Island, you will starting playing in a desert island with your basi
 
 ### Don't foget that if you don't know what to do, just follow the white line
 
+## The second island is not fully functional yet!
+
 ## Click here to play
 
 [https://cpy111.itch.io/dark-brine-rot](https://github.com/cpy114514/Dark-Brine_Rot/releases)
