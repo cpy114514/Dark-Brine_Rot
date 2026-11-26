@@ -1,6 +1,6 @@
 # v093–v095 continuation — work in progress
 
-Resumed the one-time 2026-10-13 05:30 Vancouver continuation in the original Editor PID 22012. No additional Editor, commits, pushes, save migration or original rig/Avatar replacement.
+The tests used the existing Unity Editor, character rig and Avatar.
 
 ## Collision diagnosis and conservative rejection
 

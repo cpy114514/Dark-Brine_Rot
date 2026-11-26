@@ -56,8 +56,6 @@ The leap's additive parabola failed when the full original-size animal was sunk 
 
 Eleventh take review supersedes that pending crest check: shot2 shows the complete original-size shark above the ship, and shot1 retains dry supported feet throughout the warning/retreat. Shot3 descent still hides much of the contact behind the sail and needs a clearer angle. Reviewed sheets1/2/3/36/37/41 plus prior eighth25/31/33/38/40/43; generated MP4 is retained, not claimed as normal-speed watched. Thrown head-side contact now registers in the 30 FPS take (previous ninth failure retained). Whole-body/weapon clearance across v215 and the other outstanding choreography items remain BLOCKING. Do not call this final or clipping-free.
 
-One-shot thread automation updated via the app at the user's request: id `automation`, October 18 2026 **06:30 America/Vancouver**, COUNT=1 (replaces 06:00). Continue from the latest evidence at that time; do not create further schedules. Existing editor only, retain source history and protected save.
-
 ## October 18 second continuation: v215 and clearance
 
 Imported three versioned v215 FBXs through UnityAnimationImport into isolated staging folders, verified all three Humanoid Avatars and exact 60 FPS durations, then moved them into Resources/Encounter/v215. Native skeleton and original hero/shark scales retained. Runtime/preloader now reference v215 Overhead/ProneDodge/GetUp; removed old extra prone lowering. See ArtSource/Encounter/v215/blocking-review-v215.md and export-index-v215.json for source review and contract. Isolated same-Avatar PlayableGraph pose audit retained as `.codex/encounter-redesign-20261017/pose-import-v215.json`.
@@ -76,11 +74,11 @@ Completed review of that revision:
 - fourteenth-v215-30: 2641 frames, Finished, three contacts, HP70, wrong-key/map tests pass. First actual Drift camera sample moves head .0707m; maximum Drift step likewise .0707m. (The preceding row changes stage to Drift while still rendering the last normal-speed falling sample; that falling displacement is not a pose switch.) All recorded Drift body-envelope costs zero and released-stick flotation active. 504 original-ship foot samples retain positive soles (.0295m left minimum, .0190m right minimum) and shark scale (3,3,3). Console errors zero. Full actual-camera MP4 retained.
 - fifteenth-nearpass-15: focused native geometry review, deliberately stopped on the first get-up shot after capturing 13 extra top views through the prone pass. Recorder therefore marks this focused take aborted; it is not a full-route success/failure. Primary game camera remains unchanged. Auxiliary top-000/003/006/009/012 inspected: banked shark passes beside the visible Sahur/board footprint; later fin/foot projections approach/cover the edge, so these top views alone do not certify complete vertical back/belly/appendage clearance. The earlier attempt to attach this observer during take14 missed shot34 and yielded no auxiliary samples; take15 is the actual diagnostic evidence.
 
-Current source compiles; isolated low-HP/nonlethal cumulative budget and pause ownership checks pass after v215 integration. Each run stopped before restoring the protected save; final hash matches the protected backup. No commit, push or scene serialization. Work remains BLOCKING: main-camera closest prone pass still needs clearer contact silhouette, mast/sail response during body crush needs further visual work, warning shadow readability and full weapon/body clearances require polish. Continue those concrete items at the scheduled 06:30; preserve this evidence instead of claiming final or universally clipping-free animation.
+Current source compiles; isolated low-HP/nonlethal cumulative budget and pause ownership checks pass after v215 integration. Each run stopped before restoring the protected save; final hash matches the protected backup. No commit, push or scene serialization. Work remains BLOCKING: main-camera closest prone pass still needs clearer contact silhouette, mast/sail response during body crush needs further visual work, warning shadow readability and full weapon/body clearances require polish.
 
-## One-shot 06:30 continuation, October 18
+## October 18 camera and rigging tests
 
-The requested one-shot heartbeat ran in this chat. No further schedule has been created. Same existing Unity 6000.3.23f1 Editor on port7800 only; protected save verified before Play.
+The camera and geometry checks ran in Unity 6000.3.23f1 with a protected test save.
 
 Independent camera and geometry audits are retained in `redesign-camera-readonly-v004-20261018.md` and `redesign-geometry-readonly-v005-20261018.md`.
 

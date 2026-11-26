@@ -22,7 +22,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
     public bool IsSmall => isSmall;
     public bool Leading { get; private set; }
     public bool Talking { get; private set; }
-    public Transform Guide => residents.Count > 0 ? residents[0].root : null;
+    public Transform Guide => residents.Count > 0 ? residents[0].Root : null;
     public Transform Entrance => entrance ? entrance.transform : null;
     public Transform Grove => grove ? grove.transform : null;
     public Transform SmallLight => smallLight ? smallLight.transform : null;
@@ -42,13 +42,7 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
         }
     }
 
-    sealed class Resident
-    {
-        public Transform root, visual, leftArm, rightArm, leftLeg, rightLeg;
-        public Vector3 origin;
-        public float phase;
-    }
-    readonly List<Resident> residents = new List<Resident>();
+    readonly List<MarshmallowResident> residents = new List<MarshmallowResident>();
     readonly List<Material> materials = new List<Material>();
     ThirdPersonPlayerController player;
     CharacterController body;
@@ -119,15 +113,9 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
     }
     void MakeResident(string color, Vector3 position, float phase, Transform parent)
     {
-        var prefab=Resources.Load<GameObject>("SecondIslandResidents/"+color+" Friendly Marshmallow");
-        if(!prefab) { Debug.LogError("Missing friendly marshmallow prefab: "+color); return; }
-        var obj=Instantiate(prefab,position,Quaternion.identity,parent);
-        obj.name=color+" friendly resident";
-        var residentCollider=obj.AddComponent<CapsuleCollider>();residentCollider.center=new Vector3(0,1,0);residentCollider.height=2f;residentCollider.radius=.52f;
-        var visual=obj.transform.Find("Bouncy visual");
-        residents.Add(new Resident { root=obj.transform, visual=visual, origin=position, phase=phase,
-            leftArm=visual.Find("Left arm pivot"),rightArm=visual.Find("Right arm pivot"),
-            leftLeg=visual.Find("Left leg pivot"),rightLeg=visual.Find("Right leg pivot") });
+        var resident = MarshmallowResident.Spawn(color, position, phase, parent);
+        if (resident != null)
+            residents.Add(resident);
     }
     Material Mat(string name, Color color, bool glow=false)
     {
@@ -383,31 +371,33 @@ public sealed class FriendlyMarshmallowVillage : MonoBehaviour
     { if(!obj)return;if(obj.activeSelf!=show)obj.SetActive(show);if(show && cam)obj.transform.rotation=cam.transform.rotation; }
     void AnimateResidents(bool allowed)
     {
-        for(int i=0;i<residents.Count;i++)
+        for (int i = 0; i < residents.Count; i++)
         {
-            var r=residents[i];if(!r.root.gameObject.activeInHierarchy)continue;
-            float distance=FlatDistance(player.transform.position,r.root.position);
-            bool nearby=allowed && distance<10f && Mathf.Abs(player.transform.position.y-r.root.position.y)<8f;
-            var guideTarget=leadingToLight && smallLight ? smallLight.transform.position : entrance.transform.position;
-            bool walking=i==0 && Leading && allowed && !InGrove && distance<16f && FlatDistance(r.root.position,guideTarget)>3f;
-            if(walking)
+            var resident = residents[i];
+            var root = resident.Root;
+            if (!root.gameObject.activeInHierarchy) continue;
+
+            float distance = FlatDistance(player.transform.position, root.position);
+            bool nearby = allowed && distance < 10f && Mathf.Abs(player.transform.position.y - root.position.y) < 8f;
+            var guideTarget = leadingToLight && smallLight ? smallLight.transform.position : entrance.transform.position;
+            bool walking = i == 0 && Leading && allowed && !InGrove && distance < 16f && FlatDistance(root.position, guideTarget) > 3f;
+            if (walking)
             {
-                var dest=guideTarget;var next=Vector3.MoveTowards(r.root.position,dest,2.5f*Time.deltaTime);
-                r.root.position=Ground(new Vector2(next.x,next.z));
-                var direction=dest-r.root.position;direction.y=0;if(direction.sqrMagnitude>.01f)r.root.rotation=Quaternion.Slerp(r.root.rotation,Quaternion.LookRotation(direction),Time.deltaTime*5);
+                var next = Vector3.MoveTowards(root.position, guideTarget, 2.5f * Time.deltaTime);
+                root.position = Ground(new Vector2(next.x, next.z));
+                var direction = guideTarget - root.position;
+                direction.y = 0;
+                if (direction.sqrMagnitude > .01f)
+                    root.rotation = Quaternion.Slerp(root.rotation, Quaternion.LookRotation(direction), Time.deltaTime * 5);
             }
-            else if(nearby)
+            else if (nearby)
             {
-                var direction=player.transform.position-r.root.position;direction.y=0;
-                if(direction.sqrMagnitude>.01f)r.root.rotation=Quaternion.Slerp(r.root.rotation,Quaternion.LookRotation(direction),Time.deltaTime*3);
+                var direction = player.transform.position - root.position;
+                direction.y = 0;
+                if (direction.sqrMagnitude > .01f)
+                    root.rotation = Quaternion.Slerp(root.rotation, Quaternion.LookRotation(direction), Time.deltaTime * 3);
             }
-            float t=Time.time*5f+r.phase;
-            r.visual.localPosition=Vector3.up*(nearby ? Mathf.Max(0,Mathf.Sin(t))*.18f : .02f*Mathf.Sin(t*.4f));
-            r.visual.localRotation=Quaternion.Euler(0,0,nearby?Mathf.Sin(t)*4:Mathf.Sin(t*.4f)*2);
-            if(r.leftArm)r.leftArm.localRotation=Quaternion.Euler(0,0,nearby?-100+Mathf.Sin(t*1.5f)*24:-12);
-            if(r.rightArm)r.rightArm.localRotation=Quaternion.Euler(walking?Mathf.Sin(t)*30:0,0,12);
-            if(r.leftLeg)r.leftLeg.localRotation=Quaternion.Euler(walking?-Mathf.Sin(t)*30:0,0,-4);
-            if(r.rightLeg)r.rightLeg.localRotation=Quaternion.Euler(walking?Mathf.Sin(t)*30:0,0,4);
+            resident.Animate(nearby, walking);
         }
         var destination=leadingToLight && smallLight ? smallLight.transform.position : entrance.transform.position;
         if(Leading && FlatDistance(Guide.position,destination)<3f)Leading=false;

@@ -1,5 +1,7 @@
 # Dark Brine_Rot 第一岛性能验证
 
+本地归档路径相对于项目根目录。
+
 ## 测试条件
 
 Windows 11，Intel Core i5-14400F，NVIDIA RTX 4060，Unity 6000.3.23f1，Windows 独立 Player。固定 Direct3D11、1920×1080、PC 画质、4× MSAA、渲染比例 1、阴影距离 60、LOD Bias 1.5。吞吐采样关闭垂直同步和限帧。测试产品名为 `DarkBrineRot_PerformanceQA`，测试构建和输出位于隔离项目。当前 Unity Play 保留。
@@ -32,9 +34,9 @@ Windows 11，Intel Core i5-14400F，NVIDIA RTX 4060，Unity 6000.3.23f1，Window
 | Nailong | 25.2 → 69.8 | 21.3 → 50.7 | 43.9 → 15.8 | 9.2 → 5.8 | 39.7 → 13.2 |
 | Nailong 与密集现有特效 | 26.4 → 57.7 | 19.5 → 49.9 | 40.8 → 18.9 | 8.0 → 5.2 | 37.8 → 16.3 |
 
-单独保留 CPU 蒙皮的代码优化版也已测量，平均 FPS 依次为 37.7、47.3、37.2、40.2、15.3、24.6、25.4。草地与海面代码修改的整机收益没有在这些短窗口中建立。主要可重复收益来自蒙皮设置，两轮较早 CPU/GPU 对照也呈现同方向的大幅改善。 [最终原始数据](../.codex/system-performance-20261107/final-foreground-comparison.json) · [只改变蒙皮的对照](../.codex/system-performance-20261107/final-skinning-comparison.json)
+单独保留 CPU 蒙皮的代码优化版也已测量，平均 FPS 依次为 37.7、47.3、37.2、40.2、15.3、24.6、25.4。草地与海面代码修改的整机收益没有在这些短窗口中建立。主要可重复收益来自蒙皮设置，两轮较早 CPU/GPU 对照也呈现同方向的大幅改善。 最终原始数据（`.codex/system-performance-20261107/final-foreground-comparison.json`） · 只改变蒙皮的对照（`.codex/system-performance-20261107/final-skinning-comparison.json`）
 
-随后用 GPU 非 Development 构建重复同路线、同画质的前台采样。七段均完整完成，错误为零。它与上表优化后的 Development 结果接近，密集特效阶段仍低于平均 60 FPS。 [非 Development 原始数据](../.codex/system-performance-20261107/after-gpu-release/foreground/summary.json)
+随后用 GPU 非 Development 构建重复同路线、同画质的前台采样。七段均完整完成，错误为零。它与上表优化后的 Development 结果接近，密集特效阶段仍低于平均 60 FPS。 非 Development 原始数据（`.codex/system-performance-20261107/after-gpu-release/foreground/summary.json`）
 
 | 场景 | 平均 FPS | 1% Low | P95 ms | 主线程 ms | GPU ms |
 | --- | --- | --- | --- | --- | --- |
@@ -48,7 +50,7 @@ Windows 11，Intel Core i5-14400F，NVIDIA RTX 4060，Unity 6000.3.23f1，Window
 
 Unity 的 GPU Batched 蒙皮用计算着色器处理蒙皮，并在网格布局支持时合并多个网格的派发。该机 RTX 4060 与 DX11 支持计算着色器。此工程原来设置为 CPU，多个高面数角色同时存在时出现明显等待。结合对照结果，将蒙皮数据处理迁到 GPU 是本次收益最大的改动。具体到哪一条驱动同步导致等待，尚无底层 GPU 抓帧证据。其他显卡与后端仍需复测。 [Unity 蒙皮设置](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityeditor/playersettings/meshdeformation) · [GPU Batched 适用条件](https://docs.unity.com/en-us/engine/6000.0/script-reference/unityeditor/meshdeformation/gpubatched)
 
-![同机位截图，左侧原版，右侧优化版](../.codex/system-performance-20261107/final-visual-comparison.jpg)
+同机位截图，左侧原版，右侧优化版（`.codex/system-performance-20261107/final-visual-comparison.jpg`）
 
 已检查海岸、草甸、鸡鸭鹅、Cappuccino 与 Nailong 的渲染图，记录机位中未见材质丢失、蒙皮爆炸或植被消失。草甸的三角形提交数量仍约 821 万。波浪、风、动画与 AI 姿态按各自实际运行时间变化。逐像素同一动画时间的对齐、完整动作观感和所有 LOD 边界仍需进一步验收。
 
@@ -62,9 +64,9 @@ Unity 的 GPU Batched 蒙皮用计算着色器处理蒙皮，并在网格布局�
 
 修正路线的三份 Development 构建与一份 GPU 非 Development 构建全部成功，构建错误均为零，均报告 194 条构建警告。警告仍需逐项审查。最终前台性能采样的三个 Player 均记录零 Error 或 Exception。早期隐藏窗口曾出现 DX11 图形缓冲警告，最终三段路线的 Player 日志未记录该警告，这不能证明原间歇性闪退已经解决。
 
-GPU 非 Development 构建通过现有 `-stability-first-island` 的 13 项检查。包括第一岛加载、七个 Boss 战斗阶段、玩家虚拟键鼠攻击，以及实际受击反馈。持续约六分钟，最大记录帧间隔 64.14 ms，正常阶段使用默认帧率策略。自动 QA 会调整先决进度、Boss 血量并放置玩家。完整从新存档通关、死亡继续、奖励和抓人结尾尚未验收。 [战斗回归结果](../.codex/system-performance-20261107/after-gpu-release/first-island/stability.json)
+GPU 非 Development 构建通过现有 `-stability-first-island` 的 13 项检查。包括第一岛加载、七个 Boss 战斗阶段、玩家虚拟键鼠攻击，以及实际受击反馈。持续约六分钟，最大记录帧间隔 64.14 ms，正常阶段使用默认帧率策略。自动 QA 会调整先决进度、Boss 血量并放置玩家。完整从新存档通关、死亡继续、奖励和抓人结尾尚未验收。 战斗回归结果（`.codex/system-performance-20261107/after-gpu-release/first-island/stability.json`）
 
-同一非 Development 构建另通过既有 `-stability-check` 的 17 项检查。三波真实鸡鸭鹅通过正常伤害入口清除并解锁 Nailong，随后第二岛 60 只以上棉花糖敌人的两分钟战斗采样完成，再依次重载第一岛和第二岛。捕获零 Error 或 Exception，最大帧间隔 65.56 ms。该旧入口自身使用 1280×720 RenderTexture，因此只计入功能与资源回收回归。第二岛采样已分配内存为 726.9–737.9 MiB，重载第一岛后为 1365.7–1404.9 MiB，再回第二岛后为 734.7 MiB，说明此序列能释放上一岛的大部分资源。采样不足以建立长期无泄漏结论。 [资源重载回归](../.codex/system-performance-20261107/after-gpu-release/reload-regression/stability.json)
+同一非 Development 构建另通过既有 `-stability-check` 的 17 项检查。三波真实鸡鸭鹅通过正常伤害入口清除并解锁 Nailong，随后第二岛 60 只以上棉花糖敌人的两分钟战斗采样完成，再依次重载第一岛和第二岛。捕获零 Error 或 Exception，最大帧间隔 65.56 ms。该旧入口自身使用 1280×720 RenderTexture，因此只计入功能与资源回收回归。第二岛采样已分配内存为 726.9–737.9 MiB，重载第一岛后为 1365.7–1404.9 MiB，再回第二岛后为 734.7 MiB，说明此序列能释放上一岛的大部分资源。采样不足以建立长期无泄漏结论。 资源重载回归（`.codex/system-performance-20261107/after-gpu-release/reload-regression/stability.json`）
 
 项目 Test Runner 已发现零用例。已使用原生 Profiler 和 ProfilerRecorder。Memory Profiler、Profile Analyzer、Frame Debugger 的逐 Pass 调查尚未完成。90 分钟连续稳定性、三轮死亡与重载内存趋势，以及其他 GPU/API 的兼容性仍未验收。鸡鸭鹅与密集特效平均仍略低于 60 FPS，故“高画质全程稳定 60 FPS”目标仍未全部达到。
 
@@ -72,7 +74,7 @@ GPU 非 Development 构建通过现有 `-stability-first-island` 的 13 项检�
 
 原生设置保存前验证了五个第一岛场景均为 clean，并保留了当前 Play。正式产品名仍为 `Dark Brine_Rot`。GPU 设置前的 PlayerSettings 副本、应用收据与工程保护哈希均位于 `.codex/system-performance-20261107`。任何临时构建设置只作用于隔离快照。保留所有用户原有文件和备份。
 
-最终核验第一岛五个场景、PC URP 资产、渲染器和画质设置与隔离快照一致。正式存档及其 .bak 的 SHA-256 与任务开始前一致。设置保存没有触发主工程脚本重载，现有 Editor Play 继续运行。 [保护核验](../.codex/system-performance-20261107/final-preservation.json) · [Editor 状态](../.codex/system-performance-20261107/final-editor-state.json)
+最终核验第一岛五个场景、PC URP 资产、渲染器和画质设置与隔离快照一致。正式存档及其 .bak 的 SHA-256 与任务开始前一致。设置保存没有触发主工程脚本重载，现有 Editor Play 继续运行。 保护核验（`.codex/system-performance-20261107/final-preservation.json`） · Editor 状态（`.codex/system-performance-20261107/final-editor-state.json`）
 
 本轮增加的诊断入口包括 `Tools/SystemPerformanceRoutes.cs`、`SystemPerformanceBuild.cs`、`BuildSystemPerformance.ps1`、`RunSystemPerformance.ps1`、`SummarizeSystemPerformance.py`、`AnalyzeSystemPerformanceProfile.cs`、`VerifySystemPerformanceKernels.cs` 和 `ApplyMeasuredSkinning.cs`。诊断路线只复制进隔离构建，以显式命令行开关启用。原生项目中的普通游戏启动继续使用原入口。最后一个工具只负责将已验证的蒙皮设置精确保存到原工程。
 
@@ -85,7 +87,7 @@ GPU 非 Development 构建通过现有 `-stability-first-island` 的 13 项检�
 
 ## Unity Profiler 原生记录
 
-Unity 重新载入独立 CPU 蒙皮 Player 的原生抓取，读到 1,155 帧。主线程平均自耗时最高的标记是 `DXGI.WaitOnSwapChain`，为 23.24 ms。草地提交 0.50 ms、可见性 0.37 ms，PhysX 模拟 0.13 ms。渲染线程的 `Gfx.WaitForGfxCommandsFromMainThread` 平均 27.27 ms，`DrawOpaqueObjects` 含子项平均 2.91 ms。线程等待时间不可相加。此抓取含阶段预热、截图读回与 Profiler 自身开销，不能用作整帧 A/B。 [原始 Profiler 抓取](../.codex/system-performance-20261107/after/foreground-profile/report.raw) · [标记明细](../.codex/system-performance-20261107/after/foreground-profile/report.raw.analysis.json)
+Unity 重新载入独立 CPU 蒙皮 Player 的原生抓取，读到 1,155 帧。主线程平均自耗时最高的标记是 `DXGI.WaitOnSwapChain`，为 23.24 ms。草地提交 0.50 ms、可见性 0.37 ms，PhysX 模拟 0.13 ms。渲染线程的 `Gfx.WaitForGfxCommandsFromMainThread` 平均 27.27 ms，`DrawOpaqueObjects` 含子项平均 2.91 ms。线程等待时间不可相加。此抓取含阶段预热、截图读回与 Profiler 自身开销，不能用作整帧 A/B。 原始 Profiler 抓取（`.codex/system-performance-20261107/after/foreground-profile/report.raw`） · 标记明细（`.codex/system-performance-20261107/after/foreground-profile/report.raw.analysis.json`）
 
 ## 本机重跑
 

@@ -1,5 +1,7 @@
 # Unity 闪退排查与修正
 
+本地归档路径相对于项目根目录。
+
 ## 崩溃证据
 
 本机 `Crash_2026-11-07_021157142/Editor.log` 明确记录 `System out of memory`，失败分配只有 13,824 字节，Renderer 标签。此时 `ALLOC_DEFAULT` 已使用 91,137,573,311 字节，约 91.14 GB。托管调用栈为：
@@ -44,5 +46,5 @@ Unity 的崩溃场景副本已保存在 `Assets/_Recovery`。本轮不保存或�
 
 相同编辑器 Game View 的 draw calls 从 4,009 降至 1,617，triangles 保持 53,558,679；受控开关测试重复确认合批差异。同机位渲染的近地取样区域像素一致。脚本域重载及两轮 Play 进出未新增 Ring Buffer、运行时异常或设备丢失日志。五场景与正式存档哈希核验未改变。此项验证不代表长期警告已根治，也不代替独立构建、完整通关和 90 分钟稳定性验收。
 
-完整范围、原始数据和前后图：[本轮记录](../.codex/ring-buffer-review-20261107/review.md)。
+完整范围、原始数据和前后图：本轮记录（`.codex/ring-buffer-review-20261107/review.md`）。
 

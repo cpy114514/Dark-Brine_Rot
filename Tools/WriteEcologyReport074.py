@@ -17,7 +17,8 @@ total=sum(s['count'] for s in species)
 uncanny=sum(s['count'] for s in species if s['uncanny'])
 names=['耐风莎草','矮羊茅草','宽叶草本','鹿舌状蕨','羽状蕨','海岸鼠尾草状灌木','林下阔叶灌木','阔叶幼树','窄叶风弯幼树','赭黄野花','紫色钟形野花','象牙白野花','栗色菌群','垫状苔藓','铜褐落叶','枯枝','墨色卷叶蕨','潮汐微光菌','盐雾卷须藤','暗红种子花苞']
 rows='\n'.join(f'| {i+1} | {names[i]} / {s["name"]} | {s["count"]} | {"怪诞" if s["uncanny"] else "自然"} |' for i,s in enumerate(species))
-def image(name):return f'<{(evidence/name).as_posix()}>'
+def image(name):
+    return f"<{(evidence / name).relative_to(root / 'Documentation').as_posix()}>"
 report=f'''# Island 1 环境与植被改造 · 2026-11-04
 
 已在 `codex/island1-ecology074` 分支实现并保存到 `Assets/Scenes/First Island/Environment.unity`。先制作半径 68 米的样板，再完成画面、贴地、风摆和性能检查，随后扩展至第一岛。当前交付为可以继续编辑和运行的生态改造版本，不等同于最终商业美术验收。

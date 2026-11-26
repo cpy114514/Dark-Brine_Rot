@@ -176,7 +176,7 @@
   },
   "helpers": {
     "success": true,
-    "stdout": "\nFBX export starting... 'C:\\\\Users\\\\pinyu\\\\.codex\\\\tools\\\\blender-workflow\\\\verification\\\\TEST_b033e8037d\\\\.TEST_Connectivity_001.exporting.fbx'\n(bpy.data.armatures['TEST_b033e8037d_Rig'], 'POSE')\nexport finished in 0.0125 sec.\n",
+    "stdout": "\nFBX export starting... '%USERPROFILE%\\\\.codex\\\\tools\\\\blender-workflow\\\\verification\\\\TEST_b033e8037d\\\\.TEST_Connectivity_001.exporting.fbx'\n(bpy.data.armatures['TEST_b033e8037d_Rig'], 'POSE')\nexport finished in 0.0125 sec.\n",
     "stderr": "",
     "error": null,
     "result": {
@@ -272,18 +272,18 @@
           49
         ],
         "previews": [
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0001.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0024.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0049.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0001.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0024.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0049.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0001.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0024.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0049.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0001.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0024.00.png",
-          "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0049.00.png"
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0001.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0024.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\front-0049.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0001.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0024.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\side-0049.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0001.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0024.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\three-quarter-0049.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0001.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0024.00.png",
+          "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d\\previews\\gameplay-0049.00.png"
         ],
         "gameplay_camera": "rendered",
         "view_note": "default front assumes Blender -Y; inspect actual model forward direction"
@@ -439,7 +439,7 @@
       "overwrite_refused": true
     }
   },
-  "output": "C:\\Users\\pinyu\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d",
+  "output": "%USERPROFILE%\\.codex\\tools\\blender-workflow\\verification\\TEST_b033e8037d",
   "cleanup": {
     "success": true,
     "stdout": "",

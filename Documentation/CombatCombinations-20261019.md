@@ -12,8 +12,6 @@ Initial tunable timing: spin .9 s per revolution after .18 s startup; hits once 
 
 Stage: BLOCKING / first integration, not final art approval. Inspect source and three-angle/native gameplay previews before accepting each clip for integration. Exact actual verification and limitations will be appended after tests.
 
-Continuation: the one-time 2026-10-19 **05:45 America/Vancouver** task fired and automation `automation` was deleted through the app. No further task was scheduled. See the scheduled-continuation report below.
-
 ## Source review
 
 Oct19 source blocking review: inspected full-size front, side and three-quarter renders under ArtSource/Combat/v001/preview01, including the club grip, full X at frame31, outward blade cut, half-turn spin silhouette and overhead-to-low chop. Preserved 28-bone rig/rest pose. Revised the supporting palm against the actual right-hand shaft; numeric supporting-palm target error is 0.000205cm, jump grip error 0.000028cm. Loop seams pass source validation. Accepted for BLOCKING import only: finger closure uses the existing native hand rig, and native Avatar retargeting, two-hand contact, facing and runtime transitions still require inspection. This is not final animation approval.
@@ -40,11 +38,9 @@ Quality stage remains a playable first integration/BLOCKING, not final AAA anima
 
 Corrected the preview fixture's target/root height so both grounded spin variants and guard reference use real floor/chest heights; reran all30 checks at60Hz and30Hz successfully. Latest video uses the corrected60Hz capture and shows both spin targets on the floor. Confirmed real ChargedHeavy and JumpSlash events. Current 60Hz rush travel3.29m includes the pre-existing movement settling after a moving charge; its authored rush displacement itself is3m and physical wall test stops before the wall. Both detailed reports retain actual measured values.
 
-Final Editor is stopped, compiling false, fresh console errors0. Scene file, prefab files, ProjectSettings and Packages have no combat-pass changes. Story1 remains dirty in Editor memory; its unsaved contents were preserved without saving/reloading/discarding the scene. Save SHA256 remains EE58C485F0BA23FB6DE948F847944569C21BCFB2A83581104E4B61F1D1C523D0. C# whitespace check passes; full Git whitespace check reports Unity-generated empty serialized controller fields and a pre-existing documentation EOF blank line, left intact rather than text-editing Unity YAML. No commit/push.
+The Editor reported zero fresh console errors. The combat pass preserved the unsaved Story1 scene and the player save.
 
-## 05:45 scheduled continuation — transition and guard feedback fixes
-
-The app confirmed deletion of automation`automation` when the one-time wakeup fired. It was not rescheduled. The earlier playable moves and source clips were retained; this continuation fixes demonstrated defects rather than reinstalling animations.
+## Attack transitions and guard feedback
 
 A controlled native reproduction released a real mouse charge while the base locomotion loop was at a valid .95 phase. During the incoming heavy blend, the public attack phase incorrectly reported **.970** although the actual destination attack was at **.0222**. This allowed a recovery dodge to cancel the strike before contact. `CurrentAttackPhase` now reads the incoming attack state during its transition, and returns0 when a requested state has not yet been evaluated. It retains the previously verified mobile-layer handoff frame. The actual hit window is now a single property shared by weapon queries, dodge/combination recovery and cinematic readiness. A club-heavy Inspector window ending at.9 no longer delays the separate twin-blade rush's recovery; the latter still uses its authored .20-.56 contact window.
 
@@ -52,4 +48,4 @@ The native Nailong attack caller also placed block feedback at the end of its re
 
 Evidence: `.codex/combat-combinations-20261019/heartbeat-0545/before.json` demonstrates the defects (the .9 club-window test is a configuration edge case); `after.json` passes all four transition/recovery/front/rear checks. `guard-after.png` is an actual native camera capture. The original source and save were backed up in that folder before editing. Full source choreography, damage balance, root motion and animation assets were not changed. Full boss-AI playthrough, release FPS and final animation/audio art approval remain unverified.
 
-Scheduled-continuation final verification: **30 checks pass at60Hz and30Hz simulated deltas**, plus all four focused transition/actual-Nailong-caller checks. The moving ordinary club combo still completes all three stages through direction changes, moves9.505456m, preserves phase/root ownership and restores its upper-body layer. Evidence is under `heartbeat-0545/` so earlier validation/footage remains intact. Editor is stopped, compiling false, console errors0; current save remains EE58C485F0BA23FB6DE948F847944569C21BCFB2A83581104E4B61F1D1C523D0. No scene/prefab/ProjectSettings/Packages changes, no extra Editor/Player, no commit/push. Unsaved Story1 content remains open and was not saved or discarded. The once-only automation is deleted; no further wakeup was created.
+All 30 checks passed at both 60 Hz and 30 Hz simulated deltas, along with the four focused transition and guard checks. The moving club combo completed three stages through direction changes, travelled 9.505456 m and restored its upper-body layer.

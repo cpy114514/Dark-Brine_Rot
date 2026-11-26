@@ -1,6 +1,6 @@
 # Duck size, locomotion, wave UI and browser setup — Batch026
 
-The latest user request is implemented:duck grows another50%,wave caption moves inside its card below the encounter HUD,and duck locomotion now follows actual travel rather than treating every Chase mood as running. Playwright MCP is installed/configured independently in the user profile and its real browser protocol probe passes.
+Batch 026 increased the duck’s size by 50%, based its locomotion on actual travel and moved the wave caption inside its card below the encounter HUD.
 
 ## Confirmed evidence and corrections
 
@@ -22,12 +22,12 @@ Actual before/after size+UI and finalWalk/Idle GameView PNGs were inspected. Sil
 
 ## Playwright MCP
 
-Plugin discovery did not return a matching Playwright listing,so the requested official Microsoft server was installed directly:package@playwright/mcp0.0.83 in user tools,Node24.15.0,shared Codex MCP nameplaywright enabled,stdio,headlessChrome,isolated browser context. Automatic browser output goes to a private user folder rather than the Unity repository. The MCP client discovers25 tools,navigateshttps://example.com,findsExample Domain and closes the owned browser successfully. This verifies installed/configured/protocol-working separately from the current conversation's tool catalog,which did not hot-load the new server. The client must next initialize/reload MCP for native server tools to appear;no app restart was forced during work.
+A separate browser smoke test used Microsoft Playwright MCP 0.0.83 with Codex and Node 24.15.0. The client discovered 25 tools, opened Example Domain and closed its isolated headless Chrome session. This checked the browser protocol only. [Recorded result](../AUTO_QA/Evidence/batch026/browser-setup.json)
 
-A private global config backup and package lock are retained. No config/auth/user browser profile enters Git. Unrelated config differences observed across snapshots were preserved instead of blindly rolling back potentially concurrent settings;the exact requested Playwright entry was verified. A temporary project snapshot from the first smoke run was moved privately and its empty directory removed;future output is private. [Microsoft setup](https://github.com/microsoft/playwright-mcp),[Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
+Setup references: [Microsoft Playwright MCP](https://github.com/microsoft/playwright-mcp) · [Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli).
 
 ## Preservation and checkpoint
 
 Same Editor only. Original5 scenes restored clean/stopped,fresh save+backup byte-identical and running marker clear. FBX/import metadata/material and chicken prefab match the Git baseline;original Strike code body matches the fresh source snapshot. Runtime pixel/pipeline/camera/time ownership restores. No standalone build/full FPS or full registry preference-restoration claim:this Editor batch did not intentionally write PlayerPrefs,and no fresh100-value pre-run registry snapshot was taken. Preserve user edits/unrelated Plastic checkouts and existing606 missing plants.
 
-Public evidence:AUTO_QA/Evidence/batch026/{proof,before-reproduction,accepted,final-native-state,browser-setup}.json plus5 native PNGs. Private snapshots/intermediate cases remain.codex/enemy026;do not overwrite or rerun unchanged. Checkpoint title:Enlarge duck and correct locomotion and wave banner layout. BaselineGit314b6f1/Plasticcs209;verify actual remotes before sync.
+The batch directory contains the reproduction, accepted checks and final Editor state. The baseline was Git `314b6f1` / Plastic changeset 209. [Batch 026 evidence](../AUTO_QA/Evidence/batch026/)

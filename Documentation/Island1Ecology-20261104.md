@@ -100,31 +100,31 @@ Mavis/FoliageWind 增加默认关闭的 Botanical PBR 分支，使用 URP 的光
 
 草地改造前：
 
-![草地改造前](<D:/indiegameDev/unity/Dark Brine_Rot/Documentation/EnvironmentReview074/before-0.png>)
+![草地改造前](https://media.githubusercontent.com/media/cpy114514/Dark-Brine_Rot/476528383b67876c3530fcf1373b8fbeebe8a395/Documentation/EnvironmentReview074/before-0.png)
 
 草地改造后：
 
-![草地改造后](<D:/indiegameDev/unity/Dark Brine_Rot/Documentation/EnvironmentReview074/after-0.png>)
+![草地改造后](https://media.githubusercontent.com/media/cpy114514/Dark-Brine_Rot/476528383b67876c3530fcf1373b8fbeebe8a395/Documentation/EnvironmentReview074/after-0.png)
 
 林缘改造前：
 
-![林缘改造前](<D:/indiegameDev/unity/Dark Brine_Rot/Documentation/EnvironmentReview074/before-1.png>)
+![林缘改造前](https://media.githubusercontent.com/media/cpy114514/Dark-Brine_Rot/476528383b67876c3530fcf1373b8fbeebe8a395/Documentation/EnvironmentReview074/before-1.png)
 
 林缘改造后（含原白模树皮修复）：
 
-![林缘改造后](<D:/indiegameDev/unity/Dark Brine_Rot/Documentation/EnvironmentReview074/after-1.png>)
+![林缘改造后](https://media.githubusercontent.com/media/cpy114514/Dark-Brine_Rot/476528383b67876c3530fcf1373b8fbeebe8a395/Documentation/EnvironmentReview074/after-1.png)
 
 整体布局改造前：
 
-![布局改造前](<D:/indiegameDev/unity/Dark Brine_Rot/Documentation/EnvironmentReview074/before-3.png>)
+![布局改造前](https://media.githubusercontent.com/media/cpy114514/Dark-Brine_Rot/476528383b67876c3530fcf1373b8fbeebe8a395/Documentation/EnvironmentReview074/before-3.png)
 
 整体布局改造后：
 
-![布局改造后](<D:/indiegameDev/unity/Dark Brine_Rot/Documentation/EnvironmentReview074/after-3.png>)
+![布局改造后](https://media.githubusercontent.com/media/cpy114514/Dark-Brine_Rot/476528383b67876c3530fcf1373b8fbeebe8a395/Documentation/EnvironmentReview074/after-3.png)
 
 怪诞植物原生材质检查（独立背景，不是岛上构图）：
 
-![怪诞植物](<D:/indiegameDev/unity/Dark Brine_Rot/Documentation/EnvironmentReview074/specimens-3.png>)
+![怪诞植物](https://media.githubusercontent.com/media/cpy114514/Dark-Brine_Rot/476528383b67876c3530fcf1373b8fbeebe8a395/Documentation/EnvironmentReview074/specimens-3.png)
 
 ## 编辑、回退与尚未验证
 

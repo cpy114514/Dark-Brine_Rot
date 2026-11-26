@@ -1,5 +1,7 @@
 # 完整处决段落与武器/Boss 配对
 
+本地归档路径相对于项目根目录。
+
 **已退役：用户随后要求移除处决，当前项目已撤除本功能。** 当前结果见 [BossExecutionRemoved-20261108.md](BossExecutionRemoved-20261108.md)。下文仅保留历史记录，旧动画/配置已归档。
 
 接续 BossExecution-20261107。提示已改为全英文 `Press [E] Execute`；键名跟随原有输入配置。零血待处决、仅 Boss、Scripted 剧情结局和单次奖励契约不变。
@@ -47,7 +49,7 @@
 
 最终结果：九组 Play Mode 回归全部通过，捕获 Error/Exception 为 0，共保存 148 张序列帧；三次步枪命中采样方向点积最低 .99999994，玩家骨盆水平偏移最大 .1381 米。原生资源检查 88 项通过，确认双方 clip/状态引用、非循环、时长、命中时刻和剧情排除配置。正式存档及备份哈希未变；五个场景与基线相同且均不 dirty，活动 Main，无临时相机焦点，已退出测试。
 
-预览：[木棒](../.codex/execution-sequences-20261108/Cup-Stick-preview.gif)、[双刀](../.codex/execution-sequences-20261108/Dragon-CapriTwinBlades-preview.gif)、[步枪](../.codex/execution-sequences-20261108/Ronin-M4A1-preview.gif)、[九组动作图](../.codex/execution-sequences-20261108/nine-pairs.png)。
+预览：木棒（`.codex/execution-sequences-20261108/Cup-Stick-preview.gif`）、双刀（`.codex/execution-sequences-20261108/Dragon-CapriTwinBlades-preview.gif`）、步枪（`.codex/execution-sequences-20261108/Ronin-M4A1-preview.gif`）、九组动作图（`.codex/execution-sequences-20261108/nine-pairs.png`）。
 
 审片记录（2026-11-08，FIRST PASS，30 FPS，木棒 0–81 / 双刀 0–75 / 步枪 0–78）：已观察到准备/举棒、斩击姿态、步枪抬放和目标响应；拒绝了首版源根轨迹导致的穿模，已针对 RootT/RootQ 和木棒 .3–1.2 秒准备段修正并重渲染；猪武士近战间距额外 .7 米已复查。未对审美打分，未观察/认证全部足底接触与复杂地形。阶段结果为已实现并完成专项审片的第一遍演出，等待用户观感反馈，不冒称人工 FINAL/APPROVED。
 

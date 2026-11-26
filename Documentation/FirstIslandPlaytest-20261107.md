@@ -1,6 +1,8 @@
 # 第一岛完整试玩与回归记录
 
-测试日期 2026-11-07。硬件为 Windows 11、Intel Core i5-14400F、32 GiB RAM、NVIDIA GeForce RTX 4060。独立 Player 使用 Unity 6000.3.23f1、Direct3D11，产品名为 `DarkBrineRot_Playtest`。构建、存档和测量的原始证据在 [试玩目录](../.codex/first-island-playtest-20261107/)。
+本地归档路径相对于项目根目录。
+
+测试日期 2026-11-07。硬件为 Windows 11、Intel Core i5-14400F、32 GiB RAM、NVIDIA GeForce RTX 4060。独立 Player 使用 Unity 6000.3.23f1、Direct3D11，产品名为 `DarkBrineRot_Playtest`。构建、存档和测量的原始证据在 试玩目录（`.codex/first-island-playtest-20261107/`）。
 
 ## 问题和修改
 
@@ -12,15 +14,15 @@
 
 相关项目文件为 `Assets/Scripts/Combat/PlayerDeathRespawn.cs`、`Assets/Scripts/Story/FirstIsland/FirstIslandBossProgression.cs`、`Assets/Scripts/Story/FirstIsland/FirstIslandArrival.cs`，以及 `Assets/Game/Prefabs/Bosses/` 下 Cappuccino、Nailong 和 Bombardino 的 AI 脚本。镜头默认值在 `Assets/Game/Prefabs/UI/SettingsMenu/Scripts/PauseSettingsMenu.cs`。本轮 QA 未保存场景、Prefab、材质或画质资产。
 
-死亡基线见 [原 Boss 状态](../.codex/first-island-playtest-20261107/first-run/death-cycle-3-boss.json)。修复后同一进程完成三轮读档、交战、自然死亡和 Enter 复活。Boss 在死亡时分别为 835、863、844 HP，复活后进入 Returning，随后回到原位和 999 HP。玩家恢复 100 HP 并可操作。飞机在完整路线复活后恢复 Patrol 和 2,100 HP。[三轮日志](../.codex/first-island-playtest-20261107/soak/repeat-memory.jsonl) · [飞机复测](../.codex/first-island-playtest-20261107/fixed-run/bombardino-reset.json)
+死亡基线见 原 Boss 状态（`.codex/first-island-playtest-20261107/first-run/death-cycle-3-boss.json`）。修复后同一进程完成三轮读档、交战、自然死亡和 Enter 复活。Boss 在死亡时分别为 835、863、844 HP，复活后进入 Returning，随后回到原位和 999 HP。玩家恢复 100 HP 并可操作。飞机在完整路线复活后恢复 Patrol 和 2,100 HP。三轮日志（`.codex/first-island-playtest-20261107/soak/repeat-memory.jsonl`） · 飞机复测（`.codex/first-island-playtest-20261107/fixed-run/bombardino-reset.json`）
 
 ## 前后画面
 
 | 旧默认与重复提示 | 测试快照中的 8.4 m 与单条引导 |
 |---|---|
-| ![修改前落岛手杖前](../.codex/first-island-playtest-20261107/first-run/shore-before-pickup.png) | ![修改后落岛手杖前](../.codex/first-island-playtest-20261107/fixed-run/shore-before-pickup.png) |
+| 修改前落岛手杖前（`.codex/first-island-playtest-20261107/first-run/shore-before-pickup.png`） | 修改后落岛手杖前（`.codex/first-island-playtest-20261107/fixed-run/shore-before-pickup.png`） |
 
-两次均为 1920×1080、PC、4× MSAA、0.75 渲染比例。角色水平位置相差不到 0.1 m，记录的 yaw/pitch 为 263.54° / 30.74°。镜头距离是比较变量，抓帧时刻和海浪相位有差异。近距离正常按 F 拾取。[近处交互提示](../.codex/first-island-playtest-20261107/fixed-run/shore-near-pickup.png) · [拾取结果](../.codex/first-island-playtest-20261107/fixed-run/pickup-after.json)
+两次均为 1920×1080、PC、4× MSAA、0.75 渲染比例。角色水平位置相差不到 0.1 m，记录的 yaw/pitch 为 263.54° / 30.74°。镜头距离是比较变量，抓帧时刻和海浪相位有差异。近距离正常按 F 拾取。近处交互提示（`.codex/first-island-playtest-20261107/fixed-run/shore-near-pickup.png`） · 拾取结果（`.codex/first-island-playtest-20261107/fixed-run/pickup-after.json`）
 
 ## 完整路线与保存
 
@@ -29,7 +31,7 @@
 - 走路约 30.65 m，体力 100 → 100。冲刺 100 → 81.2 后自然回满。练习攻击、闪避、锁定、武器切换、治疗、射击和换弹均有实际输入及状态记录。
 - Cappuccino 死亡后正常拾取双刃并按 2 装备。鸡鸭鹅阶段死亡后能继续，已完成的 Boss 记录和装备保留。打完 Nailong 后正常拾取并按 3 装备 M4A1。
 - 飞机通过正常射击从 2,100 HP 到 0，触发抓走与第二岛场景切换。落地对话按 Space 结束。交接发生一条 PlayerInput 设备配对警告，鼠标最初未锁定，单按 W 没有移动；普通左键点击后 W 移动约 3.65 m。完成保存退出。警告和焦点交接保留为待独立复现项。
-- 实际写盘快照见 [Cappuccino 后](../.codex/first-island-playtest-20261107/fixed-run/after-capri-save.json)、[鸡鸭鹅后](../.codex/first-island-playtest-20261107/fixed-run/after-flock-save.json)、[Nailong 后](../.codex/first-island-playtest-20261107/fixed-run/after-nailong-save.json)、[结束后](../.codex/first-island-playtest-20261107/fixed-run/finished-save.json)。[飞机战](../.codex/first-island-playtest-20261107/fixed-run/aircraft-rifle.png) · [切换后落下](../.codex/first-island-playtest-20261107/fixed-run/captured.png) · [第二岛对话](../.codex/first-island-playtest-20261107/fixed-run/handoff-dialogue.png) · [非 Development 继续游戏](../.codex/first-island-playtest-20261107/release-continue/continued-window.jpg)
+- 实际写盘快照见 Cappuccino 后（`.codex/first-island-playtest-20261107/fixed-run/after-capri-save.json`）、鸡鸭鹅后（`.codex/first-island-playtest-20261107/fixed-run/after-flock-save.json`）、Nailong 后（`.codex/first-island-playtest-20261107/fixed-run/after-nailong-save.json`）、结束后（`.codex/first-island-playtest-20261107/fixed-run/finished-save.json`）。飞机战（`.codex/first-island-playtest-20261107/fixed-run/aircraft-rifle.png`） · 切换后落下（`.codex/first-island-playtest-20261107/fixed-run/captured.png`） · 第二岛对话（`.codex/first-island-playtest-20261107/fixed-run/handoff-dialogue.png`） · 非 Development 继续游戏（`.codex/first-island-playtest-20261107/release-continue/continued-window.jpg`）
 
 ## 观察和构建
 
@@ -49,7 +51,7 @@
 | 飞机 | 8.08 | 11.20 | 是 |
 | Second Island | 8.54 | 10.40 | 是 |
 
-首次观测 90 分钟计划在约 61 分钟因进程退出而失败。Windows 事件记录 PID 25008 的 `0xc0000005`，指令地址落在已卸载的 `mono-2.0-bdwgc.dll+0x3f8560`。保留了原生日志和转储。事发时有并行桌面工作，当前没有证据可归因于脚本、显卡或某个具体回调，也没有据此改动草地、缓冲或诊断线程。[原生崩溃事件](../.codex/first-island-playtest-20261107/soak/native-crash-events.json) · [转储摘要](../.codex/first-island-playtest-20261107/soak/native-crash-minidump-summary.txt)
+首次观测 90 分钟计划在约 61 分钟因进程退出而失败。Windows 事件记录 PID 25008 的 `0xc0000005`，指令地址落在已卸载的 `mono-2.0-bdwgc.dll+0x3f8560`。保留了原生日志和转储。事发时有并行桌面工作，当前没有证据可归因于脚本、显卡或某个具体回调，也没有据此改动草地、缓冲或诊断线程。原生崩溃事件（`.codex/first-island-playtest-20261107/soak/native-crash-events.json`） · 转储摘要（`.codex/first-island-playtest-20261107/soak/native-crash-minidump-summary.txt`）
 
 | 同进程轮次 | 读档后约 5 秒私有内存 MiB | 复活后约 9 秒私有内存 MiB |
 |---|---:|---:|
@@ -57,12 +59,12 @@
 | 2 | 4,839.5 | 4,734.3 |
 | 3 | 4,922.3 | 4,759.9 |
 
-复活后同口径三轮增加 92.7 MiB，后续样本约 4,770 MiB。三个周期不能证明长期泄漏或无泄漏。第二轮为非 Development 版本，从鸡鸭鹅完成后读档，独立测试第一岛连续渲染。其结果以 [最终观测](../.codex/first-island-playtest-20261107/release-soak/observe.json) 和下面的补充记录为准。
+复活后同口径三轮增加 92.7 MiB，后续样本约 4,770 MiB。三个周期不能证明长期泄漏或无泄漏。第二轮为非 Development 版本，从鸡鸭鹅完成后读档，独立测试第一岛连续渲染。其结果以 最终观测（`.codex/first-island-playtest-20261107/release-soak/observe.json`） 和下面的补充记录为准。
 
 ## 工作区保护与未关闭事项
 
 原编辑器的 5 个第一岛场景、dirty 状态和 6,098 个 Prefab 根实例已记录。原产品名 `Dark Brine_Rot`、正式存档及备份、PlayerPrefs、质量/构建设置和包文件已核验。原编辑器保持 Main 激活、场景 clean、Play 停止；首次核验的场景字节一致，后续 Environment 有独立改动，已保留。当前工作区还包含测试快照之后的镜头和第二岛修改，快照结果不能作为这些后续改动的验收。
 
 - Test Runner 查询实际发现 0 用例。原生 Boss 顺序检查复核了三个固定 Boss ID，正常路线也验证了鸡鸭鹅门控。测试脚本或进程操作失败单独记录。
-- 云层条纹单独跟踪。本轮没有编辑天空。已观察的长测机位没有出现此前的大白光或明确的旧横纹，仍可见细采样纹理。该机位不能覆盖整个岛屿或不同时间。[长测机位](../.codex/first-island-playtest-20261107/release-soak/first-island-view.jpg)
-- 原生编辑器复核了当前 Environment。草甸 136,643 个，两层生态 2,724 / 738 个，生态烘焙自管碰撞分别为 145 / 40 个。沉船 49 个原开场构件、65 个 Renderer、18 个实体碰撞、0 个刚体、0 个缺材质。重跑 3,333 个沉船保护路线胶囊查询，0 次阻挡，18 个碰撞均可查询。上述查询属于专项检查。 [环境核对](../.codex/first-island-playtest-20261107/environment-audit.json) · [沉船复测](../.codex/first-island-playtest-20261107/shipwreck/validation.json) · [环境维护说明](Island1EnvironmentMaintenance-20261107.md)
+- 云层条纹单独跟踪。本轮没有编辑天空。已观察的长测机位没有出现此前的大白光或明确的旧横纹，仍可见细采样纹理。该机位不能覆盖整个岛屿或不同时间。长测机位（`.codex/first-island-playtest-20261107/release-soak/first-island-view.jpg`）
+- 原生编辑器复核了当前 Environment。草甸 136,643 个，两层生态 2,724 / 738 个，生态烘焙自管碰撞分别为 145 / 40 个。沉船 49 个原开场构件、65 个 Renderer、18 个实体碰撞、0 个刚体、0 个缺材质。重跑 3,333 个沉船保护路线胶囊查询，0 次阻挡，18 个碰撞均可查询。上述查询属于专项检查。 环境核对（`.codex/first-island-playtest-20261107/environment-audit.json`） · 沉船复测（`.codex/first-island-playtest-20261107/shipwreck/validation.json`） · [环境维护说明](Island1EnvironmentMaintenance-20261107.md)

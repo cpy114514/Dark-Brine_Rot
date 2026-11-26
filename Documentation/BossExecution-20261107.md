@@ -1,5 +1,7 @@
 # Boss 处决系统：配置与验证
 
+本地归档路径相对于项目根目录。
+
 **已退役：用户于 2026-11-08 要求移除处决，当前项目已撤除本功能。** 当前结果见 [BossExecutionRemoved-20261108.md](BossExecutionRemoved-20261108.md)。下文仅保留历史记录，勿据此重新运行旧配置工具。
 
 后续完整配对片段、英文提示和九组演出进展见 [BossExecutionSequences-20261108.md](BossExecutionSequences-20261108.md)。本文记录前一阶段基线；下文“未制作配对 clip”已由该后续阶段更新。
@@ -63,13 +65,13 @@ Nailong 的 PhaseAnimation、HitReaction 从原有 Awake 按需添加，改为�
 
 ## 截图
 
-![实际悬浮提示](../.codex/boss-execution-20261107/Stick-prompt.png)
+实际悬浮提示（`.codex/boss-execution-20261107/Stick-prompt.png`）
 
-![木棒演出](../.codex/boss-execution-20261107/Stick-action.png)
+木棒演出（`.codex/boss-execution-20261107/Stick-action.png`）
 
-![双刀演出](../.codex/boss-execution-20261107/CapriTwinBlades-action.png)
+双刀演出（`.codex/boss-execution-20261107/CapriTwinBlades-action.png`）
 
-![修复站位与枪口后的步枪演出](../.codex/boss-execution-20261107/M4A1-action.png)
+修复站位与枪口后的步枪演出（`.codex/boss-execution-20261107/M4A1-action.png`）
 
 ## 尚未验收
 

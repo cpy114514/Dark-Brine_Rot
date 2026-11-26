@@ -16,7 +16,7 @@
 
 ## 归档位置与恢复
 
-`D:/indiegameDev/unity/ProjectCleanupArchive/Dark-Brine-Rot-20261006-201500/`
+`ProjectCleanupArchive/Dark-Brine-Rot-20261006-201500/`
 
 归档保留原相对路径：
 

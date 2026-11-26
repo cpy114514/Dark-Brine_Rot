@@ -1,6 +1,6 @@
-# Current continuation — Oct13 — v137 measured; v138 native review IN PROGRESS
+# v137 Player measurements and the v138 water-entry trial
 
-Whole objective INCOMPLETE. Read implementation-review-v137.md before historical states. Original Unity Editor PID22012/port7800 only, autotickTRUE16ms. Native continuous four-view v138 was started ONCE via Tools/RunReviewV138.cs RunReviewV138.Start. Do not duplicate captures/builds, edit Assets or launch another Editor while it is running. Check native-paired-v138/review.json, ending-v138.json, framing-v138.json and submerged-entry-v138.json before stopping and backing up diagnostic save. No independent Player or Blender worker active.
+The v138 four-view test was started using `Tools/RunReviewV138.cs`. Its outputs cover contact, ending pose, framing and submerged entry.
 
 Completed v132:625frames/four encoded movies; sole1.107mm/slide1.305mm; TWO contacts fail1.498/1.810m in dense wood, no false hits. Ending278samples/25paused/0upright/0pausedmotion/0clockdrift, loststick/unarmed unconscious island PASS. Actual contact sheet inspected: ordinary probe shark is too exposed, foreground water/wood can occlude action. Normal-speed final art NOTobserved.
 
@@ -12,6 +12,4 @@ v137 natural-trigger actualPlayer completed and quit:3653GPUreadbacks0errors,108
 
 v138 targeted visual fix: previously swimming admission reused later raised bite's rootY, hovering above water through initial anticipation. Candidate whole-swim roots now use existing SurfaceRootY (15% bounds exposure), ALL original anatomical endpoint/path clearance and movement budgets retained; dynamic waiting root follows water rather than tilting board lifting shark. Contact pose, bite startup/window and breach unchanged. Source compilationPASS, actual four-view/submergence/contact/motion/ending validation running. Backups/v138.
 
-SAVE AUTHORITY .codex/opening-optimization-20261012/backups/save-user-after-play-052419.json SHA256 AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3. Live C:/Users/pinyu/AppData/LocalLow/DefaultCompany/Dark Brine_Rot/dark-brine-rot-save.json verifiedAB after v137. Stop/verifyactualfalse before preserving/restoring diagnostic state, protect genuinely newer human saves. NEVER old9BD/backups/save.json.
-
-Next: finish v138 review, improve route planning CPU and actual handoff initialization, native + independent rendered regression, genuine reachable086hop, fullnormal-speed/multiview artistic review. No surfing/driving/paddle/audio, original rigs/history/save protected, blackwhiteUI/colourimages, no scene save/revert/commit/push/extraEditor. Do not delete5-30 or claim whole finished. Historical states below superseded.
+Open checks at this revision included route-planning cost, handoff initialization, a reachable v086 hop and full-speed multiview review of the entry.

@@ -37,7 +37,7 @@ The active SSAO depth-normal prepass omits custom terrain/foliage lacking DepthN
 
 ## Baseline — 2026-10-28
 
-Unity 6000.3.23f1; one project Editor connected, stopped in the five First Island scenes. HEAD at entry: `dbf282d`. Numerous pre-existing uncommitted changes are listed in `Evidence/initial-worktree.txt`; preserve them and commit only QA-owned changes. No existing AUTO_QA records or applicable AGENTS.md found. Unity reports no current script compilation failure. Unity Test Runner discovers zero EditMode tests; existing regression scripts use explicit static entry points.
+Unity 6000.3.23f1; one project Editor connected, stopped in the five First Island scenes. HEAD at entry: `dbf282d`. The [initial worktree inventory](https://github.com/cpy114514/Dark-Brine_Rot/blob/adbe8cc794659768260f8ff7b007003fb6de6264/AUTO_QA/Evidence/initial-worktree.txt) recorded pre-existing edits outside the QA changes. No existing AUTO_QA records or applicable AGENTS.md found. Unity reports no current script compilation failure. Unity Test Runner discovers zero EditMode tests; existing regression scripts use explicit static entry points.
 
 ## Verified fixes
 

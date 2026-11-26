@@ -43,6 +43,21 @@ public static class SecondIslandFullReview
             await Task.Delay(40);
         }
     }
+    static async Task CollectResult(Dictionary<string, object> results, string key,
+        Func<string> readStatus, Func<object> readSummary, float timeoutSeconds)
+    {
+        await WaitFor(() =>
+        {
+            var current = readStatus();
+            return current == "completed" || current.StartsWith("failed");
+        }, timeoutSeconds);
+
+        var status = readStatus();
+        results[key + "Status"] = status;
+        results[key] = readSummary();
+        if (status != "completed") throw new Exception(status);
+    }
+
     static object Terrain(ThirdPersonPlayerController player,MarshmallowIslandExperience experience)
     {
         var collider=experience.surface.GetComponent<Collider>();
@@ -115,9 +130,8 @@ public static class SecondIslandFullReview
         try
         {
             Progress("opening");
-            await WaitFor(()=>VerifySecondIslandAwakening.Status=="completed" || VerifySecondIslandAwakening.Status.StartsWith("failed"),40);
-            results["openingStatus"]=VerifySecondIslandAwakening.Status;results["opening"]=VerifySecondIslandAwakening.Summary;
-            if(VerifySecondIslandAwakening.Status!="completed")throw new Exception(VerifySecondIslandAwakening.Status);
+            await CollectResult(results, "opening", () => VerifySecondIslandAwakening.Status,
+                () => VerifySecondIslandAwakening.Summary, 40);
             var player=UnityEngine.Object.FindFirstObjectByType<ThirdPersonPlayerController>();
             var soft=player.GetComponent<MarshmallowTraversal>();var experience=player.GetComponent<MarshmallowIslandExperience>();
             if(!soft || !experience || !soft.Active || !experience.Ready)throw new Exception("Soft island traversal or feedback is inactive.");
@@ -127,15 +141,13 @@ public static class SecondIslandFullReview
             results["terrain"]=Terrain(player,experience);
             Progress("candy-collisions");results["candyCollisions"]=CandyColliderTools.Verify(player);
             Progress("fast-air-dodge");VerifyFastAirDodge.Start();
-            await WaitFor(()=>VerifyFastAirDodge.Status=="completed" || VerifyFastAirDodge.Status.StartsWith("failed"),40);
-            results["fastAirDodgeStatus"]=VerifyFastAirDodge.Status;results["fastAirDodge"]=VerifyFastAirDodge.Summary;
-            if(VerifyFastAirDodge.Status!="completed")throw new Exception(VerifyFastAirDodge.Status);
+            await CollectResult(results, "fastAirDodge", () => VerifyFastAirDodge.Status,
+                () => VerifyFastAirDodge.Summary, 40);
             Progress("map");results["map"]=await Map(player);
             Progress("weather");results["weather"]=await Weather();
             Progress("fairy-flight");VerifyNealFairyHover.Start();
-            await WaitFor(()=>VerifyNealFairyHover.Status=="completed" || VerifyNealFairyHover.Status.StartsWith("failed"),30);
-            results["fairyStatus"]=VerifyNealFairyHover.Status;results["fairy"]=VerifyNealFairyHover.Summary;
-            if(VerifyNealFairyHover.Status!="completed")throw new Exception(VerifyNealFairyHover.Status);
+            await CollectResult(results, "fairy", () => VerifyNealFairyHover.Status,
+                () => VerifyNealFairyHover.Summary, 30);
             Progress("walking-jumping-dodging");VerifyMarshmallowSpacewalk.Start();
             await WaitFor(()=>VerifyMarshmallowSpacewalk.Status=="completed" || VerifyMarshmallowSpacewalk.Status.StartsWith("failed"),120);
             results["spacewalkStatus"]=VerifyMarshmallowSpacewalk.Status;results["spacewalk"]=VerifyMarshmallowSpacewalk.Summary;
@@ -150,9 +162,8 @@ public static class SecondIslandFullReview
             {
                 if(outpostsWereActive)outposts.SetActive(false);
                 Progress("aerial-combo");VerifyAerialCombo.Start();
-                await WaitFor(()=>VerifyAerialCombo.Status=="completed" || VerifyAerialCombo.Status.StartsWith("failed"),90);
-                results["aerialStatus"]=VerifyAerialCombo.Status;results["aerial"]=VerifyAerialCombo.Summary;
-                if(VerifyAerialCombo.Status!="completed")throw new Exception(VerifyAerialCombo.Status);
+                await CollectResult(results, "aerial", () => VerifyAerialCombo.Status,
+                    () => VerifyAerialCombo.Summary, 90);
             }
             finally{if(outpostsWereActive && outposts)outposts.SetActive(true);}
             Progress("performance");var frames=new List<float>();float end=Time.realtimeSinceStartup+2;

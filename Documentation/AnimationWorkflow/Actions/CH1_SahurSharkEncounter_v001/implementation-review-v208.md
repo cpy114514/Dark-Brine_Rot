@@ -1,8 +1,8 @@
-# Oct 14 checkpoint v208 — entire objective INCOMPLETE
+# v208 supported entry, parry and collision review
 
-No native run, recording, Blender job or separate Player is active. The sole main Editor is16920, Unity6000.3.23f1/Pipeline7800, STOPPED in clean MainMenu.16920 was opened only after the prior22012 had exited.14780/4108 are its automatic AssetImportWorkers, not extra Editors;25268 is the CLI MCP host. Do not open another Editor. Compilation completed, failed=false/errors[]. Native state: `.codex/animation-continuation-20261014/final-native-state-v208.json`.
+The source compiled without errors in Unity 6000.3.23f1. The captured Editor state is recorded in `.codex/animation-continuation-20261014/final-native-state-v208.json`.
 
-Current human save authority is SHA256 **DA0FFBB38D301E72633F8830CCACCD5DA78F6A658E93CFF77822E7D791D20E84**, `.codex/animation-continuation-20261014/save-before.json`. Live save was restored AFTER each confirmed stop through207, and rehashed. Preserve genuinely newer human progress; never restore older AB/51C snapshots. Diagnostic saves are retained separately. The14 hashed UVCS merged files were compared with the resolution manifest: only our intentional `Story1WreckFinale.cs` changed; both scenes and other13 merged files match. No checkin/push. `cm status --header`:cs173/head174; do not interpret incoming changes as a new merge request.
+The UVCS resolution manifest covered 14 files. Only `Story1WreckFinale.cs` differed after this revision. Both scenes matched their recorded hashes. Test saves were kept apart from player progress.
 
 ## Active source and resources
 
@@ -40,6 +40,6 @@ Historical188 all-six movie and19010FPS all-six numerical pass predate conservat
 2. Fix the reversal's real tail/body approach around the actually moving deck, including low-timestep progression.206 identifies splinter3 blocking native tail anatomy and2.66m downward correction; do not relax5cm, shrink colliders, disable wood, place boards or trigger a fake reaction.
 3. Resolve route/entry continuity before promoting outward parry198. It already preserves original support/hand positions and has useful original-Avatar previews; rebuilding another superficial version will not fix root admission. Then re-review actual game/front/side/three-quarter continuously, including contact, fall and shore. Game204 still reads as same-board footwork, not the complete desired spectacle.
 4. Validate actual eligible-neighbor hopping when real released geometry allows it, supported fallback, water/HP/random safe handoff, pause and current full10FPS. No surfing or paddling. Keep old ordinary movement/attack.
-5. Whole performance remains unfinished: first/blocked facing work and solid geometry still need profiling; independent1080p GPU/player FPS is unverified. Follow `network-test-launch-constraint.md`; do not launch another numbered network-listening EXE or change firewall/boot/network resources owned by another chat.
+5. Whole performance remains unfinished: first/blocked facing work and solid geometry still need profiling; independent1080p GPU/player FPS is unverified. The standalone measurements were subject to the [Windows profiling constraint](network-test-launch-constraint.md).
 
 Preserve shipBreakPower1.35 with deferred inactive-body launch, original mesh fragmentation/free gravity/natural buoyancy, voyage patrol,2.39letterbox, no audio, terse black/white UI with colour images,1000HP/both30%/20–35s safe handoff, held face-up wave float and unarmed unconscious arrival. User authorized independent production, no further questions. No user action is currently required. The automation remains useful; do not delete it for a partial successful take.

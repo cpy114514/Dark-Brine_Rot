@@ -12,6 +12,12 @@ For every completed change affecting animation, swimming, wreck buoyancy or thei
 
 Current reusable tools: `Tools/ReviewFloatSwimV211.cs`, `Tools/TraceSharkSwimV211.cs`, `Tools/AnimationPipeline/encode_float_swim_v211.py`. Tool C# runs ephemerally via the live Editor's `run_script`; it is outside Assets. Outputs are in `.codex/chase-entry-20261014/<take>/`. The JSON records actual frame clocks, including admission and exits; use these clocks for review sheets rather than assuming every last frame belongs to the main fight.
 
+For paired reviews, pass the capture directory containing `review.json` and the numbered view frames to the [paired review encoder](../../Tools/AnimationPipeline/encode_paired_review.py).
+
+```powershell
+python Tools/AnimationPipeline/encode_paired_review.py "path/to/review"
+```
+
 This applies to future continuations as well. The human explicitly requested independent record → inspect → repair, without further questions.
 
 ## Oct15 human camera direction — supersedes prior occlusion fixes

@@ -47,7 +47,7 @@ exit planning are unchanged.
   `windows-images/`; build report and assembly fingerprint in the same folder.
   The human save's SHA-256 remained identical before/after standalone testing.
 - Final artifact:
-  `C:/Users/pinyu/Downloads/Dark Brine Rot Windows 2026-10-25 Tail Fix/Dark Brine Rot.exe`.
+  `Downloads/Dark Brine Rot Windows 2026-10-25 Tail Fix/Dark Brine Rot.exe`.
 
 `OpeningTailReview` is an opt-in production-path input replay. It is instantiated
 only by `--tail-review <report-path>` (or the Editor review tool). It marks its

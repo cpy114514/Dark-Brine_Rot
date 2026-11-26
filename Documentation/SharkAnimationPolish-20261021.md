@@ -28,9 +28,9 @@ Only existing C# sources `Story1WreckBattle.Redesign.cs`, `Story1WreckBattle.Cam
 Reproduction tools outside Assets:
 
 - `ReviewSharkAnimationV237.Start(label,fps,images)` records the entire original route with actual synthetic Input System keys/buttons and final SRP camera completions.
-- `VerifyTutorialContactsV237.Start(label)` independently bakes the rendered shark at both confirmed tutorial hits, checking actual weapon/skin contact, measured soles, body envelopes and original timber.
-- `AuditSharkFilmV237.Start(label)` independently rebuilds the posed shark triangle index at cinematic contacts and regular later-film samples, checking body envelopes and exact timber triangles.
-- `AnalyzeSharkAnimationV237.py`, `VerifySharkAnimationV237.py` and `CompareSharkAnimationV237.py` produce consecutive review sheets, measured seam checks, normal-rate movies and aligned before/after footage.
+- [VerifyTutorialContactsV237.Start(label)](https://github.com/cpy114514/Dark-Brine_Rot/blob/105d1e65df5c92cc5c22a96c1332862ec694b389/Tools/VerifyTutorialContactsV237.cs) independently bakes the rendered shark at both confirmed tutorial hits, checking actual weapon/skin contact, measured soles, body envelopes and original timber.
+- [AuditSharkFilmV237.Start(label)](https://github.com/cpy114514/Dark-Brine_Rot/blob/105d1e65df5c92cc5c22a96c1332862ec694b389/Tools/AuditSharkFilmV237.cs) independently rebuilds the posed shark triangle index at cinematic contacts and regular later-film samples, checking body envelopes and exact timber triangles.
+- `AnalyzeSharkAnimationV237.py`, [VerifySharkAnimationV237.py](https://github.com/cpy114514/Dark-Brine_Rot/blob/105d1e65df5c92cc5c22a96c1332862ec694b389/Tools/VerifySharkAnimationV237.py) and `CompareSharkAnimationV237.py` produce consecutive review sheets, measured seam checks, normal-rate movies and aligned before/after footage.
 
 Review method is consecutive actual-camera frames, key-pose sheets and final-pose geometry. It is not a claim of watching the entire MP4 at normal speed or of human FINAL approval. Full-angle/hardware audio/release performance and arbitrary wreck layouts remain outside this targeted pass.
 

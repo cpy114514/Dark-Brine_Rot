@@ -1,6 +1,8 @@
 # 第一岛：复用开场沉船残骸
 
-后续重做已保存到同一 Prefab。下面保留首次摆放的证据，现行构图、数量和路线验证见 [沉船重做记录](../.codex/island-shipwreck-redesign-20261107/review.md)。
+本地归档路径相对于项目根目录。
+
+后续重做已保存到同一 Prefab。下面保留首次摆放的证据，现行构图、数量和路线验证见 沉船重做记录（`.codex/island-shipwreck-redesign-20261107/review.md`）。
 
 ## 实际修改
 

@@ -1,25 +1,20 @@
-# v088–v090 continued production — INCOMPLETE
+# v088–v090 parry and contact tests
 
-Latest direct user scheduled one-time continuation TODAY Oct13 05:30 America/Vancouver; new heartbeat id5-30 created ACTIVE, COUNT1. Prior id automation no longer exists; do not duplicate. Continue independently now.
+In the v088 four-view capture, all six strikes met their contact threshold, but Sahur’s planted foot slid 9.692 cm during recovery at 1.717 s. A separate v088 Player run missed the first two strikes and failed its frame-rate target. The layouts evolved independently.
 
-Native full four-view v088 seed14 recorded625frames/20.8s and encoded4movies. All six contacts PASS [0,.001202,0,0,.0000207,0]m. Actual hero renderer bounds screen framing PASS541frames,0cropped crown/feet, minY.069/maxY.946/FOVmax76.74. Ending276frames PASS:0upright/clock drift,25pausedframes/0motion,lostStick/unarmed unconscious island; headfreeboard.04m,waveheight4.339m/rock9.85deg. Still a same-board variant,0hops. Fixed-foot slide FAIL9.692cm at1.717s in old CH1_SahurParry_v040 recovery; foot-height1.394mm. Key actual game/four-view stills inspected, normal-speed full film not directly observed. v088 independent seed13 still FAILS first2contacts/FPS despite native seed14 pass; layout robustness remains unaccepted.
+## Parry revision
 
-v089 optimizes only the boolean escape predicate: test the last blocking anatomy first, still require every original volume clear at the unchanged3mm threshold. Escape position/distance order and authoritative solid solve order unchanged. Intended equivalent geometry result; native real-wreck equivalence observer Tools/VerifyEscapeOrderV089.cs is ready but NOT RUN. Source compilation PASS.
+The v090 parry starts with Guard v047 on Sahur’s existing 28-bone rig. The hips shift weight over the planted soles, the right arm deflects the strike and the free left hand balances the torso. The initial hand target was outside the arm’s reach. Moving the target inside the upper- and lower-arm span preserved the original bone lengths. The clip runs for 1.1 s at 60 FPS, with contact at 0.484 s.
 
-v090 parry is authored directly on the retained actual28bone Sahur rig, starting from existing accepted Guard_v047. Both soles stay planted through compression, right-hand deflection, torso reaction and recovery; Hips carries weight shift, no planar root travel. Free left hand only balances. Originalmesh/rest/bind/hierarchy preserved. Duration1.1s,60FPS,contact.484s unchanged. Initial requested hand target exceeded actual limb length; corrected by placing effector inside actual upper+lower limb reach, never stretching bones. Source ankle/hand errors<0.00003cm; validation foot drift<0.32micrometres/root planar3.38e-9m. Source side contact/front recovery/three-quarter preparation inspected and accepted only FIRST PASS staging.
+The Unity import used the original Avatar and contained 130 Humanoid curves. Source foot drift stayed below 0.32 micrometres. The isolated Unity preview had 4.061 cm ankle drift before runtime IK. The integrated take measured 1.393 mm of foot slide. The installer replaced one parry beat and saved the previous definition in `Resources/Encounter/v090/PreviousEncounterDefinition.asset`.
 
-Native v090 original Avatar valid,130Humanoid curves,60FPS/1.1s. Full201images/three60FPSmovies in native-framed-parry-v090. Inspected side contact29/front recovery48/three-quarter prep13. Shaft max1.08745degrees/source-frame. Uncorrected native ankle drift4.061cm before live IK (old fixed recovery slipped9.692cm even after correction). Native FIRST PASS accepted for integration trial, live correction/contact still pending. InstallParryTrialV090 ALREADY INSTALLED through native EditorAPI: Resources/Encounter/v090/PreviousEncounterDefinition.asset preserves previousdefinition, only one Parry beat changed; DO NOT rerun installer. Original walk/run/roll/left-click controller and rig/Avatar unchanged.
+## Native integration, seed 14
 
-Latest state: original Editor22012/7800 STOPPED/CLEAN/autotickTRUE after v088; v090 import/native isolated preview/install complete. Recompile requested for latest default-beat mapping. No recording or Player expected active yet; verify fresh state before full native-paired-v090 seed14, approach/framing/ending and v089 geometry predicate observer. Preserve existingv088 artifacts; no overwrites. No new Editor, scene save, commit or push.
+| Check | Observation |
+| --- | --- |
+| Six strike gaps, in order | 0.029621, 0, 0, 0.031210, 0.005495 and 0 m across 625 recorded frames. |
+| Support and framing | Foot height error was 1.395 mm. Sahur’s renderer stayed inside the frame in all 541 measured frames. Foreground waves and timber still covered parts of the weapon or actor in some views. |
+| Ending | Across 264 frames the fallen pose held, with no clock drift. The actor stayed still through 25 paused frames, lost the stick and arrived unconscious on shore. Head clearance above water was 0.04 m. |
+| Coverage | Four continuous views were encoded. Review covered the contact sheet and throw frames 249 and 267. This same-board take did not exercise the v086 hop or establish final visual approval. |
 
-Save was backed up to save-after-v088-capture.json after Play=false, and newer authoritative AB575DF9484F0327E8FC7AD7B7BD9B123ADB85D13F4E9A627F3F40A38D1EC0F3 restored. Source backup save-user-after-play-052419.json; never restore old9BD backups/save.json. Overall remaining: robust real-layout contacts, new actual-hop live art, new parry slide regression, continuous art/independent FPS. Whole work INCOMPLETE.
-
-## Completed native integration regression
-
-Native paired v090 seed14 completed625frames, encoded4continuous movies. ALL6actualcontacts PASS [.029621,0,0,.031210,.005495,0]m; footheight1.395mm, fixedslide1.393mm. Screen framingPASS541frames,0croppedhero bounds/feet,minY.0536/maxY.9464/maxFOV57.40. Ending264frames PASS0upright/clockdrift,25pausedframes0motion,loststick/unarmedunconsciousshore,headfreeboard.04m,waves2.408m/rock12.22deg. Sameboardvariant0hops; new v086 hop not exercised in this take.
-
-v089 real native geometry predicate equivalence PASS150probes across5liveposes,122clear/28blocked,0mismatches. Offline diagnostics are not FPS evidence.
-
-Actual full contact-sheet and game throw frames249/267 inspected. Screen bounds PASS does NOT prove visibility: foreground waves/wood obscure parts of Sahur/weapon in some game frames; full normal-speed art approval remains pending. Do not claim all cinematic framing/occlusion problems solved.
-
-After actual Play=false/scene clean, diagnostic save preserved as save-after-v090-capture.json and newer AB575 checkpoint restored. EditorSTOPPED/autotick temporarilyFALSE during independently rendered Player. Standalone v090 build succeeded34.1s,1reportederror/488warnings; sourceC#compilepassed, exact build messages not yet diagnosed (AuditBuildMessagesV090 prepared). Player seed14 launched PID40524 with async bounded real1080p/DX12GPUreadback; report pending. Restore autotickTRUE after Player quits. Build/Player must not be duplicated while active.
+The v089 escape check tested the most recent blocking anatomy first, retaining the original 3 mm threshold and escape order. All 150 native probes agreed across five poses (122 clear, 28 blocked). The independent v090 build took 34.1 s and reported one error and 488 warnings. The exception and standalone performance are documented in the [v092 build review](implementation-review-v092.md).

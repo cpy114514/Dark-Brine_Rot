@@ -157,8 +157,7 @@ InitTestScene*.unity*
 /Tools/blender/
 __pycache__/
 *.py[cod]
-# Local-only agent / assistant tooling scripts (outside Assets/ so they don't trigger reimports).
-# Keep them out of the repo: they're scaffolding for AI-driven one-off jobs, not project source.
+# Workstation-specific scripts live outside Assets to avoid Unity reimports.
 AgentScripts/
 # Unity Temp folder inside Assets/ (root /Temp/ already covered above)
 /Assets/Temp/
@@ -182,3 +181,22 @@ AgentScripts/
 /.vscode/
 /Tools/dark_brine_promo/out/
 /Documentation/LocalTestCleanup-20261108/audit.zip
+
+# Workstation-only assistant memory and GPU driver diagnostics.
+/.dsh-project-memory/
+/NVIDIA Corporation/umdlogs/
+
+# Transient QA status. Completed results, failed takes and raw telemetry stay reviewable.
+/AUTO_QA/Evidence/initial-worktree.txt
+/AUTO_QA/Evidence/batch-[0-9][0-9][0-9]-*console.json
+/AUTO_QA/Evidence/active-death[0-9][0-9][0-9]-*-progress.json
+/AUTO_QA/Evidence/native-input/*/progress.json
+
+# Local cleanup inventories and retired session handoffs.
+/Documentation/LocalTestCleanup-20261108/*.json
+/Documentation/GameplayFeel-Resume-20261109.md
+/Documentation/VanGogh2-Resume-20261109.md
+/Documentation/AnimationWorkflow/Actions/CH1_SahurSharkEncounter_v001/resume-at-0250.md
+/Tools/WriteOpeningResumeV[0-9][0-9][0-9].py
+/Tools/WriteOpeningCheckpointV[0-9][0-9][0-9].py
+/Documentation/AnimationWorkflow/verification/codex-discovery.json

@@ -8,7 +8,7 @@ Restored the existing approved melee states, timing, transitions and charge mask
 
 The original rifle layers and their eleven named serialized objects remain byte-identical. Existing blades, meshes, clips, damage, 1.2x dimensions, 1.2s minimum/2.6s full charge, 16m travel, rush-only immunity and frontal guard rules remain unchanged. Both combination and v002 polish installers now include the rifle graph so that future installation of these moves reaches all three gameplay controllers.
 
-Reproduction/repair tools: `InspectTwinBladeRestoreV235.Run`, `RestoreTwinBladeControllerV235.Run`, `VerifySharedMeleeControllerV235.Run` through Pipeline `run_script`, using the corresponding `Tools/*.cs` files. The repair tool requires Edit Mode and saves only its target asset.
+Reproduction/repair tools: `InspectTwinBladeRestoreV235.Run`, `RestoreTwinBladeControllerV235.Run`, [VerifySharedMeleeControllerV235.Run](https://github.com/cpy114514/Dark-Brine_Rot/blob/105d1e65df5c92cc5c22a96c1332862ec694b389/Tools/VerifySharedMeleeControllerV235.cs) through Pipeline `run_script`, using the corresponding `Tools/*.cs` files. The repair tool requires Edit Mode and saves only its target asset.
 
 ## Actual verification
 

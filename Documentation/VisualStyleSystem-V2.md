@@ -138,7 +138,7 @@ See the exact task manifest appended below. Unity-generated .meta companions are
 - Created: `AUTO_QA/Evidence/visual-style-v2/safety.json`
 - Created: `AUTO_QA/Evidence/visual-style-v2/verification.json`
 - Modified: `AUTO_QA/NEXT_TASK.md`
-- Modified: `AUTO_QA/PROGRESS.md`
+- Modified: [AUTO_QA/PROGRESS.md before consolidation](https://github.com/cpy114514/Dark-Brine_Rot/blob/105d1e65df5c92cc5c22a96c1332862ec694b389/AUTO_QA/PROGRESS.md)
 - Modified: `AUTO_QA/TEST_RESULTS.md`
 - Created: `Documentation/VisualStyleSystem-V2.md`
 - Created: `Tools/CaptureVisualStylesV2.cs`
